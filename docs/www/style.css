@@ -1,0 +1,335 @@
+/* ============================================
+   Ogneliss Dialer — стили в стиле основной страницы
+   ============================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: #1F2329;
+  color: #E2E2E2;
+  line-height: 1.6;
+  padding: 2rem 1rem;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  /*
+   * flex-start, а не center.
+   *
+   * ══════════════════════════════════════════════════════════════════════
+   * ПОЧЕМУ НЕЛЬЗЯ ЦЕНТРИРОВАТЬ ПО ВЫСОТЕ
+   * ══════════════════════════════════════════════════════════════════════
+   * При align-items: center содержимое выше экрана вылезает в обе
+   * стороны, и верхняя часть оказывается за началом прокрутки —
+   * до неё нельзя долистать. На коротких страницах этого не видно,
+   * а политика конфиденциальности длиной в экран с лишним обрезалась бы
+   * сверху на телефоне.
+   *
+   * Центрирование коротких страниц сохраняется отступом auto у main.
+   */
+  align-items: flex-start;
+}
+
+main {
+  max-width: 780px;
+  width: 100%;
+  /* auto по вертикали: короткая страница по-прежнему посередине экрана,
+     длинная прокручивается с самого верха */
+  margin: auto;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 2.5rem 3rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.5px;
+}
+
+h1 .fire {
+  color: #FDBF03;
+}
+
+h1 .gray {
+  color: #E2E2E2;
+}
+
+.lead {
+  font-size: 1.1rem;
+  color: #8F98A3;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #E2E2E2;
+  margin: 1.8rem 0 0.8rem 0;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li {
+  padding: 0.4rem 0;
+}
+
+ul li a {
+  color: #FDBF03;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+
+ul li a:hover {
+  color: #FFD700;
+  text-shadow: 0 0 20px rgba(253, 191, 3, 0.15);
+  text-decoration: underline;
+}
+
+a {
+  color: #FDBF03 !important;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #FFD700 !important;
+  text-decoration: underline;
+}
+
+footer {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.9rem;
+  color: #8F98A3;
+  text-align: center;
+}
+
+/* Стили для страниц документов (privacy, eula, etc.) */
+.back {
+  display: inline-block;
+  margin-top: 1.5rem;
+  color: #FDBF03;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.back:hover {
+  color: #FFD700;
+  text-decoration: underline;
+}
+
+/* Таблицы */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.8rem 0 1.2rem;
+  font-size: 0.95rem;
+  color: #E2E2E2;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th, td {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: rgba(253, 191, 3, 0.15);
+  font-weight: 600;
+  color: #FDBF03;
+  border-bottom: 2px solid rgba(253, 191, 3, 0.3);
+}
+
+tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+tr:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+table {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+th {
+  background: rgba(253, 191, 3, 0.15) !important;
+  color: #FDBF03 !important;
+  border-bottom: 2px solid rgba(253, 191, 3, 0.3) !important;
+}
+
+td {
+  color: #E2E2E2 !important;
+}
+
+tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+tr:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Стили для кода и важных блоков */
+code {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #E2E2E2;
+  word-break: break-all;
+}
+
+.important {
+  background: rgba(253, 191, 3, 0.08);
+  border-left: 4px solid #FDBF03;
+  padding: 0.8rem 1.2rem;
+  margin: 1rem 0;
+  border-radius: 4px;
+}
+
+.important p {
+  color: #E2E2E2;
+}
+
+.important strong {
+  color: #FDBF03;
+}
+
+h3 {
+  margin-top: 1.2rem;
+  color: #E2E2E2;
+}
+
+.lang-section {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Списки библиотек */
+.lib-list {
+  columns: 2 250px;
+  column-gap: 2rem;
+  margin: 0.5rem 0 1.5rem;
+}
+
+.lib-list li {
+  padding: 0.2rem 0;
+  font-size: 0.95rem;
+  color: #E2E2E2;
+}
+
+.lib-list li strong {
+  color: #FDBF03;
+}
+
+/* Логотип */
+.logo {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+/*
+ * Правила для обоих видов логотипа: встроенного <svg> и <img>.
+ *
+ * Логотип вынесен в отдельный файл logo.svg — четыре копии внутри
+ * страницы (по одной на язык) отличались бы при первой же правке.
+ * Старое правило для svg оставлено: если где-то ещё остался встроенный,
+ * он не должен внезапно вырасти до натурального размера.
+ */
+.logo svg,
+.logo img {
+  width: 80px;
+  height: 80px;
+  filter: drop-shadow(0 4px 12px rgba(253, 191, 3, 0.2));
+  transition: transform 0.3s ease;
+}
+
+.logo svg:hover,
+.logo img:hover {
+  transform: scale(1.05);
+}
+
+/* Адаптив для телефонов */
+@media (max-width: 600px) {
+  main {
+    padding: 1.5rem;
+  }
+  h1 {
+    font-size: 1.7rem;
+  }
+  .page-bar {
+    margin: -1.5rem -1.5rem 1rem;
+    padding: 0.6rem 1.5rem;
+  }
+  /* На узком экране «Назад к документам» отнимает место у языка:
+     стрелка остаётся, подпись прячется */
+  .page-bar .back-label {
+    display: none;
+  }
+}
+
+/* ============================================
+   Шапка страницы
+   ============================================
+
+   Прилипает к верху при прокрутке. Отрицательные поля по бокам тянут её
+   на всю ширину карточки: у main поля 3 rem, и без этого шапка была бы
+   уже текста, а её подложка не закрывала бы уезжающие под неё строки.
+
+   ⚠️ На телефоне поля карточки другие (1.5 rem), поэтому отрицательные
+   поля переопределены в блоке адаптива ниже. Иначе шапка вылезла бы
+   за край экрана. */
+
+.page-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: -2.5rem -3rem 1.5rem;
+  padding: 0.75rem 3rem;
+  /* Непрозрачная подложка: под шапкой проезжает текст, и сквозь
+     полупрозрачную он просвечивал бы */
+  background: #23272E;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px 20px 0 0;
+}
+
+.page-bar .back {
+  margin-top: 0;
+  white-space: nowrap;
+  /* 44 px — минимальная высота нажатия пальцем */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+/* Переключатель внутри шапки прижат вправо и не создаёт своих отступов */
+.page-bar .lang-switcher {
+  margin: 0;
+}

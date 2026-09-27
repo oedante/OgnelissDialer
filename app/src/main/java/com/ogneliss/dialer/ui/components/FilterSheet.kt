@@ -1,0 +1,381 @@
+package com.ogneliss.dialer.ui.components
+
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.material.icons.filled.PersonOff
+import androidx.compose.material.icons.automirrored.filled.StickyNote2
+import androidx.compose.material.icons.filled.Alarm
+import com.ogneliss.dialer.ui.theme.NoteTeal
+import androidx.compose.material.icons.filled.Block
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.automirrored.filled.CallReceived
+import androidx.compose.material.icons.automirrored.filled.CallMissed
+import androidx.compose.material.icons.automirrored.filled.CallMade
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material3.*
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.ogneliss.dialer.ui.theme.FlowUi
+import com.ogneliss.dialer.R
+import com.ogneliss.dialer.data.CallLogFilter
+import com.ogneliss.dialer.data.CallType
+
+/**
+ * ФИЛЬТРЫ ЖУРНАЛА В ШТОРКЕ.
+ *
+ * ── Что было не так с рядом чипов ──────────────────────────────────────────
+ * Восемь чипов в одну строку не помещались и уезжали за край экрана.
+ * Часть фильтров была попросту недоступна: о существовании «Спам»
+ * и «Незнакомые» можно было узнать, только догадавшись прокрутить
+ * ряд вбок, чего никто не делает.
+ *
+ * Плюс ряд занимал место над списком постоянно, хотя фильтрами
+ * пользуются изредка.
+ *
+ * ── Как сейчас ─────────────────────────────────────────────────────────────
+ * Одна кнопка «Фильтры» со счётчиком активных условий. Нажатие открывает
+ * шторку, где все фильтры видны разом и сгруппированы по смыслу.
+ *
+ * Счётчик на кнопке принципиален: без него активный фильтр не виден,
+ * и пользователь недоумевает, почему журнал наполовину пуст.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FilterSheet(
+    filter: CallLogFilter,
+    simCount: Int,
+    onFilterChange: (CallLogFilter) -> Unit,
+    /** Сколько записей проходит текущий отбор. */
+    matchCount: Int = 0,
+    onDismiss: () -> Unit
+) {
+    /*
+     * Шторка раскрывается сразу полностью и учитывает системные панели.
+     *
+     * По умолчанию ModalBottomSheet открывается наполовину и не знает
+     * о навигационной панели: нижние пункты оказываются под кнопками
+     * системы, и нажать их нельзя.
+     */
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        contentWindowInsets = { WindowInsets.navigationBars }
+    ) {
+        Column(
+            Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = FlowUi.sheetPadding)
+                .padding(bottom = FlowUi.sheetBottomPadding)
+        ) {
+            Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                Text(
+                    stringResource(R.string.filter_title),
+                    Modifier.weight(1f),
+                    style = MaterialTheme.typography.titleLarge
+                )
+                if (filter.isActive) {
+                    TextButton(onClick = { onFilterChange(CallLogFilter()) }) {
+                        Text(stringResource(R.string.filter_reset))
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            GroupLabel(stringResource(R.string.filter_group_type))
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                TypeChip(filter, CallType.MISSED, R.string.call_missed, onFilterChange)
+                TypeChip(filter, CallType.INCOMING, R.string.call_incoming, onFilterChange)
+                TypeChip(filter, CallType.OUTGOING, R.string.call_outgoing, onFilterChange)
+            }
+
+            // 12 dp вместо 20: шторку открывают часто, и на экран
+            // должны помещаться все разделы без прокрутки
+            Spacer(Modifier.height(12.dp))
+
+            GroupLabel(stringResource(R.string.filter_group_period))
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                CallLogFilter.Period.entries.forEach { period ->
+                    FilterChip(
+                        selected = filter.period == period,
+                        onClick = { onFilterChange(filter.copy(period = period)) },
+                        label = { Text(stringResource(periodLabel(period))) },
+                        // Галочка у выбранного: период — выбор одного
+                        // из нескольких, и видно, какой действует
+                        leadingIcon = if (filter.period == period) {
+                            {
+                                Icon(
+                                    Icons.Default.Check,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        } else null
+                    )
+                }
+            }
+
+            // SIM показываем только при двух картах: мёртвый фильтр
+            // занимает место и сбивает с толку
+            if (simCount > 1) {
+                // 12 dp вместо 20: шторку открывают часто, и на экран
+            // должны помещаться все разделы без прокрутки
+            Spacer(Modifier.height(12.dp))
+                GroupLabel(stringResource(R.string.filter_group_sim))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    repeat(simCount) { slot ->
+                        FilterChip(
+                            selected = filter.simSlot == slot,
+                            onClick = {
+                                onFilterChange(
+                                    filter.copy(
+                                        simSlot = if (filter.simSlot == slot) null else slot
+                                    )
+                                )
+                            },
+                            label = { Text("SIM ${slot + 1}") }
+                        )
+                    }
+                }
+            }
+
+            // 12 dp вместо 20: шторку открывают часто, и на экран
+            // должны помещаться все разделы без прокрутки
+            Spacer(Modifier.height(12.dp))
+
+            GroupLabel(stringResource(R.string.filter_group_other))
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterChip(
+                    selected = filter.unknownOnly,
+                    onClick = { onFilterChange(filter.copy(unknownOnly = !filter.unknownOnly)) },
+                    label = { Text(stringResource(R.string.filter_unknown)) },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Default.PersonOff,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                )
+                /*
+                 * «Ожидают ответа» — первой фишкой в ряду.
+                 *
+                 * Это единственный отбор, который отвечает на вопрос
+                 * «что я должен сделать», а не «что было». Им пользуются
+                 * чаще остальных, и ставить его после «спама» значило бы
+                 * прятать нужное за редким.
+                 */
+                FilterChip(
+                    selected = filter.awaitingCallbackOnly,
+                    onClick = {
+                        onFilterChange(
+                            filter.copy(
+                                awaitingCallbackOnly = !filter.awaitingCallbackOnly
+                            )
+                        )
+                    },
+                    label = { Text(stringResource(R.string.filter_awaiting)) },
+                    leadingIcon = {
+                        Icon(
+                            Icons.AutoMirrored.Filled.CallMissed,
+                            contentDescription = null,
+                            modifier = Modifier.size(FlowUi.iconSizeInline),
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                )
+                FilterChip(
+                    selected = filter.withNoteOnly,
+                    onClick = {
+                        onFilterChange(filter.copy(withNoteOnly = !filter.withNoteOnly))
+                    },
+                    label = { Text(stringResource(R.string.filter_with_note)) },
+                    leadingIcon = {
+                        Icon(
+                            Icons.AutoMirrored.Filled.StickyNote2,
+                            contentDescription = null,
+                            modifier = Modifier.size(FlowUi.iconSizeInline),
+                            tint = NoteTeal
+                        )
+                    }
+                )
+                FilterChip(
+                    selected = filter.withReminderOnly,
+                    onClick = {
+                        onFilterChange(
+                            filter.copy(withReminderOnly = !filter.withReminderOnly)
+                        )
+                    },
+                    label = { Text(stringResource(R.string.filter_with_reminder)) },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Default.Alarm,
+                            contentDescription = null,
+                            modifier = Modifier.size(FlowUi.iconSizeInline)
+                        )
+                    }
+                )
+                FilterChip(
+                    selected = filter.spamOnly,
+                    onClick = { onFilterChange(filter.copy(spamOnly = !filter.spamOnly)) },
+                    label = { Text(stringResource(R.string.filter_spam)) },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Default.Block,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                )
+            }
+
+            /*
+             * СКОЛЬКО ЗАПИСЕЙ ОТОБРАНО.
+             *
+             * ── Зачем ──────────────────────────────────────────────────────
+             * Шторка закрывает список, и результат отбора не виден:
+             * человек выбирает условия вслепую и закрывает её, чтобы
+             * проверить. Если ничего не нашлось — открывает снова.
+             *
+             * Счётчик показывает итог сразу. Ноль при этом не ошибка,
+             * а ответ: с такими условиями записей нет, и менять надо
+             * условия, а не искать поломку.
+             */
+            if (filter.isActive) {
+                // 12 dp вместо 20: шторку открывают часто, и на экран
+            // должны помещаться все разделы без прокрутки
+            Spacer(Modifier.height(12.dp))
+
+                Text(
+                    if (matchCount == 0) {
+                        stringResource(R.string.filter_no_matches)
+                    } else {
+                        pluralStringResource(
+                            R.plurals.filter_match_count, matchCount, matchCount
+                        )
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (matchCount == 0) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    }
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Кнопка открытия фильтров со счётчиком.
+ * Счётчик обязателен: иначе активный фильтр невидим, и наполовину
+ * пустой журнал выглядит как потеря данных.
+ */
+@Composable
+fun FilterButton(filter: CallLogFilter, onClick: () -> Unit) {
+    if (filter.isActive) {
+        FilledTonalButton(onClick = onClick) {
+            Icon(Icons.Default.FilterList, null, Modifier.size(18.dp))
+            Spacer(Modifier.width(8.dp))
+            Text(stringResource(R.string.filter_active_count, filter.activeCount))
+        }
+    } else {
+        TextButton(onClick = onClick) {
+            Icon(Icons.Default.FilterList, null, Modifier.size(18.dp))
+            Spacer(Modifier.width(8.dp))
+            Text(stringResource(R.string.filter_title))
+        }
+    }
+}
+
+@Composable
+private fun GroupLabel(text: String) {
+    Text(
+        text,
+        style = MaterialTheme.typography.labelLarge,
+        // Тёмно-серый: подпись группы — разметка, а не акцент.
+        // Акцентным остаётся только то, что несёт данные, —
+        // счётчики вызовов и выбранные значения
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+    Spacer(Modifier.height(8.dp))
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun FlowRow(
+    horizontalArrangement: Arrangement.Horizontal,
+    content: @Composable () -> Unit
+) {
+    androidx.compose.foundation.layout.FlowRow(
+        horizontalArrangement = horizontalArrangement
+    ) { content() }
+}
+
+@Composable
+private fun TypeChip(
+    filter: CallLogFilter,
+    type: CallType,
+    labelRes: Int,
+    onChange: (CallLogFilter) -> Unit
+) {
+    /*
+     * ИКОНКА РЯДОМ С ПОДПИСЬЮ.
+     *
+     * ── Зачем ──────────────────────────────────────────────────────────────
+     * Три фишки «Пропущенный», «Входящий», «Исходящий» отличаются
+     * только текстом, и различать их приходится чтением. А те же стрелки
+     * человек уже видит в каждой строке журнала: связь между фильтром
+     * и тем, что он отбирает, становится очевидной без слов.
+     *
+     * Цвет у пропущенного красный — тот же, что в списке. Одинаковый
+     * признак должен выглядеть одинаково везде, иначе приходится
+     * запоминать два разных обозначения одного и того же.
+     */
+    FilterChip(
+        selected = type in filter.types,
+        leadingIcon = {
+            Icon(
+                when (type) {
+                    CallType.MISSED -> Icons.AutoMirrored.Filled.CallMissed
+                    CallType.INCOMING -> Icons.AutoMirrored.Filled.CallReceived
+                    else -> Icons.AutoMirrored.Filled.CallMade
+                },
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+                tint = if (type == CallType.MISSED) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    LocalContentColor.current
+                }
+            )
+        },
+        onClick = {
+            onChange(
+                filter.copy(
+                    types = if (type in filter.types) filter.types - type
+                    else filter.types + type
+                )
+            )
+        },
+        label = { Text(stringResource(labelRes)) }
+    )
+}
+
+private fun periodLabel(period: CallLogFilter.Period): Int = when (period) {
+    CallLogFilter.Period.ALL -> R.string.filter_period_all
+    CallLogFilter.Period.TODAY -> R.string.filter_period_today
+    CallLogFilter.Period.WEEK -> R.string.filter_period_week
+    CallLogFilter.Period.MONTH -> R.string.filter_period_month
+}

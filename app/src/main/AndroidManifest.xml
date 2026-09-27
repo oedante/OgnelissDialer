@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      АППАРАТНЫЕ ТРЕБОВАНИЯ.
+
+      Разрешения телефонии автоматически подразумевают наличие модуля связи,
+      и без явного объявления Google Play выведет свои правила фильтрации.
+      Объявляем сами, чтобы решение было осознанным.
+
+      required="true": диалер без телефонии бессмысленен — он не сможет
+      ни позвонить, ни стать приложением по умолчанию. Планшеты без модема
+      приложение попросту не увидят в Play, и это правильно: установка
+      закончилась бы разочарованием.
+
+      Планшетов с LTE и модемом это НЕ касается, они подходят под условие.
+    -->
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="true" />
+
+    <!-- Базовые разрешения диалера. Все запрашиваются в рантайме. -->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
+    <!-- Приём вызова программно (кнопка на уведомлении и на экране блокировки) -->
+    <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
+
+    <!-- Управление аудиомаршрутом во время разговора: динамик, гарнитура -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <!--
+      Отображение поверх других приложений.
+      Нужно для всплывающей плашки текущего вызова, когда пользователь ушёл
+      в другое приложение. Это СПЕЦИАЛЬНОЕ разрешение: выдаётся не диалогом,
+      а переходом в системные настройки. Приложение обязано работать и без него —
+      с деградацией до обычного уведомления.
+    -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- Напоминания «перезвонить». USE_EXACT_ALARM разрешён Google Play
+         только для будильников и напоминаний, инициированных пользователем. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
+    <!--
+      РАЗРЕШЕНИЕ INTERNET НАМЕРЕННО ОТСУТСТВУЕТ.
+      Все данные (журнал, контакты, блок-лист, определение номера)
+      обрабатываются исключительно на устройстве. Без этого разрешения
+      приложение физически не способно установить сетевое соединение —
+      это проверяемая гарантия, а не декларация.
+    -->
+
+    <queries>
+        <intent><action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="smsto" /></intent>
+        <intent><action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" /></intent>
+        <intent><action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" /></intent>
+        <!-- Чтобы видеть установленные определители номера -->
+        <intent><action android:name="android.telecom.CallScreeningService" /></intent>
+        <package android:name="com.whatsapp" />
+        <package android:name="org.telegram.messenger" />
+        <package android:name="com.viber.voip" />
+        <package android:name="ru.oneme.app" />
+    </queries>
+
+    <application
+        android:name=".OgnelissApp"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="${appLabel}"
+        android:supportsRtl="true"
+        android:enableOnBackInvokedCallback="true"
+        android:localeConfig="@xml/locales_config"
+        android:theme="@style/Theme.OgnelissDialer">
+
+
+        <!-- ГЛАВНЫЙ ЭКРАН. Набор intent-filter ниже — обязательное условие,
+             чтобы система предложила приложение как "Телефон по умолчанию". -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.Ogneliss.Splash">
+
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!--
+                Ярлыков в манифесте нет: все публикуются во время работы
+                (ContactShortcuts). Статический список смешивался
+                с динамическим по правилам лаунчера, и псевдозвонок
+                оказывался в середине между контактами.
+            -->
+
+            <!-- Роль DIALER -->
+            <intent-filter>
+                <action android:name="android.intent.action.DIAL" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.DIAL" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="tel" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.DIAL" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="tel" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.CALL_BUTTON" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- Экран активного вызова -->
+        <activity
+            android:name=".call.InCallActivity"
+            android:exported="false"
+            android:launchMode="singleInstance"
+            android:excludeFromRecents="true"
+            android:showOnLockScreen="true"
+            android:turnScreenOn="true"
+            android:theme="@style/Theme.OgnelissDialer.InCall" />
+
+        <!--
+            Псевдозвонок.
+
+            excludeFromRecents: экран не должен оставаться в списке
+            недавних. Смысл функции в том, чтобы разговор выглядел
+            прерванным звонком, а карточка «Псевдозвонок» в недавних
+            выдаёт её с головой.
+
+            Тема та же, что у настоящего вызова: экран должен выглядеть
+            как настоящий, иначе функция бесполезна.
+        -->
+        <activity
+            android:name=".call.FakeCallActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:showOnLockScreen="true"
+            android:theme="@style/Theme.OgnelissDialer.InCall" />
+
+        <receiver
+            android:name=".call.FakeCall$Receiver"
+            android:exported="false" />
+
+        <!--
+            Плитка в шторке быстрых настроек.
+
+            exported="true" обязателен: плитку запускает системный
+            интерфейс, а не приложение. Доступ при этом закрыт
+            разрешением BIND_QUICK_SETTINGS_TILE, которое может выдать
+            только система, — просто открытым такой компонент не будет.
+        -->
+        <service
+            android:name=".call.FakeCallTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_fake_call"
+            android:label="@string/fake_call_title"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <!-- Обработчик телефонии: без него роль диалера не работает -->
+        <service
+            android:name=".call.OgnelissInCallService"
+            android:exported="true"
+            android:permission="android.permission.BIND_INCALL_SERVICE">
+            <meta-data android:name="android.telecom.IN_CALL_SERVICE_UI" android:value="true" />
+            <!--
+              IN_CALL_SERVICE_RINGING НАМЕРЕННО НЕ ОБЪЯВЛЕН.
+
+              Этот флаг означал бы, что приложение берёт воспроизведение
+              мелодии на себя, а система свой звонок подавляет. Мы от него
+              отказались осознанно: система делает эту работу лучше и учитывает
+              то, что нам пришлось бы воспроизводить заново на каждой прошивке —
+              персональную мелодию контакта, режим «Не беспокоить» с его
+              исключениями, вибро и беззвучный режимы, рабочий профиль,
+              вспышку для слабослышащих, а у ряда производителей и собственное
+              нарастание громкости.
+
+              Практическое следствие: если когда-нибудь флаг понадобится,
+              вместе с ним ОБЯЗАТЕЛЬНО нужен собственный проигрыватель.
+              Флаг без проигрывателя = беззвучные входящие вызовы,
+              и на эмуляторе это не обнаружить.
+            -->
+            <intent-filter>
+                <action android:name="android.telecom.InCallService" />
+            </intent-filter>
+        </service>
+
+        <!-- Фильтрация спама (Android 10+) -->
+        <service
+            android:name=".call.OgnelissCallScreeningService"
+            android:exported="true"
+            android:permission="android.permission.BIND_SCREENING_SERVICE">
+            <intent-filter>
+                <action android:name="android.telecom.CallScreeningService" />
+            </intent-filter>
+        </service>
+
+        <!-- Foreground-сервис на время разговора -->
+        <service
+            android:name=".call.CallForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="phoneCall" />
+
+        <!-- Кнопки на уведомлении вызова -->
+        <receiver android:name=".call.CallControlReceiver" android:exported="false" />
+
+        <!-- Напоминание перезвонить -->
+        <receiver android:name=".background.CallbackReminder$Receiver" android:exported="false" />
+
+        <!--
+            Отмена блокировки из шторки.
+
+            exported="false": намерение формирует само приложение,
+            снаружи вызывать нечего. Открытый приёмник позволил бы
+            любому приложению снимать правила блокировки.
+        -->
+        <receiver
+            android:name=".background.BlockedCallNotice$Receiver"
+            android:exported="false" />
+
+        <!-- Кнопки «напомнить» в предложении после сброшенного вызова -->
+        <receiver
+            android:name=".background.CallbackSuggestion$Receiver"
+            android:exported="false" />
+
+        <!-- Отдача файла лога во внешние приложения.
+             Прямой file:// URI запрещён с Android 7, нужен FileProvider. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- Хранилище выбранного языка для Android 12 и ниже.
+             На Android 13+ язык хранит система, сервис не используется. -->
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
+
+        <!-- WorkManager инициализируется через Hilt, а не автоматически -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
+        <receiver android:name=".background.BootReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+</manifest>

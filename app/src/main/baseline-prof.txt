@@ -1,0 +1,22 @@
+# Baseline Profile — Ogneliss Dialer
+#
+# Файл генерируется командой:
+#   ./gradlew :app:generateBaselineProfile
+# на подключённом устройстве, затем коммитится в репозиторий.
+#
+# Здесь перечислены методы, которые Android скомпилирует заранее (AOT)
+# при установке вместо интерпретации при первом запуске. Для приложения
+# на Compose это даёт 20–30 % к скорости холодного старта.
+#
+# Для диалера холодный старт критичнее, чем для большинства приложений:
+# его открывают, когда нужно позвонить прямо сейчас.
+#
+# Пока файл содержит только точки входа. После первого прогона генератора
+# он будет заполнен автоматически — заменить содержимое целиком.
+
+HSPLcom/ogneliss/dialer/MainActivity;-><init>()V
+HSPLcom/ogneliss/dialer/MainActivity;->onCreate(Landroid/os/Bundle;)V
+HSPLcom/ogneliss/dialer/OgnelissApp;-><init>()V
+HSPLcom/ogneliss/dialer/OgnelissApp;->onCreate()V
+HSPLcom/ogneliss/dialer/t9/T9Engine;->toDigits(Ljava/lang/String;)Ljava/lang/String;
+HSPLcom/ogneliss/dialer/data/CallLogGrouper;->group(Ljava/util/List;Lcom/ogneliss/dialer/data/CallLogGrouper$Mode;ZLkotlin/jvm/functions/Function1;)Ljava/util/List;

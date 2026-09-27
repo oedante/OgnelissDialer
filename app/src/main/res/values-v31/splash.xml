@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ЗАСТАВКА ДЛЯ ANDROID 12 И ВЫШЕ.
+
+  ── Почему префикс android: ────────────────────────────────────────────────
+  windowSplashScreenBrandingImage — атрибут ПЛАТФОРМЫ, а не библиотеки
+  core-splashscreen. Библиотека определяет свои совместимые атрибуты
+  (windowSplashScreenBackground, windowSplashScreenAnimatedIcon),
+  но брендирование в них не входит: на старых версиях его показать
+  нечем, и совместимой замены нет.
+
+  Без префикса android: сборка ищет атрибут среди атрибутов приложения,
+  не находит и падает с «attribute not found» — причём на этапе сборки
+  ресурсов, до компиляции кода.
+
+  ── Почему отдельная папка values-v31 ──────────────────────────────────────
+  Атрибут появился в API 31. В базовой теме его нет вовсе, и объявление
+  там ломало бы сборку для всех версий сразу.
+
+  На Android 11 и ниже заставка покажет только логотип — это штатное
+  поведение системы, а не потеря функции.
+-->
+<resources>
+    <style name="Theme.Ogneliss.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
+        <item name="android:windowSplashScreenBrandingImage">@drawable/splash_branding</item>
+        <item name="postSplashScreenTheme">@style/Theme.OgnelissDialer</item>
+    </style>
+</resources>

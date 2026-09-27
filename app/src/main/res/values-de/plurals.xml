@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Множественные формы немецкого: one и other — как в английском.
+  Русских форм few и many здесь нет, и добавлять их нельзя:
+  Android их просто проигнорирует, а инструменты сборки предупредят.
+-->
+<resources>
+    <plurals name="duration_minutes">
+        <item quantity="one">%d Minute</item>
+        <item quantity="other">%d Minuten</item>
+    </plurals>
+    <plurals name="call_count">
+        <item quantity="one">%d Anruf</item>
+        <item quantity="other">%d Anrufe</item>
+    </plurals>
+    <plurals name="blocked_count">
+        <item quantity="one">%d Nummer gesperrt</item>
+        <item quantity="other">%d Nummern gesperrt</item>
+    </plurals>
+    <plurals name="duration_seconds">
+        <item quantity="one">%d Sekunde</item>
+        <item quantity="other">%d Sekunden</item>
+    </plurals>
+    <plurals name="selected_count">
+        <item quantity="one">%d ausgewählt</item>
+        <item quantity="other">%d ausgewählt</item>
+    </plurals>
+    <plurals name="selection_delete_text">
+        <item quantity="one">%d Eintrag wird aus der Anrufliste entfernt. Das lässt sich nicht rückgängig machen.</item>
+        <item quantity="other">%d Einträge werden aus der Anrufliste entfernt. Das lässt sich nicht rückgängig machen.</item>
+    </plurals>
+    <plurals name="filter_match_count">
+        <item quantity="one">%1$d Anruf passt</item>
+        <item quantity="other">%1$d Anrufe passen</item>
+    </plurals>
+</resources>

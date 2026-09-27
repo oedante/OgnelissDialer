@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Список поддерживаемых языков.
+  Чтобы добавить новый: создать values-<code>/strings.xml и дописать locale сюда.
+  Больше ничего менять не нужно — системный переключатель языка и наш
+  экран выбора читают этот файл.
+-->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en" />
+    <locale android:name="ru" />
+    <locale android:name="de" />
+    <locale android:name="fr" />
+</locale-config>

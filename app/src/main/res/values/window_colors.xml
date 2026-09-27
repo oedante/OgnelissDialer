@@ -1,0 +1,8 @@
+<resources>
+    <!--
+      Фон окна светлой темы. Совпадает с background цветовой схемы:
+      расхождение было бы заметно в момент запуска, до первой отрисовки
+      Compose.
+    -->
+    <color name="window_background">#FFFFFF</color>
+</resources>

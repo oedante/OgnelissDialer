@@ -1,0 +1,76 @@
+package com.ogneliss.dialer.util
+
+import com.ogneliss.dialer.data.NumberCategory
+
+/**
+ * ПРЕДУПРЕЖДЕНИЕ ПЕРЕД НАБОРОМ.
+ *
+ * Назначение: предупредить о звонке, который может дорого обойтись,
+ * ДО начала вызова, а не после списания денег.
+ *
+ * ── Какие случаи стоят денег ───────────────────────────────────────────────
+ * • ПЛАТНЫЕ НОМЕРА (8-809 и подобные). Минута может стоить сотни рублей.
+ *   Классическая схема мошенничества: пропущенный звонок с такого номера
+ *   и расчёт на то, что человек перезвонит.
+ * • МЕЖДУНАРОДНЫЕ звонки. Особенно опасны номера, визуально похожие
+ *   на российские.
+ * • ПРЕМИУМ-КОДЫ в коротких номерах.
+ *
+ * ── Почему предупреждение, а не блокировка ─────────────────────────────────
+ * Иногда позвонить действительно нужно: международный звонок родственнику
+ * или платная линия техподдержки. Запрещать нельзя — можно только
+ * убедиться, что человек понимает, что делает.
+ *
+ * ── Почему это не дублирует определитель ───────────────────────────────────
+ * Определитель работает на ВХОДЯЩИХ. Здесь исходящий звонок, который
+ * пользователь инициирует сам, и предупредить нужно в другой момент —
+ * между нажатием кнопки и началом набора.
+ */
+object PreDialWarning {
+
+    enum class Level { NONE, INFO, WARNING }
+
+    data class Warning(
+        val level: Level,
+        val category: NumberCategory,
+        /** Страна для международного звонка. */
+        val country: String? = null
+    )
+
+    /**
+     * @param category категория номера из офлайн-определителя
+     * @param isInContacts номер есть в книге — тогда предупреждать не о чем
+     * @param country страна номера
+     * @param homeRegion регион пользователя
+     */
+    fun evaluate(
+        category: NumberCategory,
+        isInContacts: Boolean,
+        country: String? = null,
+        homeRegion: String = "RU"
+    ): Warning {
+        // Знакомому номеру доверяем: пользователь сам его добавил
+        // и звонил раньше. Предупреждать каждый раз — раздражать
+        if (isInContacts) return Warning(Level.NONE, category)
+
+        return when (category) {
+            // Деньги списываются сразу и помногу
+            NumberCategory.PREMIUM ->
+                Warning(Level.WARNING, category)
+
+            // Международный звонок стоит дороже обычного
+            NumberCategory.INTERNATIONAL ->
+                Warning(Level.WARNING, category, country)
+
+            // Короткий номер может оказаться платным сервисом
+            NumberCategory.SHORT_CODE ->
+                Warning(Level.INFO, category)
+
+            else -> Warning(Level.NONE, category)
+        }
+    }
+
+    /** Нужно ли останавливать набор до подтверждения. */
+    fun requiresConfirmation(warning: Warning): Boolean =
+        warning.level == Level.WARNING
+}

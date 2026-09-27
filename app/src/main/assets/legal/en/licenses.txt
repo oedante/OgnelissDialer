@@ -1,0 +1,76 @@
+Licence
+
+Ogneliss Dialer
+Copyright 2026 Ermishin Oleg
+All rights reserved.
+
+Contact: oedante@gmail.com
+
+
+Licence type
+
+Proprietary Freeware Licence.
+
+The Application is distributed free of charge but is not free or open
+source software. The source code is closed.
+
+Full terms are set out in the End User Licence Agreement, which you
+accept on first launch of the Application.
+
+
+In brief
+
+Permitted:
+- download and use the Application on your own devices free of charge;
+- share a link to the Application page in an official app store.
+
+Prohibited:
+- decompilation, disassembly, reverse engineering;
+- modification and derivative versions;
+- distribution through third-party sources;
+- any commercial use.
+
+
+No warranty
+
+The Application is provided "AS IS", without warranties of any kind. The
+Rightsholder is not liable for any damage related to use of the
+Application. See sections 4 and 5 of the EULA.
+
+
+Third-party components
+
+The Application uses open source libraries. Their licences require
+attribution, which is given below.
+
+Apache License 2.0
+
+- AndroidX (Core, AppCompat, Lifecycle, Activity, Navigation, Room,
+  DataStore, WorkManager, Compose) - The Android Open Source Project
+- Kotlin and Kotlin Coroutines - JetBrains s.r.o.
+- Dagger Hilt - Google LLC
+- libphonenumber - Google LLC
+- Coil - Coil Contributors
+- Accompanist - The Android Open Source Project
+
+Full licence text: https://www.apache.org/licenses/LICENSE-2.0
+
+Conditions of Apache 2.0 that we comply with:
+
+1. Attribution - given above and duplicated in the About section.
+2. Statement of changes - no changes were made to library source code.
+3. Preservation of licence notices - notices are preserved.
+
+Libraries remain the property of their rightsholders and are distributed
+under the terms of the licences indicated. This licence does not apply to
+them.
+
+
+Trademarks
+
+The name "Ogneliss Dialer", the logo and other graphic designations of
+the Application are designations of the Rightsholder. Their use to
+promote third-party products or to create the impression of an
+association with the Rightsholder is not permitted.
+
+Android, Google Play and related marks are trademarks of Google LLC.

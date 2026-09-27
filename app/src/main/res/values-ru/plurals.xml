@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="duration_minutes">
+        <item quantity="one">%d минута</item>
+        <item quantity="few">%d минуты</item>
+        <item quantity="many">%d минут</item>
+        <item quantity="other">%d минуты</item>
+    </plurals>
+    <plurals name="duration_seconds">
+        <item quantity="one">%d секунда</item>
+        <item quantity="few">%d секунды</item>
+        <item quantity="many">%d секунд</item>
+        <item quantity="other">%d секунды</item>
+    </plurals>
+    <plurals name="call_count">
+        <item quantity="one">%d вызов</item>
+        <item quantity="few">%d вызова</item>
+        <item quantity="many">%d вызовов</item>
+        <item quantity="other">%d вызова</item>
+    </plurals>
+    <plurals name="blocked_count">
+        <item quantity="one">%d заблокированный номер</item>
+        <item quantity="few">%d заблокированных номера</item>
+        <item quantity="many">%d заблокированных номеров</item>
+        <item quantity="other">%d заблокированных номера</item>
+    </plurals>
+    <plurals name="selected_count">
+        <item quantity="one">Выбрана %d запись</item>
+        <item quantity="few">Выбрано %d записи</item>
+        <item quantity="many">Выбрано %d записей</item>
+        <item quantity="other">Выбрано %d записи</item>
+    </plurals>
+    <plurals name="selection_delete_text">
+        <item quantity="one">%d запись будет удалена из журнала вызовов. Отменить это нельзя.</item>
+        <item quantity="few">%d записи будут удалены из журнала вызовов. Отменить это нельзя.</item>
+        <item quantity="many">%d записей будут удалены из журнала вызовов. Отменить это нельзя.</item>
+        <item quantity="other">%d записи будут удалены из журнала вызовов. Отменить это нельзя.</item>
+    </plurals>
+    <plurals name="filter_match_count">
+        <item quantity="one">Подходит %1$d запись</item>
+        <item quantity="few">Подходит %1$d записи</item>
+        <item quantity="many">Подходит %1$d записей</item>
+        <item quantity="other">Подходит %1$d записи</item>
+    </plurals>
+</resources>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Огнелисс</title>
+<meta name="description" content="Огнелисс — приложения без рекламы и без лишнего доступа к вашим данным.">
+<link rel="icon" href="/dialer/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="/dialer/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/dialer/apple-touch-icon.png">
+<style>
+html,body{margin:0;width:100%;min-height:100%}
+body{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    padding:2rem 1rem;
+    box-sizing:border-box;
+    background:#1F2329;
+    font-family:"Segoe UI",Arial,sans-serif;
+    color:#E2E2E2;
+}
+.logo{display:flex;align-items:center;gap:26px}
+.logo svg{width:120px;height:auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,.35))}
+.title{font-size:64px;font-weight:700;line-height:1;letter-spacing:.5px}
+.fire{color:#FDBF03}
+.gray{color:#E2E2E2}
+.subtitle{margin-top:10px;font-size:15px;color:#8F98A3;letter-spacing:6px}
+
+.products{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:16px;
+    width:100%;
+    max-width:620px;
+    margin-top:48px;
+}
+.card{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:18px 20px;
+    border-radius:18px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.08);
+    color:inherit;
+    text-decoration:none;
+    transition:border-color .2s ease,transform .2s ease;
+}
+a.card:hover,a.card:focus-visible{border-color:#FDBF03;transform:translateY(-2px);outline:none}
+.card img,.card .icon{width:56px;height:56px;border-radius:14px;flex-shrink:0}
+.card .icon{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.06)}
+.card .icon svg{width:30px;height:30px}
+.card h2{margin:0;font-size:18px;font-weight:600;color:#E2E2E2}
+.card p{margin:4px 0 0;font-size:14px;line-height:1.4;color:#8F98A3}
+.badge{
+    display:inline-block;
+    margin-top:6px;
+    padding:2px 10px;
+    border-radius:999px;
+    font-size:12px;
+    color:#FDBF03;
+    border:1px solid rgba(253,191,3,.45);
+}
+.card.soon{opacity:.75}
+
+@media (max-width:600px){
+    .logo{gap:16px}
+    .logo svg{width:84px}
+    .title{font-size:44px}
+    .subtitle{font-size:12px;letter-spacing:4px}
+    .products{margin-top:36px}
+}
+</style>
+</head>
+<body>
+
+<div class="logo">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" width="120" height="120" aria-label="Огнелисс">
+<defs>
+<mask id="fox-ear" maskUnits="userSpaceOnUse" x="0" y="0" width="150" height="150">
+<rect width="150" height="150" fill="#fff"/>
+<path d="M75.4 67.4C79.5 62.4 85 58.6 90.4 56.9L87.2 76.5L80 77L74 71.2Z" fill="#000"/>
+</mask>
+</defs>
+<path fill="#FEBD04" mask="url(#fox-ear)" d="m114 59.6c-5-8.8-7.9-15.1-7.8-25.2-2.4 1.6-8.4 7.4-10.6 15.2-4.9-5.7-13.1-14.7-13.2-27.4 0-5.3 1.6-10.5 4.2-16-4.4 1.4-24.5 10.1-29.5 31.9-2.4 10.8-3.3 21.6-16.6 35.3-0.7-6.3 0.2-11.3 0.4-13.8-6 4.3-16.8 16-16.8 35s14.7 47.5 49.7 47.5c-13.8-2.2-28.4-14.4-28.4-33.1 0-8.8 4.1-15.9 11.1-21.6-4.2 1.1-8.2 3.8-11.3 6.7 2.3-6.3 7.8-13.7 14.4-18.9 1.8-10.4 9.9-17.5 16.1-21.5l0.6 14.9c12.1 4.9 13.7 10.3 14.5 15.4 0.8 5 7.1 7.4 11.1 9.7 0.9 0.4-2.8 4.8-7.5 5.4-7.4 0.7-10.4-2.7-17.8-2.9-4.2 0-7.9 1.2-10.5 4.2 1.9-1 3.8-1.5 5.7-1.7-4.7 3.5-7.9 9.7-7.9 17 0.5 11.9 10.6 22.2 25.7 22.2 19.1 0 36.3-18.2 36.3-44.5 0-14.9-7.3-23.4-11.9-33.8z"/>
+<path fill="#FEBD04" d="m79 68c1.7 0.8 4.1 2.2 5.4 3.3l3.9-9.8c-4.2 1.2-8.3 3.8-10.4 6l1.1 0.5z"/>
+<path fill="#FEBD04" d="m73.3 71.8 0.4-12.2c-3.2 1.8-7.4 7.2-8.2 12.6 1.5-1.2 3.5-2.6 5.3-3.8l2.1 3.4h0.4z"/>
+<path fill="#FEBD04" d="m83.4 83.9c-1.4-0.4-3.1-0.9-4.8-0.9 2.6 3.5 3.9 4.1 8.8 5.3-1.2-2-2.3-3.4-4-4.4z"/>
+</svg>
+<div>
+<div class="title"><span class="fire">огне</span><span class="gray">лисс</span></div>
+<div class="subtitle">ПРИЛОЖЕНИЯ БЕЗ ЛИШНЕГО</div>
+</div>
+</div>
+
+<nav class="products" aria-label="Приложения">
+
+<a class="card" href="/dialer/">
+<img src="/dialer/app-icon.png" width="56" height="56" alt="">
+<div>
+<h2>Огнелисс Dialer</h2>
+<p>Телефон для Android: журнал, контакты, заметки и напоминания. Без рекламы и без доступа к интернету.</p>
+</div>
+</a>
+
+<div class="card soon" aria-disabled="true">
+<div class="icon" aria-hidden="true">
+<svg viewBox="0 0 24 24" fill="none" stroke="#FDBF03" stroke-width="1.8" stroke-linejoin="round">
+<rect x="3" y="5" width="18" height="14" rx="2.5"/>
+<path d="M4 7l8 6 8-6"/>
+</svg>
+</div>
+<div>
+<h2>Огнелисс Mail</h2>
+<p>Умный почтовый клиент.</p>
+<span class="badge">В разработке</span>
+</div>
+</div>
+
+</nav>
+
+</body>
+</html>

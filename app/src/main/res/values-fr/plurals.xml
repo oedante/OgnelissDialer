@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Множественные числа, французский.
+
+  ⚠️ Не вычитано носителем.
+
+  Во французском две формы: one (0 и 1) и other. Ноль здесь ведёт себя
+  как единственное число — «0 minute», а не «0 minutes», — и это
+  не опечатка, а правило CLDR для fr.
+-->
+<resources>
+    <plurals name="duration_minutes">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="duration_seconds">
+        <item quantity="one">%d seconde</item>
+        <item quantity="other">%d secondes</item>
+    </plurals>
+    <plurals name="call_count">
+        <item quantity="one">%d appel</item>
+        <item quantity="other">%d appels</item>
+    </plurals>
+    <plurals name="blocked_count">
+        <item quantity="one">%d numéro bloqué</item>
+        <item quantity="other">%d numéros bloqués</item>
+    </plurals>
+    <plurals name="selected_count">
+        <item quantity="one">%d sélectionné</item>
+        <item quantity="other">%d sélectionnés</item>
+    </plurals>
+    <plurals name="selection_delete_text">
+        <item quantity="one">%d entrée sera supprimée de l\'historique des appels. Cette action est irréversible.</item>
+        <item quantity="other">%d entrées seront supprimées de l\'historique des appels. Cette action est irréversible.</item>
+    </plurals>
+    <plurals name="filter_match_count">
+        <item quantity="one">%1$d appel correspond</item>
+        <item quantity="other">%1$d appels correspondent</item>
+    </plurals>
+</resources>

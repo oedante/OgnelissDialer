@@ -1,0 +1,352 @@
+package com.ogneliss.dialer.call
+
+import android.telecom.Call
+import android.telecom.CallAudioState
+import android.telecom.InCallService
+import android.telecom.VideoProfile
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+
+/**
+ * Единая точка доступа к активным вызовам.
+ * InCallService держит связь с системой, UI подписывается на StateFlow.
+ */
+object CallManager {
+
+    private val _calls = MutableStateFlow<List<Call>>(emptyList())
+    val calls: StateFlow<List<Call>> = _calls
+
+    private val _audioState = MutableStateFlow<CallAudioState?>(null)
+    val audioState: StateFlow<CallAudioState?> = _audioState
+
+    /** Инкремент при любом изменении состояния — заставляет Compose перерисоваться. */
+    private val _revision = MutableStateFlow(0)
+    val revision: StateFlow<Int> = _revision
+
+    /**
+     * Ссылка на сервис телефонии.
+     *
+     * ── Про предупреждение об утечке ───────────────────────────────────────
+     * Статическое поле с Context-объектом анализатор справедливо помечает
+     * как потенциальную утечку. Здесь она невозможна по устройству:
+     * ссылка ставится в onCallAdded и обнуляется в onCallRemoved,
+     * когда активных вызовов не осталось.
+     *
+     * Альтернатива — держать состояние вызовов в самом сервисе — хуже:
+     * экран вызова живёт в другом процессе жизненного цикла и должен
+     * получать состояние независимо от того, запущен ли сервис прямо сейчас.
+     */
+    @Volatile
+    var service: InCallService? = null
+        internal set
+
+    private val callback = object : Call.Callback() {
+        override fun onStateChanged(call: Call, state: Int) { _revision.value++ }
+        override fun onDetailsChanged(call: Call, details: Call.Details) { _revision.value++ }
+        override fun onChildrenChanged(call: Call, children: MutableList<Call>) { _revision.value++ }
+
+        // Список вызовов, с которыми этот можно объединить, приходит
+        // отдельно и позже: без этой подписки плитка «Объединить»
+        // не появлялась бы, пока что-нибудь другое не перерисует экран
+        override fun onConferenceableCallsChanged(call: Call, calls: MutableList<Call>) {
+            _revision.value++
+        }
+
+        override fun onParentChanged(call: Call, parent: Call?) { _revision.value++ }
+    }
+
+    internal fun add(call: Call) {
+        call.registerCallback(callback)
+        _calls.value = _calls.value + call
+        _revision.value++
+    }
+
+    internal fun remove(call: Call) {
+        call.unregisterCallback(callback)
+        _calls.value = _calls.value - call
+        _revision.value++
+    }
+
+    internal fun updateAudio(state: CallAudioState?) { _audioState.value = state }
+
+    /*
+     * ══════════════════════════════════════════════════════════════════════
+     * ВЫЗОВЫ ВЕРХНЕГО УРОВНЯ
+     * ══════════════════════════════════════════════════════════════════════
+     * Когда два вызова объединяют в конференцию, Telecom создаёт третий
+     * объект — саму конференцию, — а два прежних становятся её
+     * участниками (у них появляется parent). Все три при этом лежат
+     * в общем списке.
+     *
+     * Раньше выбор «текущего вызова» смотрел на весь список и мог выбрать
+     * участника вместо конференции: у участников тоже состояние ACTIVE.
+     * Экран показывал одного собеседника, а «Завершить» клал трубку
+     * только ему. Теперь выбираем только среди вызовов без родителя.
+     */
+    @Suppress("DEPRECATION")
+    private val topLevel: List<Call>
+        get() = _calls.value.filter {
+            it.parent == null &&
+                it.state != Call.STATE_DISCONNECTED &&
+                it.state != Call.STATE_DISCONNECTING
+        }
+
+    /**
+     * Текущий вызов — тот, с которым человек сейчас имеет дело.
+     *
+     * ── Порядок выбора ─────────────────────────────────────────────────────
+     * 1. Идущий разговор (ACTIVE).
+     * 2. Набираемый (DIALING, CONNECTING и соседние): человек только что
+     *    нажал «Добавить вызов», первый ушёл на удержание, и экран должен
+     *    показывать новый — тот, что сейчас дозванивается.
+     * 3. Звонящий (RINGING): входящий, когда других нет.
+     * 4. Удержанный — если больше ничего не осталось.
+     *
+     * Раньше было «активный, иначе первый живой», и во время набора
+     * второго номера первым живым оказывался удержанный — экран показывал
+     * не тот вызов.
+     *
+     * @Suppress("DEPRECATION") — про Call.state. Замена,
+     * Call.getDetails().getState(), появилась в API 31, а minSdk у нас 26.
+     */
+    @Suppress("DEPRECATION")
+    val primary: Call?
+        get() {
+            val live = topLevel
+            return live.firstOrNull { it.state == Call.STATE_ACTIVE }
+                ?: live.firstOrNull { it.state in OUTGOING_STATES }
+                ?: live.firstOrNull { it.state == Call.STATE_RINGING }
+                ?: live.firstOrNull()
+        }
+
+    /** Вторая линия — вызов на удержании, пока говорим по первой. */
+    @Suppress("DEPRECATION")
+    val secondary: Call?
+        get() {
+            val main = primary
+            return topLevel.firstOrNull { it != main && it.state == Call.STATE_HOLDING }
+        }
+
+    /**
+     * ВТОРОЙ ВХОДЯЩИЙ ВО ВРЕМЯ РАЗГОВОРА.
+     *
+     * Раньше его не было видно вовсе: текущим оставался идущий разговор,
+     * а звонящий вызов на экране не показывался — ответить на него можно
+     * было только из шторки уведомлений, если повезёт. Теперь экран вызова
+     * показывает его отдельной плашкой с выбором, что делать с первым.
+     */
+    @Suppress("DEPRECATION")
+    val waiting: Call?
+        get() {
+            val main = primary
+            return topLevel.firstOrNull { it != main && it.state == Call.STATE_RINGING }
+        }
+
+    @Suppress("DEPRECATION")
+    val hasIncoming: Boolean
+        get() = topLevel.any { it.state == Call.STATE_RINGING }
+
+    fun answer() = primary?.answer(VideoProfile.STATE_AUDIO_ONLY)
+    fun reject() = primary?.reject(false, null)
+    fun hangup() = primary?.disconnect()
+
+    // ── Второй входящий ─────────────────────────────────────────────────────
+
+    /**
+     * Ответить на второй вызов, первый — на удержание.
+     *
+     * Удерживать первый вручную не нужно: Telecom при ответе на вызов,
+     * пока другой активен, сам ставит активный на удержание, если сеть
+     * это умеет. Ручной hold() перед answer() на части сетей гонялся бы
+     * с системным и оставлял оба вызова на удержании.
+     */
+    fun answerWaitingHoldCurrent() {
+        waiting?.answer(VideoProfile.STATE_AUDIO_ONLY)
+    }
+
+    /** Ответить на второй вызов, первый — завершить. */
+    fun answerWaitingEndCurrent() {
+        val incoming = waiting ?: return
+        primary?.disconnect()
+        incoming.answer(VideoProfile.STATE_AUDIO_ONLY)
+    }
+
+    fun rejectWaiting() {
+        waiting?.reject(false, null)
+    }
+
+    // ── Удержание ───────────────────────────────────────────────────────────
+
+    /**
+     * Можно ли поставить текущий вызов на удержание.
+     *
+     * ══════════════════════════════════════════════════════════════════════
+     * ПОЧЕМУ ПРОВЕРЯТЬ
+     * ══════════════════════════════════════════════════════════════════════
+     * Удержание — услуга сети, и не каждая сеть и не каждый тип вызова
+     * её дают (у VoLTE и у экстренных вызовов свои правила). Система
+     * сообщает это флагами CAPABILITY_HOLD и CAPABILITY_SUPPORT_HOLD.
+     * Без проверки кнопка показывалась всегда и на неподдерживаемой сети
+     * молча ничего не делала — выглядело как сломанная кнопка.
+     *
+     * Уже удержанный вызов снять с удержания можно всегда: иначе человек
+     * застрял бы с вызовом, который нельзя вернуть.
+     */
+    @Suppress("DEPRECATION")
+    val canHold: Boolean
+        get() {
+            val c = primary ?: return false
+            if (c.state == Call.STATE_HOLDING) return true
+            return c.details.can(Call.Details.CAPABILITY_HOLD) ||
+                c.details.can(Call.Details.CAPABILITY_SUPPORT_HOLD)
+        }
+
+    @Suppress("DEPRECATION")
+    fun toggleHold() {
+        val c = primary ?: return
+        if (c.state == Call.STATE_HOLDING) c.unhold() else c.hold()
+    }
+
+    // ── Две линии ───────────────────────────────────────────────────────────
+
+    /**
+     * Переключение между двумя линиями.
+     *
+     * Если текущий вызов — конференция, у которой сеть умеет переключаться
+     * сама (CAPABILITY_SWAP_CONFERENCE), просим её: так делают сети, где
+     * вторая линия живёт внутри конференции. Иначе — вручную: текущий
+     * на удержание, удержанный обратно.
+     */
+    fun swapCalls() {
+        val main = primary
+        if (main != null && main.details.can(Call.Details.CAPABILITY_SWAP_CONFERENCE)) {
+            main.swapConference()
+            return
+        }
+        val hold = secondary ?: return
+        main?.hold()
+        hold.unhold()
+    }
+
+    /**
+     * Можно ли объединить две линии.
+     *
+     * Разные сети объединяют по-разному, и система сообщает, какой путь
+     * открыт. Раньше кнопка «Объединить» показывалась всегда, когда линий
+     * две, и на сети без конференций молча не работала.
+     */
+    val canMerge: Boolean
+        get() {
+            val a = primary ?: return false
+            val b = secondary ?: return false
+            return b in a.conferenceableCalls ||
+                a.details.can(Call.Details.CAPABILITY_MERGE_CONFERENCE) ||
+                b.details.can(Call.Details.CAPABILITY_MERGE_CONFERENCE)
+        }
+
+    /**
+     * Объединить в конференцию.
+     *
+     * Порядок — по документации Telecom:
+     *
+     * 1. вызовы указаны друг у друга как «можно объединить» — просим
+     *    объединить именно их (так работает большинство сетей GSM);
+     * 2. иначе, если вызов сам умеет собрать конференцию (сети CDMA
+     *    и часть IMS) — mergeConference().
+     *
+     * Раньше был только первый путь, и на сетях второго типа кнопка
+     * ничего не делала.
+     */
+    fun merge() {
+        val a = primary ?: return
+        val b = secondary ?: return
+        when {
+            b in a.conferenceableCalls -> a.conference(b)
+            a.details.can(Call.Details.CAPABILITY_MERGE_CONFERENCE) -> a.mergeConference()
+            b.details.can(Call.Details.CAPABILITY_MERGE_CONFERENCE) -> b.mergeConference()
+            // Последняя попытка: часть прошивок не заполняет список, но
+            // объединение принимает
+            else -> a.conference(b)
+        }
+    }
+
+    // ── Новый вызов во время разговора ──────────────────────────────────────
+
+    /**
+     * Можно ли набрать ещё один номер, не прерывая разговор.
+     *
+     * Условия: текущий вызов идёт (не звонит и не набирается), его можно
+     * удержать — иначе новому вызову некуда деть первый — и второй линии
+     * ещё нет: большинство сетей держат две линии, третью не дают.
+     */
+    @Suppress("DEPRECATION")
+    val canAddCall: Boolean
+        get() {
+            val c = primary ?: return false
+            return c.state == Call.STATE_ACTIVE && canHold && secondary == null && waiting == null
+        }
+
+    // ── Конференция ─────────────────────────────────────────────────────────
+
+    /** Участники текущей конференции; пусто, если это обычный вызов. */
+    val conferenceParticipants: List<Call>
+        get() = primary?.children.orEmpty()
+
+    /**
+     * Отключить участника конференции.
+     *
+     * Только если сеть позволяет (CAPABILITY_DISCONNECT_FROM_CONFERENCE):
+     * иначе disconnect() у участника на части сетей кладёт трубку всей
+     * конференции.
+     */
+    fun canDropParticipant(child: Call): Boolean =
+        child.details.can(Call.Details.CAPABILITY_DISCONNECT_FROM_CONFERENCE)
+
+    fun dropParticipant(child: Call) {
+        if (canDropParticipant(child)) child.disconnect()
+    }
+
+    /** Поговорить с участником отдельно: остальные уходят на удержание. */
+    fun canSplitParticipant(child: Call): Boolean =
+        child.details.can(Call.Details.CAPABILITY_SEPARATE_FROM_CONFERENCE)
+
+    fun splitParticipant(child: Call) {
+        if (canSplitParticipant(child)) child.splitFromConference()
+    }
+
+    fun playDtmf(c: Char) {
+        primary?.playDtmfTone(c)
+        primary?.stopDtmfTone()
+    }
+
+    fun setMuted(muted: Boolean) { service?.setMuted(muted) }
+
+    /**
+     * Переключение маршрута звука.
+     *
+     * @Suppress("DEPRECATION") — про setAudioRoute. Замена,
+     * requestCallEndpointChange, появилась в API 34 и требует другой
+     * модели: не «маршрут», а объект конечной точки, который надо
+     * получить из колбэка. Переписывать стоит вместе с подъёмом minSdk,
+     * а не ради снятия предупреждения.
+     */
+    @Suppress("DEPRECATION")
+    fun setAudioRoute(route: Int) { service?.setAudioRoute(route) }
+
+    val isMuted: Boolean get() = _audioState.value?.isMuted == true
+    val isSpeakerOn: Boolean
+        get() = _audioState.value?.route == CallAudioState.ROUTE_SPEAKER
+    val isBluetoothAvailable: Boolean
+        get() = (_audioState.value?.supportedRouteMask ?: 0) and
+            CallAudioState.ROUTE_BLUETOOTH != 0
+
+    /** Состояния набираемого вызова: разбор у primary. */
+    @Suppress("DEPRECATION")
+    private val OUTGOING_STATES = setOf(
+        Call.STATE_DIALING,
+        Call.STATE_CONNECTING,
+        Call.STATE_SELECT_PHONE_ACCOUNT,
+        Call.STATE_NEW,
+        Call.STATE_PULLING_CALL
+    )
+}

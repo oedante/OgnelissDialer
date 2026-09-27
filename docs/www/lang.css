@@ -1,0 +1,98 @@
+/*
+ * ВЫПАДАЮЩИЙ СПИСОК ЯЗЫКОВ.
+ *
+ * Цвета не задаются жёстко: кнопка берёт цвет текста страницы
+ * (currentColor), подложки — полупрозрачные. Так список одинаково
+ * уместен и в светлой, и в тёмной теме сайта, и не расходится с его
+ * основной таблицей стилей, если та поменяется.
+ *
+ * Единственный собственный цвет — акцент выбранного пункта, тот же
+ * жёлтый, что у ссылок и логотипа.
+ */
+
+.lang-switcher {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.lang-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid rgba(128, 128, 128, 0.35);
+  border-radius: 999px;
+  background: rgba(128, 128, 128, 0.08);
+  color: inherit;
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  /* 44 px — минимальная высота нажатия на телефоне */
+  min-height: 44px;
+}
+
+.lang-button:hover,
+.lang-button:focus-visible {
+  border-color: #FDBF03;
+  outline: none;
+}
+
+.lang-flag {
+  width: 24px;
+  height: 16px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  /* тонкая рамка: белая полоса российского и французского флага
+     иначе сливается со светлым фоном */
+  box-shadow: 0 0 0 1px rgba(128, 128, 128, 0.35);
+}
+
+.lang-chevron {
+  width: 18px;
+  height: 18px;
+  opacity: 0.7;
+}
+
+.lang-list {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 10;
+  min-width: 11rem;
+  margin: 0;
+  padding: 0.35rem;
+  list-style: none;
+  border: 1px solid rgba(128, 128, 128, 0.35);
+  border-radius: 12px;
+  /*
+   * Непрозрачная подложка цвета страницы (#1F2329 на сайте), а не
+   * полупрозрачная: список всплывает над текстом, и сквозь него
+   * просвечивали бы строки.
+   */
+  background: var(--bg, #1F2329);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.lang-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  cursor: pointer;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.lang-list li:hover,
+.lang-list li:focus {
+  background: rgba(128, 128, 128, 0.14);
+  outline: none;
+}
+
+.lang-list li[aria-selected="true"] {
+  color: #FDBF03;
+  font-weight: 600;
+}

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Открытые компоненты / Open Source — Ogneliss Dialer</title>
+<link rel="stylesheet" href="/dialer/style.css">
+<link rel="icon" href="/dialer/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="/dialer/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/dialer/apple-touch-icon.png">
+<link rel="stylesheet" href="/dialer/lang.css">
+<style>
+.lang-section { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 2px solid rgba(255, 255, 255, 0.08); }
+
+</style>
+</head>
+<body>
+<main>
+
+<!-- Переключатель языка -->
+<!--
+  Шапка страницы: возврат к списку документов и выбор языка.
+
+  Прилипает к верху при прокрутке (position: sticky). Документы
+  длинные — политика занимает несколько экранов, — и возврат
+  в конце страницы означал бы: дочитал до середины, передумал,
+  листай до низа. Теперь выход виден всегда.
+
+  Подпись возврата переводится скриптом: шапка стоит вне языковых
+  блоков, четырёх копий у неё нет.
+-->
+<header class="page-bar">
+  <a href="/dialer" class="back" data-back><span aria-hidden="true">←</span> <span class="back-label">Назад к документам</span></a>
+  <div class="lang-switcher"></div>
+</header>
+
+<!-- Русская версия -->
+<div id="lang-ru">
+
+<h1>Открытые компоненты</h1>
+
+<p><strong>Ogneliss Dialer</strong><br>
+Copyright © 2026 Ermishin Oleg / Ермишин Олег Андреевич<br>
+Все права защищены.</p>
+
+<p><strong>Контакт:</strong> <a href="mailto:oedante@gmail.com">oedante@gmail.com</a></p>
+
+<hr>
+
+<h2>Тип лицензии</h2>
+
+<p><strong>Проприетарная лицензия на бесплатное программное обеспечение</strong> (Proprietary Freeware License).</p>
+
+<p>Приложение распространяется <strong>бесплатно</strong>, но <strong>не является</strong> свободным или открытым программным обеспечением. Исходный код закрыт.</p>
+
+<p>Полные условия использования изложены в <strong>Лицензионном соглашении с конечным пользователем</strong> (<a href="/dialer/eula">EULA</a>), которое пользователь принимает при первом запуске Приложения.</p>
+
+<h2>Кратко</h2>
+
+<p><strong>Разрешено:</strong></p>
+<ul>
+  <li>бесплатно скачивать и использовать Приложение на своих устройствах;</li>
+  <li>делиться ссылкой на страницу Приложения в официальном магазине.</li>
+</ul>
+
+<p><strong>Запрещено:</strong></p>
+<ul>
+  <li>декомпиляция, дизассемблирование, реверс-инжиниринг;</li>
+  <li>изменение Приложения и создание производных версий;</li>
+  <li>распространение через сторонние источники;</li>
+  <li>любое коммерческое использование.</li>
+</ul>
+
+<h2>Отсутствие гарантий</h2>
+<p>Приложение предоставляется «КАК ЕСТЬ» (AS IS), без гарантий любого рода. Правообладатель не несёт ответственности за возможный ущерб, связанный с использованием Приложения. Подробности — в разделах 4 и 5 <a href="/dialer/eula">EULA</a>.</p>
+
+<hr>
+
+<h2>Сторонние компоненты</h2>
+
+<p>Приложение использует библиотеки с открытым исходным кодом. Их лицензии требуют указания авторства, и это указание приведено ниже.</p>
+
+<h3>Apache License 2.0</h3>
+
+<p>Следующие компоненты распространяются под лицензией Apache 2.0:</p>
+
+<ul class="lib-list">
+  <li><strong>AndroidX</strong> (Core, AppCompat, Lifecycle, Activity, Navigation, Room, DataStore, WorkManager, Compose) — © The Android Open Source Project</li>
+  <li><strong>Kotlin и Kotlin Coroutines</strong> — © JetBrains s.r.o.</li>
+  <li><strong>Dagger Hilt</strong> — © Google LLC</li>
+  <li><strong>libphonenumber</strong> — © Google LLC</li>
+  <li><strong>Coil</strong> — © Coil Contributors</li>
+  <li><strong>Accompanist</strong> — © The Android Open Source Project</li>
+</ul>
+
+<p><strong>Полный текст лицензии:</strong> <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank">https://www.apache.org/licenses/LICENSE-2.0</a></p>
+
+<h3>Условия Apache 2.0, которые мы соблюдаем</h3>
+
+<ol>
+  <li><strong>Указание авторства</strong> — приведено выше и продублировано в приложении в разделе «О приложении».</li>
+  <li><strong>Указание на изменения</strong> — изменений в исходный код библиотек не вносилось.</li>
+  <li><strong>Сохранение уведомлений о лицензии</strong> — уведомления сохранены.</li>
+</ol>
+
+<p>Библиотеки остаются собственностью их правообладателей и распространяются на условиях указанных лицензий. Настоящая лицензия на них не действует.</p>
+
+<hr>
+
+<h2>Товарные знаки</h2>
+
+<p>Наименование «Ogneliss Dialer», логотип и иные графические обозначения Приложения являются обозначениями правообладателя. Их использование для продвижения сторонних продуктов или создания впечатления связи с правообладателем не допускается.</p>
+
+<p>Android, Google Play и связанные обозначения — товарные знаки Google LLC.</p>
+
+</div><!-- /lang-ru -->
+
+<!-- Английская версия -->
+<div id="lang-en" style="display:none;">
+
+<h1>Open Source Components</h1>
+
+<p><strong>Ogneliss Dialer</strong><br>
+Copyright © 2026 Ermishin Oleg Andreevich<br>
+All rights reserved.</p>
+
+<p><strong>Contact:</strong> <a href="mailto:oedante@gmail.com">oedante@gmail.com</a></p>
+
+<hr>
+
+<h2>License Type</h2>
+
+<p><strong>Proprietary Freeware License</strong>.</p>
+
+<p>The Application is distributed <strong>for free</strong>, but <strong>is not</strong> free or open source software. The source code is closed.</p>
+
+<p>Full terms of use are set out in the <strong>End User License Agreement</strong> (<a href="/dialer/eula">EULA</a>), which the user accepts upon first launch of the Application.</p>
+
+<h2>In brief</h2>
+
+<p><strong>Permitted:</strong></p>
+<ul>
+  <li>download and use the Application on your devices for free;</li>
+  <li>share a link to the Application page in the official store.</li>
+</ul>
+
+<p><strong>Prohibited:</strong></p>
+<ul>
+  <li>decompilation, disassembly, reverse engineering;</li>
+  <li>modifying the Application and creating derivative versions;</li>
+  <li>distribution through third-party sources;</li>
+  <li>any commercial use.</li>
+</ul>
+
+<h2>No Warranty</h2>
+<p>The Application is provided "AS IS", without warranties of any kind. The Rightsholder is not liable for any damages arising from the use of the Application. Details — in sections 4 and 5 of the <a href="/dialer/eula">EULA</a>.</p>
+
+<hr>
+
+<h2>Third-party Components</h2>
+
+<p>The Application uses open source libraries. Their licenses require attribution, and this attribution is provided below.</p>
+
+<h3>Apache License 2.0</h3>
+
+<p>The following components are distributed under the Apache 2.0 license:</p>
+
+<ul class="lib-list">
+  <li><strong>AndroidX</strong> (Core, AppCompat, Lifecycle, Activity, Navigation, Room, DataStore, WorkManager, Compose) — © The Android Open Source Project</li>
+  <li><strong>Kotlin and Kotlin Coroutines</strong> — © JetBrains s.r.o.</li>
+  <li><strong>Dagger Hilt</strong> — © Google LLC</li>
+  <li><strong>libphonenumber</strong> — © Google LLC</li>
+  <li><strong>Coil</strong> — © Coil Contributors</li>
+  <li><strong>Accompanist</strong> — © The Android Open Source Project</li>
+</ul>
+
+<p><strong>Full license text:</strong> <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank">https://www.apache.org/licenses/LICENSE-2.0</a></p>
+
+<h3>Apache 2.0 terms we comply with</h3>
+
+<ol>
+  <li><strong>Attribution</strong> — provided above and duplicated in the Application in the "About" section.</li>
+  <li><strong>Notice of changes</strong> — no changes were made to the source code of the libraries.</li>
+  <li><strong>Retention of license notices</strong> — notices are retained.</li>
+</ol>
+
+<p>The libraries remain the property of their copyright holders and are distributed under the terms of the specified licenses. This license does not apply to them.</p>
+
+<hr>
+
+<h2>Trademarks</h2>
+
+<p>The name "Ogneliss Dialer", logo and other graphic designations of the Application are designations of the Rightsholder. Their use to promote third-party products or create the impression of a connection with the Rightsholder is not permitted.</p>
+
+<p>Android, Google Play and related marks are trademarks of Google LLC.</p>
+
+</div><!-- /lang-en -->
+
+<!-- Немецкая версия -->
+<div id="lang-de" style="display:none;">
+<h1>Open-Source-Komponenten</h1>
+
+<p><strong>Ogneliss Dialer</strong><br>
+Copyright © 2026 Ermishin Oleg Andreevich<br>
+Alle Rechte vorbehalten.</p>
+
+<p><strong>Kontakt:</strong> <a href="mailto:oedante@gmail.com">oedante@gmail.com</a></p>
+
+<div class="important">
+<p><strong>Hinweis zur Übersetzung.</strong> Diese Fassung dient nur der besseren Verständlichkeit. Rechtlich verbindlich ist ausschließlich die russische Fassung dieses Dokuments. Die Lizenztexte der Drittkomponenten gelten in ihrer englischen Originalfassung.</p>
+</div>
+
+<hr>
+
+<h2>Lizenzart</h2>
+
+<p><strong>Proprietäre Freeware-Lizenz</strong>.</p>
+
+<p>Die Anwendung wird <strong>kostenlos</strong> vertrieben, ist jedoch <strong>keine</strong> freie oder quelloffene Software. Der Quellcode ist geschlossen.</p>
+
+<p>Die vollständigen Nutzungsbedingungen sind im <strong>Endbenutzer-Lizenzvertrag</strong> (<a href="/dialer/eula">EULA</a>) festgelegt, dem der Nutzer beim ersten Start der Anwendung zustimmt.</p>
+
+<h2>Kurz gefasst</h2>
+
+<p><strong>Erlaubt:</strong></p>
+<ul>
+  <li>die Anwendung kostenlos herunterladen und auf Ihren Geräten nutzen;</li>
+  <li>einen Link zur Seite der Anwendung im offiziellen Store weitergeben.</li>
+</ul>
+
+<p><strong>Untersagt:</strong></p>
+<ul>
+  <li>Dekompilierung, Disassemblierung, Rückentwicklung;</li>
+  <li>Veränderung der Anwendung und Erstellung abgeleiteter Fassungen;</li>
+  <li>Verbreitung über Quellen Dritter;</li>
+  <li>jede gewerbliche Nutzung.</li>
+</ul>
+
+<h2>Keine Gewährleistung</h2>
+<p>Die Anwendung wird „WIE BESEHEN“ bereitgestellt, ohne Gewährleistung jeglicher Art. Der Rechteinhaber haftet nicht für Schäden, die aus der Nutzung der Anwendung entstehen. Einzelheiten — in den Abschnitten 4 und 5 des <a href="/dialer/eula">EULA</a>.</p>
+
+<hr>
+
+<h2>Komponenten von Drittanbietern</h2>
+
+<p>Die Anwendung verwendet quelloffene Bibliotheken. Deren Lizenzen verlangen eine Nennung, die nachstehend erfolgt.</p>
+
+<h3>Apache License 2.0</h3>
+
+<p>Die folgenden Komponenten stehen unter der Apache-2.0-Lizenz:</p>
+
+<ul class="lib-list">
+  <li><strong>AndroidX</strong> (Core, AppCompat, Lifecycle, Activity, Navigation, Room, DataStore, WorkManager, Compose) — © The Android Open Source Project</li>
+  <li><strong>Kotlin and Kotlin Coroutines</strong> — © JetBrains s.r.o.</li>
+  <li><strong>Dagger Hilt</strong> — © Google LLC</li>
+  <li><strong>libphonenumber</strong> — © Google LLC</li>
+  <li><strong>Coil</strong> — © Coil Contributors</li>
+  <li><strong>Accompanist</strong> — © The Android Open Source Project</li>
+</ul>
+
+<p><strong>Vollständiger Lizenztext:</strong> <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank">https://www.apache.org/licenses/LICENSE-2.0</a></p>
+
+<h3>Bedingungen der Apache 2.0, die wir einhalten</h3>
+
+<ol>
+  <li><strong>Nennung</strong> — oben aufgeführt und in der Anwendung im Abschnitt „Über die App“ wiederholt.</li>
+  <li><strong>Hinweis auf Änderungen</strong> — am Quellcode der Bibliotheken wurden keine Änderungen vorgenommen.</li>
+  <li><strong>Beibehaltung der Lizenzhinweise</strong> — die Hinweise bleiben erhalten.</li>
+</ol>
+
+<p>Die Bibliotheken bleiben Eigentum ihrer Rechteinhaber und werden zu den Bedingungen der genannten Lizenzen verbreitet. Die vorliegende Lizenz gilt für sie nicht.</p>
+
+<hr>
+
+<h2>Marken</h2>
+
+<p>Der Name „Ogneliss Dialer“, das Logo und weitere grafische Kennzeichen der Anwendung sind Kennzeichen des Rechteinhabers. Ihre Verwendung zur Bewerbung fremder Produkte oder zur Erweckung des Eindrucks einer Verbindung zum Rechteinhaber ist nicht gestattet.</p>
+
+<p>Android, Google Play und zugehörige Zeichen sind Marken von Google LLC.</p>
+
+</div><!-- /lang-de -->
+
+<!-- Французская версия -->
+<div id="lang-fr" style="display:none;">
+<h1>Composants open source</h1>
+
+<p><strong>Ogneliss Dialer</strong><br>
+Copyright © 2026 Ermishin Oleg Andreevich<br>
+Tous droits réservés.</p>
+
+<p><strong>Contact :</strong> <a href="mailto:oedante@gmail.com">oedante@gmail.com</a></p>
+
+<div class="important">
+<p><strong>Remarque sur la traduction.</strong> Cette version est fournie à titre de commodité. Seule la version russe de ce document fait foi juridiquement. Les textes de licence des composants tiers font foi dans leur version originale anglaise.</p>
+</div>
+
+<hr>
+
+<h2>Type de licence</h2>
+
+<p><strong>Licence propriétaire gratuite (freeware)</strong>.</p>
+
+<p>L’application est distribuée <strong>gratuitement</strong>, mais <strong>n’est pas</strong> un logiciel libre ni open source. Le code source est fermé.</p>
+
+<p>Les conditions complètes d’utilisation figurent dans le <strong>contrat de licence utilisateur final</strong> (<a href="/dialer/eula">EULA</a>), que l’utilisateur accepte au premier lancement de l’application.</p>
+
+<h2>En bref</h2>
+
+<p><strong>Autorisé :</strong></p>
+<ul>
+  <li>télécharger et utiliser gratuitement l’application sur vos appareils ;</li>
+  <li>partager un lien vers la page de l’application dans la boutique officielle.</li>
+</ul>
+
+<p><strong>Interdit :</strong></p>
+<ul>
+  <li>décompilation, désassemblage, ingénierie inverse ;</li>
+  <li>modification de l’application et création de versions dérivées ;</li>
+  <li>distribution par des sources tierces ;</li>
+  <li>tout usage commercial.</li>
+</ul>
+
+<h2>Absence de garantie</h2>
+<p>L’application est fournie « EN L’ÉTAT », sans garantie d’aucune sorte. Le titulaire des droits n’est pas responsable des dommages résultant de l’utilisation de l’application. Détails — aux sections 4 et 5 de l’<a href="/dialer/eula">EULA</a>.</p>
+
+<hr>
+
+<h2>Composants tiers</h2>
+
+<p>L’application utilise des bibliothèques open source. Leurs licences exigent une attribution, fournie ci-dessous.</p>
+
+<h3>Apache License 2.0</h3>
+
+<p>Les composants suivants sont distribués sous licence Apache 2.0 :</p>
+
+<ul class="lib-list">
+  <li><strong>AndroidX</strong> (Core, AppCompat, Lifecycle, Activity, Navigation, Room, DataStore, WorkManager, Compose) — © The Android Open Source Project</li>
+  <li><strong>Kotlin and Kotlin Coroutines</strong> — © JetBrains s.r.o.</li>
+  <li><strong>Dagger Hilt</strong> — © Google LLC</li>
+  <li><strong>libphonenumber</strong> — © Google LLC</li>
+  <li><strong>Coil</strong> — © Coil Contributors</li>
+  <li><strong>Accompanist</strong> — © The Android Open Source Project</li>
+</ul>
+
+<p><strong>Texte complet de la licence :</strong> <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank">https://www.apache.org/licenses/LICENSE-2.0</a></p>
+
+<h3>Conditions Apache 2.0 que nous respectons</h3>
+
+<ol>
+  <li><strong>Attribution</strong> — indiquée ci-dessus et reprise dans l’application, section « À propos ».</li>
+  <li><strong>Mention des modifications</strong> — aucune modification n’a été apportée au code source des bibliothèques.</li>
+  <li><strong>Conservation des mentions de licence</strong> — les mentions sont conservées.</li>
+</ol>
+
+<p>Les bibliothèques restent la propriété de leurs titulaires de droits et sont distribuées selon les conditions des licences indiquées. La présente licence ne s’applique pas à elles.</p>
+
+<hr>
+
+<h2>Marques</h2>
+
+<p>Le nom « Ogneliss Dialer », le logo et les autres éléments graphiques de l’application sont des signes distinctifs du titulaire des droits. Leur utilisation pour promouvoir des produits tiers ou pour donner l’impression d’un lien avec le titulaire des droits n’est pas autorisée.</p>
+
+<p>Android, Google Play et les marques associées sont des marques de Google LLC.</p>
+
+</div><!-- /lang-fr -->
+
+
+<script src="/dialer/lang.js" defer></script>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,20 @@
+*.iml
+.gradle/
+local.properties
+.idea/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.keystore
+*.jks
+keystore.properties
+# Ключ подписи в репозитории означает, что любой с доступом к коду
+# может выпустить обновление вашего приложения. Отозвать нельзя
+*.jks
+*.keystore
+
+# ВАЖНО: app/schemas НЕ игнорируется — схемы Room нужны для тестов миграций
+!app/schemas/
