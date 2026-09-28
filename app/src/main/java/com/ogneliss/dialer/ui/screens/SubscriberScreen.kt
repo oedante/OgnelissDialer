@@ -74,6 +74,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import com.ogneliss.dialer.ui.components.OgnelissListRow
 import com.ogneliss.dialer.data.SpamMarkType
 import androidx.compose.material.icons.filled.Report
@@ -628,6 +632,55 @@ fun SubscriberScreen(
         ?: PhoneFormatter.format(group.number)
 
 
+    /*
+     * ══════════════════════════════════════════════════════════════════════
+     * СТРОКА ЗАГОЛОВКА НАД ОБЛОЖКОЙ
+     * ══════════════════════════════════════════════════════════════════════
+     * Обложка уходит под строку заголовка до верха экрана. Пока она там:
+     *
+     * • строка заголовка прозрачная, значки белые (сверху на фото лёгкое
+     *   затемнение — на светлых фото белое иначе терялось бы);
+     * • значки строки состояния (часы, батарея) — тоже светлые;
+     * • имени в заголовке нет: оно под фото, второй раз не нужно.
+     *
+     * Когда шапка уехала вверх, строка заголовка становится обычной:
+     * непрозрачная, тёмные значки, имя в заголовке — чтобы было видно,
+     * чья это карточка.
+     *
+     * В две колонки (телефон лёжа) обложка в левой колонке, под строку
+     * заголовка не уходит — там всё как раньше, только без имени
+     * в заголовке: оно всегда видно слева.
+     */
+    val cardListState = rememberLazyListState()
+    val cardTwoColumns = LocalWindowLayout.current.hasRoomForSidePanel
+    val coverBehindBar = !photoUri.isNullOrBlank() && !cardTwoColumns
+    val headerScrolledAway by remember {
+        derivedStateOf { cardListState.firstVisibleItemIndex > 0 }
+    }
+    val overCover = coverBehindBar && !headerScrolledAway
+    val showBarTitle = !cardTwoColumns && headerScrolledAway
+
+    // Значки строки состояния: светлые над обложкой, по теме — в остальное время
+    val lightTheme = MaterialTheme.colorScheme.background.luminance() > 0.5f
+    val hostView = androidx.compose.ui.platform.LocalView.current
+    DisposableEffect(overCover, lightTheme) {
+        val window = (hostView.context as? android.app.Activity)?.window
+        val controller = window?.let {
+            androidx.core.view.WindowCompat.getInsetsController(it, hostView)
+        }
+        controller?.isAppearanceLightStatusBars = lightTheme && !overCover
+        onDispose { controller?.isAppearanceLightStatusBars = lightTheme }
+    }
+
+    val barContainer by animateColorAsState(
+        if (overCover) Color.Transparent else MaterialTheme.colorScheme.background,
+        label = "cardBarContainer"
+    )
+    val barIcons by animateColorAsState(
+        if (overCover) Color.White else MaterialTheme.colorScheme.onSurface,
+        label = "cardBarIcons"
+    )
+
     Scaffold(
         // В edge-to-edge содержимое иначе уезжает под системные панели
         contentWindowInsets = WindowInsets.safeDrawing,
@@ -672,12 +725,20 @@ fun SubscriberScreen(
              * ради чего шапка нужна.
              */
             TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = barContainer,
+                    navigationIconContentColor = barIcons,
+                    actionIconContentColor = barIcons
+                ),
                 title = {
-                    Text(
-                        title,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    // Имя в заголовке — только когда шапки с именем не видно
+                    if (showBarTitle) {
+                        Text(
+                            title,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
@@ -810,15 +871,65 @@ fun SubscriberScreen(
              * под кнопками растягивали шапку почти на весь экран:
              * статистику приходилось искать прокруткой.
              */
-            Surface(
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
-                shape = MaterialTheme.shapes.large,
-                // Отступ уменьшен: шапка занимала слишком много,
-                // и статистику приходилось искать прокруткой
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = FlowUi.screenPadding, vertical = 8.dp)
-            ) {
+            // Шапка — на фоне экрана, без своей панели: обложка во всю
+            // ширину сверху, под ней имя и кнопки
+            Column(Modifier.fillMaxWidth()) {
+                    /*
+                     * ══════════════════════════════════════════════════════
+                     * ФОТО — ОБЛОЖКОЙ ВО ВСЮ ШИРИНУ, ОТ САМОГО ВЕРХА
+                     * ══════════════════════════════════════════════════════
+                     * Раньше фото было скруглённым прямоугольником внутри
+                     * серой скруглённой панели — «рамка в рамке», — с именем
+                     * поверх и тем же именем в заголовке экрана. Смотрелось
+                     * вставленным извне: единственный прямоугольник среди
+                     * круглых аватаров и кнопок.
+                     *
+                     * Теперь (вариант B, выбран по наброскам): фото без рамки
+                     * и скруглений, во всю ширину, уходит под строку
+                     * заголовка до верха экрана и снизу растворяется в фоне.
+                     * Имя — под фото, тёмным по светлому, как у контакта
+                     * без фото. Сверху — лёгкое затемнение: без него белые
+                     * значки «назад» и меню терялись бы на светлом фото.
+                     *
+                     * Без фото — ничего вместо него: сразу имя и кнопки.
+                     */
+                    photoUri?.takeIf { it.isNotBlank() }?.let { uri ->
+                        val backdrop = MaterialTheme.colorScheme.background
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(if (flatPhoto) 3.2f else 1.5f)
+                        ) {
+                            AsyncImage(
+                                model = uri,
+                                contentDescription = stringResource(
+                                    R.string.a11y_contact_photo, title
+                                ),
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                            Box(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(0.35f)
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(Color.Black.copy(alpha = 0.35f), Color.Transparent)
+                                        )
+                                    )
+                            )
+                            Box(
+                                Modifier
+                                    .fillMaxSize()
+                                    .background(
+                                        Brush.verticalGradient(
+                                            0.55f to Color.Transparent,
+                                            1f to backdrop
+                                        )
+                                    )
+                            )
+                        }
+                    }
                 Column(
                     /*
                      * ПОРТРЕТ ПО ЦЕНТРУ.
@@ -837,7 +948,7 @@ fun SubscriberScreen(
                     // немного, но рядом с журналом карточка выглядела
                     // разреженной
                     modifier = Modifier.fillMaxWidth().padding(
-                        horizontal = FlowUi.screenPadding,
+                        horizontal = FlowUi.screenPadding * 2,
                         vertical = FlowUi.screenPadding
                     )
                 ) {
@@ -944,51 +1055,7 @@ fun SubscriberScreen(
                      * превращается в фон, и смысла показывать его
                      * не остаётся.
                      */
-                    photoUri?.takeIf { it.isNotBlank() }?.let { uri ->
-                        Surface(
-                            shape = MaterialTheme.shapes.large,
-                            color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                // В ландшафте портрет плоский: при 1.9
-                                // и ширине экрана он выше самого экрана
-                                .aspectRatio(if (flatPhoto) 3.2f else 1.9f)
-                        ) {
-                            Box {
-                                AsyncImage(
-                                    model = uri,
-                                    contentDescription = stringResource(
-                                        R.string.a11y_contact_photo, title
-                                    ),
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier.fillMaxSize()
-                                )
 
-                                Box(
-                                    Modifier
-                                        .fillMaxSize()
-                                        .background(
-                                            Brush.verticalGradient(
-                                                0.5f to Color.Transparent,
-                                                1f to Color.Black.copy(alpha = 0.65f)
-                                            )
-                                        )
-                                )
-
-                                Text(
-                                    title,
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.Medium,
-                                    color = Color.White,
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier
-                                        .align(Alignment.BottomStart)
-                                        .padding(FlowUi.contentPadding)
-                                )
-                            }
-                        }
-                    }
 
                     /*
                      * Отступ по ВЫСОТЕ.
@@ -1033,7 +1100,10 @@ fun SubscriberScreen(
                      * карточки: показывать его дважды подряд тем
                      * более не нужно.
                      */
-                    if (photoUri.isNullOrBlank()) {
+                    // Имя — всегда здесь, под фото или вместо него.
+                    // В заголовке экрана оно появляется, только когда
+                    // шапка уехала вверх: иначе имя на экране дважды
+                    run {
                         Text(
                             title,
                             /*
@@ -1271,7 +1341,20 @@ fun SubscriberScreen(
             }
         }
 
-        Row(Modifier.padding(pad).fillMaxSize()) {
+        // С обложкой список начинается от самого верха — под строкой
+        // заголовка: так фото уходит до верха экрана. Без обложки —
+        // как раньше, под строкой заголовка
+        val layoutDir = LocalLayoutDirection.current
+        Row(
+            Modifier
+                .padding(
+                    start = pad.calculateStartPadding(layoutDir),
+                    top = if (coverBehindBar) 0.dp else pad.calculateTopPadding(),
+                    end = pad.calculateEndPadding(layoutDir),
+                    bottom = pad.calculateBottomPadding()
+                )
+                .fillMaxSize()
+        ) {
 
         if (twoColumns) {
             /*
@@ -1291,7 +1374,8 @@ fun SubscriberScreen(
         }
 
         LazyColumn(
-            Modifier
+            state = cardListState,
+            modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight()
                 .then(
@@ -1435,7 +1519,7 @@ fun SubscriberScreen(
                             }
                         }
 
-                        NumberAction(Icons.Default.Call, R.string.action_call) {
+                        NumberAction(Icons.Default.Call, R.string.action_call, tint = CallGreen) {
                             vm.call(number)
                         }
                         NumberAction(
@@ -1606,7 +1690,10 @@ fun SubscriberScreen(
                                     haptics()
                                     vm.setSpamMark(group.e164, if (selected) null else type)
                                 },
-                                label = { Text(stringResource(labelRes)) },
+                                // С заглавной: в журнале и на экране вызова та же
+                                // отметка пишется «Спам», а здесь строчными
+                                // выглядела как другая надпись
+                                label = { Text(stringResource(labelRes).replaceFirstChar { it.titlecase() }) },
                                 leadingIcon = if (selected) {
                                     {
                                         Icon(
@@ -1651,10 +1738,7 @@ fun SubscriberScreen(
                     item {
                         OgnelissPanel(title = stringResource(R.string.subscriber_details)) {
                             contact.emails.forEachIndexed { index, email ->
-                                if (index > 0) HorizontalDivider(
-                                    color = MaterialTheme.colorScheme.outlineVariant
-                                        .copy(alpha = 0.5f)
-                                )
+                                if (index > 0) OgnelissDivider()
                                 DetailRow(
                                     icon = Icons.Default.Email,
                                     value = email,
@@ -1669,10 +1753,7 @@ fun SubscriberScreen(
                                 // Линия и перед первой датой, если выше
                                 // была почта: это разные виды сведений
                                 if (index > 0 || contact.emails.isNotEmpty()) {
-                                    HorizontalDivider(
-                                        color = MaterialTheme.colorScheme.outlineVariant
-                                            .copy(alpha = 0.5f)
-                                    )
+                                    OgnelissDivider()
                                 }
                                 DetailRow(
                                     icon = Icons.Default.Cake,
@@ -2385,6 +2466,21 @@ private fun RowScope.QuickAction(
 private fun NumberAction(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     labelRes: Int,
+    /**
+     * Цвет значка.
+     *
+     * ══════════════════════════════════════════════════════════════════════
+     * ПОЧЕМУ НЕ ВСЕ СИНИЕ
+     * ══════════════════════════════════════════════════════════════════════
+     * Все три значка у номера были синими (primary). А звонок во всём
+     * остальном приложении зелёный: в журнале, в контактах, круглая кнопка
+     * в этой же карточке. Одно действие — два цвета на одном экране.
+     *
+     * Теперь: звонок — зелёный, как везде; SMS и копирование — нейтральные.
+     * Три синих значка в ряд спорили между собой, а главное действие
+     * у номера одно — позвонить.
+     */
+    tint: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurfaceVariant,
     onClick: () -> Unit
 ) {
     IconButton(
@@ -2394,7 +2490,7 @@ private fun NumberAction(
         Icon(
             icon,
             contentDescription = stringResource(labelRes),
-            tint = MaterialTheme.colorScheme.primary
+            tint = tint
         )
     }
 }

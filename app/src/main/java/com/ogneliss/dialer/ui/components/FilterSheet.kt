@@ -117,7 +117,7 @@ fun FilterSheet(
                                 Icon(
                                     Icons.Default.Check,
                                     contentDescription = null,
-                                    modifier = Modifier.size(18.dp)
+                                    modifier = Modifier.size(FlowUi.iconSizeInline)
                                 )
                             }
                         } else null
@@ -163,7 +163,7 @@ fun FilterSheet(
                         Icon(
                             Icons.Default.PersonOff,
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(FlowUi.iconSizeInline)
                         )
                     }
                 )
@@ -233,7 +233,7 @@ fun FilterSheet(
                         Icon(
                             Icons.Default.Block,
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp),
+                            modifier = Modifier.size(FlowUi.iconSizeInline),
                             tint = MaterialTheme.colorScheme.error
                         )
                     }
@@ -286,13 +286,13 @@ fun FilterSheet(
 fun FilterButton(filter: CallLogFilter, onClick: () -> Unit) {
     if (filter.isActive) {
         FilledTonalButton(onClick = onClick) {
-            Icon(Icons.Default.FilterList, null, Modifier.size(18.dp))
+            Icon(Icons.Default.FilterList, null, Modifier.size(FlowUi.iconSizeInline))
             Spacer(Modifier.width(8.dp))
             Text(stringResource(R.string.filter_active_count, filter.activeCount))
         }
     } else {
         TextButton(onClick = onClick) {
-            Icon(Icons.Default.FilterList, null, Modifier.size(18.dp))
+            Icon(Icons.Default.FilterList, null, Modifier.size(FlowUi.iconSizeInline))
             Spacer(Modifier.width(8.dp))
             Text(stringResource(R.string.filter_title))
         }
@@ -353,7 +353,7 @@ private fun TypeChip(
                     else -> Icons.AutoMirrored.Filled.CallMade
                 },
                 contentDescription = null,
-                modifier = Modifier.size(18.dp),
+                modifier = Modifier.size(FlowUi.iconSizeInline),
                 tint = if (type == CallType.MISSED) {
                     MaterialTheme.colorScheme.error
                 } else {

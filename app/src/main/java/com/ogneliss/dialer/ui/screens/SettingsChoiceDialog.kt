@@ -77,6 +77,11 @@ fun SettingsChoiceDialog(
             "RECENCY" to stringResource(R.string.sort_recency),
             "ALPHABET" to stringResource(R.string.sort_alphabet)
         )
+        "journal_style" -> listOf(
+            "CARDS" to stringResource(R.string.journal_style_cards),
+            "GROUPS" to stringResource(R.string.journal_style_groups)
+        )
+
         "carrier_info" -> listOf(
             "UNKNOWN_ONLY" to stringResource(R.string.carrier_info_unknown),
             "ALL" to stringResource(R.string.carrier_info_all),

@@ -93,6 +93,9 @@ class SettingsStateSource @Inject constructor(
     ) { merge, grouping, rememberSim, labels, carrier ->
         Calls(merge, grouping, rememberSim, labels, carrier)
     }
+        // Шестой поток — отдельным combine: у типизированной перегрузки
+        // предел в пять
+        .combine(prefs.journalStyle) { c, style -> c.copy(journalStyle = style) }
 
     /** Экран после звонка и сопутствующие функции. */
     private val postCall: Flow<PostCall> = combine(
@@ -156,6 +159,7 @@ class SettingsStateSource @Inject constructor(
             rememberSim = c.rememberSim,
             simLabels = c.simLabels,
             carrierInfo = c.carrierInfo,
+            journalStyle = c.journalStyle,
 
             postCallEnabled = p.postCallEnabled,
             postCallUnknownOnly = p.postCallUnknownOnly,
@@ -203,7 +207,8 @@ class SettingsStateSource @Inject constructor(
         val groupingMode: GroupingMode,
         val rememberSim: Boolean,
         val simLabels: Map<Int, String>,
-        val carrierInfo: CarrierInfoMode
+        val carrierInfo: CarrierInfoMode,
+        val journalStyle: JournalStyle = JournalStyle.GROUPS
     )
 
     private data class PostCall(

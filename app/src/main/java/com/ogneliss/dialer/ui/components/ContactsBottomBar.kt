@@ -155,7 +155,7 @@ fun ContactsBottomBar(
                      * Общее значение лежит в FlowUi: менять его теперь
                      * можно только для обеих панелей сразу.
                      */
-                    .height(FlowUi.bottomPanelRowHeight)
+                    .height(FlowUi.panelRowHeight())
                     // Отступ по краям: раньше поле упиралось в границу
                     // панели, и они сливались в одну линию
                     .padding(horizontal = FlowUi.screenPadding),
@@ -163,6 +163,13 @@ fun ContactsBottomBar(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
             OutlinedTextField(
+                // Белое поле на серой панели — как клавиши и строка номера:
+                // иначе в светлой теме поле сливается с панелью.
+                // Разбор — в PanelColors
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = PanelColors.key(),
+                    unfocusedContainerColor = PanelColors.key()
+                ),
                 value = query,
                 onValueChange = onQueryChange,
                 placeholder = { Text(stringResource(R.string.contacts_search_hint)) },

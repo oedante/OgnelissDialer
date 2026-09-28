@@ -163,7 +163,7 @@ fun SettingsCategoryScreen(
                     )
                 }
                 if (entryIndex < chunkEntries.lastIndex) {
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    OgnelissDivider()
                 }
             }
             }

@@ -133,7 +133,7 @@ fun SettingsHomeScreen(
                             // Отступ пустого состояния из общих правил:
                             // в журнале и контактах он такой же
                             Modifier.padding(FlowUi.sheetPadding),
-                            color = MaterialTheme.colorScheme.outline
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 } else {
@@ -166,10 +166,7 @@ fun SettingsHomeScreen(
                             // Разделитель между строками, но не после последней:
                             // черта у нижней границы карточки выглядит обрывом
                             if (index < SettingsCategory.entries.lastIndex) {
-                                HorizontalDivider(
-                                    Modifier.padding(start = 56.dp),
-                                    color = MaterialTheme.colorScheme.outlineVariant
-                                )
+                                OgnelissDivider(Modifier.padding(start = 56.dp))
                             }
                         }
                     }

@@ -137,6 +137,22 @@
         </activity>
 
         <!-- Экран активного вызова -->
+                <!--
+            ЭКРАНЫ ВЫЗОВА НЕ ПЕРЕСОЗДАЮТСЯ ПРИ СКЛАДЫВАНИИ И ПОВОРОТЕ.
+
+            Раскладушку складывают и раскрывают посреди разговора — для
+            Android это смена размера окна, и по умолчанию активность
+            пересоздаётся. Состояние вызова при этом не теряется (оно живёт
+            в CallManager), а вот состояние экрана — теряется: открытая
+            клавиатура тонового набора, набранные цифры, текст заметки,
+            раскрытая панель кнопок. Посреди «нажмите 1 для…» это
+            неприятно.
+
+            Compose сам перерисует экран под новый размер (LocalConfiguration
+            меняется без пересоздания), поэтому пересоздание тут не нужно.
+            uiMode в список не входит: смена светлой и тёмной темы по-прежнему
+            пересоздаёт экран — так тема применяется целиком.
+        -->
         <activity
             android:name=".call.InCallActivity"
             android:exported="false"
@@ -144,7 +160,8 @@
             android:excludeFromRecents="true"
             android:showOnLockScreen="true"
             android:turnScreenOn="true"
-            android:theme="@style/Theme.OgnelissDialer.InCall" />
+            android:theme="@style/Theme.OgnelissDialer.InCall"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|density"/>
 
         <!--
             Псевдозвонок.
@@ -163,7 +180,8 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
             android:showOnLockScreen="true"
-            android:theme="@style/Theme.OgnelissDialer.InCall" />
+            android:theme="@style/Theme.OgnelissDialer.InCall"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|density"/>
 
         <receiver
             android:name=".call.FakeCall$Receiver"

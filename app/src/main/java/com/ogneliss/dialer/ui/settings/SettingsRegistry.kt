@@ -347,6 +347,12 @@ object SettingsRegistry {
             groupRes = R.string.settings_group_log_view
         ),
         SettingEntry(
+            "journal_style", SettingsCategory.CALL_LOG,
+            R.string.settings_journal_style, R.string.settings_journal_style_text,
+            SettingKind.Choice("journal_style"),
+            groupRes = R.string.settings_group_log_view
+        ),
+        SettingEntry(
             "carrier_info", SettingsCategory.CALL_LOG,
             R.string.settings_carrier_info, R.string.settings_carrier_info_text,
             SettingKind.Choice("carrier_info"),

@@ -121,6 +121,32 @@ enum class CarrierInfoMode {
     }
 }
 
+/**
+ * ВИД ЖУРНАЛА: КАЖДАЯ ЗАПИСЬ КАРТОЧКОЙ ИЛИ ЗАПИСИ ГРУППОЙ.
+ *
+ * CARDS — каждая запись — отдельная скруглённая карточка с зазором.
+ * Так журнал выглядел до 1.1.3.
+ *
+ * GROUPS — записи одной группы («Сегодня», «Вчера»…) лежат на одной
+ * общей подложке, разделённые линией. Меньше контейнеров и зазоров —
+ * на экране больше записей, вид легче. Предложено аудитом оформления
+ * (docs/UI_AUDIT_2026_09.md, пункт C).
+ *
+ * С 1.1.3 по умолчанию — GROUPS: решение принято по сравнению обоих
+ * видов на устройстве. Кто уже выбрал вид сам, сохраняет свой выбор:
+ * значение по умолчанию действует, только пока в настройках ничего
+ * не записано.
+ */
+enum class JournalStyle {
+    CARDS,
+    GROUPS;
+
+    companion object {
+        fun from(name: String?): JournalStyle =
+            entries.firstOrNull { it.name == name } ?: GROUPS
+    }
+}
+
 enum class ThemeMode { SYSTEM, LIGHT, DARK, BLACK_AMOLED, HIGH_CONTRAST }
 
 /**
@@ -195,6 +221,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val LANGUAGE = stringPreferencesKey("language")
         val SWIPE_SIM_MODE = stringPreferencesKey("swipe_sim_mode")
         val CARRIER_INFO = stringPreferencesKey("carrier_info")
+        val JOURNAL_STYLE = stringPreferencesKey("journal_style")
 
         /**
          * Номер, с которого «звонят» при псевдозвонке.
@@ -389,6 +416,10 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     val carrierInfo: Flow<CarrierInfoMode> = data.map { p ->
         CarrierInfoMode.from(p[Keys.CARRIER_INFO])
+    }
+
+    val journalStyle: Flow<JournalStyle> = data.map { p ->
+        JournalStyle.from(p[Keys.JOURNAL_STYLE])
     }
 
     val swipeSimMode: Flow<SwipeSimMode> = data.map { p ->
@@ -656,6 +687,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     suspend fun setCarrierInfo(mode: CarrierInfoMode) =
         edit("carrier_info", mode.name) { it[Keys.CARRIER_INFO] = mode.name }
+
+    suspend fun setJournalStyle(style: JournalStyle) =
+        edit("journal_style", style.name) { it[Keys.JOURNAL_STYLE] = style.name }
 
     suspend fun setSwipeSimMode(mode: SwipeSimMode) =
         edit("swipe_sim_mode", mode.name) { it[Keys.SWIPE_SIM_MODE] = mode.name }

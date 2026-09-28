@@ -116,7 +116,7 @@ fun StatsScreen(
                     Text(
                         stringResource(R.string.stats_empty),
                         Modifier.padding(FlowUi.contentPadding),
-                        color = MaterialTheme.colorScheme.outline
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }

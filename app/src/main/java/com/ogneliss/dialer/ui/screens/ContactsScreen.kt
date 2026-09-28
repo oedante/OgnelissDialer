@@ -1009,7 +1009,7 @@ private fun ContactRow(
                                 contentDescription = stringResource(
                                     R.string.filter_with_reminder
                                 ),
-                                modifier = Modifier.size(14.dp),
+                                modifier = Modifier.size(FlowUi.iconSizeSmall),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -1019,7 +1019,7 @@ private fun ContactRow(
                             Icon(
                                 Icons.Default.Block,
                                 contentDescription = null,
-                                modifier = Modifier.size(14.dp),
+                                modifier = Modifier.size(FlowUi.iconSizeSmall),
                                 tint = MaterialTheme.colorScheme.error
                             )
                             Spacer(Modifier.width(4.dp))

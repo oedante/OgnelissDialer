@@ -101,7 +101,7 @@ fun SettingsSwitchRow(
                         Icons.Default.Warning,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(FlowUi.iconSizeInline)
                     )
                     Spacer(Modifier.width(6.dp))
                 }

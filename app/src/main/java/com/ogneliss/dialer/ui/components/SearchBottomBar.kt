@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -146,12 +147,19 @@ fun SearchBottomBar(
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .height(FlowUi.bottomPanelRowHeight)
+                    .height(FlowUi.panelRowHeight())
                     .padding(horizontal = FlowUi.screenPadding),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedTextField(
+                // Белое поле на серой панели — как клавиши и строка номера:
+                // иначе в светлой теме поле сливается с панелью.
+                // Разбор — в PanelColors
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = PanelColors.key(),
+                    unfocusedContainerColor = PanelColors.key()
+                ),
                     modifier = Modifier.weight(1f),
                     value = query,
                     onValueChange = onQueryChange,

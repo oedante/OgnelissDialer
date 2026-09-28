@@ -127,7 +127,7 @@ fun BackupScreen(
                 stringResource(R.string.backup_contents),
                 Modifier.padding(FlowUi.contentPadding),
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.outline
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(Modifier.height(32.dp))

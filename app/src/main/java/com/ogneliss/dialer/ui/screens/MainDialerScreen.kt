@@ -42,6 +42,8 @@ import androidx.core.os.ConfigurationCompat
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.call.FakeCall
 import com.ogneliss.dialer.ui.theme.Dimens
+import androidx.compose.foundation.lazy.itemsIndexed
+import com.ogneliss.dialer.settings.JournalStyle
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
@@ -1265,18 +1267,26 @@ fun MainDialerScreen(
                  * в пределах большого пальца: тянуться к верху экрана ради
                  * частого действия неудобно.
                  */
+                // Вид журнала «Группы по дням»: место строки в группе.
+                // В обычном виде каждая строка — отдельная карточка
+                val groupPositionOf: (Int, Int) -> GroupPosition = { i, n ->
+                    if (settings.journalStyle == JournalStyle.GROUPS) GroupPosition.of(i, n)
+                    else GroupPosition.SINGLE
+                }
+
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.padding(padding).fillMaxSize(),
                     contentPadding = PaddingValues(vertical = 4.dp)
                 ) {
                     if (state.query.isNotEmpty() && contactRows.isNotEmpty()) {
-                        items(
+                        itemsIndexed(
                             contactRows,
-                            key = { "found_${it.key}" },
-                            contentType = { "call_log_row" }
-                        ) { row ->
+                            key = { _, r -> "found_${r.key}" },
+                            contentType = { _, _ -> "call_log_row" }
+                        ) { index, row ->
                             CallLogRow(
+                                groupPosition = groupPositionOf(index, contactRows.size),
                                 row = liveRow(row),
                                 vm = vm,
                                 state = state,
@@ -1364,12 +1374,13 @@ fun MainDialerScreen(
                         }
 
 
-                        items(
+                        itemsIndexed(
                             pinnedRows,
-                            key = { "pin_${it.key}" },
-                            contentType = { "call_log_row" }
-                        ) { row ->
+                            key = { _, r -> "pin_${r.key}" },
+                            contentType = { _, _ -> "call_log_row" }
+                        ) { index, row ->
                             CallLogRow(
+                                groupPosition = groupPositionOf(index, pinnedRows.size),
                                 row = liveRow(row),
                                 vm = vm,
                                 state = state,
@@ -1420,12 +1431,13 @@ fun MainDialerScreen(
                         }
 
 
-                        items(
+                        itemsIndexed(
                             items = rowsInBucket,
-                            key = { it.key },
-                            contentType = { "call_log_row" }
-                        ) { row ->
+                            key = { _, r -> r.key },
+                            contentType = { _, _ -> "call_log_row" }
+                        ) { index, row ->
                             CallLogRow(
+                                groupPosition = groupPositionOf(index, rowsInBucket.size),
                                 row = liveRow(row),
                                 vm = vm,
                                 state = state,
@@ -2121,12 +2133,14 @@ private fun CallLogRow(
     swipeKeyPrefix: String = "",
     onOpenSubscriber: (String) -> Unit,
     onLongPress: (CallLogGroup) -> Unit,
-    onNeedNumberPicker: (CallLogGroup, List<NumberOption>) -> Unit
+    onNeedNumberPicker: (CallLogGroup, List<NumberOption>) -> Unit,
+    groupPosition: GroupPosition = GroupPosition.SINGLE
 ) {
     val group = row.group
 
 
     CallLogCard(
+        groupPosition = groupPosition,
         row = row,
         /*
          * Кнопка вызова в строке.

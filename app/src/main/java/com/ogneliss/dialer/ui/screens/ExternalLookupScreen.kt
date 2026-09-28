@@ -106,7 +106,7 @@ fun ExternalLookupScreen(
                     Column(Modifier.padding(FlowUi.contentPadding)) {
                         Text(
                             stringResource(R.string.external_lookup_none),
-                            color = MaterialTheme.colorScheme.outline
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
                         Spacer(Modifier.height(16.dp))

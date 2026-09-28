@@ -212,7 +212,7 @@ fun PermissionWizardScreen(
                             Row(Modifier.padding(FlowUi.contentPadding), verticalAlignment = Alignment.Top) {
                                 Icon(
                                     Icons.Default.Info, null,
-                                    Modifier.size(20.dp),
+                                    Modifier.size(FlowUi.iconSizeInline),
                                     tint = MaterialTheme.colorScheme.outline
                                 )
                                 Spacer(Modifier.width(12.dp))

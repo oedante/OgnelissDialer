@@ -2,7 +2,6 @@ package com.ogneliss.dialer.ui.components
 
 import com.ogneliss.dialer.ui.theme.NoteTeal
 import com.ogneliss.dialer.ui.theme.Dimens
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -14,6 +13,7 @@ import com.ogneliss.dialer.ui.theme.CallGreen
 import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.automirrored.filled.CallMade
 import androidx.compose.material.icons.automirrored.filled.CallMissed
 import androidx.compose.material.icons.automirrored.filled.CallReceived
@@ -104,8 +104,33 @@ fun CallLogCard(
     onDirectStart: (() -> Unit)?,
     onDirectEnd: (() -> Unit)?,
     onClick: () -> Unit,
-    onLongClick: () -> Unit
+    onLongClick: () -> Unit,
+    /**
+     * Место строки в группе — для вида журнала «Группы по дням».
+     * SINGLE — отдельная карточка, как было всегда. Разбор — в JournalStyle.
+     */
+    groupPosition: GroupPosition = GroupPosition.SINGLE
 ) {
+    /*
+     * ФОРМА И ОТСТУПЫ ПО МЕСТУ В ГРУППЕ.
+     *
+     * Строки одной группы лежат вплотную на общей подложке: скруглены
+     * только верх первой и низ последней, зазоров между ними нет,
+     * вместо зазора — тонкая линия. Снаружи группа выглядит одной
+     * карточкой, как панели в карточке абонента и история вызовов в ней.
+     */
+    val corner = MaterialTheme.shapes.medium
+    val zero = androidx.compose.foundation.shape.CornerSize(0.dp)
+    val shape = when (groupPosition) {
+        GroupPosition.SINGLE -> corner
+        GroupPosition.FIRST -> corner.copy(bottomStart = zero, bottomEnd = zero)
+        GroupPosition.MIDDLE -> androidx.compose.ui.graphics.RectangleShape
+        GroupPosition.LAST -> corner.copy(topStart = zero, topEnd = zero)
+    }
+    val gap = FlowUi.cardSpacing / 2
+    val topGap = if (groupPosition == GroupPosition.SINGLE || groupPosition == GroupPosition.FIRST) gap else 0.dp
+    val bottomGap = if (groupPosition == GroupPosition.SINGLE || groupPosition == GroupPosition.LAST) gap else 0.dp
+
     // Никаких вычислений: всё пришло готовым
 
     Card(
@@ -121,7 +146,7 @@ fun CallLogCard(
             containerColor = androidx.compose.ui.graphics.Color.Transparent
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        shape = MaterialTheme.shapes.medium,
+        shape = shape,
         modifier = Modifier
             .fillMaxWidth()
             /*
@@ -133,13 +158,22 @@ fun CallLogCard(
              * правке разойдутся — поправят одно, забудут другое.
              */
             .padding(
-                horizontal = FlowUi.screenPadding,
-                vertical = FlowUi.cardSpacing / 2
+                start = FlowUi.screenPadding,
+                end = FlowUi.screenPadding,
+                top = topGap,
+                bottom = bottomGap
             )
             .semantics(mergeDescendants = true) {
                 contentDescription = row.accessibilityLabel
             }
     ) {
+        if (groupPosition == GroupPosition.MIDDLE || groupPosition == GroupPosition.LAST) {
+            // От начала текста, а не от края: под аватаром линия
+            // разрезала бы колонку лиц, по которой глаз бежит вниз
+            Box(Modifier.background(MaterialTheme.colorScheme.surfaceContainerLow)) {
+                OgnelissDivider(Modifier.padding(start = 76.dp))
+            }
+        }
         SwipeRevealRow(
             key = swipeKey,
             controller = swipeController,
@@ -240,7 +274,7 @@ fun CallLogCard(
                         Icon(
                             Icons.Default.Alarm,
                             contentDescription = stringResource(R.string.filter_with_reminder),
-                            modifier = Modifier.size(14.dp),
+                            modifier = Modifier.size(FlowUi.iconSizeSmall),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -269,11 +303,34 @@ fun CallLogCard(
                     // Вторая строка: направление, SIM, номер. Всё мелко
                     // и одним цветом — это справочная информация,
                     // а не то, что ищут взглядом
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    /*
+                     * КОНТАКТ БЕЗ ЗВОНКОВ — НОМЕР ВМЕСТО СТРЕЛКИ.
+                     *
+                     * При наборе номера в журнал подмешиваются контакты,
+                     * с которыми звонков не было: их строки собираются
+                     * из книги, а тип вызова им ставится «входящий» просто
+                     * потому, что поле обязательное. На экране это давало
+                     * стрелку входящего без даты — будто звонок был,
+                     * но неизвестно когда. Найдено по снимку экрана
+                     * из тестирования (поиск «585»).
+                     *
+                     * У такой строки показываем номер: при поиске по цифрам
+                     * это и есть то, ради чего строка попала в список, —
+                     * видно, какой именно номер совпал.
+                     */
+                    if (row.count == 0) {
+                        Text(
+                            row.formattedNumber,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    } else Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             typeIcon(row.lastType),
                             contentDescription = null,
-                            modifier = Modifier.size(14.dp),
+                            modifier = Modifier.size(FlowUi.iconSizeSmall),
                             tint = if (row.hasMissed) MaterialTheme.colorScheme.error
                             else MaterialTheme.colorScheme.outline
                         )
@@ -328,7 +385,7 @@ fun CallLogCard(
                             Icon(
                                 Icons.Default.Block,
                                 contentDescription = null,
-                                modifier = Modifier.size(14.dp),
+                                modifier = Modifier.size(FlowUi.iconSizeSmall),
                                 tint = MaterialTheme.colorScheme.error
                             )
                             Spacer(Modifier.width(4.dp))
@@ -355,7 +412,7 @@ fun CallLogCard(
                             Icon(
                                 Icons.Default.Report,
                                 contentDescription = null,
-                                modifier = Modifier.size(14.dp),
+                                modifier = Modifier.size(FlowUi.iconSizeSmall),
                                 tint = MaterialTheme.colorScheme.error
                             )
                             Spacer(Modifier.width(4.dp))
@@ -555,11 +612,32 @@ private fun NoteAvatar(hasMissed: Boolean) {
     ) {
         Box(contentAlignment = Alignment.Center) {
             Icon(
-                Icons.Outlined.Info,
+                // Залитый, как остальные значки приложения. Контурные у нас
+                // только там, где контур несёт смысл: булавка и звезда без
+                // заливки — «не закреплён», трубка псевдозвонка — иначе
+                // на 24 dp стрелка сливается с трубкой
+                Icons.Default.Info,
                 contentDescription = null,
                 tint = if (hasMissed) MaterialTheme.colorScheme.onErrorContainer
                 else NoteTeal
             )
+        }
+    }
+}
+
+/**
+ * Место строки журнала в группе: разбор — у параметра groupPosition
+ * в CallLogCard и в JournalStyle.
+ */
+enum class GroupPosition {
+    SINGLE, FIRST, MIDDLE, LAST;
+
+    companion object {
+        fun of(index: Int, size: Int): GroupPosition = when {
+            size <= 1 -> SINGLE
+            index == 0 -> FIRST
+            index == size - 1 -> LAST
+            else -> MIDDLE
         }
     }
 }

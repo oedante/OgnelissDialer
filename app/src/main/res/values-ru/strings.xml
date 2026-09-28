@@ -641,4 +641,9 @@
     <string name="incall_conference_split">Поговорить отдельно</string>
     <string name="incall_conference_drop">Отключить</string>
     <string name="incall_hidden_number">Скрытый номер</string>
+    <!-- Вид журнала: разбор в JournalStyle -->
+    <string name="settings_journal_style">Вид журнала</string>
+    <string name="settings_journal_style_text">Каждый звонок карточкой или звонки группой по дням</string>
+    <string name="journal_style_cards">Карточки</string>
+    <string name="journal_style_groups">Группы по дням</string>
 </resources>

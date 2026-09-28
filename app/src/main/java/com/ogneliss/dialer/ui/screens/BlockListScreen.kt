@@ -142,7 +142,7 @@ fun BlockListScreen(
                         ),
                         Modifier.padding(horizontal = FlowUi.contentPadding),
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.outline
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -257,7 +257,7 @@ private fun InfoNote(text: String) {
     ) {
         Icon(
             Icons.Default.Info, contentDescription = null,
-            Modifier.size(16.dp), tint = MaterialTheme.colorScheme.outline
+            Modifier.size(FlowUi.iconSizeInline), tint = MaterialTheme.colorScheme.outline
         )
         Spacer(Modifier.width(8.dp))
         Text(
@@ -274,6 +274,6 @@ private fun EmptyNote(text: String) {
         text,
         Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
         style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.outline
+        color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }

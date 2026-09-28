@@ -1032,9 +1032,18 @@ for path in kt_files():
         problems['Card вместо OgnelissPanel'].append(f'{rel}:{line}')
 
     # Разделитель со своей прозрачностью — тот самый разнобой
-    # В самом OgnelissDivider прозрачность и задаётся — это его работа
-    m = re.search(r'HorizontalDivider\([^)]*outlineVariant\.copy\(alpha', body)
-    if m and not rel.endswith('OgnelissPanel.kt'):
+    # В самом OgnelissDivider прозрачность и задаётся — это его работа.
+    #
+    # [\s\S], а не [^)]: первая версия ловила только разделитель, записанный
+    # в одну строку. Многострочные — с цветом на следующей строке — она
+    # пропускала, и пять таких жили в настройках и карточке с тремя разными
+    # толщинами линии. Нашлось общим аудитом оформления, а не проверкой.
+    #
+    # Разрешён только подчёркивающий заголовок раздела в контактах: это
+    # линия под буквой алфавита, а не между строками, — у неё своя роль.
+    m = re.search(r'HorizontalDivider\((?:(?!HorizontalDivider\()[\s\S]){0,200}?outlineVariant', body)
+    header_underline = rel.endswith('ContactsScreen.kt')
+    if m and not rel.endswith('OgnelissPanel.kt') and not header_underline:
         line = body[:m.start()].count('\n') + 1
         problems['Свой разделитель вместо OgnelissDivider'].append(f'{rel}:{line}')
 

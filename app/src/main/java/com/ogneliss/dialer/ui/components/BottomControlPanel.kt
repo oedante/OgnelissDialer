@@ -327,7 +327,7 @@ fun BottomControlPanel(
                             Icon(
                                 Icons.AutoMirrored.Filled.StickyNote2,
                                 contentDescription = null,
-                                modifier = Modifier.size(16.dp),
+                                modifier = Modifier.size(FlowUi.iconSizeInline),
                                 tint = NoteTeal
                             )
                             Spacer(Modifier.width(8.dp))
@@ -503,18 +503,30 @@ private fun ActionRow(
     onMenu: () -> Unit,
     menuContent: @Composable () -> Unit
 ) {
+    val labelsShown = !com.ogneliss.dialer.ui.adaptive.LocalWindowLayout.current.isShort
     Row(
         Modifier
             .fillMaxWidth()
             // Высота задана явно и тем же значением, что у панели
             // контактов: раньше обе набирали её из содержимого
             // и не совпадали
-            // heightIn, а не фиксированная высота: со времени, когда
-            // высота задавалась жёстко, под значками появились подписи,
-            // и при крупном системном шрифте они обрезались бы
-            .height(FlowUi.bottomPanelRowHeight)
-            .padding(horizontal = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .height(FlowUi.panelRowHeight())
+            .padding(horizontal = 8.dp)
+            .then(if (labelsShown) Modifier.padding(bottom = 4.dp) else Modifier),
+        /*
+         * Подписи — на одной линии.
+         *
+         * Кнопка клавиатуры выше остальных (52 dp против 24 у значков),
+         * и при выравнивании по центру её подпись садилась ниже соседних
+         * на ~20 точек: «Контакты», «Фильтры», «Напоминания», «Ещё» —
+         * на одной высоте, «Клавиатура» — ниже. На снимке тёмной темы
+         * это было видно сразу.
+         *
+         * Выравнивание по низу ставит все подписи на одну линию. Без подписей
+         * (телефон лёжа) — снова по центру: иначе маленькие значки легли бы
+         * на дно рядом с высокой кнопкой.
+         */
+        verticalAlignment = if (labelsShown) Alignment.Bottom else Alignment.CenterVertically
     ) {
         /*
          * ГЛАВНАЯ КНОПКА ЦЕНТРИРУЕТСЯ ПО ПОСТРОЕНИЮ.
@@ -605,14 +617,17 @@ private fun ActionRow(
             )
         }
 
-        Spacer(Modifier.height(2.dp))
+        // Подпись — как у соседей: на телефоне лёжа прячется вместе с ними
+        if (!com.ogneliss.dialer.ui.adaptive.LocalWindowLayout.current.isShort) {
+            Spacer(Modifier.height(2.dp))
 
-        Text(
-            stringResource(R.string.bar_dialpad),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1
-        )
+            Text(
+                stringResource(R.string.bar_dialpad),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1
+            )
+        }
         }
 
 

@@ -175,13 +175,14 @@ fun PostCallSheet(
                         FilterChip(
                             selected = selected,
                             onClick = { onMark(if (selected) null else type) },
-                            label = { Text(stringResource(labelRes)) },
+                            // С заглавной — как в карточке и журнале
+                            label = { Text(stringResource(labelRes).replaceFirstChar { it.titlecase() }) },
                             leadingIcon = if (selected) {
                                 {
                                     Icon(
                                         Icons.Default.Block,
                                         contentDescription = null,
-                                        modifier = Modifier.size(18.dp)
+                                        modifier = Modifier.size(FlowUi.iconSizeInline)
                                     )
                                 }
                             } else null,

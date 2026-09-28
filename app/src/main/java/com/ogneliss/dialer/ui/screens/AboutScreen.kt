@@ -83,7 +83,7 @@ fun AboutScreen(
                         "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
                     ),
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 

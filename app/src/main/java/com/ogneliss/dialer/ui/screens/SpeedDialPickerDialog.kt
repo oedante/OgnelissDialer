@@ -73,7 +73,7 @@ fun SpeedDialPickerDialog(
                     Text(
                         stringResource(R.string.speed_dial_no_contacts),
                         Modifier.padding(vertical = 16.dp),
-                        color = MaterialTheme.colorScheme.outline
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 

@@ -3,6 +3,7 @@ package com.ogneliss.dialer.ui
 import androidx.compose.runtime.Immutable
 
 import com.ogneliss.dialer.settings.CarrierInfoMode
+import com.ogneliss.dialer.settings.JournalStyle
 import com.ogneliss.dialer.settings.GroupingMode
 import com.ogneliss.dialer.data.NotesRetention
 import com.ogneliss.dialer.settings.SortOrder
@@ -67,6 +68,8 @@ data class SettingsState(
      * за что можно зацепиться.
      */
     val carrierInfo: CarrierInfoMode = CarrierInfoMode.UNKNOWN_ONLY,
+    /** Вид журнала: разбор в JournalStyle. */
+    val journalStyle: JournalStyle = JournalStyle.GROUPS,
     /** Круглая кнопка псевдозвонка на экранах журнала и контактов. */
     val fakeCallButton: Boolean = true
 ) {

@@ -189,7 +189,7 @@ private fun LayerCard(
                 Text(
                     text,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Spacer(Modifier.width(8.dp))

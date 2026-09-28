@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
 import com.ogneliss.dialer.ui.theme.Dimens
 
 /**
@@ -55,7 +56,13 @@ fun LabeledIconButton(
     labelRes: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    tint: Color = LocalContentColor.current
+    tint: Color = LocalContentColor.current,
+    /**
+     * Показывать ли подпись. По умолчанию — везде, кроме низкого окна
+     * (телефон лёжа): там подписи съедали бы четверть высоты экрана.
+     * Описание для чтения с экрана остаётся в любом случае.
+     */
+    showLabel: Boolean = !LocalWindowLayout.current.isShort
 ) {
     val label = stringResource(labelRes)
 
@@ -74,14 +81,16 @@ fun LabeledIconButton(
     ) {
         Icon(icon, contentDescription = null, tint = tint)
 
-        Spacer(Modifier.height(2.dp))
+        if (showLabel) {
+            Spacer(Modifier.height(2.dp))
 
-        Text(
-            label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+            Text(
+                label,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
     }
 }

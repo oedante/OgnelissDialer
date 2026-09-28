@@ -90,7 +90,7 @@ fun EmptyState(
             Text(
                 title,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.outline
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         return

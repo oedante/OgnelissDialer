@@ -2,7 +2,7 @@ package com.ogneliss.dialer.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
@@ -82,14 +82,17 @@ fun SpeedDialScreen(
                 OgnelissDivider()
             }
 
-            items(slots, key = { it.first }) { (digit, entry) ->
+            itemsIndexed(slots, key = { _, slot -> slot.first }) { index, (digit, entry) ->
                 SpeedDialRow(
                     digit = digit,
                     entry = entry,
                     onAssign = { assigning = digit },
                     onClear = { vm.clearSpeedDial(digit) }
                 )
-                HorizontalDivider()
+                // Общий разделитель и только между строками: прежде здесь
+                // стоял HorizontalDivider со своей толщиной, и под последней
+                // клавишей висела черта, которой нигде больше нет
+                if (index < slots.lastIndex) OgnelissDivider()
             }
 
             item { Spacer(Modifier.height(32.dp)) }

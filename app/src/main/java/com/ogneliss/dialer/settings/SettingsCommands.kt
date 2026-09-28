@@ -152,6 +152,7 @@ class SettingsCommands @Inject constructor(
             )
             "swipe_sim" -> prefs.setSwipeSimMode(SwipeSimMode.from(value))
             "carrier_info" -> prefs.setCarrierInfo(CarrierInfoMode.from(value))
+            "journal_style" -> prefs.setJournalStyle(JournalStyle.from(value))
             "sort_order" -> prefs.setSortOrder(
                 runCatching { SortOrder.valueOf(value) }.getOrDefault(SortOrder.RELEVANCE)
             )
@@ -174,6 +175,7 @@ class SettingsCommands @Inject constructor(
         "sort_order" -> state.sortOrder.name
         "swipe_sim" -> state.swipeSimMode.name
         "carrier_info" -> state.carrierInfo.name
+        "journal_style" -> state.journalStyle.name
         "notes_retention" -> state.notesRetention.name
         "notes_retention_scope" -> state.notesRetentionScope.name
         else -> ""
@@ -212,6 +214,13 @@ class SettingsCommands @Inject constructor(
                 GroupingMode.CONSECUTIVE -> R.string.grouping_consecutive
                 GroupingMode.BY_CONTACT -> R.string.grouping_by_contact
                 GroupingMode.NONE -> R.string.grouping_none
+            }
+        )
+
+        "journal_style" -> context.getString(
+            when (state.journalStyle) {
+                JournalStyle.CARDS -> R.string.journal_style_cards
+                JournalStyle.GROUPS -> R.string.journal_style_groups
             }
         )
 
@@ -270,6 +279,7 @@ class SettingsCommands @Inject constructor(
             "sort_order" -> R.string.settings_sort_order
             "swipe_sim" -> R.string.settings_swipe_sim
             "carrier_info" -> R.string.settings_carrier_info
+            "journal_style" -> R.string.settings_journal_style
             "notes_retention" -> R.string.settings_notes_retention
             "notes_retention_scope" -> R.string.settings_notes_scope
             else -> R.string.nav_settings
@@ -320,7 +330,8 @@ class SettingsCommands @Inject constructor(
         /** Ключи, которые обрабатывает setChoice. */
         val CHOICE_KEYS = setOf(
             "language", "theme", "swipe_right", "swipe_left", "grouping", "sort_order",
-            "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info"
+            "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info",
+            "journal_style"
         )
     }
 }

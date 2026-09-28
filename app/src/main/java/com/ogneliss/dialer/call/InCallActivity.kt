@@ -62,9 +62,12 @@ import com.ogneliss.dialer.ui.theme.OgnelissDialerTheme
 import androidx.compose.ui.res.stringResource
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
+import androidx.compose.ui.platform.LocalDensity
+import com.ogneliss.dialer.ui.adaptive.FoldPosture
 import com.ogneliss.dialer.settings.CarrierInfoMode
 import com.ogneliss.dialer.data.NoteDisplay
 import com.ogneliss.dialer.log.Logger
+import com.ogneliss.dialer.ui.components.OgnelissDivider
 import com.ogneliss.dialer.util.PhoneFormatter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -612,15 +615,12 @@ private fun InCallScreen(
      * рисуются внутри этой Surface, и отступ нужен обеим.
      */
     Surface(Modifier.fillMaxSize().safeDrawingPadding()) {
-        if (landscape) {
-            Row(
-                Modifier.fillMaxSize().padding(FlowUi.contentPadding),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(
-                    Modifier.weight(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+        /*
+         * Кто звонит — фото, имя, оператор, состояние вызова. Общий блок
+         * для раскладок «лёжа» и «ноутбук»: раньше жил только внутри
+         * альбомной ветки, и вторая раскладка скопировала бы его целиком.
+         */
+        val identityBlock: @Composable () -> Unit = {
                     /*
                      * Портрет и в альбомной ориентации.
                      *
@@ -652,10 +652,9 @@ private fun InCallScreen(
                     Spacer(Modifier.height(8.dp))
                     CallStatusLine(state, call)
                 }
-                Column(
-                    Modifier.weight(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+
+        /** Главные кнопки: ответить и отклонить, или завершить. */
+        val mainButtons: @Composable () -> Unit = {
                     Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                         if (state == Call.STATE_RINGING) {
                             BigButton(
@@ -682,6 +681,81 @@ private fun InCallScreen(
                             }
                         }
                     }
+                }
+
+        /*
+         * ══════════════════════════════════════════════════════════════════
+         * РАСКЛАДУШКА В ПОЛОЖЕНИИ «НОУТБУК»
+         * ══════════════════════════════════════════════════════════════════
+         * Полураскрытая раскладушка, сгиб горизонтальный: нижняя половина
+         * лежит на столе, верхняя стоит. Так её ставят для громкой связи
+         * и видеозвонков — и так же делает системное приложение на Pixel
+         * Fold и Galaxy Fold: собеседник — наверху, где его видно,
+         * кнопки — внизу, где до них достаёт палец.
+         *
+         * Граница — по сгибу, а не посередине экрана: у разных моделей
+         * сгиб не ровно в центре, и ничего не должно лечь на сам сгиб —
+         * там изображение искажено.
+         *
+         * ⚠️ Проверяется только на раскладушке или эмуляторе Pixel Fold:
+         * у телефона сгиба нет, и эта ветка не срабатывает.
+         */
+        val windowLayout = LocalWindowLayout.current
+        val hinge = windowLayout.hinge
+        if (windowLayout.posture == FoldPosture.TABLETOP && hinge != null && !hinge.vertical) {
+            val density = LocalDensity.current
+            // Сгиб — в координатах окна, а содержимое начинается ниже
+            // строки состояния: вычитаем её
+            val topInsetDp = with(density) {
+                WindowInsets.safeDrawing.getTop(density).toDp().value
+            }
+            val aboveHinge = (hinge.startDp - topInsetDp).coerceAtLeast(0f).dp
+            val hingeThickness = (hinge.endDp - hinge.startDp).coerceAtLeast(0f).dp
+
+            Column(Modifier.fillMaxSize()) {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(aboveHinge)
+                        .padding(FlowUi.contentPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        identityBlock()
+                    }
+                }
+
+                Spacer(Modifier.height(hingeThickness))
+
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(FlowUi.contentPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    mainButtons()
+                }
+            }
+            return@Surface
+        }
+
+        if (landscape) {
+            Row(
+                Modifier.fillMaxSize().padding(FlowUi.contentPadding),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    identityBlock()
+                }
+                Column(
+                    Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    mainButtons()
                 }
             }
             return@Surface
@@ -1387,7 +1461,8 @@ private fun InCallNoteField(
                 FilterChip(
                     selected = tag.key in selectedTags,
                     onClick = { onToggleTag(tag.key) },
-                    label = { Text(stringResource(tag.labelRes)) }
+                    // С заглавной — как в карточке, журнале и после звонка
+                    label = { Text(stringResource(tag.labelRes).replaceFirstChar { it.titlecase() }) }
                 )
             }
         }
@@ -1448,7 +1523,9 @@ private fun DtmfPanel(
                 }
             }
 
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            // Тот же разделитель, что везде: своя толщина здесь была
+            // заметнее соседних линий на других экранах
+            OgnelissDivider()
             Spacer(Modifier.height(8.dp))
 
             // Та же клавиатура, что на главном экране: одинаковые размеры

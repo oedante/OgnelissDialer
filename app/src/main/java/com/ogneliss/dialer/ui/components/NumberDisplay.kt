@@ -20,6 +20,10 @@ import com.ogneliss.dialer.R
 import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.ui.platform.LocalContext
 import com.ogneliss.dialer.ui.theme.Dimens
+import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
+import com.ogneliss.dialer.ui.theme.PanelColors
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.background
 import com.ogneliss.dialer.ui.theme.LocalAppearance
 import com.ogneliss.dialer.util.DialString
 
@@ -107,11 +111,32 @@ fun NumberDisplay(
         clipboard.primaryClipDescription?.hasMimeType("text/plain") == true
 
 
+    /*
+     * ══════════════════════════════════════════════════════════════════════
+     * СТРОКА НОМЕРА — ПОЛЕ, А НЕ ЧАСТЬ ПАНЕЛИ
+     * ══════════════════════════════════════════════════════════════════════
+     * В 1.1.2 панель в светлой теме стала серой, а клавиши — белыми.
+     * Строка номера осталась без своего фона, то есть того же серого, что
+     * панель, — и слилась с ней. Подсказка «Номер» цветом outlineVariant
+     * на новом сером почти пропала (контраст ~1,3 : 1), разделитель под
+     * строкой — тоже.
+     *
+     * Теперь строка номера — белое поле той же формы, что клавиши,
+     * и с теми же боковыми отступами (12 dp): видно, что сюда вводят,
+     * и поле стоит в одной сетке с клавиатурой. Разделитель под ним
+     * больше не нужен — границу даёт сам фон.
+     *
+     * Цвет — PanelColors.key(): в тёмной теме поле, как и клавиши,
+     * светлее панели.
+     */
     Column {
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 4.dp),
+                .padding(horizontal = 12.dp, vertical = 6.dp)
+                .clip(OgnelissShapeTokens.dialKey)
+                .background(PanelColors.key())
+                .padding(horizontal = 4.dp, vertical = 2.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             /*
@@ -172,8 +197,12 @@ fun NumberDisplay(
                     style = MaterialTheme.typography.displaySmall,
                     // Подсказка бледнее набранного: иначе пустое поле
                     // выглядит как уже введённое слово
+                    // outline, а не outlineVariant: на белом поле
+                    // outlineVariant даёт 1,7 : 1 — подсказку не видно.
+                    // outline — ~4,6 : 1: читается, но заметно бледнее
+                    // набранных цифр
                     color = if (query.isEmpty()) {
-                        MaterialTheme.colorScheme.outlineVariant
+                        MaterialTheme.colorScheme.outline
                     } else {
                         MaterialTheme.colorScheme.onSurface
                     },
@@ -230,6 +259,5 @@ fun NumberDisplay(
                 )
             }
         }
-        OgnelissDivider()
     }
 }
