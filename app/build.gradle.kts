@@ -297,7 +297,18 @@ android {
      * res/xml/locales_config.xml, иначе переключатель языка предложит
      * язык, которого в сборке нет, и интерфейс останется прежним.
      */
-    ksp { arg("room.schemaLocation", "$projectDir/schemas") }
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas")
+        /*
+         * Room 2.7+ по умолчанию генерирует код на Kotlin, 2.6 генерировал
+         * на Java. Kotlin-генерация строже к типам в DAO, и на ней могут
+         * всплыть ошибки компиляции, которых раньше не было. Обновление
+         * Room здесь вынужденное — ради совместимости с KSP2, — поэтому
+         * меняем как можно меньше: генерация остаётся на Java, как было.
+         * Перейти на Kotlin можно позже, отдельным шагом.
+         */
+        arg("room.generateKotlin", "false")
+    }
     /*
      * isReturnDefaultValues — почему включено.
      *
