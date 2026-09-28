@@ -18,7 +18,6 @@ import java.io.FileInputStream
  */
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
@@ -370,12 +369,6 @@ composeCompiler {
     if (metricsEnabled) {
         metricsDestination.set(layout.buildDirectory.dir("compose_metrics"))
         reportsDestination.set(layout.buildDirectory.dir("compose_metrics"))
-    }
-}
-
-kotlin {
-    compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 }
 
