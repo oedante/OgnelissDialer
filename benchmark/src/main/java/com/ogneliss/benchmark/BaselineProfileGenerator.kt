@@ -33,7 +33,23 @@ class BaselineProfileGenerator {
     val rule = BaselineProfileRule()
 
     @Test
-    fun generate() = rule.collect(packageName = "com.ogneliss.dialer") {
+            /*
+             * includeInStartupProfile = true — вдобавок к обычному профилю
+             * собирается профиль запуска.
+             *
+             * Обычный профиль говорит системе, какие методы скомпилировать заранее.
+             * Профиль запуска говорит R8, в каком порядке раскладывать код внутри
+             * DEX-файла: всё нужное для первого экрана — в начало, одним куском.
+             * Так при холодном старте с диска читается меньше страниц. Для диалера,
+             * которого открывают, когда нужно позвонить сейчас, это заметно.
+             *
+             * Без флага сборка профиля сама предупреждала: «No startup profile
+             * rules were generated».
+             */
+    fun generate() = rule.collect(
+        packageName = "com.ogneliss.dialer",
+        includeInStartupProfile = true
+    ) {
         pressHome()
         startActivityAndWait()
 
