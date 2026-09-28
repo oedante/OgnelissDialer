@@ -13,7 +13,8 @@ composeBom = "2024.12.01"
 # Gradle возьмёт высшую — таково правило разрешения конфликтов.
 #
 # Так в сборку и попал Compose 1.12.0, требующий AGP 9.1 и compileSdk 37,
-# тогда как у проекта AGP 8.7.3 и compileSdk 35.
+# тогда как у проекта тогда был AGP 8.7.3 и compileSdk 35. С AGP 9.3.1
+# преграда осталась одна — compileSdk 37 (у нас 36).
 #
 # Явная версия у инструментов разработчика закрывает эту лазейку:
 # она указана прямо, и поднять её транзитивной зависимостью нельзя.
@@ -67,6 +68,7 @@ androidx-datastore = { module = "androidx.datastore:datastore-preferences", vers
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version = "1.2.0" }

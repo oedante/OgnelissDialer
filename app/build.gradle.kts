@@ -331,18 +331,14 @@ android {
     packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
 }
 
-/**
- * ЦЕЛЕВАЯ ВЕРСИЯ JVM ДЛЯ KOTLIN.
+/*
+ * ЦЕЛЕВАЯ ВЕРСИЯ JVM ДЛЯ KOTLIN — БОЛЬШЕ НЕ ЗАДАЁТСЯ ОТДЕЛЬНО.
  *
- * Задаётся здесь, а не внутри `android { }`.
- *
- * Прежний `kotlinOptions { jvmTarget = "17" }` объявлен устаревшим
- * в Kotlin 2.x: в новых версиях он даёт ошибку компиляции самого
- * скрипта сборки, а не предупреждение.
- *
- * Значение обязано совпадать с `compileOptions` выше: расхождение
- * между Java и Kotlin даёт невнятную ошибку про несовместимые версии
- * байт-кода уже на этапе компоновки.
+ * С AGP 9 Kotlin встроен в сам плагин Android (плагин
+ * org.jetbrains.kotlin.android убран), и целевая версия JVM для Kotlin
+ * берётся из compileOptions выше. Раньше её приходилось дублировать
+ * блоком kotlin { compilerOptions { jvmTarget } } и следить, чтобы
+ * значения совпадали. Теперь расходиться нечему.
  */
 /**
  * ОТЧЁТ О СТАБИЛЬНОСТИ COMPOSE.
@@ -382,19 +378,20 @@ composeCompiler {
  * или транзитивная — потребует версию выше, Gradle возьмёт высшую:
  * таково правило разрешения конфликтов, и BOM его не отменяет.
  *
- * Так в сборку попал Compose 1.12.0. Он требует Android Gradle Plugin 9.1
- * и compileSdk 37, тогда как у проекта AGP 8.7.3 и compileSdk 35 —
- * сборка падает на проверке метаданных AAR с десятком сообщений сразу.
+ * Так в сборку однажды попал Compose 1.12.0. Он требует compileSdk 37,
+ * а у проекта compileSdk 36 — сборка падает на проверке метаданных AAR
+ * с десятком сообщений сразу.
  *
  * `strictly` действует иначе рекомендации: попытка поднять версию
  * не проходит молча, а роняет сборку с указанием, кто её потребовал.
  * Это и нужно — узнать источник, а не обнаружить последствие.
  *
- * ── Почему обновиться нельзя ───────────────────────────────────────────────
- * compileSdk 37 требует AGP 9.x, а тот — Gradle 9 и новую версию Kotlin.
- * Обновление всей цепочки посреди подготовки к публикации означало бы
- * заново проверять всё приложение. Compose 1.7.6 полностью закрывает
- * наши задачи.
+ * ── Когда можно обновить ────────────────────────────────────────────────────
+ * Теперь у проекта AGP 9.3.1 — он поддерживает compileSdk 37, так что
+ * преграда со стороны плагина снята. Осталась одна: compileSdk 37
+ * вместе с новым Compose — это смена поведения интерфейса по всему
+ * приложению, и делать её стоит отдельным выпуском с проверкой
+ * на устройстве, а не попутно.
  *
  * ── Как найти виновника, если сборка упадёт ────────────────────────────────
  *   ./gradlew :app:dependencyInsight \
@@ -412,7 +409,7 @@ configurations.configureEach {
                 requested.group == "androidx.compose.runtime"
             ) {
                 useVersion(libs.versions.composeUi.get())
-                because("AGP 8.7.3 и compileSdk 35 не поддерживают Compose 1.12+")
+                because("Compose 1.12+ требует compileSdk 37, у проекта 36")
             }
         }
     }
@@ -495,7 +492,9 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    androidTestImplementation("androidx.room:room-testing:2.6.1")
+    // Версия — из каталога, вместе с Room: разные версии runtime и testing
+    // ломают тесты миграций невнятными ошибками схемы
+    androidTestImplementation(libs.room.testing)
     baselineProfile(project(":benchmark"))
 
     /*
@@ -507,7 +506,7 @@ dependencies {
      * и Gradle брал последнюю доступную версию — 1.12.0.
      *
      * Она требует Android Gradle Plugin 9.1 и compileSdk 37, тогда как
-     * у проекта AGP 8.7.3 и compileSdk 35. Отсюда двенадцать сообщений
+     * у проекта тогда был AGP 8.7.3 и compileSdk 35. Отсюда двенадцать сообщений
      * о несовместимости метаданных AAR.
      *
      * Одна зависимость без версии подтягивает за собой весь Compose:
