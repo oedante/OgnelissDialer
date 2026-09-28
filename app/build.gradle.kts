@@ -244,9 +244,8 @@ android {
         checkReleaseBuilds = true
         warningsAsErrors = false
 
-        // Отчёт в файл: в CI консоль обрезается, и причина падения теряется
-        htmlReport = true
-        textReport = true
+        // Отчёты в файл (HTML и текст) AGP 9 создаёт всегда: прежние
+        // htmlReport и textReport устарели и больше ничего не меняют
 
         disable += setOf(
             // Переводы добавляются вместе с новыми строками, а не заранее:
