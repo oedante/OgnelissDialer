@@ -41,6 +41,8 @@ fun SettingsCategoryScreen(
      * тот, кто запускает запись, поэтому оно приходит снаружи.
      */
     snackbar: SnackbarHostState = remember { SnackbarHostState() },
+    /** Стрелка «назад»: разбор у ScreenScaffold.showBack. */
+    showBack: Boolean = true,
     onAction: (String) -> Unit
 ) {
     val ctx = LocalContext.current
@@ -56,6 +58,7 @@ fun SettingsCategoryScreen(
     ScreenScaffold(
         title = stringResource(category.titleRes),
         onBack = onBack,
+        showBack = showBack,
         snackbarHost = { SnackbarHost(snackbar) },
         /*
          * Панель закреплена.
@@ -100,7 +103,9 @@ fun SettingsCategoryScreen(
             }
 
             chunks.forEachIndexed { chunkIndex, (groupRes, chunkEntries) ->
-            if (chunkIndex > 0) Spacer(Modifier.height(16.dp))
+            // Зазор между подгруппами — только отступ над заголовком
+            // в SettingsGroup (12 dp). Был ещё и этот, 16 dp: вместе 36 —
+            // группы разъезжались, и раздел занимал полтора экрана
             SettingsGroup(title = groupRes?.let { stringResource(it) }) {
             chunkEntries.forEachIndexed { entryIndex, entry ->
                 val title = stringResource(entry.titleRes)

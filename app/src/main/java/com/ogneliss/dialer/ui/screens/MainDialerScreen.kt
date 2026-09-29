@@ -13,6 +13,14 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.*
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -1233,7 +1241,21 @@ fun MainDialerScreen(
         },
         bottomBar = {
             // Внизу — только когда клавиатура не стоит сбоку: разбор у sideDialpad
-            if (!sideDialpad) controlPanel(Modifier, false, null)
+            /*
+             * Панель внизу уезжает и возвращается плавно — в паре
+             * с клавиатурой сбоку (разбор ниже, у боковой панели).
+             * На телефоне в портрете sideDialpad всегда false: панель
+             * видна с самого начала, анимации нет.
+             */
+            AnimatedVisibility(
+                visible = !sideDialpad,
+                enter = expandVertically(tween(Motion.NORMAL_MS), expandFrom = Alignment.Top) +
+                    fadeIn(tween(Motion.NORMAL_MS)),
+                exit = shrinkVertically(tween(Motion.NORMAL_MS), shrinkTowards = Alignment.Top) +
+                    fadeOut(tween(Motion.QUICK_MS))
+            ) {
+                controlPanel(Modifier, false, null)
+            }
         },
         contentWindowInsets = WindowInsets.safeDrawing
     ) { scaffoldPadding ->
@@ -1474,21 +1496,43 @@ fun MainDialerScreen(
     
             }
 
-            if (sideDialpad) {
-                Box(
-                    Modifier
-                        // Сверху — под строку состояния; справа — под вырез
-                        // камеры, если он с этой стороны. Панель навигации
-                        // панель учитывает сама (navigationBarsPadding внутри)
-                        .padding(top = scaffoldPadding.calculateTopPadding())
-                        .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.End))
-                        .width(SIDE_DIALPAD_WIDTH)
-                        .fillMaxHeight()
-                        .padding(end = 8.dp, bottom = 8.dp)
-                ) {
-                    // Ряды клавиш делят высоту сами: разбор в Dialpad.fillHeight
-                    controlPanel(Modifier.fillMaxHeight(), true, null)
-                }
+            /*
+             * ══════════════════════════════════════════════════════════════
+             * КЛАВИАТУРА СБОКУ ВЫЕЗЖАЕТ, А НЕ ПОЯВЛЯЕТСЯ
+             * ══════════════════════════════════════════════════════════════
+             * Раньше при нажатии на клавиатуру на телефоне лёжа журнал
+             * мгновенно сжимался на 360 dp, а справа из ниоткуда возникала
+             * клавиатура. Резко — глаз не успевал понять, что произошло.
+             *
+             * Теперь клавиатура выезжает справа, расширяясь от левого края,
+             * журнал плавно уступает ей место, а нижняя панель в это же
+             * время уезжает вниз. При закрытии — всё обратно.
+             *
+             * Скорости — общие для приложения (Motion): выезд 300 мс,
+             * исчезновение быстрее, 200, — уходящее не должно задерживать
+             * взгляд.
+             */
+            AnimatedVisibility(
+                visible = sideDialpad,
+                enter = expandHorizontally(tween(Motion.NORMAL_MS), expandFrom = Alignment.Start) +
+                    fadeIn(tween(Motion.NORMAL_MS)),
+                exit = shrinkHorizontally(tween(Motion.NORMAL_MS), shrinkTowards = Alignment.Start) +
+                    fadeOut(tween(Motion.QUICK_MS))
+            ) {
+                    Box(
+                        Modifier
+                            // Сверху — под строку состояния; справа — под вырез
+                            // камеры, если он с этой стороны. Панель навигации
+                            // панель учитывает сама (navigationBarsPadding внутри)
+                            .padding(top = scaffoldPadding.calculateTopPadding())
+                            .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.End))
+                            .width(SIDE_DIALPAD_WIDTH)
+                            .fillMaxHeight()
+                            .padding(end = 8.dp, bottom = 8.dp)
+                    ) {
+                        // Ряды клавиш делят высоту сами: разбор в Dialpad.fillHeight
+                        controlPanel(Modifier.fillMaxHeight(), true, null)
+                    }
             }
         }
     }
@@ -2171,17 +2215,36 @@ private fun CallLogRow(
         directEndAction = endHint,
         startActions = emptyList(),
         endActions = emptyList(),
+        /*
+         * СВАЙП ВЫКЛЮЧЕН В НАСТРОЙКАХ — ОБРАБОТЧИКА НЕТ ВОВСЕ.
+         *
+         * Раньше обработчик передавался всегда, даже для «Нет действия».
+         * Строка свайпа считает направление рабочим, если обработчик есть
+         * (SwipeRevealRow.hasStartDirect), — и выключенный свайп всё равно
+         * тянулся: строка уезжала, возвращалась, только ничего не делала.
+         * А при обоих выключенных строка продолжала перехватывать
+         * горизонтальные движения пальца.
+         *
+         * Теперь для «Нет действия» — null: направление не тянется,
+         * а при обоих выключенных жест отключается целиком.
+         */
         onDirectStart = remember(row.key, settings.swipeRight) {
-            {
-                vm.performSwipe(settings.swipeRight, group) {
-                    swipeController.close()
+            if (settings.swipeRight == SwipeAction.NONE) null
+            else {
+                {
+                    vm.performSwipe(settings.swipeRight, group) {
+                        swipeController.close()
+                    }
                 }
             }
         },
         onDirectEnd = remember(row.key, settings.swipeLeft) {
-            {
-                vm.performSwipe(settings.swipeLeft, group) {
-                    swipeController.close()
+            if (settings.swipeLeft == SwipeAction.NONE) null
+            else {
+                {
+                    vm.performSwipe(settings.swipeLeft, group) {
+                        swipeController.close()
+                    }
                 }
             }
         },

@@ -157,25 +157,30 @@ class SimRepository @Inject constructor(
                         slotIndex = slot,
                         label = labelForSlot(slot, info.displayName?.toString()),
                         /*
-                         * Номер SIM-карты.
+                         * Номер SIM-карты — двумя путями.
                          *
-                         * Может отсутствовать — это нормально: операторы
-                         * записывают его на карту редко, и на нём ничего
-                         * не завязано.
+                         * С Android 13 номер отдаёт SubscriptionManager
+                         * .getPhoneNumber: он знает не только номер,
+                         * записанный на карту, но и полученный от сети
+                         * и заданный оператором. Нужно разрешение
+                         * READ_PHONE_NUMBERS — оно у нас запрашивается
+                         * вместе с остальными телефонными (AppPermissions,
+                         * группа «phone»). Прежний комментарий здесь
+                         * утверждал, что разрешения нет, — это устарело.
                          *
-                         * С Android 13 SubscriptionInfo.getNumber
-                         * объявлен устаревшим в пользу
-                         * SubscriptionManager.getPhoneNumber. Новый путь
-                         * требует API 33 и разрешения READ_PHONE_NUMBERS,
-                         * которого у нас нет и просить которое ради
-                         * необязательной подписи несоразмерно.
+                         * На старых версиях и без разрешения — прежний
+                         * SubscriptionInfo.number.
                          *
-                         * Поэтому старый вызов остаётся, а подавление
-                         * стоит точечно — чтобы предупреждение вернулось,
-                         * когда minSdk дорастёт до 33.
+                         * Номера может не быть ни там, ни там: российские
+                         * операторы записывают его на карту редко. Тогда
+                         * человеку поможет оператор и системное имя —
+                         * их показывает окно названий SIM.
                          */
-                        number = @Suppress("DEPRECATION") info.number
-                            ?.takeIf { it.isNotBlank() }
+                        number = readNumber(sm, info),
+                        carrier = info.carrierName?.toString()?.takeIf { it.isNotBlank() },
+                        systemName = info.displayName?.toString()?.takeIf { it.isNotBlank() },
+                        // isEmbedded — с Android 9; на 8 eSIM в телефонах не было
+                        embedded = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && info.isEmbedded
                     )
                 }
         }.getOrElse {
@@ -309,6 +314,27 @@ class SimRepository @Inject constructor(
         SubscriptionManager.OnSubscriptionsChangedListener? = null
 
     /** Подпись слота с учётом пользовательского имени. */
+    /** Номер карты: новым путём на Android 13+, иначе прежним. Разбор — у вызова. */
+    @SuppressLint("MissingPermission")
+    private fun readNumber(
+        sm: SubscriptionManager,
+        info: android.telephony.SubscriptionInfo
+    ): String? {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            androidx.core.content.ContextCompat.checkSelfPermission(
+                context, android.Manifest.permission.READ_PHONE_NUMBERS
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            runCatching { sm.getPhoneNumber(info.subscriptionId) }
+                .getOrNull()
+                ?.takeIf { it.isNotBlank() }
+                ?.let { return it }
+        }
+        return runCatching { @Suppress("DEPRECATION") info.number }
+            .getOrNull()
+            ?.takeIf { it.isNotBlank() }
+    }
+
     fun labelForSlot(slotIndex: Int, systemName: String? = null): String =
         customLabels[slotIndex]?.takeIf { it.isNotBlank() }
             ?: systemName?.takeIf { it.isNotBlank() }

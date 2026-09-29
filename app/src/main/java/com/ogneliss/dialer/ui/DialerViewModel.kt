@@ -214,6 +214,9 @@ class DialerViewModel @Inject constructor(
         group: CallLogGroup,
         sims: List<SimSlot>
     ): List<RevealAction> {
+        // Свайп выключен — выключен целиком, вместе с дополнительными
+        // действиями: иначе панель раскрывалась бы с одними «дополнительными»
+        if (primary == SwipeAction.NONE) return emptyList()
         if (extra.isEmpty()) return revealActions(primary, group, sims)
 
         return buildList {

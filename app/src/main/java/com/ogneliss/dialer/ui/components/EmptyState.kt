@@ -72,7 +72,15 @@ sealed interface EmptyReason {
 fun EmptyState(
     reason: EmptyReason,
     compact: Boolean = false,
-    onAction: (() -> Unit)? = null
+    onAction: (() -> Unit)? = null,
+    /**
+     * Внешние отступы — обычно отступы каркаса экрана.
+     *
+     * Заметки и напоминания рисовали пустое состояние без них, и значок
+     * с заголовком «Заметок пока нет» частично уходил под строку
+     * заголовка экрана — видно на снимках из тестирования 1.1.3.
+     */
+    modifier: Modifier = Modifier
 ) {
     val icon = iconFor(reason)
     val title = stringResource(titleFor(reason))
@@ -82,7 +90,7 @@ fun EmptyState(
     if (compact) {
         // Одна строка: в ландшафте и на узкой панели места под иллюстрацию нет
         Row(
-            Modifier.fillMaxWidth().padding(24.dp),
+            modifier.fillMaxWidth().padding(24.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(icon, null, tint = MaterialTheme.colorScheme.outline)
@@ -112,7 +120,7 @@ fun EmptyState(
     val alpha by animateFloatAsState(1f, tween(Motion.QUICK_MS), label = "emptyState")
 
     Column(
-        Modifier
+        modifier
             .fillMaxWidth()
             .graphicsLayer { this.alpha = alpha }
             .padding(32.dp),

@@ -159,7 +159,7 @@ for branch in re.finditer(
     # Ветка с телом в фигурных скобках — тоже обработка: действия,
     # которые пишут файл, сначала запоминают, что писать, и лишь потом
     # открывают системный выбор файла, а это две строки, а не одна
-    r'((?:"\w+"\s*,\s*)*"\w+")\s*->\s*(?:nav\.navigate|vm\.|openDocument|\w+ = true|\{)',
+    r'((?:"\w+"\s*,\s*)*"\w+")\s*->\s*(?:nav\.navigate|vm\.|openDocument|\w+ = true|on[A-Z]\w*\(\)|\{)',
     root_screen
 ):
     handled |= set(re.findall(r'"(\w+)"', branch.group(1)))

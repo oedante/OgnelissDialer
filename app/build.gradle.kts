@@ -82,8 +82,8 @@ android {
          * Перед публикацией в открытый доступ сменить на 1.0.0
          * и поднять versionCode.
          */
-        versionCode = 20
-        versionName = "1.1.3"
+        versionCode = 22
+        versionName = "1.2.1"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -350,6 +350,32 @@ android {
  * блоком kotlin { compilerOptions { jvmTarget } } и следить, чтобы
  * значения совпадали. Теперь расходиться нечему.
  */
+/*
+ * АННОТАЦИИ НА ПАРАМЕТРАХ КОНСТРУКТОРА — И НА ПОЛЕ ТОЖЕ.
+ *
+ * Kotlin 2.2 предупреждал об этом тридцать раз за сборку (KT-73255):
+ * аннотация на параметре конструктора вида
+ *
+ *     class Repo @Inject constructor(@ApplicationContext private val context: Context)
+ *
+ * сейчас применяется только к параметру, а в следующих версиях будет
+ * применяться и к полю. Флаг включает будущее поведение уже сейчас.
+ *
+ * Для нас это ничего не меняет: у нас такие аннотации — квалификаторы
+ * Hilt (@ApplicationContext) и подсказки ресурсов (@StringRes). Hilt
+ * читает их с параметра, где они и останутся; на поле они лишь
+ * добавятся и никем не читаются. Зато тридцать одинаковых предупреждений
+ * больше не заслоняют настоящие.
+ *
+ * Блок kotlin { } со встроенным в AGP 9 Kotlin остаётся на месте —
+ * убран был только jvmTarget, который теперь берётся из compileOptions.
+ */
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xannotation-default-target=param-property")
+    }
+}
+
 /**
  * ОТЧЁТ О СТАБИЛЬНОСТИ COMPOSE.
  *

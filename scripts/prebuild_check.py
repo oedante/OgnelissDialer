@@ -386,13 +386,24 @@ for f in kt_files():
 # dropAllTables добавлен в Room 2.7. На более ранних версиях вызов
 # с этим параметром не компилируется, а сообщение — «No parameter
 # with name» — не подсказывает, что дело в версии библиотеки
-for f in kt_files():
-    text = open(f, encoding='utf-8').read()
-    code = re.sub(r'/\*.*?\*/', '', text, flags=re.S)
-    code = re.sub(r'//.*', '', code)
-    if 'dropAllTables' in code:
-        problems['Параметр Room недоступен в текущей версии'].append(
-            f'{os.path.relpath(f, SRC)}: dropAllTables требует Room 2.7+')
+#
+# Версия Room берётся из каталога версий: раньше проверка ругалась
+# на любой dropAllTables, потому что Room был 2.6.1 навсегда. С 1.1.3
+# Room 2.8 — параметр законен, а на 2.6 запрещён по-прежнему.
+_catalog = os.path.join(ROOT, 'gradle', 'libs.versions.toml')
+_room = None
+if os.path.exists(_catalog):
+    _m = re.search(r'^room\s*=\s*"(\d+)\.(\d+)', open(_catalog, encoding='utf-8').read(), re.M)
+    if _m:
+        _room = (int(_m.group(1)), int(_m.group(2)))
+if _room is None or _room < (2, 7):
+    for f in kt_files():
+        text = open(f, encoding='utf-8').read()
+        code = re.sub(r'/\*.*?\*/', '', text, flags=re.S)
+        code = re.sub(r'//.*', '', code)
+        if 'dropAllTables' in code:
+            problems['Параметр Room недоступен в текущей версии'].append(
+                f'{os.path.relpath(f, SRC)}: dropAllTables требует Room 2.7+')
 
 # ── 15. Полнота настроек ──────────────────────────────────────────────────
 # Реестр настроек — декларация, и в ней легко продублировать пункт

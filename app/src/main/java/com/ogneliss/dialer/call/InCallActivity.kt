@@ -175,11 +175,19 @@ class InCallActivity : ComponentActivity() {
              */
             val theme by prefs.theme.collectAsState(initial = ThemeMode.SYSTEM)
             val dynamic by prefs.dynamicColor.collectAsState(initial = false)
+            // Подписи под кнопками — та же настройка, что во всём приложении.
+            // Экран вызова — отдельная активность, корня приложения у него
+            // нет, поэтому оформление ставится здесь
+            val buttonLabels by prefs.buttonLabels.collectAsState(initial = true)
 
             OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic) {
                 // Раскладка окна: телефон, лёжа, раскладушка, планшет.
                 // Разбор — в ui/adaptive/WindowLayout.kt
                 ProvideWindowLayout(this@InCallActivity) {
+                androidx.compose.runtime.CompositionLocalProvider(
+                    com.ogneliss.dialer.ui.theme.LocalAppearance provides
+                        com.ogneliss.dialer.ui.theme.Appearance(buttonLabels = buttonLabels)
+                ) {
                 val calls by CallManager.calls.collectAsState()
                 val revision by CallManager.revision.collectAsState()
                 val audio by CallManager.audioState.collectAsState()
@@ -242,6 +250,7 @@ class InCallActivity : ComponentActivity() {
                 )
             }
             }
+                }
         }
     }
 
@@ -906,7 +915,7 @@ private fun InCallScreen(
                 ) {
                   Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     /*
-                     * УПРАВЛЕНИЕ — ОДНОЙ ПАНЕЛЬЮ.
+                     * УПРАВЛЕНИЕ — ОДНИМ БЛОКОМ, БЕЗ ПОДЛОЖКИ.
                      *
                      * ── Что было ───────────────────────────────────────────
                      * Кнопки висели прямо на фоне экрана. Вместе с именем,
@@ -915,46 +924,50 @@ private fun InCallScreen(
                      * где кончается «кто звонит» и начинается «что я могу
                      * сделать».
                      *
-                     * ── Как теперь ─────────────────────────────────────────
+                     * ── Как было в 1.0 — 1.2.0 ─────────────────────────────
                      * Те же кнопки на подложке — по общему правилу
                      * приложения: смысловой блок живёт в карточке.
-                     * Ничего не добавлено и не убрано, изменилась
-                     * только группировка.
+                     *
+                     * ── Как теперь (1.2.1) ─────────────────────────────────
+                     * Подложка убрана. Первый же отзыв в Google Play
+                     * просил убрать «большую квадратную тень вокруг
+                     * кнопок»: большой светло-серый прямоугольник занимал
+                     * треть экрана и спорил с портретом за внимание.
+                     * Круглые кнопки группируются и сами — одинаковой
+                     * формой и ровной сеткой; отдельный фон под ними
+                     * не нужен. Сами кружки стали заметнее: теперь они
+                     * лежат прямо на светлом фоне экрана, а не на сером.
                      *
                      * Полоски-«ручки» сверху, как в макете, здесь нет:
                      * она обещает, что панель тянется пальцем, а она
                      * не тянется. Обещать жест и не дать его — хуже,
                      * чем не обещать.
                      */
-                    Surface(
-                        shape = MaterialTheme.shapes.extraLarge,
-                        color = MaterialTheme.colorScheme.surfaceContainer,
-                        tonalElevation = 2.dp,
-                        modifier = Modifier.fillMaxWidth()
+                    Box(
+                        Modifier.fillMaxWidth().padding(vertical = 8.dp, horizontal = 8.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Box(Modifier.padding(vertical = 16.dp, horizontal = 8.dp)) {
-                            // Возможности читаются заново на каждое событие
-                            // телефонии: сеть сообщает их не сразу
-                            val canHold = remember(revision, call) { CallManager.canHold }
-                            val canMerge = remember(revision, call, secondary) { CallManager.canMerge }
-                            val canAddCall = remember(revision, call, secondary) { CallManager.canAddCall }
-                            val context = androidx.compose.ui.platform.LocalContext.current
+                        // Возможности читаются заново на каждое событие
+                        // телефонии: сеть сообщает их не сразу
+                        val canHold = remember(revision, call) { CallManager.canHold }
+                        val canMerge = remember(revision, call, secondary) { CallManager.canMerge }
+                        val canAddCall = remember(revision, call, secondary) { CallManager.canAddCall }
+                        val context = androidx.compose.ui.platform.LocalContext.current
 
-                            ControlsRow(
-                                audioState = audioState,
-                                onManualAudioChange = onManualAudioChange,
-                                onHold = { CallManager.toggleHold() },
-                                onDialpad = { showDialpad = !showDialpad },
-                                onSwap = { CallManager.swapCalls() },
-                                onMerge = { CallManager.merge() },
-                                hasSecondary = secondary != null,
-                                isHolding = state == Call.STATE_HOLDING,
-                                canHold = canHold,
-                                canMerge = canMerge,
-                                canAddCall = canAddCall,
-                                onAddCall = { openDialerForSecondCall(context) }
-                            )
-                        }
+                        ControlsRow(
+                            audioState = audioState,
+                            onManualAudioChange = onManualAudioChange,
+                            onHold = { CallManager.toggleHold() },
+                            onDialpad = { showDialpad = !showDialpad },
+                            onSwap = { CallManager.swapCalls() },
+                            onMerge = { CallManager.merge() },
+                            hasSecondary = secondary != null,
+                            isHolding = state == Call.STATE_HOLDING,
+                            canHold = canHold,
+                            canMerge = canMerge,
+                            canAddCall = canAddCall,
+                            onAddCall = { openDialerForSecondCall(context) }
+                        )
                     }
                     Spacer(Modifier.height(16.dp))
                   }
@@ -1327,10 +1340,14 @@ private fun ToggleTile(
         ) {
             Icon(icon, label, Modifier.size(28.dp))
         }
-        Spacer(Modifier.height(8.dp))
-        // labelMedium: подпись под значком — тот же стиль,
-        // что у подписей в нижней панели журнала
-        Text(label, style = MaterialTheme.typography.labelMedium)
+        // Подпись — если не выключена в настройках оформления.
+        // Описание для TalkBack у значка есть и без неё
+        if (com.ogneliss.dialer.ui.theme.LocalAppearance.current.buttonLabels) {
+            Spacer(Modifier.height(8.dp))
+            // labelMedium: подпись под значком — тот же стиль,
+            // что у подписей в нижней панели журнала
+            Text(label, style = MaterialTheme.typography.labelMedium)
+        }
     }
 }
 

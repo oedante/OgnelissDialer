@@ -1,6 +1,11 @@
 package com.ogneliss.dialer.ui.components
 
 import androidx.compose.foundation.clickable
+import com.ogneliss.dialer.ui.theme.PanelColors
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -62,7 +67,8 @@ fun LabeledIconButton(
      * (телефон лёжа): там подписи съедали бы четверть высоты экрана.
      * Описание для чтения с экрана остаётся в любом случае.
      */
-    showLabel: Boolean = !LocalWindowLayout.current.isShort
+    showLabel: Boolean = !LocalWindowLayout.current.isShort &&
+        com.ogneliss.dialer.ui.theme.LocalAppearance.current.buttonLabels
 ) {
     val label = stringResource(labelRes)
 
@@ -79,7 +85,31 @@ fun LabeledIconButton(
             .padding(horizontal = 4.dp, vertical = 2.dp)
             .widthIn(min = Dimens.MIN_TOUCH_TARGET)
     ) {
-        Icon(icon, contentDescription = null, tint = tint)
+        /*
+         * ЗНАЧОК — В «ТАБЛЕТКЕ» ТОГО ЖЕ РАЗМЕРА, ЧТО КНОПКА КЛАВИАТУРЫ.
+         *
+         * Раньше по сторонам стояли голые значки (24 dp), а в центре —
+         * крупная кнопка клавиатуры (88 × 52). Из-за разницы в высоте
+         * над боковыми значками оставалась пустота, а подписи приходилось
+         * выравнивать по низу.
+         *
+         * Теперь все пять кнопок одной высоты: боковые — таблетки
+         * 56 × 40 со светлой подложкой (цвет клавиш набора), кнопка
+         * клавиатуры — 72 × 40 и залита основным цветом. Ряд ровный,
+         * пустоты нет, а кнопки стали крупнее и проще для пальца.
+         *
+         * Совмещены оба ваших варианта: боковые кнопки больше,
+         * клавиатура — меньше (но всё ещё шире соседей и выделена цветом).
+         */
+        Box(
+            Modifier
+                .size(width = PILL_WIDTH, height = PILL_HEIGHT)
+                .clip(CircleShape)
+                .background(PanelColors.key()),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(icon, contentDescription = null, tint = tint)
+        }
 
         if (showLabel) {
             Spacer(Modifier.height(2.dp))
@@ -94,3 +124,7 @@ fun LabeledIconButton(
         }
     }
 }
+
+/** Размер «таблетки» боковой кнопки панели. */
+internal val PILL_WIDTH = 56.dp
+internal val PILL_HEIGHT = 40.dp

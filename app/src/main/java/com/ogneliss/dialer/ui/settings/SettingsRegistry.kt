@@ -227,6 +227,11 @@ object SettingsRegistry {
             keywordsRes = R.string.keywords_accessibility
         ),
         SettingEntry(
+            "button_labels", SettingsCategory.APPEARANCE,
+            R.string.settings_button_labels, R.string.settings_button_labels_text,
+            SettingKind.Switch("button_labels")
+        ),
+        SettingEntry(
             "show_photo", SettingsCategory.APPEARANCE,
             R.string.settings_show_photo, null,
             SettingKind.Switch("show_photo")

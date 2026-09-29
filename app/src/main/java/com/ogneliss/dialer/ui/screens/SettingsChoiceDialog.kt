@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.R
+import com.ogneliss.dialer.ui.components.swipe.RevealActionFactory
 import com.ogneliss.dialer.settings.SettingsCommands
 import com.ogneliss.dialer.settings.SwipeAction
 import com.ogneliss.dialer.settings.SwipeSimMode
@@ -138,10 +139,26 @@ fun SettingsChoiceDialog(
                     .heightIn(max = 400.dp)
                     .verticalScroll(rememberScrollState())
             ) {
+                /*
+                 * У действий свайпа — значки, те же, что появляются под
+                 * строкой журнала при свайпе, в тех же цветах: список
+                 * быстрее читается, и выбранное действие потом узнаётся
+                 * в журнале с первого взгляда.
+                 */
+                val swipeIcons = settingKey == "swipe_right" || settingKey == "swipe_left"
                 options.forEach { (value, label) ->
+                    val visual = if (swipeIcons) {
+                        SwipeAction.entries.firstOrNull { it.key == value }
+                            ?.let { RevealActionFactory.iconOf(it) }
+                    } else null
                     ChoiceRow(
                         selected = value == current,
                         label = label,
+                        icon = visual?.first,
+                        iconTint = visual?.second,
+                        // У «Ничего» значка нет, но место под него оставлено:
+                        // иначе подпись съехала бы левее остальных
+                        reserveIconSpace = swipeIcons,
                         onSelect = {
                             vm.setChoice(settingKey, value)
                             onDismiss()
@@ -157,7 +174,14 @@ fun SettingsChoiceDialog(
 }
 
 @Composable
-private fun ChoiceRow(selected: Boolean, label: String, onSelect: () -> Unit) {
+private fun ChoiceRow(
+    selected: Boolean,
+    label: String,
+    onSelect: () -> Unit,
+    icon: androidx.compose.ui.graphics.vector.ImageVector? = null,
+    iconTint: androidx.compose.ui.graphics.Color? = null,
+    reserveIconSpace: Boolean = false
+) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -169,6 +193,17 @@ private fun ChoiceRow(selected: Boolean, label: String, onSelect: () -> Unit) {
         // onClick = null: нажатие обрабатывает вся строка
         RadioButton(selected = selected, onClick = null)
         Spacer(Modifier.width(12.dp))
+        if (icon != null) {
+            Icon(
+                icon,
+                contentDescription = null,
+                tint = iconTint ?: MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(Modifier.width(12.dp))
+        } else if (reserveIconSpace) {
+            Spacer(Modifier.width(36.dp))
+        }
         Text(label, style = MaterialTheme.typography.bodyLarge)
     }
 }

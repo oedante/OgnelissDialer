@@ -208,10 +208,9 @@ object FlowUi {
      * с подписью — 46. Одно значение на все четыре панели держит их
      * одинаковыми: при переходе между экранами край панели не прыгает.
      */
-    // 76, а не 72: подписи встали на одну линию (выравнивание по низу
-    // с отступом 4 dp), и кнопке клавиатуры с подписью (52 + 2 + 16 = 70)
-    // в 72 − 4 уже не хватало бы места
-    val bottomPanelRowHeight = 76.dp
+    // Кнопка с подписью: таблетка 40 + зазор 2 + подпись 16 = 58.
+    // С 1.2.0 все кнопки ряда одной высоты, и 72 хватает с запасом
+    val bottomPanelRowHeight = 72.dp
 
     /**
      * Высота строки нижней панели для текущего окна.
@@ -226,7 +225,10 @@ object FlowUi {
      */
     @androidx.compose.runtime.Composable
     fun panelRowHeight(): androidx.compose.ui.unit.Dp =
-        if (com.ogneliss.dialer.ui.adaptive.LocalWindowLayout.current.isShort) 60.dp
+        // Без подписей строке хватает высоты самой кнопки — как лёжа
+        if (com.ogneliss.dialer.ui.adaptive.LocalWindowLayout.current.isShort ||
+            !LocalAppearance.current.buttonLabels
+        ) 60.dp
         else bottomPanelRowHeight
 
     /**

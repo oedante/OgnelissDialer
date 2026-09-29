@@ -53,6 +53,8 @@ class SettingsStateSource @Inject constructor(
     ) { theme, dynamic, large, photo, sort ->
         Appearance(theme, dynamic, large, photo, sort)
     }
+        // Шестой поток — отдельно: у типизированного combine предел пять
+        .combine(prefs.buttonLabels) { a, labels -> a.copy(buttonLabels = labels) }
 
     /** Жесты и отклик. */
     private val gestures: Flow<Gestures> = combine(
@@ -142,6 +144,7 @@ class SettingsStateSource @Inject constructor(
             largeButtons = a.largeButtons,
             showPhoto = a.showPhoto,
             sortOrder = a.sortOrder,
+            buttonLabels = a.buttonLabels,
             notesRetention = n.retention,
             notesRetentionScope = n.scope,
             language = n.language,
@@ -182,7 +185,8 @@ class SettingsStateSource @Inject constructor(
         val dynamicColor: Boolean,
         val largeButtons: Boolean,
         val showPhoto: Boolean,
-        val sortOrder: SortOrder
+        val sortOrder: SortOrder,
+        val buttonLabels: Boolean = true
     )
 
     private data class Notes(

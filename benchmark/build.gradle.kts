@@ -74,14 +74,6 @@ android {
 
     testOptions {
         managedDevices {
-            /*
-             * localDevices, а не devices.
-             *
-             * Контейнер devices с create<ManagedVirtualDevice> — старый API,
-             * в AGP 9 его нет: сборка падает на «Unresolved reference
-             * 'devices'». localDevices — нынешний вид, в нём тип устройства
-             * уже известен, и указывать его не нужно.
-             */
             localDevices {
                 create("benchmarkDevice") {
                     device = "Pixel 6"
@@ -113,7 +105,7 @@ baselineProfile {
     // false: профиль собирается на виртуальном устройстве из блока выше.
     // Поставить true, если хотите собирать на подключённом телефоне —
     // цифры будут ближе к реальности, но нужен физический аппарат
-    useConnectedDevices = false
+    useConnectedDevices = true
 
     /*
      * Блок warnings убран.

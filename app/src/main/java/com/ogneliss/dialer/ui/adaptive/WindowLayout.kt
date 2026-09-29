@@ -215,3 +215,49 @@ fun ProvideWindowLayout(activity: Activity, content: @Composable () -> Unit) {
 
     CompositionLocalProvider(LocalWindowLayout provides layout, content = content)
 }
+
+/**
+ * Показана ли боковая полоса навигации (RootScreen).
+ *
+ * Отдельно от раскладки окна: внутри панели «список — подробности»
+ * раскладка переопределяется по ширине панели (см. ProvidePaneLayout),
+ * и по ней уже не понять, что слева от всего экрана есть полоса.
+ * А панели журнала это важно: при полосе кнопки «Контакты»
+ * и «Напоминания» на ней лишние.
+ */
+val LocalNavigationRailShown = staticCompositionLocalOf { false }
+
+/**
+ * РАСКЛАДКА ДЛЯ ПАНЕЛИ, А НЕ ДЛЯ ВСЕГО ОКНА.
+ *
+ * ══════════════════════════════════════════════════════════════════════════
+ * ЗАЧЕМ
+ * ══════════════════════════════════════════════════════════════════════════
+ * На планшете журнал и карточка стоят рядом, каждая — на половине
+ * экрана. Но их собственные решения о раскладке смотрят на окно
+ * целиком: окно широкое — значит, клавиатуру сбоку, карточку в две
+ * колонки. На половине экрана это давало бы журнал шириной в палец
+ * рядом с клавиатурой и карточку, разрезанную на узкие колонки.
+ *
+ * Здесь раскладка переопределяется по размеру самой панели: для экрана
+ * внутри она — «окно». Половина планшета — это раскладушка
+ * или телефон, и экраны выбирают раскладку, подходящую своему месту,
+ * ничего не зная о соседях.
+ *
+ * Положение сгиба и сам сгиб переносятся как есть: сгиб — свойство
+ * устройства, а не панели.
+ */
+@Composable
+fun ProvidePaneLayout(content: @Composable () -> Unit) {
+    androidx.compose.foundation.layout.BoxWithConstraints {
+        val parent = LocalWindowLayout.current
+        val w = maxWidth.value.toInt()
+        val h = maxHeight.value.toInt()
+        val pane = parent.copy(
+            mode = WindowLayout.classify(w, h),
+            widthDp = w,
+            heightDp = h
+        )
+        CompositionLocalProvider(LocalWindowLayout provides pane, content = content)
+    }
+}

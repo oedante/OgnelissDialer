@@ -39,7 +39,10 @@ fun SettingsGroup(
             Text(
                 it,
                 Modifier
-                    .padding(start = 8.dp, top = 20.dp, bottom = 8.dp)
+                    // 12 сверху, а не 20: с подгруппами разделы стали длиннее,
+                    // и прежний зазор между группами (36 dp вместе
+                    // с разделителем подгрупп) растягивал экран втрое
+                    .padding(start = 8.dp, top = 12.dp, bottom = 8.dp)
                     // heading() позволяет TalkBack прыгать по разделам,
                     // не прослушивая каждую строку
                     .semantics { heading() },

@@ -915,8 +915,11 @@ private fun ContactRow(
             controller = swipeController,
             startActions = startActions,
             endActions = emptyList(),
-            onDirectStart = onSwipeCall,
-            onDirectEnd = onSwipeSms,
+            // Выключенный в настройках свайп — без обработчика: иначе
+            // строка тянется, хотя ничего не делает (разбор — у журнала,
+            // MainDialerScreen, onDirectStart)
+            onDirectStart = onSwipeCall.takeIf { startHint != null },
+            onDirectEnd = onSwipeSms.takeIf { endHint != null },
             // Пороги те же, что в журнале: расхождение читается
             // как «свайп сломан»
             tuning = swipeTuning,

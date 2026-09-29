@@ -30,6 +30,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.text.style.TextAlign
+import com.ogneliss.dialer.ui.adaptive.ProvidePaneLayout
+import com.ogneliss.dialer.ui.adaptive.LocalNavigationRailShown
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.material.icons.automirrored.filled.StickyNote2
+import androidx.compose.material.icons.filled.Alarm
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.Icons
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.ogneliss.dialer.ui.theme.PanelColors
+import com.ogneliss.dialer.ui.adaptive.LayoutMode
+import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
 import com.ogneliss.dialer.ui.screens.ContactsScreen
 import com.ogneliss.dialer.ui.screens.NotesScreen
 import com.ogneliss.dialer.ui.screens.RemindersScreen
@@ -231,7 +244,8 @@ fun RootScreen(
             largeButtons = settings.largeButtons,
             showPhoto = settings.showPhoto,
             haptic = settings.haptic,
-            keyTones = settings.keyTones
+            keyTones = settings.keyTones,
+            buttonLabels = settings.buttonLabels
         )
     }
 
@@ -338,390 +352,363 @@ fun RootScreen(
             }
         }
 
-        NavHost(
-            nav,
-            startDestination = "dialer",
-            modifier = Modifier.weight(1f),
-            // Переходы построены на смещении и прозрачности — система
-            // умеет анимировать их в обратную сторону, что нужно
-            // для предпросмотра возврата на Android 14+
-            enterTransition = Motion.enterForward,
-            exitTransition = Motion.exitForward,
-            popEnterTransition = Motion.enterBackward,
-            popExitTransition = Motion.exitBackward
-        ) {
-            composable("dialer") {
-                MainDialerScreen(
-                    vm = vm,
-                    prefilledNumber = prefilledNumber,
-                    prefillToken = prefillToken,
-                    openDialpad = openDialpad,
-                    onOpenContacts = { nav.navigate("contacts") },
-                    onOpenSettings = { nav.navigate("settings") },
-                    // Ключ группы кодируем: он содержит символы,
-                    // недопустимые в маршруте без экранирования
-                    onOpenSubscriber = { key ->
-                        nav.navigate("subscriber/" + android.net.Uri.encode(key))
-                    },
-                    onOpenBlockLists = { nav.navigate("blocklists") },
-                    onOpenFakeCallPicker = { nav.navigate("contacts?pick=fake") },
-                    onOpenNotes = { nav.navigate("notes") },
-                    onOpenReminders = { nav.navigate("reminders") }
-                )
-            }
-            composable(
-                "contacts?pick={pick}",
-                arguments = listOf(
-                    navArgument("pick") { defaultValue = ""; type = NavType.StringType }
-                )
-            ) { entry ->
-                /*
-                 * Режим выбора для закрепления.
-                 *
-                 * Экран контактов один и тот же: заводить второй список
-                 * ради выбора означало бы поддерживать два поиска,
-                 * две группировки и два набора свайпов — и они разошлись
-                 * бы при первой же правке.
-                 */
-                val pickMode = entry.arguments?.getString("pick").orEmpty()
+        /*
+         * ══════════════════════════════════════════════════════════════════
+         * БОКОВАЯ НАВИГАЦИЯ НА ШИРОКОМ ОКНЕ
+         * ══════════════════════════════════════════════════════════════════
+         * Этап 5 плана ADAPTIVE_PLAN.md. На планшете и раскладушке лёжа
+         * до нижней кромки экрана палец тянется неудобно, а по бокам места
+         * в избытке — Material советует для широких окон боковую полосу
+         * навигации вместо нижней.
+         *
+         * Четыре главных экрана — журнал, контакты, заметки, напоминания —
+         * всегда под рукой слева, одним касанием, без перелистывания.
+         *
+         * ⚠️ Первая версия: нижние панели экранов остаются на месте —
+         * в них клавиатура набора, поиск и фильтры. Кнопки «Контакты»
+         * и «Напоминания» на панели журнала на широком окне дублируют
+         * полосу; убрать их — следующим шагом, когда полоса проверена
+         * на устройстве.
+         */
+        val railLayout = LocalWindowLayout.current
+        val showRail = railLayout.mode == LayoutMode.TABLET
+        val backStack by nav.currentBackStackEntryAsState()
+        val currentRoute = backStack?.destination?.route.orEmpty()
 
-                ContactsScreen(
-                    vm = vm,
-                    onOpenNotes = { nav.navigate("notes") },
-                    // Псевдозвонок с экрана контактов запускается сразу,
-                    // без выбора времени: окно с вариантами живёт
-                    // в журнале, а здесь нужна та же кнопка «сейчас»
-                    onFakeCall = { FakeCall.ringNow(context) },
-                    /*
-                     * Режим выбора один, а применений два: закрепление
-                     * номера и выбор «звонящего» для псевдозвонка.
-                     * Экран об этом не знает — он просто возвращает
-                     * номер, а что с ним делать, решает маршрут.
-                     */
-                    pickForPinning = pickMode == "pin" || pickMode == "fake",
-                    onPicked = { e164 ->
-                        when (pickMode) {
-                            "fake" -> vm.setFakeCallNumber(e164)
-                            else -> vm.pinNumber(e164)
-                        }
-                        nav.popBackStack()
-                    },
-                    onBack = { nav.popBackStack() },
-                    // Карточка открывается по ключу группы журнала;
-                    // для контакта без звонков ключ строится по его id
-                    onOpenContact = { id ->
-                        nav.navigate("subscriber/" + android.net.Uri.encode("contact:$id"))
-                    }
-                )
-            }
-
-
-            // Карточка абонента: вся история общения с одним человеком
-            composable(
-                "subscriber/{key}",
-                arguments = listOf(navArgument("key") { type = NavType.StringType })
-            ) { entry ->
-                val key = android.net.Uri.decode(entry.arguments?.getString("key").orEmpty())
-                SubscriberScreen(
-                    groupKey = key,
-                    vm = vm,
-                    onOpenBlockLists = { nav.navigate("blocklists") },
-                    onBack = { nav.popBackStack() }
-                )
-            }
-            // Главный экран настроек: семь категорий + поиск
-            composable("settings") {
-                SettingsHomeScreen(
-                    onBack = { nav.popBackStack() },
-                    onOpenCategory = { nav.navigate(it.route) },
-                    // Из поиска переходим сразу в категорию найденной настройки
-                    onOpenEntry = { nav.navigate(it.category.route) }
-                )
-            }
-
-            composable("permissions") {
-                PermissionsSettingsScreen(
-                    isDefaultDialer = isDefaultDialer,
-                    onRequestDefaultDialer = onRequestDefault,
-                    onOpenSystemSettings = onOpenSystemSettings,
-                    onBack = { nav.popBackStack() }
-                )
-            }
-
-            composable("about") {
-                AboutScreen(
-                    onBack = { nav.popBackStack() },
-                    onOpenLegal = { doc -> nav.navigate("legal/${doc.name}") }
-                )
-            }
-
-            composable("legal/{doc}") { entry ->
-                val doc = runCatching {
-                    LegalDocument.valueOf(entry.arguments?.getString("doc").orEmpty())
-                }.getOrDefault(LegalDocument.PRIVACY)
-                LegalScreen(document = doc, onBack = { nav.popBackStack() })
-            }
-
-            composable("external_lookup") {
-                ExternalLookupScreen(vm = vm, onBack = { nav.popBackStack() })
-            }
-
-            composable("pinned") {
-                PinnedContactsScreen(
-                    vm = vm,
-                    onBack = { nav.popBackStack() },
-                    // Выбор идёт через тот же экран контактов: заводить
-                    // второй список ради одной задачи означало бы
-                    // поддерживать два поиска и две группировки
-                    onAddFromContacts = { nav.navigate("contacts?pick=pin") }
-                )
-            }
-
-            composable("swipe_tuning") {
-                SwipeTuningScreen(vm = vm, onBack = { nav.popBackStack() })
-            }
-
-            composable("backup") {
-                BackupScreen(vm = vm, onBack = { nav.popBackStack() })
-            }
-
-            composable("stats") {
-                StatsScreen(vm = vm, onBack = { nav.popBackStack() })
-            }
-
-            composable("speeddial") {
-                SpeedDialScreen(vm = vm, onBack = { nav.popBackStack() })
-            }
-
-            /*
-             * Заметки и напоминания.
-             *
-             * Отдельные экраны, а не фильтры списков: заметку ищут,
-             * когда забыли, к кому она относится, а напоминания нужны
-             * по времени, а не по человеку. Разбор — в шапках самих
-             * экранов.
-             */
-            composable("notes") {
-                /*
-                 * ══════════════════════════════════════════════════════════
-                 * ВОТ ПОЧЕМУ СВАЙП НЕ РАБОТАЛ — И НИКОГДА НЕ РАБОТАЛ
-                 * ══════════════════════════════════════════════════════════
-                 * Экран заметок умеет листаться, но колбэки перелистывания
-                 * сюда просто не передавались: onSwipeNext и onSwipePrevious
-                 * оставались по умолчанию null, а при null жест выключен
-                 * (enabled = false). Палец шёл вбок — и касание уходило полю
-                 * поиска или кнопке фильтра, потому что жеста не было вовсе.
-                 *
-                 * Три захода я чинил распознавание жеста — фазу доставки
-                 * событий, площадь касания, перехват у поля ввода. Всё это
-                 * было не о том. Подсказка была в словах «в контактах
-                 * работает, наполнение панели то же»: раз панель одна,
-                 * разница должна быть не в ней, а в том, что ей передают.
-                 *
-                 * Передача — как в контактах: с учётом той же настройки
-                 * panelSwipeNav и в том же порядке карусели
-                 * журнал → контакты → заметки → напоминания.
-                 */
-                NotesScreen(
-                    vm = vm,
-                    onOpenCard = { number ->
-                        nav.navigate("subscriber/" + android.net.Uri.encode(number))
-                    },
-                    onBack = { nav.popBackStack() },
-                    // Вперёд — к напоминаниям, назад — туда, откуда пришли
-                    // (из карусели это контакты), как «назад» в контактах
-                    onSwipeNext = if (settings.panelSwipeNav) {
-                        { nav.navigate("reminders") }
-                    } else null,
-                    onSwipePrevious = if (settings.panelSwipeNav) {
-                        { nav.popBackStack() }
-                    } else null
-                )
-            }
-
-            composable("reminders") {
-                RemindersScreen(
-                    vm = vm,
-                    onOpenCard = { number ->
-                        nav.navigate("subscriber/" + android.net.Uri.encode(number))
-                    },
-                    onBack = { nav.popBackStack() },
-                    // Напоминания — последний экран карусели: вперёд листать
-                    // некуда, назад — к заметкам. Разбор — у NotesScreen выше
-                    onSwipeNext = null,
-                    onSwipePrevious = if (settings.panelSwipeNav) {
-                        { nav.popBackStack() }
-                    } else null
-                )
-            }
-
-            // Списки блокировки и разрешений
-            composable("blocklists") {
-                BlockListScreen(vm = vm, onBack = { nav.popBackStack() })
-            }
-
-            // Сводка по слоям защиты от спама
-            composable("spam") {
-                SpamProtectionScreen(
-                    vm = vm,
-                    onBack = { nav.popBackStack() },
-                    onOpenLists = { nav.navigate("blocklists") }
-                )
-            }
-
-            // По экрану на каждую категорию. Маршруты берутся из самого enum,
-            // поэтому новая категория не требует правки навигации здесь.
-            SettingsCategory.entries.forEach { category ->
-                composable(category.route) {
-                    /*
-                     * ЗАПИСЬ ФАЙЛОВ ИЗ НАСТРОЕК.
-                     *
-                     * Выгрузка журнала и сохранение технического журнала
-                     * пишут в файл, который человек выбирает системным
-                     * окном: приложение не решает за него, куда класть,
-                     * и не оставляет файлов, о которых владелец не знает.
-                     *
-                     * Текст собирается ПОСЛЕ выбора файла, а не до:
-                     * на десяти тысячах записей это секунда работы,
-                     * и делать её впустую, если человек передумает,
-                     * незачем.
-                     */
-                    var pendingText by remember {
-                        mutableStateOf<(suspend () -> String?)?>(null)
-                    }
-
-                    val settingsSnackbar = remember { SnackbarHostState() }
-                    val scope = rememberCoroutineScope()
-                    val exportDoneText = stringResource(R.string.export_done)
-                    val exportFailedText = stringResource(R.string.export_failed)
-
-                    val saveLauncher = rememberLauncherForActivityResult(
-                        ActivityResultContracts.CreateDocument("text/*")
-                    ) { uri ->
-                        val build = pendingText
-                        pendingText = null
-                        if (uri == null || build == null) {
-                            return@rememberLauncherForActivityResult
-                        }
-                        scope.launch {
-                            val text = build()
-                            val ok = text != null && vm.writeTextToUri(uri, text)
-                            settingsSnackbar.showSnackbar(
-                                if (ok) exportDoneText else exportFailedText
-                            )
-                        }
-                    }
-
-                    SettingsCategoryScreen(
-                        category = category,
-                        vm = vm,
-                        onBack = { nav.popBackStack() },
-                        snackbar = settingsSnackbar,
-                        onAction = { key ->
-                            when (key) {
-                                "allow_list", "block_list" -> nav.navigate("blocklists")
-                                "spam_overview" -> nav.navigate("spam")
-                                "speed_dial" -> nav.navigate("speeddial")
-                                "backup_export", "backup_import" -> nav.navigate("backup")
-
-                                "calllog_export" -> {
-                                    pendingText = { vm.buildCallLogCsv() }
-                                    saveLauncher.launch(vm.callLogCsvFileName())
-                                }
-
-                                "log_save" -> {
-                                    pendingText = { vm.buildLogText() }
-                                    saveLauncher.launch("ogneliss.log")
-                                }
-                                "stats" -> nav.navigate("stats")
-                                "swipe_tuning" -> nav.navigate("swipe_tuning")
-                                "pinned" -> nav.navigate("pinned")
-                                /*
-                                 * Свой номер: диалог поверх настроек.
-                                 *
-                                 * Отдельный экран ради одного поля был бы
-                                 * лишним переходом — человек пришёл
-                                 * изменить номер, а не изучать раздел.
-                                 */
-                                "own_number" -> ownNumberOpen = true
-
-                                "external_lookup" -> nav.navigate("external_lookup")
-                                "permissions" -> nav.navigate("permissions")
-                                /*
-                                 * ДОКУМЕНТЫ ОТКРЫВАЮТСЯ НА САЙТЕ.
-                                 *
-                                 * ── Почему не встроенный экран ────────────
-                                 * Встроенная копия устаревает: редакцию
-                                 * правят, а у людей на телефонах остаётся
-                                 * та, что была в их версии приложения.
-                                 * Для политики конфиденциальности это
-                                 * важно — она обязана быть актуальной.
-                                 *
-                                 * На сайте лежит та же редакция, что
-                                 * в репозитории: страницы собираются
-                                 * из тех же файлов.
-                                 *
-                                 * Встроенный экран остаётся запасным:
-                                 * если браузера нет или ссылка
-                                 * не открылась, документ показывается
-                                 * из приложения. Без сети человек всё
-                                 * равно должен их прочитать.
-                                 */
-                                "privacy" -> openDocument(
-                                    context, "https://ogneliss.ru/dialer/privacy"
-                                ) { nav.navigate("about") }
-
-                                "terms" -> openDocument(
-                                    context, "https://ogneliss.ru/dialer/terms"
-                                ) { nav.navigate("about") }
-
-                                "licenses" -> openDocument(
-                                    context, "https://ogneliss.ru/dialer/licenses"
-                                ) { nav.navigate("about") }
-
-                                /*
-                                 * «Версия» ведёт в магазин.
-                                 *
-                                 * Сам номер версии уже виден в подписи
-                                 * пункта, а нажимают на него обычно
-                                 * за обновлением или чтобы оставить отзыв.
-                                 *
-                                 * Если Google Play на устройстве нет
-                                 * (а его нет на части прошивок), открывается
-                                 * прежний экран «О приложении» —
-                                 * openDocument сам вызовет запасной путь.
-                                 */
-                                /*
-                                 * Выбор «звонящего» — тот же экран,
-                                 * что и выбор номера для закрепления:
-                                 * список контактов с поиском. Заводить
-                                 * ради этого второй такой экран
-                                 * не за чем.
-                                 */
-                                "fake_call_number" -> nav.navigate("contacts?pick=fake")
-
-                                "rate_app" -> openDocument(
-                                    context,
-                                    "https://play.google.com/store/apps/details" +
-                                        "?id=com.ogneliss.dialer"
-                                ) {
-                                    // Магазина на устройстве может не быть:
-                                    // тогда сообщаем, а не молчим
-                                    vm.notifyNoStore()
-                                }
-
-                                "version" -> openDocument(
-                                    context,
-                                    "https://play.google.com/store/apps/details" +
-                                        "?id=com.ogneliss.dialer"
-                                ) { nav.navigate("about") }
-
-                                else -> vm.handleSettingsAction(key)
+        CompositionLocalProvider(LocalNavigationRailShown provides showRail) {
+        Row(Modifier.weight(1f).fillMaxWidth()) {
+            if (showRail) {
+                AppNavigationRail(
+                    currentRoute = currentRoute,
+                    onNavigate = { route ->
+                        if (route == "dialer") {
+                            nav.popBackStack("dialer", inclusive = false)
+                        } else {
+                            nav.navigate(route) {
+                                // Один экран каждого вида в стеке: касание
+                                // по «Контактам» из заметок не громоздит
+                                // экраны друг на друга, а переключает
+                                popUpTo("dialer") { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
                             }
                         }
+                    }
+                )
+            }
+
+            NavHost(
+                nav,
+                startDestination = "dialer",
+                modifier = Modifier.weight(1f).fillMaxHeight(),
+                // Переходы построены на смещении и прозрачности — система
+                // умеет анимировать их в обратную сторону, что нужно
+                // для предпросмотра возврата на Android 14+
+                enterTransition = Motion.enterForward,
+                exitTransition = Motion.exitForward,
+                popEnterTransition = Motion.enterBackward,
+                popExitTransition = Motion.exitBackward
+            ) {
+                composable("dialer") {
+                    /*
+                     * ══════════════════════════════════════════════════════
+                     * ЖУРНАЛ И КАРТОЧКА РЯДОМ НА ПЛАНШЕТЕ
+                     * ══════════════════════════════════════════════════════
+                     * Этап 6 плана ADAPTIVE_PLAN.md. На планшете касание
+                     * записи открывает карточку справа, а не вместо журнала:
+                     * журнал остаётся на месте, по нему можно идти дальше,
+                     * и карточка следующего абонента — одно касание.
+                     *
+                     * Каждая половина получает свою раскладку по своей
+                     * ширине (ProvidePaneLayout): для журнала половина
+                     * планшета — это раскладушка, и клавиатура открывается
+                     * внизу, а не сбоку; карточка — одной колонкой.
+                     *
+                     * Выбранная запись переживает поворот и складывание
+                     * (rememberSaveable). На телефоне и раскладушке
+                     * в портрете всё как было — карточка открывается
+                     * отдельным экраном.
+                     */
+                    ListDetailHost(vm = vm, nav = nav) { openCard ->
+                        MainDialerScreen(
+                            vm = vm,
+                            prefilledNumber = prefilledNumber,
+                            prefillToken = prefillToken,
+                            openDialpad = openDialpad,
+                            onOpenContacts = { nav.navigate("contacts") },
+                            onOpenSettings = { nav.navigate("settings") },
+                            // Ключ группы кодирует ListDetailHost: он содержит
+                            // символы, недопустимые в маршруте без экранирования
+                            onOpenSubscriber = openCard,
+                            onOpenBlockLists = { nav.navigate("blocklists") },
+                            onOpenFakeCallPicker = { nav.navigate("contacts?pick=fake") },
+                            onOpenNotes = { nav.navigate("notes") },
+                            onOpenReminders = { nav.navigate("reminders") }
+                        )
+                    }
+                }
+                composable(
+                    "contacts?pick={pick}",
+                    arguments = listOf(
+                        navArgument("pick") { defaultValue = ""; type = NavType.StringType }
+                    )
+                ) { entry ->
+                    /*
+                     * Режим выбора для закрепления.
+                     *
+                     * Экран контактов один и тот же: заводить второй список
+                     * ради выбора означало бы поддерживать два поиска,
+                     * две группировки и два набора свайпов — и они разошлись
+                     * бы при первой же правке.
+                     */
+                    val pickMode = entry.arguments?.getString("pick").orEmpty()
+                    // В режиме выбора (закрепить, псевдозвонок) касание выбирает
+                    // контакт, а не открывает карточку — правая панель не нужна
+                    ListDetailHost(vm = vm, nav = nav, enabled = pickMode.isEmpty()) { openCard ->
+                    ContactsScreen(
+                        vm = vm,
+                        onOpenNotes = { nav.navigate("notes") },
+                        // Псевдозвонок с экрана контактов запускается сразу,
+                        // без выбора времени: окно с вариантами живёт
+                        // в журнале, а здесь нужна та же кнопка «сейчас»
+                        onFakeCall = { FakeCall.ringNow(context) },
+                        /*
+                         * Режим выбора один, а применений два: закрепление
+                         * номера и выбор «звонящего» для псевдозвонка.
+                         * Экран об этом не знает — он просто возвращает
+                         * номер, а что с ним делать, решает маршрут.
+                         */
+                        pickForPinning = pickMode == "pin" || pickMode == "fake",
+                        onPicked = { e164 ->
+                            when (pickMode) {
+                                "fake" -> vm.setFakeCallNumber(e164)
+                                else -> vm.pinNumber(e164)
+                            }
+                            nav.popBackStack()
+                        },
+                        onBack = { nav.popBackStack() },
+                        // Карточка открывается по ключу группы журнала;
+                        // для контакта без звонков ключ строится по его id
+                        onOpenContact = { id -> openCard("contact:$id") }
+                    )
+                    }
+                }
+
+
+                // Карточка абонента: вся история общения с одним человеком
+                composable(
+                    "subscriber/{key}",
+                    arguments = listOf(navArgument("key") { type = NavType.StringType })
+                ) { entry ->
+                    val key = android.net.Uri.decode(entry.arguments?.getString("key").orEmpty())
+                    SubscriberScreen(
+                        groupKey = key,
+                        vm = vm,
+                        onOpenBlockLists = { nav.navigate("blocklists") },
+                        onBack = { nav.popBackStack() }
                     )
                 }
+                // Главный экран настроек: семь категорий + поиск
+                composable("settings") {
+                    /*
+                     * ══════════════════════════════════════════════════════
+                     * НАСТРОЙКИ В ДВЕ ПАНЕЛИ НА ПЛАНШЕТЕ
+                     * ══════════════════════════════════════════════════════
+                     * Этап 7 плана ADAPTIVE_PLAN.md. На планшете список из
+                     * десяти разделов растягивался на всю ширину, а раздел
+                     * открывался отдельным экраном поверх — и чтобы
+                     * заглянуть в соседний, приходилось возвращаться.
+                     *
+                     * Теперь слева — разделы, справа — содержимое
+                     * выбранного. Переход между разделами — одно касание,
+                     * без возврата. Справа нет стрелки «назад»: она
+                     * закрыла бы настройки целиком, а «назад» здесь —
+                     * это выбрать другой раздел.
+                     *
+                     * Обработка действий раздела (выгрузка журнала,
+                     * переходы в списки, открытие документов) вынесена
+                     * в SettingsCategoryHost — одна и та же для отдельного
+                     * экрана раздела и для правой панели.
+                     */
+                    val settingsLayout = LocalWindowLayout.current
+                    if (settingsLayout.mode == LayoutMode.TABLET) {
+                        var selected by rememberSaveable {
+                            mutableStateOf(SettingsCategory.entries.first())
+                        }
+                        Row(Modifier.fillMaxSize()) {
+                            Box(Modifier.width(SETTINGS_LIST_WIDTH).fillMaxHeight()) {
+                                SettingsHomeScreen(
+                                    onBack = { nav.popBackStack() },
+                                    onOpenCategory = { selected = it },
+                                    onOpenEntry = { selected = it.category }
+                                )
+                            }
+                            Box(Modifier.weight(1f).fillMaxHeight()) {
+                                SettingsCategoryHost(
+                                    category = selected,
+                                    vm = vm,
+                                    nav = nav,
+                                    onBack = { nav.popBackStack() },
+                                    onOwnNumber = { ownNumberOpen = true },
+                                    showBack = false
+                                )
+                            }
+                        }
+                    } else {
+                        SettingsHomeScreen(
+                            onBack = { nav.popBackStack() },
+                            onOpenCategory = { nav.navigate(it.route) },
+                            // Из поиска переходим сразу в категорию найденной настройки
+                            onOpenEntry = { nav.navigate(it.category.route) }
+                        )
+                    }
+                }
+
+                composable("permissions") {
+                    PermissionsSettingsScreen(
+                        isDefaultDialer = isDefaultDialer,
+                        onRequestDefaultDialer = onRequestDefault,
+                        onOpenSystemSettings = onOpenSystemSettings,
+                        onBack = { nav.popBackStack() }
+                    )
+                }
+
+                composable("about") {
+                    AboutScreen(
+                        onBack = { nav.popBackStack() },
+                        onOpenLegal = { doc -> nav.navigate("legal/${doc.name}") }
+                    )
+                }
+
+                composable("legal/{doc}") { entry ->
+                    val doc = runCatching {
+                        LegalDocument.valueOf(entry.arguments?.getString("doc").orEmpty())
+                    }.getOrDefault(LegalDocument.PRIVACY)
+                    LegalScreen(document = doc, onBack = { nav.popBackStack() })
+                }
+
+                composable("external_lookup") {
+                    ExternalLookupScreen(vm = vm, onBack = { nav.popBackStack() })
+                }
+
+                composable("pinned") {
+                    PinnedContactsScreen(
+                        vm = vm,
+                        onBack = { nav.popBackStack() },
+                        // Выбор идёт через тот же экран контактов: заводить
+                        // второй список ради одной задачи означало бы
+                        // поддерживать два поиска и две группировки
+                        onAddFromContacts = { nav.navigate("contacts?pick=pin") }
+                    )
+                }
+
+                composable("swipe_tuning") {
+                    SwipeTuningScreen(vm = vm, onBack = { nav.popBackStack() })
+                }
+
+                composable("backup") {
+                    BackupScreen(vm = vm, onBack = { nav.popBackStack() })
+                }
+
+                composable("stats") {
+                    StatsScreen(vm = vm, onBack = { nav.popBackStack() })
+                }
+
+                composable("speeddial") {
+                    SpeedDialScreen(vm = vm, onBack = { nav.popBackStack() })
+                }
+
+                /*
+                 * Заметки и напоминания.
+                 *
+                 * Отдельные экраны, а не фильтры списков: заметку ищут,
+                 * когда забыли, к кому она относится, а напоминания нужны
+                 * по времени, а не по человеку. Разбор — в шапках самих
+                 * экранов.
+                 */
+                composable("notes") {
+                    /*
+                     * ══════════════════════════════════════════════════════════
+                     * ВОТ ПОЧЕМУ СВАЙП НЕ РАБОТАЛ — И НИКОГДА НЕ РАБОТАЛ
+                     * ══════════════════════════════════════════════════════════
+                     * Экран заметок умеет листаться, но колбэки перелистывания
+                     * сюда просто не передавались: onSwipeNext и onSwipePrevious
+                     * оставались по умолчанию null, а при null жест выключен
+                     * (enabled = false). Палец шёл вбок — и касание уходило полю
+                     * поиска или кнопке фильтра, потому что жеста не было вовсе.
+                     *
+                     * Три захода я чинил распознавание жеста — фазу доставки
+                     * событий, площадь касания, перехват у поля ввода. Всё это
+                     * было не о том. Подсказка была в словах «в контактах
+                     * работает, наполнение панели то же»: раз панель одна,
+                     * разница должна быть не в ней, а в том, что ей передают.
+                     *
+                     * Передача — как в контактах: с учётом той же настройки
+                     * panelSwipeNav и в том же порядке карусели
+                     * журнал → контакты → заметки → напоминания.
+                     */
+                    ListDetailHost(vm = vm, nav = nav) { openCard ->
+                    NotesScreen(
+                        vm = vm,
+                        onOpenCard = openCard,
+                        onBack = { nav.popBackStack() },
+                        // Вперёд — к напоминаниям, назад — туда, откуда пришли
+                        // (из карусели это контакты), как «назад» в контактах
+                        onSwipeNext = if (settings.panelSwipeNav) {
+                            { nav.navigate("reminders") }
+                        } else null,
+                        onSwipePrevious = if (settings.panelSwipeNav) {
+                            { nav.popBackStack() }
+                        } else null
+                    )
+                    }
+                }
+
+                composable("reminders") {
+                    ListDetailHost(vm = vm, nav = nav) { openCard ->
+                    RemindersScreen(
+                        vm = vm,
+                        onOpenCard = openCard,
+                        onBack = { nav.popBackStack() },
+                        // Напоминания — последний экран карусели: вперёд листать
+                        // некуда, назад — к заметкам. Разбор — у NotesScreen выше
+                        onSwipeNext = null,
+                        onSwipePrevious = if (settings.panelSwipeNav) {
+                            { nav.popBackStack() }
+                        } else null
+                    )
+                    }
+                }
+
+                // Списки блокировки и разрешений
+                composable("blocklists") {
+                    BlockListScreen(vm = vm, onBack = { nav.popBackStack() })
+                }
+
+                // Сводка по слоям защиты от спама
+                composable("spam") {
+                    SpamProtectionScreen(
+                        vm = vm,
+                        onBack = { nav.popBackStack() },
+                        onOpenLists = { nav.navigate("blocklists") }
+                    )
+                }
+
+                // По экрану на каждую категорию. Маршруты берутся из самого enum,
+                // поэтому новая категория не требует правки навигации здесь.
+                SettingsCategory.entries.forEach { category ->
+                    composable(category.route) {
+                        SettingsCategoryHost(
+                            category = category,
+                            vm = vm,
+                            nav = nav,
+                            onBack = { nav.popBackStack() },
+                            onOwnNumber = { ownNumberOpen = true }
+                        )
+                    }
+                }
             }
+        }
         }
     }
 
@@ -790,4 +777,317 @@ private fun openDocument(
     }.getOrDefault(false)
 
     if (!opened) fallback()
+}
+
+
+/**
+ * Боковая полоса навигации: четыре главных экрана.
+ *
+ * Выбранный пункт определяется по маршруту: у контактов он с параметром
+ * («contacts?pick={pick}»), поэтому сравнение по началу строки.
+ */
+@Composable
+private fun AppNavigationRail(
+    currentRoute: String,
+    onNavigate: (String) -> Unit
+) {
+    val items = listOf(
+        Triple("dialer", Icons.Default.History, R.string.nav_journal),
+        Triple("contacts", Icons.Default.Person, R.string.nav_contacts),
+        Triple("notes", Icons.AutoMirrored.Filled.StickyNote2, R.string.nav_notes),
+        Triple("reminders", Icons.Default.Alarm, R.string.nav_reminders)
+    )
+
+    NavigationRail(
+        containerColor = PanelColors.panel()
+    ) {
+        Spacer(Modifier.weight(1f))
+        items.forEach { (route, icon, label) ->
+            val selected = currentRoute == route || currentRoute.startsWith("$route?")
+            NavigationRailItem(
+                selected = selected,
+                onClick = { if (!selected) onNavigate(route) },
+                icon = { Icon(icon, contentDescription = null) },
+                label = { Text(stringResource(label)) }
+            )
+        }
+        Spacer(Modifier.weight(1f))
+    }
+}
+
+
+/**
+ * Ширина колонки разделов настроек на планшете — ширина телефона:
+ * названия разделов с пояснениями помещаются в строку, как в портрете.
+ */
+private val SETTINGS_LIST_WIDTH = 360.dp
+
+/**
+ * РАЗДЕЛ НАСТРОЕК ВМЕСТЕ С ОБРАБОТКОЙ ЕГО ДЕЙСТВИЙ.
+ *
+ * Раньше всё это жило прямо внутри перехода на экран раздела: запуск
+ * окна сохранения файла, сообщения о выгрузке, переходы в списки
+ * блокировки, быстрый набор, документы. Для настроек в две панели
+ * (планшет) тот же раздел показывается справа от списка — и обработку
+ * пришлось бы копировать. Вынесена сюда, одна на оба случая.
+ */
+@Composable
+private fun SettingsCategoryHost(
+    category: SettingsCategory,
+    vm: DialerViewModel,
+    nav: androidx.navigation.NavController,
+    onBack: () -> Unit,
+    onOwnNumber: () -> Unit,
+    showBack: Boolean = true
+) {
+    val context = LocalContext.current
+
+    /*
+     * ЗАПИСЬ ФАЙЛОВ ИЗ НАСТРОЕК.
+     *
+     * Выгрузка журнала и сохранение технического журнала
+     * пишут в файл, который человек выбирает системным
+     * окном: приложение не решает за него, куда класть,
+     * и не оставляет файлов, о которых владелец не знает.
+     *
+     * Текст собирается ПОСЛЕ выбора файла, а не до:
+     * на десяти тысячах записей это секунда работы,
+     * и делать её впустую, если человек передумает,
+     * незачем.
+     */
+    var pendingText by remember {
+        mutableStateOf<(suspend () -> String?)?>(null)
+    }
+
+    val settingsSnackbar = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val exportDoneText = stringResource(R.string.export_done)
+    val exportFailedText = stringResource(R.string.export_failed)
+
+    val saveLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("text/*")
+    ) { uri ->
+        val build = pendingText
+        pendingText = null
+        if (uri == null || build == null) {
+            return@rememberLauncherForActivityResult
+        }
+        scope.launch {
+            val text = build()
+            val ok = text != null && vm.writeTextToUri(uri, text)
+            settingsSnackbar.showSnackbar(
+                if (ok) exportDoneText else exportFailedText
+            )
+        }
+    }
+
+    SettingsCategoryScreen(
+        category = category,
+        vm = vm,
+        onBack = onBack,
+        snackbar = settingsSnackbar,
+        showBack = showBack,
+        onAction = { key ->
+            when (key) {
+                "allow_list", "block_list" -> nav.navigate("blocklists")
+                "spam_overview" -> nav.navigate("spam")
+                "speed_dial" -> nav.navigate("speeddial")
+                "backup_export", "backup_import" -> nav.navigate("backup")
+
+                "calllog_export" -> {
+                    pendingText = { vm.buildCallLogCsv() }
+                    saveLauncher.launch(vm.callLogCsvFileName())
+                }
+
+                "log_save" -> {
+                    pendingText = { vm.buildLogText() }
+                    saveLauncher.launch("ogneliss.log")
+                }
+                "stats" -> nav.navigate("stats")
+                "swipe_tuning" -> nav.navigate("swipe_tuning")
+                "pinned" -> nav.navigate("pinned")
+                /*
+                 * Свой номер: диалог поверх настроек.
+                 *
+                 * Отдельный экран ради одного поля был бы
+                 * лишним переходом — человек пришёл
+                 * изменить номер, а не изучать раздел.
+                 */
+                "own_number" -> onOwnNumber()
+
+                "external_lookup" -> nav.navigate("external_lookup")
+                "permissions" -> nav.navigate("permissions")
+                /*
+                 * ДОКУМЕНТЫ ОТКРЫВАЮТСЯ НА САЙТЕ.
+                 *
+                 * ── Почему не встроенный экран ────────────
+                 * Встроенная копия устаревает: редакцию
+                 * правят, а у людей на телефонах остаётся
+                 * та, что была в их версии приложения.
+                 * Для политики конфиденциальности это
+                 * важно — она обязана быть актуальной.
+                 *
+                 * На сайте лежит та же редакция, что
+                 * в репозитории: страницы собираются
+                 * из тех же файлов.
+                 *
+                 * Встроенный экран остаётся запасным:
+                 * если браузера нет или ссылка
+                 * не открылась, документ показывается
+                 * из приложения. Без сети человек всё
+                 * равно должен их прочитать.
+                 */
+                "privacy" -> openDocument(
+                    context, "https://ogneliss.ru/dialer/privacy"
+                ) { nav.navigate("about") }
+
+                "terms" -> openDocument(
+                    context, "https://ogneliss.ru/dialer/terms"
+                ) { nav.navigate("about") }
+
+                "licenses" -> openDocument(
+                    context, "https://ogneliss.ru/dialer/licenses"
+                ) { nav.navigate("about") }
+
+                /*
+                 * «Версия» ведёт в магазин.
+                 *
+                 * Сам номер версии уже виден в подписи
+                 * пункта, а нажимают на него обычно
+                 * за обновлением или чтобы оставить отзыв.
+                 *
+                 * Если Google Play на устройстве нет
+                 * (а его нет на части прошивок), открывается
+                 * прежний экран «О приложении» —
+                 * openDocument сам вызовет запасной путь.
+                 */
+                /*
+                 * Выбор «звонящего» — тот же экран,
+                 * что и выбор номера для закрепления:
+                 * список контактов с поиском. Заводить
+                 * ради этого второй такой экран
+                 * не за чем.
+                 */
+                "fake_call_number" -> nav.navigate("contacts?pick=fake")
+
+                "rate_app" -> openDocument(
+                    context,
+                    "https://play.google.com/store/apps/details" +
+                        "?id=com.ogneliss.dialer"
+                ) {
+                    // Магазина на устройстве может не быть:
+                    // тогда сообщаем, а не молчим
+                    vm.notifyNoStore()
+                }
+
+                "version" -> openDocument(
+                    context,
+                    "https://play.google.com/store/apps/details" +
+                        "?id=com.ogneliss.dialer"
+                ) { nav.navigate("about") }
+
+                else -> vm.handleSettingsAction(key)
+            }
+        }
+    )
+}
+
+
+/**
+ * Правая половина, пока запись не выбрана: подсказка, что сюда встанет
+ * карточка. Пустая панель выглядела бы недогруженным экраном.
+ */
+@Composable
+private fun DetailPlaceholder() {
+    Column(
+        Modifier.fillMaxSize().padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            Icons.Default.Person,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.outline,
+            modifier = Modifier.size(48.dp)
+        )
+        Spacer(Modifier.height(12.dp))
+        Text(
+            stringResource(R.string.detail_placeholder),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+
+/**
+ * «СПИСОК — ПОДРОБНОСТИ» НА ПЛАНШЕТЕ ДЛЯ ЛЮБОГО СПИСКА С КАРТОЧКАМИ.
+ *
+ * ══════════════════════════════════════════════════════════════════════════
+ * ЗАЧЕМ ОБЩИЙ
+ * ══════════════════════════════════════════════════════════════════════════
+ * Журнал получил раскладку «список слева, карточка справа» первым.
+ * Контакты, заметки и напоминания — такие же списки, из которых
+ * открывается та же карточка абонента. Копировать раскладку четыре раза
+ * значило бы четыре места, где она однажды разойдётся.
+ *
+ * Экран-список получает функцию openCard и зовёт её, как раньше звал
+ * переход на карточку. Что она сделает — решает этот компонент:
+ * на планшете покажет карточку справа, на телефоне — перейдёт на экран
+ * карточки, как всегда.
+ *
+ * Каждая половина — со своей раскладкой по своей ширине
+ * (ProvidePaneLayout): для списка половина планшета — это раскладушка.
+ *
+ * ── enabled ────────────────────────────────────────────────────────────────
+ * false — всегда как на телефоне. Нужен контактам в режиме выбора:
+ * там касание выбирает контакт, и правая панель стояла бы пустой.
+ */
+@Composable
+private fun ListDetailHost(
+    vm: DialerViewModel,
+    nav: androidx.navigation.NavController,
+    enabled: Boolean = true,
+    list: @Composable (openCard: (String) -> Unit) -> Unit
+) {
+    val listDetail = enabled && LocalWindowLayout.current.mode == LayoutMode.TABLET
+    var selectedKey by rememberSaveable { mutableStateOf<String?>(null) }
+
+    val openCard: (String) -> Unit = { key ->
+        if (listDetail) selectedKey = key
+        // Ключ кодируется: в нём бывают символы, недопустимые в маршруте
+        else nav.navigate("subscriber/" + android.net.Uri.encode(key))
+    }
+
+    if (!listDetail) {
+        list(openCard)
+    } else {
+        Row(Modifier.fillMaxSize()) {
+            Box(Modifier.weight(1f).fillMaxHeight()) {
+                ProvidePaneLayout { list(openCard) }
+            }
+            VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            Box(Modifier.weight(1f).fillMaxHeight()) {
+                ProvidePaneLayout {
+                    val key = selectedKey
+                    if (key == null) {
+                        DetailPlaceholder()
+                    } else {
+                        // key(): у каждого абонента своё состояние карточки —
+                        // прокрутка, открытые диалоги
+                        androidx.compose.runtime.key(key) {
+                            SubscriberScreen(
+                                groupKey = key,
+                                vm = vm,
+                                onOpenBlockLists = { nav.navigate("blocklists") },
+                                onBack = { selectedKey = null },
+                                showBack = false
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

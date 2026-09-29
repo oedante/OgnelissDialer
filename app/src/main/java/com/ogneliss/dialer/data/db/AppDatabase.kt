@@ -322,7 +322,11 @@ object DatabaseModule {
              * поэтому вызов без него — иначе сборка падает на более
              * ранних версиях библиотеки.
              */
-            .fallbackToDestructiveMigrationOnDowngrade()
+            // Room 2.8 объявил вариант без параметра устаревшим и требует сказать
+            // явно, сносить ли при откате версии и чужие таблицы. false — ровно то,
+            // что делал прежний вариант: пересоздаются только таблицы Room.
+            // Поведение не меняется
+            .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = false)
             .build()
 
     @Provides fun provideNoteDao(db: AppDatabase) = db.notes()

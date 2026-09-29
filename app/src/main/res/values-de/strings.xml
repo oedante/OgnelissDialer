@@ -99,6 +99,7 @@
     <string name="empty_no_contacts_permission_hint">Ohne Zugriff auf Kontakte erscheinen Anrufe als nackte Nummern, und die T9-Suche findet niemanden über den Namen.</string>
     <string name="empty_no_favourites">Keine Favoriten</string>
     <string name="empty_no_favourites_hint">Tippen Sie auf den Stern neben einem Kontakt, um ihn griffbereit zu halten.</string>
+    <string name="nav_journal">Anrufliste</string>
     <string name="nav_notes">Notizen</string>
     <string name="reminders_filter_today">Heute</string>
     <string name="reminders_filter_week">Diese Woche</string>
@@ -645,4 +646,11 @@
     <string name="settings_journal_style_text">Jeder Anruf als Karte oder Anrufe nach Tagen gruppiert</string>
     <string name="journal_style_cards">Karten</string>
     <string name="journal_style_groups">Gruppen nach Tagen</string>
+    <string name="action_mark_spam">Als Spam markieren</string>
+    <string name="action_unmark_spam">Spam-Markierung entfernen</string>
+    <string name="detail_placeholder">Wählen Sie einen Anruf aus – die Kontaktkarte erscheint hier</string>
+    <string name="sim_kind_esim">eSIM</string>
+    <string name="sim_kind_physical">SIM-Karte</string>
+    <string name="settings_button_labels">Beschriftungen unter Tasten</string>
+    <string name="settings_button_labels_text">Text unter den Symbolen in den unteren Leisten, der Kontaktkarte und im Anrufbildschirm. Abschaltbar, sobald die Symbole vertraut sind</string>
 </resources>

@@ -33,6 +33,8 @@ data class SettingsState(
     val dynamicColor: Boolean = false,
     val largeButtons: Boolean = false,
     val showPhoto: Boolean = true,
+    /** Подписи под кнопками по всему приложению. */
+    val buttonLabels: Boolean = true,
     val haptic: Boolean = true,
     val keyTones: Boolean = true,
     val mergeCalls: Boolean = true,
@@ -79,6 +81,7 @@ data class SettingsState(
         "dynamic_color" -> dynamicColor
         "large_buttons" -> largeButtons
         "show_photo" -> showPhoto
+        "button_labels" -> buttonLabels
         "panel_swipe_nav" -> panelSwipeNav
         "fake_call_button" -> fakeCallButton
         "haptic" -> haptic

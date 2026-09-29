@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Share
 import com.ogneliss.dialer.ui.theme.BlockRed
 import com.ogneliss.dialer.ui.theme.UnblockGreen
 import com.ogneliss.dialer.ui.theme.CallGreen
+import com.ogneliss.dialer.ui.theme.LocalAppearance
 import com.ogneliss.dialer.ui.theme.NoteTeal
 import androidx.compose.material.icons.automirrored.filled.StickyNote2
 import com.ogneliss.dialer.ui.theme.FlowUi
@@ -74,9 +75,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.graphics.luminance
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import com.ogneliss.dialer.ui.components.OgnelissListRow
 import com.ogneliss.dialer.data.SpamMarkType
@@ -199,7 +201,12 @@ fun SubscriberScreen(
     vm: DialerViewModel,
     /** Чёрный и белый списки: туда ведёт разбор блокировки по маске. */
     onOpenBlockLists: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    /**
+     * Стрелка «назад». Нет — когда карточка стоит правой панелью рядом
+     * с журналом (планшет): «назад» там — выбрать другую запись слева.
+     */
+    showBack: Boolean = true
 ) {
     val state by vm.state.collectAsState()
     /**
@@ -654,31 +661,67 @@ fun SubscriberScreen(
     val cardListState = rememberLazyListState()
     val cardTwoColumns = LocalWindowLayout.current.hasRoomForSidePanel
     val coverBehindBar = !photoUri.isNullOrBlank() && !cardTwoColumns
-    val headerScrolledAway by remember {
-        derivedStateOf { cardListState.firstVisibleItemIndex > 0 }
-    }
-    val overCover = coverBehindBar && !headerScrolledAway
-    val showBarTitle = !cardTwoColumns && headerScrolledAway
+    /*
+     * ══════════════════════════════════════════════════════════════════════
+     * СТРОКА ЗАГОЛОВКА — ПО ПРОКРУТКЕ, А НЕ ПЕРЕКЛЮЧАТЕЛЕМ
+     * ══════════════════════════════════════════════════════════════════════
+     * Первая версия (1.1.3) переключала строку заголовка одним событием —
+     * «шапка целиком уехала». Из этого вышло три ошибки, найденные
+     * на устройстве:
+     *
+     * 1. Имя в заголовке появлялось, только когда уезжали и кнопки
+     *    действий под именем, — а не само имя.
+     * 2. Мигание — только в светлой теме, что и подсказало причину.
+     *    Цвет анимировался от Color.Transparent к фону. Но Transparent —
+     *    это прозрачный ЧЁРНЫЙ (0, 0, 0, 0), и по дороге к белому цвет
+     *    проходил через серый: строка на миг темнела. В тёмной теме
+     *    фон и так тёмный — промежуточного серого не видно. Теперь
+     *    меняется только прозрачность самого цвета фона, а сам цвет
+     *    не меняется — темнеть нечему.
+     * 3. Невидимые значки. Пока шапка не уехала целиком, значки
+     *    оставались белыми — даже когда фото уже скрылось и под ними
+     *    белый фон. «Назад» и меню пропадали, а вместе с ними и часы
+     *    со строки состояния, которую я делал светлой над обложкой.
+     *
+     * Теперь всё ведёт положение прокрутки:
+     *
+     * • подложка строки проявляется плавно, ровно по мере того как фото
+     *   уходит под неё, и становится полностью непрозрачной, когда фото
+     *   скрылось, — ничего не просвечивает;
+     * • значки — белые над фото и тёмные над фоном, переход по той же
+     *   прокрутке;
+     * • имя в заголовке появляется, когда само имя под фото уехало под
+     *   строку заголовка, — измеряется по его настоящему положению
+     *   на экране.
+     *
+     * Строку состояния больше не трогаем: наше окно не заходит под неё
+     * (отступы корня приложения), значит, над ней никогда нет фото —
+     * светлые значки на светлом фоне просто исчезали.
+     */
+    val density = LocalDensity.current
+    var coverHeightPx by remember { mutableIntStateOf(0) }
+    var nameBottomInRoot by remember { mutableFloatStateOf(Float.MAX_VALUE) }
+    var barBottomInRoot by remember { mutableFloatStateOf(0f) }
 
-    // Значки строки состояния: светлые над обложкой, по теме — в остальное время
-    val lightTheme = MaterialTheme.colorScheme.background.luminance() > 0.5f
-    val hostView = androidx.compose.ui.platform.LocalView.current
-    DisposableEffect(overCover, lightTheme) {
-        val window = (hostView.context as? android.app.Activity)?.window
-        val controller = window?.let {
-            androidx.core.view.WindowCompat.getInsetsController(it, hostView)
+    val coverProgress by remember(coverBehindBar) {
+        derivedStateOf {
+            if (!coverBehindBar) return@derivedStateOf 1f
+            if (cardListState.firstVisibleItemIndex > 0) return@derivedStateOf 1f
+            val barPx = with(density) { 64.dp.toPx() }
+            val travel = (coverHeightPx - barPx).coerceAtLeast(1f)
+            (cardListState.firstVisibleItemScrollOffset / travel).coerceIn(0f, 1f)
         }
-        controller?.isAppearanceLightStatusBars = lightTheme && !overCover
-        onDispose { controller?.isAppearanceLightStatusBars = lightTheme }
     }
+    val nameHidden by remember {
+        derivedStateOf {
+            cardListState.firstVisibleItemIndex > 0 || nameBottomInRoot <= barBottomInRoot
+        }
+    }
+    val showBarTitle = !cardTwoColumns && nameHidden
 
-    val barContainer by animateColorAsState(
-        if (overCover) Color.Transparent else MaterialTheme.colorScheme.background,
-        label = "cardBarContainer"
-    )
-    val barIcons by animateColorAsState(
-        if (overCover) Color.White else MaterialTheme.colorScheme.onSurface,
-        label = "cardBarIcons"
+    val barContainer = MaterialTheme.colorScheme.background.copy(alpha = coverProgress)
+    val barIcons = androidx.compose.ui.graphics.lerp(
+        Color.White, MaterialTheme.colorScheme.onSurface, coverProgress
     )
 
     Scaffold(
@@ -725,27 +768,57 @@ fun SubscriberScreen(
              * ради чего шапка нужна.
              */
             TopAppBar(
+                modifier = Modifier.onGloballyPositioned { coords ->
+                    barBottomInRoot = coords.positionInRoot().y + coords.size.height
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = barContainer,
                     navigationIconContentColor = barIcons,
                     actionIconContentColor = barIcons
                 ),
                 title = {
-                    // Имя в заголовке — только когда шапки с именем не видно
-                    if (showBarTitle) {
-                        Text(
-                            title,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                    /*
+                     * Имя — когда имени под фото уже не видно. С фото рядом
+                     * маленький круглый портрет: фото «уходит» в строку
+                     * заголовка кружком, как в журнале, — видно, чья
+                     * карточка, и после прокрутки.
+                     *
+                     * Появление плавное: без этого строка дёргалась, когда
+                     * в ней вдруг возникал текст.
+                     */
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = showBarTitle,
+                        enter = androidx.compose.animation.fadeIn(),
+                        exit = androidx.compose.animation.fadeOut()
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            photoUri?.takeIf { it.isNotBlank() }?.let { uri ->
+                                AsyncImage(
+                                    model = uri,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .size(32.dp)
+                                        .clip(CircleShape)
+                                )
+                                Spacer(Modifier.width(12.dp))
+                            }
+                            Text(
+                                title,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.nav_back)
-                        )
+                    if (showBack) {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.nav_back)
+                            )
+                        }
                     }
                 },
                 actions = {
@@ -899,6 +972,7 @@ fun SubscriberScreen(
                             Modifier
                                 .fillMaxWidth()
                                 .aspectRatio(if (flatPhoto) 3.2f else 1.5f)
+                                .onGloballyPositioned { coverHeightPx = it.size.height }
                         ) {
                             AsyncImage(
                                 model = uri,
@@ -1116,7 +1190,21 @@ fun SubscriberScreen(
                              */
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Medium,
-                            textAlign = TextAlign.Center
+                            /*
+                             * По левому краю, а не по центру.
+                             *
+                             * Под обложкой во всю ширину имя по центру
+                             * висело отдельно от всего остального: номера,
+                             * заметка, сведения — все начинаются слева.
+                             * Слева имя встаёт в одну линию с ними и читается
+                             * как заголовок карточки, а не подпись к фото.
+                             */
+                            textAlign = TextAlign.Start,
+                            // Где имя на экране: когда его нижний край уходит
+                            // под строку заголовка, имя появляется в ней
+                            modifier = Modifier.fillMaxWidth().onGloballyPositioned { coords ->
+                                nameBottomInRoot = coords.positionInRoot().y + coords.size.height
+                            }
                         )
 
                         Spacer(Modifier.height(FlowUi.contentPadding))
@@ -1674,7 +1762,20 @@ fun SubscriberScreen(
              * у каждого номера превратилась бы в шум.
              */
             item {
-                OgnelissPanel(title = stringResource(R.string.spam_mark_section)) {
+                // Значок блокировки у заголовка: «Отметка» сама по себе
+                // не говорит, о чём раздел, — значок сразу связывает его
+                // с защитой от нежелательных звонков
+                OgnelissPanel(
+                    title = stringResource(R.string.spam_mark_section),
+                    icon = {
+                        Icon(
+                            Icons.Default.Block,
+                            contentDescription = null,
+                            tint = BlockRed,
+                            modifier = Modifier.size(FlowUi.iconSizeInline)
+                        )
+                    }
+                ) {
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -2427,27 +2528,29 @@ private fun RowScope.QuickAction(
             modifier = Modifier.size(FlowUi.actionCircleSize)
         ) {
             Box(contentAlignment = Alignment.Center) {
+                val labelsShown = LocalAppearance.current.buttonLabels
                 Icon(
                     icon,
-                    // Подпись под кругом читается и так; для TalkBack
-                    // хватает одного описания на колонку, иначе оно
-                    // звучит дважды
-                    contentDescription = null,
+                    // С подписью описание не нужно: TalkBack прочёл бы
+                    // его дважды. Без подписи — нужно, иначе кнопка немая
+                    contentDescription = if (labelsShown) null else label,
                     tint = tint ?: MaterialTheme.colorScheme.primary
                 )
             }
         }
 
-        Spacer(Modifier.height(6.dp))
+        if (LocalAppearance.current.buttonLabels) {
+            Spacer(Modifier.height(6.dp))
 
-        Text(
-            label,
-            style = MaterialTheme.typography.labelSmall,
-            textAlign = TextAlign.Center,
-            // Две строки: длинные подписи есть не только в русском
-            maxLines = 2,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+            Text(
+                label,
+                style = MaterialTheme.typography.labelSmall,
+                textAlign = TextAlign.Center,
+                // Две строки: длинные подписи есть не только в русском
+                maxLines = 2,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
 

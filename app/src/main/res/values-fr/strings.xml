@@ -97,6 +97,7 @@
     <string name="empty_no_contacts_permission_hint">Sans accès aux contacts, les appels s’affichent en numéros bruts et la recherche T9 ne trouve personne par son nom.</string>
     <string name="empty_no_favourites">Aucun favori</string>
     <string name="empty_no_favourites_hint">Touchez l’étoile à côté d’un contact pour le garder à portée de main.</string>
+    <string name="nav_journal">Journal</string>
     <string name="nav_notes">Notes</string>
     <string name="reminders_filter_today">Aujourd’hui</string>
     <string name="reminders_filter_week">Cette semaine</string>
@@ -641,4 +642,11 @@
     <string name="settings_journal_style_text">Chaque appel en carte ou appels regroupés par jour</string>
     <string name="journal_style_cards">Cartes</string>
     <string name="journal_style_groups">Groupes par jour</string>
+    <string name="action_mark_spam">Marquer comme spam</string>
+    <string name="action_unmark_spam">Retirer la marque spam</string>
+    <string name="detail_placeholder">Sélectionnez un appel — la fiche du contact s’affichera ici</string>
+    <string name="sim_kind_esim">eSIM</string>
+    <string name="sim_kind_physical">Carte SIM</string>
+    <string name="settings_button_labels">Libellés sous les boutons</string>
+    <string name="settings_button_labels_text">Texte sous les icônes des barres du bas, de la fiche contact et de l’écran d’appel. Désactivable une fois les icônes connues</string>
 </resources>

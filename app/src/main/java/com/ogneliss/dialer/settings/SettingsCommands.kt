@@ -85,6 +85,7 @@ class SettingsCommands @Inject constructor(
             "dynamic_color" -> prefs.setDynamicColor(value)
             "large_buttons" -> prefs.setLargeButtons(value)
             "show_photo" -> prefs.setShowPhoto(value)
+            "button_labels" -> prefs.setButtonLabels(value)
             "panel_swipe_nav" -> prefs.setPanelSwipeNav(value)
             "fake_call_button" -> prefs.setFakeCallButton(value)
             "haptic" -> prefs.setHaptic(value)
@@ -318,7 +319,7 @@ class SettingsCommands @Inject constructor(
          * молча неработающий переключатель.
          */
         val SWITCH_KEYS = setOf(
-            "dynamic_color", "large_buttons", "show_photo", "panel_swipe_nav",
+            "dynamic_color", "large_buttons", "show_photo", "button_labels", "panel_swipe_nav",
             "fake_call_button",
             "haptic", "key_tones",
             "merge_calls", "remember_sim", "smart_speaker",

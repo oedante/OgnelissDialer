@@ -264,6 +264,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val DYNAMIC_COLOR = booleanPreferencesKey("dynamic_color")
         val SHOW_PHOTO = booleanPreferencesKey("show_photo")
         val LARGE_BUTTONS = booleanPreferencesKey("large_buttons")
+        val BUTTON_LABELS = booleanPreferencesKey("button_labels")
         // Поведение
         val HAPTIC = booleanPreferencesKey("haptic")
         val KEY_TONES = booleanPreferencesKey("key_tones")
@@ -462,6 +463,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     val dynamicColor: Flow<Boolean> = data.map { it[Keys.DYNAMIC_COLOR] ?: false }
     val showPhoto: Flow<Boolean> = data.map { it[Keys.SHOW_PHOTO] ?: true }
     val largeButtons: Flow<Boolean> = data.map { it[Keys.LARGE_BUTTONS] ?: false }
+
+    /** Подписи под кнопками: разбор у Appearance.buttonLabels. По умолчанию — показывать. */
+    val buttonLabels: Flow<Boolean> = data.map { it[Keys.BUTTON_LABELS] ?: true }
 
     // ── Поведение ──────────────────────────────────────────────────────────
     val haptic: Flow<Boolean> = data.map { it[Keys.HAPTIC] ?: true }
@@ -701,6 +705,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setDynamicColor(v: Boolean) = edit("dynamic_color", v) { it[Keys.DYNAMIC_COLOR] = v }
     suspend fun setShowPhoto(v: Boolean) = edit("show_photo", v) { it[Keys.SHOW_PHOTO] = v }
     suspend fun setLargeButtons(v: Boolean) = edit("large_buttons", v) { it[Keys.LARGE_BUTTONS] = v }
+    suspend fun setButtonLabels(v: Boolean) = edit("button_labels", v) { it[Keys.BUTTON_LABELS] = v }
     suspend fun setHaptic(v: Boolean) = edit("haptic", v) { it[Keys.HAPTIC] = v }
     suspend fun setKeyTones(v: Boolean) = edit("key_tones", v) { it[Keys.KEY_TONES] = v }
     suspend fun setGroupingMode(v: GroupingMode) =

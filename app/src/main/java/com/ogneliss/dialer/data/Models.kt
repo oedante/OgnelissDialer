@@ -146,8 +146,36 @@ data class ContactEvent(val label: String, val date: String)
 @Immutable
 data class PhoneNumber(val value: String, val label: String, val e164: String)
 
+/**
+ * SIM-карта в слоте.
+ *
+ * label — то, что показываем на кнопках: своё название, если задано,
+ * иначе системное.
+ *
+ * carrier и systemName — чтобы человек мог понять, какая карта где,
+ * когда подписывает слоты. «Слот 1» и «Слот 2» сами по себе ничего
+ * не говорят: где у него какой номер, пользователь не знает (вопрос
+ * пришёл от пользователя). По умолчанию null: сохранённый на диске
+ * список карт этих полей не хранит, и после первого живого чтения
+ * они появятся сами.
+ */
 @Immutable
-data class SimSlot(val subscriptionId: Int, val slotIndex: Int, val label: String, val number: String?)
+data class SimSlot(
+    val subscriptionId: Int,
+    val slotIndex: Int,
+    val label: String,
+    val number: String?,
+    /** Оператор, как его сообщает карта: «Beeline», «MTS RUS». */
+    val carrier: String? = null,
+    /** Имя карты в системе — то, что видно в настройках телефона. */
+    val systemName: String? = null,
+    /**
+     * Встроенная eSIM, а не пластиковая карта. Не у всех два физических
+     * слота: часто вторая «карта» — eSIM, и «Слот 2» человеку ни о чём
+     * не говорит, а «eSIM» — сразу понятно.
+     */
+    val embedded: Boolean = false
+)
 
 data class SpeedDialEntry(val digit: Int, val number: String, val name: String?)
 

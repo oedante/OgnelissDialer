@@ -87,6 +87,7 @@
     <string name="empty_no_contacts_permission_hint">Без доступа к контактам вызовы показываются голыми номерами, а T9-поиск не находит людей по имени.</string>
     <string name="empty_no_favourites">Избранных нет</string>
     <string name="empty_no_favourites_hint">Нажмите звёздочку рядом с контактом, чтобы держать его под рукой.</string>
+    <string name="nav_journal">Журнал</string>
     <string name="nav_notes">Заметки</string>
     <string name="reminders_filter_today">Сегодня</string>
     <string name="reminders_filter_week">На этой неделе</string>
@@ -646,4 +647,11 @@
     <string name="settings_journal_style_text">Каждый звонок карточкой или звонки группой по дням</string>
     <string name="journal_style_cards">Карточки</string>
     <string name="journal_style_groups">Группы по дням</string>
+    <string name="action_mark_spam">Отметить как спам</string>
+    <string name="action_unmark_spam">Снять отметку «спам»</string>
+    <string name="detail_placeholder">Выберите запись в журнале — карточка откроется здесь</string>
+    <string name="sim_kind_esim">eSIM</string>
+    <string name="sim_kind_physical">SIM-карта</string>
+    <string name="settings_button_labels">Подписи под кнопками</string>
+    <string name="settings_button_labels_text">Текст под значками на нижних панелях, в карточке и на экране вызова. Можно выключить, когда значки уже знакомы</string>
 </resources>

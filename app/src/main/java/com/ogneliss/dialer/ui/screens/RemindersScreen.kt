@@ -195,7 +195,9 @@ fun RemindersScreen(
                 } else {
                     EmptyReason.NoReminders
                 },
-                onAction = { search = "" }
+                onAction = { search = "" },
+                // Отступы каркаса: иначе значок уходит под строку заголовка
+                modifier = Modifier.padding(padding)
             )
             return@ScreenScaffold
         }

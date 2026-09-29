@@ -100,6 +100,7 @@
     <string name="empty_no_contacts_permission_hint">Without access to contacts, calls show as bare numbers and T9 search cannot find people by name.</string>
     <string name="empty_no_favourites">No favourites</string>
     <string name="empty_no_favourites_hint">Tap the star next to a contact to keep them at hand.</string>
+    <string name="nav_journal">Call log</string>
     <string name="nav_notes">Notes</string>
     <string name="reminders_filter_today">Today</string>
     <string name="reminders_filter_week">This week</string>
@@ -657,4 +658,11 @@ Open Settings → Security → Special app access and allow this app to modify s
     <string name="settings_journal_style_text">Each call as a card, or calls grouped by day</string>
     <string name="journal_style_cards">Cards</string>
     <string name="journal_style_groups">Groups by day</string>
+    <string name="action_mark_spam">Mark as spam</string>
+    <string name="action_unmark_spam">Remove spam mark</string>
+    <string name="detail_placeholder">Select a call to see the contact card here</string>
+    <string name="sim_kind_esim">eSIM</string>
+    <string name="sim_kind_physical">SIM card</string>
+    <string name="settings_button_labels">Button labels</string>
+    <string name="settings_button_labels_text">Text under icons on the bottom bars, contact card and call screen. Turn off once you know the icons</string>
 </resources>

@@ -503,7 +503,10 @@ private fun ActionRow(
     onMenu: () -> Unit,
     menuContent: @Composable () -> Unit
 ) {
-    val labelsShown = !com.ogneliss.dialer.ui.adaptive.LocalWindowLayout.current.isShort
+    // Полоса навигации слева от всего экрана — признак из RootScreen.
+    // Не по раскладке: в режиме «список — подробности» раскладка у журнала
+    // своя, по ширине панели, и по ней полосу не увидеть
+    val railShown = com.ogneliss.dialer.ui.adaptive.LocalNavigationRailShown.current
     Row(
         Modifier
             .fillMaxWidth()
@@ -511,29 +514,21 @@ private fun ActionRow(
             // контактов: раньше обе набирали её из содержимого
             // и не совпадали
             .height(FlowUi.panelRowHeight())
-            .padding(horizontal = 8.dp)
-            .then(if (labelsShown) Modifier.padding(bottom = 4.dp) else Modifier),
+            .padding(horizontal = 8.dp),
         /*
-         * Подписи — на одной линии.
-         *
-         * Кнопка клавиатуры выше остальных (52 dp против 24 у значков),
-         * и при выравнивании по центру её подпись садилась ниже соседних
-         * на ~20 точек: «Контакты», «Фильтры», «Напоминания», «Ещё» —
-         * на одной высоте, «Клавиатура» — ниже. На снимке тёмной темы
-         * это было видно сразу.
-         *
-         * Выравнивание по низу ставит все подписи на одну линию. Без подписей
-         * (телефон лёжа) — снова по центру: иначе маленькие значки легли бы
-         * на дно рядом с высокой кнопкой.
+         * Подписи — на одной линии: с 1.2.0 все кнопки ряда одной высоты
+         * (таблетки по 40 dp), поэтому достаточно выравнивания по центру.
+         * В 1.1.3 кнопка клавиатуры была выше соседей, и её подпись
+         * садилась ниже остальных.
          */
-        verticalAlignment = if (labelsShown) Alignment.Bottom else Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically
     ) {
         /*
          * ГЛАВНАЯ КНОПКА ЦЕНТРИРУЕТСЯ ПО ПОСТРОЕНИЮ.
          *
          * ── Почему не SpaceEvenly ──────────────────────────────────────────
          * Он распределяет промежутки поровну, но кнопка клавиатуры шире
-         * значков (88 dp против 48). Пока по бокам поровну элементов,
+         * значков (72 dp против 56). Пока по бокам поровну элементов,
          * центр совпадает случайно — стоит добавить или убрать один,
          * и кнопка уезжает.
          *
@@ -546,7 +541,17 @@ private fun ActionRow(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            LabeledIconButton(Icons.Default.Person, R.string.nav_contacts, onContacts)
+            /*
+             * На широком окне (планшет, раскладушка лёжа) слева есть
+             * боковая полоса навигации с контактами и напоминаниями —
+             * здесь те же кнопки дублировали бы её. Место не пропадает:
+             * Spacer того же размера держит кнопку клавиатуры по центру.
+             */
+            if (!railShown) {
+                LabeledIconButton(Icons.Default.Person, R.string.nav_contacts, onContacts)
+            } else {
+                Spacer(Modifier.size(width = PILL_WIDTH, height = PILL_HEIGHT))
+            }
 
 
             /*
@@ -600,7 +605,9 @@ private fun ActionRow(
             onClick = onToggleExpanded,
             shape = OgnelissShapeTokens.callButton,
             modifier = Modifier
-                .size(width = 88.dp, height = 52.dp)
+                // Высота — как у боковых кнопок (PILL_HEIGHT): ряд ровный.
+                // Шире соседей и залита цветом — главная кнопка видна сразу
+                .size(width = 72.dp, height = PILL_HEIGHT)
                 .verticalSwipeGesture(
                     // Вверх раскрывает только если ещё закрыта, вниз —
                     // только если открыта: жест в сторону текущего
@@ -618,7 +625,9 @@ private fun ActionRow(
         }
 
         // Подпись — как у соседей: на телефоне лёжа прячется вместе с ними
-        if (!com.ogneliss.dialer.ui.adaptive.LocalWindowLayout.current.isShort) {
+        if (!com.ogneliss.dialer.ui.adaptive.LocalWindowLayout.current.isShort &&
+            com.ogneliss.dialer.ui.theme.LocalAppearance.current.buttonLabels
+        ) {
             Spacer(Modifier.height(2.dp))
 
             Text(
@@ -682,10 +691,11 @@ private fun ActionRow(
                     onClick = onStartSelection,
                     tint = MaterialTheme.colorScheme.primary
                 )
-            } else if (onReminders != null) {
+            } else if (onReminders != null && !railShown) {
                 LabeledIconButton(Icons.Default.Alarm, R.string.nav_reminders, onReminders)
             } else {
-                Spacer(Modifier.size(Dimens.MIN_TOUCH_TARGET))
+                // Размером с кнопку-таблетку: пустое место не короче соседей
+                Spacer(Modifier.size(width = PILL_WIDTH, height = PILL_HEIGHT))
             }
 
 

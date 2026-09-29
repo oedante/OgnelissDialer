@@ -79,7 +79,23 @@ fun SimLabelsDialog(
                                 )
                             )
                         },
-                        placeholder = { Text(sim.label) },
+                        placeholder = { Text(sim.systemName ?: sim.label) },
+                        /*
+                         * ЧТО ЭТО ЗА КАРТА — ПОД ПОЛЕМ, ВСЕГДА НА ВИДУ.
+                         *
+                         * Вопрос от пользователя: «Слот 1», «Слот 2» —
+                         * а где у меня какой номер? Системное имя стояло
+                         * только подсказкой внутри пустого поля, и её
+                         * закрывала подпись «Слот 1»: пока в поле не нажмёшь,
+                         * не видно.
+                         *
+                         * Теперь под каждым полем — имя карты в системе,
+                         * оператор и номер, что из этого известно. Номера
+                         * часто нет (операторы редко пишут его на карту),
+                         * но системное имя есть всегда — и оно то же, что
+                         * в настройках телефона, где карты подписаны.
+                         */
+                        supportingText = { Text(simIdentity(sim)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
                     )
@@ -87,4 +103,28 @@ fun SimLabelsDialog(
             }
         }
     )
+}
+
+
+/**
+ * Строка «что это за карта»: системное имя, оператор, номер — без повторов.
+ *
+ * Оператор не повторяется, если системное имя с него начинается
+ * («Beeline2292» и «Beeline»). Вид карты — SIM или eSIM — есть всегда.
+ */
+@Composable
+private fun simIdentity(sim: SimSlot): String {
+    val kind = stringResource(if (sim.embedded) R.string.sim_kind_esim else R.string.sim_kind_physical)
+    val parts = buildList {
+        // Вид карты — первым: «eSIM» сразу отвечает на «где какая»,
+        // если физический слот у телефона один
+        add(kind)
+        sim.systemName?.let { add(it) }
+        sim.carrier?.let { carrier ->
+            val dup = sim.systemName?.startsWith(carrier, ignoreCase = true) == true
+            if (!dup) add(carrier)
+        }
+        sim.number?.let { add(com.ogneliss.dialer.util.PhoneFormatter.format(it)) }
+    }
+    return parts.joinToString(" · ")
 }

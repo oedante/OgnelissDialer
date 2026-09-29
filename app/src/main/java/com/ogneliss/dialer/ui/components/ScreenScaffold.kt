@@ -45,6 +45,12 @@ import com.ogneliss.dialer.R
 fun ScreenScaffold(
     title: String,
     onBack: () -> Unit,
+    /**
+     * Показывать стрелку «назад». Нет — когда экран стоит правой панелью
+     * рядом со списком (настройки на планшете): возврат там — выбор
+     * другого раздела слева, а стрелка закрыла бы настройки целиком.
+     */
+    showBack: Boolean = true,
     actions: @Composable RowScope.() -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
     snackbarHost: @Composable () -> Unit = {},
@@ -70,11 +76,13 @@ fun ScreenScaffold(
             TopAppBar(
                 title = { Text(title) },
                 navigationIcon = {
+                    if (showBack) {
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.nav_back)
                         )
+                    }
                     }
                 },
                 actions = actions,

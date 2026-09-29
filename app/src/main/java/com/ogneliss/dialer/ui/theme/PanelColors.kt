@@ -26,7 +26,7 @@ import androidx.compose.ui.graphics.luminance
  * ── Что выбрано ────────────────────────────────────────────────────────────
  * | Тема     | Панель           | Клавиша                 | Контраст |
  * |----------|------------------|-------------------------|----------|
- * | светлая  | surfaceVariant   | surfaceContainerLowest  | 1,29 : 1 |
+ * | светлая  | surfaceContainerHighest | surfaceContainerLowest | 1,17 : 1 |
  * | тёмная   | surfaceContainer | surfaceContainerHighest | 1,34 : 1 |
  *
  * В светлой клавиши белые на сером — как у клавиатур Gboard и iOS:
@@ -56,7 +56,17 @@ object PanelColors {
     @Composable
     @ReadOnlyComposable
     fun panel(): Color =
-        if (isLight()) MaterialTheme.colorScheme.surfaceVariant
+        /*
+         * В светлой теме — surfaceContainerHighest, а не surfaceVariant.
+         *
+         * С surfaceVariant (Grey90, #E1E3E1) клавиши и поля белели
+         * хорошо — 1,29 : 1, — но сама панель на снимках с устройства
+         * оказалась слишком тёмной для светлой темы: тяжёлая серая
+         * полоса под светлым журналом. На уровень светлее — Grey92:
+         * белое на нём 1,17 : 1, всё ещё заметно больше прежних 1,04,
+         * при которых клавиши сливались с панелью.
+         */
+        if (isLight()) MaterialTheme.colorScheme.surfaceContainerHighest
         else MaterialTheme.colorScheme.surfaceContainer
 
     /** Фон клавиши набора. */

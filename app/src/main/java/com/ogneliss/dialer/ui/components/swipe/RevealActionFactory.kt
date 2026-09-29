@@ -146,6 +146,16 @@ object RevealActionFactory {
         val allLabels = labels.filterNotNull()
 
         return when (action) {
+            /*
+             * «Нет действия» — пустой список, а не кнопка.
+             *
+             * Раньше NONE падал в общую ветку else и превращался в обычную
+             * кнопку панели: в контактах выключенный свайп всё равно
+             * раскрывал панель — с кнопкой, которая ничего не делает.
+             * Пустой список для строки свайпа означает «в эту сторону
+             * не тянется» (SwipeRevealRow.hasStartPanel).
+             */
+            SwipeAction.NONE -> emptyList()
             SwipeAction.CALL -> buildCallActions(
                 numbers, labels, allLabels, sims, strings, onCall
             )
@@ -281,6 +291,16 @@ object RevealActionFactory {
      * фирменные оттенки — их узнают по цвету быстрее, чем по значку.
      * Разрушительные действия красные.
      */
+    /**
+     * Значок и цвет действия — для списка выбора в настройках свайпов.
+     *
+     * Тот же значок, что человек увидит под строкой при свайпе: выбирая
+     * действие, он заодно запоминает, как оно выглядит в журнале.
+     * null — для «Ничего»: значка у выключенного свайпа нет.
+     */
+    fun iconOf(action: SwipeAction): Pair<ImageVector, Color>? =
+        if (action == SwipeAction.NONE) null else visuals(action)
+
     private fun visuals(action: SwipeAction): Pair<ImageVector, Color> = when (action) {
         // Вызов
         SwipeAction.CALL -> Icons.Default.Call to CallGreen

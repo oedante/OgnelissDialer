@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.R
+import com.ogneliss.dialer.data.SpamMarkType
 import com.ogneliss.dialer.data.CallLogGroup
 import com.ogneliss.dialer.data.PinnedContacts
 import com.ogneliss.dialer.data.RulePattern
@@ -301,6 +302,36 @@ fun ContactActionSheet(
                     haptics(); vm.blockNumber(group.e164); onDismiss()
                 }
             }
+            /*
+             * «СПАМ» — РЯДОМ С БЛОКИРОВКОЙ.
+             *
+             * С 1.1.1 отметка «спам» живёт отдельно от заметки, а поставить
+             * её можно было только в карточке. Здесь, в меню записи, где
+             * человек и так решает «что делать с этим номером», её не было.
+             *
+             * Пункт переключает отметку: нет отметки — ставит «спам»,
+             * есть любая (спам или мошенники) — снимает. «Мошенники» —
+             * тоньше, их ставят в карточке, где видны обе фишки.
+             */
+            val mark = state.spamMarks[group.e164]
+            if (mark == null) {
+                SheetAction(
+                    Icons.Default.Report,
+                    R.string.action_mark_spam,
+                    destructive = true
+                ) {
+                    haptics(); vm.setSpamMark(group.e164, SpamMarkType.SPAM); onDismiss()
+                }
+            } else {
+                SheetAction(
+                    Icons.Default.Report,
+                    R.string.action_unmark_spam,
+                    accent = UnblockGreen
+                ) {
+                    haptics(); vm.setSpamMark(group.e164, null); onDismiss()
+                }
+            }
+
             SheetAction(
                 Icons.Default.Delete,
                 R.string.action_delete_from_log,
