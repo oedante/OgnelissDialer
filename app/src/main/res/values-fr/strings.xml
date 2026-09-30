@@ -44,14 +44,9 @@
     <string name="action_remind">Me rappeler de rappeler</string>
     <string name="action_share_number">Partager le numéro</string>
     <string name="action_sms">SMS</string>
-    <string name="action_telegram">Telegram</string>
-    <string name="action_viber">Viber</string>
     <string name="action_view_contact">Ouvrir le contact</string>
-    <string name="action_whatsapp">WhatsApp</string>
     <string name="allow_list_empty">Aucune exception pour l’instant</string>
     <string name="allow_list_priority_note">Les numéros listés ici passent toujours, quelles que soient les autres règles. Ajoutez votre médecin, l’école et le livreur avant d’activer un blocage strict.</string>
-    <string name="app_name">Ogneliss Dialer</string>
-    <string name="app_short_name">Ogneliss</string>
     <string name="backup_contents">Le fichier contient les notes, les étiquettes, les listes de blocage et d’exceptions ainsi que les numéros abrégés. L’historique des appels et les contacts n’y sont pas : Android les transfère lui-même.</string>
     <string name="backup_done">Sauvegarde enregistrée</string>
     <string name="backup_failed">Impossible d’enregistrer la sauvegarde</string>
@@ -416,7 +411,6 @@
     <string name="settings_dialpad_open">Ouvrir le clavier au lancement</string>
     <string name="settings_dialpad_open_text">Désactivé par défaut : on ouvre plus souvent l’application pour voir qui a appelé que pour composer.</string>
     <string name="incall_dtmf_hint">Numérotation par tonalités</string>
-    <string name="action_max">Max</string>
     <string name="settings_theme_contrast">Contraste élevé (basse vision)</string>
     <string name="settings_notes_retention">Supprimer les anciennes notes</string>
     <string name="settings_notes_retention_text">Une note sur une livraison est utile une semaine ; un an plus tard, c’est de l’encombrement. Les notes étiquetées spam ou fraude ne sont jamais supprimées.</string>
@@ -645,8 +639,11 @@
     <string name="action_mark_spam">Marquer comme spam</string>
     <string name="action_unmark_spam">Retirer la marque spam</string>
     <string name="detail_placeholder">Sélectionnez un appel — la fiche du contact s’affichera ici</string>
-    <string name="sim_kind_esim">eSIM</string>
     <string name="sim_kind_physical">Carte SIM</string>
     <string name="settings_button_labels">Libellés sous les boutons</string>
     <string name="settings_button_labels_text">Texte sous les icônes des barres du bas, de la fiche contact et de l’écran d’appel. Désactivable une fois les icônes connues</string>
+    <string name="settings_proximity">Éteindre l’écran près de l’oreille</string>
+    <string name="settings_proximity_text">Le capteur de proximité éteint l’écran pendant un appel. Sans lui, la joue peut appuyer sur « Raccrocher » ou « Muet »</string>
+    <string name="settings_hide_contact_number">Type de numéro au lieu du numéro</string>
+    <string name="settings_hide_contact_number_text">Sur l’écran d’appel, les contacts enregistrés affichent « Mobile », « Travail », etc. au lieu des chiffres. Les numéros inconnus restent toujours visibles</string>
 </resources>

@@ -101,6 +101,18 @@ object Logger {
         return "$head${"*".repeat((digits.length - head.length - 4).coerceAtLeast(1))}$tail"
     }
 
+    /**
+     * Маскирование ключа карточки журнала: номер внутри ключа скрыт,
+     * служебная часть (вид ключа, номер записи) видна — по ней видно,
+     * устарел ли ключ.
+     *
+     * Пример: "number:+79619226305#1234" → "number:+7******6305#1234"
+     */
+    fun maskKey(key: String?): String {
+        if (key.isNullOrBlank()) return "<пусто>"
+        return Regex("""\+?\d{7,}""").replace(key) { mask(it.value) }
+    }
+
     /** Маскирование имени: "Андрей Клинов" → "А. К." */
     fun maskName(name: String?): String {
         if (name.isNullOrBlank()) return "<без имени>"

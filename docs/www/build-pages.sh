@@ -46,7 +46,7 @@ echo "  style.css"
 # Переключатель языка, логотип и значки сайта — общие файлы страниц.
 # Забыть их значит выложить страницы, которые ссылаются в пустоту:
 # вместо списка языков — ничего, вместо логотипа — крестик.
-for asset in lang.js lang.css logo.svg favicon.svg favicon-32.png apple-touch-icon.png app-icon.png home.html; do
+for asset in lang.js lang.css logo.svg favicon.svg favicon-32.png apple-touch-icon.png app-icon.png home.html qr-google-play.svg robots.txt sitemap.xml; do
     cp "$HERE/$asset" "$DIALER/$asset"
     echo "  $asset"
 done

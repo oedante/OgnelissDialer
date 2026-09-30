@@ -82,8 +82,8 @@ android {
          * Перед публикацией в открытый доступ сменить на 1.0.0
          * и поднять versionCode.
          */
-        versionCode = 22
-        versionName = "1.2.1"
+        versionCode = 24
+        versionName = "1.2.3"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

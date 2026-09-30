@@ -112,7 +112,8 @@ fun LabeledIconButton(
         }
 
         if (showLabel) {
-            Spacer(Modifier.height(2.dp))
+            // 4 dp, а не 2: подпись прилипала к таблетке кнопки
+            Spacer(Modifier.height(4.dp))
 
             Text(
                 label,

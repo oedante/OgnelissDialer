@@ -1,6 +1,6 @@
 # Google-Play-Eintrag — Deutsch
 
-Stand 1.1.1.
+Stand 1.2.2.
 
 ⚠️ **Nicht von einer Muttersprachlerin oder einem Muttersprachler
 gegengelesen.** Vor der Veröffentlichung prüfen lassen: ein Fehler im
@@ -69,13 +69,23 @@ ZWEI SIM-KARTEN
 • Die App merkt sich, mit welcher Karte Sie wen anrufen
 • Eigene Namen für die Steckplätze: „Arbeit“, „Privat“
 
+ANRUFBILDSCHIRM
+• Ausschalten des Displays am Ohr abschaltbar
+• Bei Kontakten Nummerntyp statt Ziffern
+• Schnelle SMS-Antwort auf eingehende Anrufe
+
+TABLETS UND FALTGERÄTE
+• Anrufliste und Kontaktkarte nebeneinander
+• Seitliche Navigation; quer: Tasten unter dem Daumen
+
 BEDIENUNG
 • Wischen zwischen den Bildschirmen: Protokoll, Kontakte, Notizen,
   Erinnerungen
 • Einstellbare Wischgesten in der Zeile: 14 Aktionen zur Auswahl
 • Helles, dunkles und AMOLED-schwarzes Design
 • Große Schaltflächen bei eingeschränktem Sehvermögen
-• Vier Sprachen: Russisch, Englisch, Deutsch, Französisch
+• Beschriftungen unter Tasten ausblendbar
+• 48 Sprachen, darunter Deutsch, Englisch, Französisch und Russisch
 • Export von Notizen und Listen in eine Datei
 
 WAS DIE APP NICHT HAT

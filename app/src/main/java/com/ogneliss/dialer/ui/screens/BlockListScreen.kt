@@ -27,7 +27,6 @@ import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.components.ReadableWidth
 import com.ogneliss.dialer.data.RuleKind
 import com.ogneliss.dialer.ui.theme.BlockRed
-import com.ogneliss.dialer.ui.theme.UnblockGreen
 import com.ogneliss.dialer.data.RulePattern
 import com.ogneliss.dialer.ui.DialerViewModel
 import androidx.compose.foundation.combinedClickable
@@ -231,7 +230,7 @@ private fun RuleRow(
                  * в карточке и в меню: человек читает смысл по цвету,
                  * не вчитываясь в подпись. Разбор — в Color.kt.
                  */
-                tint = if (isAllow) UnblockGreen else BlockRed
+                tint = if (isAllow) MaterialTheme.colorScheme.primary else BlockRed
             )
         },
         headlineContent = { Text(RulePattern.describe(pattern)) },

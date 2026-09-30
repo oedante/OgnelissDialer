@@ -1,14 +1,10 @@
 package com.ogneliss.dialer.ui.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -72,25 +68,22 @@ fun <T> SingleChoiceSheet(
                 )
             )
 
-            options.forEach { (value, labelRes) ->
-                ListItem(
-                    headlineContent = { Text(stringResource(labelRes)) },
-                    leadingContent = {
-                        RadioButton(
-                            selected = current == value,
-                            // null: нажатие обрабатывает вся строка —
-                            // попасть в неё проще, чем в кружок
-                            onClick = null
-                        )
-                    },
-                    modifier = Modifier
-                        .heightIn(min = FlowUi.rowHeight)
-                        .padding(horizontal = FlowUi.sheetPadding - 16.dp)
-                        .clickable {
+            /*
+             * Варианты — в скруглённой панели, как группы шторок «Ещё»
+             * и меню записи (1.2.2): одна форма для всех шторок приложения.
+             */
+            SheetGroup {
+                options.forEachIndexed { index, (value, labelRes) ->
+                    SheetChoiceRow(
+                        selected = current == value,
+                        label = stringResource(labelRes),
+                        onClick = {
                             onSelect(value)
                             onDismiss()
                         }
-                )
+                    )
+                    if (index < options.lastIndex) SheetDivider()
+                }
             }
         }
     }

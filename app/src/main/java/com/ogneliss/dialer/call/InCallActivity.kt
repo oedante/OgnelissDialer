@@ -35,10 +35,10 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.material.icons.automirrored.filled.CallSplit
 import androidx.compose.material.icons.automirrored.filled.MergeType
@@ -146,7 +146,16 @@ class InCallActivity : ComponentActivity() {
             )
         }
 
-        proximity = ProximityLock(this).also { it.acquire() }
+        /*
+         * Датчик приближения — по настройке (по умолчанию включён).
+         * Выключить просили в отзыве в Google Play: на части телефонов
+         * датчик гасит экран не вовремя. Без него щека может нажать
+         * кнопку — об этом сказано в описании настройки.
+         */
+        proximity = ProximityLock(this)
+        lifecycleScope.launch {
+            if (prefs.proximityScreenOff.first()) proximity?.acquire()
+        }
 
         // Авто-громкая связь: подписка на датчики только если функция
         // включена, иначе разговор час жёг бы батарею впустую
@@ -179,6 +188,7 @@ class InCallActivity : ComponentActivity() {
             // Экран вызова — отдельная активность, корня приложения у него
             // нет, поэтому оформление ставится здесь
             val buttonLabels by prefs.buttonLabels.collectAsState(initial = true)
+            val hideContactNumber by prefs.callHideContactNumber.collectAsState(initial = false)
 
             OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic) {
                 // Раскладка окна: телефон, лёжа, раскладушка, планшет.
@@ -244,6 +254,7 @@ class InCallActivity : ComponentActivity() {
                     appScope = appScope,
                     notesRepo = notesRepo,
                     spamMarksRepo = spamMarksRepo,
+                    hideContactNumber = hideContactNumber,
                     // Пользователь переключил звук сам — датчики умолкают
                     // до конца разговора
                     onManualAudioChange = { smartSpeaker?.notifyManualToggle() }
@@ -294,6 +305,8 @@ private fun InCallScreen(
     appScope: kotlinx.coroutines.CoroutineScope,
     notesRepo: com.ogneliss.dialer.data.NotesRepository,
     spamMarksRepo: com.ogneliss.dialer.data.SpamMarksRepository,
+    /** У сохранённого контакта — тип номера вместо номера. */
+    hideContactNumber: Boolean = false,
     onManualAudioChange: () -> Unit = {}
 ) {
     // Мало места по высоте — раскладка в две колонки. Порог прежний
@@ -392,6 +405,30 @@ private fun InCallScreen(
     val photoUri by produceState<String?>(initialValue = null, number) {
         value = runCatching { contactsRepo.photoUriForNumber(number) }.getOrNull()
     }
+    // Тип номера — только если он понадобится: настройка включена
+    // и звонит сохранённый контакт
+    val numberType by produceState<String?>(null, number, hideContactNumber, name) {
+        value = if (hideContactNumber && !name.isNullOrBlank()) {
+            runCatching { contactsRepo.numberTypeLabel(number) }.getOrNull()
+        } else null
+    }
+    /*
+     * ══════════════════════════════════════════════════════════════════════
+     * ЧТО ПОКАЗАТЬ ПОД ИМЕНЕМ
+     * ══════════════════════════════════════════════════════════════════════
+     * Отзыв в Google Play просил дважды: «показывать у сохранённых
+     * контактов только имя». Против было одно возражение: у контакта
+     * бывает несколько номеров, в том числе зарубежный, и номер
+     * показывает, какой именно звонит.
+     *
+     * Поэтому при включённой настройке вместо номера — его тип из книги:
+     * «Мобильный», «Рабочий», своя подпись. Какой номер звонит — видно,
+     * цифр нет. Если тип не прочитался — номер, как обычно: лучше лишние
+     * цифры, чем гадать. У незнакомых номеров номер показывается всегда.
+     */
+    val numberLine = if (hideContactNumber && !name.isNullOrBlank() && numberType != null) {
+        numberType
+    } else null
 
     /*
      * ЗАМЕТКА О ЗВОНЯЩЕМ.
@@ -654,6 +691,7 @@ private fun InCallScreen(
                         display = callerDisplay,
                         number = number,
                         carrierLine = carrierLine,
+                        numberLine = numberLine,
                         danger = isDangerTagged,
                         titleSize = FlowUi.callNameSizeLandscape
                     )
@@ -664,19 +702,26 @@ private fun InCallScreen(
 
         /** Главные кнопки: ответить и отклонить, или завершить. */
         val mainButtons: @Composable () -> Unit = {
-                    Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
+                    ) {
                         if (state == Call.STATE_RINGING) {
                             BigButton(
                                 stringResource(R.string.incall_decline),
                                 DeclineRed,
-                                Icons.Default.CallEnd
+                                Icons.Default.CallEnd,
+                                modifier = Modifier.weight(1f),
+                                shareRow = true
                             ) {
                                 CallManager.reject()
                             }
                             BigButton(
                                 stringResource(R.string.incall_answer),
                                 CallGreen,
-                                Icons.Default.Call
+                                Icons.Default.Call,
+                                modifier = Modifier.weight(1f),
+                                shareRow = true
                             ) {
                                 CallManager.answer()
                             }
@@ -819,6 +864,7 @@ private fun InCallScreen(
                     display = callerDisplay,
                     number = number,
                     carrierLine = carrierLine,
+                    numberLine = numberLine,
                     danger = isDangerTagged,
                     titleSize = FlowUi.callNameSize
                 )
@@ -1042,12 +1088,19 @@ private fun InCallScreen(
                     Spacer(Modifier.height(12.dp))
                 }
 
-                Row(horizontalArrangement = Arrangement.spacedBy(40.dp)) {
+                Row(
+                    Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    // По центру: при одной кнопке («Завершить») ряд не должен
+                    // прижимать её к левому краю
+                    horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
+                ) {
                     if (state == Call.STATE_RINGING) {
                         BigButton(
                             stringResource(R.string.incall_decline),
                             DeclineRed,
-                            Icons.Default.CallEnd
+                            Icons.Default.CallEnd,
+                            modifier = Modifier.weight(1f),
+                            shareRow = true
                         ) { CallManager.reject() }
 
                         /*
@@ -1088,11 +1141,13 @@ private fun InCallScreen(
                             label = "answerScale"
                         )
 
-                        Box(Modifier.graphicsLayer { scaleX = scale; scaleY = scale }) {
+                        Box(Modifier.weight(1f).graphicsLayer { scaleX = scale; scaleY = scale }) {
                             BigButton(
                                 stringResource(R.string.incall_answer),
                                 CallGreen,
-                                Icons.Default.Call
+                                Icons.Default.Call,
+                                modifier = Modifier.fillMaxWidth(),
+                                shareRow = true
                             ) { CallManager.answer() }
                         }
                     } else {
@@ -1377,14 +1432,16 @@ private fun QuickReplySheet(
                 Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
                 style = MaterialTheme.typography.titleLarge
             )
-            HorizontalDivider()
-            templates.forEach { template ->
-                ListItem(
-                    headlineContent = { Text(template) },
-                    modifier = Modifier
-                        .heightIn(min = com.ogneliss.dialer.ui.theme.Dimens.MIN_TOUCH_TARGET)
-                        .clickable { onSend(template) }
-                )
+            // Ответы — в скруглённой панели, как строки остальных шторок (1.2.2)
+            com.ogneliss.dialer.ui.components.SheetGroup {
+                templates.forEachIndexed { index, template ->
+                    com.ogneliss.dialer.ui.components.SheetRow(
+                        Icons.AutoMirrored.Filled.Message,
+                        template,
+                        onClick = { onSend(template) }
+                    )
+                    if (index < templates.lastIndex) com.ogneliss.dialer.ui.components.SheetDivider()
+                }
             }
         }
     }
@@ -1584,6 +1641,8 @@ private fun CallerIdentity(
     /** «Билайн · Москва и Московская область» или null. */
     carrierLine: String?,
     titleSize: TextUnit,
+    /** Вместо номера под именем — например, тип номера. null — номер. */
+    numberLine: String? = null,
     /**
      * У номера метка «спам» или «мошенники».
      *
@@ -1645,7 +1704,7 @@ private fun CallerIdentity(
     if (display.title != PhoneFormatter.format(number)) {
         Spacer(Modifier.height(4.dp))
         Text(
-            PhoneFormatter.format(number),
+            numberLine ?: PhoneFormatter.format(number),
             fontSize = FlowUi.callNumberSize,
             color = MaterialTheme.colorScheme.outline
         )
@@ -1767,11 +1826,31 @@ private fun BigButton(
      * разговора, поэтому слово оставлено.
      */
     icon: androidx.compose.ui.graphics.vector.ImageVector,
+    modifier: Modifier = Modifier,
+    /**
+     * Кнопка делит ряд поровну с соседкой — «Отклонить» и «Ответить».
+     *
+     * ══════════════════════════════════════════════════════════════════
+     * ЗАЧЕМ
+     * ══════════════════════════════════════════════════════════════════
+     * Отзыв в Google Play (Samsung Galaxy A04s, английский): «поправьте
+     * немного подписи на кнопках ответа». У каждой кнопки была
+     * наименьшая ширина 152 dp и зазор 40 dp: вместе 344 dp — а экран
+     * A04s шириной 360 dp, из которых ещё уходят поля. Кнопки не
+     * помещались, вторая сжималась, и подпись ломалась посреди слова
+     * или обрезалась.
+     *
+     * Теперь в ряду из двух кнопки делят ширину поровну, поля внутри
+     * кнопки меньше, а подпись при нехватке места переносится на вторую
+     * строку целым словом, а не обрезается.
+     */
+    shareRow: Boolean = false,
     onClick: () -> Unit
 ) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(containerColor = color),
+        contentPadding = PaddingValues(horizontal = 16.dp),
         /*
          * Высота из правил FlowUI.
          *
@@ -1783,9 +1862,11 @@ private fun BigButton(
          * Плюс запас: по кнопке ответа попадают в худших условиях —
          * телефон достают из кармана на ходу.
          */
-        modifier = Modifier
+        modifier = modifier
             .height(FlowUi.primaryActionHeight + 16.dp)
-            .widthIn(min = FlowUi.callActionMinWidth)
+            // Одна кнопка («Завершить») — не уже 152 dp, чтобы в неё легко
+            // попасть; две в ряду — сколько даст ряд
+            .then(if (shareRow) Modifier else Modifier.widthIn(min = FlowUi.callActionMinWidth))
     ) {
         Icon(icon, contentDescription = null, tint = Color.White)
         Spacer(Modifier.width(8.dp))
@@ -1793,7 +1874,11 @@ private fun BigButton(
             text,
             color = Color.White,
             fontSize = FlowUi.callNumberSize,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            // Две строки и по центру: при крупном шрифте системы подпись
+            // переносится целым словом, а не обрезается
+            maxLines = 2,
+            textAlign = TextAlign.Center
         )
     }
 }

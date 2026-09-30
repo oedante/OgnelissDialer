@@ -55,6 +55,10 @@ class SettingsStateSource @Inject constructor(
     }
         // Шестой поток — отдельно: у типизированного combine предел пять
         .combine(prefs.buttonLabels) { a, labels -> a.copy(buttonLabels = labels) }
+        // Настройки экрана вызова — сюда же: отдельной группы потоков
+        // ради двух переключателей не заводим
+        .combine(prefs.proximityScreenOff) { a, v -> a.copy(proximityScreenOff = v) }
+        .combine(prefs.callHideContactNumber) { a, v -> a.copy(callHideContactNumber = v) }
 
     /** Жесты и отклик. */
     private val gestures: Flow<Gestures> = combine(
@@ -145,6 +149,8 @@ class SettingsStateSource @Inject constructor(
             showPhoto = a.showPhoto,
             sortOrder = a.sortOrder,
             buttonLabels = a.buttonLabels,
+            proximityScreenOff = a.proximityScreenOff,
+            callHideContactNumber = a.callHideContactNumber,
             notesRetention = n.retention,
             notesRetentionScope = n.scope,
             language = n.language,
@@ -186,7 +192,9 @@ class SettingsStateSource @Inject constructor(
         val largeButtons: Boolean,
         val showPhoto: Boolean,
         val sortOrder: SortOrder,
-        val buttonLabels: Boolean = true
+        val buttonLabels: Boolean = true,
+        val proximityScreenOff: Boolean = true,
+        val callHideContactNumber: Boolean = false
     )
 
     private data class Notes(

@@ -112,3 +112,26 @@ androidResources {
 Смысл тот же: какие локали попадут в сборку. Список обязан совпадать
 с `res/xml/locales_config.xml`, иначе выбор языка в приложении
 покажет язык, которого в APK нет.
+
+## generateBaselineProfile: INSTALL_FAILED_UPDATE_INCOMPATIBLE
+
+```
+Existing package com.ogneliss.dialer signatures do not match newer version
+> Task :benchmark:connectedNonMinifiedReleaseAndroidTest FAILED
+```
+
+**Причина:** во время сборки профиля к компьютеру был подключён телефон
+с включённой отладкой по USB. Кроме эмулятора (benchmarkDevice), сборка
+попыталась поставить тестовую версию и на телефон — а там стоит версия
+из Google Play с другой подписью. Android отказывается ставить приложение
+поверх с чужой подписью — и правильно делает.
+
+**Что делать:** отключить телефон (или отладку по USB) на время
+`generateBaselineProfile` — профиль собирается на эмуляторе.
+
+⚠️ **Не удалять приложение с телефона**, чтобы «пропустить» установку:
+вместе с ним удалятся заметки, отметки, напоминания и настройки.
+
+В `benchmark/build.gradle.kts` стоит `useConnectedDevices = false`, но
+плагин Baseline Profile 1.3.3 проверен только до AGP 9.0-alpha01 —
+похоже, с AGP 9.3 он эту настройку соблюдает не полностью.

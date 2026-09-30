@@ -3,6 +3,12 @@ package com.ogneliss.dialer.ui.components
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.runtime.getValue
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -134,6 +140,22 @@ fun Dialpad(
                      * Порядок важен: clip перед background, иначе фон
                      * нарисуется прямоугольником и скругление закрасится.
                      */
+                    /*
+                     * НАЖАТАЯ КЛАВИША — С ЛЁГКИМ ОТТЕНКОМ ОСНОВНОГО ЦВЕТА.
+                     *
+                     * Одной ряби мало: она светлая и на белой клавише едва
+                     * видна, особенно при быстром наборе. Пока палец на
+                     * клавише, её фон — primaryContainer: видно, какая
+                     * нажата. Плавно (100 мс), чтобы быстрый набор не мигал.
+                     * Предложено разбором палитры: синий — цвет управления.
+                     */
+                    val keyInteraction = remember { MutableInteractionSource() }
+                    val keyPressed by keyInteraction.collectIsPressedAsState()
+                    val keyColor by animateColorAsState(
+                        if (keyPressed) MaterialTheme.colorScheme.primaryContainer else PanelColors.key(),
+                        animationSpec = tween(100),
+                        label = "dialKeyPressed"
+                    )
                     Box(
                         modifier = Modifier
                             .weight(1f)
@@ -152,12 +174,14 @@ fun Dialpad(
                             )
                             .clip(OgnelissShapeTokens.dialKey)
                             // Клавиша заметно отличается от панели: разбор в PanelColors
-                            .background(PanelColors.key())
+                            .background(keyColor)
                             .semantics(mergeDescendants = true) {
                                 contentDescription = keyLabel
                                 role = Role.Button
                             }
                             .combinedClickable(
+                                interactionSource = keyInteraction,
+                                indication = LocalIndication.current,
                                 onClick = {
                                     // Три канала отклика сразу: набирают
                                     // вслепую, глядя на бумажку, а не на экран

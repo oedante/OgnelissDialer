@@ -265,6 +265,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val SHOW_PHOTO = booleanPreferencesKey("show_photo")
         val LARGE_BUTTONS = booleanPreferencesKey("large_buttons")
         val BUTTON_LABELS = booleanPreferencesKey("button_labels")
+        val PROXIMITY_SCREEN_OFF = booleanPreferencesKey("proximity_screen_off")
+        val CALL_HIDE_CONTACT_NUMBER = booleanPreferencesKey("call_hide_contact_number")
         // Поведение
         val HAPTIC = booleanPreferencesKey("haptic")
         val KEY_TONES = booleanPreferencesKey("key_tones")
@@ -466,6 +468,19 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     /** Подписи под кнопками: разбор у Appearance.buttonLabels. По умолчанию — показывать. */
     val buttonLabels: Flow<Boolean> = data.map { it[Keys.BUTTON_LABELS] ?: true }
+
+    /**
+     * Гасить экран у уха по датчику приближения. По умолчанию — да:
+     * без этого щека нажимает кнопки. Просили выключаемым в отзыве
+     * в Google Play (бывают датчики, которые гасят экран не вовремя).
+     */
+    val proximityScreenOff: Flow<Boolean> = data.map { it[Keys.PROXIMITY_SCREEN_OFF] ?: true }
+
+    /**
+     * На экране вызова у сохранённого контакта — тип номера вместо
+     * самого номера. По умолчанию — нет: номер показывается.
+     */
+    val callHideContactNumber: Flow<Boolean> = data.map { it[Keys.CALL_HIDE_CONTACT_NUMBER] ?: false }
 
     // ── Поведение ──────────────────────────────────────────────────────────
     val haptic: Flow<Boolean> = data.map { it[Keys.HAPTIC] ?: true }
@@ -706,6 +721,10 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setShowPhoto(v: Boolean) = edit("show_photo", v) { it[Keys.SHOW_PHOTO] = v }
     suspend fun setLargeButtons(v: Boolean) = edit("large_buttons", v) { it[Keys.LARGE_BUTTONS] = v }
     suspend fun setButtonLabels(v: Boolean) = edit("button_labels", v) { it[Keys.BUTTON_LABELS] = v }
+    suspend fun setProximityScreenOff(v: Boolean) =
+        edit("proximity_screen_off", v) { it[Keys.PROXIMITY_SCREEN_OFF] = v }
+    suspend fun setCallHideContactNumber(v: Boolean) =
+        edit("call_hide_contact_number", v) { it[Keys.CALL_HIDE_CONTACT_NUMBER] = v }
     suspend fun setHaptic(v: Boolean) = edit("haptic", v) { it[Keys.HAPTIC] = v }
     suspend fun setKeyTones(v: Boolean) = edit("key_tones", v) { it[Keys.KEY_TONES] = v }
     suspend fun setGroupingMode(v: GroupingMode) =

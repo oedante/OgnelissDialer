@@ -175,7 +175,12 @@ internal val NoteTeal = androidx.compose.ui.graphics.Color(0xFF4DB6AC)
  */
 internal val BlockRed = DeclineRed
 
-internal val UnblockGreen = CallGreen
+/*
+ * UnblockGreen убран в 1.2.1. Зелёный в приложении означает одно — звонок
+ * («Позвонить», «Ответить», идущий разговор). Снятие блокировки и отметки
+ * «спам» теперь основного цвета (colorScheme.primary): это управление,
+ * а не вызов.
+ */
 
 /*
  * ЦВЕТА ДЕЙСТВИЙ СВАЙПА.

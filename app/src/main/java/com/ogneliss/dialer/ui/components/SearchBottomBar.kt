@@ -82,7 +82,8 @@ fun SearchBottomBar(
     Surface(
         // Цвет панели общий для четырёх экранов: разбор в PanelColors
         color = PanelColors.panel(),
-        tonalElevation = 3.dp,
+        // Без тонального подъёма — разбор в BottomControlPanel
+        tonalElevation = 0.dp,
         shape = OgnelissShapeTokens.bottomPanel,
         /*
          * ЖЕСТ — НА ВСЮ ПАНЕЛЬ, КАК В КОНТАКТАХ.
@@ -158,7 +159,25 @@ fun SearchBottomBar(
                 // Разбор — в PanelColors
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedContainerColor = PanelColors.key(),
-                    unfocusedContainerColor = PanelColors.key()
+                    unfocusedContainerColor = PanelColors.key(),
+                    /*
+                     * Рамка — только при вводе.
+                     *
+                     * Стандартная рамка поля была самым контрастным
+                     * элементом панели: замер по снимкам — 3,5 : 1
+                     * в светлой теме и 4,9 : 1 в тёмной, тогда как клавиши
+                     * и поле номера отличаются от панели на 1,2–1,3.
+                     * Поле и так видно по своему фону — как поле номера
+                     * в журнале, у которого рамки нет вовсе. Рамка цвета
+                     * primary появляется, когда в поле вводят: видно,
+                     * куда идут буквы.
+                     */
+                    unfocusedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    // Подсказка — тем же цветом, что «Номер» в журнале:
+                    // читается, но бледнее введённого текста
+                    focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
+                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline
                 ),
                     modifier = Modifier.weight(1f),
                     value = query,

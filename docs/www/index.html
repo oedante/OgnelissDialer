@@ -3,7 +3,77 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ogneliss Dialer</title>
+<!--
+  ══════════════════════════════════════════════════════════════════════
+  ДЛЯ ПОИСКОВИКОВ И ССЫЛОК В МЕССЕНДЖЕРАХ
+  ══════════════════════════════════════════════════════════════════════
+  title и description — то, что Яндекс и Google показывают в выдаче.
+  Прежде был только title «Ogneliss Dialer» и никакого описания:
+  поисковик подставлял случайный кусок страницы.
+
+  canonical — один адрес страницы: /dialer, /dialer/ и /dialer/?utm=…
+  поисковик считает одной страницей, а не дублями.
+
+  hreflang — языковые версии. Страница одна, язык переключает lang.js;
+  для поисковика у каждого языка свой адрес: /dialer/?lang=en и т. д.
+  (lang.js понимает этот параметр). Русский — основной и «по умолчанию».
+
+  og:* — карточка ссылки в Telegram, WhatsApp, ВКонтакте: название,
+  описание и значок вместо голого адреса.
+
+  JSON-LD — описание приложения по schema.org: поисковик понимает,
+  что это приложение для Android, бесплатное, и где его скачать.
+-->
+<title>Ogneliss Dialer — звонилка для Android без интернета</title>
+<meta name="description" content="Номеронабиратель для Android, который работает только на телефоне: без доступа в интернет, без рекламы. T9-поиск, заметки к номерам, напоминания перезвонить, защита от спама, две SIM-карты.">
+<link rel="canonical" href="https://ogneliss.ru/dialer/">
+<link rel="alternate" hreflang="ru" href="https://ogneliss.ru/dialer/">
+<link rel="alternate" hreflang="en" href="https://ogneliss.ru/dialer/?lang=en">
+<link rel="alternate" hreflang="de" href="https://ogneliss.ru/dialer/?lang=de">
+<link rel="alternate" hreflang="fr" href="https://ogneliss.ru/dialer/?lang=fr">
+<link rel="alternate" hreflang="x-default" href="https://ogneliss.ru/dialer/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Огнелисс">
+<meta property="og:title" content="Ogneliss Dialer — звонилка без интернета">
+<meta property="og:description" content="T9-поиск, заметки к номерам, напоминания, защита от спама. Без рекламы и без доступа в интернет.">
+<meta property="og:url" content="https://ogneliss.ru/dialer/">
+<meta property="og:image" content="https://ogneliss.ru/dialer/app-icon.png">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#1F2329">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MobileApplication",
+  "name": "Ogneliss Dialer",
+  "operatingSystem": "Android 8.0+",
+  "applicationCategory": "CommunicationApplication",
+  "description": "Звонилка для Android без доступа в интернет: T9-поиск, заметки к номерам, напоминания перезвонить, защита от спама, две SIM-карты.",
+  "url": "https://ogneliss.ru/dialer/",
+  "downloadUrl": "https://play.google.com/store/apps/details?id=com.ogneliss.dialer",
+  "installUrl": "https://play.google.com/store/apps/details?id=com.ogneliss.dialer",
+  "image": "https://ogneliss.ru/dialer/app-icon.png",
+  "inLanguage": [
+    "ru",
+    "en",
+    "de",
+    "fr"
+  ],
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "RUB"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Ермишин Олег Андреевич",
+    "email": "oedante@gmail.com"
+  }
+}
+</script>
 <link rel="stylesheet" href="/dialer/style.css">
 <link rel="icon" href="/dialer/favicon.svg" type="image/svg+xml">
 <link rel="alternate icon" href="/dialer/favicon-32.png" sizes="32x32">
@@ -51,6 +121,47 @@
 .google-play-btn .btn-text span {
   font-size: 0.9rem;
 }
+/*
+ * QR-КОД НА СТРАНИЦУ В GOOGLE PLAY.
+ *
+ * Для тех, кто открыл сайт на компьютере: навёл камеру телефона —
+ * и сразу на странице приложения в магазине, без набора адреса.
+ *
+ * На телефоне и планшете QR прячется (pointer: coarse — сенсорный
+ * экран): отсканировать собственный экран нельзя, а кнопка выше
+ * и так ведёт в магазин одним касанием.
+ *
+ * Код тёмный на белом, с полем вокруг: камерам нужен контраст
+ * и «тихая зона», на тёмном фоне страницы светлые модули читаются хуже.
+ */
+.play-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 0.5rem 0 1.25rem 0;
+}
+.play-qr img {
+  width: 160px;
+  height: 160px;
+  padding: 8px;
+  background: #fff;
+  border-radius: 16px;
+}
+.play-qr p {
+  margin: 0;
+  max-width: 260px;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  text-align: center;
+}
+@media (pointer: coarse), (max-width: 700px) {
+  .play-qr { display: none; }
+}
+/* Возможности: список без маркеров-точек, с отступом между пунктами —
+   длинные строки читаются как абзацы, а не как сплошной текст */
+.features { padding-left: 1.1rem; }
+.features li { margin: 0.35rem 0; line-height: 1.45; }
 </style>
 </head>
 <body>
@@ -93,6 +204,24 @@
   </span>
 </a>
 
+<div class="play-qr">
+  <img src="/dialer/qr-google-play.svg" width="160" height="160" alt="QR-код: Ogneliss Dialer в Google Play">
+  <p>Наведите камеру телефона — откроется страница приложения в Google Play</p>
+</div>
+
+<h2>Возможности</h2>
+<ul class="features">
+  <li>Работает только на телефоне: у приложения нет доступа в интернет — это видно в свойствах установленного приложения</li>
+  <li>T9-поиск по кириллице и латинице сразу, быстрый набор на цифрах 2–9</li>
+  <li>Журнал с группировкой по дням, фильтрами и закреплёнными номерами</li>
+  <li>Оператор и регион незнакомого номера — без интернета</li>
+  <li>Заметки к любому номеру и напоминания перезвонить</li>
+  <li>Защита от спама: белый и чёрный списки, маски номеров, отметки «спам» и «мошенники»</li>
+  <li>Две SIM-карты: своя кнопка вызова у каждой, память выбора для номера</li>
+  <li>Планшеты и раскладушки: журнал и карточка рядом, боковая навигация</li>
+  <li>Без рекламы, подписок и платных функций</li>
+</ul>
+
 <h2>Документы</h2>
 <ul>
   <li><a href="/dialer/privacy">Политика конфиденциальности</a></li>
@@ -131,6 +260,24 @@
   </span>
 </a>
 
+<div class="play-qr">
+  <img src="/dialer/qr-google-play.svg" width="160" height="160" alt="QR code: Ogneliss Dialer on Google Play">
+  <p>Point your phone camera here to open the app on Google Play</p>
+</div>
+
+<h2>Features</h2>
+<ul class="features">
+  <li>Works only on your phone: the app has no internet access — you can check this in the installed app details</li>
+  <li>T9 search in Cyrillic and Latin at once, speed dial on digits 2–9</li>
+  <li>Call log grouped by day, with filters and pinned numbers</li>
+  <li>Carrier and region of an unknown number — offline</li>
+  <li>Notes for any number and call-back reminders</li>
+  <li>Spam protection: allow and block lists, number masks, spam and fraud marks</li>
+  <li>Dual SIM: a call button for each card, remembered choice per number</li>
+  <li>Tablets and foldables: call log and contact card side by side, side navigation</li>
+  <li>No ads, no subscriptions, no paid features</li>
+</ul>
+
 <h2>Documents</h2>
 <ul>
   <li><a href="/dialer/privacy">Privacy Policy</a></li>
@@ -168,6 +315,24 @@
   </span>
 </a>
 
+<div class="play-qr">
+  <img src="/dialer/qr-google-play.svg" width="160" height="160" alt="QR-Code: Ogneliss Dialer bei Google Play">
+  <p>Richten Sie die Handykamera hierauf, um die App bei Google Play zu öffnen</p>
+</div>
+
+<h2>Funktionen</h2>
+<ul class="features">
+  <li>Arbeitet nur auf dem Telefon: Die App hat keinen Internetzugriff — prüfbar in den Details der installierten App</li>
+  <li>T9-Suche in kyrillischer und lateinischer Schrift zugleich, Kurzwahl auf 2–9</li>
+  <li>Anrufliste nach Tagen gruppiert, mit Filtern und angehefteten Nummern</li>
+  <li>Anbieter und Region unbekannter Nummern — offline</li>
+  <li>Notizen zu jeder Nummer und Rückruf-Erinnerungen</li>
+  <li>Spamschutz: Erlaubt- und Sperrlisten, Nummernmasken, Markierungen „Spam“ und „Betrug“</li>
+  <li>Dual-SIM: eigene Anruftaste für jede Karte, gemerkte Wahl pro Nummer</li>
+  <li>Tablets und Faltgeräte: Anrufliste und Kontaktkarte nebeneinander</li>
+  <li>Keine Werbung, keine Abos, keine kostenpflichtigen Funktionen</li>
+</ul>
+
 <h2>Dokumente</h2>
 <ul>
   <li><a href="/dialer/privacy">Datenschutzerklärung</a></li>
@@ -204,6 +369,24 @@
     <span>Google Play</span>
   </span>
 </a>
+
+<div class="play-qr">
+  <img src="/dialer/qr-google-play.svg" width="160" height="160" alt="QR code : Ogneliss Dialer sur Google Play">
+  <p>Visez avec l’appareil photo du téléphone pour ouvrir l’application sur Google Play</p>
+</div>
+
+<h2>Fonctionnalités</h2>
+<ul class="features">
+  <li>Fonctionne uniquement sur le téléphone : l’application n’a pas accès à Internet — vérifiable dans les détails de l’application installée</li>
+  <li>Recherche T9 en cyrillique et en latin à la fois, numérotation rapide sur 2–9</li>
+  <li>Journal groupé par jour, avec filtres et numéros épinglés</li>
+  <li>Opérateur et région d’un numéro inconnu — hors ligne</li>
+  <li>Notes pour tout numéro et rappels pour rappeler</li>
+  <li>Protection anti-spam : listes autorisées et bloquées, masques, marques « spam » et « fraude »</li>
+  <li>Double SIM : un bouton d’appel par carte, choix mémorisé par numéro</li>
+  <li>Tablettes et pliables : journal et fiche contact côte à côte</li>
+  <li>Sans publicité, sans abonnement, sans fonctions payantes</li>
+</ul>
 
 <h2>Documents</h2>
 <ul>

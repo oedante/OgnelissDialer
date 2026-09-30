@@ -430,6 +430,18 @@ object SettingsRegistry {
             groupRes = R.string.settings_group_during_call
         ),
         SettingEntry(
+            "proximity_screen_off", SettingsCategory.CALLS,
+            R.string.settings_proximity, R.string.settings_proximity_text,
+            SettingKind.Switch("proximity_screen_off"),
+            groupRes = R.string.settings_group_during_call
+        ),
+        SettingEntry(
+            "call_hide_contact_number", SettingsCategory.CALLS,
+            R.string.settings_hide_contact_number, R.string.settings_hide_contact_number_text,
+            SettingKind.Switch("call_hide_contact_number"),
+            groupRes = R.string.settings_group_during_call
+        ),
+        SettingEntry(
             "post_call", SettingsCategory.CALLS,
             R.string.settings_post_call, R.string.settings_post_call_text,
             SettingKind.Switch("post_call"),

@@ -10,4 +10,56 @@
     <locale android:name="ru" />
     <locale android:name="de" />
     <locale android:name="fr" />
+    <!--
+        Переводы ниже делает Google Play (Gemini) при публикации бандла
+        (с 1.2.2 — 44 языка, список как в Play Console) —
+        в исходниках их нет. Здесь языки перечислены, чтобы их можно было
+        выбрать вручную: в выборе языка приложения и в системной настройке
+        «Язык приложения». В сборке, установленной не из Google Play,
+        переводов нет — приложение покажет английский.
+    -->
+    <locale android:name="ar" />
+    <locale android:name="bn" />
+    <locale android:name="bg" />
+    <locale android:name="ca" />
+    <locale android:name="zh-CN" />
+    <locale android:name="hr" />
+    <locale android:name="cs" />
+    <locale android:name="da" />
+    <locale android:name="nl" />
+    <locale android:name="et" />
+    <locale android:name="fi" />
+    <locale android:name="el" />
+    <locale android:name="gu" />
+    <locale android:name="he" />
+    <locale android:name="hi" />
+    <locale android:name="hu" />
+    <locale android:name="is" />
+    <locale android:name="id" />
+    <locale android:name="it" />
+    <locale android:name="ja" />
+    <locale android:name="kn" />
+    <locale android:name="ko" />
+    <locale android:name="lv" />
+    <locale android:name="lt" />
+    <locale android:name="ml" />
+    <locale android:name="mr" />
+    <locale android:name="no" />
+    <locale android:name="fa" />
+    <locale android:name="pl" />
+    <locale android:name="pt" />
+    <locale android:name="pa" />
+    <locale android:name="ro" />
+    <locale android:name="sk" />
+    <locale android:name="sl" />
+    <locale android:name="es" />
+    <locale android:name="sw" />
+    <locale android:name="sv" />
+    <locale android:name="ta" />
+    <locale android:name="te" />
+    <locale android:name="th" />
+    <locale android:name="tr" />
+    <locale android:name="ur" />
+    <locale android:name="vi" />
+    <locale android:name="zu" />
 </locale-config>

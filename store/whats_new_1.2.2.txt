@@ -1,0 +1,28 @@
+<ru-RU>
+• Экран вызова: можно отключить гашение экрана у уха и показывать у контактов тип номера вместо цифр. Кнопки ответа помещаются на узких экранах.
+• Все меню — удобными шторками; меню записи — как маленькая карточка.
+• Телефон лёжа: панель справа, под большим пальцем; карточка помещается целиком.
+• Псевдозвонок — первым в меню значка на рабочем столе.
+• Спокойнее поля поиска, нажатая клавиша подсвечивается.
+</ru-RU>
+<en-US>
+• Call screen: turn off screen blanking near your ear, and show the number type instead of digits for contacts. Answer buttons now fit narrow screens.
+• All menus are tidy bottom sheets; the call log menu looks like a mini card.
+• Phone in landscape: the panel moves to the right, under your thumb; the contact card fits the screen.
+• Fake call comes first in the home screen icon menu.
+• Calmer search fields; pressed keys are highlighted.
+</en-US>
+<de-DE>
+• Anrufbildschirm: Ausschalten des Displays am Ohr abschaltbar, bei Kontakten Nummerntyp statt Ziffern. Annahme-Tasten passen auf schmale Displays.
+• Alle Menüs als übersichtliche Leisten von unten; das Anruflisten-Menü wie eine kleine Karte.
+• Telefon quer: Leiste rechts, unter dem Daumen; die Kontaktkarte passt aufs Display.
+• Scheinanruf steht im Symbolmenü auf dem Startbildschirm an erster Stelle.
+• Ruhigere Suchfelder; gedrückte Tasten werden hervorgehoben.
+</de-DE>
+<fr-FR>
+• Écran d’appel : veille près de l’oreille désactivable, type de numéro au lieu des chiffres pour les contacts. Boutons de réponse adaptés aux écrans étroits.
+• Tous les menus en volets pratiques ; le menu du journal ressemble à une mini-fiche.
+• Téléphone à l’horizontale : barre à droite, sous le pouce ; la fiche contact tient à l’écran.
+• Faux appel en premier dans le menu de l’icône sur l’écran d’accueil.
+• Champs de recherche plus discrets ; touches appuyées mises en évidence.
+</fr-FR>

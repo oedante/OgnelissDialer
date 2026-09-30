@@ -74,6 +74,14 @@ android {
 
     testOptions {
         managedDevices {
+            /*
+             * localDevices, а не devices.
+             *
+             * Контейнер devices с create<ManagedVirtualDevice> — старый API,
+             * в AGP 9 его нет: сборка падает на «Unresolved reference
+             * 'devices'». localDevices — нынешний вид, в нём тип устройства
+             * уже известен, и указывать его не нужно.
+             */
             localDevices {
                 create("benchmarkDevice") {
                     device = "Pixel 6"

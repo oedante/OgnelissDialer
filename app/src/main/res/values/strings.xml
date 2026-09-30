@@ -14,6 +14,16 @@
     и перевод дал бы отчёты на непонятном ему языке.
 -->
 <resources>
+    <!--
+        translatable="false" — у названий марок и приложения: WhatsApp,
+        Telegram, Viber, Max, eSIM, Ogneliss. Автоперевод Google Play
+        переводил «Max» (мессенджер) как «Максимум» на всех десяти языках,
+        а название приложения — «Marcador Ogneliss», «Ogneliss 拨号器».
+        Такие строки переводчику не отдаются и в локалях не дублируются.
+
+        spam_mark_section — «Caller mark», а не «Mark»: одно слово
+        автоперевод понимал как глагол «отметить».
+    -->
     <string name="a11y_backspace">Delete last digit</string>
     <string name="a11y_call_with_sim">Call %2$s with %1$s</string>
     <string name="a11y_call_with_sim_only">Call with %1$s</string>
@@ -47,14 +57,14 @@
     <string name="action_remind">Remind me to call back</string>
     <string name="action_share_number">Share number</string>
     <string name="action_sms">SMS</string>
-    <string name="action_telegram">Telegram</string>
-    <string name="action_viber">Viber</string>
+    <string name="action_telegram" translatable="false">Telegram</string>
+    <string name="action_viber" translatable="false">Viber</string>
     <string name="action_view_contact">Open contact</string>
-    <string name="action_whatsapp">WhatsApp</string>
+    <string name="action_whatsapp" translatable="false">WhatsApp</string>
     <string name="allow_list_empty">Nothing allowed explicitly yet</string>
     <string name="allow_list_priority_note">Numbers here always get through, whatever the other rules say. Add your clinic, school and courier here before turning on strict blocking.</string>
-    <string name="app_name">Ogneliss Dialer</string>
-    <string name="app_short_name">Ogneliss</string>
+    <string name="app_name" translatable="false">Ogneliss Dialer</string>
+    <string name="app_short_name" translatable="false">Ogneliss</string>
     <string name="backup_contents">The file contains notes, tags, block and allow lists and speed dial. Call history and contacts are not included — Android transfers those itself.</string>
     <string name="backup_done">Backup saved</string>
     <string name="backup_failed">Could not save backup</string>
@@ -374,7 +384,7 @@
     <string name="msg_marked_spam">Marked as spam</string>
     <string name="msg_marked_fraud">Marked as fraud</string>
     <string name="msg_spam_mark_removed">Mark removed</string>
-    <string name="spam_mark_section">Mark</string>
+    <string name="spam_mark_section">Caller mark</string>
     <string name="voice_prompt">Say a number or a name</string>
     <string name="selection_start">Select several</string>
     <string name="selection_select_all">Select all</string>
@@ -427,7 +437,7 @@
     <string name="settings_dialpad_open">Open keypad on launch</string>
     <string name="settings_dialpad_open_text">Off by default: the app is opened more often to see who called than to dial.</string>
     <string name="incall_dtmf_hint">Tone dialing</string>
-    <string name="action_max">Max</string>
+    <string name="action_max" translatable="false">Max</string>
     <string name="settings_theme_contrast">High contrast (low vision)</string>
 
     <string name="settings_notes_retention">Delete old notes</string>
@@ -661,8 +671,12 @@ Open Settings → Security → Special app access and allow this app to modify s
     <string name="action_mark_spam">Mark as spam</string>
     <string name="action_unmark_spam">Remove spam mark</string>
     <string name="detail_placeholder">Select a call to see the contact card here</string>
-    <string name="sim_kind_esim">eSIM</string>
+    <string name="sim_kind_esim" translatable="false">eSIM</string>
     <string name="sim_kind_physical">SIM card</string>
     <string name="settings_button_labels">Button labels</string>
     <string name="settings_button_labels_text">Text under icons on the bottom bars, contact card and call screen. Turn off once you know the icons</string>
+    <string name="settings_proximity">Turn off screen near ear</string>
+    <string name="settings_proximity_text">The proximity sensor turns the screen off during a call. Without it your cheek may press End call or Mute</string>
+    <string name="settings_hide_contact_number">Number type instead of number</string>
+    <string name="settings_hide_contact_number_text">On the call screen, saved contacts show Mobile, Work and so on instead of digits. Unknown numbers are always shown</string>
 </resources>

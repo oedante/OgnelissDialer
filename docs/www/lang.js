@@ -152,6 +152,17 @@
     var saved = null;
     try { saved = sessionStorage.getItem(KEY); } catch (e) {}
 
+    /*
+     * Язык из адреса — главнее всего: /dialer/?lang=en. У каждой языковой
+     * версии для поисковика свой адрес (hreflang в index.html), и по такой
+     * ссылке страница открывается сразу на нужном языке.
+     */
+    var fromUrl = null;
+    try {
+      var m = /[?&]lang=([a-z]{2})/.exec(window.location.search);
+      if (m && LANGS.some(function (l) { return l.code === m[1]; })) fromUrl = m[1];
+    } catch (e) {}
+    if (fromUrl) saved = fromUrl;
     var browser = (navigator.language || navigator.userLanguage || '').slice(0, 2).toLowerCase();
     var known = LANGS.some(function (l) { return l.code === browser; });
     var code = saved || (known ? browser : 'ru');

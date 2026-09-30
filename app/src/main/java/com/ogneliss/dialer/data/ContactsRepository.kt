@@ -359,6 +359,37 @@ class ContactsRepository @Inject constructor(
         }
     }
 
+    /**
+     * Тип номера в книге — «Мобильный», «Рабочий», своя подпись.
+     *
+     * Для настройки «Номер у контактов на экране вызова»: вместо номера
+     * показываем его тип, и видно, с какого из номеров контакта звонят.
+     * null — номера нет в книге или тип не прочитался.
+     */
+    suspend fun numberTypeLabel(number: String): String? = withContext(io) {
+        if (number.isBlank()) return@withContext null
+        if (!PermissionGuard.canReadContacts(context)) return@withContext null
+        val uri = Uri.withAppendedPath(
+            ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number)
+        )
+        runCatching {
+            context.contentResolver.query(
+                uri,
+                arrayOf(ContactsContract.PhoneLookup.TYPE, ContactsContract.PhoneLookup.LABEL),
+                null, null, null
+            )?.use { c ->
+                if (!c.moveToFirst()) null
+                else ContactsContract.CommonDataKinds.Phone
+                    .getTypeLabel(context.resources, c.getInt(0), c.getString(1))
+                    ?.toString()
+                    ?.takeIf { it.isNotBlank() }
+            }
+        }.getOrElse {
+            Logger.w("Contacts", "Не удалось прочитать тип номера", it)
+            null
+        }
+    }
+
     /** Быстрая проверка наличия номера в книге. */
     suspend fun isKnownNumber(number: String): Boolean =
         lookupByNumber(number) != null

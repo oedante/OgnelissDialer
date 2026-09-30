@@ -165,6 +165,53 @@ fun Modifier.panelSwipeNavigation(
  * оба жеста живут на одном экране, и разные пороги ощущались бы
  * как непредсказуемость.
  */
+/**
+ * ПЕРЕЛИСТЫВАНИЕ ЭКРАНОВ ВЕРТИКАЛЬНЫМ СВАЙПОМ — ДЛЯ БОКОВОЙ ПАНЕЛИ.
+ *
+ * На телефоне лёжа панель журнала стоит справа вертикальной полосой
+ * (1.2.2), и горизонтальный свайп по ней неудобен: полоса узкая.
+ * По ней листают снизу вверх — к контактам, как по нижней панели
+ * листают справа налево. Устроено так же, как panelSwipeNavigation:
+ * жест забирается, только если движение явно вертикальное, и срабатывает
+ * по отпусканию пальца.
+ */
+fun Modifier.panelVerticalSwipeNavigation(
+    enabled: Boolean,
+    onSwipeUp: (() -> Unit)? = null,
+    onSwipeDown: (() -> Unit)? = null
+): Modifier = if (!enabled) this else composed {
+    val thresholdPx = with(LocalDensity.current) { SWIPE_THRESHOLD_DP.dp.toPx() }
+    val currentUp by rememberUpdatedState(onSwipeUp)
+    val currentDown by rememberUpdatedState(onSwipeDown)
+    pointerInput(Unit) {
+        val slop = viewConfiguration.touchSlop
+        awaitEachGesture {
+            val down = awaitFirstDown(
+                requireUnconsumed = false,
+                pass = PointerEventPass.Initial
+            )
+            var dx = 0f
+            var dy = 0f
+            var decided = false
+            var claimed = false
+            while (true) {
+                val event = awaitPointerEvent(PointerEventPass.Initial)
+                val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                if (!change.pressed) break
+                dx += change.positionChange().x
+                dy += change.positionChange().y
+                if (!decided && (abs(dx) > slop || abs(dy) > slop)) {
+                    decided = true
+                    claimed = abs(dy) > abs(dx) * HORIZONTAL_DOMINANCE
+                }
+                if (claimed) change.consume()
+            }
+            if (!claimed || abs(dy) < thresholdPx) return@awaitEachGesture
+            if (dy < 0) currentUp?.invoke() else currentDown?.invoke()
+        }
+    }
+}
+
 private const val HORIZONTAL_DOMINANCE = 1.5f
 
 private const val SWIPE_THRESHOLD_DP = 64

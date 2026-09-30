@@ -4,7 +4,6 @@ package com.ogneliss.dialer.ui.screens
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.settings.ThemeMode
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.DarkMode
@@ -48,6 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.os.ConfigurationCompat
 import com.ogneliss.dialer.R
+import com.ogneliss.dialer.log.Logger
 import com.ogneliss.dialer.call.FakeCall
 import com.ogneliss.dialer.ui.theme.Dimens
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -545,7 +545,10 @@ fun MainDialerScreen(
      * При поиске закреплённые не показываются: человек ищет
      * конкретного абонента, и лишняя группа сверху ему мешает.
      */
-    val pinnedRows = remember(rows.size, rows.firstOrNull()?.key, pinnedNumbers, state.query) {
+    // Ключ — сами строки, а не их число и первая: иначе изменение записи
+    // в середине журнала (ключ карточки меняется после каждого звонка)
+    // оставляло здесь старые строки со старыми ключами
+    val pinnedRows = remember(rows, pinnedNumbers, state.query) {
         if (pinnedNumbers.isEmpty() || state.query.isNotEmpty()) emptyList()
         else {
             val orderIndex = pinnedNumbers.withIndex().associate { (i, n) -> n to i }
@@ -598,7 +601,7 @@ fun MainDialerScreen(
     }
 
 
-    val unpinnedRows = remember(rows.size, rows.firstOrNull()?.key, pinnedRows) {
+    val unpinnedRows = remember(rows, pinnedRows) {
         if (pinnedRows.isEmpty()) rows
         else {
             val pinnedKeys = pinnedRows.mapTo(HashSet()) { it.key }
@@ -615,7 +618,7 @@ fun MainDialerScreen(
      */
     val dateGroups by produceState(
         initialValue = emptyList<Pair<CallLogDateGroup, List<CallLogRowState>>>(),
-        unpinnedRows.size, unpinnedRows.firstOrNull()?.key
+        unpinnedRows
     ) {
         value = withContext(Dispatchers.Default) {
             val now = System.currentTimeMillis()
@@ -671,10 +674,33 @@ fun MainDialerScreen(
      * derivedStateOf вдобавок сообщает об изменении, только когда
      * меняется результат, а не при каждом чтении зависимостей.
      */
+    /*
+     * ══════════════════════════════════════════════════════════════════════
+     * ОШИБКА 1.0 — 1.2.2: КЛЮЧ СМОТРЕЛ НА СПИСОК ПЕРВОГО ПОКАЗА ЭКРАНА
+     * ══════════════════════════════════════════════════════════════════════
+     * Здесь стоял `list` — обычная переменная этой функции. derivedStateOf
+     * внутри remember { } создаётся один раз и запоминает `list` таким,
+     * каким он был при первом показе экрана, — и дальше считал размер
+     * и первую запись ЭТОГО, давно устаревшего списка.
+     *
+     * Пересборка строк случалась, только если менялось что-то ещё
+     * из ключа: число заметок, контактов, сведений о номерах. После
+     * обычного звонка ничего из этого не менялось — строки журнала
+     * оставались старыми, со старыми ключами карточек. А ключ карточки
+     * включает номер последней записи вызова («абонент#id»), и после
+     * звонка он другой. Нажатие открывало карточку по старому ключу,
+     * карточка не находила такой группы и тут же закрывалась — со стороны
+     * «ничего не происходит». Сообщено пользователем по логу 30.09.2026.
+     *
+     * Теперь список берётся через rememberUpdatedState — всегда текущий,
+     * а в ключ входят ключи всех групп, а не только первой: слияние
+     * вызовов в середине журнала тоже меняет ключ.
+     */
+    val currentList by rememberUpdatedState(list)
     val rowsKey by remember {
         derivedStateOf {
-            var h = list.size
-            h = 31 * h + (list.firstOrNull()?.key?.hashCode() ?: 0)
+            var h = currentList.size
+            h = 31 * h + currentList.fold(0) { acc, g -> 31 * acc + g.key.hashCode() }
 
             /*
              * ПОИСКОВЫЙ ЗАПРОС — ЧАСТЬ КЛЮЧА.
@@ -1015,11 +1041,20 @@ fun MainDialerScreen(
      * у неё хватает и на клавиатуру снизу.
      */
     val sideDialpad = dialpadExpanded && windowLayout.hasRoomForSidePanel
+    /*
+     * Телефон лёжа: панель журнала — вертикальной полосой справа, а не
+     * внизу (1.2.2). Разбор — у ActionRail в BottomControlPanel.
+     * Только телефон: на планшете слева полоса навигации приложения,
+     * и вторая полоса справа была бы лишней.
+     */
+    val landscapeRail = windowLayout.mode == com.ogneliss.dialer.ui.adaptive.LayoutMode.PHONE_LANDSCAPE &&
+        !com.ogneliss.dialer.ui.adaptive.LocalNavigationRailShown.current
 
-    val controlPanel: @Composable (Modifier, Boolean, Dp?) -> Unit = { panelModifier, side, keyHeight ->
+    val controlPanel: @Composable (Modifier, Boolean, Dp?, Boolean) -> Unit = { panelModifier, side, keyHeight, rail ->
         BottomControlPanel(
             modifier = panelModifier,
             side = side,
+            rail = rail,
             dialKeyHeight = keyHeight,
             expanded = dialpadExpanded,
             query = state.query,
@@ -1248,13 +1283,14 @@ fun MainDialerScreen(
              * видна с самого начала, анимации нет.
              */
             AnimatedVisibility(
-                visible = !sideDialpad,
+                // Лёжа панель справа — внизу её нет вовсе
+                visible = !sideDialpad && !landscapeRail,
                 enter = expandVertically(tween(Motion.NORMAL_MS), expandFrom = Alignment.Top) +
                     fadeIn(tween(Motion.NORMAL_MS)),
                 exit = shrinkVertically(tween(Motion.NORMAL_MS), shrinkTowards = Alignment.Top) +
                     fadeOut(tween(Motion.QUICK_MS))
             ) {
-                controlPanel(Modifier, false, null)
+                controlPanel(Modifier, false, null, false)
             }
         },
         contentWindowInsets = WindowInsets.safeDrawing
@@ -1525,14 +1561,33 @@ fun MainDialerScreen(
                             // камеры, если он с этой стороны. Панель навигации
                             // панель учитывает сама (navigationBarsPadding внутри)
                             .padding(top = scaffoldPadding.calculateTopPadding())
-                            .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.End))
+                            // Вырез камеры обходит тот, кто у самого края:
+                            // при полосе кнопок справа — она, а не клавиатура
+                            .then(
+                                if (landscapeRail) Modifier
+                                else Modifier.windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.End))
+                            )
                             .width(SIDE_DIALPAD_WIDTH)
                             .fillMaxHeight()
                             .padding(end = 8.dp, bottom = 8.dp)
                     ) {
                         // Ряды клавиш делят высоту сами: разбор в Dialpad.fillHeight
-                        controlPanel(Modifier.fillMaxHeight(), true, null)
+                        controlPanel(Modifier.fillMaxHeight(), true, null, false)
                     }
+            }
+
+            // Полоса кнопок справа — телефон лёжа (1.2.2)
+            if (landscapeRail) {
+                Box(
+                    Modifier
+                        .padding(top = scaffoldPadding.calculateTopPadding())
+                        // Вырез камеры справа — полоса его обходит
+                        .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.End))
+                        .fillMaxHeight()
+                        .padding(end = 8.dp, bottom = 8.dp)
+                ) {
+                    controlPanel(Modifier.fillMaxHeight(), false, null, true)
+                }
             }
         }
     }
@@ -1959,6 +2014,8 @@ private suspend fun handleLongDigit(
  * Разрушительное действие внизу и отделено чертой.
  * Переключение темы находится внутри меню.
  */
+// ModalBottomSheet в Material 3 1.3 ещё помечен как экспериментальный
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun OverflowMenu(
     expanded: Boolean,
@@ -2006,147 +2063,91 @@ private fun OverflowMenu(
      * который нельзя отменить, не должен оказаться рядом с тем,
      * что нажимают часто.
      */
-    DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.fake_call_title)) },
-            leadingIcon = { Icon(Icons.AutoMirrored.Outlined.PhoneCallback, null) },
-            onClick = onFakeCall,
-            modifier = Modifier.heightIn(min = MENU_ITEM_HEIGHT),
-            contentPadding = MENU_ITEM_PADDING
-        )
-        HorizontalDivider(Modifier.padding(vertical = 4.dp))
-        DropdownMenuItem(
-            text = {
-                Text(
-                    stringResource(
-                        if (settings.theme == ThemeMode.DARK)
-                            R.string.menu_theme_light
-                        else R.string.menu_theme_dark
-                    )
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    if (settings.theme == ThemeMode.DARK) Icons.Default.LightMode
-                    else Icons.Default.DarkMode,
-                    contentDescription = null
-                )
-            },
-            onClick = onThemeToggle,
-            modifier = Modifier.heightIn(min = MENU_ITEM_HEIGHT),
-            contentPadding = MENU_ITEM_PADDING
-        )
-        HorizontalDivider(Modifier.padding(vertical = 4.dp))
-        DropdownMenuItem(
-            text = {
-                /*
-                 * Подпись говорит, что произойдёт по нажатию.
-                 *
-                 * Номер задан — откроется карточка, и пункт называется
-                 * «Мой контакт». Не задан — откроется диалог ввода,
-                 * и пункт честно говорит «Номер не указан».
-                 *
-                 * Показывать сам номер, как было, оказалось хуже:
-                 * он выглядел как сведение, а не как действие,
-                 * и было неясно, зачем на него нажимать.
-                 */
-                Column {
-                    Text(
-                        if (ownNumber.isBlank()) {
-                            stringResource(R.string.menu_my_number_unknown)
-                        } else {
-                            stringResource(R.string.menu_my_contact)
-                        }
-                    )
+    /*
+     * ══════════════════════════════════════════════════════════════════════
+     * «ЕЩЁ» — ШТОРКА С ГРУППАМИ, А НЕ ВЫПАДАЮЩЕЕ МЕНЮ (1.2.1)
+     * ══════════════════════════════════════════════════════════════════════
+     * Было стандартное выпадающее меню: углы 4 dp и тень — единственный
+     * такой элемент в приложении, где скругления крупные, а теней нет.
+     * Выпадало от кнопки внизу, а выглядело как меню верхней строки.
+     *
+     * Теперь — шторка снизу, как у меню долгого нажатия: появляется
+     * там, где палец, и выглядит так же. Порядок и смысл групп прежние:
+     *
+     *   1. Псевдозвонок и свой номер — быстрые действия;
+     *   2. заметки, напоминания, выбор нескольких — свои данные и режимы;
+     *   3. тема и настройки — управление;
+     *   4. очистить журнал — необратимое, отдельно и красным.
+     */
+    if (!expanded) return
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-                    // Номер второй строкой: у DropdownMenuItem нет
-                    // supportingContent, а видеть, какой номер задан,
-                    // полезно — иначе придётся открывать настройки
-                    if (ownNumber.isNotBlank()) {
-                        Text(
-                            PhoneFormatter.format(ownNumber),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            },
+    val fakeCallLabel = stringResource(R.string.fake_call_title)
+    val ownLabel = stringResource(
+        if (ownNumber.isBlank()) R.string.menu_my_number_unknown else R.string.menu_my_contact
+    )
+    val notesLabel = stringResource(R.string.nav_notes)
+    val remindersLabel = stringResource(R.string.nav_reminders)
+    val selectionLabel = stringResource(
+        if (selectionActive) R.string.selection_exit else R.string.selection_start
+    )
+    val themeLabel = stringResource(
+        if (settings.theme == ThemeMode.DARK) R.string.menu_theme_light else R.string.menu_theme_dark
+    )
+    val settingsLabel = stringResource(R.string.nav_settings)
+    val clearLabel = stringResource(R.string.log_clear_all)
 
-            leadingIcon = {
-                Icon(
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        contentWindowInsets = { WindowInsets.navigationBars }
+    ) {
+        Column(Modifier.padding(bottom = 16.dp)) {
+            SheetGroup {
+                SheetRow(Icons.AutoMirrored.Outlined.PhoneCallback, fakeCallLabel, onClick = onFakeCall)
+                SheetDivider()
+                SheetRow(
                     Icons.Default.Person,
-                    contentDescription = null,
-                    // Приглушённый, когда номера нет: пункт не требует
-                    // внимания, но и не прячется
-                    tint = if (ownNumber.isBlank()) {
-                        MaterialTheme.colorScheme.outline
-                    } else {
-                        LocalContentColor.current
-                    }
+                    ownLabel,
+                    // Номер второй строкой: видно, какой задан, без похода в настройки
+                    supporting = ownNumber.takeIf { it.isNotBlank() }?.let { PhoneFormatter.format(it) },
+                    // Приглушённый, пока номера нет: не требует внимания, но и не прячется
+                    iconTint = if (ownNumber.isBlank()) MaterialTheme.colorScheme.outline else null,
+                    onClick = onOwnNumber
                 )
-            },
-            onClick = onOwnNumber,
-            modifier = Modifier.heightIn(min = MENU_ITEM_HEIGHT),
-            contentPadding = MENU_ITEM_PADDING
-        )
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.nav_notes)) },
-            leadingIcon = {
-                Icon(Icons.AutoMirrored.Filled.StickyNote2, null, tint = NoteTeal)
-            },
-            onClick = onNotes,
-            modifier = Modifier.heightIn(min = MENU_ITEM_HEIGHT),
-            contentPadding = MENU_ITEM_PADDING
-        )
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.nav_reminders)) },
-            leadingIcon = { Icon(Icons.Default.Alarm, null) },
-            onClick = onReminders,
-            modifier = Modifier.heightIn(min = MENU_ITEM_HEIGHT),
-            contentPadding = MENU_ITEM_PADDING
-        )
-        HorizontalDivider(Modifier.padding(vertical = 4.dp))
-        DropdownMenuItem(
-            text = {
-                Text(
-                    stringResource(
-                        if (selectionActive) R.string.selection_exit
-                        else R.string.selection_start
-                    )
+            }
+            SheetGroup {
+                SheetRow(
+                    Icons.AutoMirrored.Filled.StickyNote2,
+                    notesLabel,
+                    iconTint = NoteTeal,
+                    onClick = onNotes
                 )
-            },
-            leadingIcon = {
-                Icon(
+                SheetDivider()
+                SheetRow(Icons.Default.Alarm, remindersLabel, onClick = onReminders)
+                SheetDivider()
+                SheetRow(
                     if (selectionActive) Icons.Default.Close else Icons.Default.Checklist,
-                    contentDescription = null
+                    selectionLabel,
+                    onClick = onStartSelection
                 )
-            },
-            onClick = onStartSelection,
-            modifier = Modifier.heightIn(min = MENU_ITEM_HEIGHT),
-            contentPadding = MENU_ITEM_PADDING
-        )
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.nav_settings)) },
-            leadingIcon = { Icon(Icons.Default.Settings, null) },
-            onClick = onSettings,
-            modifier = Modifier.heightIn(min = MENU_ITEM_HEIGHT),
-            contentPadding = MENU_ITEM_PADDING
-        )
-        HorizontalDivider(Modifier.padding(vertical = 4.dp))
-        DropdownMenuItem(
-            text = {
-                Text(
-                    stringResource(R.string.log_clear_all),
-                    color = MaterialTheme.colorScheme.error
+            }
+            SheetGroup {
+                SheetRow(
+                    if (settings.theme == ThemeMode.DARK) Icons.Default.LightMode else Icons.Default.DarkMode,
+                    themeLabel,
+                    onClick = onThemeToggle
                 )
-            },
-            leadingIcon = {
-                Icon(Icons.Default.DeleteSweep, null, tint = MaterialTheme.colorScheme.error)
-            },
-            onClick = onClearLog,
-            modifier = Modifier.heightIn(min = MENU_ITEM_HEIGHT),
-            contentPadding = MENU_ITEM_PADDING
-        )
+                SheetDivider()
+                SheetRow(Icons.Default.Settings, settingsLabel, onClick = onSettings)
+            }
+            SheetRow(
+                Icons.Default.DeleteSweep,
+                clearLabel,
+                color = MaterialTheme.colorScheme.error,
+                onClick = onClearLog
+            )
+        }
     }
 }
 
@@ -2249,10 +2250,25 @@ private fun CallLogRow(
             }
         },
         onClick = {
+            /*
+             * Нажатие — в журнал приложения. Жалоба «после звонка нажатие
+             * на запись ничего не делает» пришла с логом, где нажатий
+             * не было вовсе, и причину пришлось искать по коду. Теперь
+             * видно, какая ветка сработала и с каким ключом.
+             */
             when {
-                selection.isActive -> selection.toggle(row.key)
-                swipeController.isOpen(row.key) -> swipeController.close()
-                else -> onOpenSubscriber(row.key)
+                selection.isActive -> {
+                    Logger.i("Journal", "Нажатие: режим выбора")
+                    selection.toggle(row.key)
+                }
+                swipeController.isOpen(row.key) -> {
+                    Logger.i("Journal", "Нажатие: закрыта раскрытая строка")
+                    swipeController.close()
+                }
+                else -> {
+                    Logger.i("Journal", "Нажатие: карточка ${Logger.maskKey(row.key)}")
+                    onOpenSubscriber(row.key)
+                }
             }
         },
         onLongClick = {

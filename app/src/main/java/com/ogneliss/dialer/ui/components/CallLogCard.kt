@@ -502,6 +502,10 @@ fun CallLogCard(
     }
 }
 
+/** Портрет абонента для шапки меню долгого нажатия — тот же, что в строке журнала. */
+@Composable
+internal fun RowAvatar(photoUri: String?) = Avatar(photoUri, hasMissed = false)
+
 @Composable
 private fun Avatar(photoUri: String?, hasMissed: Boolean) {
     val appearance = LocalAppearance.current

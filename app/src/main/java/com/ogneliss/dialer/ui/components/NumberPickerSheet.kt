@@ -17,7 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ogneliss.dialer.ui.theme.FlowUi
-import com.ogneliss.dialer.ui.components.OgnelissListRow
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.data.SimSlot
 import com.ogneliss.dialer.ui.theme.Dimens
@@ -75,20 +74,26 @@ fun NumberPickerSheet(
                 style = MaterialTheme.typography.titleLarge
             )
 
-            numbers.forEach { option ->
-                NumberRow(option, sims, onCall, onSms, onMessenger)
-                OgnelissDivider()
+            /*
+             * Номера — в скруглённой панели, почта — во второй (1.2.2).
+             * Раньше линия стояла и под последним номером, а почта шла
+             * сразу за ней без границы — как будто это ещё один номер.
+             */
+            SheetGroup {
+                numbers.forEachIndexed { index, option ->
+                    NumberRow(option, sims, onCall, onSms, onMessenger)
+                    if (index < numbers.lastIndex) {
+                        OgnelissDivider(Modifier.padding(start = 16.dp))
+                    }
+                }
             }
 
             if (emails.isNotEmpty() && onEmail != null) {
-                emails.forEach { address ->
-                    OgnelissListRow(
-                        headline = address,
-                        leading = {
-                            Icon(Icons.Default.Email, contentDescription = null)
-                        },
-                        onClick = { onEmail(address) }
-                    )
+                SheetGroup {
+                    emails.forEachIndexed { index, address ->
+                        SheetRow(Icons.Default.Email, address, onClick = { onEmail(address) })
+                        if (index < emails.lastIndex) SheetDivider()
+                    }
                 }
             }
         }
@@ -115,7 +120,8 @@ private fun NumberRow(
     onSms: (String) -> Unit,
     onMessenger: (String) -> Unit
 ) {
-    Column(Modifier.padding(horizontal = FlowUi.sheetPadding, vertical = 8.dp)) {
+    // Поля — внутри панели: её собственный отступ от края уже есть
+    Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {

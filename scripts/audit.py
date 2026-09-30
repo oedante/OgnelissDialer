@@ -35,8 +35,14 @@ def parse_strings(path):
         return {}
     content = open(path, encoding='utf-8').read()
     out = {}
-    for m in re.finditer(r'<string name="([^"]+)"[^>]*>(.*?)</string>', content, re.S):
-        out[m.group(1)] = m.group(2)
+    for m in re.finditer(r'<string name="([^"]+)"([^>]*)>(.*?)</string>', content, re.S):
+        # translatable="false" — названия марок и приложения: одинаковы
+        # во всех языках и переводчику (в том числе автопереводу Google
+        # Play) не отдаются. В локалях их быть не должно — lint считает
+        # такой «перевод» ошибкой
+        if 'translatable="false"' in m.group(2):
+            continue
+        out[m.group(1)] = m.group(3)
     for m in re.finditer(r'<plurals name="([^"]+)"', content):
         out[m.group(1)] = 'PLURAL'
     return out

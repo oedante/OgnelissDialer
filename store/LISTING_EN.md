@@ -1,6 +1,6 @@
 # Google Play listing — English
 
-Current as of 1.1.1.
+Current as of 1.2.2.
 
 ## Title (30 chars)
 Ogneliss Dialer
@@ -62,12 +62,22 @@ DUAL SIM
 • The app remembers which card you use for a given person
 • Your own names for the slots: “Work”, “Personal”
 
+CALL SCREEN
+• Turn off screen blanking near your ear if you wish
+• Show the number type instead of digits for contacts
+• Quick SMS reply to an incoming call
+
+TABLETS AND FOLDABLES
+• Call log and contact card side by side, two-pane settings
+• Side navigation; phone in landscape — buttons under your thumb
+
 CONVENIENCE
 • Swipe between screens: call log, contacts, notes, reminders
 • Configurable row swipes: 14 actions to choose from
 • Light, dark and AMOLED black themes
 • Large buttons for low vision
-• Four interface languages: Russian, English, German, French
+• Button labels can be hidden
+• 48 interface languages, including English, Russian, German and French
 • Export notes and lists to a file
 
 WHAT THE APP DOES NOT HAVE

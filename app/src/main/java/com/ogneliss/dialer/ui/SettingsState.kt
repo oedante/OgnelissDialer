@@ -35,6 +35,10 @@ data class SettingsState(
     val showPhoto: Boolean = true,
     /** Подписи под кнопками по всему приложению. */
     val buttonLabels: Boolean = true,
+    /** Гасить экран у уха: разбор в Prefs.proximityScreenOff. */
+    val proximityScreenOff: Boolean = true,
+    /** Тип номера вместо номера у контакта на экране вызова. */
+    val callHideContactNumber: Boolean = false,
     val haptic: Boolean = true,
     val keyTones: Boolean = true,
     val mergeCalls: Boolean = true,
@@ -82,6 +86,8 @@ data class SettingsState(
         "large_buttons" -> largeButtons
         "show_photo" -> showPhoto
         "button_labels" -> buttonLabels
+        "proximity_screen_off" -> proximityScreenOff
+        "call_hide_contact_number" -> callHideContactNumber
         "panel_swipe_nav" -> panelSwipeNav
         "fake_call_button" -> fakeCallButton
         "haptic" -> haptic

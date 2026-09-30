@@ -1,6 +1,6 @@
 # Fiche Google Play — français
 
-À jour pour la version 1.1.1.
+À jour pour la version 1.2.2.
 
 ⚠️ **Non relu par un locuteur natif.** À faire vérifier avant
 publication : une faute dans la fiche est visible par tous et ne se
@@ -70,13 +70,23 @@ DOUBLE SIM
 • L’application retient avec quelle carte vous appelez telle personne
 • Vos propres noms pour les emplacements : « Travail », « Perso »
 
+ÉCRAN D’APPEL
+• Mise en veille près de l’oreille désactivable
+• Type de numéro au lieu des chiffres pour les contacts
+• Réponse rapide par SMS à un appel entrant
+
+TABLETTES ET PLIABLES
+• Journal et fiche contact côte à côte
+• Navigation latérale ; à l’horizontale, boutons sous le pouce
+
 CONFORT
 • Passage d’un écran à l’autre par balayage : journal, contacts, notes,
   rappels
 • Balayages configurables sur les lignes : 14 actions au choix
 • Thèmes clair, sombre et noir AMOLED
 • Grands boutons pour une vue limitée
-• Quatre langues : russe, anglais, allemand, français
+• Libellés des boutons masquables
+• 48 langues, dont le français, l’anglais, l’allemand et le russe
 • Export des notes et des listes dans un fichier
 
 CE QUE L’APPLICATION N’A PAS

@@ -34,14 +34,9 @@
     <string name="action_remind">Напомнить перезвонить</string>
     <string name="action_share_number">Поделиться номером</string>
     <string name="action_sms">SMS</string>
-    <string name="action_telegram">Telegram</string>
-    <string name="action_viber">Viber</string>
     <string name="action_view_contact">Открыть контакт</string>
-    <string name="action_whatsapp">WhatsApp</string>
     <string name="allow_list_empty">Пока никто не разрешён явно</string>
     <string name="allow_list_priority_note">Номера отсюда проходят всегда, что бы ни говорили другие правила. Добавьте поликлинику, школу и курьера сюда до того, как включать строгую блокировку.</string>
-    <string name="app_name">Ogneliss Dialer</string>
-    <string name="app_short_name">Ogneliss</string>
     <string name="backup_contents">В файл попадают заметки, метки, чёрный и белый списки и быстрый набор. Журнал вызовов и контакты не включаются — их переносит сам Android.</string>
     <string name="backup_done">Копия сохранена</string>
     <string name="backup_failed">Не удалось сохранить копию</string>
@@ -411,7 +406,6 @@
     <string name="settings_dialpad_open">Открывать клавиатуру при запуске</string>
     <string name="settings_dialpad_open_text">По умолчанию выключено: приложение чаще открывают посмотреть, кто звонил, чем набрать номер.</string>
     <string name="incall_dtmf_hint">Тональный набор</string>
-    <string name="action_max">Max</string>
     <string name="settings_theme_contrast">Высокий контраст (для слабого зрения)</string>
 
     <string name="settings_notes_retention">Удалять старые заметки</string>
@@ -650,8 +644,11 @@
     <string name="action_mark_spam">Отметить как спам</string>
     <string name="action_unmark_spam">Снять отметку «спам»</string>
     <string name="detail_placeholder">Выберите запись в журнале — карточка откроется здесь</string>
-    <string name="sim_kind_esim">eSIM</string>
     <string name="sim_kind_physical">SIM-карта</string>
     <string name="settings_button_labels">Подписи под кнопками</string>
     <string name="settings_button_labels_text">Текст под значками на нижних панелях, в карточке и на экране вызова. Можно выключить, когда значки уже знакомы</string>
+    <string name="settings_proximity">Гасить экран у уха</string>
+    <string name="settings_proximity_text">Датчик приближения гасит экран во время разговора. Без него щека может нажать «Завершить» или «Звук»</string>
+    <string name="settings_hide_contact_number">Тип номера вместо номера</string>
+    <string name="settings_hide_contact_number_text">На экране вызова у сохранённых контактов — «Мобильный», «Рабочий» вместо цифр. Незнакомые номера показываются всегда</string>
 </resources>

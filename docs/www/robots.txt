@@ -1,0 +1,5 @@
+# Огнелисс — всё открыто для индексации.
+User-agent: *
+Allow: /
+
+Sitemap: https://ogneliss.ru/sitemap.xml

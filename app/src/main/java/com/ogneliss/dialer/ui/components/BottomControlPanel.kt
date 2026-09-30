@@ -17,6 +17,7 @@ import com.ogneliss.dialer.ui.theme.NoteTeal
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.ui.theme.PanelColors
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -109,11 +110,40 @@ fun BottomControlPanel(
      * Полоска сбоку отняла бы 20 dp высоты — а её там и так впритык.
      */
     side: Boolean = false,
+    /**
+     * Вертикальная полоса справа — телефон лёжа (1.2.2). Разбор —
+     * у ActionRail ниже.
+     */
+    rail: Boolean = false,
     /** Высота клавиш, если её диктует место: разбор в Dialpad. */
     dialKeyHeight: androidx.compose.ui.unit.Dp? = null,
     modifier: Modifier = Modifier,
     menuContent: @Composable () -> Unit
 ) {
+    if (rail) {
+        Surface(
+            color = PanelColors.panel(),
+            shape = MaterialTheme.shapes.extraLarge,
+            modifier = modifier.panelVerticalSwipeNavigation(
+                enabled = onSwipeToContacts != null,
+                onSwipeUp = onSwipeToContacts
+            )
+        ) {
+            ActionRail(
+                expanded = expanded,
+                filter = filter,
+                onToggleExpanded = onToggleExpanded,
+                onContacts = onContacts,
+                onFilters = onFilters,
+                onStartSelection = onStartSelection,
+                selectionActive = selectionActive,
+                onReminders = onReminders,
+                onMenu = onMenu,
+                menuContent = menuContent
+            )
+        }
+        return
+    }
     val handleHint = stringResource(R.string.gesture_handle_hint)
 
     Surface(
@@ -138,7 +168,20 @@ fun BottomControlPanel(
             onSwipeLeft = onSwipeToContacts
         ),
         shape = if (side) MaterialTheme.shapes.extraLarge else RoundedCornerShapeTop,
-        tonalElevation = 3.dp
+        /*
+         * Без тонального подъёма (было 3 dp).
+         *
+         * Сама панель от него не менялась: Material подкрашивает только
+         * поверхности цвета surface, а у панели свой цвет. Но подъём
+         * наследуется вложенными Surface — и кнопка «Скрыть клавиатуру»
+         * (FilledTonalIconButton — это Surface) цвета «клавиши» попадала
+         * под подкраску: в светлой теме цвет клавиши — белый, ровно
+         * такой же, как surface. Material принимал её за surface и
+         * подмешивал синеву — кнопка выходила #EAF1FB вместо белого
+         * и почти сливалась с панелью, хотя в коде ей задан белый.
+         * Найдено по пикселям снимка: клавиши #FFFFFF, кнопка #EAF1FB.
+         */
+        tonalElevation = 0.dp
     ) {
         Column(
             Modifier
@@ -628,7 +671,8 @@ private fun ActionRow(
         if (!com.ogneliss.dialer.ui.adaptive.LocalWindowLayout.current.isShort &&
             com.ogneliss.dialer.ui.theme.LocalAppearance.current.buttonLabels
         ) {
-            Spacer(Modifier.height(2.dp))
+            // 4 dp, а не 2: подпись прилипала к таблетке кнопки
+            Spacer(Modifier.height(4.dp))
 
             Text(
                 stringResource(R.string.bar_dialpad),
@@ -728,3 +772,78 @@ private fun ActionRow(
 }
 
 
+/**
+ * ══════════════════════════════════════════════════════════════════════════
+ * ПАНЕЛЬ ЖУРНАЛА СПРАВА — ТЕЛЕФОН ЛЁЖА
+ * ══════════════════════════════════════════════════════════════════════════
+ * Телефон лёжа держат двумя руками, большие пальцы — по бокам. Нижняя
+ * панель при этом под пальцами не оказывается, а по высоте её место
+ * дорого: экран и так низкий. Справа, вертикальной полосой, кнопки
+ * ложатся под правый большой палец, а журнал получает всю высоту.
+ *
+ * Кнопки те же и в том же порядке, что на нижней панели, сверху вниз:
+ * контакты, фильтры, клавиатура, напоминания, «Ещё». Без подписей —
+ * лёжа их и на нижней панели не было.
+ *
+ * Перелистывание экранов — свайпом снизу вверх по полосе
+ * (panelVerticalSwipeNavigation). У кнопки клавиатуры вертикального
+ * жеста здесь нет: он спорил бы с перелистыванием.
+ */
+@Composable
+private fun ActionRail(
+    expanded: Boolean,
+    filter: CallLogFilter,
+    onToggleExpanded: () -> Unit,
+    onContacts: () -> Unit,
+    onFilters: () -> Unit,
+    onStartSelection: (() -> Unit)?,
+    selectionActive: Boolean,
+    onReminders: (() -> Unit)?,
+    onMenu: () -> Unit,
+    menuContent: @Composable () -> Unit
+) {
+    Column(
+        Modifier
+            .fillMaxHeight()
+            .navigationBarsPadding()
+            .padding(horizontal = 8.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.SpaceEvenly,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        LabeledIconButton(Icons.Default.Person, R.string.nav_contacts, onContacts, showLabel = false)
+        Box {
+            LabeledIconButton(Icons.Default.FilterList, R.string.filter_title, onFilters, showLabel = false)
+            if (filter.isActive) {
+                Badge(Modifier.align(Alignment.TopEnd)) { Text(filter.activeCount.toString()) }
+            }
+        }
+        FilledIconButton(
+            onClick = onToggleExpanded,
+            shape = OgnelissShapeTokens.callButton,
+            modifier = Modifier.size(width = PILL_WIDTH, height = 56.dp)
+        ) {
+            Icon(
+                // Клавиатура открывается слева от полосы — стрелка туда же
+                if (expanded) Icons.AutoMirrored.Filled.KeyboardArrowRight else Icons.Default.Dialpad,
+                contentDescription = stringResource(
+                    if (expanded) R.string.dialpad_hide else R.string.dialpad_show
+                )
+            )
+        }
+        if (selectionActive && onStartSelection != null) {
+            LabeledIconButton(
+                icon = Icons.Default.Close,
+                labelRes = R.string.bar_exit,
+                onClick = onStartSelection,
+                tint = MaterialTheme.colorScheme.primary,
+                showLabel = false
+            )
+        } else if (onReminders != null) {
+            LabeledIconButton(Icons.Default.Alarm, R.string.nav_reminders, onReminders, showLabel = false)
+        }
+        Box {
+            LabeledIconButton(Icons.Default.MoreVert, R.string.bar_menu, onMenu, showLabel = false)
+            menuContent()
+        }
+    }
+}

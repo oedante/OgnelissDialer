@@ -2,7 +2,6 @@ package com.ogneliss.dialer.ui.screens
 
 import com.ogneliss.dialer.util.ContactQr
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.HorizontalDivider
 import com.ogneliss.dialer.ui.components.OgnelissDivider
 import androidx.compose.material3.TopAppBar
 import androidx.compose.foundation.layout.aspectRatio
@@ -12,8 +11,6 @@ import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.ui.text.style.TextOverflow
@@ -21,9 +18,7 @@ import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Share
 import com.ogneliss.dialer.ui.theme.BlockRed
-import com.ogneliss.dialer.ui.theme.UnblockGreen
 import com.ogneliss.dialer.ui.theme.CallGreen
-import com.ogneliss.dialer.ui.theme.LocalAppearance
 import com.ogneliss.dialer.ui.theme.NoteTeal
 import androidx.compose.material.icons.automirrored.filled.StickyNote2
 import com.ogneliss.dialer.ui.theme.FlowUi
@@ -84,8 +79,13 @@ import com.ogneliss.dialer.ui.components.OgnelissListRow
 import com.ogneliss.dialer.data.SpamMarkType
 import androidx.compose.material.icons.filled.Report
 import com.ogneliss.dialer.ui.components.OgnelissPanel
+import com.ogneliss.dialer.ui.components.QuickAction
+import com.ogneliss.dialer.ui.components.SheetDivider
+import com.ogneliss.dialer.ui.components.SheetRow
+import com.ogneliss.dialer.ui.components.SheetGroup
 import com.ogneliss.dialer.ui.components.rememberActionHaptics
 import com.ogneliss.dialer.R
+import com.ogneliss.dialer.log.Logger
 import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
 import com.ogneliss.dialer.data.RulePattern
 import com.ogneliss.dialer.ui.components.ReminderTimeDialog
@@ -235,6 +235,18 @@ fun SubscriberScreen(
      */
     val group = remember(groupKey, state.callLog, state.contacts) {
         state.callLog.firstOrNull { it.key == groupKey }
+            /*
+             * Запасной путь: тот же абонент, другая последняя запись.
+             *
+             * Ключ карточки — «абонент#номер_записи». После нового звонка
+             * номер последней записи меняется, и ключ, взятый со строки
+             * журнала мгновением раньше, уже не совпадает. Раньше карточка
+             * в этом случае закрывалась сразу — нажатие выглядело
+             * пустым. Теперь открывается свежая группа того же абонента.
+             */
+            ?: groupKey.substringBefore('#').takeIf { '#' in groupKey }?.let { subscriber ->
+                state.callLog.firstOrNull { it.key.substringBefore('#') == subscriber }
+            }
             ?: groupKey.removePrefix("contact:").toLongOrNull()
                 ?.let { id -> state.contacts.firstOrNull { it.id == id } }
                 ?.let { contact -> groupFromContact(contact) }
@@ -244,8 +256,13 @@ fun SubscriberScreen(
     }
 
     if (group == null) {
-        // Группа могла исчезнуть после удаления записей — не показываем пустоту
-        LaunchedEffect(Unit) { onBack() }
+        // Группа могла исчезнуть после удаления записей — не показываем пустоту.
+        // Но пишем в журнал: молчаливое закрытие со стороны выглядит как
+        // «нажатие не сработало», и без записи причину не найти
+        LaunchedEffect(Unit) {
+            Logger.w("Card", "Группа не найдена, карточка закрыта: ${Logger.maskKey(groupKey)}")
+            onBack()
+        }
         return
     }
 
@@ -971,7 +988,21 @@ fun SubscriberScreen(
                         Box(
                             Modifier
                                 .fillMaxWidth()
-                                .aspectRatio(if (flatPhoto) 3.2f else 1.5f)
+                                /*
+                                 * Лёжа в две колонки обложка — 3 : 1, а не 1,5 : 1.
+                                 * Колонка шириной 360 dp давала обложку в 240 dp
+                                 * высотой — на экране лёжа (около 330 dp под
+                                 * строкой заголовка) имя и кнопки под ней уходили
+                                 * за нижний край. 3 : 1 — это 120 dp: обложка,
+                                 * имя и кнопки помещаются целиком.
+                                 */
+                                .aspectRatio(
+                                    when {
+                                        flatPhoto -> 3.2f
+                                        twoColumns -> 3f
+                                        else -> 1.5f
+                                    }
+                                )
                                 .onGloballyPositioned { coverHeightPx = it.size.height }
                         ) {
                             AsyncImage(
@@ -1403,7 +1434,7 @@ fun SubscriberScreen(
                              * сказать тем же цветом, что у блокировки.
                              */
                             tint = when {
-                                isBlocked -> UnblockGreen
+                                isBlocked -> MaterialTheme.colorScheme.primary
                                 blockingMask != null -> BlockRed
                                 else -> BlockRed
                             }
@@ -2469,91 +2500,6 @@ private fun StatCell(value: Int, labelRes: Int, highlight: Boolean = false) {
  * Скруглённый прямоугольник — та же форма, что у карточек номеров
  * и заметки ниже. Круг был единственной круглой формой на экране.
  */
-@Composable
-private fun RowScope.QuickAction(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    labelRes: Int,
-    /**
-     * Цвет значка, когда действие уже применено.
-     *
-     * null — обычный вид. Красный у заблокированного номера: состояние
-     * должно быть видно без чтения подписи.
-     */
-    tint: androidx.compose.ui.graphics.Color? = null,
-    /**
-     * Цвет подложки плитки.
-     *
-     * null — общий для ряда. Зелёный только у «Позвонить»: главное
-     * действие карточки, и цвет — единственное, что теперь отличает
-     * его от соседей по ряду.
-     */
-    container: androidx.compose.ui.graphics.Color? = null,
-    onClick: () -> Unit
-) {
-    val label = stringResource(labelRes)
-
-    /*
-     * ══════════════════════════════════════════════════════════════════════
-     * КРУГЛАЯ КНОПКА, ПОДПИСЬ ПОД НЕЙ — ВМЕСТО ПЛИТКИ С ЗАЛИВКОЙ
-     * ══════════════════════════════════════════════════════════════════════
-     * Плитки — прямоугольники с заливкой и подписью внутри — пришли
-     * из ранних версий Material. Пять таких прямоугольников в ряд
-     * спорят за внимание между собой и с содержимым карточки: глазу
-     * кажется, что все пять одинаково важны.
-     *
-     * Круг меньше по площади и читается как «кнопка», а не как «блок».
-     * Подпись под ним не отнимает ширину у значка, поэтому помещается
-     * целиком — «Отправить SMS» пришлось сокращать до «SMS» именно
-     * потому, что подпись делила место с заливкой.
-     *
-     * ── Что осталось от прежнего вида ──────────────────────────────────────
-     * Зелёный у вызова и красный у блокировки: цвет несёт смысл,
-     * а не украшает. У остальных круг нейтральный — они равнозначны.
-     *
-     * ⚠️ Нажимается вся колонка, а не только круг: попасть в подпись
-     * так же естественно, как в значок, и человек не должен угадывать
-     * границу.
-     */
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .weight(1f)
-            .clip(MaterialTheme.shapes.medium)
-            .clickable(onClick = onClick)
-            .padding(vertical = 8.dp, horizontal = 2.dp)
-    ) {
-        Surface(
-            shape = CircleShape,
-            color = container ?: MaterialTheme.colorScheme.surfaceContainerHighest,
-            modifier = Modifier.size(FlowUi.actionCircleSize)
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                val labelsShown = LocalAppearance.current.buttonLabels
-                Icon(
-                    icon,
-                    // С подписью описание не нужно: TalkBack прочёл бы
-                    // его дважды. Без подписи — нужно, иначе кнопка немая
-                    contentDescription = if (labelsShown) null else label,
-                    tint = tint ?: MaterialTheme.colorScheme.primary
-                )
-            }
-        }
-
-        if (LocalAppearance.current.buttonLabels) {
-            Spacer(Modifier.height(6.dp))
-
-            Text(
-                label,
-                style = MaterialTheme.typography.labelSmall,
-                textAlign = TextAlign.Center,
-                // Две строки: длинные подписи есть не только в русском
-                maxLines = 2,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
-}
-
 /**
  * КНОПКА ДЕЙСТВИЯ У НОМЕРА.
  *
@@ -2613,6 +2559,7 @@ private fun NumberAction(
  * Читать её целиком в одном месте тяжело, а меню — самостоятельный
  * кусок, который к остальной шапке отношения не имеет.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SubscriberMoreMenu(
     knownContactId: Long?,
@@ -2633,78 +2580,54 @@ private fun SubscriberMoreMenu(
         )
     }
 
-    DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.subscriber_summary)) },
-            leadingIcon = { Icon(Icons.Default.BarChart, null) },
-            onClick = { open = false; onStats() },
-            // Единые размеры пунктов меню: разбор в FlowUi
-            modifier = Modifier.heightIn(min = FlowUi.menuItemHeight),
-            contentPadding = FlowUi.menuItemPadding
-        )
-
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.subscriber_qr)) },
-            leadingIcon = { Icon(Icons.Default.QrCode2, null) },
-            onClick = { open = false; onQr() },
-            // Единые размеры пунктов меню: разбор в FlowUi
-            modifier = Modifier.heightIn(min = FlowUi.menuItemHeight),
-            contentPadding = FlowUi.menuItemPadding
-        )
-
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.subscriber_export)) },
-            leadingIcon = { Icon(Icons.Default.Share, null) },
-            onClick = { open = false; onExport() },
-            // Единые размеры пунктов меню: разбор в FlowUi
-            modifier = Modifier.heightIn(min = FlowUi.menuItemHeight),
-            contentPadding = FlowUi.menuItemPadding
-        )
-
-        /*
-         * Действия с контактом — только когда контакт есть.
-         *
-         * Мелодию и ярлык нельзя задать номеру, которого нет в книге:
-         * они хранятся в самой записи контакта.
-         */
-        if (knownContactId != null) {
-            HorizontalDivider()
-
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.contact_ringtone)) },
-                leadingIcon = { Icon(Icons.Default.MusicNote, null) },
-                onClick = { open = false; onRingtone() },
-                // Единые размеры пунктов меню: разбор в FlowUi
-                modifier = Modifier.heightIn(min = FlowUi.menuItemHeight),
-                contentPadding = FlowUi.menuItemPadding
-            )
-
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.contact_silent)) },
-                leadingIcon = { Icon(Icons.Default.NotificationsOff, null) },
-                onClick = { open = false; onSilent(knownContactId) },
-                // Единые размеры пунктов меню: разбор в FlowUi
-                modifier = Modifier.heightIn(min = FlowUi.menuItemHeight),
-                contentPadding = FlowUi.menuItemPadding
-            )
-
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.contact_pin_shortcut)) },
-                leadingIcon = { Icon(Icons.AutoMirrored.Filled.AddToHomeScreen, null) },
-                onClick = { open = false; onShortcut() },
-                // Единые размеры пунктов меню: разбор в FlowUi
-                modifier = Modifier.heightIn(min = FlowUi.menuItemHeight),
-                contentPadding = FlowUi.menuItemPadding
-            )
-
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.action_edit_contact)) },
-                leadingIcon = { Icon(Icons.Default.Edit, null) },
-                onClick = { open = false; onEdit(knownContactId) },
-                // Единые размеры пунктов меню: разбор в FlowUi
-                modifier = Modifier.heightIn(min = FlowUi.menuItemHeight),
-                contentPadding = FlowUi.menuItemPadding
-            )
+    /*
+     * Меню карточки — шторка снизу с группами, как «Ещё» в журнале
+     * и меню записи (1.2.2). Было стандартное выпадающее меню с углами
+     * 4 dp и тенью — последнее такое в приложении.
+     */
+    if (open) {
+        val summaryLabel = stringResource(R.string.subscriber_summary)
+        val qrLabel = stringResource(R.string.subscriber_qr)
+        val exportLabel = stringResource(R.string.subscriber_export)
+        val ringtoneLabel = stringResource(R.string.contact_ringtone)
+        val silentLabel = stringResource(R.string.contact_silent)
+        val shortcutLabel = stringResource(R.string.contact_pin_shortcut)
+        val editLabel = stringResource(R.string.action_edit_contact)
+        ModalBottomSheet(
+            onDismissRequest = { open = false },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+            contentWindowInsets = { WindowInsets.navigationBars }
+        ) {
+            Column(Modifier.padding(bottom = 16.dp)) {
+                // Про номер: сводка, поделиться, выгрузить
+                SheetGroup {
+                    SheetRow(Icons.Default.BarChart, summaryLabel, onClick = { open = false; onStats() })
+                    SheetDivider()
+                    SheetRow(Icons.Default.QrCode2, qrLabel, onClick = { open = false; onQr() })
+                    SheetDivider()
+                    SheetRow(Icons.Default.Share, exportLabel, onClick = { open = false; onExport() })
+                }
+                // Про контакт в книге — только если он там есть
+                if (knownContactId != null) {
+                    SheetGroup {
+                        SheetRow(Icons.Default.MusicNote, ringtoneLabel, onClick = { open = false; onRingtone() })
+                        SheetDivider()
+                        SheetRow(
+                            Icons.Default.NotificationsOff,
+                            silentLabel,
+                            onClick = { open = false; onSilent(knownContactId) }
+                        )
+                        SheetDivider()
+                        SheetRow(
+                            Icons.AutoMirrored.Filled.AddToHomeScreen,
+                            shortcutLabel,
+                            onClick = { open = false; onShortcut() }
+                        )
+                        SheetDivider()
+                        SheetRow(Icons.Default.Edit, editLabel, onClick = { open = false; onEdit(knownContactId) })
+                    }
+                }
+            }
         }
     }
 }

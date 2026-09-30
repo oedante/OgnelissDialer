@@ -46,14 +46,9 @@
     <string name="action_remind">An Rückruf erinnern</string>
     <string name="action_share_number">Nummer teilen</string>
     <string name="action_sms">SMS</string>
-    <string name="action_telegram">Telegram</string>
-    <string name="action_viber">Viber</string>
     <string name="action_view_contact">Kontakt öffnen</string>
-    <string name="action_whatsapp">WhatsApp</string>
     <string name="allow_list_empty">Noch nichts ausdrücklich erlaubt</string>
     <string name="allow_list_priority_note">Diese Nummern kommen immer durch, unabhängig von anderen Regeln. Tragen Sie Praxis, Schule und Kurier hier ein, bevor Sie strenge Sperren aktivieren.</string>
-    <string name="app_name">Ogneliss Dialer</string>
-    <string name="app_short_name">Ogneliss</string>
     <string name="backup_contents">Die Datei enthält Notizen, Markierungen, Sperr- und Freigabelisten sowie Kurzwahl. Anrufliste und Kontakte sind nicht enthalten — die überträgt Android selbst.</string>
     <string name="backup_done">Sicherung gespeichert</string>
     <string name="backup_failed">Sicherung konnte nicht gespeichert werden</string>
@@ -418,7 +413,6 @@
     <string name="settings_dialpad_open">Tastenfeld beim Start öffnen</string>
     <string name="settings_dialpad_open_text">Standardmäßig aus: die App wird öfter geöffnet, um zu sehen, wer angerufen hat, als um zu wählen.</string>
     <string name="incall_dtmf_hint">Tonwahl</string>
-    <string name="action_max">Max</string>
     <string name="settings_theme_contrast">Hoher Kontrast (Sehschwäche)</string>
     <string name="settings_notes_retention">Alte Notizen löschen</string>
     <string name="settings_notes_retention_text">Eine Notiz zu einer Lieferung ist eine Woche nützlich, nach einem Jahr ist sie Ballast. Notizen mit Spam- oder Betrugsmarkierung werden nie gelöscht.</string>
@@ -649,8 +643,11 @@
     <string name="action_mark_spam">Als Spam markieren</string>
     <string name="action_unmark_spam">Spam-Markierung entfernen</string>
     <string name="detail_placeholder">Wählen Sie einen Anruf aus – die Kontaktkarte erscheint hier</string>
-    <string name="sim_kind_esim">eSIM</string>
     <string name="sim_kind_physical">SIM-Karte</string>
     <string name="settings_button_labels">Beschriftungen unter Tasten</string>
     <string name="settings_button_labels_text">Text unter den Symbolen in den unteren Leisten, der Kontaktkarte und im Anrufbildschirm. Abschaltbar, sobald die Symbole vertraut sind</string>
+    <string name="settings_proximity">Bildschirm am Ohr ausschalten</string>
+    <string name="settings_proximity_text">Der Näherungssensor schaltet den Bildschirm während eines Anrufs aus. Ohne ihn kann die Wange „Beenden“ oder „Stumm“ drücken</string>
+    <string name="settings_hide_contact_number">Nummerntyp statt Nummer</string>
+    <string name="settings_hide_contact_number_text">Im Anrufbildschirm zeigen gespeicherte Kontakte „Mobil“, „Arbeit“ usw. statt Ziffern. Unbekannte Nummern werden immer angezeigt</string>
 </resources>

@@ -92,10 +92,23 @@ object ContactShortcuts {
                     Intent(context, com.ogneliss.dialer.call.FakeCallActivity::class.java)
                         .setAction(Intent.ACTION_VIEW)
                 )
-                .setRank(0)
+                /*
+                 * РАНГ — ПОСЛЕДНИЙ, А НЕ НУЛЕВОЙ.
+                 *
+                 * Лаунчер ставит ярлык с рангом 0 ближе всего к значку.
+                 * Значок звонилки почти всегда в нижнем ряду, меню
+                 * раскрывается вверх — и ближний к значку пункт оказывается
+                 * внизу списка. С рангом 0 псевдозвонок стоял вторым
+                 * (под одним контактом) или последним, хотя задумывался
+                 * первым. Последний ранг ставит его наверх меню,
+                 * раскрытого вверх. Если значок вверху экрана и меню
+                 * раскрывается вниз, псевдозвонок будет внизу — это цена
+                 * решения, но звонилку туда кладут редко.
+                 */
+                .setRank(contacts.take(MAX_DYNAMIC - 1).size)
                 .build()
 
-            val shortcuts = listOf(fakeCall) + contacts.take(MAX_DYNAMIC - 1).mapIndexed { index, target ->
+            val shortcuts = contacts.take(MAX_DYNAMIC - 1).mapIndexed { index, target ->
                 ShortcutInfoCompat.Builder(context, "call_${target.e164}")
                     .setShortLabel(target.name)
                     .setLongLabel(
@@ -103,11 +116,11 @@ object ContactShortcuts {
                     )
                     .setIcon(iconFor(context, target))
                     .setIntent(callIntent(target.number))
-                    // Ранг определяет порядок в меню лаунчера:
-                    // нулевой занят псевдозвонком
-                    .setRank(index + 1)
+                    // Ранг определяет порядок в меню лаунчера: контакты
+                    // первыми по рангу, псевдозвонок — последним (разбор выше)
+                    .setRank(index)
                     .build()
-            }
+            } + fakeCall
             ShortcutManagerCompat.setDynamicShortcuts(context, shortcuts)
             Logger.d(TAG, "Обновлено динамических ярлыков: ${shortcuts.size}")
         }.onFailure { Logger.w(TAG, "Не удалось обновить ярлыки", it) }

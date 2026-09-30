@@ -1,6 +1,5 @@
 package com.ogneliss.dialer.ui.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.material.icons.Icons
@@ -16,7 +15,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.R
@@ -26,11 +24,19 @@ import com.ogneliss.dialer.data.PinnedContacts
 import com.ogneliss.dialer.data.RulePattern
 import androidx.compose.ui.graphics.Color
 import com.ogneliss.dialer.ui.theme.BlockRed
-import com.ogneliss.dialer.ui.theme.UnblockGreen
 import com.ogneliss.dialer.ui.components.OgnelissDialog
 import com.ogneliss.dialer.ui.components.rememberActionHaptics
+import androidx.compose.ui.Alignment
+import androidx.compose.material.icons.automirrored.filled.StickyNote2
+import androidx.compose.ui.text.style.TextOverflow
+import com.ogneliss.dialer.ui.theme.NoteTeal
+import com.ogneliss.dialer.ui.theme.CallGreen
+import com.ogneliss.dialer.ui.components.RowAvatar
+import com.ogneliss.dialer.ui.components.SheetRow
+import com.ogneliss.dialer.ui.components.SheetGroup
+import com.ogneliss.dialer.ui.components.SheetDivider
+import com.ogneliss.dialer.ui.components.QuickAction
 import com.ogneliss.dialer.ui.DialerViewModel
-import com.ogneliss.dialer.ui.theme.Dimens
 import com.ogneliss.dialer.util.PhoneFormatter
 
 /**
@@ -120,254 +126,191 @@ fun ContactActionSheet(
         sheetState = sheetState,
         contentWindowInsets = { WindowInsets.navigationBars }
     ) {
-        Column(Modifier.padding(bottom = 24.dp)) {
+        /*
+         * ══════════════════════════════════════════════════════════════════
+         * МЕНЮ ЗАПИСИ — КАК МАЛЕНЬКАЯ КАРТОЧКА (1.2.1)
+         * ══════════════════════════════════════════════════════════════════
+         * Было: пятнадцать строк одним списком со стандартными
+         * разделителями во всю ширину. Приходилось прокручивать,
+         * а «Позвонить», «SMS», «Напомнить», «Блок» выглядели простыми
+         * строками — хотя в карточке это круглые кнопки.
+         *
+         * Стало, сверху вниз:
+         * 1. шапка — портрет, имя, номер, как в строке журнала;
+         * 2. четыре главных действия — те же круглые кнопки, что
+         *    в карточке (общий QuickAction);
+         * 3. работа с контактом — одной панелью;
+         * 4. работа с номером — второй панелью;
+         * 5. «Удалить из журнала» — отдельно, красным, внизу.
+         */
+        Column(Modifier.padding(bottom = 16.dp)) {
+            // Отклик на необратимое: блокировка, снятие, удаление
+            val haptics = rememberActionHaptics()
 
-            // Шапка: с кем работаем. Без неё после долгого нажатия
-            // легко потерять, к какой записи относится список
-            Column(Modifier.padding(horizontal = 24.dp, vertical = 8.dp)) {
-                Text(
-                    group.displayName ?: PhoneFormatter.format(group.number),
-                    style = MaterialTheme.typography.titleLarge
-                )
-                if (group.displayName != null) {
+            // ── 1. Шапка ────────────────────────────────────────────────
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
+            ) {
+                RowAvatar(group.photoUri)
+                Spacer(Modifier.width(16.dp))
+                Column(Modifier.weight(1f)) {
                     Text(
-                        PhoneFormatter.format(group.number),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        group.displayName ?: PhoneFormatter.format(group.number),
+                        style = MaterialTheme.typography.titleLarge,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
+                    if (group.displayName != null) {
+                        Text(
+                            PhoneFormatter.format(group.number),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
 
-            HorizontalDivider()
+            // ── 2. Главные действия — как в карточке ─────────────────────
+            val exactRule = rules.firstOrNull { it.isBlock && it.pattern == group.e164 }
+            val maskRule = rules.firstOrNull {
+                it.isBlock && it.isMask && RulePattern.matches(it.pattern, group.e164)
+            }
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
+            ) {
+                QuickAction(
+                    Icons.Default.Call,
+                    R.string.action_call,
+                    container = CallGreen,
+                    tint = Color.White
+                ) { vm.call(group.number); onDismiss() }
+                QuickAction(Icons.AutoMirrored.Filled.Message, R.string.action_sms) {
+                    vm.openSms(group.number); onDismiss()
+                }
+                QuickAction(Icons.Default.Alarm, R.string.action_remind_short) {
+                    vm.requestReminder(group); onDismiss()
+                }
+                /*
+                 * Блок — с тремя состояниями, как в карточке: заблокирован
+                 * точным правилом — снять; попадает под маску — показать
+                 * маску и предложить открыть список (снять отсюда нельзя,
+                 * иначе снялась бы вся маска); не заблокирован — блокировать.
+                 */
+                QuickAction(
+                    icon = Icons.Default.Block,
+                    labelRes = when {
+                        exactRule != null -> R.string.action_unblock_short
+                        maskRule != null -> R.string.action_blocked_by_mask
+                        else -> R.string.action_block_short
+                    },
+                    tint = if (exactRule != null) MaterialTheme.colorScheme.primary else BlockRed
+                ) {
+                    when {
+                        exactRule != null -> {
+                            haptics(); vm.removeRule(group.e164); onDismiss()
+                        }
+                        maskRule != null -> maskWarning = maskRule.pattern
+                        else -> {
+                            haptics(); vm.blockNumber(group.e164); onDismiss()
+                        }
+                    }
+                }
+            }
 
-            SheetAction(Icons.Default.Call, R.string.action_call) {
-                vm.call(group.number); onDismiss()
-            }
-            SheetAction(Icons.AutoMirrored.Filled.Message, R.string.action_sms) {
-                vm.openSms(group.number); onDismiss()
-            }
-            SheetAction(Icons.Default.History, R.string.subscriber_history) {
-                onOpenCard(); onDismiss()
-            }
+            Spacer(Modifier.height(8.dp))
 
-            /*
-             * ЕСТЬ ЛИ АБОНЕНТ В КНИГЕ — ПРОВЕРКА ПО НОМЕРУ.
-             *
-             * ── Почему не group.contactId ──────────────────────────────────
-             * Он разбирается из CACHED_LOOKUP_URI журнала, а на многих
-             * прошивках последний сегмент этой строки — lookup-ключ,
-             * а не число. Разбор возвращает null, приложение считает
-             * контакт отсутствующим — и предлагает «В контакты» тем,
-             * кто в книге давно.
-             *
-             * Нажатие приводило к созданию дубликата.
-             *
-             * Сверка по номеру в формате E.164 надёжна: он есть
-             * у каждой записи и от кэша журнала не зависит.
-             */
+            // ── 3. Контакт ──────────────────────────────────────────────
             val knownContactId = remember(state.contacts, group.e164) {
-                // sortedBy: при нескольких контактах на номер выбираем
-                // первого по алфавиту — тот же порядок, что у имени
-                // и фотографии в журнале. Иначе экраны показывали бы
-                // разные контакты для одной записи
                 state.contacts
                     .filter { contact -> contact.numbers.any { it.e164 == group.e164 } }
                     .minByOrNull { it.displayName.lowercase() }
                     ?.id ?: group.contactId
             }
-
-            if (knownContactId == null) {
-                SheetAction(Icons.Default.PersonAdd, R.string.action_add_contact) {
-                    vm.createContact(group.number, group.displayName); onDismiss()
-                }
-            } else {
-                SheetAction(Icons.Default.Edit, R.string.action_edit_contact) {
-                    vm.editContact(knownContactId); onDismiss()
-                }
-            }
-
-            // Заметка выше копирования: пометить, кто звонил, хотят чаще,
-            // чем скопировать номер
-            /*
-             * Закрепление — свойство журнала, а не контакта.
-             *
-             * Избранное живёт в телефонной книге и синхронизируется
-             * с Google; закрепить же хочется курьера или мастера,
-             * которых в книгу не заносят вовсе.
-             */
             val pinned = vm.isPinned(group.e164)
-            SheetAction(
-                if (pinned) Icons.Default.PushPin else Icons.Outlined.PushPin,
-                if (pinned) R.string.action_unpin else R.string.action_pin
-            ) {
-                if (pinned) {
-                    vm.unpinNumber(group.e164)
-                    onDismiss()
-                } else if (vm.pinNumber(group.e164)) {
-                    onDismiss()
-                } else {
-                    // Предел достигнут: сообщаем причину, а не закрываем
-                    // шторку молча — иначе выглядит как сбой
-                    pinLimitReached = true
-                }
+            val historyLabel = stringResource(R.string.subscriber_history)
+            val contactLabel = stringResource(
+                if (knownContactId == null) R.string.action_add_contact else R.string.action_edit_contact
+            )
+            val pinLabel = stringResource(if (pinned) R.string.action_unpin else R.string.action_pin)
+            val noteLabel = stringResource(R.string.action_add_note)
+            SheetGroup {
+                        SheetRow(Icons.Default.History, historyLabel, onClick = {
+                            onOpenCard(); onDismiss()
+                        })
+                SheetDivider()
+                        SheetRow(
+                            if (knownContactId == null) Icons.Default.PersonAdd else Icons.Default.Edit,
+                            contactLabel,
+                            onClick = {
+                                if (knownContactId == null) {
+                                    vm.createContact(group.number, group.displayName)
+                                } else {
+                                    vm.editContact(knownContactId)
+                                }
+                                onDismiss()
+                            }
+                        )
+                SheetDivider()
+                        // Контурная булавка — «не закреплён», залитая — «закреплён»
+                        SheetRow(
+                            if (pinned) Icons.Default.PushPin else Icons.Outlined.PushPin,
+                            pinLabel,
+                            onClick = {
+                                if (pinned) {
+                                    vm.unpinNumber(group.e164)
+                                    onDismiss()
+                                } else if (vm.pinNumber(group.e164)) {
+                                    onDismiss()
+                                } else {
+                                    pinLimitReached = true
+                                }
+                            }
+                        )
+                SheetDivider()
+                        SheetRow(
+                            Icons.AutoMirrored.Filled.StickyNote2,
+                            noteLabel,
+                            iconTint = NoteTeal,
+                            onClick = { vm.openNoteEditor(group); onDismiss() }
+                        )
             }
 
-            SheetAction(Icons.Default.EditNote, R.string.action_add_note) {
-                vm.openNoteEditor(group); onDismiss()
-            }
-
-            SheetAction(Icons.Default.ContentCopy, R.string.action_copy_number) {
-                // Напрямую, а не через handleSwipe: путь короче
-                // и не зависит от разбора действий свайпа
-                vm.copyNumber(group.number); onDismiss()
-            }
-            /*
-             * «Напомнить перезвонить» — через то же окно выбора, что в карточке.
-             *
-             * Раньше этот пункт молча ставил напоминание через час. В карточке
-             * та же кнопка открывала выбор («через час», «вечером», «завтра»,
-             * своё время), и человек, привыкший к карточке, получал
-             * напоминание не на то время — и узнавал об этом, когда оно
-             * срабатывало.
-             *
-             * Окно выбора на экране журнала уже есть: оно отвечает
-             * на reminderRequest, как и в карточке. Достаточно попросить.
-             */
-            SheetAction(Icons.Default.Notifications, R.string.action_remind) {
-                vm.requestReminder(group); onDismiss()
-            }
-
-            HorizontalDivider(Modifier.padding(vertical = 8.dp))
-
-            /*
-             * БЛОКИРОВКА, РАЗБЛОКИРОВКА И МАСКА — ОДИН ПУНКТ.
-             *
-             * ══════════════════════════════════════════════════════════════
-             * ЧТО БЫЛО НЕ ТАК
-             * ══════════════════════════════════════════════════════════════
-             * Пункт всегда назывался «Заблокировать номер» и всегда
-             * добавлял правило. Снять блокировку отсюда было нельзя:
-             * приходилось открывать карточку или искать номер в списке
-             * правил. При том что заблокировали его тем же длинным
-             * нажатием секунду назад.
-             *
-             * Теперь пункт показывает состояние: у заблокированного
-             * номера подпись «Разблокировать», и нажатие снимает
-             * правило.
-             *
-             * ── Третье состояние: заблокирован маской ──────────────────────
-             * Номер мог попасть под маску вида 8800*, не имея своего
-             * правила. Снять её отсюда нельзя: вместе с ней разблокируется
-             * весь диапазон, а человек этого не просил.
-             *
-             * Раньше пункт в этом случае просто предлагал «заблокировать»
-             * уже заблокированный номер — нажатие добавляло точное
-             * правило и внешне не меняло ничего. Теперь показывается
-             * маска и предлагается открыть чёрный список: решение
-             * там, где его видно целиком.
-             */
-            /*
-     * Отклик на необратимое: блокировка, снятие блокировки, удаление
-     * записи. Разбор — в ActionHaptics.
-     */
-    val haptics = rememberActionHaptics()
-
-    val exactRule = rules.firstOrNull { it.isBlock && it.pattern == group.e164 }
-            val maskRule = rules.firstOrNull {
-                it.isBlock && it.isMask && RulePattern.matches(it.pattern, group.e164)
-            }
-
-            when {
-                exactRule != null -> SheetAction(
-                    Icons.Default.Block,
-                    R.string.action_unblock,
-                    accent = UnblockGreen
-                ) {
-                    haptics(); vm.removeRule(group.e164); onDismiss()
-                }
-
-                maskRule != null -> SheetAction(
-                    Icons.Default.Block,
-                    R.string.action_blocked_by_mask,
-                    destructive = true
-                ) {
-                    maskWarning = maskRule.pattern
-                }
-
-                else -> SheetAction(
-                    Icons.Default.Block,
-                    R.string.action_block,
-                    destructive = true
-                ) {
-                    haptics(); vm.blockNumber(group.e164); onDismiss()
-                }
-            }
-            /*
-             * «СПАМ» — РЯДОМ С БЛОКИРОВКОЙ.
-             *
-             * С 1.1.1 отметка «спам» живёт отдельно от заметки, а поставить
-             * её можно было только в карточке. Здесь, в меню записи, где
-             * человек и так решает «что делать с этим номером», её не было.
-             *
-             * Пункт переключает отметку: нет отметки — ставит «спам»,
-             * есть любая (спам или мошенники) — снимает. «Мошенники» —
-             * тоньше, их ставят в карточке, где видны обе фишки.
-             */
+            // ── 4. Номер ────────────────────────────────────────────────
             val mark = state.spamMarks[group.e164]
-            if (mark == null) {
-                SheetAction(
-                    Icons.Default.Report,
-                    R.string.action_mark_spam,
-                    destructive = true
-                ) {
-                    haptics(); vm.setSpamMark(group.e164, SpamMarkType.SPAM); onDismiss()
-                }
-            } else {
-                SheetAction(
-                    Icons.Default.Report,
-                    R.string.action_unmark_spam,
-                    accent = UnblockGreen
-                ) {
-                    haptics(); vm.setSpamMark(group.e164, null); onDismiss()
-                }
+            val copyLabel = stringResource(R.string.action_copy_number)
+            val spamLabel = stringResource(
+                if (mark == null) R.string.action_mark_spam else R.string.action_unmark_spam
+            )
+            SheetGroup {
+                        SheetRow(Icons.Default.ContentCopy, copyLabel, onClick = {
+                            vm.copyNumber(group.number); onDismiss()
+                        })
+                SheetDivider()
+                        // Отметка «спам»: ставит, если нет; снимает любую, если есть.
+                        // «Мошенники» — в карточке, где видны обе отметки
+                        SheetRow(
+                            Icons.Default.Report,
+                            spamLabel,
+                            color = if (mark == null) BlockRed else MaterialTheme.colorScheme.primary,
+                            onClick = {
+                                haptics()
+                                vm.setSpamMark(group.e164, if (mark == null) SpamMarkType.SPAM else null)
+                                onDismiss()
+                            }
+                        )
             }
 
-            SheetAction(
+            // ── 5. Необратимое — отдельно, внизу ───────────────────────
+            SheetRow(
                 Icons.Default.Delete,
-                R.string.action_delete_from_log,
-                destructive = true
-            ) {
-                haptics(); vm.deleteGroups(listOf(group)); onDismiss()
-            }
+                stringResource(R.string.action_delete_from_log),
+                color = BlockRed,
+                onClick = { haptics(); vm.deleteGroups(listOf(group)); onDismiss() }
+            )
         }
     }
 }
 
-@Composable
-private fun SheetAction(
-    icon: ImageVector,
-    labelRes: Int,
-    destructive: Boolean = false,
-    /**
-     * Свой цвет пункта.
-     *
-     * Нужен разблокировке: она не разрушительна, но и не обычна —
-     * зелёный говорит, что нажатие СНИМЕТ блокировку. Разбор цветов —
-     * в Color.kt рядом с BlockRed.
-     */
-    accent: Color? = null,
-    onClick: () -> Unit
-) {
-    val color = accent
-        ?: if (destructive) BlockRed
-        else MaterialTheme.colorScheme.onSurface
-
-    ListItem(
-        leadingContent = { Icon(icon, contentDescription = null, tint = color) },
-        headlineContent = { Text(stringResource(labelRes), color = color) },
-        colors = ListItemDefaults.colors(containerColor = androidx.compose.ui.graphics.Color.Transparent),
-        modifier = Modifier
-            .heightIn(min = Dimens.MIN_TOUCH_TARGET)
-            .clickable(onClick = onClick)
-    )
-}
