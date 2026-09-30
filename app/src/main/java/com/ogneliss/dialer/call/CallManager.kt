@@ -1,9 +1,11 @@
 package com.ogneliss.dialer.call
 
+import com.ogneliss.dialer.log.CallDiagnostics
 import android.telecom.Call
 import android.telecom.CallAudioState
 import android.telecom.InCallService
 import android.telecom.VideoProfile
+import com.ogneliss.dialer.log.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -67,7 +69,17 @@ object CallManager {
         _revision.value++
     }
 
-    internal fun updateAudio(state: CallAudioState?) { _audioState.value = state }
+    internal fun updateAudio(state: CallAudioState?) {
+        /*
+         * Смена вывода звука — в журнал приложения (1.2.4). Вопрос
+         * «вызов сбросился в наушниках — приложение виновато?» по логу
+         * было не решить: не было видно ни куда шёл звук, ни когда
+         * он переключался. Пишем только смену, не каждое обновление.
+         */
+        val before = _audioState.value?.route
+        if (state != null && state.route != before) CallDiagnostics.logRoute(state)
+        _audioState.value = state
+    }
 
     /*
      * ══════════════════════════════════════════════════════════════════════
@@ -147,8 +159,20 @@ object CallManager {
         get() = topLevel.any { it.state == Call.STATE_RINGING }
 
     fun answer() = primary?.answer(VideoProfile.STATE_AUDIO_ONLY)
-    fun reject() = primary?.reject(false, null)
-    fun hangup() = primary?.disconnect()
+    /*
+     * Отклонение и завершение по команде ПРИЛОЖЕНИЯ — в журнал (1.2.4):
+     * кнопка на экране вызова или в уведомлении. Если вызов завершён,
+     * а этой строки перед ним нет, — его завершило не приложение:
+     * собеседник, сеть или кнопка гарнитуры (ею управляет система).
+     */
+    fun reject() {
+        Logger.i("Call", "Отклонён из приложения")
+        primary?.reject(false, null)
+    }
+    fun hangup() {
+        Logger.i("Call", "Завершён из приложения")
+        primary?.disconnect()
+    }
 
     // ── Второй входящий ─────────────────────────────────────────────────────
 

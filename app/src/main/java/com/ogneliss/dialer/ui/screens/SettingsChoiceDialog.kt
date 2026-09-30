@@ -113,6 +113,12 @@ fun SettingsChoiceDialog(
     val settingsSnapshot by vm.settingsState.collectAsState()
     val current = remember(settingsSnapshot, settingKey) { vm.choiceValue(settingKey) }
 
+    // Язык — своё окно: 48 вариантов, поиск, два названия (разбор там)
+    if (settingKey == "language") {
+        LanguagePickerDialog(vm = vm, current = current, onDismiss = onDismiss)
+        return
+    }
+
     /*
      * ОБЩИЙ КОНТЕЙНЕР ВМЕСТО AlertDialog.
      *

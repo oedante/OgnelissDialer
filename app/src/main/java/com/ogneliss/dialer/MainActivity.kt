@@ -323,6 +323,15 @@ class MainActivity : ComponentActivity() {
     /** Сколько намерений пришло: см. MainDialerScreen.prefillToken. */
     private var intentToken by mutableStateOf(0)
 
+    /*
+     * Открыли приложение — пропущенные увидены: счётчик на значке
+     * и уведомление убираются (MissedCallsNotifier.clear).
+     */
+    override fun onResume() {
+        super.onResume()
+        com.ogneliss.dialer.call.MissedCallsNotifier.clear(this)
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)

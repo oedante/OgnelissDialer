@@ -140,7 +140,7 @@ fun PermissionsSettingsScreen(
                     required = group.required,
                     onClick = {
                         if (group.id in missing) {
-                            launcher.launch(group.permissions.toTypedArray())
+                            launcher.launch(group.toRequest.toTypedArray())
                         }
                     }
                 )

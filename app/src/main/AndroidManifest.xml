@@ -206,6 +206,21 @@
             </intent-filter>
         </service>
 
+        <!--
+          Число пропущенных от системы: с этим приёмником Telecom не рисует
+          своё уведомление, а отдаёт число нам — и отметка появляется на
+          значке нашего приложения. Разбор в MissedCallsNotifier.
+          MODIFY_PHONE_STATE держит только система — рассылку не подделать.
+        -->
+        <receiver
+            android:name=".call.MissedCallsReceiver"
+            android:exported="true"
+            android:permission="android.permission.MODIFY_PHONE_STATE">
+            <intent-filter>
+                <action android:name="android.telecom.action.SHOW_MISSED_CALLS_NOTIFICATION" />
+            </intent-filter>
+        </receiver>
+
         <!-- Обработчик телефонии: без него роль диалера не работает -->
         <service
             android:name=".call.OgnelissInCallService"

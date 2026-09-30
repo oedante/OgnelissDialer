@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.call
 
+import com.ogneliss.dialer.log.CallDiagnostics
 import android.content.Intent
 import android.telecom.Call
 import android.telecom.CallAudioState
@@ -61,6 +62,16 @@ class OgnelissInCallService : InCallService() {
         super.onCallAdded(call)
         CallManager.service = this
         CallManager.add(call)
+
+        // Исходящий звонок — человек у телефона: пропущенные увидены,
+        // счётчик на значке сбрасываем (MissedCallsNotifier)
+        @Suppress("DEPRECATION")
+        val outgoing = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            call.details.callDirection == Call.Details.DIRECTION_OUTGOING
+        } else {
+            call.state == Call.STATE_DIALING || call.state == Call.STATE_CONNECTING
+        }
+        if (outgoing) MissedCallsNotifier.clear(this)
 
         /*
          * ОТСЛЕЖИВАНИЕ СОСТОЯНИЯ ВЫЗОВА.
@@ -265,6 +276,8 @@ class OgnelissInCallService : InCallService() {
 
     override fun onCallRemoved(call: Call) {
         super.onCallRemoved(call)
+        // Кто и почему завершил, куда шёл звук — разбор в CallDiagnostics
+        CallDiagnostics.logEnded(call, CallManager.audioState.value)
         val details = call.details
 
         // Сброшенный входящий: предлагаем создать напоминание.

@@ -389,7 +389,9 @@ private fun buildSteps(
                     consequenceRes = consequences[group.id] ?: R.string.wizard_generic_consequence,
                     required = group.required,
                     isGranted = AppPermissions.missing(context).none { it.id == group.id },
-                    permissions = group.permissions
+                    // Вместе с «попутными» (Bluetooth у телефонной группы) —
+                    // одним системным окном
+                    permissions = group.toRequest
                 )
             )
         }

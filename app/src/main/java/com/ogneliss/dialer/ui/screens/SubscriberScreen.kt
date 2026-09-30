@@ -253,6 +253,10 @@ fun SubscriberScreen(
             ?: groupKey.takeIf { it.startsWith("number:") }
                 ?.removePrefix("number:")
                 ?.let { number -> groupFromNumber(number, state) }
+            // Голый номер — ключ из старых мест (закреплённые без звонков
+            // до 1.2.4, ярлыки): тоже открываем по номеру, а не закрываемся
+            ?: groupKey.takeIf { BARE_NUMBER.matches(it) }
+                ?.let { number -> groupFromNumber(number, state) }
     }
 
     if (group == null) {
@@ -2687,3 +2691,6 @@ private val CARD_SIDE_COLUMN_WIDTH = 360.dp
  * во всю оставшуюся ширину растянулась бы на тысячу точек.
  */
 private val CARD_CONTENT_MAX_WIDTH = 640.dp
+
+/** Ключ карточки, который сам является номером: «+79101234567», «89101234567». */
+private val BARE_NUMBER = Regex("""^\+?\d{3,}$""")

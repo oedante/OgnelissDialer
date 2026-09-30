@@ -23,8 +23,21 @@ object AppPermissions {
         val titleRes: Int,
         val rationaleRes: Int,
         val permissions: List<String>,
-        val required: Boolean
-    )
+        val required: Boolean,
+        /**
+         * Запросить в том же системном окне, но не считать обязательными.
+         *
+         * Для Bluetooth (1.2.4): отдельным необязательным шагом мастера его
+         * пропускали, а без него экран вызова не видит беспроводную
+         * гарнитуру и не может переключить на неё разговор. Теперь он
+         * просится вместе с телефонными разрешениями, одним окном. Отказ
+         * не блокирует мастер — шаг «Звук» остаётся для повторного запроса.
+         */
+        val alsoRequest: List<String> = emptyList()
+    ) {
+        /** Что показать в системном окне запроса. */
+        val toRequest: List<String> get() = (permissions + alsoRequest).distinct()
+    }
 
     /**
      * Группы разрешений в порядке важности.
@@ -46,7 +59,11 @@ object AppPermissions {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                         add(Manifest.permission.READ_PHONE_NUMBERS)
                 },
-                required = true
+                required = true,
+                alsoRequest = buildList {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                        add(Manifest.permission.BLUETOOTH_CONNECT)
+                }
             ),
             Group(
                 id = "call_log",

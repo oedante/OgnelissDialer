@@ -651,4 +651,14 @@
     <string name="settings_proximity_text">Датчик приближения гасит экран во время разговора. Без него щека может нажать «Завершить» или «Звук»</string>
     <string name="settings_hide_contact_number">Тип номера вместо номера</string>
     <string name="settings_hide_contact_number_text">На экране вызова у сохранённых контактов — «Мобильный», «Рабочий» вместо цифр. Незнакомые номера показываются всегда</string>
+    <string name="language_search_hint">Поиск языка</string>
+    <string name="language_auto_translated">автоперевод</string>
+    <string name="missed_calls_channel">Пропущенные вызовы</string>
+    <string name="missed_calls_last">Последний: %1$s</string>
+    <plurals name="missed_calls_title">
+        <item quantity="one">%d пропущенный вызов</item>
+        <item quantity="few">%d пропущенных вызова</item>
+        <item quantity="many">%d пропущенных вызовов</item>
+        <item quantity="other">%d пропущенного вызова</item>
+    </plurals>
 </resources>

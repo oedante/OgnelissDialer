@@ -650,4 +650,12 @@
     <string name="settings_proximity_text">Der Näherungssensor schaltet den Bildschirm während eines Anrufs aus. Ohne ihn kann die Wange „Beenden“ oder „Stumm“ drücken</string>
     <string name="settings_hide_contact_number">Nummerntyp statt Nummer</string>
     <string name="settings_hide_contact_number_text">Im Anrufbildschirm zeigen gespeicherte Kontakte „Mobil“, „Arbeit“ usw. statt Ziffern. Unbekannte Nummern werden immer angezeigt</string>
+    <string name="language_search_hint">Sprache suchen</string>
+    <string name="language_auto_translated">automatisch übersetzt</string>
+    <string name="missed_calls_channel">Verpasste Anrufe</string>
+    <string name="missed_calls_last">Zuletzt: %1$s</string>
+    <plurals name="missed_calls_title">
+        <item quantity="one">%d verpasster Anruf</item>
+        <item quantity="other">%d verpasste Anrufe</item>
+    </plurals>
 </resources>

@@ -14,6 +14,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
@@ -65,7 +66,14 @@ fun SheetRow(
     onClick: () -> Unit,
     color: Color? = null,
     iconTint: Color? = null,
-    supporting: String? = null
+    supporting: String? = null,
+    /**
+     * Строка стоит в шторке сама по себе, вне SheetGroup (например,
+     * красное «Очистить журнал» внизу). Тогда ей нужен тот же отступ
+     * от края, что у панелей групп, — иначе её значок и подпись
+     * прижимаются к краю шторки левее всех остальных строк.
+     */
+    standalone: Boolean = false
 ) {
     val textColor = color ?: MaterialTheme.colorScheme.onSurface
     ListItem(
@@ -78,6 +86,14 @@ fun SheetRow(
         },
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         modifier = Modifier
+            .then(
+                if (standalone) {
+                    Modifier
+                        .padding(horizontal = FlowUi.screenPadding, vertical = 4.dp)
+                        // Отклик нажатия — в пределах скругления, как у панелей
+                        .clip(MaterialTheme.shapes.large)
+                } else Modifier
+            )
             .heightIn(min = Dimens.MIN_TOUCH_TARGET)
             .clickable(onClick = onClick)
     )

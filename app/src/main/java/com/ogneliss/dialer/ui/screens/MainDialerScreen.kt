@@ -548,12 +548,45 @@ fun MainDialerScreen(
     // Ключ — сами строки, а не их число и первая: иначе изменение записи
     // в середине журнала (ключ карточки меняется после каждого звонка)
     // оставляло здесь старые строки со старыми ключами
-    val pinnedRows = remember(rows, pinnedNumbers, state.query) {
-        if (pinnedNumbers.isEmpty() || state.query.isNotEmpty()) emptyList()
+    /*
+     * ══════════════════════════════════════════════════════════════════════
+     * ЗАКРЕПЛЁННЫЕ — ПО КОНТАКТУ, А НЕ ТОЛЬКО ПО НОМЕРУ (1.2.4)
+     * ══════════════════════════════════════════════════════════════════════
+     * Закрепляется номер. Но группа журнала у контакта одна на все его
+     * номера, и её «номер» — номер последнего звонка. Позвонили с другого
+     * номера того же контакта — группа сменила номер, перестала совпадать
+     * с закреплённым, и закреплённая карточка превращалась в «без звонков»:
+     * без портрета, а нажатие открывало карточку по голому номеру, которую
+     * карточка не умела искать, — и тут же закрывалась (лог 30.09.2026:
+     * «Группа не найдена» на каждое нажатие).
+     *
+     * Теперь строка закреплена, если её номер закреплён ИЛИ закреплён любой
+     * другой номер того же контакта. Порядок — по первому закреплённому
+     * номеру контакта; на каждый закреплённый номер — одна строка.
+     */
+    val pinOrder = remember(pinnedNumbers) {
+        pinnedNumbers.withIndex().associate { (i, n) -> n to i }
+    }
+    val contactPinIndex = remember(pinOrder, state.contacts) {
+        buildMap<Long, Int> {
+            state.contacts.forEach { contact ->
+                contact.numbers.mapNotNull { pinOrder[it.e164] }.minOrNull()
+                    ?.let { put(contact.id, it) }
+            }
+        }
+    }
+    fun pinIndexOf(row: CallLogRowState): Int? =
+        pinOrder[row.e164] ?: row.group.contactId?.let { contactPinIndex[it] }
+
+    val pinnedRows = remember(rows, pinOrder, contactPinIndex, state.query) {
+        if (pinOrder.isEmpty() || state.query.isNotEmpty()) emptyList()
         else {
-            val orderIndex = pinnedNumbers.withIndex().associate { (i, n) -> n to i }
-            rows.filter { it.e164 in orderIndex }
-                .sortedBy { orderIndex[it.e164] ?: Int.MAX_VALUE }
+            rows.mapNotNull { row -> pinIndexOf(row)?.let { it to row } }
+                // Строки идут от новых к старым: у каждого закреплённого
+                // остаётся самая свежая
+                .distinctBy { it.first }
+                .sortedBy { it.first }
+                .map { it.second }
         }
     }
 
@@ -577,10 +610,13 @@ fun MainDialerScreen(
      * фотография, номер. Позвонить по ней можно, а истории в ней нет —
      * потому что её и правда нет.
      */
-    val pinnedWithoutCalls = remember(pinnedNumbers, rows.size, state.contacts, state.query) {
+    val pinnedWithoutCalls = remember(pinnedNumbers, pinnedRows, state.contacts, state.query) {
         if (pinnedNumbers.isEmpty() || state.query.isNotEmpty()) emptyList()
         else {
-            val withCalls = rows.mapTo(HashSet()) { it.e164 }
+            // «Со звонками» — закреплённые, для которых нашлась строка:
+            // по своему номеру или по другому номеру того же контакта
+            val coveredIndexes = pinnedRows.mapNotNullTo(HashSet()) { pinIndexOf(it) }
+            val withCalls = pinnedNumbers.filterIndexed { i, _ -> i in coveredIndexes }.toHashSet()
             val byNumber = buildMap {
                 state.contacts.forEach { contact ->
                     contact.numbers.forEach { number ->
@@ -1477,7 +1513,9 @@ fun MainDialerScreen(
                             PinnedOnlyCard(
                                 row = row,
                                 onCall = { vm.call(row.e164) },
-                                onOpen = { onOpenSubscriber(row.e164) }
+                                // «number:» — карточка по номеру; голый номер
+                                // карточка не распознавала и закрывалась
+                                onOpen = { onOpenSubscriber("number:${row.e164}") }
                             )
                         }
                     }
@@ -2145,7 +2183,9 @@ private fun OverflowMenu(
                 Icons.Default.DeleteSweep,
                 clearLabel,
                 color = MaterialTheme.colorScheme.error,
-                onClick = onClearLog
+                onClick = onClearLog,
+                // Вне панели — отступ как у групп выше
+                standalone = true
             )
         }
     }

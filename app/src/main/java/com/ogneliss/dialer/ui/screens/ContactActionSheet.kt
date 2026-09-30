@@ -308,7 +308,9 @@ fun ContactActionSheet(
                 Icons.Default.Delete,
                 stringResource(R.string.action_delete_from_log),
                 color = BlockRed,
-                onClick = { haptics(); vm.deleteGroups(listOf(group)); onDismiss() }
+                onClick = { haptics(); vm.deleteGroups(listOf(group)); onDismiss() },
+                // Вне панели — отступ как у групп выше
+                standalone = true
             )
         }
     }

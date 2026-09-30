@@ -646,4 +646,13 @@
     <string name="settings_proximity_text">Le capteur de proximité éteint l’écran pendant un appel. Sans lui, la joue peut appuyer sur « Raccrocher » ou « Muet »</string>
     <string name="settings_hide_contact_number">Type de numéro au lieu du numéro</string>
     <string name="settings_hide_contact_number_text">Sur l’écran d’appel, les contacts enregistrés affichent « Mobile », « Travail », etc. au lieu des chiffres. Les numéros inconnus restent toujours visibles</string>
+    <string name="language_search_hint">Rechercher une langue</string>
+    <string name="language_auto_translated">traduction automatique</string>
+    <string name="missed_calls_channel">Appels manqués</string>
+    <string name="missed_calls_last">Dernier : %1$s</string>
+    <plurals name="missed_calls_title">
+        <item quantity="one">%d appel manqué</item>
+        <item quantity="many">%d appels manqués</item>
+        <item quantity="other">%d appels manqués</item>
+    </plurals>
 </resources>
