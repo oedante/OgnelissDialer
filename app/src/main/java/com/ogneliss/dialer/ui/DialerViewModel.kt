@@ -17,6 +17,7 @@ import com.ogneliss.dialer.data.*
 import com.ogneliss.dialer.settings.Prefs
 import com.ogneliss.dialer.settings.SpeedDialStore
 import com.ogneliss.dialer.settings.SwipeAction
+import com.ogneliss.dialer.ui.theme.MessageBlue
 import com.ogneliss.dialer.settings.SwipeSimMode
 import com.ogneliss.dialer.settings.SwipeTuning
 import com.ogneliss.dialer.data.CallLogLoader
@@ -219,12 +220,34 @@ class DialerViewModel @Inject constructor(
         if (primary == SwipeAction.NONE) return emptyList()
         if (extra.isEmpty()) return revealActions(primary, group, sims)
 
-        return buildList {
-            addAll(revealActions(primary, group, sims).take(1))
-            extra.forEach { action ->
-                addAll(revealActions(action, group, sims).take(1))
+        /*
+         * НЕСКОЛЬКО ДЕЙСТВИЙ — ПО КНОПКЕ НА ДЕЙСТВИЕ (1.2.5).
+         *
+         * Первая версия брала первую кнопку из «панели по номерам» каждого
+         * действия. Такие кнопки рассчитаны на выбор номера: одинаковый
+         * синий цвет, общий значок сообщения, подпись — номер. В итоге
+         * SMS, Telegram и WhatsApp на панели выглядели одинаково, а под
+         * значком стоял номер (с телефона, 30.09.2026).
+         *
+         * Теперь у каждого действия своя кнопка: значок и цвет — те же,
+         * что в настройках свайпа, подпись — название действия. Номер
+         * действие выбирает само (handleSwipe): для мессенджеров — тот,
+         * на котором мессенджер у контакта есть.
+         */
+        return (listOf(primary) + extra)
+            .filter { it != SwipeAction.NONE }
+            .distinct()
+            .map { action ->
+                val visual = RevealActionFactory.iconOf(action)
+                val label = app.getString(SettingsCommands.swipeActionLabelRes(action))
+                RevealAction(
+                    label = label,
+                    description = label,
+                    color = visual?.second ?: MessageBlue,
+                    icon = visual?.first,
+                    onClick = { performSwipe(action, group) }
+                )
             }
-        }
     }
 
     init {
@@ -1627,14 +1650,39 @@ class DialerViewModel @Inject constructor(
         }
     }
 
-    fun handleSwipe(action: SwipeAction, group: CallLogGroup) = viewModelScope.launch {
+    /** Мессенджер для группы журнала — разбор у handleSwipe. */
+    private suspend fun openMessenger(action: SwipeAction, group: CallLogGroup) {
+        val contactId = group.contactId ?: state.value.contacts
+            .firstOrNull { c -> c.numbers.any { it.e164 == group.e164 } }?.id
+        val links = contactId?.let { id ->
+            withContext(Dispatchers.IO) { ContactMessengers.linksFor(app, id) }
+        }.orEmpty().filter { it.kind == action }
+        // Номер строки журнала, если на нём мессенджер есть; иначе — любой,
+        // на котором есть; иначе — по номеру, как было
+        val link = links.firstOrNull { it.e164 == group.e164 } ?: links.firstOrNull()
+        if (link != null && ContactMessengers.open(app, link)) return
         when (action) {
-            SwipeAction.CALL -> actions.placeCall(group.number)
-            SwipeAction.SMS -> actions.openSms(group.number)
             SwipeAction.WHATSAPP -> actions.openWhatsApp(group.number)
             SwipeAction.TELEGRAM -> ExternalApps.telegram(app, group.number)
             SwipeAction.VIBER -> ExternalApps.viber(app, group.number)
             SwipeAction.MAX -> ExternalApps.max(app, group.number)
+            else -> Unit
+        }
+    }
+
+    fun handleSwipe(action: SwipeAction, group: CallLogGroup) = viewModelScope.launch {
+        when (action) {
+            SwipeAction.CALL -> actions.placeCall(group.number)
+            SwipeAction.SMS -> actions.openSms(group.number)
+            /*
+             * Мессенджеры — через телефонную книгу (1.2.5): открывается чат
+             * на том номере, где мессенджер у контакта есть. Раньше свайп
+             * открывал мессенджер по номеру строки журнала — а это мог быть
+             * городской номер или номер без этого мессенджера. Если строки
+             * книги нет (номер не в контактах), — по номеру, как было.
+             */
+            SwipeAction.WHATSAPP, SwipeAction.TELEGRAM,
+            SwipeAction.VIBER, SwipeAction.MAX -> openMessenger(action, group)
 
             /*
              * Заметка открывается редактором, а не сохраняется молча:

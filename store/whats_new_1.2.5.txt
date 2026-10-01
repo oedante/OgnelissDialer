@@ -3,18 +3,138 @@
 • До трёх действий на свайп: строка сдвигается и показывает кнопки, как в почтовых клиентах. Одно действие по-прежнему срабатывает сразу.
 • Мелкие исправления.
 </ru-RU>
-<en-US>
-• "Message" button on the contact card: SMS or a messenger — Telegram, WhatsApp, Viber, Max, if the contact uses it.
-• Up to three actions per swipe: the row slides open and shows buttons, like in email apps. A single action still fires right away.
-• Minor fixes.
-</en-US>
+<ar>
+• زر «مراسلة» في بطاقة جهة الاتصال: رسالة SMS أو تطبيق مراسلة — Telegram وWhatsApp وViber وMax، إذا كانت جهة الاتصال تستخدمه.
+• حتى ثلاثة إجراءات لكل سحب: ينزلق الصف ويعرض الأزرار، كما في تطبيقات البريد. الإجراء الواحد لا يزال يُنفَّذ فورًا.
+• إصلاحات بسيطة.
+</ar>
+<cs-CZ>
+• Tlačítko „Napsat“ na kartě kontaktu: SMS nebo messenger — Telegram, WhatsApp, Viber, Max, pokud ho kontakt používá.
+• Až tři akce na jedno přejetí: řádek se odsune a zobrazí tlačítka, jako v e-mailových aplikacích. Jedna akce se stále provede okamžitě.
+• Drobné opravy.
+</cs-CZ>
+<da-DK>
+• Knappen "Skriv" på kontaktkortet: SMS eller en beskedapp – Telegram, WhatsApp, Viber, Max, hvis kontakten bruger den.
+• Op til tre handlinger pr. swipe: rækken glider til side og viser knapper, som i mailapps. En enkelt handling udføres stadig med det samme.
+• Mindre rettelser.
+</da-DK>
 <de-DE>
 • Schaltfläche „Schreiben“ in der Kontaktkarte: SMS oder ein Messenger – Telegram, WhatsApp, Viber, Max, wenn der Kontakt ihn nutzt.
 • Bis zu drei Aktionen pro Wischgeste: Die Zeile gleitet auf und zeigt Schaltflächen, wie in E-Mail-Apps. Eine einzelne Aktion wird weiterhin sofort ausgeführt.
 • Kleinere Korrekturen.
 </de-DE>
+<en-US>
+• "Message" button on the contact card: SMS or a messenger — Telegram, WhatsApp, Viber, Max, if the contact uses it.
+• Up to three actions per swipe: the row slides open and shows buttons, like in email apps. A single action still fires right away.
+• Minor fixes.
+</en-US>
+<es-419>
+• Botón «Escribir» en la ficha del contacto: SMS o una app de mensajería (Telegram, WhatsApp, Viber, Max) si el contacto la usa.
+• Hasta tres acciones por deslizamiento: la fila se desplaza y muestra botones, como en las apps de correo. Una sola acción se sigue ejecutando al instante.
+• Correcciones menores.
+</es-419>
+<es-ES>
+• Botón «Escribir» en la ficha del contacto: SMS o una aplicación de mensajería (Telegram, WhatsApp, Viber, Max) si el contacto la usa.
+• Hasta tres acciones por deslizamiento: la fila se desplaza y muestra botones, como en las aplicaciones de correo. Una sola acción se sigue ejecutando al momento.
+• Correcciones menores.
+</es-ES>
+<fi-FI>
+• Yhteystietokortin ”Kirjoita”-painike: tekstiviesti tai pikaviestin – Telegram, WhatsApp, Viber, Max, jos yhteyshenkilö käyttää sitä.
+• Jopa kolme toimintoa pyyhkäisyä kohden: rivi liukuu sivuun ja näyttää painikkeet, kuten sähköpostisovelluksissa. Yksittäinen toiminto suoritetaan edelleen heti.
+• Pieniä korjauksia.
+</fi-FI>
 <fr-FR>
 • Bouton « Écrire » sur la fiche contact : SMS ou messagerie — Telegram, WhatsApp, Viber, Max, si le contact l’utilise.
 • Jusqu’à trois actions par balayage : la ligne s’ouvre et affiche des boutons, comme dans les applications de messagerie. Une action unique s’exécute toujours aussitôt.
 • Petites corrections.
 </fr-FR>
+<hi-IN>
+• संपर्क कार्ड पर "लिखें" बटन: SMS या मैसेंजर — Telegram, WhatsApp, Viber, Max, अगर संपर्क उसका उपयोग करता है।
+• हर स्वाइप पर तीन तक कार्रवाइयाँ: ईमेल ऐप्स की तरह पंक्ति खिसककर बटन दिखाती है। एक ही कार्रवाई अब भी तुरंत होती है।
+• छोटे सुधार।
+</hi-IN>
+<hu-HU>
+• „Írás” gomb a névjegykártyán: SMS vagy üzenetküldő – Telegram, WhatsApp, Viber, Max, ha a névjegy használja.
+• Legfeljebb három művelet húzásonként: a sor elcsúszik és gombokat mutat, mint a levelezőalkalmazásokban. Egyetlen művelet továbbra is azonnal lefut.
+• Kisebb javítások.
+</hu-HU>
+<id>
+• Tombol "Kirim pesan" di kartu kontak: SMS atau aplikasi pesan — Telegram, WhatsApp, Viber, Max, jika kontak menggunakannya.
+• Hingga tiga tindakan per geser: baris bergeser dan menampilkan tombol, seperti di aplikasi email. Satu tindakan tetap langsung dijalankan.
+• Perbaikan kecil.
+</id>
+<it-IT>
+• Pulsante «Scrivi» nella scheda contatto: SMS o un'app di messaggistica — Telegram, WhatsApp, Viber, Max, se il contatto la usa.
+• Fino a tre azioni per scorrimento: la riga si sposta e mostra dei pulsanti, come nelle app di posta. Un'azione singola viene ancora eseguita subito.
+• Correzioni minori.
+</it-IT>
+<iw-IL>
+• כפתור „כתיבה” בכרטיס איש הקשר: SMS או אפליקציית הודעות — Telegram, WhatsApp, Viber, Max, אם איש הקשר משתמש בה.
+• עד שלוש פעולות בכל החלקה: השורה זזה ומציגה כפתורים, כמו באפליקציות דואר. פעולה יחידה עדיין מתבצעת מיד.
+• תיקונים קטנים.
+</iw-IL>
+<ja-JP>
+• 連絡先カードに「メッセージ」ボタン：相手が使っていれば、SMS とメッセンジャー（Telegram、WhatsApp、Viber、Max）から選べます。
+• 1回のスワイプに最大3つの操作：メールアプリのように行がスライドしてボタンが表示されます。操作が1つの場合は、これまでどおりすぐに実行されます。
+• 細かな修正。
+</ja-JP>
+<ko-KR>
+• 연락처 카드의 '메시지' 버튼: SMS 또는 메신저(Telegram, WhatsApp, Viber, Max) 중 상대방이 사용하는 앱으로 보낼 수 있습니다.
+• 스와이프 한 번에 최대 3개 동작: 이메일 앱처럼 행이 밀리며 버튼이 표시됩니다. 동작이 하나면 지금처럼 바로 실행됩니다.
+• 사소한 수정.
+</ko-KR>
+<nl-NL>
+• Knop 'Schrijven' op de contactkaart: sms of een berichtenapp – Telegram, WhatsApp, Viber, Max, als het contact die gebruikt.
+• Tot drie acties per veeg: de rij schuift open en toont knoppen, zoals in e-mailapps. Eén actie wordt nog steeds direct uitgevoerd.
+• Kleine verbeteringen.
+</nl-NL>
+<no-NO>
+• «Skriv»-knapp på kontaktkortet: SMS eller en meldingsapp – Telegram, WhatsApp, Viber, Max, hvis kontakten bruker den.
+• Opptil tre handlinger per sveip: raden glir til side og viser knapper, som i e-postapper. Én handling utføres fortsatt med en gang.
+• Mindre rettelser.
+</no-NO>
+<pl-PL>
+• Przycisk „Napisz” na karcie kontaktu: SMS lub komunikator — Telegram, WhatsApp, Viber, Max, jeśli kontakt z niego korzysta.
+• Do trzech akcji na jedno przesunięcie: wiersz się odsuwa i pokazuje przyciski, jak w aplikacjach pocztowych. Pojedyncza akcja nadal działa od razu.
+• Drobne poprawki.
+</pl-PL>
+<pt-BR>
+• Botão "Escrever" no cartão do contato: SMS ou um mensageiro — Telegram, WhatsApp, Viber, Max, se o contato usar.
+• Até três ações por deslize: a linha se desloca e mostra botões, como em apps de e-mail. Uma única ação continua sendo executada na hora.
+• Pequenas correções.
+</pt-BR>
+<ro>
+• Butonul „Scrie” pe fișa contactului: SMS sau o aplicație de mesagerie — Telegram, WhatsApp, Viber, Max, dacă persoana o folosește.
+• Până la trei acțiuni pe glisare: rândul glisează și afișează butoane, ca în aplicațiile de e-mail. O singură acțiune se execută în continuare imediat.
+• Corecturi minore.
+</ro>
+<sk>
+• Tlačidlo „Napísať“ na karte kontaktu: SMS alebo messenger — Telegram, WhatsApp, Viber, Max, ak ho kontakt používa.
+• Až tri akcie na jedno potiahnutie: riadok sa posunie a zobrazí tlačidlá, ako v e-mailových aplikáciách. Jedna akcia sa stále vykoná okamžite.
+• Drobné opravy.
+</sk>
+<sv-SE>
+• Knappen ”Skriv” på kontaktkortet: sms eller en meddelandeapp – Telegram, WhatsApp, Viber, Max, om kontakten använder den.
+• Upp till tre åtgärder per svep: raden glider åt sidan och visar knappar, som i e-postappar. En enda åtgärd utförs fortfarande direkt.
+• Mindre korrigeringar.
+</sv-SE>
+<th>
+• ปุ่ม "เขียน" ในการ์ดผู้ติดต่อ: SMS หรือแอปแชต — Telegram, WhatsApp, Viber, Max หากผู้ติดต่อใช้งานอยู่
+• สูงสุดสามการทำงานต่อการปัด: แถวจะเลื่อนออกและแสดงปุ่ม เหมือนในแอปอีเมล ถ้ามีการทำงานเดียวจะทำงานทันทีเหมือนเดิม
+• แก้ไขเล็กน้อย
+</th>
+<tr-TR>
+• Kişi kartında "Yaz" düğmesi: kişi kullanıyorsa SMS veya mesajlaşma uygulaması — Telegram, WhatsApp, Viber, Max.
+• Kaydırma başına en fazla üç işlem: satır kayar ve e-posta uygulamalarındaki gibi düğmeler gösterir. Tek bir işlem yine hemen gerçekleşir.
+• Küçük düzeltmeler.
+</tr-TR>
+<vi>
+• Nút "Nhắn tin" trên thẻ liên hệ: SMS hoặc ứng dụng nhắn tin — Telegram, WhatsApp, Viber, Max, nếu liên hệ có dùng.
+• Tối đa ba thao tác cho mỗi lần vuốt: hàng trượt ra và hiện các nút, như trong ứng dụng email. Nếu chỉ có một thao tác, nó vẫn được thực hiện ngay.
+• Sửa lỗi nhỏ.
+</vi>
+<zh-CN>
+• 联系人卡片新增“发消息”按钮：可选短信或联系人正在使用的即时通讯应用——Telegram、WhatsApp、Viber、Max。
+• 每次滑动最多三个操作：像邮件应用一样，行会滑开并显示按钮。只设置一个操作时，仍会立即执行。
+• 细节修复。
+</zh-CN>

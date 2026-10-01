@@ -1,0 +1,168 @@
+<ru-RU>
+• Панель свайпа: у каждого действия свой значок, цвет и название.
+• Мессенджер из свайпа открывается на том номере, где контакт им пользуется.
+• Карточка контакта: имя теперь на фото, без пустого промежутка.
+• Мелкие исправления.
+</ru-RU>
+<ar>
+• لوحة السحب: لكل إجراء أيقونته ولونه واسمه الخاص.
+• يُفتح تطبيق المراسلة من السحب على الرقم الذي تستخدمه جهة الاتصال فيه.
+• بطاقة جهة الاتصال: الاسم الآن على الصورة دون فراغ زائد.
+• إصلاحات بسيطة.
+</ar>
+<cs-CZ>
+• Panel přejetí: každá akce má vlastní ikonu, barvu a název.
+• Messenger z přejetí se otevře na čísle, na kterém ho kontakt používá.
+• Karta kontaktu: jméno je nyní na fotce, bez prázdné mezery.
+• Drobné opravy.
+</cs-CZ>
+<da-DK>
+• Swipe-panel: hver handling har sit eget ikon, sin egen farve og sit eget navn.
+• Beskedappen fra swipe åbner på det nummer, hvor kontakten bruger den.
+• Kontaktkort: navnet står nu på billedet uden tomt mellemrum.
+• Mindre rettelser.
+</da-DK>
+<de-DE>
+• Wisch-Leiste: Jede Aktion hat ein eigenes Symbol, eine eigene Farbe und einen eigenen Namen.
+• Der Messenger öffnet sich per Wischgeste auf der Nummer, mit der der Kontakt ihn nutzt.
+• Kontaktkarte: Der Name steht jetzt auf dem Foto, ohne leeren Abstand.
+• Kleinere Korrekturen.
+</de-DE>
+<en-US>
+• Swipe panel: each action has its own icon, color and name.
+• Messengers opened by swipe now use the number the contact actually uses them on.
+• Contact card: the name now sits on the photo, without the empty gap.
+• Minor fixes.
+</en-US>
+<es-419>
+• Panel de deslizamiento: cada acción tiene su propio ícono, color y nombre.
+• La app de mensajería abierta con un deslizamiento usa el número en el que el contacto la tiene.
+• Ficha del contacto: el nombre ahora va sobre la foto, sin espacio vacío.
+• Correcciones menores.
+</es-419>
+<es-ES>
+• Panel de deslizamiento: cada acción tiene su propio icono, color y nombre.
+• La aplicación de mensajería abierta con un deslizamiento usa el número en el que el contacto la tiene.
+• Ficha del contacto: el nombre ahora va sobre la foto, sin hueco vacío.
+• Correcciones menores.
+</es-ES>
+<fi-FI>
+• Pyyhkäisypaneeli: jokaisella toiminnolla on oma kuvake, väri ja nimi.
+• Pyyhkäisyllä avattu pikaviestin aukeaa numerolla, jolla yhteyshenkilö sitä käyttää.
+• Yhteystietokortti: nimi on nyt kuvan päällä ilman tyhjää väliä.
+• Pieniä korjauksia.
+</fi-FI>
+<fr-FR>
+• Panneau de balayage : chaque action a sa propre icône, sa couleur et son nom.
+• La messagerie ouverte par balayage utilise le numéro sur lequel le contact l’utilise.
+• Fiche contact : le nom est désormais sur la photo, sans espace vide.
+• Petites corrections.
+</fr-FR>
+<hi-IN>
+• स्वाइप पैनल: हर कार्रवाई का अपना आइकन, रंग और नाम।
+• स्वाइप से खुला मैसेंजर उसी नंबर पर खुलता है जिस पर संपर्क उसका उपयोग करता है।
+• संपर्क कार्ड: नाम अब फ़ोटो पर है, बिना खाली जगह के।
+• छोटे सुधार।
+</hi-IN>
+<hu-HU>
+• Húzási panel: minden műveletnek saját ikonja, színe és neve van.
+• A húzással megnyitott üzenetküldő azon a számon nyílik meg, amelyen a névjegy használja.
+• Névjegykártya: a név most a fotón van, üres hely nélkül.
+• Kisebb javítások.
+</hu-HU>
+<id>
+• Panel geser: setiap tindakan punya ikon, warna, dan nama sendiri.
+• Aplikasi pesan dari geser kini terbuka di nomor yang dipakai kontak untuk aplikasi itu.
+• Kartu kontak: nama kini berada di foto, tanpa celah kosong.
+• Perbaikan kecil.
+</id>
+<it-IT>
+• Pannello di scorrimento: ogni azione ha icona, colore e nome propri.
+• L'app di messaggistica aperta con uno scorrimento usa il numero su cui il contatto la usa.
+• Scheda contatto: il nome ora è sulla foto, senza spazio vuoto.
+• Correzioni minori.
+</it-IT>
+<iw-IL>
+• לוח ההחלקה: לכל פעולה סמל, צבע ושם משלה.
+• אפליקציית ההודעות שנפתחת בהחלקה משתמשת במספר שבו איש הקשר משתמש בה.
+• כרטיס איש הקשר: השם מופיע עכשיו על התמונה, בלי רווח ריק.
+• תיקונים קטנים.
+</iw-IL>
+<ja-JP>
+• スワイプパネル：操作ごとに専用のアイコン、色、名前を表示。
+• スワイプで開くメッセンジャーは、相手がそのアプリを使っている番号で開きます。
+• 連絡先カード：名前を写真の上に表示し、余白をなくしました。
+• 細かな修正。
+</ja-JP>
+<ko-KR>
+• 스와이프 패널: 동작마다 고유한 아이콘, 색상, 이름이 표시됩니다.
+• 스와이프로 여는 메신저는 상대방이 해당 앱을 쓰는 번호로 열립니다.
+• 연락처 카드: 이름이 사진 위에 표시되어 빈 공간이 없어졌습니다.
+• 사소한 수정.
+</ko-KR>
+<nl-NL>
+• Veegpaneel: elke actie heeft een eigen pictogram, kleur en naam.
+• De berichtenapp via vegen opent nu op het nummer waarop het contact die gebruikt.
+• Contactkaart: de naam staat nu op de foto, zonder lege ruimte.
+• Kleine verbeteringen.
+</nl-NL>
+<no-NO>
+• Sveipepanel: hver handling har sitt eget ikon, sin egen farge og sitt eget navn.
+• Meldingsappen fra sveip åpnes på nummeret der kontakten bruker den.
+• Kontaktkort: navnet står nå på bildet, uten tomt mellomrom.
+• Mindre rettelser.
+</no-NO>
+<pl-PL>
+• Panel przesunięcia: każda akcja ma własną ikonę, kolor i nazwę.
+• Komunikator otwarty przesunięciem używa numeru, na którym kontakt z niego korzysta.
+• Karta kontaktu: nazwa jest teraz na zdjęciu, bez pustej przerwy.
+• Drobne poprawki.
+</pl-PL>
+<pt-BR>
+• Painel de deslize: cada ação tem ícone, cor e nome próprios.
+• O mensageiro aberto pelo deslize usa o número em que o contato o utiliza.
+• Cartão do contato: o nome agora fica sobre a foto, sem espaço vazio.
+• Pequenas correções.
+</pt-BR>
+<ro>
+• Panoul de glisare: fiecare acțiune are propria pictogramă, culoare și denumire.
+• Aplicația de mesagerie deschisă prin glisare folosește numărul pe care contactul o utilizează.
+• Fișa contactului: numele este acum pe fotografie, fără spațiu gol.
+• Corecturi minore.
+</ro>
+<sk>
+• Panel potiahnutia: každá akcia má vlastnú ikonu, farbu a názov.
+• Messenger otvorený potiahnutím použije číslo, na ktorom ho kontakt používa.
+• Karta kontaktu: meno je teraz na fotke, bez prázdnej medzery.
+• Drobné opravy.
+</sk>
+<sv-SE>
+• Svepanel: varje åtgärd har egen ikon, färg och eget namn.
+• Meddelandeappen från svep öppnas på numret där kontakten använder den.
+• Kontaktkort: namnet står nu på bilden, utan tomt mellanrum.
+• Mindre korrigeringar.
+</sv-SE>
+<th>
+• แผงปัด: แต่ละการทำงานมีไอคอน สี และชื่อของตัวเอง
+• แอปแชตที่เปิดจากการปัดจะใช้หมายเลขที่ผู้ติดต่อใช้แอปนั้นอยู่
+• การ์ดผู้ติดต่อ: ชื่ออยู่บนรูปภาพแล้ว ไม่มีช่องว่างเปล่า
+• แก้ไขเล็กน้อย
+</th>
+<tr-TR>
+• Kaydırma paneli: her işlemin kendi simgesi, rengi ve adı var.
+• Kaydırmayla açılan mesajlaşma uygulaması, kişinin onu kullandığı numarada açılır.
+• Kişi kartı: ad artık fotoğrafın üzerinde, boşluk olmadan.
+• Küçük düzeltmeler.
+</tr-TR>
+<vi>
+• Bảng vuốt: mỗi thao tác có biểu tượng, màu sắc và tên riêng.
+• Ứng dụng nhắn tin mở bằng thao tác vuốt sẽ dùng số mà liên hệ đang dùng ứng dụng đó.
+• Thẻ liên hệ: tên giờ nằm trên ảnh, không còn khoảng trống.
+• Sửa lỗi nhỏ.
+</vi>
+<zh-CN>
+• 滑动面板：每个操作都有自己的图标、颜色和名称。
+• 通过滑动打开的即时通讯应用，会使用联系人实际使用该应用的号码。
+• 联系人卡片：姓名现在显示在照片上，不再留有空白。
+• 细节修复。
+</zh-CN>

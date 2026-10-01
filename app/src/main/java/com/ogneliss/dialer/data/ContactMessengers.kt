@@ -40,7 +40,9 @@ object ContactMessengers {
         val dataId: Long,
         val mimeType: String,
         /** Подпись из строки книги или номер — чтобы различать номера. */
-        val summary: String?
+        val summary: String?,
+        /** Номер в виде +7…, если его удалось достать из строки, — для сравнения. */
+        val e164: String? = null
     )
 
     private fun kindOf(mime: String): SwipeAction? = when {
@@ -75,13 +77,20 @@ object ContactMessengers {
                     val kind = kindOf(mime) ?: continue
                     val data1 = c.getString(2)
                     val data3 = c.getString(3)
-                    // Номер из строки: у WhatsApp это «79101234567@s.whatsapp.net»,
-                    // у Viber — сам номер; подпись (DATA3) у Telegram — «+7 910 …»
-                    val number = data1?.substringBefore('@')
+                    /*
+                     * Номер из строки. У WhatsApp DATA1 — «79101234567@s.whatsapp.net»,
+                     * у Viber — сам номер. А у Telegram DATA1 — внутренний ID
+                     * пользователя: раньше он показывался как «странный номер»
+                     * (с телефона, 30.09.2026). Для Telegram номер берём только
+                     * из подписи DATA3 («Написать +7 910 …»), если он там есть.
+                     */
+                    val raw = if (kind == SwipeAction.TELEGRAM) data3 else data1?.substringBefore('@')
+                    val number = raw
+                        ?.let { PHONE_IN_TEXT.find(it)?.value }
                         ?.filter { it.isDigit() || it == '+' }
-                        ?.takeIf { it.length >= 7 }
+                        ?.takeIf { it.count(Char::isDigit) >= 7 }
                         ?.let { if (it.startsWith("+")) it else "+$it" }
-                    out += Link(kind, c.getLong(0), mime, number ?: data3?.takeIf { it.isNotBlank() })
+                    out += Link(kind, c.getLong(0), mime, number, number)
                 }
             }
             // Один и тот же номер в одном мессенджере — одна строка
@@ -115,3 +124,6 @@ object ContactMessengers {
         false
     }
 }
+
+/** Номер внутри текста: «+7 910 123-45-67», «79101234567». */
+private val PHONE_IN_TEXT = Regex("""\+?\d[\d\s()\-]{6,}\d""")

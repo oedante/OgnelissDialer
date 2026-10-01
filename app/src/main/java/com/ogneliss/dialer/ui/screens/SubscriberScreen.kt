@@ -1067,6 +1067,34 @@ fun SubscriberScreen(
                                         )
                                     )
                             )
+                            /*
+                             * ИМЯ — НА ОБЛОЖКЕ, ВНИЗУ (1.2.5).
+                             *
+                             * Под обложкой имя стояло после её растворённой
+                             * в фоне нижней части — а эта часть сама выглядит
+                             * пустым местом. Между лицом и именем выходил
+                             * большой зазор (с телефона, 30.09.2026).
+                             *
+                             * Теперь имя лежит на этой растворённой части:
+                             * там уже почти цвет фона, поэтому текст обычного
+                             * цвета читается в обеих темах — не белый поверх
+                             * фото, как было в первой версии, а как остальной
+                             * текст карточки.
+                             */
+                            Text(
+                                title,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier
+                                    .align(Alignment.BottomStart)
+                                    .padding(horizontal = FlowUi.screenPadding * 2, vertical = 4.dp)
+                                    .onGloballyPositioned { coords ->
+                                        nameBottomInRoot = coords.positionInRoot().y + coords.size.height
+                                    }
+                            )
                         }
                     }
                 Column(
@@ -1218,8 +1246,13 @@ fun SubscriberScreen(
                      *
                      * Теперь отступ один — здесь. Имя без фотографии
                      * идёт следующей строкой со своим отступом снизу.
+                     *
+                     * 1.2.5: с фото имя на обложке, кнопкам хватает поля
+                     * колонки и 4 dp; без фото — только поле колонки
+                     * под строкой заголовка. Было 16 dp сверх поля —
+                     * зазор над именем выглядел пустым местом.
                      */
-                    Spacer(Modifier.height(FlowUi.contentPadding))
+                    Spacer(Modifier.height(if (photoUri.isNullOrBlank()) 0.dp else 4.dp))
 
                     /*
                      * ══════════════════════════════════════════════════
@@ -1239,10 +1272,10 @@ fun SubscriberScreen(
                      * карточки: показывать его дважды подряд тем
                      * более не нужно.
                      */
-                    // Имя — всегда здесь, под фото или вместо него.
-                    // В заголовке экрана оно появляется, только когда
-                    // шапка уехала вверх: иначе имя на экране дважды
-                    run {
+                    // Имя — здесь, если фото нет. С фото имя на самой
+                    // обложке, внизу (разбор у обложки). В заголовке экрана
+                    // оно появляется, только когда шапка уехала вверх
+                    if (photoUri.isNullOrBlank()) {
                         Text(
                             title,
                             /*
