@@ -197,6 +197,41 @@ fun MainDialerScreen(
     }
     var menuOpen by remember { mutableStateOf(false) }
 
+    /*
+     * ══════════════════════════════════════════════════════════════════════
+     * ОЧИСТКА ЖУРНАЛА — С ПОДТВЕРЖДЕНИЕМ (1.3.0)
+     * ══════════════════════════════════════════════════════════════════════
+     * С 1.2.1 («Ещё» — шторка) пункт «Очистить журнал» стирал журнал
+     * сразу, без вопроса: окно подтверждения потерялось при переделке
+     * меню. Случайное нажатие удаляло весь журнал — и в приложении,
+     * и в системном журнале вызовов, — без возможности вернуть
+     * (найдено пользователем 30.09.2026).
+     */
+    var confirmClearLog by remember { mutableStateOf(false) }
+    if (confirmClearLog) {
+        OgnelissDialog(
+            onDismissRequest = { confirmClearLog = false },
+            title = stringResource(R.string.log_clear_confirm_title),
+            content = { Text(stringResource(R.string.log_clear_confirm_text)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    confirmClearLog = false
+                    vm.clearLog()
+                }) {
+                    Text(
+                        stringResource(R.string.log_clear_confirm_action),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmClearLog = false }) {
+                    Text(stringResource(R.string.nav_cancel))
+                }
+            }
+        )
+    }
+
     // Собственный номер: нужен, чтобы делиться своей карточкой
     val ownNumber by vm.ownNumber.collectAsState()
     var showOwnNumber by remember { mutableStateOf(false) }
@@ -1218,7 +1253,9 @@ fun MainDialerScreen(
                         )
                         menuOpen = false
                     },
-                    onClearLog = { vm.clearLog(); menuOpen = false },
+                    // Только после подтверждения: очистка необратима и стирает
+                    // и системный журнал (разбор у confirmClearLog)
+                    onClearLog = { menuOpen = false; confirmClearLog = true },
                     onSettings = { menuOpen = false; onOpenSettings() },
                     onFakeCall = { menuOpen = false; fakeCallOpen = true },
                     onNotes = { menuOpen = false; onOpenNotes() },
@@ -1460,9 +1497,14 @@ fun MainDialerScreen(
                     }
 
 
-                    if (list.isNotEmpty() &&
-                        (pinnedRows.isNotEmpty() || pinnedWithoutCalls.isNotEmpty())
-                    ) {
+                    /*
+                     * Закреплённые — и при пустом журнале (1.3.0). Раньше
+                     * раздел показывался только при непустом журнале:
+                     * после очистки закреплённые карточки пропадали, пока
+                     * не появится новый звонок, — хотя закрепление никуда
+                     * не делось.
+                     */
+                    if (pinnedRows.isNotEmpty() || pinnedWithoutCalls.isNotEmpty()) {
                         item(key = "pinned_header", contentType = "date_header") {
                             LetterHeader(stringResource(R.string.pinned_header))
                         }

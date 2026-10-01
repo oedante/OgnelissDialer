@@ -274,6 +274,10 @@ private val HighContrastDark = darkColorScheme(
 fun OgnelissDialerTheme(
     themeMode: ThemeMode = ThemeMode.SYSTEM,
     dynamicColor: Boolean = false,
+    /** Обои рабочего стола под приложением — разбор в WallpaperBackground. */
+    wallpaper: Boolean = false,
+    /** Приглушение обоев, 0–100 %. */
+    wallpaperDim: Int = 35,
     content: @Composable () -> Unit
 ) {
     val systemDark = isSystemInDarkTheme()
@@ -332,8 +336,25 @@ fun OgnelissDialerTheme(
         }
     }
 
+    /*
+     * Обои — только в обычных темах: AMOLED и «Высокий контраст» —
+     * без них (разбор в WallpaperBackground).
+     */
+    val wallpaperOn = wallpaper &&
+        themeMode != ThemeMode.BLACK_AMOLED && themeMode != ThemeMode.HIGH_CONTRAST
+    val opaqueBackground = scheme.background
+    val activity = (view.context as? Activity)
+    if (!view.isInEditMode && activity != null) {
+        SideEffect {
+            // Размытие подставит MainActivity (знает настройку); здесь —
+            // только признак и цвет фона на случай выключения
+            if (!wallpaperOn) WallpaperBackground.apply(activity, false, 0, opaqueBackground)
+        }
+    }
     MaterialTheme(
-        colorScheme = scheme,
+        // Фон экранов прозрачный — под ним обои; карточки, панели, окна,
+        // шторки — на surface-цветах и остаются непрозрачными
+        colorScheme = if (wallpaperOn) scheme.copy(background = Color.Transparent) else scheme,
         typography = OgnelissTypography,
         shapes = OgnelissShapes
     ) {
@@ -363,7 +384,16 @@ fun OgnelissDialerTheme(
          */
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background,
+            /*
+             * С обоями — слой приглушения: цвет фона темы с прозрачностью
+             * (в тёмной теме — затемнение, в светлой — осветление; разбор
+             * в WallpaperBackground). Без обоев — непрозрачный фон, как было.
+             */
+            color = if (wallpaperOn) {
+                opaqueBackground.copy(alpha = wallpaperDim.coerceIn(0, 100) / 100f)
+            } else {
+                MaterialTheme.colorScheme.background
+            },
             content = content
         )
     }

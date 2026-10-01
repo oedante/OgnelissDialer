@@ -660,4 +660,18 @@
     </plurals>
     <string name="action_write">Schreiben</string>
     <string name="swipe_actions_hint">Eine Aktion wird sofort ausgeführt. Bei zwei oder drei gleitet die Zeile auf und wartet auf einen Tipp. Höchstens drei.</string>
+    <string name="log_clear_confirm_title">Anrufliste leeren?</string>
+    <string name="log_clear_confirm_text">Alle Einträge der Anrufliste werden gelöscht, hier und in der Systemanrufliste des Telefons. Das lässt sich nicht rückgängig machen. Notizen, angeheftete Nummern, Erinnerungen und Sperrlisten bleiben erhalten.</string>
+    <string name="log_clear_confirm_action">Leeren</string>
+    <string name="delete_entry_confirm_title">Aus dem Verlauf löschen?</string>
+    <string name="delete_entry_confirm_text">Anrufe mit %1$s werden gelöscht, hier und in der Systemanrufliste des Telefons. Das lässt sich nicht rückgängig machen.</string>
+    <string name="settings_wallpaper_bg">Hintergrundbild als Hintergrund</string>
+    <string name="settings_wallpaper_bg_text">Ihr Startbildschirm-Hintergrund, abgeschwächt und unscharf, hinter Anrufliste und Listen. Leisten und Tasten bleiben deckend. Nicht bei den Designs AMOLED und Hoher Kontrast</string>
+    <string name="settings_wallpaper_dim">Abschwächung</string>
+    <string name="settings_wallpaper_dim_text">Wie stark die Hintergrundfarbe das Bild überdeckt: im dunklen Design dunkler, im hellen heller</string>
+    <string name="settings_wallpaper_blur">Unschärfe</string>
+    <string name="settings_wallpaper_blur_text">Ab Android 12, sofern das System die Unschärfe nicht abschaltet (z. B. Energiesparmodus)</string>
+    <string name="wallpaper_dim_value">%1$d %%</string>
+    <string name="wallpaper_blur_value">%1$d px</string>
+    <string name="wallpaper_blur_none">Keine Unschärfe</string>
 </resources>

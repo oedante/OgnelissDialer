@@ -39,6 +39,10 @@ data class SettingsState(
     val proximityScreenOff: Boolean = true,
     /** Тип номера вместо номера у контакта на экране вызова. */
     val callHideContactNumber: Boolean = false,
+    /** Обои рабочего стола как фон — разбор в WallpaperBackground. */
+    val wallpaperBg: Boolean = false,
+    val wallpaperDim: Int = 35,
+    val wallpaperBlur: Int = 20,
     val haptic: Boolean = true,
     val keyTones: Boolean = true,
     val mergeCalls: Boolean = true,
@@ -88,6 +92,7 @@ data class SettingsState(
         "button_labels" -> buttonLabels
         "proximity_screen_off" -> proximityScreenOff
         "call_hide_contact_number" -> callHideContactNumber
+        "wallpaper_bg" -> wallpaperBg
         "panel_swipe_nav" -> panelSwipeNav
         "fake_call_button" -> fakeCallButton
         "haptic" -> haptic

@@ -663,4 +663,18 @@
     </plurals>
     <string name="action_write">Написать</string>
     <string name="swipe_actions_hint">Одно действие срабатывает сразу. Два-три — строка сдвигается и ждёт нажатия. Не больше трёх.</string>
+    <string name="log_clear_confirm_title">Очистить журнал?</string>
+    <string name="log_clear_confirm_text">Будут удалены все записи журнала вызовов — и здесь, и в системном журнале телефона. Отменить это нельзя. Заметки, закреплённые номера, напоминания и списки блокировки останутся.</string>
+    <string name="log_clear_confirm_action">Очистить</string>
+    <string name="delete_entry_confirm_title">Удалить из журнала?</string>
+    <string name="delete_entry_confirm_text">Вызовы с %1$s будут удалены — и здесь, и в системном журнале телефона. Отменить это нельзя.</string>
+    <string name="settings_wallpaper_bg">Обои как фон</string>
+    <string name="settings_wallpaper_bg_text">Обои рабочего стола — приглушённые и размытые — под журналом и списками. Панели и кнопки остаются непрозрачными. В темах AMOLED и «Высокий контраст» не используется</string>
+    <string name="settings_wallpaper_dim">Приглушение обоев</string>
+    <string name="settings_wallpaper_dim_text">Насколько обои закрыты цветом фона: в тёмной теме — затемнение, в светлой — осветление</string>
+    <string name="settings_wallpaper_blur">Размытие обоев</string>
+    <string name="settings_wallpaper_blur_text">Android 12 и новее, если размытие не выключено системой (например, энергосбережением)</string>
+    <string name="wallpaper_dim_value">%1$d %%</string>
+    <string name="wallpaper_blur_value">%1$d px</string>
+    <string name="wallpaper_blur_none">Без размытия</string>
 </resources>

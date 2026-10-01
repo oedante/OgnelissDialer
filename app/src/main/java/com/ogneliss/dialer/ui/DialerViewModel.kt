@@ -1701,17 +1701,15 @@ class DialerViewModel @Inject constructor(
             SwipeAction.REMIND_CALLBACK -> _reminderRequest.value = group
             SwipeAction.EDIT_BEFORE_CALL -> actions.editBeforeCall(group.number)
             SwipeAction.VIEW_CONTACT -> group.contactId?.let { actions.viewContact(it) }
-            SwipeAction.DELETE_FROM_LOG -> viewModelScope.launch {
-                callLogRepo.deleteGroup(group)
-                refresh()
-                /*
-                 * Отмены здесь нет намеренно: запись удаляется
-                 * из системного журнала, и восстановить её невозможно.
-                 * Предлагать отмену, которая не сработает, хуже,
-                 * чем не предлагать вовсе.
-                 */
-                notify(R.string.msg_deleted_from_log)
-            }
+            /*
+             * Удаление свайпом — после подтверждения (1.3.0). Свайп легко
+             * сделать случайно, а запись удаляется из системного журнала,
+             * и восстановить её невозможно (поэтому и отмены после удаления
+             * нет — она бы не сработала). Окно — в RootScreen (deleteRequest).
+             * Удаление из меню записи — явный выбор красного пункта после
+             * долгого нажатия, там вопроса нет.
+             */
+            SwipeAction.DELETE_FROM_LOG -> _deleteRequest.value = group
             /*
              * Блокировка идёт в общие правила, а не в отдельное хранилище.
              *
@@ -2460,6 +2458,22 @@ class DialerViewModel @Inject constructor(
      * от дела — «освободится через пять минут» и «позвонить в банк
      * завтра» требуют разного.
      */
+    /** Запись, которую свайп просит удалить, — ждёт подтверждения. */
+    private val _deleteRequest = MutableStateFlow<CallLogGroup?>(null)
+    val deleteRequest: StateFlow<CallLogGroup?> = _deleteRequest
+
+    fun confirmDeleteRequest() {
+        val group = _deleteRequest.value ?: return
+        _deleteRequest.value = null
+        viewModelScope.launch {
+            callLogRepo.deleteGroup(group)
+            refresh()
+            notify(R.string.msg_deleted_from_log)
+        }
+    }
+
+    fun dismissDeleteRequest() { _deleteRequest.value = null }
+
     private val _reminderRequest = MutableStateFlow<CallLogGroup?>(null)
     val reminderRequest: StateFlow<CallLogGroup?> = _reminderRequest
 

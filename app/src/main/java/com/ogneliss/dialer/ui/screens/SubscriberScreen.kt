@@ -1090,7 +1090,13 @@ fun SubscriberScreen(
                                 overflow = TextOverflow.Ellipsis,
                                 modifier = Modifier
                                     .align(Alignment.BottomStart)
-                                    .padding(horizontal = FlowUi.screenPadding * 2, vertical = 4.dp)
+                                    // 16 dp от нижнего края: с 4 dp имя лежало
+                                    // на самой границе обложки (с телефона, 1.3.0)
+                                    .padding(
+                                        start = FlowUi.screenPadding * 2,
+                                        end = FlowUi.screenPadding * 2,
+                                        bottom = 16.dp
+                                    )
                                     .onGloballyPositioned { coords ->
                                         nameBottomInRoot = coords.positionInRoot().y + coords.size.height
                                     }

@@ -689,4 +689,18 @@ Open Settings → Security → Special app access and allow this app to modify s
     </plurals>
     <string name="action_write">Message</string>
     <string name="swipe_actions_hint">One action fires right away. Two or three: the row slides open and waits for a tap. Up to three.</string>
+    <string name="log_clear_confirm_title">Clear call history?</string>
+    <string name="log_clear_confirm_text">All call history entries will be deleted, here and in the phone system call log. This cannot be undone. Notes, pinned numbers, reminders and block lists are kept.</string>
+    <string name="log_clear_confirm_action">Clear</string>
+    <string name="delete_entry_confirm_title">Delete from history?</string>
+    <string name="delete_entry_confirm_text">Calls with %1$s will be deleted, here and in the phone system call log. This cannot be undone.</string>
+    <string name="settings_wallpaper_bg">Wallpaper as background</string>
+    <string name="settings_wallpaper_bg_text">Your home screen wallpaper, softened and blurred, behind the call log and lists. Panels and buttons stay solid. Not used with the AMOLED and high-contrast themes</string>
+    <string name="settings_wallpaper_dim">Wallpaper dimming</string>
+    <string name="settings_wallpaper_dim_text">How much the wallpaper is covered by the background colour: darker in the dark theme, lighter in the light theme</string>
+    <string name="settings_wallpaper_blur">Wallpaper blur</string>
+    <string name="settings_wallpaper_blur_text">Android 12 and later, unless blur is turned off by the system (for example, by battery saver)</string>
+    <string name="wallpaper_dim_value">%1$d %%</string>
+    <string name="wallpaper_blur_value">%1$d px</string>
+    <string name="wallpaper_blur_none">No blur</string>
 </resources>

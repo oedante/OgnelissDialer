@@ -657,4 +657,18 @@
     </plurals>
     <string name="action_write">Écrire</string>
     <string name="swipe_actions_hint">Une action s’exécute aussitôt. Avec deux ou trois, la ligne s’ouvre et attend un appui. Trois au maximum.</string>
+    <string name="log_clear_confirm_title">Effacer le journal ?</string>
+    <string name="log_clear_confirm_text">Toutes les entrées du journal d’appels seront supprimées, ici et dans le journal système du téléphone. Impossible d’annuler. Les notes, numéros épinglés, rappels et listes de blocage sont conservés.</string>
+    <string name="log_clear_confirm_action">Effacer</string>
+    <string name="delete_entry_confirm_title">Supprimer de l’historique ?</string>
+    <string name="delete_entry_confirm_text">Les appels avec %1$s seront supprimés, ici et dans le journal système du téléphone. Impossible d’annuler.</string>
+    <string name="settings_wallpaper_bg">Fond d’écran en arrière-plan</string>
+    <string name="settings_wallpaper_bg_text">Votre fond d’écran, atténué et flouté, derrière le journal et les listes. Les barres et boutons restent opaques. Non utilisé avec les thèmes AMOLED et Contraste élevé</string>
+    <string name="settings_wallpaper_dim">Atténuation</string>
+    <string name="settings_wallpaper_dim_text">Part du fond qui recouvre l’image : plus sombre en thème sombre, plus clair en thème clair</string>
+    <string name="settings_wallpaper_blur">Flou</string>
+    <string name="settings_wallpaper_blur_text">Android 12 et ultérieur, sauf si le système désactive le flou (par exemple, l’économiseur de batterie)</string>
+    <string name="wallpaper_dim_value">%1$d %%</string>
+    <string name="wallpaper_blur_value">%1$d px</string>
+    <string name="wallpaper_blur_none">Sans flou</string>
 </resources>

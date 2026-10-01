@@ -231,6 +231,36 @@ fun RootScreen(
 
     val pendingPostCall by vm.pendingPostCall.collectAsState()
 
+    // Удаление записи свайпом — после подтверждения (разбор в handleSwipe)
+    val deleteRequest by vm.deleteRequest.collectAsState()
+    deleteRequest?.let { group ->
+        com.ogneliss.dialer.ui.components.OgnelissDialog(
+            onDismissRequest = { vm.dismissDeleteRequest() },
+            title = androidx.compose.ui.res.stringResource(R.string.delete_entry_confirm_title),
+            content = {
+                androidx.compose.material3.Text(
+                    androidx.compose.ui.res.stringResource(
+                        R.string.delete_entry_confirm_text,
+                        group.displayName ?: com.ogneliss.dialer.util.PhoneFormatter.format(group.number)
+                    )
+                )
+            },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = { vm.confirmDeleteRequest() }) {
+                    androidx.compose.material3.Text(
+                        androidx.compose.ui.res.stringResource(R.string.action_delete),
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(onClick = { vm.dismissDeleteRequest() }) {
+                    androidx.compose.material3.Text(androidx.compose.ui.res.stringResource(R.string.nav_cancel))
+                }
+            }
+        )
+    }
+
     // Нужно окну после звонка: показать уже поставленную отметку
 
     val uiState by vm.state.collectAsState()
