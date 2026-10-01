@@ -1,0 +1,20 @@
+<ru-RU>
+• Кнопка «Написать» в карточке контакта: SMS или мессенджер — Telegram, WhatsApp, Viber, Max, если контакт в нём есть.
+• До трёх действий на свайп: строка сдвигается и показывает кнопки, как в почтовых клиентах. Одно действие по-прежнему срабатывает сразу.
+• Мелкие исправления.
+</ru-RU>
+<en-US>
+• "Message" button on the contact card: SMS or a messenger — Telegram, WhatsApp, Viber, Max, if the contact uses it.
+• Up to three actions per swipe: the row slides open and shows buttons, like in email apps. A single action still fires right away.
+• Minor fixes.
+</en-US>
+<de-DE>
+• Schaltfläche „Schreiben“ in der Kontaktkarte: SMS oder ein Messenger – Telegram, WhatsApp, Viber, Max, wenn der Kontakt ihn nutzt.
+• Bis zu drei Aktionen pro Wischgeste: Die Zeile gleitet auf und zeigt Schaltflächen, wie in E-Mail-Apps. Eine einzelne Aktion wird weiterhin sofort ausgeführt.
+• Kleinere Korrekturen.
+</de-DE>
+<fr-FR>
+• Bouton « Écrire » sur la fiche contact : SMS ou messagerie — Telegram, WhatsApp, Viber, Max, si le contact l’utilise.
+• Jusqu’à trois actions par balayage : la ligne s’ouvre et affiche des boutons, comme dans les applications de messagerie. Une action unique s’exécute toujours aussitôt.
+• Petites corrections.
+</fr-FR>

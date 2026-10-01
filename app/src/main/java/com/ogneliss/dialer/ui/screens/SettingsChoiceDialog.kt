@@ -113,6 +113,20 @@ fun SettingsChoiceDialog(
     val settingsSnapshot by vm.settingsState.collectAsState()
     val current = remember(settingsSnapshot, settingKey) { vm.choiceValue(settingKey) }
 
+    // Свайпы — своё окно: до трёх действий на сторону (разбор там)
+    if (settingKey == "swipe_right" || settingKey == "swipe_left") {
+        val isRight = settingKey == "swipe_right"
+        val extra by (if (isRight) vm.swipeRightExtra else vm.swipeLeftExtra).collectAsState()
+        SwipeActionsDialog(
+            vm = vm,
+            isRight = isRight,
+            primary = SwipeAction.from(current),
+            extra = extra,
+            onDismiss = onDismiss
+        )
+        return
+    }
+
     // Язык — своё окно: 48 вариантов, поиск, два названия (разбор там)
     if (settingKey == "language") {
         LanguagePickerDialog(vm = vm, current = current, onDismiss = onDismiss)

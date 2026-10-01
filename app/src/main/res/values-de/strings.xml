@@ -658,4 +658,6 @@
         <item quantity="one">%d verpasster Anruf</item>
         <item quantity="other">%d verpasste Anrufe</item>
     </plurals>
+    <string name="action_write">Schreiben</string>
+    <string name="swipe_actions_hint">Eine Aktion wird sofort ausgeführt. Bei zwei oder drei gleitet die Zeile auf und wartet auf einen Tipp. Höchstens drei.</string>
 </resources>

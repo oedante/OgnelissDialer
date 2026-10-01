@@ -655,4 +655,6 @@
         <item quantity="many">%d appels manqués</item>
         <item quantity="other">%d appels manqués</item>
     </plurals>
+    <string name="action_write">Écrire</string>
+    <string name="swipe_actions_hint">Une action s’exécute aussitôt. Avec deux ou trois, la ligne s’ouvre et attend un appui. Trois au maximum.</string>
 </resources>

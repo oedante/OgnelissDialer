@@ -2222,6 +2222,9 @@ private fun CallLogRow(
     groupPosition: GroupPosition = GroupPosition.SINGLE
 ) {
     val group = row.group
+    // Несколько действий на сторону — панель кнопок вместо мгновенного действия
+    val rightMulti = settings.swipeRight != SwipeAction.NONE && rightExtra.isNotEmpty()
+    val leftMulti = settings.swipeLeft != SwipeAction.NONE && leftExtra.isNotEmpty()
 
 
     CallLogCard(
@@ -2254,8 +2257,22 @@ private fun CallLogRow(
         swipeTuning = swipeTuning,
         directStartAction = startHint,
         directEndAction = endHint,
-        startActions = emptyList(),
-        endActions = emptyList(),
+        /*
+         * ДВА-ТРИ ДЕЙСТВИЯ НА СВАЙП — ПАНЕЛЬ КНОПОК (1.2.5).
+         * Строка сдвигается и ждёт нажатия, как в почтовых клиентах;
+         * мгновенного действия в эту сторону нет (onDirect… ниже — null).
+         * Одно действие — как было: срабатывает сразу.
+         */
+        startActions = if (rightMulti) {
+            remember(row.key, settings.swipeRight, rightExtra, state.sims) {
+                vm.revealActionsFor(settings.swipeRight, rightExtra, group, state.sims)
+            }
+        } else emptyList(),
+        endActions = if (leftMulti) {
+            remember(row.key, settings.swipeLeft, leftExtra, state.sims) {
+                vm.revealActionsFor(settings.swipeLeft, leftExtra, group, state.sims)
+            }
+        } else emptyList(),
         /*
          * СВАЙП ВЫКЛЮЧЕН В НАСТРОЙКАХ — ОБРАБОТЧИКА НЕТ ВОВСЕ.
          *
@@ -2269,8 +2286,8 @@ private fun CallLogRow(
          * Теперь для «Нет действия» — null: направление не тянется,
          * а при обоих выключенных жест отключается целиком.
          */
-        onDirectStart = remember(row.key, settings.swipeRight) {
-            if (settings.swipeRight == SwipeAction.NONE) null
+        onDirectStart = remember(row.key, settings.swipeRight, rightMulti) {
+            if (settings.swipeRight == SwipeAction.NONE || rightMulti) null
             else {
                 {
                     vm.performSwipe(settings.swipeRight, group) {
@@ -2279,8 +2296,8 @@ private fun CallLogRow(
                 }
             }
         },
-        onDirectEnd = remember(row.key, settings.swipeLeft) {
-            if (settings.swipeLeft == SwipeAction.NONE) null
+        onDirectEnd = remember(row.key, settings.swipeLeft, leftMulti) {
+            if (settings.swipeLeft == SwipeAction.NONE || leftMulti) null
             else {
                 {
                     vm.performSwipe(settings.swipeLeft, group) {

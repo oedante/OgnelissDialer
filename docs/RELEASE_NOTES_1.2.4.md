@@ -1,12 +1,31 @@
-# Ogneliss Dialer 1.2.4 — в работе
+# Ogneliss Dialer 1.2.4
 
 ```
 versionName  1.2.4
-versionCode  25
-Предыдущая версия: 1.2.3
+versionCode  25       (проставлено в app/build.gradle.kts)
+minSdk 26 · compileSdk 36 · targetSdk 36
+Сборка: AGP 9.3.1 · Kotlin 2.2.10 · KSP 2.3.6 · Room 2.8.5
+Предыдущая версия: 1.2.3 (в магазине)
 ```
 
-Выпуск мелочей: доработки по ходу, пока 1.2.3 настаивается.
+Миграций базы нет. Новых разрешений и зависимостей нет (Bluetooth
+и уведомления были и раньше — изменилось, когда их просить).
+
+## Коротко: что изменилось относительно 1.2.3
+
+**Новое**
+- Счётчик пропущенных вызовов на значке приложения; сброс при открытии
+  приложения и при исходящем звонке.
+- Выбор языка: два названия, поиск, пометка «автоперевод».
+- Разрешение на Bluetooth — вместе с телефонными, при первом запуске.
+- Диагностика вызовов в журнале приложения: причина завершения, вывод звука.
+
+**Исправлено**
+- Закреплённая карточка теряла портрет и не открывалась после звонка
+  с другого номера того же контакта.
+- «Очистить журнал» и «Удалить из журнала» прижимались к краю шторки.
+
+Ниже — по разделам, с причинами.
 
 ## 1. Выбор языка — для 48 языков
 
@@ -107,3 +126,75 @@ versionCode  25
 - **завершение и отклонение из приложения** — кнопкой на экране вызова
   или в уведомлении. Если вызов завершён с причиной `LOCAL`, а этой строки
   перед ним нет, — его завершила кнопка гарнитуры (ею управляет система).
+
+## Перед публикацией
+
+```bash
+./scripts/kotlin_syntax_check.sh   # нужен kotlinc (KOTLINC=...)
+./gradlew assembleDebug
+./gradlew testDebugUnitTest
+./gradlew lintRelease
+./scripts/check_no_internet.sh
+# профиль запуска — с ОТКЛЮЧЁННЫМ от компьютера телефоном
+./gradlew generateBaselineProfile
+./gradlew bundleRelease
+./scripts/check_native_symbols.sh
+```
+
+### Что проверить глазами
+
+1. **Пропущенный вызов** — на значке отметка (у Samsung, Xiaomi, Honor —
+   число); уведомление «1 пропущенный вызов». Открыть приложение — отметка
+   и уведомление исчезают. Второй пропущенный, затем исходящий — тоже.
+2. **Закрепить один номер контакта, позвонить с другого** — карточка
+   остаётся с портретом и открывается.
+3. **Выбор языка** — поиск («нем», «deu»), у 44 языков пометка
+   «автоперевод», «Как в системе» первым.
+4. **Шторки «Ещё» и меню записи** — красный пункт внизу с отступом.
+5. **Новая установка** — Bluetooth просится в одном окне с телефонными.
+6. **Журнал приложения** после звонка: строки «Завершён: …, причина: …»
+   и «Звук: …».
+
+## Текст «Что нового» для Google Play
+
+Считается от 1.2.3 — последней версии в магазине.
+
+**Русский**
+
+```
+• Счётчик пропущенных вызовов на значке приложения. Сбрасывается, когда вы открываете приложение или звоните сами.
+• Новый выбор языка: поиск и названия на двух языках.
+• Закреплённая карточка больше не теряется, если звонок пришёл с другого номера того же контакта.
+• Разрешение на Bluetooth-гарнитуру запрашивается сразу — звук разговора можно вывести в наушники.
+• Мелкие исправления оформления.
+```
+
+**English**
+
+```
+• Missed call count on the app icon. It resets when you open the app or make a call.
+• New language picker: search and names in two languages.
+• A pinned card no longer disappears when a contact calls from another of their numbers.
+• Bluetooth headset permission is requested right away, so calls can be routed to your headphones.
+• Minor design fixes.
+```
+
+**Deutsch** — вычитать носителем.
+
+```
+• Anzahl verpasster Anrufe am App-Symbol. Sie wird zurückgesetzt, wenn Sie die App öffnen oder selbst anrufen.
+• Neue Sprachauswahl: Suche und Namen in zwei Sprachen.
+• Eine angeheftete Karte verschwindet nicht mehr, wenn ein Kontakt von einer anderen Nummer anruft.
+• Die Bluetooth-Berechtigung wird sofort abgefragt, damit Gespräche über Kopfhörer laufen können.
+• Kleinere Designkorrekturen.
+```
+
+**Français** — вычитать носителем.
+
+```
+• Nombre d’appels manqués sur l’icône de l’application. Il se réinitialise à l’ouverture de l’application ou lors d’un appel sortant.
+• Nouveau choix de langue : recherche et noms en deux langues.
+• Une fiche épinglée ne disparaît plus quand un contact appelle depuis un autre de ses numéros.
+• L’autorisation Bluetooth est demandée dès le départ, pour passer les appels dans le casque.
+• Petites corrections visuelles.
+```

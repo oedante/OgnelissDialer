@@ -1,0 +1,28 @@
+<ru-RU>
+• Счётчик пропущенных вызовов на значке приложения. Сбрасывается, когда вы открываете приложение или звоните сами.
+• Новый выбор языка: поиск и названия на двух языках.
+• Закреплённая карточка больше не теряется, если звонок пришёл с другого номера того же контакта.
+• Разрешение на Bluetooth-гарнитуру запрашивается сразу — звук разговора можно вывести в наушники.
+• Мелкие исправления оформления.
+</ru-RU>
+<en-US>
+• Missed call count on the app icon. It resets when you open the app or make a call.
+• New language picker: search and names in two languages.
+• A pinned card no longer disappears when a contact calls from another of their numbers.
+• Bluetooth headset permission is requested right away, so calls can be routed to your headphones.
+• Minor design fixes.
+</en-US>
+<de-DE>
+• Anzahl verpasster Anrufe am App-Symbol. Sie wird zurückgesetzt, wenn Sie die App öffnen oder selbst anrufen.
+• Neue Sprachauswahl: Suche und Namen in zwei Sprachen.
+• Eine angeheftete Karte verschwindet nicht mehr, wenn ein Kontakt von einer anderen Nummer anruft.
+• Die Bluetooth-Berechtigung wird sofort abgefragt, damit Gespräche über Kopfhörer laufen können.
+• Kleinere Designkorrekturen.
+</de-DE>
+<fr-FR>
+• Nombre d’appels manqués sur l’icône de l’application. Il se réinitialise à l’ouverture de l’application ou lors d’un appel sortant.
+• Nouveau choix de langue : recherche et noms en deux langues.
+• Une fiche épinglée ne disparaît plus quand un contact appelle depuis un autre de ses numéros.
+• L’autorisation Bluetooth est demandée dès le départ, pour passer les appels dans le casque.
+• Petites corrections visuelles.
+</fr-FR>

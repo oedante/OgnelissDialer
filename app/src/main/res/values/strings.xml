@@ -687,4 +687,6 @@ Open Settings → Security → Special app access and allow this app to modify s
         <item quantity="one">%d missed call</item>
         <item quantity="other">%d missed calls</item>
     </plurals>
+    <string name="action_write">Message</string>
+    <string name="swipe_actions_hint">One action fires right away. Two or three: the row slides open and waits for a tap. Up to three.</string>
 </resources>

@@ -661,4 +661,6 @@
         <item quantity="many">%d пропущенных вызовов</item>
         <item quantity="other">%d пропущенного вызова</item>
     </plurals>
+    <string name="action_write">Написать</string>
+    <string name="swipe_actions_hint">Одно действие срабатывает сразу. Два-три — строка сдвигается и ждёт нажатия. Не больше трёх.</string>
 </resources>

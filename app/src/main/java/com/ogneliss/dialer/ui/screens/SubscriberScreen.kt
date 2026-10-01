@@ -85,6 +85,11 @@ import com.ogneliss.dialer.ui.components.SheetRow
 import com.ogneliss.dialer.ui.components.SheetGroup
 import com.ogneliss.dialer.ui.components.rememberActionHaptics
 import com.ogneliss.dialer.R
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
+import com.ogneliss.dialer.settings.SwipeAction
+import com.ogneliss.dialer.ui.components.swipe.RevealActionFactory
+import com.ogneliss.dialer.data.ContactMessengers
 import com.ogneliss.dialer.log.Logger
 import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
 import com.ogneliss.dialer.data.RulePattern
@@ -525,6 +530,31 @@ fun SubscriberScreen(
             .filter { contact -> contact.numbers.any { it.e164 == group.e164 } }
             .minByOrNull { it.displayName.lowercase() }
             ?.id ?: group.contactId
+    }
+
+    // Мессенджеры контакта для кнопки «Написать» — из телефонной книги
+    val appContext = LocalContext.current.applicationContext
+    val messengerLinks by produceState(emptyList<ContactMessengers.Link>(), knownContactId) {
+        value = knownContactId?.let { id ->
+            withContext(Dispatchers.IO) { ContactMessengers.linksFor(appContext, id) }
+        } ?: emptyList()
+    }
+    var writeSheetOpen by remember { mutableStateOf(false) }
+    if (writeSheetOpen) {
+        WriteSheet(
+            numbers = remember(state.contacts, knownContactId, group.number) {
+                state.contacts.firstOrNull { it.id == knownContactId }
+                    ?.numbers?.map { it.value }?.distinct()
+                    ?.ifEmpty { null } ?: listOf(group.number)
+            },
+            links = messengerLinks,
+            onSms = { number -> writeSheetOpen = false; vm.openSms(number) },
+            onMessenger = { link ->
+                writeSheetOpen = false
+                ContactMessengers.open(appContext, link)
+            },
+            onDismiss = { writeSheetOpen = false }
+        )
     }
 
     /** Контакт карточки: из него берутся почта и даты. */
@@ -1333,11 +1363,19 @@ fun SubscriberScreen(
                             vm.call(group.number)
                         }
 
+                        /*
+                         * «НАПИСАТЬ» ВМЕСТО «SMS» (1.2.5).
+                         * Нет мессенджеров у контакта — сразу SMS, как было:
+                         * для таких контактов ничего не изменилось. Есть —
+                         * шторка выбора: SMS и только те мессенджеры,
+                         * в которых человек есть (ContactMessengers).
+                         */
                         QuickAction(
                             Icons.AutoMirrored.Filled.Message,
-                            R.string.action_sms
+                            R.string.action_write
                         ) {
-                            vm.openSms(group.number)
+                            if (messengerLinks.isEmpty()) vm.openSms(group.number)
+                            else writeSheetOpen = true
                         }
                         /*
                          * ПОДЕЛИТЬСЯ КОНТАКТОМ.
@@ -2694,3 +2732,65 @@ private val CARD_CONTENT_MAX_WIDTH = 640.dp
 
 /** Ключ карточки, который сам является номером: «+79101234567», «89101234567». */
 private val BARE_NUMBER = Regex("""^\+?\d{3,}$""")
+
+
+/**
+ * Шторка «Написать»: SMS на каждый номер контакта — одной группой,
+ * мессенджеры — второй, со значками и цветами тех же, что у свайпов.
+ * Если один номер есть во всех четырёх мессенджерах — четыре строки:
+ * шторка открывается только по нажатию и карточку не загромождает.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun WriteSheet(
+    numbers: List<String>,
+    links: List<ContactMessengers.Link>,
+    onSms: (String) -> Unit,
+    onMessenger: (ContactMessengers.Link) -> Unit,
+    onDismiss: () -> Unit
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        contentWindowInsets = { WindowInsets.navigationBars }
+    ) {
+        val smsLabel = stringResource(R.string.action_sms)
+        Column(Modifier.padding(bottom = 16.dp)) {
+            SheetGroup {
+                numbers.forEachIndexed { index, number ->
+                    SheetRow(
+                        Icons.AutoMirrored.Filled.Message,
+                        smsLabel,
+                        // Номер — вторая строка, только если номеров несколько
+                        supporting = PhoneFormatter.format(number).takeIf { numbers.size > 1 },
+                        onClick = { onSms(number) }
+                    )
+                    if (index < numbers.lastIndex) SheetDivider()
+                }
+            }
+            SheetGroup {
+                links.forEachIndexed { index, link ->
+                    val visual = RevealActionFactory.iconOf(link.kind)
+                    SheetRow(
+                        visual?.first ?: Icons.AutoMirrored.Filled.Message,
+                        stringResource(
+                            when (link.kind) {
+                                SwipeAction.WHATSAPP -> R.string.action_whatsapp
+                                SwipeAction.TELEGRAM -> R.string.action_telegram
+                                SwipeAction.VIBER -> R.string.action_viber
+                                else -> R.string.action_max
+                            }
+                        ),
+                        iconTint = visual?.second,
+                        // Номер — чтобы различать, если номеров у контакта несколько
+                        supporting = link.summary?.let {
+                            if (it.startsWith("+")) PhoneFormatter.format(it) else it
+                        }.takeIf { numbers.size > 1 || links.count { l -> l.kind == link.kind } > 1 },
+                        onClick = { onMessenger(link) }
+                    )
+                    if (index < links.lastIndex) SheetDivider()
+                }
+            }
+        }
+    }
+}

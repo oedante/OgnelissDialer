@@ -1846,8 +1846,18 @@ class DialerViewModel @Inject constructor(
     fun choiceValue(key: String): String =
         settingsCommands.currentChoice(key, settingsState.value)
 
-    fun choiceLabel(context: Context, key: String): String =
-        settingsCommands.choiceLabel(context, key, settingsState.value)
+    fun choiceLabel(context: Context, key: String): String {
+        // Свайп с несколькими действиями — все через запятую: «SMS, WhatsApp»
+        val extra = when (key) {
+            "swipe_right" -> swipeRightExtra.value
+            "swipe_left" -> swipeLeftExtra.value
+            else -> emptyList()
+        }
+        val base = settingsCommands.choiceLabel(context, key, settingsState.value)
+        if (extra.isEmpty()) return base
+        return (listOf(base) + extra.map { context.getString(SettingsCommands.swipeActionLabelRes(it)) })
+            .joinToString(", ")
+    }
 
     fun choiceTitle(context: Context, key: String): String =
         settingsCommands.choiceTitle(context, key)

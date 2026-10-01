@@ -124,6 +124,8 @@ object MissedCallsNotifier {
         if (savedCount(context) == 0) return
         saveCount(context, 0)
         cancel(context)
+        // В журнал — чтобы сброс было видно так же, как появление счётчика
+        Logger.i("Missed", "Счётчик пропущенных сброшен")
         runCatching {
             context.getSystemService(TelecomManager::class.java)?.cancelMissedCallsNotification()
         }.onFailure {

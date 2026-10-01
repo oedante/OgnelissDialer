@@ -129,6 +129,7 @@ fun ContactsScreen(
     }
     val settings by vm.settingsState.collectAsState()
     val rightExtra by vm.swipeRightExtra.collectAsState()
+    val leftExtra by vm.swipeLeftExtra.collectAsState()
     val scope = rememberCoroutineScope()
     var search by remember { mutableStateOf("") }
 
@@ -344,6 +345,20 @@ fun ContactsScreen(
                 )
             }
         }
+    val swipeEndActionsFor: (Contact) -> List<RevealAction> =
+        remember(settings.swipeLeft, leftExtra, state.sims) {
+            { contact ->
+                vm.revealActionsFor(
+                    settings.swipeLeft, leftExtra, contactAsGroup(contact), state.sims
+                )
+            }
+        }
+    /*
+     * Два-три действия на сторону — панель кнопок, как в журнале (1.2.5);
+     * одно — мгновенно, как было.
+     */
+    val rightMulti = settings.swipeRight != SwipeAction.NONE && rightExtra.isNotEmpty()
+    val leftMulti = settings.swipeLeft != SwipeAction.NONE && leftExtra.isNotEmpty()
 
     // Статистика вызовов нужна фильтрам «часто» и «давно не звонили»
     val callStats = remember(state.callLog) {
@@ -669,7 +684,8 @@ fun ContactsScreen(
                              * поведение свайпа отличалось между экранами,
                              * и это приходилось запоминать отдельно.
                              */
-                            startActions = emptyList(),
+                            startActions = if (rightMulti) swipeActionsFor(contact) else emptyList(),
+                            endActions = if (leftMulti) swipeEndActionsFor(contact) else emptyList(),
                             swipeTuning = swipeTuning,
                             listScrolling = listScrolling,
                             /*
@@ -742,7 +758,8 @@ fun ContactsScreen(
                              * поведение свайпа отличалось между экранами,
                              * и это приходилось запоминать отдельно.
                              */
-                            startActions = emptyList(),
+                            startActions = if (rightMulti) swipeActionsFor(contact) else emptyList(),
+                            endActions = if (leftMulti) swipeEndActionsFor(contact) else emptyList(),
                             swipeTuning = swipeTuning,
                             listScrolling = listScrolling,
                             /*
@@ -877,6 +894,7 @@ private fun ContactRow(
     swipeController: SwipeRevealController,
     swipeKey: String,
     startActions: List<RevealAction>,
+    endActions: List<RevealAction> = emptyList(),
     swipeTuning: com.ogneliss.dialer.settings.SwipeTuning,
     listScrolling: Boolean,
     onSwipeCall: () -> Unit,
@@ -914,12 +932,13 @@ private fun ContactRow(
             key = swipeKey,
             controller = swipeController,
             startActions = startActions,
-            endActions = emptyList(),
+            endActions = endActions,
             // Выключенный в настройках свайп — без обработчика: иначе
             // строка тянется, хотя ничего не делает (разбор — у журнала,
             // MainDialerScreen, onDirectStart)
-            onDirectStart = onSwipeCall.takeIf { startHint != null },
-            onDirectEnd = onSwipeSms.takeIf { endHint != null },
+            // Есть панель (два-три действия) — мгновенного действия нет
+            onDirectStart = onSwipeCall.takeIf { startHint != null && startActions.isEmpty() },
+            onDirectEnd = onSwipeSms.takeIf { endHint != null && endActions.isEmpty() },
             // Пороги те же, что в журнале: расхождение читается
             // как «свайп сломан»
             tuning = swipeTuning,

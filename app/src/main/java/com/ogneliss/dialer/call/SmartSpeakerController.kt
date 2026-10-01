@@ -55,6 +55,23 @@ class SmartSpeakerController(
         private set
 
     private var speakerOn = false
+
+    /*
+     * ЗАПРОШЕННЫЙ, НО ЕЩЁ НЕ ПРИМЕНЁННЫЙ МАРШРУТ (1.2.4).
+     *
+     * Лог 30.09.2026: «Телефон положили — включаю громкую связь» дважды
+     * за 59 мс. Переключение звука система выполняет не мгновенно:
+     * между запросом и новым состоянием приходило обновление со старым
+     * маршрутом (разговорный динамик), updateCallState сбрасывал
+     * speakerOn обратно в false — и следующее показание датчика
+     * включало громкую связь второй раз. Безвредно (запрос тот же),
+     * но при неудаче могло бы «качаться» туда-обратно.
+     *
+     * Теперь на время ожидания (до 1,5 с) обновления со старым
+     * маршрутом не перебивают решение.
+     */
+    private var pendingRoute: Int? = null
+    private var pendingUntil = 0L
     private var headsetConnected = false
     private var callActive = false
     private var running = false
@@ -94,7 +111,18 @@ class SmartSpeakerController(
     @Suppress("DEPRECATION")
     fun updateCallState(call: Call?, audioState: CallAudioState?) {
         callActive = call?.state == Call.STATE_ACTIVE
-        speakerOn = audioState?.route == CallAudioState.ROUTE_SPEAKER
+        val route = audioState?.route
+        val pending = pendingRoute
+        if (pending != null) {
+            if (route == pending || System.currentTimeMillis() > pendingUntil) {
+                pendingRoute = null
+            } else {
+                // Старый маршрут, пока система переключает, — не перебивает
+                // наше решение (разбор у pendingRoute)
+                return
+            }
+        }
+        speakerOn = route == CallAudioState.ROUTE_SPEAKER
         headsetConnected = audioState?.route == CallAudioState.ROUTE_BLUETOOTH ||
             audioState?.route == CallAudioState.ROUTE_WIRED_HEADSET
 
@@ -155,14 +183,21 @@ class SmartSpeakerController(
             SmartSpeakerPolicy.Route.SPEAKER -> {
                 Logger.i(TAG, "Телефон положили — включаю громкую связь")
                 speakerOn = true
+                pendingRoute = CallAudioState.ROUTE_SPEAKER
+                pendingUntil = System.currentTimeMillis() + PENDING_MS
                 onRouteChange(CallAudioState.ROUTE_SPEAKER)
             }
             SmartSpeakerPolicy.Route.EARPIECE -> {
                 Logger.i(TAG, "Телефон подняли — возвращаю разговорный динамик")
                 speakerOn = false
+                pendingRoute = CallAudioState.ROUTE_EARPIECE
+                pendingUntil = System.currentTimeMillis() + PENDING_MS
                 onRouteChange(CallAudioState.ROUTE_EARPIECE)
             }
             SmartSpeakerPolicy.Route.UNCHANGED -> Unit
         }
     }
 }
+
+/** Сколько ждать, пока система применит запрошенный маршрут звука. */
+private const val PENDING_MS = 1_500L
