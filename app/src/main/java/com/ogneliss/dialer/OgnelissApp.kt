@@ -1,5 +1,7 @@
 package com.ogneliss.dialer
 
+import com.ogneliss.dialer.concurrency.suspendRunCatching
+
 import android.app.Application
 import coil.ImageLoader
 import coil.ImageLoaderFactory

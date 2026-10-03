@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.concurrency.suspendRunCatching
+
 import com.ogneliss.dialer.util.ContactQr
 import androidx.compose.material3.FilledTonalButton
 import com.ogneliss.dialer.ui.components.OgnelissDivider

@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.data
 
+import com.ogneliss.dialer.concurrency.suspendRunCatching
+
 import android.content.ContentValues
 import android.content.Context
 import android.provider.BlockedNumberContract

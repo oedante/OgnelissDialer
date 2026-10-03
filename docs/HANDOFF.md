@@ -46,7 +46,10 @@ Android-звонилка (замена системной) — `com.ogneliss.dia
   решения («было — стало — почему»), с версией и датой находки.
 - Перед упаковкой каждый раз: `python3 scripts/prebuild_check.py`,
   `scripts/kotlin_syntax_check.sh` (kotlinc в окружении Claude),
-  `python3 scripts/audit.py` — все без замечаний.
+  `python3 scripts/audit.py`, `python3 scripts/import_check.py` — все
+  без замечаний. Синтаксис ≠ компиляция: импорты символов проекта
+  проверяет только `import_check.py` (добавлен после сбоя сборки
+  01.10.2026 — 17 файлов без импорта `suspendRunCatching`).
 - Строки интерфейса — в 4 языках вручную (en, ru, de, fr); остальные
   44 — автоперевод Google Play (не добавлять туда наши 4!). Названия
   марок — `translatable="false"`.

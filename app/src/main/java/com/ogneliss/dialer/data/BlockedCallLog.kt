@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.data
 
+import com.ogneliss.dialer.concurrency.suspendRunCatching
+
 import com.ogneliss.dialer.call.SpamPolicy
 import com.ogneliss.dialer.data.db.BlockedCallDao
 import com.ogneliss.dialer.data.db.BlockedCallEntity

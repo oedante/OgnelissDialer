@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.data
 
+import com.ogneliss.dialer.concurrency.suspendRunCatching
+
 import com.ogneliss.dialer.data.db.ContactCacheDao
 import com.ogneliss.dialer.data.db.ContactCacheEntity
 import com.ogneliss.dialer.log.Logger

@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.data
 
+import com.ogneliss.dialer.concurrency.suspendRunCatching
+
 import com.ogneliss.dialer.di.IoDispatcher
 import com.ogneliss.dialer.log.Logger
 import com.ogneliss.dialer.settings.Prefs

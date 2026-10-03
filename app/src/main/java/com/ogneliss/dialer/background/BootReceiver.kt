@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.background
 
+import com.ogneliss.dialer.concurrency.suspendRunCatching
+
 import kotlinx.coroutines.launch
 import android.content.BroadcastReceiver
 import android.content.Context

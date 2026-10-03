@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.background
 
+import com.ogneliss.dialer.concurrency.suspendRunCatching
+
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints

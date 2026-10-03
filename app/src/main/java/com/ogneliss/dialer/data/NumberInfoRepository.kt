@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.data
 
+import com.ogneliss.dialer.concurrency.suspendRunCatching
+
 import androidx.compose.runtime.Immutable
 
 import android.content.Context
