@@ -15,7 +15,11 @@ Android-звонилка (замена системной) — `com.ogneliss.dia
 - **1.3.1** (versionCode 29) — выпуск без обоев: подтверждение
   необратимых действий, закреплённые при пустом журнале, имя на обложке
   (`docs/RELEASE_NOTES_1.3.1.md`). Внутренний тест → рабочая версия.
-- **1.3.2** (versionCode 30) — в работе, только внутренний тест:
+- **1.3.3** (versionCode 31) — в работе: фаза «Новые инструменты»
+  (`docs/RELEASE_NOTES_1.3.3.md`). Каждый шаг — отдельная сборка
+  и замер против `docs/BASELINE_1.3.2.md`.
+- **1.3.2** (versionCode 30) — готова к внутреннему тесту (архив
+  `OgnelissDialer_1_3_2.zip`):
   фаза «Стабилизация» (`docs/RELEASE_NOTES_1.3.2.md`). Сделано в коде всё,
   что не требует телефона; остались за автором — Gradle wrapper
   в архиве, базовые замеры, проверка на release-сборке.
@@ -32,8 +36,8 @@ Android-звонилка (замена системной) — `com.ogneliss.dia
 
 ## Сборка и окружение
 
-- minSdk 26 · compileSdk 36 · targetSdk 36
-- AGP 9.3.1 · Kotlin 2.2.10 · KSP 2.3.6 · Room 2.8.5 · Hilt 2.59.2
+- minSdk 26 · compileSdk 37 · targetSdk 36 · Gradle 9.7.1 (wrapper в проекте)
+- AGP 9.4.1 · Kotlin 2.2.10 · KSP 2.3.6 · Room 2.8.5 · Hilt 2.59.2
 - Compose (Material 3 1.3), одна активность + `InCallActivity`
 - `android.newDsl=false` в gradle.properties — нужен плагину Baseline
   Profile 1.3.3; предупреждения при сборке про это — ожидаемые

@@ -40,7 +40,7 @@ android {
      */
     // Совпадает с приложением: иначе профиль опишет не то,
     // что поедет пользователям
-    compileSdk = 36
+    compileSdk = 37  // 1.3.3: вместе с app
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

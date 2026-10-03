@@ -47,7 +47,13 @@ android {
      * каждый шаг вводит новые ограничения фона, уведомлений
      * и разрешений.
      */
-    compileSdk = 36
+    /*
+     * compileSdk 37 (1.3.3, 03.10.2026): было 36. Нужен Compose 1.12
+     * (следующий шаг) — он требует компиляции против API 37.
+     * targetSdk не меняется: это поведение приложения на телефоне,
+     * его повышаем отдельным выпуском с проверкой.
+     */
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.ogneliss.dialer"
@@ -82,8 +88,8 @@ android {
          * Перед публикацией в открытый доступ сменить на 1.0.0
          * и поднять versionCode.
          */
-        versionCode = 30
-        versionName = "1.3.2"
+        versionCode = 31
+        versionName = "1.3.3"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
