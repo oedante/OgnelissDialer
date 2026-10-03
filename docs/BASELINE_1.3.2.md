@@ -24,7 +24,7 @@ nubia NX721J, Android 15 (API 35). Базовая точка — 1.3.2, а не 
 
 ```
 # Запуск, прокрутка, клавиатура, карточка (Macrobenchmark, по 10 повторов)
-./gradlew :benchmark:connectedBenchmarkAndroidTest \
+./gradlew :benchmark:connectedBenchmarkReleaseAndroidTest \
   -Pandroid.testInstrumentationRunnerArguments.cardNumber=+7XXXXXXXXXX
 
 # Размер выпуска
@@ -62,7 +62,7 @@ adb shell dumpsys meminfo com.ogneliss.dialer | grep -E "TOTAL PSS|Java Heap|Nat
 | Прокрутка журнала, превышение кадра P90, мс | `StartupBenchmark.scrollCallLog` | 17,8 — недостоверно ² | | |
 | Входящий → экран вызова, мс | Perfetto, вручную | не снят | | |
 | Память, TOTAL PSS, МБ | `dumpsys meminfo` после 5 мин | **160,4** (Java 40,4; Native 48,1) | | |
-| Размер AAB, МБ | `bundleRelease` | **10,14** | | |
+| Размер AAB, МБ | `bundleRelease` | **10,14** | 10,15 (1.3.3, шаг 1) | +0,1% |
 | Размер APK release, МБ | `assembleRelease` | **6,75** | | |
 | Предупреждения Lint | `lintRelease` | не снят | | |
 | Время сборки release, с | `--profile`, вторая сборка | не снят | | |

@@ -1,5 +1,8 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.compose.ui.unit.coerceAtLeast
+import com.ogneliss.dialer.ui.theme.FlowUi
+import com.ogneliss.dialer.ui.theme.LocalAppearance
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.material.icons.Icons
@@ -148,11 +151,41 @@ fun ContactActionSheet(
             val haptics = rememberActionHaptics()
 
             // ── 1. Шапка ────────────────────────────────────────────────
+            /*
+             * Выравнивание шапки по пунктам меню (1.3.3, 03.10.2026, замечание
+             * автора: шапка «стоит обособленно»).
+             * Было: отступ 24 dp — кружок правее колонки иконок, имя заметно
+             * правее текста пунктов.
+             * Стало: центр кружка — на центре колонки иконок. Пункты лежат
+             * в SheetGroup (отступ FlowUi.screenPadding), у пункта ListItem
+             * иконка 24 dp начинается через 16 dp: центр — 12 + 16 + 12 = 40 dp.
+             * Размер кружка зависит от настройки «крупные кнопки» (48 или 60 dp),
+             * поэтому отступ считается от него.
+             */
+            val avatarSize = LocalAppearance.current.avatarSize
+            val iconColumnCenter = FlowUi.screenPadding + 16.dp + 12.dp
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
+                modifier = Modifier.padding(
+                    start = (iconColumnCenter - avatarSize / 2).coerceAtLeast(8.dp),
+                    end = 24.dp,
+                    top = 8.dp,
+                    bottom = 8.dp
+                )
             ) {
-                RowAvatar(group.photoUri)
+                /*
+                 * Фото — из книги, как у строки журнала (1.3.3, 03.10.2026).
+                 * Было: group.photoUri — кэш системного журнала звонков.
+                 * Его заполняет системное приложение для набора номера,
+                 * а не наше, поэтому он часто пуст: в журнале портрет
+                 * был, а в меню записи — пустой кружок.
+                 */
+                val photoUri = remember(state.contacts, group.contactId, group.e164) {
+                    state.contacts.firstOrNull { it.id == group.contactId }?.photoUri
+                        ?: state.contacts.firstOrNull { c -> c.numbers.any { it.e164 == group.e164 } }?.photoUri
+                        ?: group.photoUri
+                }
+                RowAvatar(photoUri)
                 Spacer(Modifier.width(16.dp))
                 Column(Modifier.weight(1f)) {
                     Text(
