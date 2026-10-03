@@ -4,6 +4,7 @@ import androidx.benchmark.macro.junit4.BaselineProfileRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Direction
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,6 +32,11 @@ class BaselineProfileGenerator {
 
     @get:Rule
     val rule = BaselineProfileRule()
+
+    // Разрешения и роль — до первого запуска, иначе меряется мастер
+    // разрешений (1.3.3, DeviceSetup)
+    @Before
+    fun prepareDevice() = DeviceSetup.prepare()
 
     @Test
     /*

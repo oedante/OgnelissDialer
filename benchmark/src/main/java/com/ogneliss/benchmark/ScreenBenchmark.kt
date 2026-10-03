@@ -7,6 +7,7 @@ import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assume.assumeTrue
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,6 +32,11 @@ class ScreenBenchmark {
 
     @get:Rule
     val rule = MacrobenchmarkRule()
+
+    // Разрешения и роль — до первого запуска, иначе меряется мастер
+    // разрешений (1.3.3, DeviceSetup)
+    @Before
+    fun prepareDevice() = DeviceSetup.prepare()
 
     private companion object {
         const val PACKAGE = "com.ogneliss.dialer"

@@ -235,7 +235,10 @@ class PinnedContactsTest {
     @Test
     fun `повторная миграция возвращает тот же список`() {
         val migrated = listOf(PinnedContacts.contactKey(lk, "+79105214092"), "+79001112233")
-        assertTrue(PinnedContacts.migrate(migrated) { lk } === migrated)
+        // Номер не из книги остаётся номером: поиск возвращает ключ только
+        // для номера контакта (1.3.3: прежняя версия теста отдавала ключ
+        // для любого номера и проверяла не то)
+        assertTrue(PinnedContacts.migrate(migrated) { if (it == "+79105214092") lk else null } === migrated)
     }
 
     @Test

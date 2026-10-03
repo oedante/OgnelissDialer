@@ -37,7 +37,7 @@ Android-звонилка (замена системной) — `com.ogneliss.dia
 ## Сборка и окружение
 
 - minSdk 26 · compileSdk 37 · targetSdk 36 · Gradle 9.7.1 (wrapper в проекте)
-- AGP 9.4.1 · Kotlin 2.2.10 · KSP 2.3.6 · Room 2.8.5 · Hilt 2.59.2
+- AGP 9.4.1 · Kotlin 2.4.20 · KSP 2.3.12 · Room 2.8.5 · Hilt 2.60.1
 - Compose (Material 3 1.3), одна активность + `InCallActivity`
 - `android.newDsl=false` в gradle.properties — нужен плагину Baseline
   Profile 1.3.3; предупреждения при сборке про это — ожидаемые

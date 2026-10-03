@@ -1,0 +1,551 @@
+{
+    "context": {
+        "build": {
+            "brand": "nubia",
+            "device": "PQ83A01",
+            "fingerprint": "nubia/PQ83A01-UN/PQ83A01:15/AQ3A.240812.002/20260106.015417:user/release-keys",
+            "id": "AQ3A.240812.002",
+            "model": "NX721J",
+            "type": "user",
+            "version": {
+                "codename": "REL",
+                "sdk": 35
+            }
+        },
+        "cpuCoreCount": 8,
+        "cpuLocked": false,
+        "cpuMaxFreqHz": 3302400000,
+        "memTotalBytes": 16092770304,
+        "sustainedPerformanceModeEnabled": false,
+        "artMainlineVersion": 372042580,
+        "osCodenameAbbreviated": "A",
+        "compilationMode": "run-from-apk"
+    },
+    "benchmarks": [
+        {
+            "name": "startupWarm",
+            "params": {},
+            "className": "com.ogneliss.benchmark.ScreenBenchmark",
+            "totalRunTimeNs": 61326797893,
+            "metrics": {
+                "timeToInitialDisplayMs": {
+                    "minimum": 67.112604,
+                    "maximum": 135.842396,
+                    "median": 82.682083,
+                    "runs": [
+                        81.001198,
+                        67.112604,
+                        78.28224,
+                        91.366407,
+                        135.842396,
+                        94.857864,
+                        82.682083,
+                        83.364479,
+                        82.626145
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 0,
+            "repeatIterations": 10,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 0",
+                    "filename": "ScreenBenchmark_startupWarm_iter000_2026-10-03-05-47-19.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 1",
+                    "filename": "ScreenBenchmark_startupWarm_iter001_2026-10-03-05-47-21.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 2",
+                    "filename": "ScreenBenchmark_startupWarm_iter002_2026-10-03-05-47-23.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 3",
+                    "filename": "ScreenBenchmark_startupWarm_iter003_2026-10-03-05-47-28.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 4",
+                    "filename": "ScreenBenchmark_startupWarm_iter004_2026-10-03-05-47-34.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 5",
+                    "filename": "ScreenBenchmark_startupWarm_iter005_2026-10-03-05-47-37.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 6",
+                    "filename": "ScreenBenchmark_startupWarm_iter006_2026-10-03-05-48-09.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 7",
+                    "filename": "ScreenBenchmark_startupWarm_iter007_2026-10-03-05-48-11.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 8",
+                    "filename": "ScreenBenchmark_startupWarm_iter008_2026-10-03-05-48-13.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 9",
+                    "filename": "ScreenBenchmark_startupWarm_iter009_2026-10-03-05-48-15.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "openCard",
+            "params": {},
+            "className": "com.ogneliss.benchmark.ScreenBenchmark",
+            "totalRunTimeNs": 53236911542,
+            "metrics": {
+                "timeToInitialDisplayMs": {
+                    "minimum": 71.832709,
+                    "maximum": 112.141458,
+                    "median": 94.301354,
+                    "runs": [
+                        110.523229,
+                        96.324948,
+                        112.141458,
+                        90.828073,
+                        88.925,
+                        94.301354,
+                        79.439687,
+                        107.242343,
+                        71.832709
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 0,
+            "repeatIterations": 10,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 0",
+                    "filename": "ScreenBenchmark_openCard_iter000_2026-10-03-05-48-21.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 1",
+                    "filename": "ScreenBenchmark_openCard_iter001_2026-10-03-05-48-23.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 2",
+                    "filename": "ScreenBenchmark_openCard_iter002_2026-10-03-05-48-26.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 3",
+                    "filename": "ScreenBenchmark_openCard_iter003_2026-10-03-05-48-28.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 4",
+                    "filename": "ScreenBenchmark_openCard_iter004_2026-10-03-05-49-01.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 5",
+                    "filename": "ScreenBenchmark_openCard_iter005_2026-10-03-05-49-03.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 6",
+                    "filename": "ScreenBenchmark_openCard_iter006_2026-10-03-05-49-05.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 7",
+                    "filename": "ScreenBenchmark_openCard_iter007_2026-10-03-05-49-07.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 8",
+                    "filename": "ScreenBenchmark_openCard_iter008_2026-10-03-05-49-09.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 9",
+                    "filename": "ScreenBenchmark_openCard_iter009_2026-10-03-05-49-11.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "openDialpad",
+            "params": {},
+            "className": "com.ogneliss.benchmark.ScreenBenchmark",
+            "totalRunTimeNs": 24378441344,
+            "metrics": {
+                "timeToInitialDisplayMs": {
+                    "minimum": 103.920104,
+                    "maximum": 165.392187,
+                    "median": 119.0492705,
+                    "runs": [
+                        103.920104,
+                        165.392187,
+                        110.653073,
+                        138.693438,
+                        109.355834,
+                        156.096145,
+                        126.862604,
+                        112.862604,
+                        125.235937,
+                        111.772292
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 0,
+            "repeatIterations": 10,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 0",
+                    "filename": "ScreenBenchmark_openDialpad_iter000_2026-10-03-05-49-15.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 1",
+                    "filename": "ScreenBenchmark_openDialpad_iter001_2026-10-03-05-49-17.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 2",
+                    "filename": "ScreenBenchmark_openDialpad_iter002_2026-10-03-05-49-20.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 3",
+                    "filename": "ScreenBenchmark_openDialpad_iter003_2026-10-03-05-49-23.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 4",
+                    "filename": "ScreenBenchmark_openDialpad_iter004_2026-10-03-05-49-25.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 5",
+                    "filename": "ScreenBenchmark_openDialpad_iter005_2026-10-03-05-49-27.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 6",
+                    "filename": "ScreenBenchmark_openDialpad_iter006_2026-10-03-05-49-29.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 7",
+                    "filename": "ScreenBenchmark_openDialpad_iter007_2026-10-03-05-49-31.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 8",
+                    "filename": "ScreenBenchmark_openDialpad_iter008_2026-10-03-05-49-33.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 9",
+                    "filename": "ScreenBenchmark_openDialpad_iter009_2026-10-03-05-49-35.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "scrollCallLog",
+            "params": {},
+            "className": "com.ogneliss.benchmark.StartupBenchmark",
+            "totalRunTimeNs": 102402836732,
+            "metrics": {
+                "frameCount": {
+                    "minimum": 5.0,
+                    "maximum": 10.0,
+                    "median": 7.5,
+                    "runs": [
+                        5.0,
+                        8.0,
+                        8.0,
+                        6.0,
+                        7.0,
+                        6.0,
+                        6.0,
+                        10.0,
+                        8.0,
+                        9.0
+                    ]
+                }
+            },
+            "sampledMetrics": {
+                "frameDurationCpuMs": {
+                    "P50": 6.376927,
+                    "P90": 27.577030999999998,
+                    "P95": 31.034874599999988,
+                    "P99": 40.56804328000001,
+                    "runs": [
+                        [
+                            19.280157,
+                            9.256146,
+                            10.090573,
+                            8.183334,
+                            3.714635
+                        ],
+                        [
+                            5.286719,
+                            37.286093,
+                            5.678438,
+                            6.131771,
+                            6.195729,
+                            5.13776,
+                            6.693177,
+                            8.567657
+                        ],
+                        [
+                            6.913541,
+                            30.569687,
+                            3.467656,
+                            5.797552,
+                            6.974843,
+                            10.335729,
+                            6.376927,
+                            8.244479
+                        ],
+                        [
+                            6.706563,
+                            31.732656,
+                            4.270834,
+                            6.752604,
+                            5.639739,
+                            6.1125
+                        ],
+                        [
+                            4.999843,
+                            3.929479,
+                            26.491823,
+                            2.916355,
+                            6.351042,
+                            8.107136,
+                            6.114375
+                        ],
+                        [
+                            6.750937,
+                            28.714479,
+                            4.236041,
+                            6.170053,
+                            6.526094,
+                            6.307031
+                        ],
+                        [
+                            6.34,
+                            27.848333,
+                            3.967761,
+                            5.055833,
+                            5.209219,
+                            5.496302
+                        ],
+                        [
+                            23.979687,
+                            49.007344,
+                            19.079219,
+                            4.611511,
+                            12.953542,
+                            30.371406,
+                            19.881354,
+                            12.57526,
+                            10.784531,
+                            7.365468
+                        ],
+                        [
+                            5.573541,
+                            23.063229,
+                            5.10177,
+                            5.027395,
+                            5.02974,
+                            4.264948,
+                            5.585885,
+                            10.62224
+                        ],
+                        [
+                            7.433541,
+                            24.80599,
+                            3.07625,
+                            5.720573,
+                            33.517813,
+                            8.439531,
+                            4.77875,
+                            5.724791,
+                            5.87
+                        ]
+                    ]
+                },
+                "frameOverrunMs": {
+                    "P50": -4.056214,
+                    "P90": 17.816277999999997,
+                    "P95": 22.211494,
+                    "P99": 27.55802892000001,
+                    "runs": [
+                        [
+                            3.113863,
+                            -6.093703,
+                            -4.966997,
+                            -6.741153,
+                            -8.827706
+                        ],
+                        [
+                            10.1447,
+                            24.984013,
+                            12.720576,
+                            -6.255008,
+                            -6.255857,
+                            -6.74397,
+                            -5.622701,
+                            2.017025
+                        ],
+                        [
+                            -1.690202,
+                            18.120373,
+                            15.458526,
+                            -6.354906,
+                            -5.482364,
+                            20.492866,
+                            -6.228989,
+                            4.396297
+                        ],
+                        [
+                            7.554253,
+                            20.784116,
+                            6.460887,
+                            -5.65466,
+                            -6.906515,
+                            -1.483924
+                        ],
+                        [
+                            -4.056214,
+                            -9.106474,
+                            16.179325,
+                            8.672785,
+                            -6.111921,
+                            -4.140587,
+                            -6.396329
+                        ],
+                        [
+                            -6.998681,
+                            16.599898,
+                            3.316253,
+                            -6.020206,
+                            -6.299198,
+                            -3.973451
+                        ],
+                        [
+                            1.976898,
+                            15.746345,
+                            1.444627,
+                            -6.518,
+                            -7.236616,
+                            -6.288904
+                        ],
+                        [
+                            8.504461,
+                            34.176927,
+                            3.792437,
+                            -10.706146,
+                            -2.5064,
+                            24.963735,
+                            8.847755,
+                            -3.041393,
+                            -4.632991,
+                            -8.139982
+                        ],
+                        [
+                            -5.839576,
+                            11.882509,
+                            -2.17874,
+                            -6.737388,
+                            -7.346847,
+                            -6.627003,
+                            -6.810679,
+                            5.98087
+                        ],
+                        [
+                            -6.023225,
+                            9.420318,
+                            -10.507024,
+                            2.117059,
+                            22.333024,
+                            22.130474,
+                            -7.618149,
+                            -6.549706,
+                            -6.351256
+                        ]
+                    ]
+                }
+            },
+            "warmupIterations": 0,
+            "repeatIterations": 10,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 0",
+                    "filename": "StartupBenchmark_scrollCallLog_iter000_2026-10-03-05-50-13.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 1",
+                    "filename": "StartupBenchmark_scrollCallLog_iter001_2026-10-03-05-50-17.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 2",
+                    "filename": "StartupBenchmark_scrollCallLog_iter002_2026-10-03-05-50-20.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 3",
+                    "filename": "StartupBenchmark_scrollCallLog_iter003_2026-10-03-05-50-23.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 4",
+                    "filename": "StartupBenchmark_scrollCallLog_iter004_2026-10-03-05-50-26.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 5",
+                    "filename": "StartupBenchmark_scrollCallLog_iter005_2026-10-03-05-50-29.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 6",
+                    "filename": "StartupBenchmark_scrollCallLog_iter006_2026-10-03-05-50-32.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 7",
+                    "filename": "StartupBenchmark_scrollCallLog_iter007_2026-10-03-05-51-07.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 8",
+                    "filename": "StartupBenchmark_scrollCallLog_iter008_2026-10-03-05-51-11.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 9",
+                    "filename": "StartupBenchmark_scrollCallLog_iter009_2026-10-03-05-51-16.perfetto-trace"
+                }
+            ]
+        }
+    ]
+}

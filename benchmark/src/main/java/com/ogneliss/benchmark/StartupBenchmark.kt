@@ -9,6 +9,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Direction
 import androidx.test.uiautomator.Until
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -37,6 +38,11 @@ class StartupBenchmark {
 
     @get:Rule
     val rule = MacrobenchmarkRule()
+
+    // Разрешения и роль — до первого запуска, иначе меряется мастер
+    // разрешений (1.3.3, DeviceSetup)
+    @Before
+    fun prepareDevice() = DeviceSetup.prepare()
 
     private companion object {
         const val PACKAGE = "com.ogneliss.dialer"

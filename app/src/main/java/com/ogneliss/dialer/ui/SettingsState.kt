@@ -114,7 +114,10 @@ data class SettingsState(
             "haptic", "key_tones",
             "merge_calls", "remember_sim", "smart_speaker",
             "callback_suggestion", "dialpad_open_at_start", "post_call", "post_call_unknown",
-            "block_hidden", "block_unknown", "block_tagged", "file_logging"
+            "block_hidden", "block_unknown", "block_tagged", "file_logging",
+            // 1.3.3: переключатели обрабатывались (switchValue выше), но в список
+            // не попали — SettingsRegistryTest падал ещё с 1.3.0
+            "button_labels", "proximity_screen_off", "call_hide_contact_number"
         )
     }
 }
