@@ -62,3 +62,23 @@ adb shell dumpsys meminfo com.ogneliss.dialer | grep -E "TOTAL PSS|Java Heap|Nat
 | Предупреждения Lint | `lintRelease` | | | |
 | Время сборки release, с | `--profile`, вторая сборка | | | |
 | Сбои и ANR (Android vitals) | Play Console, 28 дней | | | |
+
+
+# 1. Телефон виден?
+adb devices
+
+# 2. Точное имя задачи замеров (зависит от плагина Baseline Profile)
+./gradlew :benchmark:tasks --all | Select-String "connected"
+
+# 3. Замеры: запуск, прокрутка, клавиатура, карточка (около 15–25 минут)
+#    Номер — любой из ваших контактов. Кавычки обязательны:
+#    без них PowerShell разрежет аргумент по точке
+./gradlew :benchmark:connectedBenchmarkReleaseAndroidTest "-Pandroid.testInstrumentationRunnerArguments.cardNumber=+79105214092"
+
+# 4. Размер выпуска
+./gradlew :app:bundleRelease
+./gradlew :app:assembleRelease
+Get-ChildItem app\build\outputs -Recurse -Include *.aab,*.apk | Select-Object Name, Length
+
+# 5. Память: поработать в приложении 5 минут (журнал, карточка, клавиатура), затем
+adb shell dumpsys meminfo com.ogneliss.dialer | Select-String "TOTAL PSS|Java Heap|Native Heap"
