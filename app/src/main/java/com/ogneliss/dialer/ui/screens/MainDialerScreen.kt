@@ -1,6 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
 
+import com.ogneliss.dialer.data.PinnedContacts
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.settings.ThemeMode
 import androidx.compose.material.icons.filled.Person
@@ -599,26 +600,30 @@ fun MainDialerScreen(
      * другой номер того же контакта. Порядок — по первому закреплённому
      * номеру контакта; на каждый закреплённый номер — одна строка.
      */
-    val pinOrder = remember(pinnedNumbers) {
-        pinnedNumbers.withIndex().associate { (i, n) -> n to i }
-    }
-    val contactPinIndex = remember(pinOrder, state.contacts) {
-        buildMap<Long, Int> {
-            state.contacts.forEach { contact ->
-                contact.numbers.mapNotNull { pinOrder[it.e164] }.minOrNull()
-                    ?.let { put(contact.id, it) }
-            }
-        }
+    /*
+     * ЗАКРЕПЛЁННЫЙ — КОНТАКТ (1.3.2, 03.10.2026).
+     * Было (1.2.4–1.3.1): закреплялся номер, а контакт подбирался к нему
+     * здесь, на каждом пересчёте. Строка «без звонков» при этом не рисовала
+     * фото и открывала карточку по номеру — после очистки журнала автор
+     * видел закреплённого без портрета и без реакции на нажатие.
+     * Стало: в записи хранится ключ контакта (устройство — PinnedContacts),
+     * строка относится к закреплённому, если это звонок с любого номера
+     * этого контакта; строка без звонков — с фото и открывает карточку
+     * контакта тем же путём, что экран «Контакты».
+     */
+    val pins = remember(pinnedNumbers) { pinnedNumbers.map(PinnedContacts::parse) }
+    val lookupById = remember(state.contacts) {
+        state.contacts.associate { it.id to it.lookupKey }
     }
     fun pinIndexOf(row: CallLogRowState): Int? =
-        pinOrder[row.e164] ?: row.group.contactId?.let { contactPinIndex[it] }
+        PinnedContacts.indexOf(pins, row.e164, row.group.contactId?.let { lookupById[it] })
+            .takeIf { it >= 0 }
 
-    val pinnedRows = remember(rows, pinOrder, contactPinIndex, state.query) {
-        if (pinOrder.isEmpty() || state.query.isNotEmpty()) emptyList()
+    val pinnedRows = remember(rows, pins, lookupById, state.query) {
+        if (pins.isEmpty() || state.query.isNotEmpty()) emptyList()
         else {
+            // Строки идут от новых к старым: у контакта остаётся последний звонок
             rows.mapNotNull { row -> pinIndexOf(row)?.let { it to row } }
-                // Строки идут от новых к старым: у каждого закреплённого
-                // остаётся самая свежая
                 .distinctBy { it.first }
                 .sortedBy { it.first }
                 .map { it.second }
@@ -645,32 +650,35 @@ fun MainDialerScreen(
      * фотография, номер. Позвонить по ней можно, а истории в ней нет —
      * потому что её и правда нет.
      */
-    val pinnedWithoutCalls = remember(pinnedNumbers, pinnedRows, state.contacts, state.query) {
-        if (pinnedNumbers.isEmpty() || state.query.isNotEmpty()) emptyList()
+    val pinnedWithoutCalls = remember(pins, pinnedRows, state.contacts, state.query) {
+        if (pins.isEmpty() || state.query.isNotEmpty()) emptyList()
         else {
-            // «Со звонками» — закреплённые, для которых нашлась строка:
-            // по своему номеру или по другому номеру того же контакта
-            val coveredIndexes = pinnedRows.mapNotNullTo(HashSet()) { pinIndexOf(it) }
-            val withCalls = pinnedNumbers.filterIndexed { i, _ -> i in coveredIndexes }.toHashSet()
+            val covered = pinnedRows.mapNotNullTo(HashSet()) { pinIndexOf(it) }
+            val byLookup = state.contacts.associateBy { it.lookupKey }
             val byNumber = buildMap {
                 state.contacts.forEach { contact ->
-                    contact.numbers.forEach { number ->
-                        putIfAbsent(number.e164, contact)
-                    }
+                    contact.numbers.forEach { number -> putIfAbsent(number.e164, contact) }
                 }
             }
 
-            pinnedNumbers.filterNot { it in withCalls }.map { e164 ->
-                val contact = byNumber[e164]
-                PinnedOnlyRow(
-                    e164 = e164,
-                    title = contact?.displayName ?: PhoneFormatter.format(e164),
-                    photoUri = contact?.photoUri
-                )
-            }
+            pins.withIndex()
+                .filterNot { it.index in covered }
+                .mapNotNull { (_, pin) ->
+                    // Контакт — по ключу; не нашёлся (удалён, ключ сменился) —
+                    // по запасному номеру, как закреплённый номер
+                    val contact = pin.lookupKey?.let { byLookup[it] } ?: byNumber[pin.e164]
+                    val e164 = pin.e164.ifEmpty { contact?.numbers?.firstOrNull()?.e164.orEmpty() }
+                    if (e164.isEmpty()) return@mapNotNull null
+                    PinnedOnlyRow(
+                        key = pin.raw,
+                        e164 = e164,
+                        title = contact?.displayName ?: PhoneFormatter.format(e164),
+                        photoUri = contact?.photoUri,
+                        openKey = contact?.let { "contact:${it.id}" } ?: "number:$e164"
+                    )
+                }
         }
     }
-
 
     val unpinnedRows = remember(rows, pinnedRows) {
         if (pinnedRows.isEmpty()) rows
@@ -1549,15 +1557,16 @@ fun MainDialerScreen(
                          */
                         items(
                             pinnedWithoutCalls,
-                            key = { "pin_only_${it.e164}" },
+                            key = { "pin_only_${it.key}" },
                             contentType = { "pinned_only_row" }
                         ) { row ->
                             PinnedOnlyCard(
                                 row = row,
                                 onCall = { vm.call(row.e164) },
-                                // «number:» — карточка по номеру; голый номер
+                                // «contact:» для контакта из книги, «number:» —
+                                // для номера не из книги (1.3.2); голый номер
                                 // карточка не распознавала и закрывалась
-                                onOpen = { onOpenSubscriber("number:${row.e164}") }
+                                onOpen = { onOpenSubscriber(row.openKey) }
                             )
                         }
                     }
@@ -2394,9 +2403,13 @@ private const val LOAD_MORE_THRESHOLD = 5
 
 /** Закреплённый номер, по которому ещё не было звонков. */
 data class PinnedOnlyRow(
+    /** Запись закреплённого в настройках — ключ строки списка. */
+    val key: String,
     val e164: String,
     val title: String,
-    val photoUri: String?
+    val photoUri: String?,
+    /** Ключ карточки: «contact:<id>» или «number:<e164>». */
+    val openKey: String
 )
 
 /**
@@ -2425,6 +2438,10 @@ private fun PinnedOnlyCard(
             Modifier.padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Фото — как у строк журнала (1.3.2): photoUri передавался,
+            // но не рисовался, и закреплённый «терял портрет»
+            RowAvatar(row.photoUri)
+            Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(row.title, style = MaterialTheme.typography.titleMedium, maxLines = 1)
                 Text(

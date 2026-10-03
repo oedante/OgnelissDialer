@@ -135,4 +135,101 @@ object PinnedContacts {
         val index = current.indexOf(e164)
         return index >= 0 && index < current.lastIndex
     }
+
+    // ── Закрепление контакта, а не номера (1.3.2, 03.10.2026) ──────────────
+    /*
+     * Было: в настройках хранились номера E.164. Контакт подбирался
+     * к номеру каждый раз заново, поэтому звонок с другого номера того же
+     * человека или очистка журнала «теряли» закреплённого: строка без
+     * звонков показывалась без фото и могла не открыть карточку.
+     *
+     * Стало: для номера из книги хранится ключ контакта —
+     *   contact:<LOOKUP_KEY>|<e164>
+     * LOOKUP_KEY — постоянный ключ контакта в книге Android (id контакта
+     * меняется при синхронизации, ключ — нет). Номер после «|» — запасной:
+     * если контакт удалили или ключ сменился, закреплённый остаётся
+     * по номеру, а не пропадает. Номер не из книги хранится как раньше —
+     * голым E.164. Старые записи читаются без изменений и переводятся
+     * на контакт функцией migrate(), как только контакты загружены.
+     *
+     * Ключ экранируется: «,» разделяет записи в настройках, «|» — части.
+     */
+
+    private const val CONTACT_PREFIX = "contact:"
+
+    /** Разобранная запись: lookupKey == null — закреплён номер не из книги. */
+    data class Pin(val raw: String, val lookupKey: String?, val e164: String)
+
+    private fun escape(s: String) = s.replace("%", "%25").replace(",", "%2C").replace("|", "%7C")
+    private fun unescape(s: String) = s.replace("%7C", "|").replace("%2C", ",").replace("%25", "%")
+
+    fun contactKey(lookupKey: String, e164: String): String =
+        CONTACT_PREFIX + escape(lookupKey) + "|" + e164
+
+    /** Ключ для закрепления: контакт, если номер есть в книге, иначе номер. */
+    fun keyFor(e164: String, lookupKey: String?): String =
+        if (lookupKey.isNullOrBlank()) e164 else contactKey(lookupKey, e164)
+
+    fun parse(raw: String): Pin {
+        if (!raw.startsWith(CONTACT_PREFIX)) return Pin(raw, null, raw)
+        val body = raw.removePrefix(CONTACT_PREFIX)
+        val bar = body.lastIndexOf('|')
+        return if (bar < 0) Pin(raw, unescape(body), "")
+        else Pin(raw, unescape(body.substring(0, bar)), body.substring(bar + 1))
+    }
+
+    /**
+     * Позиция закреплённого, к которому относится номер (или контакт).
+     * Контакт совпадает по ключу — значит, подходит звонок с любого его
+     * номера. Номер совпадает напрямую — для номеров не из книги и как
+     * запасной вариант, если ключ контакта не найден.
+     */
+    fun indexOf(pins: List<Pin>, e164: String, lookupKey: String?): Int =
+        pins.indexOfFirst { pin ->
+            (pin.lookupKey != null && pin.lookupKey == lookupKey) ||
+                (pin.e164.isNotEmpty() && pin.e164 == e164)
+        }
+
+    fun isSubscriberPinned(current: List<String>, e164: String, lookupKey: String?): Boolean =
+        indexOf(current.map(::parse), e164, lookupKey) >= 0
+
+    /** Закрепить номер или его контакт; null — предел или пустой номер. */
+    fun pinSubscriber(current: List<String>, e164: String, lookupKey: String?): List<String>? = when {
+        e164.isBlank() -> null
+        isSubscriberPinned(current, e164, lookupKey) -> current
+        current.size >= MAX_PINNED -> null
+        else -> current + keyFor(e164, lookupKey)
+    }
+
+    /** Открепить всё, что относится к этому номеру или контакту. */
+    fun unpinSubscriber(current: List<String>, e164: String, lookupKey: String?): List<String> =
+        current.filterNot { raw ->
+            val pin = parse(raw)
+            (pin.lookupKey != null && pin.lookupKey == lookupKey) ||
+                (pin.e164.isNotEmpty() && pin.e164 == e164)
+        }
+
+    /**
+     * Перевод закреплённых номеров на контакты. Номер, который есть
+     * в книге, становится ключом контакта; два закреплённых номера одного
+     * человека сливаются в один (остаётся тот, что выше). Порядок
+     * сохраняется. Возвращает тот же список, если менять нечего, —
+     * по этому признаку вызывающий решает, писать ли в настройки.
+     */
+    fun migrate(current: List<String>, lookupKeyOf: (String) -> String?): List<String> {
+        val result = mutableListOf<String>()
+        val seenContacts = HashSet<String>()
+        val seenNumbers = HashSet<String>()
+        current.forEach { raw ->
+            val pin = parse(raw)
+            val key = pin.lookupKey ?: lookupKeyOf(pin.e164)
+            when {
+                key != null -> if (seenContacts.add(key)) {
+                    result += if (pin.lookupKey != null) raw else contactKey(key, pin.e164)
+                }
+                seenNumbers.add(pin.e164) -> result += raw
+            }
+        }
+        return if (result == current) current else result
+    }
 }

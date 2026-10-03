@@ -2576,22 +2576,21 @@ class DialerViewModel @Inject constructor(
      * @return false, если достигнут предел — интерфейс тогда объяснит
      *         причину, а не сделает вид, что всё получилось
      */
+    /*
+     * Закрепление контакта, а не номера (1.3.2, 03.10.2026) — устройство
+     * и причины в PinnedContacts. Снаружи по-прежнему передаётся номер:
+     * ViewModel сама находит, есть ли он в книге.
+     */
+    private fun lookupKeyFor(e164: String): String? =
+        state.value.contacts.firstOrNull { c -> c.numbers.any { it.e164 == e164 } }?.lookupKey
+
     fun pinNumber(e164: String): Boolean {
-        val updated = PinnedContacts.pin(pinnedNumbers.value, e164) ?: return false
+        val updated = PinnedContacts.pinSubscriber(pinnedNumbers.value, e164, lookupKeyFor(e164)) ?: return false
         viewModelScope.launch {
             prefs.setPinnedNumbers(updated)
             /*
-             * ЗАКРЕПЛЕНИЕ ТОЖЕ ЧИТАЕТ ЗАНОВО.
-             *
-             * ── Почему не только перегруппировка ───────────────────────────
-             * Формально закрепление меняет лишь порядок групп, и хватило
-             * бы regroupOnly. Но человек закрепляет абонента, глядя
-             * на журнал, и ждёт увидеть его наверху с актуальными
-             * сведениями — а не с теми, что были при прошлом чтении.
-             *
-             * Единообразие здесь дороже экономии: любое действие
-             * над журналом обновляет всё, и не приходится помнить,
-             * какое из них исключение.
+             * Полное обновление, а не только перестановка групп: закреплённый
+             * мог не попасть в загруженную страницу журнала
              */
             refresh()
         }
@@ -2599,42 +2598,74 @@ class DialerViewModel @Inject constructor(
     }
 
     fun unpinNumber(e164: String) = viewModelScope.launch {
-        prefs.setPinnedNumbers(PinnedContacts.unpin(pinnedNumbers.value, e164))
+        prefs.setPinnedNumbers(PinnedContacts.unpinSubscriber(pinnedNumbers.value, e164, lookupKeyFor(e164)))
         // Как и закрепление: обновляем всё, а не только порядок групп
         refresh()
     }
 
-    fun isPinned(e164: String): Boolean = PinnedContacts.isPinned(pinnedNumbers.value, e164)
-
-    /** Переместить закреплённый номер на позицию вверх или вниз. */
-    fun movePinned(e164: String, up: Boolean) = viewModelScope.launch {
-        prefs.setPinnedNumbers(PinnedContacts.move(pinnedNumbers.value, e164, up))
+    /** Открепление из списка «Закреплённые» — по записи, а не по номеру. */
+    fun unpinKey(key: String) = viewModelScope.launch {
+        prefs.setPinnedNumbers(pinnedNumbers.value.filterNot { it == key })
+        refresh()
     }
 
-    /**
-     * Карточки закреплённых номеров для экрана настроек.
-     *
-     * Берутся из загруженного журнала: там уже есть имя, фотография
-     * и статистика. Отдельный запрос ради тех же данных был бы лишним.
-     *
-     * Номер, которого в загруженной части журнала нет, всё равно
-     * показывается — иначе открепить его было бы нечем.
+    fun isPinned(e164: String): Boolean =
+        PinnedContacts.isSubscriberPinned(pinnedNumbers.value, e164, lookupKeyFor(e164))
+
+    fun movePinned(key: String, up: Boolean) = viewModelScope.launch {
+        prefs.setPinnedNumbers(PinnedContacts.move(pinnedNumbers.value, key, up))
+    }
+
+    /*
+     * Перевод старых закреплений по номеру на контакты — как только
+     * загружены контакты, и после каждого их изменения (номер могли
+     * добавить в книгу). migrate() возвращает тот же список, если менять
+     * нечего: записи в настройки нет, цикла нет.
      */
+    init {
+        viewModelScope.launch {
+            combine(
+                prefs.pinnedNumbers,
+                _state.map { it.contacts }.distinctUntilChanged()
+            ) { pins, contacts -> pins to contacts }
+                .collect { (pins, contacts) ->
+                    if (pins.isEmpty() || contacts.isEmpty()) return@collect
+                    val byE164 = HashMap<String, String>()
+                    contacts.forEach { c -> c.numbers.forEach { byE164.putIfAbsent(it.e164, c.lookupKey) } }
+                    val migrated = PinnedContacts.migrate(pins) { byE164[it] }
+                    if (migrated !== pins) {
+                        Logger.i(TAG, "Закреплённые переведены на контакты: ${pins.size} → ${migrated.size}")
+                        prefs.setPinnedNumbers(migrated)
+                    }
+                }
+        }
+    }
+
     fun pinnedEntries(): List<PinnedEntry> {
-        val byE164 = state.value.callLog.associateBy { it.e164 }
-        return pinnedNumbers.value.map { e164 ->
-            val group = byE164[e164]
+        val contacts = state.value.contacts
+        val byLookup = contacts.associateBy { it.lookupKey }
+        return pinnedNumbers.value.map { raw ->
+            val pin = PinnedContacts.parse(raw)
+            val contact = pin.lookupKey?.let { byLookup[it] }
+                ?: contacts.firstOrNull { c -> c.numbers.any { it.e164 == pin.e164 } }
+            // Последний звонок этого контакта (с любого номера) или номера
+            val group = state.value.callLog.firstOrNull { g ->
+                (contact != null && g.contactId == contact.id) || g.e164 == pin.e164
+            }
+            val number = group?.number ?: contact?.numbers?.firstOrNull()?.value ?: pin.e164
             PinnedEntry(
-                e164 = e164,
-                displayName = group?.displayName,
-                formattedNumber = PhoneFormatter.format(group?.number ?: e164),
-                photoUri = group?.photoUri
+                key = raw,
+                e164 = group?.e164 ?: contact?.numbers?.firstOrNull()?.e164 ?: pin.e164,
+                displayName = contact?.displayName ?: group?.displayName,
+                formattedNumber = PhoneFormatter.format(number),
+                photoUri = contact?.photoUri ?: group?.photoUri
             )
         }
     }
 
-    /** Закреплённый номер для показа в настройках. */
     data class PinnedEntry(
+        /** Запись в настройках — для перестановки и открепления. */
+        val key: String,
         val e164: String,
         val displayName: String?,
         val formattedNumber: String,

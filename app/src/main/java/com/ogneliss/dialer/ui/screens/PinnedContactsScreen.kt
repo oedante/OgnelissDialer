@@ -62,7 +62,9 @@ fun PinnedContactsScreen(
     onAddFromContacts: () -> Unit
 ) {
     val pinnedNumbers by vm.pinnedNumbers.collectAsState()
-    val entries = remember(pinnedNumbers, vm.state.collectAsState().value.callLog) {
+    val uiState by vm.state.collectAsState()
+    // Контакты — тоже ключ: имя и фото закреплённого берутся из книги (1.3.2)
+    val entries = remember(pinnedNumbers, uiState.callLog, uiState.contacts) {
         vm.pinnedEntries()
     }
 
@@ -120,9 +122,11 @@ fun PinnedContactsScreen(
                     entry = entry,
                     canMoveUp = index > 0,
                     canMoveDown = index < entries.lastIndex,
-                    onMoveUp = { vm.movePinned(entry.e164, up = true) },
-                    onMoveDown = { vm.movePinned(entry.e164, up = false) },
-                    onUnpin = { vm.unpinNumber(entry.e164) }
+                    // По записи, а не по номеру (1.3.2): у закреплённого
+                    // контакта номер в записи может быть не тем, что в строке
+                    onMoveUp = { vm.movePinned(entry.key, up = true) },
+                    onMoveDown = { vm.movePinned(entry.key, up = false) },
+                    onUnpin = { vm.unpinKey(entry.key) }
                 )
                 OgnelissDivider()
             }
