@@ -376,11 +376,11 @@ android {
  * Блок kotlin { } со встроенным в AGP 9 Kotlin остаётся на месте —
  * убран был только jvmTarget, который теперь берётся из compileOptions.
  */
-kotlin {
-    compilerOptions {
-        freeCompilerArgs.add("-Xannotation-default-target=param-property")
-    }
-}
+/*
+ * 1.3.3 (Kotlin 2.4): флаг -Xannotation-default-target=param-property убран —
+ * в Kotlin 2.4 это поведение по умолчанию, компилятор называл флаг лишним.
+ * Блок kotlin { } остался пустым и удалён вместе с флагом.
+ */
 
 /**
  * ОТЧЁТ О СТАБИЛЬНОСТИ COMPOSE.

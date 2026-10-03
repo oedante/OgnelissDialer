@@ -43,6 +43,6 @@ object NumberDisplay {
             // Метка бесполезна, если у всех номеров она одинаковая:
             // три «Мобильный» ничего не различают
             allLabels.count { it == label } == 1
-        return if (labelIsUseful) label!! else shortLabel(number)
+        return if (labelIsUseful) label else shortLabel(number)
     }
 }

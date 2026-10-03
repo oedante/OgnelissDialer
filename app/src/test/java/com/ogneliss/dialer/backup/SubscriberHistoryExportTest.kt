@@ -19,7 +19,7 @@ import java.util.Locale
 class SubscriberHistoryExportTest {
 
     private val now = 1_700_000_000_000L
-    private val ru = Locale("ru")
+    private val ru = Locale.forLanguageTag("ru")
 
     private fun entry(
         type: CallType = CallType.INCOMING,

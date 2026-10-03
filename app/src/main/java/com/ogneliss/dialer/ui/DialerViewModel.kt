@@ -1125,9 +1125,10 @@ class DialerViewModel @Inject constructor(
         val contacts = when {
             freshContacts == null -> previousContacts
             providerAnsweredEmpty && previousContacts.isNotEmpty() -> previousContacts
-            // Слева — то же freshContacts, уже не null после первой ветки;
-            // запасной вариант оставлен ради ясности, а не по нужде
-            else -> freshContacts ?: previousContacts
+            // freshContacts здесь уже не null — это проверила первая ветка.
+            // 1.3.3: запасное «?: previousContacts» убрано — Kotlin 2.4
+            // предупреждал, что оно никогда не срабатывает
+            else -> freshContacts
         }
 
         /*

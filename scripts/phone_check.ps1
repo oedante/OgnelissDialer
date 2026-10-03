@@ -47,9 +47,29 @@ if ($json) {
 
 Step "3. Установка выпускной сборки"
 ./gradlew :app:installRelease
-Wait "Откройте Ogneliss, сделайте его приложением для набора номера по умолчанию и восстановите резервную копию. Затем 5 минут поработайте: журнал, карточка, клавиатура."
+Wait "Откройте Ogneliss, сделайте его приложением для набора номера по умолчанию и восстановите резервную копию."
 
-Step "4. Память (приложение должно быть открыто)"
-adb shell dumpsys meminfo $pkg | Select-String "TOTAL PSS|Java Heap|Native Heap"
+# Память — одинаковым сценарием, а не «5 минут работы» (1.3.3, 03.10.2026):
+# ручной сценарий каждый раз разный, TOTAL PSS прыгал на 20% при меньших
+# кучах. Здесь: холодный запуск журнала, 10 секунд, замер; три раза, медиана.
+Step "4. Память: холодный запуск журнала, 3 повтора"
+$pss = @()
+foreach ($i in 1..3) {
+    adb shell am force-stop $pkg
+    adb shell am start -W -n "$pkg/$pkg.MainActivity" | Out-Null
+    Start-Sleep -Seconds 10
+    $out = adb shell dumpsys meminfo $pkg
+    $m = [regex]::Match(($out -join "`n"), 'TOTAL PSS:\s+(\d+)')
+    $j = [regex]::Match(($out -join "`n"), 'Java Heap:\s+(\d+)')
+    $n = [regex]::Match(($out -join "`n"), 'Native Heap:\s+(\d+)')
+    if ($m.Success) {
+        $pss += [int]$m.Groups[1].Value
+        Write-Host ("  повтор {0}: TOTAL PSS {1:N1} МБ, Java {2:N1}, Native {3:N1}" -f $i, ($m.Groups[1].Value / 1024), ($j.Groups[1].Value / 1024), ($n.Groups[1].Value / 1024))
+    }
+}
+if ($pss.Count -gt 0) {
+    $median = ($pss | Sort-Object)[[int][math]::Floor($pss.Count / 2)]
+    Write-Host ("Медиана TOTAL PSS: {0:N1} МБ" -f ($median / 1024)) -ForegroundColor Green
+}
 
 Step "5. Ручная проверка — раздел «Что проверить» в docs\RELEASE_NOTES текущей версии"

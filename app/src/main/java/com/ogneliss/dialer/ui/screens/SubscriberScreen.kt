@@ -659,7 +659,7 @@ fun SubscriberScreen(
     val ringtoneLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        group?.contactId?.let { id ->
+        group.contactId?.let { id ->
             vm.setCustomRingtone(id, RingtonePicker.extractResult(result.data))
         }
     }
