@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -105,11 +104,13 @@ fun RowScope.QuickAction(
         if (LocalAppearance.current.buttonLabels) {
             Spacer(Modifier.height(6.dp))
 
-            Text(
+            // Две строки: длинные подписи есть не только в русском.
+            // FitText (1.3.2): слово длиннее кнопки уменьшается,
+            // а не рвётся посреди («Поделитьс / я» лёжа)
+            FitText(
                 label,
                 style = MaterialTheme.typography.labelSmall,
                 textAlign = TextAlign.Center,
-                // Две строки: длинные подписи есть не только в русском
                 maxLines = 2,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

@@ -59,9 +59,6 @@ class SettingsStateSource @Inject constructor(
         // ради двух переключателей не заводим
         .combine(prefs.proximityScreenOff) { a, v -> a.copy(proximityScreenOff = v) }
         .combine(prefs.callHideContactNumber) { a, v -> a.copy(callHideContactNumber = v) }
-        .combine(prefs.wallpaperBg) { a, v -> a.copy(wallpaperBg = v) }
-        .combine(prefs.wallpaperDim) { a, v -> a.copy(wallpaperDim = v) }
-        .combine(prefs.wallpaperBlur) { a, v -> a.copy(wallpaperBlur = v) }
 
     /** Жесты и отклик. */
     private val gestures: Flow<Gestures> = combine(
@@ -154,9 +151,6 @@ class SettingsStateSource @Inject constructor(
             buttonLabels = a.buttonLabels,
             proximityScreenOff = a.proximityScreenOff,
             callHideContactNumber = a.callHideContactNumber,
-            wallpaperBg = a.wallpaperBg,
-            wallpaperDim = a.wallpaperDim,
-            wallpaperBlur = a.wallpaperBlur,
             notesRetention = n.retention,
             notesRetentionScope = n.scope,
             language = n.language,
@@ -200,10 +194,7 @@ class SettingsStateSource @Inject constructor(
         val sortOrder: SortOrder,
         val buttonLabels: Boolean = true,
         val proximityScreenOff: Boolean = true,
-        val callHideContactNumber: Boolean = false,
-        val wallpaperBg: Boolean = false,
-        val wallpaperDim: Int = 35,
-        val wallpaperBlur: Int = 20
+        val callHideContactNumber: Boolean = false
     )
 
     private data class Notes(

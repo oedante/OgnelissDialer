@@ -141,7 +141,7 @@ object FakeCall {
             kotlinx.coroutines.CoroutineScope(
                 kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.IO
             ).launch {
-                runCatching { prefs.setFakeCallAt(0L) }
+                suspendRunCatching { prefs.setFakeCallAt(0L) }
                 pending.finish()
             }
         }

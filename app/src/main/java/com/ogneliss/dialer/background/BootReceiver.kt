@@ -34,7 +34,7 @@ class BootReceiver : BroadcastReceiver() {
         kotlinx.coroutines.CoroutineScope(
             kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.IO
         ).launch {
-            runCatching { reminders.restoreAfterBoot() }
+            suspendRunCatching { reminders.restoreAfterBoot() }
             pending.finish()
         }
     }

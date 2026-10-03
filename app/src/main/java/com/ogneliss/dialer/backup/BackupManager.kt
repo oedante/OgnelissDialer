@@ -75,7 +75,7 @@ class BackupManager @Inject constructor(
      * @return true при успехе
      */
     suspend fun export(target: Uri): Boolean = withContext(Dispatchers.IO) {
-        runCatching {
+        suspendRunCatching {
             val json = buildJson()
             context.contentResolver.openOutputStream(target)?.use { out ->
                 out.write(json.toString(2).toByteArray())
@@ -96,7 +96,7 @@ class BackupManager @Inject constructor(
      * не должен внезапно потерять это. Совпадающие ключи перезаписываются.
      */
     suspend fun import(source: Uri): Boolean = withContext(Dispatchers.IO) {
-        runCatching {
+        suspendRunCatching {
             val text = context.contentResolver.openInputStream(source)?.use {
                 it.readBytes().decodeToString()
             } ?: error("Не удалось открыть файл для чтения")

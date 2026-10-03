@@ -41,6 +41,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.CallMade
 import androidx.compose.material.icons.automirrored.filled.CallMissed
@@ -301,12 +303,12 @@ fun SubscriberScreen(
              */
             group.numbers.size > 1 -> group.numbers
                 .flatMap { number ->
-                    runCatching { vm.historyFor(number) }.getOrDefault(emptyList())
+                    suspendRunCatching { vm.historyFor(number) }.getOrDefault(emptyList())
                 }
                 .distinctBy { it.id }
                 .sortedByDescending { it.date }
 
-            else -> runCatching { vm.historyFor(group.number) }.getOrDefault(emptyList())
+            else -> suspendRunCatching { vm.historyFor(group.number) }.getOrDefault(emptyList())
         }
     }
 
@@ -508,7 +510,7 @@ fun SubscriberScreen(
      * идёт по индексу PhoneLookup и занимает миллисекунды.
      */
     val photoUri by produceState<String?>(initialValue = group.photoUri, group.e164) {
-        value = runCatching { vm.photoForNumber(group.number) }.getOrNull()
+        value = suspendRunCatching { vm.photoForNumber(group.number) }.getOrNull()
             ?: group.photoUri
     }
 
@@ -1952,14 +1954,32 @@ fun SubscriberScreen(
                         OgnelissPanel(title = stringResource(R.string.subscriber_details)) {
                             contact.emails.forEachIndexed { index, email ->
                                 if (index > 0) OgnelissDivider()
+                                /*
+                                 * Было (до 1.3.2): только нажатие на всю строку
+                                 * открывало почту; скопировать адрес было нельзя.
+                                 * Стало (1.3.2, 01.10.2026): справа те же кнопки,
+                                 * что у номеров, — «Написать» и «Скопировать».
+                                 * Нажатие на строку оставлено: к нему привыкли.
+                                 */
                                 DetailRow(
                                     icon = Icons.Default.Email,
                                     value = email,
                                     label = null,
-                                    // Почта нажимается: открывается почтовый
-                                    // клиент с заполненным адресом
                                     onClick = { vm.openEmail(email) }
-                                )
+                                ) {
+                                    NumberAction(
+                                        Icons.AutoMirrored.Filled.Send,
+                                        R.string.action_write_email
+                                    ) {
+                                        vm.openEmail(email)
+                                    }
+                                    NumberAction(
+                                        Icons.Default.ContentCopy,
+                                        R.string.action_copy_email
+                                    ) {
+                                        vm.copyEmail(email)
+                                    }
+                                }
                             }
 
                             contact.events.forEachIndexed { index, event ->
@@ -2727,7 +2747,9 @@ private fun DetailRow(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     value: String,
     label: String?,
-    onClick: (() -> Unit)?
+    onClick: (() -> Unit)?,
+    // Кнопки справа, как у номеров (1.3.2)
+    trailing: @Composable RowScope.() -> Unit = {}
 ) {
     Row(
         Modifier
@@ -2742,7 +2764,7 @@ private fun DetailRow(
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(Modifier.width(12.dp))
-        Column {
+        Column(Modifier.weight(1f)) {
             Text(value, style = MaterialTheme.typography.bodyLarge)
             label?.let {
                 Text(
@@ -2752,6 +2774,7 @@ private fun DetailRow(
                 )
             }
         }
+        trailing()
     }
 }
 

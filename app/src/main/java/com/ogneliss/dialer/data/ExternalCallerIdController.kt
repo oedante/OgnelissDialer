@@ -113,7 +113,7 @@ class ExternalCallerIdController @Inject constructor(
             // Таймаут обязателен: чужое приложение может уйти в сеть
             // и не ответить вовсе, а мы не имеем права ждать
             withTimeoutOrNull(LOOKUP_TIMEOUT_MS) {
-                runCatching {
+                suspendRunCatching {
                     directory.availableProviders()
                         .filter { it.id.toString() in enabled }
                         .firstNotNullOfOrNull { provider ->

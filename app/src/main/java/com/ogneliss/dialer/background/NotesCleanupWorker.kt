@@ -53,7 +53,7 @@ class NotesCleanupWorker @AssistedInject constructor(
             return Result.success()
         }
 
-        return runCatching {
+        return suspendRunCatching {
             val scope = prefs.notesRetentionScope.first()
             val allNotes = notes.all.first()
 
@@ -78,7 +78,7 @@ class NotesCleanupWorker @AssistedInject constructor(
              * каждая стоит пробуждения процесса, а работы здесь
              * на миллисекунды.
              */
-            runCatching { blockedCalls.purgeOlderThan() }
+            suspendRunCatching { blockedCalls.purgeOlderThan() }
                 .onFailure { Logger.w(TAG, "Не удалось очистить причины блокировки", it) }
 
             if (toDelete.isNotEmpty()) {

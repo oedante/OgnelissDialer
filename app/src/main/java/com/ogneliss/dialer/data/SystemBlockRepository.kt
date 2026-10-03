@@ -43,7 +43,7 @@ class SystemBlockRepository @Inject constructor(
     }
 
     suspend fun isBlocked(number: String): Boolean = withContext(Dispatchers.IO) {
-        runCatching {
+        suspendRunCatching {
             BlockedNumberContract.isBlocked(context, number)
         }.getOrDefault(false)
     }

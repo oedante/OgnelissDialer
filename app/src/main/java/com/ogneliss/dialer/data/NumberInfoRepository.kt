@@ -221,7 +221,7 @@ class NumberInfoRepository @Inject constructor(
              * getRegionCodeForNumber на странном номере может вернуть
              * что угодно.
              */
-            runCatching {
+            suspendRunCatching {
                 Locale.Builder()
                     .setLanguage(locale.language)
                     .setRegion(code)

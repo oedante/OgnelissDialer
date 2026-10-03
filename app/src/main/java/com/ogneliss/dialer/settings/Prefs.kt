@@ -267,9 +267,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val BUTTON_LABELS = booleanPreferencesKey("button_labels")
         val PROXIMITY_SCREEN_OFF = booleanPreferencesKey("proximity_screen_off")
         val CALL_HIDE_CONTACT_NUMBER = booleanPreferencesKey("call_hide_contact_number")
-        val WALLPAPER_BG = booleanPreferencesKey("wallpaper_bg")
-        val WALLPAPER_DIM = intPreferencesKey("wallpaper_dim")
-        val WALLPAPER_BLUR = intPreferencesKey("wallpaper_blur")
         // Поведение
         val HAPTIC = booleanPreferencesKey("haptic")
         val KEY_TONES = booleanPreferencesKey("key_tones")
@@ -484,15 +481,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      * самого номера. По умолчанию — нет: номер показывается.
      */
     val callHideContactNumber: Flow<Boolean> = data.map { it[Keys.CALL_HIDE_CONTACT_NUMBER] ?: false }
-
-    /*
-     * Обои рабочего стола как фон (1.3.0). Разбор — в WallpaperBackground.
-     * По умолчанию выключено: вид приложения не меняется сам.
-     * Приглушение по умолчанию 35 %, размытие — 20 px.
-     */
-    val wallpaperBg: Flow<Boolean> = data.map { it[Keys.WALLPAPER_BG] ?: false }
-    val wallpaperDim: Flow<Int> = data.map { it[Keys.WALLPAPER_DIM] ?: 35 }
-    val wallpaperBlur: Flow<Int> = data.map { it[Keys.WALLPAPER_BLUR] ?: 20 }
 
     // ── Поведение ──────────────────────────────────────────────────────────
     val haptic: Flow<Boolean> = data.map { it[Keys.HAPTIC] ?: true }
@@ -737,9 +725,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("proximity_screen_off", v) { it[Keys.PROXIMITY_SCREEN_OFF] = v }
     suspend fun setCallHideContactNumber(v: Boolean) =
         edit("call_hide_contact_number", v) { it[Keys.CALL_HIDE_CONTACT_NUMBER] = v }
-    suspend fun setWallpaperBg(v: Boolean) = edit("wallpaper_bg", v) { it[Keys.WALLPAPER_BG] = v }
-    suspend fun setWallpaperDim(v: Int) = edit("wallpaper_dim", v) { it[Keys.WALLPAPER_DIM] = v }
-    suspend fun setWallpaperBlur(v: Int) = edit("wallpaper_blur", v) { it[Keys.WALLPAPER_BLUR] = v }
     suspend fun setHaptic(v: Boolean) = edit("haptic", v) { it[Keys.HAPTIC] = v }
     suspend fun setKeyTones(v: Boolean) = edit("key_tones", v) { it[Keys.KEY_TONES] = v }
     suspend fun setGroupingMode(v: GroupingMode) =

@@ -7,6 +7,8 @@ import com.ogneliss.dialer.ui.theme.CallGreen
 import com.ogneliss.dialer.ui.theme.DeclineRed
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.util.TagCatalog
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.ui.text.style.TextOverflow
@@ -403,13 +405,13 @@ private fun InCallScreen(
      * и экран не ждёт результата.
      */
     val photoUri by produceState<String?>(initialValue = null, number) {
-        value = runCatching { contactsRepo.photoUriForNumber(number) }.getOrNull()
+        value = suspendRunCatching { contactsRepo.photoUriForNumber(number) }.getOrNull()
     }
     // Тип номера — только если он понадобится: настройка включена
     // и звонит сохранённый контакт
     val numberType by produceState<String?>(null, number, hideContactNumber, name) {
         value = if (hideContactNumber && !name.isNullOrBlank()) {
-            runCatching { contactsRepo.numberTypeLabel(number) }.getOrNull()
+            suspendRunCatching { contactsRepo.numberTypeLabel(number) }.getOrNull()
         } else null
     }
     /*
@@ -1032,15 +1034,23 @@ private fun InCallScreen(
                  * гудков записывать нечего.
                  */
                 if (state == Call.STATE_ACTIVE) {
-                    TextButton(onClick = { showNote = !showNote }) {
-                        Icon(Icons.Default.EditNote, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            stringResource(
-                                if (showNote) R.string.incall_note_hide
-                                else R.string.incall_note_add
-                            )
-                        )
+                    // Подпись — по настройке «Подписи под кнопками»
+                    // (1.3.2, отзыв в Google Play); без подписи значок
+                    // описан для TalkBack
+                    val noteLabel = stringResource(
+                        if (showNote) R.string.incall_note_hide
+                        else R.string.incall_note_add
+                    )
+                    if (com.ogneliss.dialer.ui.theme.LocalAppearance.current.buttonLabels) {
+                        TextButton(onClick = { showNote = !showNote }) {
+                            Icon(Icons.Default.EditNote, contentDescription = null)
+                            Spacer(Modifier.width(8.dp))
+                            Text(noteLabel)
+                        }
+                    } else {
+                        IconButton(onClick = { showNote = !showNote }) {
+                            Icon(Icons.Default.EditNote, contentDescription = noteLabel)
+                        }
                     }
                 }
 
@@ -1074,16 +1084,34 @@ private fun InCallScreen(
                      * высота текстовой кнопки — 40 dp, и промах мимо неё
                      * попадает в «Отклонить» рядом.
                      */
-                    TextButton(
-                        onClick = { showQuickReply = true },
-                        modifier = Modifier.heightIn(min = 56.dp)
-                    ) {
-                        // Стиль темы вместо числа: кегль подписи кнопки
-                        // задаётся типографикой, а не на месте
-                        Text(
-                            stringResource(R.string.quick_reply_action),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                    /*
+                     * Подпись — по настройке «Подписи под кнопками»
+                     * (1.3.2, 01.10.2026, отзыв в Google Play).
+                     * Было: текст показывался всегда, даже с выключенными
+                     * подписями. Стало: подписи выключены — только значок
+                     * сообщения той же высоты 56 dp; описание для TalkBack
+                     * остаётся.
+                     */
+                    val replyLabel = stringResource(R.string.quick_reply_action)
+                    if (com.ogneliss.dialer.ui.theme.LocalAppearance.current.buttonLabels) {
+                        TextButton(
+                            onClick = { showQuickReply = true },
+                            modifier = Modifier.heightIn(min = 56.dp)
+                        ) {
+                            // Стиль темы вместо числа: кегль подписи кнопки
+                            // задаётся типографикой, а не на месте
+                            Text(replyLabel, style = MaterialTheme.typography.bodyLarge)
+                        }
+                    } else {
+                        FilledTonalIconButton(
+                            onClick = { showQuickReply = true },
+                            modifier = Modifier.size(56.dp)
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.Message,
+                                contentDescription = replyLabel
+                            )
+                        }
                     }
                     Spacer(Modifier.height(12.dp))
                 }
@@ -1918,7 +1946,7 @@ private fun rememberCallerLabel(
 
     val name by produceState<String?>(null, raw) {
         value = if (raw.isBlank()) null
-        else runCatching { contactsRepo.lookupByNumber(raw) }.getOrNull()
+        else suspendRunCatching { contactsRepo.lookupByNumber(raw) }.getOrNull()
     }
     return name?.takeIf { it.isNotBlank() } ?: fallback
 }

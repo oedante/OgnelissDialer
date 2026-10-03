@@ -97,48 +97,69 @@ class ContentChangeObserver @Inject constructor(
      * Теперь подписка вызывается повторно после выдачи разрешений
      * (см. вызов в DialerViewModel).
      */
+    /*
+     * Какие подписки сейчас действуют. Меняются только из register()
+     * и unregister() — оба вызываются с главного потока.
+     */
+    private var callLogRegistered = false
+    private var contactsRegistered = false
+
     fun register() {
         /*
          * Повторный вызов допустим и безопасен.
          *
-         * Сначала снимаем прежнюю подписку: иначе при каждом возвращении
-         * на передний план добавлялся бы ещё один наблюдатель, и одно
-         * изменение журнала вызывало бы несколько перезагрузок подряд —
-         * лечение превратилось бы в новый источник тормозов.
+         * Было (до 1.3.2): сначала unregister(), потом подписка заново —
+         * чтобы при каждом возвращении на передний план не добавлялся ещё
+         * один наблюдатель (одно изменение журнала давало бы несколько
+         * перезагрузок подряд). Но register() зовут и при создании
+         * ViewModel, и на каждом ON_RESUME: подписка снималась и ставилась
+         * заново при каждом возврате, в журнале — «Наблюдение включено»
+         * дважды за 20 мс на каждом запуске (журнал 29.09–01.10.2026).
+         *
+         * Стало (1.3.2, 01.10.2026): каждая подписка ставится один раз
+         * и только если её ещё нет. Повторный вызов нужен для случая,
+         * когда разрешение выдали, пока приложение было в фоне, — тогда
+         * добавится только недостающая подписка.
          */
-        unregister()
-
         val cr = context.contentResolver
+        var added = false
 
-        if (PermissionGuard.canReadCallLog(context)) {
-            runCatching {
-                cr.registerContentObserver(CallLog.Calls.CONTENT_URI, true, callLogObserver)
-            }.onFailure { Logger.w(TAG, "Не удалось подписаться на журнал вызовов", it) }
-        } else {
-            PermissionGuard.logDenied("наблюдение за журналом", "READ_CALL_LOG")
+        if (!callLogRegistered) {
+            if (PermissionGuard.canReadCallLog(context)) {
+                runCatching {
+                    cr.registerContentObserver(CallLog.Calls.CONTENT_URI, true, callLogObserver)
+                    callLogRegistered = true
+                    added = true
+                }.onFailure { Logger.w(TAG, "Не удалось подписаться на журнал вызовов", it) }
+            } else {
+                PermissionGuard.logDenied("наблюдение за журналом", "READ_CALL_LOG")
+            }
         }
 
-        if (!PermissionGuard.canReadContacts(context)) {
-            PermissionGuard.logDenied("наблюдение за контактами", "READ_CONTACTS")
-            return
+        if (!contactsRegistered) {
+            if (PermissionGuard.canReadContacts(context)) {
+                runCatching {
+                    // notifyForDescendants = true обязательно: правки приходят
+                    // на дочерние URI конкретных контактов, а не на корневой.
+                    // Без этого флага изменение имени контакта останется незамеченным
+                    cr.registerContentObserver(
+                        ContactsContract.Contacts.CONTENT_URI, true, contactsObserver
+                    )
+                    contactsRegistered = true
+                    added = true
+                }.onFailure { Logger.w(TAG, "Не удалось подписаться на контакты", it) }
+            } else {
+                PermissionGuard.logDenied("наблюдение за контактами", "READ_CONTACTS")
+            }
         }
 
-        runCatching {
-            // notifyForDescendants = true обязательно: правки приходят
-            // на дочерние URI конкретных контактов, а не на корневой.
-            // Без этого флага изменение имени контакта останется незамеченным
-            cr.registerContentObserver(
-                ContactsContract.Contacts.CONTENT_URI, true, contactsObserver
-            )
-        }.onFailure { Logger.w(TAG, "Не удалось подписаться на контакты", it) }
-
-        Logger.i(TAG, "Наблюдение за изменениями включено")
+        if (added) Logger.i(TAG, "Наблюдение за изменениями включено")
     }
 
     fun unregister() {
-        runCatching {
-            context.contentResolver.unregisterContentObserver(callLogObserver)
-            context.contentResolver.unregisterContentObserver(contactsObserver)
-        }
+        runCatching { context.contentResolver.unregisterContentObserver(callLogObserver) }
+        runCatching { context.contentResolver.unregisterContentObserver(contactsObserver) }
+        callLogRegistered = false
+        contactsRegistered = false
     }
 }

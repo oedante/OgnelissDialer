@@ -88,7 +88,6 @@ class SettingsCommands @Inject constructor(
             "button_labels" -> prefs.setButtonLabels(value)
             "proximity_screen_off" -> prefs.setProximityScreenOff(value)
             "call_hide_contact_number" -> prefs.setCallHideContactNumber(value)
-            "wallpaper_bg" -> prefs.setWallpaperBg(value)
             "panel_swipe_nav" -> prefs.setPanelSwipeNav(value)
             "fake_call_button" -> prefs.setFakeCallButton(value)
             "haptic" -> prefs.setHaptic(value)
@@ -157,8 +156,6 @@ class SettingsCommands @Inject constructor(
             "swipe_sim" -> prefs.setSwipeSimMode(SwipeSimMode.from(value))
             "carrier_info" -> prefs.setCarrierInfo(CarrierInfoMode.from(value))
             "journal_style" -> prefs.setJournalStyle(JournalStyle.from(value))
-            "wallpaper_dim" -> value.toIntOrNull()?.let { prefs.setWallpaperDim(it) }
-            "wallpaper_blur" -> value.toIntOrNull()?.let { prefs.setWallpaperBlur(it) }
             "sort_order" -> prefs.setSortOrder(
                 runCatching { SortOrder.valueOf(value) }.getOrDefault(SortOrder.RELEVANCE)
             )
@@ -182,8 +179,6 @@ class SettingsCommands @Inject constructor(
         "swipe_sim" -> state.swipeSimMode.name
         "carrier_info" -> state.carrierInfo.name
         "journal_style" -> state.journalStyle.name
-        "wallpaper_dim" -> state.wallpaperDim.toString()
-        "wallpaper_blur" -> state.wallpaperBlur.toString()
         "notes_retention" -> state.notesRetention.name
         "notes_retention_scope" -> state.notesRetentionScope.name
         else -> ""
@@ -224,10 +219,6 @@ class SettingsCommands @Inject constructor(
                 GroupingMode.NONE -> R.string.grouping_none
             }
         )
-
-        "wallpaper_dim" -> context.getString(R.string.wallpaper_dim_value, state.wallpaperDim)
-        "wallpaper_blur" -> if (state.wallpaperBlur == 0) context.getString(R.string.wallpaper_blur_none)
-            else context.getString(R.string.wallpaper_blur_value, state.wallpaperBlur)
 
         "journal_style" -> context.getString(
             when (state.journalStyle) {
@@ -292,8 +283,6 @@ class SettingsCommands @Inject constructor(
             "swipe_sim" -> R.string.settings_swipe_sim
             "carrier_info" -> R.string.settings_carrier_info
             "journal_style" -> R.string.settings_journal_style
-            "wallpaper_dim" -> R.string.settings_wallpaper_dim
-            "wallpaper_blur" -> R.string.settings_wallpaper_blur
             "notes_retention" -> R.string.settings_notes_retention
             "notes_retention_scope" -> R.string.settings_notes_scope
             else -> R.string.nav_settings
@@ -332,7 +321,7 @@ class SettingsCommands @Inject constructor(
          * молча неработающий переключатель.
          */
         val SWITCH_KEYS = setOf(
-            "dynamic_color", "large_buttons", "show_photo", "button_labels", "proximity_screen_off", "call_hide_contact_number", "wallpaper_bg", "panel_swipe_nav",
+            "dynamic_color", "large_buttons", "show_photo", "button_labels", "proximity_screen_off", "call_hide_contact_number", "panel_swipe_nav",
             "fake_call_button",
             "haptic", "key_tones",
             "merge_calls", "remember_sim", "smart_speaker",
@@ -345,7 +334,7 @@ class SettingsCommands @Inject constructor(
         val CHOICE_KEYS = setOf(
             "language", "theme", "swipe_right", "swipe_left", "grouping", "sort_order",
             "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info",
-            "journal_style", "wallpaper_dim", "wallpaper_blur"
+            "journal_style"
         )
     }
 }

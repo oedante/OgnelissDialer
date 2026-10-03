@@ -75,6 +75,16 @@ object Logger {
         i("Logger", "Запись лога в файл: ${if (enabled) "включена" else "выключена"}")
     }
 
+    /*
+     * @JvmStatic обязателен для правила R8 (1.3.2, 01.10.2026).
+     *
+     * Было: Logger — object, его методы в байт-коде принадлежат
+     * экземпляру INSTANCE, а правило в proguard-rules.pro описывает
+     * статический d(...). Правило ни с чем не совпадало, отладочные
+     * вызовы и сборка их строк оставались в выпуске.
+     * Стало: d — статический метод, правило его находит и вырезает.
+     */
+    @JvmStatic
     fun d(tag: String, message: String) = log(Level.DEBUG, tag, message, null)
     fun i(tag: String, message: String) = log(Level.INFO, tag, message, null)
     fun w(tag: String, message: String, error: Throwable? = null) =

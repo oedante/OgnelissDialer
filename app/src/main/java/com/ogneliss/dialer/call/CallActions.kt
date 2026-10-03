@@ -63,8 +63,19 @@ class CallActions(
         start(Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/$digits")))
     }
 
-    fun openEmail(address: String) =
-        start(Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:$address")))
+    /*
+     * Было (до 1.3.2): Uri.parse("mailto:$address") и молчаливый провал,
+     * если почтового приложения нет. Стало (1.3.2, 01.10.2026):
+     * Uri.fromParts — адрес с «+», «?» или «#» не ломает ссылку;
+     * возвращается, удалось ли открыть, — карточка скажет, что почтового
+     * приложения нет, а не промолчит.
+     */
+    fun openEmail(address: String): Boolean = runCatching {
+        context.startActivity(
+            Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", address, null))
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        )
+    }.isSuccess
 
     fun viewContact(contactId: Long) = start(
         Intent(Intent.ACTION_VIEW,

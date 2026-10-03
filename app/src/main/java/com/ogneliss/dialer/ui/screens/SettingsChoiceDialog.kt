@@ -78,15 +78,6 @@ fun SettingsChoiceDialog(
             "RECENCY" to stringResource(R.string.sort_recency),
             "ALPHABET" to stringResource(R.string.sort_alphabet)
         )
-        "wallpaper_dim" -> listOf(0, 20, 35, 50, 70, 85).map {
-            it.toString() to stringResource(R.string.wallpaper_dim_value, it)
-        }
-        "wallpaper_blur" -> listOf(0, 10, 20, 35, 50, 80).map {
-            it.toString() to (
-                if (it == 0) stringResource(R.string.wallpaper_blur_none)
-                else stringResource(R.string.wallpaper_blur_value, it)
-            )
-        }
         "journal_style" -> listOf(
             "CARDS" to stringResource(R.string.journal_style_cards),
             "GROUPS" to stringResource(R.string.journal_style_groups)

@@ -12,6 +12,8 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -224,9 +226,14 @@ private fun ActionButton(
 /** Компактный индикатор SIM: «1» или «2» в рамке. */
 @Composable
 fun SimBadge(slotIndex: Int) {
+    // Описание для TalkBack (1.3.2): без него плашка читалась как «1»,
+    // похоже на счётчик звонков. Значок SIM вместо плашки — в фазе
+    // «Архитектура и интерфейс», вместе с дизайн-системой
+    val description = "SIM ${slotIndex + 1}"
     Surface(
         color = MaterialTheme.colorScheme.secondaryContainer,
-        shape = MaterialTheme.shapes.extraSmall
+        shape = MaterialTheme.shapes.extraSmall,
+        modifier = Modifier.clearAndSetSemantics { contentDescription = description }
     ) {
         Text(
             (slotIndex + 1).toString(),

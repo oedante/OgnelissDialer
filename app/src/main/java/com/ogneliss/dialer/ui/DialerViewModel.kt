@@ -680,7 +680,7 @@ class DialerViewModel @Inject constructor(
     }
 
     fun regroupOnly() = viewModelScope.launch {
-        runCatching {
+        suspendRunCatching {
             val groups = callLogLoader.regroup()
             _state.update { it.copy(callLog = groups) }
         }.onFailure { Logger.w(TAG, "Не удалось перегруппировать журнал", it) }
@@ -769,7 +769,7 @@ class DialerViewModel @Inject constructor(
      * сбой чтения, и стирать им прежние данные незачем.
      */
     fun reloadContacts() = viewModelScope.launch {
-        runCatching { contactsRepo.loadAll() }
+        suspendRunCatching { contactsRepo.loadAll() }
             .onFailure { Logger.w(TAG, "Повторное чтение контактов не удалось", it) }
             .getOrNull()
             ?.takeIf { it.isNotEmpty() }
@@ -1017,7 +1017,7 @@ class DialerViewModel @Inject constructor(
          * а работа теряется.
          */
         val contactsDeferred = appScope.async {
-            runCatching { contactsRepo.loadAll() }
+            suspendRunCatching { contactsRepo.loadAll() }
                 .onFailure { error ->
                     /*
                      * Отмена — не ошибка.
@@ -1033,7 +1033,7 @@ class DialerViewModel @Inject constructor(
                 .getOrNull()
         }
         val simsDeferred = async {
-            runCatching {
+            suspendRunCatching {
                 // В интерфейс попадают только карты, с которых можно
                 // звонить: активная карта не обязательно умеет голос
                 val all = simRepo.slotsAsync()
@@ -1066,7 +1066,7 @@ class DialerViewModel @Inject constructor(
             if (early.isNotEmpty()) {
                 _state.update { it.copy(sims = early) }
                 // Запоминаем для следующего запуска: показать сразу
-                runCatching { prefs.setSimCache(encodeSimCache(early)) }
+                suspendRunCatching { prefs.setSimCache(encodeSimCache(early)) }
             }
         }
 
@@ -1287,7 +1287,7 @@ class DialerViewModel @Inject constructor(
                     contactsRetries++
                     delay(delayMs)
 
-                    val loaded = runCatching { contactsRepo.loadAll() }.getOrNull()
+                    val loaded = suspendRunCatching { contactsRepo.loadAll() }.getOrNull()
                     if (!loaded.isNullOrEmpty()) {
                         Logger.i(TAG, "Контакты с попытки $contactsRetries: ${loaded.size}")
                         _state.update { it.copy(contacts = loaded) }
@@ -1348,7 +1348,7 @@ class DialerViewModel @Inject constructor(
          * на счётном пуле занимает потоки, которых там ровно по числу
          * ядер, и блокирует настоящие вычисления.
          */
-        runCatching { withContext(Dispatchers.IO) { contactActions.updateShortcuts(contacts, log) } }
+        suspendRunCatching { withContext(Dispatchers.IO) { contactActions.updateShortcuts(contacts, log) } }
             .onFailure { Logger.w(TAG, "Не удалось обновить ярлыки", it) }
 
         Stage.set("idle")
@@ -1429,7 +1429,7 @@ class DialerViewModel @Inject constructor(
             .map { it.number }
             .distinct()
 
-        val names = runCatching { externalCallerId.lookupBatch(unknown) }
+        val names = suspendRunCatching { externalCallerId.lookupBatch(unknown) }
             .getOrDefault(emptyMap())
         if (names.isEmpty()) return
 
@@ -1532,7 +1532,7 @@ class DialerViewModel @Inject constructor(
         ) {
             attempts++
 
-            val more = runCatching { callLogLoader.loadNextPage() }.getOrNull()
+            val more = suspendRunCatching { callLogLoader.loadNextPage() }.getOrNull()
                 ?: break
 
             _state.update { it.copy(callLog = more) }
@@ -1743,7 +1743,7 @@ class DialerViewModel @Inject constructor(
                 val email = state.value.contacts
                     .firstOrNull { c -> c.numbers.any { it.e164 == group.e164 } }
                     ?.emails?.firstOrNull()
-                email?.let { actions.openEmail(it) }
+                email?.let { openEmail(it) }
             }
             // Копирование делает то же, что пункт в шторке: обе точки
             // ведут в один метод, чтобы не разойтись при правках
@@ -2309,7 +2309,7 @@ class DialerViewModel @Inject constructor(
      *
      * @return текст или null, если историю не удалось прочитать
      */
-    suspend fun buildHistoryExport(group: CallLogGroup): String? = runCatching {
+    suspend fun buildHistoryExport(group: CallLogGroup): String? = suspendRunCatching {
         withContext(defaultDispatcher) {
             val entries = callLogRepo.historyFor(group.number, limit = EXPORT_LIMIT)
             SubscriberHistoryExport.asText(
@@ -2344,7 +2344,7 @@ class DialerViewModel @Inject constructor(
      * мегабайта. Кому нужно больше, тому нужен не телефон, а выгрузка
      * у оператора.
      */
-    suspend fun buildCallLogCsv(): String? = runCatching {
+    suspend fun buildCallLogCsv(): String? = suspendRunCatching {
         withContext(defaultDispatcher) {
             val entries = callLogRepo.loadEntries(limit = CSV_EXPORT_LIMIT, offset = 0)
 
@@ -2733,7 +2733,7 @@ class DialerViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
 
     suspend fun availableLookupProviders(): List<DirectoryProvider> =
-        runCatching { directoryRepo.availableProviders() }.getOrDefault(emptyList())
+        suspendRunCatching { directoryRepo.availableProviders() }.getOrDefault(emptyList())
 
     fun setLookupProvider(id: Long, enabled: Boolean) = viewModelScope.launch {
         val current = prefs.externalLookupIds.first()
@@ -2778,7 +2778,7 @@ class DialerViewModel @Inject constructor(
      * по размеру). Склеиваем в хронологическом порядке — сначала
      * старый, потом новый, — иначе читать его придётся с середины.
      */
-    suspend fun buildLogText(): String? = runCatching {
+    suspend fun buildLogText(): String? = suspendRunCatching {
         withContext(defaultDispatcher) {
             Logger.files()
                 .sortedBy { it.name }
@@ -2840,7 +2840,7 @@ class DialerViewModel @Inject constructor(
      * чтобы поведение не разошлось при правках.
      */
     fun openEmail(address: String) {
-        actions.openEmail(address)
+        if (!actions.openEmail(address)) notify(R.string.msg_no_email_app)
     }
 
     /**
@@ -2919,7 +2919,7 @@ class DialerViewModel @Inject constructor(
     val fakeCallCaller = prefs.fakeCallNumber
         .map { number ->
             if (number.isBlank()) "" else {
-                runCatching { contactsRepo.lookupByNumber(number) }.getOrNull()
+                suspendRunCatching { contactsRepo.lookupByNumber(number) }.getOrNull()
                     ?: PhoneFormatter.format(number)
             }
         }
@@ -2946,6 +2946,27 @@ class DialerViewModel @Inject constructor(
                 notify(R.string.msg_number_copied)
             }
         }.onFailure { Logger.w(TAG, "Не удалось скопировать номер", it) }
+    }
+
+    /**
+     * Копирование адреса почты из карточки (1.3.2, 01.10.2026) —
+     * так же, как номера: на Android 13+ система сама показывает,
+     * что скопировано, поэтому своё сообщение — только до 13.
+     */
+    fun copyEmail(address: String) {
+        runCatching {
+            val clipboard = app.getSystemService(android.content.ClipboardManager::class.java)
+            clipboard?.setPrimaryClip(
+                android.content.ClipData.newPlainText(
+                    app.getString(R.string.action_copy_email),
+                    address
+                )
+            )
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                notify(R.string.msg_email_copied)
+            }
+        }.onFailure { Logger.w(TAG, "Не удалось скопировать адрес", it) }
     }
 
     fun removeRule(pattern: String) = viewModelScope.launch {
@@ -2994,7 +3015,7 @@ class DialerViewModel @Inject constructor(
      * миллисекунды.
      */
     suspend fun photoForNumber(number: String): String? =
-        runCatching { contactsRepo.photoUriForNumber(number) }.getOrNull()
+        suspendRunCatching { contactsRepo.photoUriForNumber(number) }.getOrNull()
 
     fun createContact(number: String, name: String? = null) =
         contactActions.create(number, name)
@@ -3064,6 +3085,10 @@ class DialerViewModel @Inject constructor(
      * Возвращает null, если предупреждать не о чем.
      */
     fun checkBeforeDial(number: String): PreDialWarning.Warning? {
+        // Экстренный номер — без подсказок (1.3.2): «может оказаться
+        // платным» под 112 неверно и отвлекает в худший момент
+        if (com.ogneliss.dialer.util.EmergencyNumbers.isEmergency(app, number)) return null
+
         val e164 = PhoneFormatter.toE164(number)
         val known = state.value.contacts.any { c -> c.numbers.any { it.e164 == e164 } }
         val info = state.value.numberInfo[e164]

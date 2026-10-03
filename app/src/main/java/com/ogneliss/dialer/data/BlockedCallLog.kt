@@ -110,7 +110,7 @@ class BlockedCallLog @Inject constructor(
      */
     suspend fun purgeOlderThan(days: Int = RETENTION_DAYS) {
         val before = System.currentTimeMillis() - days * DAY_MILLIS
-        runCatching { dao.deleteOlderThan(before) }
+        suspendRunCatching { dao.deleteOlderThan(before) }
             .onSuccess { Logger.d(TAG, "Очищены причины блокировки старше $days дней") }
     }
 

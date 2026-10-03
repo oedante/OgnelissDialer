@@ -216,21 +216,6 @@ object SettingsRegistry {
             keywordsRes = R.string.keywords_theme
         ),
         SettingEntry(
-            "wallpaper_bg", SettingsCategory.APPEARANCE,
-            R.string.settings_wallpaper_bg, R.string.settings_wallpaper_bg_text,
-            SettingKind.Switch("wallpaper_bg")
-        ),
-        SettingEntry(
-            "wallpaper_dim", SettingsCategory.APPEARANCE,
-            R.string.settings_wallpaper_dim, R.string.settings_wallpaper_dim_text,
-            SettingKind.Choice("wallpaper_dim")
-        ),
-        SettingEntry(
-            "wallpaper_blur", SettingsCategory.APPEARANCE,
-            R.string.settings_wallpaper_blur, R.string.settings_wallpaper_blur_text,
-            SettingKind.Choice("wallpaper_blur")
-        ),
-        SettingEntry(
             "dynamic_color", SettingsCategory.APPEARANCE,
             R.string.settings_dynamic_color, R.string.settings_dynamic_color_text,
             SettingKind.Switch("dynamic_color")

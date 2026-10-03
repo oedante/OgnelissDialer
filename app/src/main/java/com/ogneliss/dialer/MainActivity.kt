@@ -147,27 +147,8 @@ class MainActivity : ComponentActivity() {
             val vm: DialerViewModel = hiltViewModel()
             val theme by vm.prefs.theme.collectAsState(ThemeMode.SYSTEM)
             val dynamic by vm.prefs.dynamicColor.collectAsState(false)
-            // Обои рабочего стола как фон — разбор в WallpaperBackground
-            val wallpaper by vm.prefs.wallpaperBg.collectAsState(false)
-            val wallpaperDim by vm.prefs.wallpaperDim.collectAsState(35)
-            val wallpaperBlur by vm.prefs.wallpaperBlur.collectAsState(20)
-            val wallpaperAllowed = wallpaper &&
-                theme != ThemeMode.BLACK_AMOLED && theme != ThemeMode.HIGH_CONTRAST
-            LaunchedEffect(wallpaperAllowed, wallpaperBlur) {
-                if (wallpaperAllowed) {
-                    com.ogneliss.dialer.ui.theme.WallpaperBackground.apply(
-                        this@MainActivity, true, wallpaperBlur,
-                        androidx.compose.ui.graphics.Color.Transparent
-                    )
-                }
-            }
 
-            OgnelissDialerTheme(
-                themeMode = theme,
-                dynamicColor = dynamic,
-                wallpaper = wallpaper,
-                wallpaperDim = wallpaperDim
-            ) {
+            OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic) {
                 // Раскладка окна: телефон, лёжа, раскладушка, планшет.
                 // Разбор — в ui/adaptive/WindowLayout.kt
                 ProvideWindowLayout(this@MainActivity) {

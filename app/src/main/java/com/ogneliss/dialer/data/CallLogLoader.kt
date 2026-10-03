@@ -200,7 +200,7 @@ class CallLogLoader @Inject constructor(
         val loaded = pager.loadedCount
         if (loaded <= CallLogPager.DEFAULT_PAGE_SIZE) return loadFirstPage()
 
-        val page = runCatching {
+        val page = suspendRunCatching {
             repository.loadEntries(limit = loaded, offset = 0)
         }.getOrElse {
             // Отмена — не ошибка: разбор у loadNextPage
@@ -247,12 +247,12 @@ class CallLogLoader @Inject constructor(
          */
         totalsJob?.cancel()
         totalsJob = scope.launch {
-            totals = runCatching { repository.totalsByNumber() }
+            totals = suspendRunCatching { repository.totalsByNumber() }
                 .onFailure { Logger.w(TAG, "Не удалось посчитать итоги журнала", it) }
                 .getOrDefault(emptyMap())
         }
 
-        val page = runCatching {
+        val page = suspendRunCatching {
             repository.loadEntries(limit = CallLogPager.DEFAULT_PAGE_SIZE)
         }.getOrElse {
             // Отмена — не ошибка чтения: разбор у loadNextPage ниже
@@ -273,7 +273,7 @@ class CallLogLoader @Inject constructor(
     suspend fun loadNextPage(): List<CallLogGroup>? {
         if (!pager.canLoadMore) return null
 
-        val page = runCatching {
+        val page = suspendRunCatching {
             repository.loadEntries(limit = pager.nextLimit, offset = pager.nextOffset)
         }.getOrElse {
             /*

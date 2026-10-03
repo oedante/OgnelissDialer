@@ -1,0 +1,140 @@
+<ru-RU>
+• Очистка журнала и удаление свайпом теперь спрашивают подтверждение.
+• Закреплённые карточки не пропадают, если журнал пуст.
+• Мелкие улучшения оформления.
+</ru-RU>
+<ar>
+• مسح السجل والحذف بالسحب يطلبان الآن التأكيد.
+• البطاقات المثبّتة لا تختفي عندما يكون السجل فارغًا.
+• تحسينات طفيفة في التصميم.
+</ar>
+<cs-CZ>
+• Vymazání historie a mazání přejetím nyní vyžadují potvrzení.
+• Připnuté karty nezmizí, když je historie prázdná.
+• Drobná vylepšení vzhledu.
+</cs-CZ>
+<da-DK>
+• Rydning af opkaldsloggen og sletning med swipe beder nu om bekræftelse.
+• Fastgjorte kort forsvinder ikke, når loggen er tom.
+• Mindre forbedringer af udseendet.
+</da-DK>
+<de-DE>
+• Anrufliste leeren und Löschen per Wischgeste fragen jetzt nach einer Bestätigung.
+• Angeheftete Karten verschwinden nicht mehr, wenn die Anrufliste leer ist.
+• Kleinere Verbesserungen der Darstellung.
+</de-DE>
+<en-US>
+• Clearing the call log and deleting by swipe now ask for confirmation.
+• Pinned cards no longer disappear when the call log is empty.
+• Minor design improvements.
+</en-US>
+<es-419>
+• Borrar el historial y eliminar con un deslizamiento ahora piden confirmación.
+• Las tarjetas fijadas ya no desaparecen si el historial está vacío.
+• Pequeñas mejoras de diseño.
+</es-419>
+<es-ES>
+• Borrar el historial y eliminar con un deslizamiento ahora piden confirmación.
+• Las tarjetas fijadas ya no desaparecen si el historial está vacío.
+• Pequeñas mejoras de diseño.
+</es-ES>
+<fi-FI>
+• Puheluhistorian tyhjennys ja poisto pyyhkäisemällä kysyvät nyt vahvistuksen.
+• Kiinnitetyt kortit eivät katoa, kun historia on tyhjä.
+• Pieniä ulkoasun parannuksia.
+</fi-FI>
+<fr-FR>
+• Effacer le journal et supprimer par balayage demandent désormais une confirmation.
+• Les fiches épinglées ne disparaissent plus quand le journal est vide.
+• Petites améliorations visuelles.
+</fr-FR>
+<hi-IN>
+• कॉल लॉग साफ़ करना और स्वाइप से हटाना अब पुष्टि माँगते हैं।
+• कॉल लॉग खाली होने पर पिन किए गए कार्ड गायब नहीं होते।
+• डिज़ाइन में छोटे सुधार।
+</hi-IN>
+<hu-HU>
+• A híváslista törlése és a húzással való törlés most megerősítést kér.
+• A rögzített kártyák nem tűnnek el, ha a híváslista üres.
+• Kisebb megjelenésbeli javítások.
+</hu-HU>
+<id>
+• Menghapus riwayat panggilan dan menghapus dengan geser kini meminta konfirmasi.
+• Kartu yang disematkan tidak lagi hilang saat riwayat kosong.
+• Perbaikan kecil tampilan.
+</id>
+<it-IT>
+• Cancellare la cronologia ed eliminare con uno scorrimento ora chiedono conferma.
+• Le schede fissate non scompaiono più quando la cronologia è vuota.
+• Piccoli miglioramenti grafici.
+</it-IT>
+<iw-IL>
+• ניקוי יומן השיחות ומחיקה בהחלקה מבקשים כעת אישור.
+• כרטיסים מוצמדים כבר לא נעלמים כשהיומן ריק.
+• שיפורי עיצוב קטנים.
+</iw-IL>
+<ja-JP>
+• 通話履歴の消去とスワイプでの削除は、確認してから実行されるようになりました。
+• 通話履歴が空でも、固定したカードは消えません。
+• デザインの細かな改善。
+</ja-JP>
+<ko-KR>
+• 통화 기록 지우기와 스와이프 삭제 시 이제 확인을 묻습니다.
+• 통화 기록이 비어 있어도 고정한 카드가 사라지지 않습니다.
+• 사소한 디자인 개선.
+</ko-KR>
+<nl-NL>
+• Het gesprekslogboek wissen en verwijderen met vegen vragen nu om bevestiging.
+• Vastgezette kaarten verdwijnen niet meer als het logboek leeg is.
+• Kleine verbeteringen aan het uiterlijk.
+</nl-NL>
+<no-NO>
+• Tømming av samtaleloggen og sletting med sveip ber nå om bekreftelse.
+• Festede kort forsvinner ikke når loggen er tom.
+• Mindre forbedringer av utseendet.
+</no-NO>
+<pl-PL>
+• Czyszczenie rejestru połączeń i usuwanie przesunięciem wymagają teraz potwierdzenia.
+• Przypięte karty nie znikają, gdy rejestr jest pusty.
+• Drobne ulepszenia wyglądu.
+</pl-PL>
+<pt-BR>
+• Limpar o histórico e excluir com um deslize agora pedem confirmação.
+• Os cartões fixados não somem mais quando o histórico está vazio.
+• Pequenas melhorias de visual.
+</pt-BR>
+<ro>
+• Ștergerea jurnalului și ștergerea prin glisare cer acum confirmare.
+• Fișele fixate nu mai dispar când jurnalul este gol.
+• Mici îmbunătățiri de aspect.
+</ro>
+<sk>
+• Vymazanie histórie a mazanie potiahnutím teraz vyžadujú potvrdenie.
+• Pripnuté karty nezmiznú, keď je história prázdna.
+• Drobné vylepšenia vzhľadu.
+</sk>
+<sv-SE>
+• Att rensa samtalsloggen och radera med svep ber nu om bekräftelse.
+• Fästa kort försvinner inte längre när loggen är tom.
+• Mindre förbättringar av utseendet.
+</sv-SE>
+<th>
+• การล้างประวัติการโทรและการลบด้วยการปัดจะขอการยืนยันก่อน
+• การ์ดที่ปักหมุดไว้จะไม่หายไปเมื่อประวัติการโทรว่าง
+• ปรับปรุงการออกแบบเล็กน้อย
+</th>
+<tr-TR>
+• Arama geçmişini temizleme ve kaydırarak silme artık onay istiyor.
+• Sabitlenen kartlar, geçmiş boşken artık kaybolmuyor.
+• Küçük tasarım iyileştirmeleri.
+</tr-TR>
+<vi>
+• Xóa nhật ký cuộc gọi và xóa bằng thao tác vuốt giờ sẽ hỏi xác nhận.
+• Thẻ đã ghim không còn biến mất khi nhật ký trống.
+• Cải thiện nhỏ về giao diện.
+</vi>
+<zh-CN>
+• 清空通话记录和滑动删除现在都会先请求确认。
+• 通话记录为空时，已固定的卡片不再消失。
+• 细节外观优化。
+</zh-CN>

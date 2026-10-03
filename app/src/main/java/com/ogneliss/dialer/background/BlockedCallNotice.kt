@@ -125,7 +125,7 @@ object BlockedCallNotice {
              */
             val pending = goAsync()
             CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
-                runCatching { blocking.removeRule(number) }
+                suspendRunCatching { blocking.removeRule(number) }
                     .onFailure { Logger.w(TAG, "Не удалось снять правило: ${it.message}") }
 
                 androidx.core.app.NotificationManagerCompat.from(context).cancel(idFor(number))

@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.call
 
+import com.ogneliss.dialer.util.EmergencyNumbers
 import android.telecom.Call
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -60,6 +61,17 @@ class OgnelissCallScreeningService : CallScreeningService() {
 
         scope.launch {
             val response = try {
+                /*
+                 * Обратный звонок экстренной службы (1.3.2, 01.10.2026).
+                 * Он приходит с незнакомого номера, и «блокировка всех
+                 * незнакомых» могла бы его отклонить. Два часа после
+                 * исходящего на экстренный номер пропускаем всё.
+                 */
+                if (EmergencyNumbers.recentlyCalled(applicationContext)) {
+                    Logger.i(TAG, "Недавно был экстренный вызов — входящий пропущен без проверки")
+                    return@launch respondSafely(callDetails, allowResponse())
+                }
+
                 val e164 = PhoneFormatter.toE164(number.orEmpty())
                 val input = collector.collect(number, e164)
                 val decision = SpamPolicy.evaluate(input)
@@ -144,9 +156,13 @@ class OgnelissCallScreeningService : CallScreeningService() {
                 allowResponse()
             }
 
-            runCatching { respondToCall(callDetails, response) }
-                .onFailure { Logger.e(TAG, "Не удалось ответить системе", it) }
+            respondSafely(callDetails, response)
         }
+    }
+
+    private fun respondSafely(callDetails: Call.Details, response: CallResponse) {
+        runCatching { respondToCall(callDetails, response) }
+            .onFailure { Logger.e(TAG, "Не удалось ответить системе", it) }
     }
 
     private fun allowResponse(): CallResponse = CallResponse.Builder().build()

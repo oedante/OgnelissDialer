@@ -135,7 +135,7 @@ class ContactCache @Inject constructor(
     suspend fun save(contacts: List<Contact>) {
         if (contacts.isEmpty()) return
 
-        runCatching {
+        suspendRunCatching {
             dao.replaceAll(
                 /*
                  * Дубли отсеиваются и при записи.

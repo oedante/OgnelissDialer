@@ -150,7 +150,7 @@ class OgnelissApp : Application(), Configuration.Provider, ImageLoaderFactory {
 
         // Настройка чтения асинхронна, до её загрузки пишем в файл по умолчанию
         appScope.launch {
-            runCatching { Logger.setFileLogging(prefs.fileLogging.first()) }
+            suspendRunCatching { Logger.setFileLogging(prefs.fileLogging.first()) }
                 .onFailure { Logger.e("App", "Не удалось прочитать настройку логирования", it) }
         }
 

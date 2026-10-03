@@ -100,10 +100,13 @@ fun CallButtons(
                         // подписал слоты, выбор становится осмысленным,
                         // а не «первая или вторая»
                         if (sim.label.isNotBlank() && sim.label != "SIM ${sim.slotIndex + 1}") {
-                            Text(
+                            // FitText (1.3.2): лёжа имя обрезалось до
+                            // «Beeline2» / «Beeline0» — карты не различить
+                            FitText(
                                 sim.label,
                                 style = MaterialTheme.typography.labelSmall,
-                                maxLines = 1
+                                maxLines = 1,
+                                minScale = 0.7f
                             )
                         }
                     }

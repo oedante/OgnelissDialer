@@ -104,10 +104,10 @@ class FakeCallActivity : ComponentActivity() {
             LaunchedEffect(Unit) {
                 val chosen = prefs.fakeCallNumber.first()
                 caller = if (chosen.isNotBlank()) {
-                    val name = runCatching { contactsRepo.lookupByNumber(chosen) }.getOrNull()
+                    val name = suspendRunCatching { contactsRepo.lookupByNumber(chosen) }.getOrNull()
                     (name ?: PhoneFormatter.format(chosen)) to chosen
                 } else {
-                    val random = runCatching {
+                    val random = suspendRunCatching {
                         contactsRepo.loadAll().filter { it.numbers.isNotEmpty() }.randomOrNull()
                     }.getOrNull()
 

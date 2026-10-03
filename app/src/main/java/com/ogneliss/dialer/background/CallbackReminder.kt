@@ -107,7 +107,7 @@ object CallbackReminder {
             kotlinx.coroutines.CoroutineScope(
                 kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.IO
             ).launch {
-                runCatching { reminders.markFired(number) }
+                suspendRunCatching { reminders.markFired(number) }
                 pending.finish()
             }
 
