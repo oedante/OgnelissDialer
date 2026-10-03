@@ -11990,7 +11990,6 @@ Landroidx/work/WorkInfo$State;
 HSPLandroidx/work/WorkInfo$State;->$values()[Landroidx/work/WorkInfo$State;
 HSPLandroidx/work/WorkInfo$State;-><clinit>()V
 HSPLandroidx/work/WorkInfo$State;-><init>(Ljava/lang/String;I)V
-HSPLandroidx/work/WorkInfo$State;->isFinished()Z
 HSPLandroidx/work/WorkInfo$State;->values()[Landroidx/work/WorkInfo$State;
 Landroidx/work/WorkManager;
 HSPLandroidx/work/WorkManager;-><clinit>()V
@@ -12282,7 +12281,6 @@ HSPLandroidx/work/impl/WorkerWrapper;->access$getWorkDatabase$p(Landroidx/work/i
 HSPLandroidx/work/impl/WorkerWrapper;->access$getWorkTaskExecutor$p(Landroidx/work/impl/WorkerWrapper;)Landroidx/work/impl/utils/taskexecutor/TaskExecutor;
 HSPLandroidx/work/impl/WorkerWrapper;->access$getWorkerJob$p(Landroidx/work/impl/WorkerWrapper;)Lkotlinx/coroutines/CompletableJob;
 HSPLandroidx/work/impl/WorkerWrapper;->access$onWorkFinished(Landroidx/work/impl/WorkerWrapper;Landroidx/work/ListenableWorker$Result;)Z
-HSPLandroidx/work/impl/WorkerWrapper;->access$resetWorkerStatus(Landroidx/work/impl/WorkerWrapper;I)Z
 HSPLandroidx/work/impl/WorkerWrapper;->access$runWorker(Landroidx/work/impl/WorkerWrapper;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 HSPLandroidx/work/impl/WorkerWrapper;->createWorkDescription(Ljava/util/List;)Ljava/lang/String;
 HSPLandroidx/work/impl/WorkerWrapper;->getWorkGenerationalId()Landroidx/work/impl/model/WorkGenerationalId;
@@ -12291,7 +12289,6 @@ HSPLandroidx/work/impl/WorkerWrapper;->handleResult(Landroidx/work/ListenableWor
 HSPLandroidx/work/impl/WorkerWrapper;->launch()Lcom/google/common/util/concurrent/ListenableFuture;
 HSPLandroidx/work/impl/WorkerWrapper;->onWorkFinished(Landroidx/work/ListenableWorker$Result;)Z
 HSPLandroidx/work/impl/WorkerWrapper;->resetPeriodic()Z
-HSPLandroidx/work/impl/WorkerWrapper;->resetWorkerStatus(I)Z
 HSPLandroidx/work/impl/WorkerWrapper;->runWorker$lambda$1(Landroidx/work/impl/WorkerWrapper;)Ljava/lang/Boolean;
 HSPLandroidx/work/impl/WorkerWrapper;->runWorker(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 HSPLandroidx/work/impl/WorkerWrapper;->setSucceeded(Landroidx/work/ListenableWorker$Result;)Z
@@ -12319,14 +12316,9 @@ HSPLandroidx/work/impl/WorkerWrapper$Builder;->withRuntimeExtras(Landroidx/work/
 Landroidx/work/impl/WorkerWrapper$Resolution;
 HSPLandroidx/work/impl/WorkerWrapper$Resolution;-><init>()V
 HSPLandroidx/work/impl/WorkerWrapper$Resolution;-><init>(Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-Landroidx/work/impl/WorkerWrapper$Resolution$Failed;
 Landroidx/work/impl/WorkerWrapper$Resolution$Finished;
 HSPLandroidx/work/impl/WorkerWrapper$Resolution$Finished;-><init>(Landroidx/work/ListenableWorker$Result;)V
 HSPLandroidx/work/impl/WorkerWrapper$Resolution$Finished;->getResult()Landroidx/work/ListenableWorker$Result;
-Landroidx/work/impl/WorkerWrapper$Resolution$ResetWorkerStatus;
-HSPLandroidx/work/impl/WorkerWrapper$Resolution$ResetWorkerStatus;-><init>(I)V
-HSPLandroidx/work/impl/WorkerWrapper$Resolution$ResetWorkerStatus;-><init>(IILkotlin/jvm/internal/DefaultConstructorMarker;)V
-HSPLandroidx/work/impl/WorkerWrapper$Resolution$ResetWorkerStatus;->getReason()I
 Landroidx/work/impl/WorkerWrapper$launch$1;
 HSPLandroidx/work/impl/WorkerWrapper$launch$1;-><init>(Landroidx/work/impl/WorkerWrapper;Lkotlin/coroutines/Continuation;)V
 HSPLandroidx/work/impl/WorkerWrapper$launch$1;->create(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
@@ -15008,7 +15000,7 @@ Lkotlin/coroutines/CombinedContext;
 HSPLkotlin/coroutines/CombinedContext;-><init>(Lkotlin/coroutines/CoroutineContext;Lkotlin/coroutines/CoroutineContext$Element;)V
 HSPLkotlin/coroutines/CombinedContext;->equals(Ljava/lang/Object;)Z
 HSPLkotlin/coroutines/CombinedContext;->fold(Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-HPLkotlin/coroutines/CombinedContext;->get(Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
+HSPLkotlin/coroutines/CombinedContext;->get(Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
 HSPLkotlin/coroutines/CombinedContext;->minusKey(Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext;
 HSPLkotlin/coroutines/CombinedContext;->plus(Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
 Lkotlin/coroutines/Continuation;
