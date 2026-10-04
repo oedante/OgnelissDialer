@@ -1,0 +1,6 @@
+﻿  пропуск BaselineProfileGenerator.generate
+  ПРОВАЛ  ScreenBenchmark.startupWarm — java.lang.IllegalStateException: После подготовки вместо журнала открылся окно другого приложения: com.android.systemui — замер был бы недостоверен. Снимок и дерево окон: setup-failed-1791091846689.png / .xml в выходных файлах замеров. | 	at com.ogneliss.benchmark.DeviceSetup.verifyMainScreen(DeviceSetup.kt:119) | 	at com.ogneliss.benchmark.DeviceSetup.prepare(DeviceSetup.kt:86)
+  ок      ScreenBenchmark.openCard
+  ок      ScreenBenchmark.openDialpad
+  ок      StartupBenchmark.startupNoCompilation
+  ПРОВАЛ  StartupBenchmark.scrollCallLog — нет текста (вероятно, процесс замеров аварийно завершился)
