@@ -1,5 +1,11 @@
 package com.ogneliss.dialer
 
+import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Box
 import com.ogneliss.dialer.ui.adaptive.ProvideWindowLayout
 import kotlinx.coroutines.launch
 import android.content.Intent
@@ -259,23 +265,26 @@ class MainActivity : ComponentActivity() {
                      * а приложение получало SecurityException при каждом
                      * обращении к журналу и контактам.
                      */
-                        PermissionWizardScreen(
-                            isDefaultDialer = isDefault,
-                            onRequestDefaultDialer = { DefaultDialer.request(this) },
-                            onOpenSystemSettings = {
-                                DefaultDialer.openSystemDefaultApps(this)
-                            },
-                            onFinished = { onboardingDone = true }
-                        )
+                        // Метка экрана — для проверки в замерах (1.3.3), см. screenTag
+                        Box(Modifier.screenTag("permission_wizard")) {
+                            PermissionWizardScreen(
+                                isDefaultDialer = isDefault,
+                                onRequestDefaultDialer = { DefaultDialer.request(this@MainActivity) },
+                                onOpenSystemSettings = {
+                                    DefaultDialer.openSystemDefaultApps(this@MainActivity)
+                                },
+                                onFinished = { onboardingDone = true }
+                            )
+                        }
                     }
 
-                    else -> RootScreen(
+                    else -> Box(Modifier.screenTag("root_screen")) { RootScreen(
                         permissionsJustGranted = permissionsJustGranted,
                         onPermissionsHandled = { permissionsJustGranted = false },
                         isDefaultDialer = isDefault,
-                        onRequestDefault = { DefaultDialer.request(this) },
+                        onRequestDefault = { DefaultDialer.request(this@MainActivity) },
                         onOpenSystemSettings = {
-                            DefaultDialer.openSystemDefaultApps(this)
+                            DefaultDialer.openSystemDefaultApps(this@MainActivity)
                         },
                         prefilledNumber = numberFromIntent(currentIntent),
                         prefillToken = intentToken,
@@ -286,7 +295,7 @@ class MainActivity : ComponentActivity() {
                         // Списки блокировки из уведомления о заблокированном
                         openBlockLists = currentIntent
                             ?.getBooleanExtra(EXTRA_OPEN_BLOCK_LISTS, false) == true
-                    )
+                    ) }
                 }
             }
             }
@@ -390,3 +399,19 @@ class MainActivity : ComponentActivity() {
         intent?.takeIf { it.action == ACTION_OPEN_CARD }?.getStringExtra(EXTRA_CARD_NUMBER)
 
 }
+
+/*
+ * Метка экрана для замеров (1.3.3, 03.10.2026).
+ *
+ * Замеры трижды мерили не тот экран: мастер разрешений, экран согласия,
+ * снова мастер — и это было видно только по сгенерированному профилю.
+ * Теперь DeviceSetup в модуле benchmark после подготовки запускает
+ * приложение и проверяет, что на экране root_screen, а не
+ * permission_wizard или экран согласия. testTagsAsResourceId делает
+ * метку видимой для UI Automator; на пользователя не влияет.
+ */
+@OptIn(androidx.compose.ui.ExperimentalComposeUiApi::class)
+private fun Modifier.screenTag(tag: String): Modifier = this
+    .fillMaxSize()
+    .semantics { testTagsAsResourceId = true }
+    .testTag(tag)

@@ -38,11 +38,19 @@ object DeviceSetup {
     private const val PACKAGE = "com.ogneliss.dialer"
     private const val ROLE_DIALER = "android.app.role.DIALER"
 
-    /** Те же, что проверяет мастер разрешений (PermissionGuard). */
+    /*
+     * Все разрешения из AppPermissions — и обязательные, и нет.
+     * Было (до 03.10.2026): шесть из PermissionGuard, без ANSWER_PHONE_CALLS
+     * и READ_PHONE_NUMBERS, которые мастер тоже считает обязательными, —
+     * и замеры опять мерили мастер (профиль: PermissionWizardScreenKt).
+     * Разрешения, которых нет на этой версии Android, pm grant отклонит —
+     * это не ошибка.
+     */
     private val PERMISSIONS = listOf(
+        "CALL_PHONE", "READ_PHONE_STATE", "ANSWER_PHONE_CALLS", "READ_PHONE_NUMBERS",
         "READ_CALL_LOG", "WRITE_CALL_LOG",
         "READ_CONTACTS", "WRITE_CONTACTS",
-        "CALL_PHONE", "READ_PHONE_STATE"
+        "POST_NOTIFICATIONS", "BLUETOOTH_CONNECT"
     )
 
     /*
@@ -73,6 +81,27 @@ object DeviceSetup {
                 "--user 0 $ROLE_DIALER $PACKAGE"
         }
         acceptConsent(device)
+        verifyMainScreen(device)
+    }
+
+    /*
+     * Главная защита: после подготовки на экране должен быть журнал
+     * (root_screen), а не мастер или экран согласия. Без этой проверки
+     * ошибка подготовки видна только по профилю, и то не сразу.
+     */
+    private fun verifyMainScreen(device: UiDevice) {
+        device.executeShellCommand("am start -W -n $PACKAGE/$PACKAGE.MainActivity")
+        val main = device.wait(Until.findObject(By.res("root_screen")), 5_000)
+        if (main == null) {
+            val shown = when {
+                device.findObject(By.res("permission_wizard")) != null ->
+                    "мастер разрешений — не хватает разрешения или роли"
+                device.findObject(By.res(CONSENT_ACCEPT)) != null -> "экран согласия"
+                else -> "неизвестный экран"
+            }
+            error("После подготовки вместо журнала открылся $shown — замер был бы недостоверен")
+        }
+        device.executeShellCommand("am force-stop $PACKAGE")
     }
 
     /** Принять условия, если экран согласия показан; уже принято — ничего не делать. */

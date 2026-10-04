@@ -42,12 +42,17 @@ $benchClasses = "com.ogneliss.benchmark.ScreenBenchmark,com.ogneliss.benchmark.S
 function Run-Bench([string]$name, [string[]]$extra) {
     Write-Host "--- Замеры: $name ---" -ForegroundColor Cyan
     $started = Get-Date
+    adb logcat -c   # чистый logcat: при сбое сохраним только этот прогон
     ./gradlew :benchmark:connectedBenchmarkReleaseAndroidTest @extra "-Pandroid.testInstrumentationRunnerArguments.class=$benchClasses" "-Pandroid.testInstrumentationRunnerArguments.cardNumber=$CardNumber" | Out-Host
     # | Out-Host: иначе вывод Gradle стал бы возвращаемым значением функции
     $json = Get-ChildItem benchmark\build\outputs\connected_android_test_additional_output -Recurse -Filter *benchmarkData.json -ErrorAction SilentlyContinue |
         Where-Object { $_.LastWriteTime -gt $started } | Sort-Object LastWriteTime | Select-Object -Last 1
     if (-not $json) {
-        Write-Host "Файл результатов не найден — пришлите вывод замеров и отчёт benchmark\build\reports\androidTests." -ForegroundColor Yellow
+        # Сбой процесса замеров («Test failed with status -1») причину
+        # не показывает — она только в logcat телефона
+        $log = "docs\baseline\logcat-$name.txt"
+        adb logcat -d -v threadtime | Out-File -Encoding utf8 $log
+        Write-Host "Замеры не дали результата. Logcat сохранён: $log — пришлите его." -ForegroundColor Yellow
         return $null
     }
     $dest = "docs\baseline\benchmarkData-$name.json"

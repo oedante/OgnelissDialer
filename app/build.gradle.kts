@@ -465,7 +465,8 @@ val composeUiVersion =
     if (composeLegacy) libs.versions.composeUiLegacy.get() else libs.versions.composeUi.get()
 
 if (composeLegacy) {
-    logger.lifecycle("Compose: прежний вариант для замера «до» — BOM $composeBomVersion, откат до $composeUiVersion")
+    // Латиницей: консоль Windows показывает кириллицу из Gradle кракозябрами
+    logger.lifecycle("Compose LEGACY build (before-measurement): BOM $composeBomVersion, forced $composeUiVersion")
     configurations.configureEach {
         resolutionStrategy {
             eachDependency {
