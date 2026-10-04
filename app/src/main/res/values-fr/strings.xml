@@ -454,8 +454,6 @@
     <string name="swipe_positional_text">La part de la distance après laquelle la ligne se déplace toute seule. Une valeur basse donne une impression d’incontrôlable lors des gestes rapides.</string>
     <string name="swipe_velocity_title">Vitesse du geste bref</string>
     <string name="swipe_velocity_text">La vitesse à laquelle un geste court suffit. Une valeur basse attrape le défilement ordinaire quand le doigt part légèrement de travers.</string>
-    <string name="swipe_horizontal_title">Exiger un départ horizontal</string>
-    <string name="swipe_horizontal_text">Un mouvement vertical va directement à la liste et le balayage n’intercepte pas le défilement. Utile si votre doigt décrit un arc.</string>
     <string name="unit_dp">dp</string>
     <string name="unit_dp_per_second">dp/s</string>
     <string name="date_group_today">Aujourd’hui</string>

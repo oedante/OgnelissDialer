@@ -66,6 +66,14 @@ object DeviceSetup {
 
     fun prepare() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        /*
+         * Экран мог погаснуть и заблокироваться за долгую сборку (04.10.2026:
+         * прогон 21 минуту, тёплый запуск упал — поверх журнала было окно
+         * com.android.systemui). Будим и снимаем блокировку без пароля;
+         * phone_check.ps1 к тому же держит экран включённым на время замеров.
+         */
+        device.wakeUp()
+        device.executeShellCommand("wm dismiss-keyguard")
         if (!traceProcessorCleaned) {
             device.executeShellCommand("rm -f /data/local/tmp/trace_processor_shell")
             traceProcessorCleaned = true
@@ -128,10 +136,11 @@ object DeviceSetup {
      * в benchmark/build/outputs/connected_android_test_additional_output.
      */
     private fun saveScreen(device: UiDevice): String = runCatching {
-        val dir = java.io.File(
-            InstrumentationRegistry.getInstrumentation().context.externalMediaDirs.first(),
-            "additional_test_output"
-        ).apply { mkdirs() }
+        // Каталог дополнительных выходных файлов передаёт сам AGP
+        // (additionalTestOutputDir) и забирает его на компьютер после прогона
+        val outDir = InstrumentationRegistry.getArguments().getString("additionalTestOutputDir")
+            ?: "/sdcard/Android/media/${InstrumentationRegistry.getInstrumentation().context.packageName}/additional_test_output"
+        val dir = java.io.File(outDir).apply { mkdirs() }
         val stamp = System.currentTimeMillis()
         device.takeScreenshot(java.io.File(dir, "setup-failed-$stamp.png"))
         device.dumpWindowHierarchy(java.io.File(dir, "setup-failed-$stamp.xml"))

@@ -4,9 +4,7 @@ import kotlin.math.abs
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableState
@@ -219,10 +217,25 @@ fun SwipeRevealRow(
         }
     }
 
+    /*
+     * НОВЫЙ API СВАЙПА (1.3.3, 04.10.2026, Compose 1.12).
+     *
+     * Состояние — только якоря; пороги и анимация — в revealFlingBehavior
+     * (RevealFlingBehavior.kt), с нашим настраиваемым порогом скорости:
+     * стандартный AnchoredDraggableDefaults.flingBehavior порог скорости
+     * не принимает (зашит 125 dp/с, у нас 450). Прежний конструктор
+     * с порогами Compose 1.12 пометил устаревшим.
+     */
     val dragState = remember(rememberedAnchors, tuning) {
         AnchoredDraggableState(
             initialValue = RevealState.CLOSED,
-            anchors = rememberedAnchors,
+            anchors = rememberedAnchors
+        )
+    }
+
+    val revealFling = remember(dragState, tuning, density) {
+        revealFlingBehavior(
+            state = dragState,
             /*
              * ПОРОГ ЗАЩЁЛКИВАНИЯ.
              *
@@ -235,7 +248,6 @@ fun SwipeRevealRow(
              * результат предсказуем и случайных срабатываний нет.
              */
             positionalThreshold = { distance -> distance * tuning.positionalThreshold },
-
             /*
              * ПОРОГ СКОРОСТИ.
              *
@@ -245,9 +257,7 @@ fun SwipeRevealRow(
              */
             velocityThreshold = {
                 with(density) { tuning.velocityDpPerSecond.dp.toPx() }
-            },
-            snapAnimationSpec = spring(),
-            decayAnimationSpec = exponentialDecay()
+            }
         )
     }
 
@@ -629,7 +639,19 @@ fun SwipeRevealRow(
                      * чей палец при листании идёт по дуге — а таких
                      * большинство при управлении одной рукой.
                      */
-                    startDragImmediately = !tuning.requireHorizontalStart,
+                    /*
+                     * startDragImmediately убран (1.3.3): в Compose 1.12 его
+                     * больше нет. Жест начинается после порога касания,
+                     * а во время анимации строки — сразу, это делает сама
+                     * библиотека. Так и работала настройка по умолчанию
+                     * («только по горизонтали» включена).
+                     */
+                    flingBehavior = revealFling,
+                    // Явно, хотя это и значения по умолчанию: тогда компилятор
+                    // однозначно выбирает новую перегрузку, а не устаревшую
+                    // со startDragImmediately
+                    interactionSource = null,
+                    overscrollEffect = null,
                     // Жест включён, если возможен хоть один сценарий:
                     // панель или прямое действие. Раньше здесь стояла
                     // проверка только на панели, из-за чего свайп

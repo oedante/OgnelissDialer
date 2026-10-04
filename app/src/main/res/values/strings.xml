@@ -484,8 +484,6 @@
     <string name="swipe_positional_text">The share of the distance after which the row snaps on its own. A low value feels uncontrollable during quick movements.</string>
     <string name="swipe_velocity_title">Flick speed</string>
     <string name="swipe_velocity_text">The speed at which a short flick is enough. A low value catches ordinary scrolling when your finger moves at a slight angle.</string>
-    <string name="swipe_horizontal_title">Require a horizontal start</string>
-    <string name="swipe_horizontal_text">A vertical movement goes to the list immediately and the swipe does not intercept scrolling. Helps if your finger travels in an arc.</string>
     <string name="unit_dp">dp</string>
     <string name="unit_dp_per_second">dp/s</string>
     <string name="date_group_today">Today</string>

@@ -451,8 +451,6 @@
     <string name="swipe_positional_text">Доля пути, после которой строка доезжает сама. Малое значение при быстром движении делает жест неуправляемым.</string>
     <string name="swipe_velocity_title">Скорость броска</string>
     <string name="swipe_velocity_text">Скорость, при которой хватает короткого движения. Низкое значение ловит обычную прокрутку, если палец идёт под небольшим углом.</string>
-    <string name="swipe_horizontal_title">Требовать горизонтальное начало</string>
-    <string name="swipe_horizontal_text">Вертикальное движение сразу отдаётся списку, и свайп не перехватывает прокрутку. Помогает, если палец идёт по дуге.</string>
     <string name="unit_dp">dp</string>
     <string name="unit_dp_per_second">dp/с</string>
     <string name="date_group_today">Сегодня</string>

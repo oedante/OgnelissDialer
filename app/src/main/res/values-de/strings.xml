@@ -456,8 +456,6 @@
     <string name="swipe_positional_text">Der Anteil der Strecke, ab dem die Zeile von selbst einrastet. Ein niedriger Wert wirkt bei schnellen Bewegungen unkontrollierbar.</string>
     <string name="swipe_velocity_title">Schwunggeschwindigkeit</string>
     <string name="swipe_velocity_text">Die Geschwindigkeit, bei der eine kurze Bewegung genügt. Ein niedriger Wert erfasst normales Scrollen, wenn der Finger leicht schräg läuft.</string>
-    <string name="swipe_horizontal_title">Waagerechten Beginn verlangen</string>
-    <string name="swipe_horizontal_text">Eine senkrechte Bewegung geht sofort an die Liste, und das Wischen fängt das Scrollen nicht ab. Hilfreich, wenn der Finger im Bogen läuft.</string>
     <string name="unit_dp">dp</string>
     <string name="unit_dp_per_second">dp/s</string>
     <string name="date_group_today">Heute</string>

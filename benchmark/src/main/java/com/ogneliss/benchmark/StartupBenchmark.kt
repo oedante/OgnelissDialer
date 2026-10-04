@@ -6,9 +6,6 @@ import androidx.benchmark.macro.StartupTimingMetric
 import androidx.benchmark.macro.FrameTimingMetric
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Direction
-import androidx.test.uiautomator.Until
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -90,13 +87,18 @@ class StartupBenchmark {
     ) {
         startActivityAndWait()
 
-        val list = device.findObject(By.scrollable(true)) ?: return@measureRepeated
-        // Настройка жеста: без неё UiAutomator скроллит рывками,
-        // и метрика измеряет не прокрутку, а сам тест
-        list.setGestureMargin(device.displayWidth / 5)
-
+        /*
+         * Жест по координатам, а не UiObject2.scroll (04.10.2026): на Compose 1.12
+         * найденный объект списка устаревал между прокрутками, и замер падал
+         * без текста ошибки. От 3/4 до 1/4 высоты по центру — середина
+         * журнала, мимо нижней панели; вертикальный жест не задевает свайпы
+         * строк. 20 шагов — плавный палец, а не рывок.
+         */
+        val x = device.displayWidth / 2
+        val from = device.displayHeight * 3 / 4
+        val to = device.displayHeight / 4
         repeat(3) {
-            list.scroll(Direction.DOWN, 0.8f)
+            device.swipe(x, from, x, to, 20)
             device.waitForIdle()
         }
     }

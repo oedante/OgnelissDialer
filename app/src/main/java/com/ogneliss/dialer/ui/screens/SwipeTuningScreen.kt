@@ -131,16 +131,15 @@ fun SwipeTuningScreen(
                 onChange = { draft = draft.copy(velocityDpPerSecond = it) }
             )
 
-            OgnelissListRow(
-                headline = stringResource(R.string.swipe_horizontal_title),
-                supporting = stringResource(R.string.swipe_horizontal_text),
-                trailing = {
-                    Switch(
-                        checked = draft.requireHorizontalStart,
-                        onCheckedChange = { draft = draft.copy(requireHorizontalStart = it) }
-                    )
-                }
-            )
+            /*
+             * Переключатель «Свайп только по горизонтали» убран (1.3.3,
+             * 04.10.2026). Он управлял startDragImmediately, которого
+             * в Compose 1.12 больше нет: жест всегда начинается после порога
+             * касания — так и работало включённое положение (по умолчанию).
+             * Выключенное повторить нельзя, и переключатель ничего бы
+             * не менял. Значение в настройках оставлено — его читают
+             * резервные копии прежних версий.
+             */
 
             // Подсказка о том, что настройки сохраняются сами: без неё
             // возникает вопрос «а где кнопка Сохранить»
