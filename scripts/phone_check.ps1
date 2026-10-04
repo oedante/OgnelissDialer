@@ -35,7 +35,40 @@ if ($LASTEXITCODE -ne 0) {
 
 # 1.3.3: и холодный запуск (StartupBenchmark) — команда profileinstaller
 # на телефоне проходит (result=14), раньше этих цифр не было
-$benchClasses = "com.ogneliss.benchmark.ScreenBenchmark,com.ogneliss.benchmark.StartupBenchmark"
+# Весь пакет, а не список классов (04.10.2026): «ScreenBenchmark,StartupBenchmark»
+# через -P до телефона не доходил — запускался только первый класс,
+# холодный запуск не мерился. Генератор профиля в обычном прогоне
+# пропускается сам.
+$benchFilter = "-Pandroid.testInstrumentationRunnerArguments.package=com.ogneliss.benchmark"
+
+# Итог каждого замера — прямо в консоль и в файл docs\baseline\tests-<метка>.txt
+# (04.10.2026): причина падения была только в HTML-отчёте, а logcat
+# на телефоне пуст. Источник — XML-результаты Gradle этого прогона.
+function Show-TestResults([string]$name, [datetime]$started) {
+    $xmls = Get-ChildItem benchmark\build\outputs\androidTest-results -Recurse -Filter "TEST-*.xml" -ErrorAction SilentlyContinue |
+        Where-Object { $_.LastWriteTime -gt $started }
+    $lines = @()
+    foreach ($x in $xmls) {
+        [xml]$doc = Get-Content $x.FullName -Encoding UTF8
+        foreach ($tc in $doc.SelectNodes("//testcase")) {
+            $title = "$($tc.classname.Split('.')[-1]).$($tc.name)"
+            $fail = $tc.SelectSingleNode("failure")
+            if ($tc.SelectSingleNode("skipped")) {
+                $lines += "  пропуск $title"
+            } elseif ($fail) {
+                $text = ($fail.InnerText.Trim() -split "`n" | Select-Object -First 3) -join " | "
+                if (-not $text) { $text = $fail.GetAttribute("message") }
+                if (-not $text) { $text = "нет текста (вероятно, процесс замеров аварийно завершился)" }
+                $lines += "  ПРОВАЛ  $title — $text"
+            } else {
+                $lines += "  ок      $title"
+            }
+        }
+    }
+    if ($lines.Count -eq 0) { $lines = @("  результатов тестов не найдено") }
+    $lines | ForEach-Object { if ($_ -like "*ПРОВАЛ*") { Write-Host $_ -ForegroundColor Yellow } else { Write-Host $_ } }
+    $lines | Out-File -Encoding utf8 "docs\baseline\tests-$name.txt"
+}
 
 # Один прогон замеров; возвращает путь к сохранённому файлу или $null.
 # Файл берётся только свежий — старый от прошлого прогона не подхватится.
@@ -43,8 +76,9 @@ function Run-Bench([string]$name, [string[]]$extra) {
     Write-Host "--- Замеры: $name ---" -ForegroundColor Cyan
     $started = Get-Date
     adb logcat -c   # чистый logcat: при сбое сохраним только этот прогон
-    ./gradlew :benchmark:connectedBenchmarkReleaseAndroidTest @extra "-Pandroid.testInstrumentationRunnerArguments.class=$benchClasses" "-Pandroid.testInstrumentationRunnerArguments.cardNumber=$CardNumber" | Out-Host
+    ./gradlew :benchmark:connectedBenchmarkReleaseAndroidTest @extra $benchFilter "-Pandroid.testInstrumentationRunnerArguments.cardNumber=$CardNumber" | Out-Host
     # | Out-Host: иначе вывод Gradle стал бы возвращаемым значением функции
+    Show-TestResults $name $started
     $json = Get-ChildItem benchmark\build\outputs\connected_android_test_additional_output -Recurse -Filter *benchmarkData.json -ErrorAction SilentlyContinue |
         Where-Object { $_.LastWriteTime -gt $started } | Sort-Object LastWriteTime | Select-Object -Last 1
     if (-not $json) {
@@ -105,7 +139,13 @@ Wait "Откройте Ogneliss, сделайте его приложением 
 # Память — одинаковым сценарием, а не «5 минут работы» (1.3.3, 03.10.2026):
 # ручной сценарий каждый раз разный, TOTAL PSS прыгал на 20% при меньших
 # кучах. Здесь: холодный запуск журнала, 10 секунд, замер; три раза, медиана.
-Step "4. Память: холодный запуск журнала, 3 повтора"
+# 04.10.2026: первый запуск после восстановления копии дал 162 МБ против
+# 110–116 у остальных и сдвинул медиану — теперь один разогревочный запуск
+# не считается.
+Step "4. Память: разогрев + 3 холодных запуска журнала"
+adb shell am force-stop $pkg
+adb shell am start -W -n "$pkg/$pkg.MainActivity" | Out-Null
+Start-Sleep -Seconds 10
 $pss = @()
 foreach ($i in 1..3) {
     adb shell am force-stop $pkg

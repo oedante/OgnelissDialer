@@ -2,7 +2,9 @@ package com.ogneliss.benchmark
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.Direction
+import androidx.test.uiautomator.StaleObjectException
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 
@@ -112,17 +114,41 @@ object DeviceSetup {
             return
         }
         // Флажок может быть ниже края экрана: текст условий длинный
-        val box = device.findObject(By.res(CONSENT_CHECKBOX))
-            ?: device.findObject(By.scrollable(true))
+        if (device.findObject(By.res(CONSENT_CHECKBOX)) == null) {
+            device.findObject(By.scrollable(true))
                 ?.scrollUntil(Direction.DOWN, Until.findObject(By.res(CONSENT_CHECKBOX)))
-        checkNotNull(box) { "Экран согласия: флажок «принимаю» не найден — замер был бы недостоверен" }
-        box.click()
+        }
         device.waitForIdle()
-        device.findObject(By.res(CONSENT_ACCEPT)).click()
+        check(clickFresh(device, By.res(CONSENT_CHECKBOX))) {
+            "Экран согласия: флажок «принимаю» не найден — замер был бы недостоверен"
+        }
+        device.waitForIdle()
+        check(clickFresh(device, By.res(CONSENT_ACCEPT).enabled(true))) {
+            "Экран согласия: кнопка «Принять» не нажалась"
+        }
         check(device.wait(Until.gone(By.res(CONSENT_ACCEPT)), 5_000)) {
             "Экран согласия не закрылся после «Принять»"
         }
         device.executeShellCommand("am force-stop $PACKAGE")
+    }
+
+    /*
+     * Нажатие с повтором (04.10.2026). На Compose 1.12 экран согласия
+     * перерисовывается между поиском объекта и нажатием — найденный
+     * UiObject2 устаревал: StaleObjectException в acceptConsent, тёплый
+     * запуск не мерился. Каждая попытка ищет объект заново.
+     */
+    private fun clickFresh(device: UiDevice, selector: BySelector): Boolean {
+        repeat(5) {
+            val obj = device.wait(Until.findObject(selector), 2_000) ?: return@repeat
+            try {
+                obj.click()
+                return true
+            } catch (e: StaleObjectException) {
+                device.waitForIdle()
+            }
+        }
+        return false
     }
 
     private const val CONSENT_ACCEPT = "consent_accept"
