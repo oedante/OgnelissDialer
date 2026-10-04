@@ -61,6 +61,30 @@ for p, pkg, t in files:
             problems.append(f"{p}: {name} (объявлен в {', '.join(sorted(pkgs))}) — нет импорта")
             break
 
+# ── private верхнего уровня, использованный в другом файле (04.10.2026) ──
+# Сборка упала: RevealState объявлен private в SwipeRevealRow.kt,
+# а использовался в RevealFlingBehavior.kt того же пакета. Импорт тут
+# ни при чём — private на верхнем уровне виден только в своём файле.
+PRIV = re.compile(r'^private\s+(?:(?:enum|data|sealed|abstract|open|inline|value)\s+)*'
+                  r'(?:class|object|interface|fun|val|var)\s+(?:<[^>]+>\s+)?'
+                  r'(?:[\w.<>?, ]+\.)?(\w+)', re.M)  # у расширения имя — после получателя: fun Modifier.x()
+private_decls = {}
+for p, pkg, t in files:
+    if '/main/' not in p:
+        continue
+    for name in PRIV.findall(t):
+        private_decls.setdefault((pkg, name), set()).add(p)
+for p, pkg, t in files:
+    body = strip(re.sub(r'^(package|import)\s[^\n]*\n', '', t, flags=re.M))
+    for (dpkg, name), owners in private_decls.items():
+        if dpkg != pkg or p in owners or len(name) < 3:
+            continue
+        if re.search(r'\b(fun|class|object|interface|val|var)\s+' + name + r'\b', body):
+            continue
+        if re.search(r'(?<![\w.])' + name + r'\b', body):
+            owner = sorted(owners)[0].rsplit('/', 1)[-1]
+            problems.append(f"{p}: {name} — private в {owner}, из другого файла не виден")
+
 print("=" * 70)
 print(f"ПРОВЕРКА ИМПОРТОВ: замечаний — {len(problems)}")
 print("=" * 70)

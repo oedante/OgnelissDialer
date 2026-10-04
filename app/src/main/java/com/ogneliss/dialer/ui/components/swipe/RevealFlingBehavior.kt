@@ -27,9 +27,12 @@ import kotlin.math.abs
  *  - медленнее — к соседнему якорю, только если пройдено больше доли
  *    positionalThreshold пути между ними, иначе обратно.
  * Отсчёт — от якоря, на котором строка стояла до жеста (settledValue).
+ *
+ * Обобщена по типу якоря: RevealState объявлен private в SwipeRevealRow.kt,
+ * а выбору цели его значения не нужны (сборка 04.10.2026 упала на этом).
  */
-internal fun revealFlingBehavior(
-    state: AnchoredDraggableState<RevealState>,
+internal fun <T> revealFlingBehavior(
+    state: AnchoredDraggableState<T>,
     positionalThreshold: (distance: Float) -> Float,
     velocityThreshold: () -> Float
 ): TargetedFlingBehavior = snapFlingBehavior(
@@ -38,8 +41,8 @@ internal fun revealFlingBehavior(
     snapAnimationSpec = spring()
 )
 
-private class RevealSnapLayoutInfo(
-    private val state: AnchoredDraggableState<RevealState>,
+private class RevealSnapLayoutInfo<T>(
+    private val state: AnchoredDraggableState<T>,
     private val positionalThreshold: (distance: Float) -> Float,
     private val velocityThreshold: () -> Float
 ) : SnapLayoutInfoProvider {
