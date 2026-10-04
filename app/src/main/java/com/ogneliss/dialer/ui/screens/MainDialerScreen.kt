@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 
 import com.ogneliss.dialer.data.PinnedContacts
 import com.ogneliss.dialer.ui.theme.FlowUi
@@ -132,21 +134,21 @@ fun MainDialerScreen(
     /** Чёрный и белый списки: туда ведёт разбор блокировки по маске. */
     onOpenBlockLists: () -> Unit
 ) {
-    val state by vm.state.collectAsState()
-    val settings by vm.settingsState.collectAsState()
+    val state by vm.state.collectAsStateWithLifecycle()
+    val settings by vm.settingsState.collectAsStateWithLifecycle()
 
     // Правила блокировки: от них зависит подпись «заблокирован»
     // в строке журнала, поэтому экран на них подписан
-    val rules by vm.rules.collectAsState()
+    val rules by vm.rules.collectAsStateWithLifecycle()
 
     // Напоминания: значок в строке и фильтр «с напоминанием»
-    val reminders by vm.activeReminders.collectAsState()
-    val activeFilter by vm.filter.collectAsState()
-    val swipeTuning by vm.swipeTuning.collectAsState()
-    val rightExtra by vm.swipeRightExtra.collectAsState()
-    val leftExtra by vm.swipeLeftExtra.collectAsState()
-    val filteredByChips by vm.filteredLog.collectAsState()
-    val loadingMore by vm.loadingMore.collectAsState()
+    val reminders by vm.activeReminders.collectAsStateWithLifecycle()
+    val activeFilter by vm.filter.collectAsStateWithLifecycle()
+    val swipeTuning by vm.swipeTuning.collectAsStateWithLifecycle()
+    val rightExtra by vm.swipeRightExtra.collectAsStateWithLifecycle()
+    val leftExtra by vm.swipeLeftExtra.collectAsStateWithLifecycle()
+    val filteredByChips by vm.filteredLog.collectAsStateWithLifecycle()
+    val loadingMore by vm.loadingMore.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -234,7 +236,7 @@ fun MainDialerScreen(
     }
 
     // Собственный номер: нужен, чтобы делиться своей карточкой
-    val ownNumber by vm.ownNumber.collectAsState()
+    val ownNumber by vm.ownNumber.collectAsStateWithLifecycle()
     var showOwnNumber by remember { mutableStateOf(false) }
 
     if (showOwnNumber) {
@@ -408,7 +410,7 @@ fun MainDialerScreen(
      */
     LaunchedEffect(Unit) { vm.refresh() }
 
-    val allRows by vm.rows.collectAsState()
+    val allRows by vm.rows.collectAsStateWithLifecycle()
 
     /*
      * СТРОКИ, КОТОРЫЕ ДЕЙСТВИТЕЛЬНО ПОКАЗЫВАЮТСЯ.
@@ -561,13 +563,13 @@ fun MainDialerScreen(
     }
 
 
-    val gestureHintShown by vm.gestureHintShown.collectAsState()
+    val gestureHintShown by vm.gestureHintShown.collectAsStateWithLifecycle()
     if (!gestureHintShown && list.isNotEmpty()) {
         GestureHintSheet(onDismiss = { vm.markGestureHintShown() })
     }
 
 
-    val pinnedNumbers by vm.pinnedNumbers.collectAsState()
+    val pinnedNumbers by vm.pinnedNumbers.collectAsStateWithLifecycle()
 
 
     /*
@@ -1033,7 +1035,7 @@ fun MainDialerScreen(
     }
 
 
-    val scrollToTop by vm.scrollToTop.collectAsState()
+    val scrollToTop by vm.scrollToTop.collectAsStateWithLifecycle()
     LaunchedEffect(scrollToTop, rows.size) {
         if (scrollToTop && rows.isNotEmpty()) {
             if (listState.firstVisibleItemIndex > 0) listState.animateScrollToItem(0)
@@ -1685,7 +1687,7 @@ fun MainDialerScreen(
     // ── Всплывающие элементы ───────────────────────────────────────────────
 
 
-    val noteEditorFor by vm.noteEditorFor.collectAsState()
+    val noteEditorFor by vm.noteEditorFor.collectAsStateWithLifecycle()
     noteEditorFor?.let { group ->
         val existing = state.notes[group.e164]
         NoteEditorDialog(
@@ -1700,7 +1702,7 @@ fun MainDialerScreen(
     }
 
 
-    val reminderFor by vm.reminderRequest.collectAsState()
+    val reminderFor by vm.reminderRequest.collectAsStateWithLifecycle()
     reminderFor?.let { group ->
         ReminderDialog(
             displayName = group.displayName ?: group.number,
@@ -1718,7 +1720,7 @@ fun MainDialerScreen(
     }
 
 
-    val simRequest by vm.simRequest.collectAsState()
+    val simRequest by vm.simRequest.collectAsStateWithLifecycle()
 
 
     LaunchedEffect(simRequest) {
@@ -1726,7 +1728,7 @@ fun MainDialerScreen(
     }
 
 
-    val closeSwipesToken by vm.closeSwipes.collectAsState()
+    val closeSwipesToken by vm.closeSwipes.collectAsStateWithLifecycle()
     LaunchedEffect(closeSwipesToken) {
         if (closeSwipesToken > 0) swipeController.closeAll()
     }
@@ -1752,8 +1754,8 @@ fun MainDialerScreen(
      * это лишние секунды на виду у собеседника.
      */
     if (fakeCallOpen) {
-        val scheduledAt by vm.fakeCallAt.collectAsState()
-        val caller by vm.fakeCallCaller.collectAsState()
+        val scheduledAt by vm.fakeCallAt.collectAsStateWithLifecycle()
+        val caller by vm.fakeCallCaller.collectAsStateWithLifecycle()
         val timeFormat = remember {
             java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT)
         }

@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -50,8 +52,8 @@ fun SpamProtectionScreen(
     onOpenLists: () -> Unit
 ) {
     val context = LocalContext.current
-    val rules by vm.rules.collectAsState()
-    val settings by vm.settingsState.collectAsState()
+    val rules by vm.rules.collectAsStateWithLifecycle()
+    val settings by vm.settingsState.collectAsStateWithLifecycle()
 
     // Состояние ролей читается при каждом входе: пользователь мог
     // поменять определитель в системных настройках и вернуться

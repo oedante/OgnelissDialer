@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.call
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 import com.ogneliss.dialer.concurrency.suspendRunCatching
 
 import com.ogneliss.dialer.ui.adaptive.ProvideWindowLayout
@@ -90,8 +92,8 @@ class FakeCallActivity : ComponentActivity() {
         startRinging()
 
         setContent {
-            val theme by prefs.theme.collectAsState(ThemeMode.SYSTEM)
-            val dynamic by prefs.dynamicColor.collectAsState(false)
+            val theme by prefs.theme.collectAsStateWithLifecycle(ThemeMode.SYSTEM)
+            val dynamic by prefs.dynamicColor.collectAsStateWithLifecycle(false)
 
             /*
              * Кто «звонит».

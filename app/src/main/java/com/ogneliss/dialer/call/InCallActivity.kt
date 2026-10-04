@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.call
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 import com.ogneliss.dialer.concurrency.suspendRunCatching
 
 import com.ogneliss.dialer.ui.adaptive.ProvideWindowLayout
@@ -186,13 +188,13 @@ class InCallActivity : ComponentActivity() {
              * Для AMOLED это ещё и вопрос батареи: экран вызова горит
              * дольше остальных, и чёрный фон на нём экономит заметно больше.
              */
-            val theme by prefs.theme.collectAsState(initial = ThemeMode.SYSTEM)
-            val dynamic by prefs.dynamicColor.collectAsState(initial = false)
+            val theme by prefs.theme.collectAsStateWithLifecycle(initialValue = ThemeMode.SYSTEM)
+            val dynamic by prefs.dynamicColor.collectAsStateWithLifecycle(initialValue = false)
             // Подписи под кнопками — та же настройка, что во всём приложении.
             // Экран вызова — отдельная активность, корня приложения у него
             // нет, поэтому оформление ставится здесь
-            val buttonLabels by prefs.buttonLabels.collectAsState(initial = true)
-            val hideContactNumber by prefs.callHideContactNumber.collectAsState(initial = false)
+            val buttonLabels by prefs.buttonLabels.collectAsStateWithLifecycle(initialValue = true)
+            val hideContactNumber by prefs.callHideContactNumber.collectAsStateWithLifecycle(initialValue = false)
 
             OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic) {
                 // Раскладка окна: телефон, лёжа, раскладушка, планшет.
@@ -202,9 +204,9 @@ class InCallActivity : ComponentActivity() {
                     com.ogneliss.dialer.ui.theme.LocalAppearance provides
                         com.ogneliss.dialer.ui.theme.Appearance(buttonLabels = buttonLabels)
                 ) {
-                val calls by CallManager.calls.collectAsState()
-                val revision by CallManager.revision.collectAsState()
-                val audio by CallManager.audioState.collectAsState()
+                val calls by CallManager.calls.collectAsStateWithLifecycle()
+                val revision by CallManager.revision.collectAsStateWithLifecycle()
+                val audio by CallManager.audioState.collectAsStateWithLifecycle()
 
                 /*
                  * Режим показа оператора берётся из тех же настроек,
@@ -212,7 +214,7 @@ class InCallActivity : ComponentActivity() {
                  * а не отдельно для каждого экрана.
                  */
                 val carrierInfo by prefs.carrierInfo
-                    .collectAsState(initial = CarrierInfoMode.UNKNOWN_ONLY)
+                    .collectAsStateWithLifecycle(initialValue = CarrierInfoMode.UNKNOWN_ONLY)
 
                 LaunchedEffect(calls) { if (calls.isEmpty()) finish() }
 

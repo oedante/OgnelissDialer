@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -56,7 +58,7 @@ fun ExternalLookupScreen(
     val providers by produceState(initialValue = emptyList<DirectoryProvider>()) {
         value = vm.availableLookupProviders()
     }
-    val enabled by vm.enabledLookupProviders.collectAsState()
+    val enabled by vm.enabledLookupProviders.collectAsStateWithLifecycle()
     var confirming by remember { mutableStateOf<DirectoryProvider?>(null) }
     val context = androidx.compose.ui.platform.LocalContext.current
 

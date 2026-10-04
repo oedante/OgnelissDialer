@@ -1,0 +1,271 @@
+{
+    "context": {
+        "build": {
+            "brand": "nubia",
+            "device": "PQ83A01",
+            "fingerprint": "nubia/PQ83A01-UN/PQ83A01:15/AQ3A.240812.002/20260106.015417:user/release-keys",
+            "id": "AQ3A.240812.002",
+            "model": "NX721J",
+            "type": "user",
+            "version": {
+                "codename": "REL",
+                "sdk": 35
+            }
+        },
+        "cpuCoreCount": 8,
+        "cpuLocked": false,
+        "cpuMaxFreqHz": 3302400000,
+        "memTotalBytes": 16092770304,
+        "sustainedPerformanceModeEnabled": false,
+        "artMainlineVersion": 372042580,
+        "osCodenameAbbreviated": "REL",
+        "compilationMode": "run-from-apk",
+        "payload": {}
+    },
+    "benchmarks": [
+        {
+            "name": "startupWarm",
+            "params": {},
+            "className": "com.ogneliss.benchmark.ScreenBenchmark",
+            "totalRunTimeNs": 57797791644,
+            "metrics": {
+                "timeToInitialDisplayMs": {
+                    "minimum": 81.122604,
+                    "maximum": 123.527656,
+                    "median": 88.096719,
+                    "coefficientOfVariation": 0.1678380125378447,
+                    "runs": [
+                        123.527656,
+                        120.261562,
+                        88.096719,
+                        87.135833,
+                        88.351563,
+                        84.417448,
+                        84.241875,
+                        97.202864,
+                        81.122604
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 0,
+            "repeatIterations": 10,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 0",
+                    "filename": "ScreenBenchmark_startupWarm_iter000_2026-10-04-04-28-34.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 1",
+                    "filename": "ScreenBenchmark_startupWarm_iter001_2026-10-04-04-28-36.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 2",
+                    "filename": "ScreenBenchmark_startupWarm_iter002_2026-10-04-04-28-38.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 3",
+                    "filename": "ScreenBenchmark_startupWarm_iter003_2026-10-04-04-28-40.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 4",
+                    "filename": "ScreenBenchmark_startupWarm_iter004_2026-10-04-04-28-42.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 5",
+                    "filename": "ScreenBenchmark_startupWarm_iter005_2026-10-04-04-29-16.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 6",
+                    "filename": "ScreenBenchmark_startupWarm_iter006_2026-10-04-04-29-19.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 7",
+                    "filename": "ScreenBenchmark_startupWarm_iter007_2026-10-04-04-29-21.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 8",
+                    "filename": "ScreenBenchmark_startupWarm_iter008_2026-10-04-04-29-23.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 9",
+                    "filename": "ScreenBenchmark_startupWarm_iter009_2026-10-04-04-29-25.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "openCard",
+            "params": {},
+            "className": "com.ogneliss.benchmark.ScreenBenchmark",
+            "totalRunTimeNs": 22079721294,
+            "metrics": {
+                "timeToInitialDisplayMs": {
+                    "minimum": 74.69849,
+                    "maximum": 115.16474,
+                    "median": 86.562239,
+                    "coefficientOfVariation": 0.13730581196120542,
+                    "runs": [
+                        88.382291,
+                        97.762917,
+                        84.742187,
+                        98.36651,
+                        83.673386,
+                        82.353229,
+                        74.69849,
+                        115.16474,
+                        76.894166,
+                        98.895469
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 0,
+            "repeatIterations": 10,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 0",
+                    "filename": "ScreenBenchmark_openCard_iter000_2026-10-04-04-29-39.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 1",
+                    "filename": "ScreenBenchmark_openCard_iter001_2026-10-04-04-29-41.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 2",
+                    "filename": "ScreenBenchmark_openCard_iter002_2026-10-04-04-29-43.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 3",
+                    "filename": "ScreenBenchmark_openCard_iter003_2026-10-04-04-29-45.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 4",
+                    "filename": "ScreenBenchmark_openCard_iter004_2026-10-04-04-29-47.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 5",
+                    "filename": "ScreenBenchmark_openCard_iter005_2026-10-04-04-29-49.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 6",
+                    "filename": "ScreenBenchmark_openCard_iter006_2026-10-04-04-29-51.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 7",
+                    "filename": "ScreenBenchmark_openCard_iter007_2026-10-04-04-29-53.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 8",
+                    "filename": "ScreenBenchmark_openCard_iter008_2026-10-04-04-29-55.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 9",
+                    "filename": "ScreenBenchmark_openCard_iter009_2026-10-04-04-29-57.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "openDialpad",
+            "params": {},
+            "className": "com.ogneliss.benchmark.ScreenBenchmark",
+            "totalRunTimeNs": 58713415342,
+            "metrics": {
+                "timeToInitialDisplayMs": {
+                    "minimum": 88.213125,
+                    "maximum": 126.026563,
+                    "median": 105.595,
+                    "coefficientOfVariation": 0.13293717413596615,
+                    "runs": [
+                        124.466771,
+                        104.129375,
+                        105.595,
+                        126.026563,
+                        90.012761,
+                        90.544271,
+                        109.238698,
+                        106.828645,
+                        88.213125
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 0,
+            "repeatIterations": 10,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 0",
+                    "filename": "ScreenBenchmark_openDialpad_iter000_2026-10-04-04-30-08.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 1",
+                    "filename": "ScreenBenchmark_openDialpad_iter001_2026-10-04-04-30-10.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 2",
+                    "filename": "ScreenBenchmark_openDialpad_iter002_2026-10-04-04-30-12.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 3",
+                    "filename": "ScreenBenchmark_openDialpad_iter003_2026-10-04-04-30-14.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 4",
+                    "filename": "ScreenBenchmark_openDialpad_iter004_2026-10-04-04-30-16.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 5",
+                    "filename": "ScreenBenchmark_openDialpad_iter005_2026-10-04-04-30-18.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 6",
+                    "filename": "ScreenBenchmark_openDialpad_iter006_2026-10-04-04-30-20.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 7",
+                    "filename": "ScreenBenchmark_openDialpad_iter007_2026-10-04-04-30-23.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 8",
+                    "filename": "ScreenBenchmark_openDialpad_iter008_2026-10-04-04-30-26.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 9",
+                    "filename": "ScreenBenchmark_openDialpad_iter009_2026-10-04-04-31-02.perfetto-trace"
+                }
+            ]
+        }
+    ]
+}

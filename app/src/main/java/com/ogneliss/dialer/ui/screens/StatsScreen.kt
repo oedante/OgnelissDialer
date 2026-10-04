@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -46,7 +48,7 @@ fun StatsScreen(
     vm: DialerViewModel,
     onBack: () -> Unit
 ) {
-    val state by vm.state.collectAsState()
+    val state by vm.state.collectAsStateWithLifecycle()
     val stats = remember(state.callLog) { vm.computeStats() }
 
     ScreenScaffold(

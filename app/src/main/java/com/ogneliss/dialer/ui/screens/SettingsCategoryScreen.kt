@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -53,7 +55,7 @@ fun SettingsCategoryScreen(
     var openChoice by remember { mutableStateOf<String?>(null) }
     var editingSimLabels by remember { mutableStateOf(false) }
 
-    val state by vm.settingsState.collectAsState()
+    val state by vm.settingsState.collectAsStateWithLifecycle()
 
     ScreenScaffold(
         title = stringResource(category.titleRes),
@@ -194,7 +196,7 @@ fun SettingsCategoryScreen(
     }
 
     if (editingSimLabels) {
-        val uiState by vm.state.collectAsState()
+        val uiState by vm.state.collectAsStateWithLifecycle()
         SimLabelsDialog(
             sims = uiState.sims,
             currentLabels = state.simLabels,

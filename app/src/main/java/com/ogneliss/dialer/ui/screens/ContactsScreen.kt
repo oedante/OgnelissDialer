@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 import com.ogneliss.dialer.ui.theme.Dimens
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextOverflow
@@ -110,7 +112,7 @@ fun ContactsScreen(
     onPicked: (String) -> Unit = {},
     onOpenContact: (Long) -> Unit = {}
 ) {
-    val state by vm.state.collectAsState()
+    val state by vm.state.collectAsStateWithLifecycle()
 
     /*
      * ЗАПРОС КОНТАКТОВ ПРИ ОТКРЫТИИ ЭКРАНА.
@@ -127,9 +129,9 @@ fun ContactsScreen(
     LaunchedEffect(Unit) {
         if (state.contacts.isEmpty()) vm.reloadContacts()
     }
-    val settings by vm.settingsState.collectAsState()
-    val rightExtra by vm.swipeRightExtra.collectAsState()
-    val leftExtra by vm.swipeLeftExtra.collectAsState()
+    val settings by vm.settingsState.collectAsStateWithLifecycle()
+    val rightExtra by vm.swipeRightExtra.collectAsStateWithLifecycle()
+    val leftExtra by vm.swipeLeftExtra.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     var search by remember { mutableStateOf("") }
 
@@ -241,7 +243,7 @@ fun ContactsScreen(
     // Подсказки прямого действия: зависят только от настроек жестов
     // Чувствительность свайпа — общая с журналом: расхождение порогов
     // между экранами читается как «свайп сломан»
-    val swipeTuning by vm.swipeTuning.collectAsState()
+    val swipeTuning by vm.swipeTuning.collectAsStateWithLifecycle()
 
     /*
      * НАБОР ЗАБЛОКИРОВАННЫХ НОМЕРОВ.
@@ -255,7 +257,7 @@ fun ContactsScreen(
      * порядок — перебирать все номера под каждую маску — стоил бы
      * столько же, но требовал бы держать оба списка целиком.
      */
-    val rules by vm.rules.collectAsState()
+    val rules by vm.rules.collectAsStateWithLifecycle()
 
     /*
      * Номера с напоминанием.
@@ -264,7 +266,7 @@ fun ContactsScreen(
      * Считаем один раз множеством — проверка вхождения в каждой строке
      * должна быть мгновенной.
      */
-    val reminders by vm.activeReminders.collectAsState()
+    val reminders by vm.activeReminders.collectAsStateWithLifecycle()
     val reminderNumbers = remember(reminders) {
         reminders.mapTo(HashSet()) { it.e164 }
     }
@@ -299,7 +301,7 @@ fun ContactsScreen(
      * То же правило, что с напоминанием: диалог живёт на том экране,
      * где может понадобиться.
      */
-    val simRequest by vm.simRequest.collectAsState()
+    val simRequest by vm.simRequest.collectAsStateWithLifecycle()
 
     /*
      * Закрытие диалога возвращает строки на место.
@@ -317,7 +319,7 @@ fun ContactsScreen(
 
     // Возврат в приложение: строка могла остаться сдвинутой, если
     // действие открыло другое приложение и прервало анимацию
-    val closeSwipesToken by vm.closeSwipes.collectAsState()
+    val closeSwipesToken by vm.closeSwipes.collectAsStateWithLifecycle()
     LaunchedEffect(closeSwipesToken) {
         if (closeSwipesToken > 0) swipeController.closeAll()
     }

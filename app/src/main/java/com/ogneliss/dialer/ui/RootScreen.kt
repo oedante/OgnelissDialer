@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.safeDrawing
@@ -174,7 +176,7 @@ fun RootScreen(
      * остаётся на прежнем языке до перезапуска приложения — именно это
      * и наблюдалось.
      */
-    val localeChanged by vm.localeChanged.collectAsState()
+    val localeChanged by vm.localeChanged.collectAsStateWithLifecycle()
     /*
      * Контекст нужен и сам по себе: документы открываются в браузере,
      * а для этого требуется startActivity. Приводить его к Activity
@@ -192,7 +194,7 @@ fun RootScreen(
      * карточку — там это действие, здесь настройка.
      */
     var ownNumberOpen by remember { mutableStateOf(false) }
-    val ownNumber by vm.ownNumber.collectAsState()
+    val ownNumber by vm.ownNumber.collectAsStateWithLifecycle()
 
     if (ownNumberOpen) {
         OwnNumberDialog(
@@ -229,10 +231,10 @@ fun RootScreen(
         }
     }
 
-    val pendingPostCall by vm.pendingPostCall.collectAsState()
+    val pendingPostCall by vm.pendingPostCall.collectAsStateWithLifecycle()
 
     // Удаление записи свайпом — после подтверждения (разбор в handleSwipe)
-    val deleteRequest by vm.deleteRequest.collectAsState()
+    val deleteRequest by vm.deleteRequest.collectAsStateWithLifecycle()
     deleteRequest?.let { group ->
         com.ogneliss.dialer.ui.components.OgnelissDialog(
             onDismissRequest = { vm.dismissDeleteRequest() },
@@ -263,12 +265,12 @@ fun RootScreen(
 
     // Нужно окну после звонка: показать уже поставленную отметку
 
-    val uiState by vm.state.collectAsState()
+    val uiState by vm.state.collectAsStateWithLifecycle()
 
     // Настройки оформления задаются один раз в корне: компоненты берут
     // их сами. Раньше эти переключатели сохранялись, но ни на что
     // не влияли — их некуда было передать
-    val settings by vm.settingsState.collectAsState()
+    val settings by vm.settingsState.collectAsStateWithLifecycle()
     val appearance = remember(settings) {
         Appearance(
             largeButtons = settings.largeButtons,

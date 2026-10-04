@@ -1,5 +1,7 @@
 package com.ogneliss.dialer
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.platform.testTag
@@ -34,7 +36,6 @@ import com.ogneliss.dialer.util.LocaleManager
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.compose.runtime.collectAsState
 import com.ogneliss.dialer.settings.ThemeMode
 import com.ogneliss.dialer.ui.DialerViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -151,8 +152,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val vm: DialerViewModel = hiltViewModel()
-            val theme by vm.prefs.theme.collectAsState(ThemeMode.SYSTEM)
-            val dynamic by vm.prefs.dynamicColor.collectAsState(false)
+            val theme by vm.prefs.theme.collectAsStateWithLifecycle(ThemeMode.SYSTEM)
+            val dynamic by vm.prefs.dynamicColor.collectAsStateWithLifecycle(false)
 
             OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic) {
                 // Раскладка окна: телефон, лёжа, раскладушка, планшет.
@@ -175,7 +176,7 @@ class MainActivity : ComponentActivity() {
                  * опечаток — нет.
                  */
                 val consentVersion by vm.prefs.consentVersion
-                    .collectAsState(initial = -1)
+                    .collectAsStateWithLifecycle(initialValue = -1)
 
                 /*
                  * ЯЗЫК ПРИ ПЕРВОМ ЗАПУСКЕ.

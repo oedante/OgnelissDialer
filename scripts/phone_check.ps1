@@ -11,10 +11,7 @@
 param(
     [Parameter(Mandatory = $true)][string]$CardNumber,
     # Метка прогона: результаты сохраняются как docs\baseline\benchmarkData-<метка>.json
-    [string]$Label = (Get-Date -Format "yyyyMMdd-HHmm"),
-    # Замер «до/после» Compose 1.12 в одной сессии: сначала сборка
-    # с -PcomposeLegacy=true (прежний Compose), затем новая (1.3.3, шаг 3)
-    [switch]$ComposeAB
+    [string]$Label = (Get-Date -Format "yyyyMMdd-HHmm")
 )
 $ErrorActionPreference = "Continue"
 $pkg = "com.ogneliss.dialer"
@@ -40,6 +37,14 @@ if ($LASTEXITCODE -ne 0) {
 # холодный запуск не мерился. Генератор профиля в обычном прогоне
 # пропускается сам.
 $benchFilter = "-Pandroid.testInstrumentationRunnerArguments.package=com.ogneliss.benchmark"
+# nubia не доставляет служебные команды profileinstaller остановленному
+# приложению (04.10.2026): холодный запуск падал на сбросе кэша шейдеров.
+# Без сброса холодный запуск меряется; «с профилем» на этом телефоне
+# не измерить — установка профиля идёт той же командой, замер исключён.
+$benchExtra = @(
+    "-Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.dropShaders.enable=false",
+    "-Pandroid.testInstrumentationRunnerArguments.notClass=com.ogneliss.benchmark.StartupBenchmark#startupWithBaselineProfile"
+)
 
 # Итог каждого замера — прямо в консоль и в файл docs\baseline\tests-<метка>.txt
 # (04.10.2026): причина падения была только в HTML-отчёте, а logcat
@@ -53,7 +58,9 @@ function Show-TestResults([string]$name, [datetime]$started) {
         foreach ($tc in $doc.SelectNodes("//testcase")) {
             $title = "$($tc.classname.Split('.')[-1]).$($tc.name)"
             $fail = $tc.SelectSingleNode("failure")
-            if ($tc.SelectSingleNode("skipped")) {
+            # Штатный пропуск (генератор профиля вне генерации) Gradle
+            # записывает как провал с AssumptionViolatedException
+            if ($tc.SelectSingleNode("skipped") -or ($fail -and $fail.InnerText -like "*AssumptionViolatedException*")) {
                 $lines += "  пропуск $title"
             } elseif ($fail) {
                 $text = ($fail.InnerText.Trim() -split "`n" | Select-Object -First 3) -join " | "
@@ -76,7 +83,7 @@ function Run-Bench([string]$name, [string[]]$extra) {
     Write-Host "--- Замеры: $name ---" -ForegroundColor Cyan
     $started = Get-Date
     adb logcat -c   # чистый logcat: при сбое сохраним только этот прогон
-    ./gradlew :benchmark:connectedBenchmarkReleaseAndroidTest @extra $benchFilter "-Pandroid.testInstrumentationRunnerArguments.cardNumber=$CardNumber" | Out-Host
+    ./gradlew :benchmark:connectedBenchmarkReleaseAndroidTest @extra $benchFilter @benchExtra "-Pandroid.testInstrumentationRunnerArguments.cardNumber=$CardNumber" | Out-Host
     # | Out-Host: иначе вывод Gradle стал бы возвращаемым значением функции
     Show-TestResults $name $started
     $json = Get-ChildItem benchmark\build\outputs\connected_android_test_additional_output -Recurse -Filter *benchmarkData.json -ErrorAction SilentlyContinue |
@@ -104,31 +111,16 @@ function Run-Bench([string]$name, [string[]]$extra) {
 $hasPython = [bool](Get-Command python -ErrorAction SilentlyContinue)
 $base = "docs\baseline\benchmarkData-base.json"
 
-if ($ComposeAB) {
-    Step "2. Замеры до и после Compose 1.12 (40–50 минут, телефон не трогать)"
-    $before = Run-Bench "$Label-compose-legacy" @("-PcomposeLegacy=true")
-    $after = Run-Bench "$Label-compose-1.12" @()
-    if ($before) {
-        # Прежний Compose — честная база: разрешения, роль и согласие выданы
-        Copy-Item $before $base -Force
-        Write-Host "База обновлена: $base (прежний Compose)" -ForegroundColor Yellow
-    }
-    if ($before -and $after) {
-        if ($hasPython) { python scripts\compare_benchmarks.py $before $after }
-        else { Write-Host "Python не найден — пришлите оба файла, сравню сам." }
-    }
-} else {
-    Step "2. Замеры: экраны и холодный запуск (15–25 минут, телефон не трогать)"
-    $now = Run-Bench $Label @()
-    if ($now) {
-        if (-not (Test-Path $base)) {
-            Copy-Item $now $base
-            Write-Host "Базовой точки не было — этот прогон стал базовой точкой: $base" -ForegroundColor Yellow
-        } elseif ($hasPython) {
-            python scripts\compare_benchmarks.py $base $now --merge-new
-        } else {
-            Write-Host "Python не найден — пришлите этот файл, сравню сам."
-        }
+Step "2. Замеры: экраны и холодный запуск (15–25 минут, телефон не трогать)"
+$now = Run-Bench $Label @()
+if ($now) {
+    if (-not (Test-Path $base)) {
+        Copy-Item $now $base
+        Write-Host "Базовой точки не было — этот прогон стал базовой точкой: $base" -ForegroundColor Yellow
+    } elseif ($hasPython) {
+        python scripts\compare_benchmarks.py $base $now --merge-new
+    } else {
+        Write-Host "Python не найден — пришлите этот файл, сравню сам."
     }
 }
 

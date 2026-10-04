@@ -443,45 +443,17 @@ composeCompiler {
  * Команда покажет цепочку: кто именно требует версию выше.
  */
 /*
- * COMPOSE 1.12 — БЕЗ ПРИНУДИТЕЛЬНОГО ОТКАТА (1.3.3, шаг 3, 03.10.2026).
+ * COMPOSE 1.12 — БЕЗ ПРИНУДИТЕЛЬНОГО ОТКАТА (1.3.3, шаг 3, принят 04.10.2026).
  *
  * Было: BOM 2024.12.01 и resolutionStrategy, который силой держал
- * ui / foundation / animation / runtime на 1.7.6, даже если библиотеке
- * нужна версия новее, — потому что Compose 1.12 требовал compileSdk 37.
- * Риск: NoSuchMethodError, если чья-то библиотека собрана под новый Compose.
- *
- * Стало: compileSdk 37 (шаг 1), BOM 2026.09.00 — Compose 1.12.1,
+ * ui / foundation / animation / runtime на 1.7.6 (Compose 1.12 требовал
+ * compileSdk 37). Стало: compileSdk 37, BOM 2026.09.00 — Compose 1.12.1,
  * Material 3 1.4.0; откат убран.
  *
- * Переключатель -PcomposeLegacy=true собирает прежний вариант (BOM
- * 2024.12.01 + откат) — только для замера «до» в scripts/phone_check.ps1
- * в той же сессии, что и «после». Удалить вместе с
- * composeBomLegacy/composeUiLegacy, когда шаг 3 принят.
+ * Замер «до/после» в одной сессии (временный переключатель старого Compose
+ * убран после принятия): карточка −0,3…−1,8%, клавиатура −4,1…−6,4%,
+ * память +0,1% — без регрессий. Подробно — docs/RELEASE_NOTES_1.3.3.md.
  */
-val composeLegacy = providers.gradleProperty("composeLegacy").orNull == "true"
-val composeBomVersion =
-    if (composeLegacy) libs.versions.composeBomLegacy.get() else libs.versions.composeBom.get()
-val composeUiVersion =
-    if (composeLegacy) libs.versions.composeUiLegacy.get() else libs.versions.composeUi.get()
-
-if (composeLegacy) {
-    // Латиницей: консоль Windows показывает кириллицу из Gradle кракозябрами
-    logger.lifecycle("Compose LEGACY build (before-measurement): BOM $composeBomVersion, forced $composeUiVersion")
-    configurations.configureEach {
-        resolutionStrategy {
-            eachDependency {
-                if (requested.group.startsWith("androidx.compose.ui") ||
-                    requested.group == "androidx.compose.foundation" ||
-                    requested.group == "androidx.compose.animation" ||
-                    requested.group == "androidx.compose.runtime"
-                ) {
-                    useVersion(composeUiVersion)
-                    because("Замер «до» Compose 1.12 (-PcomposeLegacy=true)")
-                }
-            }
-        }
-    }
-}
 
 dependencies {
     implementation(libs.androidx.core.ktx)
@@ -498,13 +470,13 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)
 
-    implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
+    implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.graphics)
-    implementation("androidx.compose.ui:ui-tooling-preview:$composeUiVersion")
+    implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons)
-    debugImplementation("androidx.compose.ui:ui-tooling:$composeUiVersion")
+    debugImplementation(libs.compose.ui.tooling)
 
     implementation(libs.androidx.datastore)
     implementation(libs.room.runtime)
@@ -558,7 +530,7 @@ dependencies {
     // Тесты на устройстве
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
+    androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     // Версия — из каталога, вместе с Room: разные версии runtime и testing
     // ломают тесты миграций невнятными ошибками схемы
@@ -581,6 +553,6 @@ dependencies {
      * версии внутри группы согласованы, и Gradle поднимает остальные
      * до той же.
      */
-    debugImplementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
+    debugImplementation(platform(libs.compose.bom))
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }

@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -29,7 +31,7 @@ fun SpeedDialPickerDialog(
     onAssign: (number: String, name: String?) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val state by vm.state.collectAsState()
+    val state by vm.state.collectAsStateWithLifecycle()
     var search by remember { mutableStateOf("") }
 
     // Разворачиваем контакты в плоский список «номер + имя»

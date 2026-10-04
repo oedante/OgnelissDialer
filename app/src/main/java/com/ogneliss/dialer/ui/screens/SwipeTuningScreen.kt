@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -53,7 +55,7 @@ fun SwipeTuningScreen(
     vm: DialerViewModel,
     onBack: () -> Unit
 ) {
-    val saved by vm.swipeTuning.collectAsState()
+    val saved by vm.swipeTuning.collectAsStateWithLifecycle()
 
     /*
      * Черновик правок.

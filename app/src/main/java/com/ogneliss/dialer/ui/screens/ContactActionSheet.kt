@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 import androidx.compose.ui.unit.coerceAtLeast
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.ui.theme.LocalAppearance
@@ -11,7 +13,6 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.*
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
@@ -76,10 +77,10 @@ fun ContactActionSheet(
      */
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    val state by vm.state.collectAsState()
+    val state by vm.state.collectAsStateWithLifecycle()
 
     // Правила нужны, чтобы пункт знал, блокировать ему или разблокировать
-    val rules by vm.rules.collectAsState()
+    val rules by vm.rules.collectAsStateWithLifecycle()
 
     /** Маска, под которую попал номер, — показывается в предупреждении. */
     var maskWarning by remember { mutableStateOf<String?>(null) }

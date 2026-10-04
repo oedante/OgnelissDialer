@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.safeDrawing
@@ -54,7 +56,7 @@ fun BlockListScreen(
     vm: DialerViewModel,
     onBack: () -> Unit
 ) {
-    val rules by vm.rules.collectAsState()
+    val rules by vm.rules.collectAsStateWithLifecycle()
     var adding by remember { mutableStateOf<RuleKind?>(null) }
 
     // Выбор нескольких правил: чистить список по одному никто не станет,

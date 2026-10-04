@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -45,7 +47,7 @@ fun SpeedDialScreen(
     vm: DialerViewModel,
     onBack: () -> Unit
 ) {
-    val entries by vm.speedDial.collectAsState()
+    val entries by vm.speedDial.collectAsStateWithLifecycle()
     var assigning by remember { mutableStateOf<Int?>(null) }
 
     // Все цифры 2..9, включая незанятые: пустой слот должен быть виден,

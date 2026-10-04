@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -61,8 +63,8 @@ fun PinnedContactsScreen(
     onBack: () -> Unit,
     onAddFromContacts: () -> Unit
 ) {
-    val pinnedNumbers by vm.pinnedNumbers.collectAsState()
-    val uiState by vm.state.collectAsState()
+    val pinnedNumbers by vm.pinnedNumbers.collectAsStateWithLifecycle()
+    val uiState by vm.state.collectAsStateWithLifecycle()
     // Контакты — тоже ключ: имя и фото закреплённого берутся из книги (1.3.2)
     val entries = remember(pinnedNumbers, uiState.callLog, uiState.contacts) {
         vm.pinnedEntries()

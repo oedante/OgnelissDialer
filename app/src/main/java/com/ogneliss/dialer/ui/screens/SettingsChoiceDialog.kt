@@ -1,12 +1,13 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -110,13 +111,13 @@ fun SettingsChoiceDialog(
      * после выбора. Отметка оставалась на прежнем пункте, хотя
      * настройка уже применилась — так вели себя и тема, и язык.
      */
-    val settingsSnapshot by vm.settingsState.collectAsState()
+    val settingsSnapshot by vm.settingsState.collectAsStateWithLifecycle()
     val current = remember(settingsSnapshot, settingKey) { vm.choiceValue(settingKey) }
 
     // Свайпы — своё окно: до трёх действий на сторону (разбор там)
     if (settingKey == "swipe_right" || settingKey == "swipe_left") {
         val isRight = settingKey == "swipe_right"
-        val extra by (if (isRight) vm.swipeRightExtra else vm.swipeLeftExtra).collectAsState()
+        val extra by (if (isRight) vm.swipeRightExtra else vm.swipeLeftExtra).collectAsStateWithLifecycle()
         SwipeActionsDialog(
             vm = vm,
             isRight = isRight,

@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 import com.ogneliss.dialer.concurrency.suspendRunCatching
 
 import com.ogneliss.dialer.util.ContactQr
@@ -217,7 +219,7 @@ fun SubscriberScreen(
      */
     showBack: Boolean = true
 ) {
-    val state by vm.state.collectAsState()
+    val state by vm.state.collectAsStateWithLifecycle()
     /**
      * Карточка открывается двумя путями: из журнала (есть готовая группа)
      * и из списка контактов (звонков может не быть вовсе).
@@ -420,7 +422,7 @@ fun SubscriberScreen(
      * могли добавить из журнала, из настроек или свайпом, и карточка
      * обязана это показывать.
      */
-    val blockedNumbers by vm.rules.collectAsState(initial = emptyList())
+    val blockedNumbers by vm.rules.collectAsStateWithLifecycle(initialValue = emptyList())
     val isBlocked = remember(blockedNumbers, group.e164) {
         // kind хранится строкой: "block" | "allow". Сравнение
         // с RuleKind не проходит по типу
@@ -577,12 +579,12 @@ fun SubscriberScreen(
      * Правило: диалог живёт на том экране, где стоит вызывающая
      * его кнопка.
      */
-    val reminderFor by vm.reminderRequest.collectAsState()
+    val reminderFor by vm.reminderRequest.collectAsStateWithLifecycle()
     /** Выбранное время напоминания: открывает окно выбора даты и времени. */
     var pendingReminderAt by remember { mutableStateOf<Long?>(null) }
 
     /** Напоминание для этого номера, если назначено. */
-    val reminders by vm.activeReminders.collectAsState()
+    val reminders by vm.activeReminders.collectAsStateWithLifecycle()
     val reminder = remember(reminders, group.e164) {
         reminders.firstOrNull { it.e164 == group.e164 }
     }

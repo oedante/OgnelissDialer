@@ -93,18 +93,50 @@ object DeviceSetup {
      */
     private fun verifyMainScreen(device: UiDevice) {
         device.executeShellCommand("am start -W -n $PACKAGE/$PACKAGE.MainActivity")
-        val main = device.wait(Until.findObject(By.res("root_screen")), 5_000)
+        // 10 с, а не 5: первый запуск после согласия бывает дольше (04.10.2026)
+        var main = device.wait(Until.findObject(By.res("root_screen")), 10_000)
+        if (main == null) {
+            /*
+             * Сразу после выдачи разрешений приложение один раз показывает
+             * подсказки поверх журнала (автор, 04.10.2026: это и был
+             * «неизвестный экран» в тёплом запуске). Закрываем «Назад»
+             * и проверяем снова.
+             */
+            device.pressBack()
+            main = device.wait(Until.findObject(By.res("root_screen")), 3_000)
+        }
         if (main == null) {
             val shown = when {
                 device.findObject(By.res("permission_wizard")) != null ->
                     "мастер разрешений — не хватает разрешения или роли"
                 device.findObject(By.res(CONSENT_ACCEPT)) != null -> "экран согласия"
-                else -> "неизвестный экран"
+                // Чужое окно поверх (системный запрос, диалог прошивки)
+                device.currentPackageName != PACKAGE ->
+                    "окно другого приложения: ${device.currentPackageName}"
+                else -> "неизвестный экран Ogneliss"
             }
-            error("После подготовки вместо журнала открылся $shown — замер был бы недостоверен")
+            val saved = saveScreen(device)
+            error("После подготовки вместо журнала открылся $shown — замер был бы недостоверен. $saved")
         }
         device.executeShellCommand("am force-stop $PACKAGE")
     }
+
+    /*
+     * Снимок экрана и дерево окон при сбое проверки (04.10.2026): logcat
+     * на телефоне не ведётся, а «неизвестный экран» без картинки
+     * не разобрать. Папка additional_test_output забирается Gradle
+     * в benchmark/build/outputs/connected_android_test_additional_output.
+     */
+    private fun saveScreen(device: UiDevice): String = runCatching {
+        val dir = java.io.File(
+            InstrumentationRegistry.getInstrumentation().context.externalMediaDirs.first(),
+            "additional_test_output"
+        ).apply { mkdirs() }
+        val stamp = System.currentTimeMillis()
+        device.takeScreenshot(java.io.File(dir, "setup-failed-$stamp.png"))
+        device.dumpWindowHierarchy(java.io.File(dir, "setup-failed-$stamp.xml"))
+        "Снимок и дерево окон: setup-failed-$stamp.png / .xml в выходных файлах замеров."
+    }.getOrElse { "Снимок сохранить не удалось: ${it.message}" }
 
     /** Принять условия, если экран согласия показан; уже принято — ничего не делать. */
     private fun acceptConsent(device: UiDevice) {
