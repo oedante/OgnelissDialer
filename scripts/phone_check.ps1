@@ -52,7 +52,13 @@ function Run-Bench([string]$name, [string[]]$extra) {
         # не показывает — она только в logcat телефона
         $log = "docs\baseline\logcat-$name.txt"
         adb logcat -d -v threadtime | Out-File -Encoding utf8 $log
-        Write-Host "Замеры не дали результата. Logcat сохранён: $log — пришлите его." -ForegroundColor Yellow
+        if ((Get-Item $log).Length -lt 1024) {
+            # 04.10.2026: на nubia logcat был пуст — журнал выключен в настройках
+            Write-Host "Logcat пуст: на телефоне не ведётся системный журнал. Настройки -> Для разработчиков -> «Размер буфера журнала» — выбрать 1 МБ или больше (не «Выкл») и повторить." -ForegroundColor Yellow
+        } else {
+            Write-Host "Замеры не дали результата. Logcat сохранён: $log — пришлите его." -ForegroundColor Yellow
+        }
+        Write-Host "Пришлите также отчёт: benchmark\build\reports\androidTests\connected\benchmarkRelease\com.ogneliss.benchmark.ScreenBenchmark.html" -ForegroundColor Yellow
         return $null
     }
     $dest = "docs\baseline\benchmarkData-$name.json"
