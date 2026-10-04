@@ -8,7 +8,14 @@
 #
 # Запуск из папки ogneliss-dialer:
 #   powershell -ExecutionPolicy Bypass -File scripts\phone_check.ps1 -CardNumber +79XXXXXXXXX
-param([Parameter(Mandatory = $true)][string]$CardNumber)
+param(
+    [Parameter(Mandatory = $true)][string]$CardNumber,
+    # Метка прогона: результаты сохраняются как docs\baseline\benchmarkData-<метка>.json
+    [string]$Label = (Get-Date -Format "yyyyMMdd-HHmm"),
+    # Замер «до/после» Compose 1.12 в одной сессии: сначала сборка
+    # с -PcomposeLegacy=true (прежний Compose), затем новая (1.3.3, шаг 3)
+    [switch]$ComposeAB
+)
 $ErrorActionPreference = "Continue"
 $pkg = "com.ogneliss.dialer"
 
@@ -26,23 +33,58 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-Step "2. Замеры экранов (5–10 минут, телефон не трогать)"
-./gradlew :benchmark:connectedBenchmarkReleaseAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.ogneliss.benchmark.ScreenBenchmark" "-Pandroid.testInstrumentationRunnerArguments.cardNumber=$CardNumber"
-$json = Get-ChildItem benchmark\build\outputs\connected_android_test_additional_output -Recurse -Filter *benchmarkData.json -ErrorAction SilentlyContinue |
-    Sort-Object LastWriteTime | Select-Object -Last 1
-if ($json) {
-    Write-Host "Результаты: $($json.FullName)"
-    $base = "docs\baseline\benchmarkData-base.json"
-    if (-not (Test-Path $base)) {
-        Copy-Item $json.FullName $base
-        Write-Host "Базовой точки не было — этот прогон стал базовой точкой: $base" -ForegroundColor Yellow
-    } elseif (Get-Command python -ErrorAction SilentlyContinue) {
-        python scripts\compare_benchmarks.py $base $json.FullName
-    } else {
-        Write-Host "Python не найден — пришлите этот файл, сравню сам."
+# 1.3.3: и холодный запуск (StartupBenchmark) — команда profileinstaller
+# на телефоне проходит (result=14), раньше этих цифр не было
+$benchClasses = "com.ogneliss.benchmark.ScreenBenchmark,com.ogneliss.benchmark.StartupBenchmark"
+
+# Один прогон замеров; возвращает путь к сохранённому файлу или $null.
+# Файл берётся только свежий — старый от прошлого прогона не подхватится.
+function Run-Bench([string]$name, [string[]]$extra) {
+    Write-Host "--- Замеры: $name ---" -ForegroundColor Cyan
+    $started = Get-Date
+    ./gradlew :benchmark:connectedBenchmarkReleaseAndroidTest @extra "-Pandroid.testInstrumentationRunnerArguments.class=$benchClasses" "-Pandroid.testInstrumentationRunnerArguments.cardNumber=$CardNumber" | Out-Host
+    # | Out-Host: иначе вывод Gradle стал бы возвращаемым значением функции
+    $json = Get-ChildItem benchmark\build\outputs\connected_android_test_additional_output -Recurse -Filter *benchmarkData.json -ErrorAction SilentlyContinue |
+        Where-Object { $_.LastWriteTime -gt $started } | Sort-Object LastWriteTime | Select-Object -Last 1
+    if (-not $json) {
+        Write-Host "Файл результатов не найден — пришлите вывод замеров и отчёт benchmark\build\reports\androidTests." -ForegroundColor Yellow
+        return $null
+    }
+    $dest = "docs\baseline\benchmarkData-$name.json"
+    Copy-Item $json.FullName $dest -Force
+    Write-Host "Сохранено: $dest"
+    return $dest
+}
+
+$hasPython = [bool](Get-Command python -ErrorAction SilentlyContinue)
+$base = "docs\baseline\benchmarkData-base.json"
+
+if ($ComposeAB) {
+    Step "2. Замеры до и после Compose 1.12 (40–50 минут, телефон не трогать)"
+    $before = Run-Bench "$Label-compose-legacy" @("-PcomposeLegacy=true")
+    $after = Run-Bench "$Label-compose-1.12" @()
+    if ($before) {
+        # Прежний Compose — честная база: разрешения, роль и согласие выданы
+        Copy-Item $before $base -Force
+        Write-Host "База обновлена: $base (прежний Compose)" -ForegroundColor Yellow
+    }
+    if ($before -and $after) {
+        if ($hasPython) { python scripts\compare_benchmarks.py $before $after }
+        else { Write-Host "Python не найден — пришлите оба файла, сравню сам." }
     }
 } else {
-    Write-Host "Файл результатов не найден — пришлите вывод замеров." -ForegroundColor Yellow
+    Step "2. Замеры: экраны и холодный запуск (15–25 минут, телефон не трогать)"
+    $now = Run-Bench $Label @()
+    if ($now) {
+        if (-not (Test-Path $base)) {
+            Copy-Item $now $base
+            Write-Host "Базовой точки не было — этот прогон стал базовой точкой: $base" -ForegroundColor Yellow
+        } elseif ($hasPython) {
+            python scripts\compare_benchmarks.py $base $now --merge-new
+        } else {
+            Write-Host "Python не найден — пришлите этот файл, сравню сам."
+        }
+    }
 }
 
 Step "3. Установка выпускной сборки"
@@ -70,6 +112,15 @@ foreach ($i in 1..3) {
 if ($pss.Count -gt 0) {
     $median = ($pss | Sort-Object)[[int][math]::Floor($pss.Count / 2)]
     Write-Host ("Медиана TOTAL PSS: {0:N1} МБ" -f ($median / 1024)) -ForegroundColor Green
+    $memBase = "docs\baseline\memory-base.txt"
+    if (Test-Path $memBase) {
+        $was = [int](Get-Content $memBase)
+        Write-Host ("База памяти {0:N1} МБ, изменение {1:+0.0;-0.0}%" -f ($was / 1024), (($median / $was - 1) * 100))
+    } else {
+        Set-Content $memBase $median
+        Write-Host "Базы памяти не было — эта цифра стала базой: $memBase" -ForegroundColor Yellow
+    }
+    Set-Content "docs\baseline\memory-$Label.txt" $median
 }
 
 Step "5. Ручная проверка — раздел «Что проверить» в docs\RELEASE_NOTES текущей версии"

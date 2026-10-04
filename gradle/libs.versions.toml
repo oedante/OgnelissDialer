@@ -3,7 +3,8 @@ agp = "9.4.1"  # 1.3.3: было 9.3.1 — фаза «Новые инструм�
 kotlin = "2.4.20"  # 1.3.3 шаг 2: было 2.2.10
 ksp = "2.3.12"     # 1.3.3 шаг 2: было 2.3.6
 hilt = "2.60.1"    # 1.3.3 шаг 2: было 2.59.2; Hilt должен читать метаданные Kotlin 2.4
-composeBom = "2024.12.01"
+composeBom = "2026.09.00"        # 1.3.3 шаг 3: Compose 1.12.1, Material 3 1.4.0 (было 2024.12.01)
+composeBomLegacy = "2024.12.01"  # только для замера «до» (-PcomposeLegacy=true), см. app/build.gradle.kts
 
 # Версия Compose, соответствующая BOM выше.
 #
@@ -21,7 +22,8 @@ composeBom = "2024.12.01"
 #
 # ⚠️ При смене composeBom поменяйте и это значение. Соответствие
 # смотреть здесь: developer.android.com/develop/ui/compose/bom/bom-mapping
-composeUi = "1.7.6"
+composeUi = "1.12.1"         # соответствует composeBom 2026.09.00
+composeUiLegacy = "1.7.6"    # соответствует composeBomLegacy
 coreKtx = "1.15.0"
 lifecycle = "2.8.7"
 activityCompose = "1.9.3"

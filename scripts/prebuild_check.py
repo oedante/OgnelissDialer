@@ -733,8 +733,12 @@ gradle_path = os.path.join(ROOT, 'app/build.gradle.kts')
 if os.path.exists(gradle_path):
     gradle_text = open(gradle_path, encoding='utf-8').read()
 
+    # 1.3.3: BOM задаётся и строкой с версией из переключателя
+    # -PcomposeLegacy — platform("androidx.compose:compose-bom:$...")
     configs_with_bom = set(
         re.findall(r'(\w+)\(platform\(libs\.compose\.bom\)\)', gradle_text)
+    ) | set(
+        re.findall(r'(\w+)\(platform\("androidx\.compose:compose-bom:[^"]+"\)\)', gradle_text)
     )
 
     for m in re.finditer(

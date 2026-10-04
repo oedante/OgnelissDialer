@@ -38,7 +38,8 @@ Android-звонилка (замена системной) — `com.ogneliss.dia
 
 - minSdk 26 · compileSdk 37 · targetSdk 36 · Gradle 9.7.1 (wrapper в проекте)
 - AGP 9.4.1 · Kotlin 2.4.20 · KSP 2.3.12 · Room 2.8.5 · Hilt 2.60.1
-- Compose (Material 3 1.3), одна активность + `InCallActivity`
+- Compose BOM 2026.09.00 (Compose 1.12.1, Material 3 1.4.0), одна активность + `InCallActivity`
+- Замеры: `scripts\\phone_check.ps1` (резервная копия → тесты → замеры → установка → память); `DeviceSetup` сам выдаёт разрешения, роль и принимает согласие
 - `android.newDsl=false` в gradle.properties — нужен плагину Baseline
   Profile 1.3.3; предупреждения при сборке про это — ожидаемые
 - Профиль запуска (`generateBaselineProfile`) — **с отключённым

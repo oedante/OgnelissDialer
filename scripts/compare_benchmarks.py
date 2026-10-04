@@ -2,7 +2,10 @@
 """
 Сравнение замеров Macrobenchmark «до / после» (1.3.3, 03.10.2026).
 
-  python3 scripts/compare_benchmarks.py docs/baseline/benchmarkData-1.3.2.json новый.json
+  python3 scripts/compare_benchmarks.py база.json новый.json [--merge-new]
+
+--merge-new: замеры, которых нет в базе (например, впервые прошедший
+холодный запуск), дописываются в базу.
 
 Почему не по медиане: на nubia NX721J разброс тёплого запуска внутри
 одного прогона — от 77 до 160 мс. При 9–10 повторах разница медиан
@@ -39,7 +42,17 @@ def mann_whitney_p(x, y):
     z = (u - n1 * n2 / 2) / sd if sd else 0.0
     return math.erfc(abs(z) / math.sqrt(2))
 
-def main(base_path, new_path):
+def merge_new(base_path, new_path):
+    """Дописать в базу замеры, которых в ней нет (например, холодный запуск)."""
+    base_doc, new_doc = json.load(open(base_path)), json.load(open(new_path))
+    have = {b["name"] for b in base_doc["benchmarks"]}
+    added = [b for b in new_doc["benchmarks"] if b["name"] not in have]
+    if added:
+        base_doc["benchmarks"] += added
+        json.dump(base_doc, open(base_path, "w"), indent=4, ensure_ascii=False)
+        print("В базу добавлены новые замеры: " + ", ".join(b["name"] for b in added))
+
+def main(base_path, new_path, merge=False):
     base, new = runs(json.load(open(base_path))), runs(json.load(open(new_path)))
     print(f"{'Замер':32} {'до':>8} {'после':>8} {'изм.':>7} {'p':>6}  вывод")
     worst = 0
@@ -57,9 +70,14 @@ def main(base_path, new_path):
         else:
             verdict = "без изменений"
         print(f"{key[0] + '.' + key[1][:12]:32} {mx:8.1f} {my:8.1f} {change:+7.1%} {p:6.2f}  {verdict}")
+    for key in sorted(new.keys() - base.keys()):
+        print(f"{key[0] + '.' + key[1][:12]:32} {'—':>8} {st.median(new[key]):8.1f}  нет в базе")
+    if merge:
+        merge_new(base_path, new_path)
     sys.exit(worst)
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
+    args = [a for a in sys.argv[1:] if a != "--merge-new"]
+    if len(args) != 2:
         sys.exit(__doc__)
-    main(sys.argv[1], sys.argv[2])
+    main(args[0], args[1], merge="--merge-new" in sys.argv)

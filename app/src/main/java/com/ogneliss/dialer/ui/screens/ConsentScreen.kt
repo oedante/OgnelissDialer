@@ -13,6 +13,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -60,7 +64,17 @@ fun ConsentScreen(
 ) {
     var accepted by remember { mutableStateOf(false) }
 
+    /*
+     * Метки для замеров (1.3.3, 03.10.2026). Сборка для замеров ставится
+     * заново, и первым открывается этот экран — замеры и профиль запуска
+     * мерили его, а не журнал. benchmark/DeviceSetup находит флажок
+     * и кнопку по этим меткам и принимает условия один раз до замеров.
+     * testTagsAsResourceId делает метки видимыми для UI Automator
+     * как resource-id. На поведение для пользователя не влияет.
+     */
+    @OptIn(ExperimentalComposeUiApi::class)
     Scaffold(
+        modifier = Modifier.semantics { testTagsAsResourceId = true },
         contentWindowInsets = WindowInsets.safeDrawing,
         bottomBar = {
             Surface(tonalElevation = 3.dp) {
@@ -73,7 +87,9 @@ fun ConsentScreen(
                     Button(
                         onClick = onAccept,
                         enabled = accepted,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("consent_accept")
                     ) {
                         Text(stringResource(R.string.consent_accept))
                     }
@@ -169,6 +185,7 @@ fun ConsentScreen(
                     .fillMaxWidth()
                     .clip(MaterialTheme.shapes.medium)
                     .clickable { accepted = !accepted }
+                    .testTag("consent_checkbox")
                     .padding(vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
