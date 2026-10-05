@@ -1296,6 +1296,23 @@ for f in glob.glob(os.path.join(os.path.dirname(SRC), '..', 'test', '**', '*.kt'
             problems['Недопустимый символ в имени теста'].append(
                 f'{os.path.relpath(f, os.path.dirname(SRC))}:{line} — «{"".join(bad)}» в `{m.group(1)[:50]}`')
 
+# ── 42. Слот Compose через if: блок вместо лямбды (05.10.2026) ────────────
+# «icon = if (x) null else { Icon(…) }» — скобки после else это БЛОК: он
+# сразу вызывает Icon и возвращает Unit, а слот ждёт функцию. Синтаксически
+# верно — проверка синтаксиса не видит, сборка падала (SubscriberScreen,
+# пустая заметка). Нужно «else { { Icon(…) } }». То же для «if (x) { Icon }».
+_SLOTS = (r'(?:icon|leadingIcon|trailingIcon|leadingContent|trailingContent|supportingContent|'
+          r'overlineContent|headlineContent|navigationIcon|actions|label|placeholder|prefix|suffix|'
+          r'title|text|confirmButton|dismissButton)')
+_SLOT_BLOCK = re.compile(_SLOTS + r'\s*=\s*if\s*\([^\n]*\)\s*(?:null\s*else\s*)?\{\s*\n'
+                         r'(?:\s*(?://[^\n]*|/\*.*?\*/)\s*\n)*\s*([A-Z]\w*)\(', re.S)
+for f in kt_files():
+    text = open(f, encoding='utf-8').read()
+    for m in _SLOT_BLOCK.finditer(text):
+        line = text[:m.start()].count('\n') + 1
+        problems['Слот Compose через if: блок вместо лямбды'].append(
+            f'{os.path.relpath(f, SRC)}:{line} — «{m.group(1)}(» вызывается сразу; нужно {{ {{ {m.group(1)}(…) }} }}')
+
 # ── ОТЧЁТ ─────────────────────────────────────────────────────────────────
 total = sum(len(v) for v in problems.values())
 print(f'\n{"="*70}\nПРОВЕРКА ПЕРЕД СБОРКОЙ: замечаний — {total}\n{"="*70}')

@@ -1805,12 +1805,16 @@ fun SubscriberScreen(
                      */
                     color = null,
                     icon = if (noteEmpty) null else {
-                        Icon(
-                            OgnelissIcons.StickyNote2,
-                            contentDescription = null,
-                            tint = NoteTeal,
-                            modifier = Modifier.size(FlowUi.iconSizeInline)
-                        )
+                        // Двойные скобки: внешние — блок else, внутренние — лямбда
+                        // (одинарные вызывали Icon сразу — ошибка сборки 05.10.2026)
+                        {
+                            Icon(
+                                OgnelissIcons.StickyNote2,
+                                contentDescription = null,
+                                tint = NoteTeal,
+                                modifier = Modifier.size(FlowUi.iconSizeInline)
+                            )
+                        }
                     }
                 ) {
 
