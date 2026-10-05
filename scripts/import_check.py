@@ -65,7 +65,9 @@ for p, pkg, t in files:
 # Сборка упала: RevealState объявлен private в SwipeRevealRow.kt,
 # а использовался в RevealFlingBehavior.kt того же пакета. Импорт тут
 # ни при чём — private на верхнем уровне виден только в своём файле.
-PRIV = re.compile(r'^private\s+(?:(?:enum|data|sealed|abstract|open|inline|value)\s+)*'
+# Модификаторы между private и объявлением — все (05.10.2026: «private const val»
+# не находился, и сборка упала на LOAD_MORE_THRESHOLD после выноса MainDialerParts)
+PRIV = re.compile(r'^private\s+(?:(?:enum|data|sealed|abstract|open|inline|value|const|suspend|tailrec|operator|infix|lateinit|annotation|fun)\s+)*'
                   r'(?:class|object|interface|fun|val|var)\s+(?:<[^>]+>\s+)?'
                   r'(?:[\w.<>?, ]+\.)?(\w+)', re.M)  # у расширения имя — после получателя: fun Modifier.x()
 private_decls = {}

@@ -44,7 +44,7 @@
  35. Окна собраны на OgnelissDialog, а не на AlertDialog
  36. Отступы кратны четырём (размеры значков не проверяются)
 """
-import os, re, sys
+import glob, os, re, sys
 from collections import defaultdict
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -1282,6 +1282,19 @@ for f in kt_files():
             line = text[:m.start()].count('\n') + 1
             problems['Отступ числом со шкалы — нужен токен Space'].append(
                 f'{rel}:{line} — {n}.dp → Space.{_SPACE[n]}')
+
+# ── 41. Недопустимые символы в имени теста в обратных кавычках (05.10.2026) ─
+# На JVM имя метода в `…` не может содержать . ; [ ] / < > : \ — тесты
+# PinnedControllerTest с «перевод: …» не скомпилировались.
+for f in glob.glob(os.path.join(os.path.dirname(SRC), '..', 'test', '**', '*.kt'), recursive=True) + \
+         glob.glob(os.path.join(os.path.dirname(SRC), '..', 'androidTest', '**', '*.kt'), recursive=True):
+    text = open(f, encoding='utf-8').read()
+    for m in re.finditer(r'fun `([^`]*)`', text):
+        bad = sorted(set(c for c in m.group(1) if c in '.;[]/<>:\\'))
+        if bad:
+            line = text[:m.start()].count('\n') + 1
+            problems['Недопустимый символ в имени теста'].append(
+                f'{os.path.relpath(f, os.path.dirname(SRC))}:{line} — «{"".join(bad)}» в `{m.group(1)[:50]}`')
 
 # ── ОТЧЁТ ─────────────────────────────────────────────────────────────────
 total = sum(len(v) for v in problems.values())

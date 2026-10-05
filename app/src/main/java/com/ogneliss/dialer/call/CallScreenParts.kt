@@ -94,8 +94,9 @@ internal fun LightStatusIconsOnPhoto(enabled: Boolean) {
         val before = controller?.isAppearanceLightStatusBars
         if (enabled) controller?.isAppearanceLightStatusBars = false
         onDispose {
-            // controller может быть null — before тогда тоже null
-            if (before != null) controller?.isAppearanceLightStatusBars = before
+            // before получен через controller?. — раз он не null, Kotlin знает,
+            // что и controller не null (предупреждение компилятора 05.10)
+            if (before != null) controller.isAppearanceLightStatusBars = before
         }
     }
 }

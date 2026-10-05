@@ -333,7 +333,7 @@ internal fun dateGroupLabel(group: CallLogDateGroup): Int = when (group) {
 }
 
 
-private const val LOAD_MORE_THRESHOLD = 5
+internal const val LOAD_MORE_THRESHOLD = 5
 
 
 
