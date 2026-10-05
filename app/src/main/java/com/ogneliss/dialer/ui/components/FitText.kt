@@ -1,6 +1,7 @@
 package com.ogneliss.dialer.ui.components
 
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -39,23 +40,34 @@ fun FitText(
     textAlign: TextAlign? = null
 ) {
     val measurer = rememberTextMeasurer()
+    /*
+     * Мерить тем же стилем, каким рисует Text (1.3.4, 04.10.2026).
+     * Было: замер по style, а Text рисует LocalTextStyle.current.merge(style).
+     * У «Поделиться» лёжа ширина была впритык: по замеру слово влезало,
+     * масштаб не включался, а при отрисовке не хватало пары пикселей —
+     * снова «Поделитьс / я» (скриншот автора, 1.3.3).
+     */
+    val merged = LocalTextStyle.current.merge(style)
     BoxWithConstraints(modifier) {
         val maxWidth = constraints.maxWidth
-        val fitted = remember(text, style, maxWidth, maxLines, minScale) {
-            if (maxWidth == Constraints.Infinity || !style.fontSize.isSp) {
-                style
+        val fitted = remember(text, merged, maxWidth, maxLines, minScale) {
+            if (maxWidth == Constraints.Infinity || !merged.fontSize.isSp) {
+                merged
             } else {
                 val parts = if (maxLines == 1) listOf(text) else text.split(' ', '\u00A0')
                 val widest = parts.maxOfOrNull { part ->
-                    measurer.measure(part, style, softWrap = false, maxLines = 1).size.width
+                    measurer.measure(part, merged, softWrap = false, maxLines = 1).size.width
                 } ?: 0
-                if (widest <= maxWidth || widest == 0) {
-                    style
+                // Запас 4%: округление и сглаживание при отрисовке
+                // не должны решать, переносить ли последнюю букву
+                val target = maxWidth * FIT_SAFETY
+                if (widest <= target || widest == 0) {
+                    merged
                 } else {
-                    val scale = (maxWidth.toFloat() / widest).coerceAtLeast(minScale)
-                    style.copy(
-                        fontSize = style.fontSize * scale,
-                        lineHeight = if (style.lineHeight.isSp) style.lineHeight * scale else style.lineHeight
+                    val scale = (target / widest).coerceAtLeast(minScale)
+                    merged.copy(
+                        fontSize = merged.fontSize * scale,
+                        lineHeight = if (merged.lineHeight.isSp) merged.lineHeight * scale else merged.lineHeight
                     )
                 }
             }
@@ -70,3 +82,6 @@ fun FitText(
         )
     }
 }
+
+/** Доля ширины, которую может занять самое широкое слово. */
+private const val FIT_SAFETY = 0.96f

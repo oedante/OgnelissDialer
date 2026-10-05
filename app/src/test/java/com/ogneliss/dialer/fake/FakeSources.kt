@@ -188,6 +188,8 @@ class FakeContactWriter : ContactWriter {
         return true
     }
 
+    override suspend fun isSendToVoicemail(contactId: Long): Boolean = silenced[contactId] == true
+
     override suspend fun setCustomRingtone(contactId: Long, uri: android.net.Uri?): Boolean = true
 
     override suspend fun delete(contactId: Long): Boolean {

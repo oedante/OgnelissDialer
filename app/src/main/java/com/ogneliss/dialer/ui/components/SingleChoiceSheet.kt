@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -10,7 +12,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.theme.FlowUi
 
@@ -64,7 +65,7 @@ fun <T> SingleChoiceSheet(
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(
                     horizontal = FlowUi.sheetPadding,
-                    vertical = 8.dp
+                    vertical = Space.s
                 )
             )
 

@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.layout.*
@@ -208,12 +210,12 @@ private fun ChoiceRow(
             .fillMaxWidth()
             .heightIn(min = Dimens.MIN_TOUCH_TARGET)
             .selectable(selected = selected, role = Role.RadioButton, onClick = onSelect)
-            .padding(vertical = 4.dp),
+            .padding(vertical = Space.xs),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // onClick = null: нажатие обрабатывает вся строка
         RadioButton(selected = selected, onClick = null)
-        Spacer(Modifier.width(12.dp))
+        Spacer(Modifier.width(Space.m))
         if (icon != null) {
             Icon(
                 icon,
@@ -221,7 +223,7 @@ private fun ChoiceRow(
                 tint = iconTint ?: MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(24.dp)
             )
-            Spacer(Modifier.width(12.dp))
+            Spacer(Modifier.width(Space.m))
         } else if (reserveIconSpace) {
             Spacer(Modifier.width(36.dp))
         }

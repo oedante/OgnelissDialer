@@ -1,0 +1,522 @@
+{
+ "Add": {
+  "symbol": "add",
+  "filled": false,
+  "autoMirror": false
+ },
+ "AddIcCall": {
+  "symbol": "add_call",
+  "filled": false,
+  "autoMirror": false
+ },
+ "AddToHomeScreen": {
+  "symbol": "add_to_home_screen",
+  "filled": false,
+  "autoMirror": true
+ },
+ "Alarm": {
+  "symbol": "alarm",
+  "filled": false,
+  "autoMirror": false
+ },
+ "ArrowBack": {
+  "symbol": "arrow_back",
+  "filled": false,
+  "autoMirror": true
+ },
+ "ArrowDownward": {
+  "symbol": "arrow_downward",
+  "filled": false,
+  "autoMirror": false
+ },
+ "ArrowUpward": {
+  "symbol": "arrow_upward",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Article": {
+  "symbol": "article",
+  "filled": false,
+  "autoMirror": true
+ },
+ "Backspace": {
+  "symbol": "backspace",
+  "filled": false,
+  "autoMirror": true
+ },
+ "BarChart": {
+  "symbol": "bar_chart",
+  "filled": false,
+  "autoMirror": false
+ },
+ "BatteryAlert": {
+  "symbol": "battery_alert",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Block": {
+  "symbol": "block",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Bluetooth": {
+  "symbol": "bluetooth",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Bolt": {
+  "symbol": "bolt",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Cake": {
+  "symbol": "cake",
+  "filled": false,
+  "autoMirror": false
+ },
+ "CalendarMonth": {
+  "symbol": "calendar_month",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Call": {
+  "symbol": "call",
+  "filled": true,
+  "autoMirror": false
+ },
+ "CallEnd": {
+  "symbol": "call_end",
+  "filled": true,
+  "autoMirror": false
+ },
+ "CallMade": {
+  "symbol": "call_made",
+  "filled": false,
+  "autoMirror": true
+ },
+ "CallMissed": {
+  "symbol": "call_missed",
+  "filled": false,
+  "autoMirror": true
+ },
+ "CallReceived": {
+  "symbol": "call_received",
+  "filled": false,
+  "autoMirror": true
+ },
+ "CallSplit": {
+  "symbol": "call_split",
+  "filled": false,
+  "autoMirror": true
+ },
+ "Chat": {
+  "symbol": "chat",
+  "filled": false,
+  "autoMirror": true
+ },
+ "Check": {
+  "symbol": "check",
+  "filled": false,
+  "autoMirror": false
+ },
+ "CheckCircle": {
+  "symbol": "check_circle",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Checklist": {
+  "symbol": "checklist",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Clear": {
+  "symbol": "close",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Close": {
+  "symbol": "close",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Code": {
+  "symbol": "code",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Contacts": {
+  "symbol": "contacts",
+  "filled": false,
+  "autoMirror": false
+ },
+ "ContentCopy": {
+  "symbol": "content_copy",
+  "filled": false,
+  "autoMirror": false
+ },
+ "ContentPaste": {
+  "symbol": "content_paste",
+  "filled": false,
+  "autoMirror": false
+ },
+ "DarkMode": {
+  "symbol": "dark_mode",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Delete": {
+  "symbol": "delete",
+  "filled": false,
+  "autoMirror": false
+ },
+ "DeleteSweep": {
+  "symbol": "delete_sweep",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Dialpad": {
+  "symbol": "dialpad",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Edit": {
+  "symbol": "edit",
+  "filled": false,
+  "autoMirror": false
+ },
+ "EditNote": {
+  "symbol": "edit_note",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Email": {
+  "symbol": "mail",
+  "filled": false,
+  "autoMirror": false
+ },
+ "ExpandLess": {
+  "symbol": "expand_less",
+  "filled": false,
+  "autoMirror": false
+ },
+ "ExpandMore": {
+  "symbol": "expand_more",
+  "filled": false,
+  "autoMirror": false
+ },
+ "FileDownload": {
+  "symbol": "download",
+  "filled": false,
+  "autoMirror": false
+ },
+ "FileUpload": {
+  "symbol": "upload",
+  "filled": false,
+  "autoMirror": false
+ },
+ "FilterList": {
+  "symbol": "filter_list",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Forum": {
+  "symbol": "forum",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Gavel": {
+  "symbol": "gavel",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Headphones": {
+  "symbol": "headphones",
+  "filled": false,
+  "autoMirror": false
+ },
+ "History": {
+  "symbol": "history",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Info": {
+  "symbol": "info",
+  "filled": false,
+  "autoMirror": false
+ },
+ "KeyboardArrowDown": {
+  "symbol": "keyboard_arrow_down",
+  "filled": false,
+  "autoMirror": false
+ },
+ "KeyboardArrowRight": {
+  "symbol": "keyboard_arrow_right",
+  "filled": false,
+  "autoMirror": true
+ },
+ "KeyboardHide": {
+  "symbol": "keyboard_hide",
+  "filled": false,
+  "autoMirror": false
+ },
+ "LightMode": {
+  "symbol": "light_mode",
+  "filled": false,
+  "autoMirror": false
+ },
+ "List": {
+  "symbol": "list",
+  "filled": false,
+  "autoMirror": true
+ },
+ "Lock": {
+  "symbol": "lock",
+  "filled": false,
+  "autoMirror": false
+ },
+ "MergeType": {
+  "symbol": "merge_type",
+  "filled": false,
+  "autoMirror": true
+ },
+ "Message": {
+  "symbol": "chat",
+  "filled": false,
+  "autoMirror": true
+ },
+ "MicOff": {
+  "symbol": "mic_off",
+  "filled": false,
+  "autoMirror": false
+ },
+ "MoreVert": {
+  "symbol": "more_vert",
+  "filled": false,
+  "autoMirror": false
+ },
+ "MusicNote": {
+  "symbol": "music_note",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Notifications": {
+  "symbol": "notifications",
+  "filled": false,
+  "autoMirror": false
+ },
+ "NotificationsOff": {
+  "symbol": "notifications_off",
+  "filled": false,
+  "autoMirror": false
+ },
+ "OpenInNew": {
+  "symbol": "open_in_new",
+  "filled": false,
+  "autoMirror": true
+ },
+ "Palette": {
+  "symbol": "palette",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Pause": {
+  "symbol": "pause",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Person": {
+  "symbol": "person",
+  "filled": false,
+  "autoMirror": false
+ },
+ "PersonAdd": {
+  "symbol": "person_add",
+  "filled": false,
+  "autoMirror": false
+ },
+ "PersonOff": {
+  "symbol": "person_off",
+  "filled": false,
+  "autoMirror": false
+ },
+ "PhoneAndroid": {
+  "symbol": "phone_android",
+  "filled": false,
+  "autoMirror": false
+ },
+ "PhoneCallback": {
+  "symbol": "phone_callback",
+  "filled": false,
+  "autoMirror": true
+ },
+ "PhoneDisabled": {
+  "symbol": "phone_disabled",
+  "filled": false,
+  "autoMirror": false
+ },
+ "PhonelinkLock": {
+  "symbol": "phonelink_lock",
+  "filled": false,
+  "autoMirror": false
+ },
+ "PrivacyTip": {
+  "symbol": "privacy_tip",
+  "filled": false,
+  "autoMirror": false
+ },
+ "PushPin": {
+  "symbol": "push_pin",
+  "filled": true,
+  "autoMirror": false
+ },
+ "QrCode2": {
+  "symbol": "qr_code_2",
+  "filled": false,
+  "autoMirror": false
+ },
+ "RadioButtonUnchecked": {
+  "symbol": "radio_button_unchecked",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Report": {
+  "symbol": "report",
+  "filled": false,
+  "autoMirror": false
+ },
+ "RestartAlt": {
+  "symbol": "restart_alt",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Restore": {
+  "symbol": "settings_backup_restore",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Rule": {
+  "symbol": "rule",
+  "filled": false,
+  "autoMirror": true
+ },
+ "Save": {
+  "symbol": "save",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Schedule": {
+  "symbol": "schedule",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Search": {
+  "symbol": "search",
+  "filled": false,
+  "autoMirror": false
+ },
+ "SearchOff": {
+  "symbol": "search_off",
+  "filled": false,
+  "autoMirror": false
+ },
+ "SelectAll": {
+  "symbol": "select_all",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Send": {
+  "symbol": "send",
+  "filled": false,
+  "autoMirror": true
+ },
+ "Settings": {
+  "symbol": "settings",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Share": {
+  "symbol": "share",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Shield": {
+  "symbol": "shield",
+  "filled": false,
+  "autoMirror": false
+ },
+ "SimCard": {
+  "symbol": "sim_card",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Smartphone": {
+  "symbol": "smartphone",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Star": {
+  "symbol": "star",
+  "filled": true,
+  "autoMirror": false
+ },
+ "StarBorder": {
+  "symbol": "star",
+  "filled": false,
+  "autoMirror": false
+ },
+ "StickyNote2": {
+  "symbol": "sticky_note_2",
+  "filled": false,
+  "autoMirror": true
+ },
+ "SwapCalls": {
+  "symbol": "swap_calls",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Swipe": {
+  "symbol": "swipe",
+  "filled": false,
+  "autoMirror": false
+ },
+ "SwipeLeft": {
+  "symbol": "swipe_left",
+  "filled": false,
+  "autoMirror": false
+ },
+ "SwipeUp": {
+  "symbol": "swipe_up",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Textsms": {
+  "symbol": "sms",
+  "filled": false,
+  "autoMirror": false
+ },
+ "TouchApp": {
+  "symbol": "touch_app",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Voicemail": {
+  "symbol": "voicemail",
+  "filled": false,
+  "autoMirror": false
+ },
+ "VolumeUp": {
+  "symbol": "volume_up",
+  "filled": false,
+  "autoMirror": true
+ },
+ "Warning": {
+  "symbol": "warning",
+  "filled": false,
+  "autoMirror": false
+ },
+ "WifiOff": {
+  "symbol": "wifi_off",
+  "filled": false,
+  "autoMirror": false
+ }
+}

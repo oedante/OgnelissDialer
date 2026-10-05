@@ -113,6 +113,8 @@ interface RulesSource {
 interface ContactWriter {
     suspend fun setStarred(contactId: Long, starred: Boolean): Boolean
     suspend fun setSendToVoicemail(contactId: Long, enabled: Boolean): Boolean
+    /** Текущее значение (1.3.4): меню карточки показывает его переключателем. */
+    suspend fun isSendToVoicemail(contactId: Long): Boolean
     suspend fun setCustomRingtone(contactId: Long, uri: android.net.Uri?): Boolean
     suspend fun delete(contactId: Long): Boolean
 }

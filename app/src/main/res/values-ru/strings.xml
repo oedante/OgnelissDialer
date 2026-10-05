@@ -57,6 +57,9 @@
     <string name="confirm_block_unknown">Курьеры, поликлиники, школы и банки звонят с номеров, которых нет в контактах. Они перестанут до вас дозваниваться. Сначала добавьте исключения в белый список.</string>
     <string name="confirm_delete_contact_text">Контакт будет удалён из всех аккаунтов, где он хранится, включая Google. Отменить это с телефона нельзя.</string>
     <string name="confirm_delete_contact_title">Удалить контакт?</string>
+    <string name="confirm_delete_contact_pinned">Контакт закреплён вверху журнала — он будет убран и из закреплённых.</string>
+    <string name="msg_contact_deleted">Контакт удалён</string>
+    <string name="msg_contact_delete_failed">Не удалось удалить контакт</string>
     <string name="confirm_enable">Включить</string>
     <string name="confirm_external_lookup">Входящий номер будет передан выбранному приложению, которое может отправить его на свои серверы.</string>
     <string name="confirm_reset">Все настройки вернутся к значениям по умолчанию. Заметки, метки и списки сохранятся.</string>
@@ -507,7 +510,7 @@
     <string name="msg_reminder_set_inexact">Напоминание поставлено: %1$s — может прийти позже</string>
     <string name="msg_reminder_exact_fix">Настроить</string>
     <string name="dialer_role_blocked_title">Окно выбора не открылось</string>
-    <string name="dialer_role_blocked_text">Некоторые оболочки — Xiaomi, Samsung, Huawei, nubia — блокируют замену системной звонилки в целях безопасности.
+    <string name="dialer_role_blocked_text">Некоторые оболочки — Xiaomi, Samsung, Huawei, nubia — блокируют замену системного приложения для набора номера в целях безопасности.
 
 Откройте «Настройки → Безопасность → Доступ для приложений с особыми правами» и разрешите изменение системных настроек. После этого вернитесь и попробуйте снова.</string>
     <string name="dialer_role_open_settings">Открыть настройки</string>

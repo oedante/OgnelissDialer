@@ -1,11 +1,12 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Article
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -70,7 +71,7 @@ fun AboutScreen(
 
             // Шапка: название, версия, и главный тезис о приватности
             Column(
-                Modifier.fillMaxWidth().padding(24.dp),
+                Modifier.fillMaxWidth().padding(Space.xl),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -89,8 +90,8 @@ fun AboutScreen(
 
             OgnelissPanel(color = MaterialTheme.colorScheme.primaryContainer) {
                 Row(verticalAlignment = Alignment.Top) {
-                    Icon(Icons.Default.WifiOff, null)
-                    Spacer(Modifier.width(12.dp))
+                    Icon(OgnelissIcons.WifiOff, null)
+                    Spacer(Modifier.width(Space.m))
                     Text(
                         stringResource(R.string.about_no_internet),
                         style = MaterialTheme.typography.bodyMedium
@@ -98,39 +99,39 @@ fun AboutScreen(
                 }
             }
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(Space.l))
 
             AboutRow(
-                Icons.Default.PrivacyTip,
+                OgnelissIcons.PrivacyTip,
                 stringResource(R.string.settings_privacy_policy)
             ) { onOpenLegal(LegalDocument.PRIVACY) }
 
             AboutRow(
-                Icons.Default.Gavel,
+                OgnelissIcons.Gavel,
                 stringResource(R.string.settings_eula),
                 stringResource(R.string.consent_eula_hint)
             ) { onOpenLegal(LegalDocument.EULA) }
 
             AboutRow(
-                Icons.AutoMirrored.Filled.Article,
+                OgnelissIcons.Article,
                 stringResource(R.string.settings_terms)
             ) { onOpenLegal(LegalDocument.TERMS) }
 
             AboutRow(
-                Icons.Default.Code,
+                OgnelissIcons.Code,
                 stringResource(R.string.settings_licenses),
                 stringResource(R.string.about_licenses_hint)
             ) { onOpenLegal(LegalDocument.LICENSES) }
 
-            HorizontalDivider(Modifier.padding(vertical = 8.dp))
+            HorizontalDivider(Modifier.padding(vertical = Space.s))
 
             AboutRow(
-                Icons.Default.MicOff,
+                OgnelissIcons.MicOff,
                 stringResource(R.string.settings_recording_title),
                 stringResource(R.string.about_recording_hint)
             ) { showRecordingInfo = true }
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(Space.xxl))
         }
     }
 

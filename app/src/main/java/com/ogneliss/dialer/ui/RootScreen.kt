@@ -1,5 +1,9 @@
 package com.ogneliss.dialer.ui
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.layout.*
@@ -36,11 +40,6 @@ import androidx.compose.ui.text.style.TextAlign
 import com.ogneliss.dialer.ui.adaptive.ProvidePaneLayout
 import com.ogneliss.dialer.ui.adaptive.LocalNavigationRailShown
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.material.icons.automirrored.filled.StickyNote2
-import androidx.compose.material.icons.filled.Alarm
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.Icons
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.ui.adaptive.LayoutMode
@@ -769,7 +768,7 @@ fun RootScreen(
 private fun DefaultDialerBanner(onRequest: () -> Unit) {
     Surface(color = MaterialTheme.colorScheme.primaryContainer) {
         Row(
-            Modifier.fillMaxWidth().padding(12.dp),
+            Modifier.fillMaxWidth().padding(Space.m),
             verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
         ) {
             Text(
@@ -824,10 +823,10 @@ private fun AppNavigationRail(
     onNavigate: (String) -> Unit
 ) {
     val items = listOf(
-        Triple("dialer", Icons.Default.History, R.string.nav_journal),
-        Triple("contacts", Icons.Default.Person, R.string.nav_contacts),
-        Triple("notes", Icons.AutoMirrored.Filled.StickyNote2, R.string.nav_notes),
-        Triple("reminders", Icons.Default.Alarm, R.string.nav_reminders)
+        Triple("dialer", OgnelissIcons.History, R.string.nav_journal),
+        Triple("contacts", OgnelissIcons.Person, R.string.nav_contacts),
+        Triple("notes", OgnelissIcons.StickyNote2, R.string.nav_notes),
+        Triple("reminders", OgnelissIcons.Alarm, R.string.nav_reminders)
     )
 
     NavigationRail(
@@ -1032,17 +1031,17 @@ private fun SettingsCategoryHost(
 @Composable
 private fun DetailPlaceholder() {
     Column(
-        Modifier.fillMaxSize().padding(32.dp),
+        Modifier.fillMaxSize().padding(Space.xxl),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            Icons.Default.Person,
+            OgnelissIcons.Person,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.outline,
             modifier = Modifier.size(48.dp)
         )
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(Space.m))
         Text(
             stringResource(R.string.detail_placeholder),
             style = MaterialTheme.typography.bodyLarge,

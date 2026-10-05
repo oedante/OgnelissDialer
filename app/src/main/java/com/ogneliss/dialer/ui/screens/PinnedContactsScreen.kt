@@ -1,16 +1,15 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
+import com.ogneliss.dialer.data.PinnedEntry
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -81,7 +80,7 @@ fun PinnedContactsScreen(
             item {
                 Text(
                     stringResource(R.string.pinned_explain),
-                    Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
+                    Modifier.padding(horizontal = Space.xl, vertical = Space.l),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -90,22 +89,22 @@ fun PinnedContactsScreen(
             if (entries.isEmpty()) {
                 item {
                     Column(
-                        Modifier.fillMaxWidth().padding(32.dp),
+                        Modifier.fillMaxWidth().padding(Space.xxl),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Icon(
-                            Icons.Default.PushPin,
+                            OgnelissIcons.PushPin,
                             contentDescription = null,
                             modifier = Modifier.size(48.dp),
                             tint = MaterialTheme.colorScheme.outline
                         )
-                        Spacer(Modifier.height(16.dp))
+                        Spacer(Modifier.height(Space.l))
                         Text(
                             stringResource(R.string.pinned_empty),
                             style = MaterialTheme.typography.titleMedium,
                             textAlign = TextAlign.Center
                         )
-                        Spacer(Modifier.height(8.dp))
+                        Spacer(Modifier.height(Space.s))
                         // Подсказка о втором способе: чаще закрепляют
                         // из журнала, и человек должен знать, что так можно
                         Text(
@@ -170,7 +169,7 @@ fun PinnedContactsScreen(
                     else MaterialTheme.colorScheme.outline,
                     leading = {
                         Icon(
-                            Icons.Default.Add,
+                            OgnelissIcons.Add,
                             contentDescription = null,
                             tint = if (canAdd) MaterialTheme.colorScheme.primary
                             else MaterialTheme.colorScheme.outline
@@ -180,7 +179,7 @@ fun PinnedContactsScreen(
                 )
             }
 
-            item { Spacer(Modifier.height(32.dp)) }
+            item { Spacer(Modifier.height(Space.xxl)) }
         }
     }
 }
@@ -195,7 +194,7 @@ fun PinnedContactsScreen(
 @Composable
 private fun PinnedRow(
     position: Int,
-    entry: DialerViewModel.PinnedEntry,
+    entry: PinnedEntry,
     canMoveUp: Boolean,
     canMoveDown: Boolean,
     onMoveUp: () -> Unit,
@@ -220,7 +219,7 @@ private fun PinnedRow(
                         AsyncImage(model = entry.photoUri, contentDescription = null)
                     } else {
                         Box(contentAlignment = Alignment.Center) {
-                            Icon(Icons.Default.Person, null, Modifier.size(20.dp))
+                            Icon(OgnelissIcons.Person, null, Modifier.size(20.dp))
                         }
                     }
                 }
@@ -238,19 +237,19 @@ private fun PinnedRow(
             Row {
                 IconButton(onClick = onMoveUp, enabled = canMoveUp) {
                     Icon(
-                        Icons.Default.ArrowUpward,
+                        OgnelissIcons.ArrowUpward,
                         contentDescription = stringResource(R.string.pinned_move_up)
                     )
                 }
                 IconButton(onClick = onMoveDown, enabled = canMoveDown) {
                     Icon(
-                        Icons.Default.ArrowDownward,
+                        OgnelissIcons.ArrowDownward,
                         contentDescription = stringResource(R.string.pinned_move_down)
                     )
                 }
                 IconButton(onClick = onUnpin) {
                     Icon(
-                        Icons.Default.PushPin,
+                        OgnelissIcons.PushPin,
                         contentDescription = stringResource(R.string.action_unpin),
                         tint = MaterialTheme.colorScheme.error
                     )

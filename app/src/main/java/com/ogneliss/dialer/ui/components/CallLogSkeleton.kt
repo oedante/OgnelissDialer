@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -86,7 +88,7 @@ private fun SkeletonRow(alpha: Float) {
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 14.dp),
+            .padding(horizontal = Space.xl, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Кружок на месте аватара
@@ -97,7 +99,7 @@ private fun SkeletonRow(alpha: Float) {
                 .background(color)
         )
 
-        Spacer(Modifier.width(12.dp))
+        Spacer(Modifier.width(Space.m))
 
         Column(Modifier.weight(1f)) {
             // Полоса имени: разной ширины у соседних строк, иначе

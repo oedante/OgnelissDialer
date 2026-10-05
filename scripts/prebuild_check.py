@@ -1264,6 +1264,25 @@ if os.path.exists(root_path):
                 line = root_src[:call.start()].count('\n') + 1
                 problems['Экрану не передан свайп'].append(f'RootScreen.kt:{line} — {name}')
 
+# ── 40. Отступ числом со шкалы (1.3.4, дизайн-система) ────────────────────
+# 301 отступ-число переведены на токены Space (4·8·12·16·24·32 dp).
+# Новое «16.dp» в padding/Spacer/spacedBy/PaddingValues — снова число
+# вместо ступени шкалы. Значения вне шкалы (2, 6, 20…) не трогаем:
+# это осознанные исключения, их решают «под глаз».
+_SPACE = {'4': 'xs', '8': 's', '12': 'm', '16': 'l', '24': 'xl', '32': 'xxl'}
+_SPACE_CTX = re.compile(r'(padding\([^()]*\)|Spacer\(Modifier\.(?:height|width)\([^()]*\)\)'
+                        r'|spacedBy\([^()]*\)|PaddingValues\([^()]*\))')
+for f in kt_files():
+    if os.sep + 'theme' + os.sep in f:
+        continue
+    text = open(f, encoding='utf-8').read()
+    rel = os.path.relpath(f, SRC)
+    for m in _SPACE_CTX.finditer(text):
+        for n in re.findall(r'\b(4|8|12|16|24|32)\.dp\b', m.group(0)):
+            line = text[:m.start()].count('\n') + 1
+            problems['Отступ числом со шкалы — нужен токен Space'].append(
+                f'{rel}:{line} — {n}.dp → Space.{_SPACE[n]}')
+
 # ── ОТЧЁТ ─────────────────────────────────────────────────────────────────
 total = sum(len(v) for v in problems.values())
 print(f'\n{"="*70}\nПРОВЕРКА ПЕРЕД СБОРКОЙ: замечаний — {total}\n{"="*70}')

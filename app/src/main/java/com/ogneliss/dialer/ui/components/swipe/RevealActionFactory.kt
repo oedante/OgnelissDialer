@@ -1,21 +1,7 @@
 package com.ogneliss.dialer.ui.components.swipe
 
-import androidx.compose.material.icons.filled.Textsms
-import androidx.compose.material.icons.filled.Forum
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.Alarm
-import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Message
-import androidx.compose.material.icons.filled.Block
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.automirrored.filled.Chat
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.EditNote
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Share
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.ogneliss.dialer.ui.theme.ReminderAmber
@@ -165,7 +151,7 @@ object RevealActionFactory {
                     label = chip(number, labels.getOrNull(i), allLabels),
                     description = strings.smsTo(number),
                     color = MessageBlue,
-                    icon = Icons.AutoMirrored.Filled.Message,
+                    icon = OgnelissIcons.Message,
                     onClick = { onSms(number) }
                 )
             }
@@ -177,7 +163,7 @@ object RevealActionFactory {
                         label = chip(number, labels.getOrNull(i), allLabels),
                         description = strings.messengerTo(number),
                         color = MessageBlue,
-                        icon = Icons.AutoMirrored.Filled.Chat,
+                        icon = OgnelissIcons.Chat,
                         onClick = { onMessenger(number) }
                     )
                 }
@@ -231,7 +217,7 @@ object RevealActionFactory {
                             label = chipLabel,
                             description = strings.callWithSim(number, sim.label),
                             color = CallGreen,
-                            icon = Icons.Default.Call,
+                            icon = OgnelissIcons.Call,
                             simBadge = slot + 1,
                             onClick = { onCall(number, slot) }
                         )
@@ -243,7 +229,7 @@ object RevealActionFactory {
                         label = chipLabel,
                         description = strings.callTo(number),
                         color = CallGreen,
-                        icon = Icons.Default.Call,
+                        icon = OgnelissIcons.Call,
                         onClick = { onCall(number, -1) }
                     )
                 )
@@ -303,28 +289,28 @@ object RevealActionFactory {
 
     private fun visuals(action: SwipeAction): Pair<ImageVector, Color> = when (action) {
         // Вызов
-        SwipeAction.CALL -> Icons.Default.Call to CallGreen
+        SwipeAction.CALL -> OgnelissIcons.Call to CallGreen
 
         // Сообщения
-        SwipeAction.SMS -> Icons.AutoMirrored.Filled.Message to MessageBlue
-        SwipeAction.WHATSAPP -> Icons.AutoMirrored.Filled.Chat to WhatsAppGreen
-        SwipeAction.TELEGRAM -> Icons.AutoMirrored.Filled.Send to TelegramBlue
-        SwipeAction.VIBER -> Icons.Default.Forum to ViberPurple
-        SwipeAction.MAX -> Icons.Default.Textsms to MaxBlue
-        SwipeAction.EMAIL -> Icons.Default.Email to NeutralGrey
+        SwipeAction.SMS -> OgnelissIcons.Message to MessageBlue
+        SwipeAction.WHATSAPP -> OgnelissIcons.Chat to WhatsAppGreen
+        SwipeAction.TELEGRAM -> OgnelissIcons.Send to TelegramBlue
+        SwipeAction.VIBER -> OgnelissIcons.Forum to ViberPurple
+        SwipeAction.MAX -> OgnelissIcons.Textsms to MaxBlue
+        SwipeAction.EMAIL -> OgnelissIcons.Email to NeutralGrey
 
         // Работа с записью
-        SwipeAction.DELETE_FROM_LOG -> Icons.Default.Delete to DestructiveRed
-        SwipeAction.BLOCK_NUMBER -> Icons.Default.Block to DestructiveRed
-        SwipeAction.VIEW_CONTACT -> Icons.Default.Person to NeutralGrey
-        SwipeAction.REMIND_CALLBACK -> Icons.Default.Alarm to ReminderAmber
-        SwipeAction.ADD_NOTE -> Icons.Default.EditNote to NeutralGrey
-        SwipeAction.EDIT_BEFORE_CALL -> Icons.Default.Edit to NeutralGrey
-        SwipeAction.SHARE_NUMBER -> Icons.Default.Share to NeutralGrey
-        SwipeAction.COPY_NUMBER -> Icons.Default.ContentCopy to NeutralGrey
+        SwipeAction.DELETE_FROM_LOG -> OgnelissIcons.Delete to DestructiveRed
+        SwipeAction.BLOCK_NUMBER -> OgnelissIcons.Block to DestructiveRed
+        SwipeAction.VIEW_CONTACT -> OgnelissIcons.Person to NeutralGrey
+        SwipeAction.REMIND_CALLBACK -> OgnelissIcons.Alarm to ReminderAmber
+        SwipeAction.ADD_NOTE -> OgnelissIcons.EditNote to NeutralGrey
+        SwipeAction.EDIT_BEFORE_CALL -> OgnelissIcons.Edit to NeutralGrey
+        SwipeAction.SHARE_NUMBER -> OgnelissIcons.Share to NeutralGrey
+        SwipeAction.COPY_NUMBER -> OgnelissIcons.ContentCopy to NeutralGrey
 
         // Действие не выбрано: иконки нет, но цвет нужен для фона
-        SwipeAction.NONE -> Icons.Default.Block to NeutralGrey
+        SwipeAction.NONE -> OgnelissIcons.Block to NeutralGrey
     }
 
     private fun chip(number: String, label: String?, allLabels: List<String>) =

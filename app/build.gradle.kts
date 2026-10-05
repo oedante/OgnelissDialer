@@ -88,8 +88,8 @@ android {
          * Перед публикацией в открытый доступ сменить на 1.0.0
          * и поднять versionCode.
          */
-        versionCode = 31
-        versionName = "1.3.3"
+        versionCode = 32
+        versionName = "1.3.4"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -475,7 +475,8 @@ dependencies {
     implementation(libs.compose.ui.graphics)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
-    implementation(libs.compose.material.icons)
+    // material-icons-extended убран (1.3.4): иконки — Material Symbols Rounded
+    // в ui/theme/OgnelissIcons.kt (scripts/build_icons.py)
     debugImplementation(libs.compose.ui.tooling)
 
     implementation(libs.androidx.datastore)

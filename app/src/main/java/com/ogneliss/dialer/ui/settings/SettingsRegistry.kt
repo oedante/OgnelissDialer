@@ -1,9 +1,8 @@
 package com.ogneliss.dialer.ui.settings
 
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.annotation.StringRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.ogneliss.dialer.R
 
@@ -41,13 +40,13 @@ enum class SettingsCategory(
         "settings/appearance",
         R.string.settings_section_appearance,
         R.string.settings_section_appearance_summary,
-        Icons.Default.Palette
+        OgnelissIcons.Palette
     ),
     GESTURES(
         "settings/gestures",
         R.string.settings_section_gestures,
         R.string.settings_section_gestures_summary,
-        Icons.Default.Swipe
+        OgnelissIcons.Swipe
     ),
     /*
      * РАЗДЕЛ «ВЫЗОВЫ» РАЗДЕЛЁН НА ЧЕТЫРЕ.
@@ -83,31 +82,31 @@ enum class SettingsCategory(
         "settings/calls",
         R.string.settings_section_calls,
         R.string.settings_section_calls_summary,
-        Icons.Default.Call
+        OgnelissIcons.Call
     ),
     CALL_LOG(
         "settings/calllog",
         R.string.settings_section_log,
         R.string.settings_section_log_summary,
-        Icons.AutoMirrored.Filled.List
+        OgnelissIcons.List
     ),
     SIM(
         "settings/sim",
         R.string.settings_section_sim,
         R.string.settings_section_sim_summary,
-        Icons.Default.SimCard
+        OgnelissIcons.SimCard
     ),
     QUICK_ACCESS(
         "settings/quick",
         R.string.settings_section_quick,
         R.string.settings_section_quick_summary,
-        Icons.Default.Bolt
+        OgnelissIcons.Bolt
     ),
     SPAM(
         "settings/spam",
         R.string.settings_section_spam,
         R.string.settings_section_spam_summary,
-        Icons.Default.Block
+        OgnelissIcons.Block
     ),
     /*
      * «Резервная копия» и «Диагностика» объединены.
@@ -122,19 +121,19 @@ enum class SettingsCategory(
         "settings/maintenance",
         R.string.settings_section_maintenance,
         R.string.settings_section_maintenance_summary,
-        Icons.Default.Save
+        OgnelissIcons.Save
     ),
     SYSTEM(
         "settings/system",
         R.string.settings_section_system,
         R.string.settings_section_system_summary,
-        Icons.Default.PhoneAndroid
+        OgnelissIcons.PhoneAndroid
     ),
     ABOUT(
         "settings/about",
         R.string.settings_section_about,
         R.string.settings_section_about_summary,
-        Icons.Default.Info
+        OgnelissIcons.Info
     )
 }
 

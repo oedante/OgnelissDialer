@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Собрано build_mail_pages.py из content_*.py. Правьте тексты там и пересоберите. -->
+<title>Политика конфиденциальности / Privacy Policy — Ogneliss Mail</title>
+<link rel="canonical" href="https://ogneliss.ru/mail/privacy">
+<link rel="stylesheet" href="/dialer/style.css">
+<link rel="icon" href="/dialer/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="/dialer/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/mail/app-icon.png">
+<link rel="stylesheet" href="/dialer/lang.css">
+</head>
+<body>
+<main>
+
+<header class="page-bar">
+  <a href="/mail/" class="back" data-back><span aria-hidden="true">←</span> <span class="back-label">Назад к документам</span></a>
+  <div class="lang-switcher"></div>
+</header>
+
+<!-- Русская версия -->
+<div id="lang-ru">
+
+<h1>Политика конфиденциальности</h1>
+
+<p><strong>Ogneliss Mail</strong> · Версия 1.0 · 4 октября 2026 г.</p>
+
+<hr>
+
+<h2>Кратко</h2>
+
+<div class="important">
+<p>Ogneliss Mail работает напрямую с вашими почтовыми серверами. Письма, контакты и календарь хранятся на устройстве в зашифрованном виде и передаются только этим серверам. В приложении нет рекламы, аналитики и сбора отчётов о сбоях. Разработчик не получает содержимое вашей почты.</p>
+</div>
+
+<h2>1. Кто мы</h2>
+
+<p>Ogneliss Mail («Приложение») — почтовый клиент для Android.</p>
+
+<p><strong>Разработчик:</strong> Ермишин Олег Андреевич</p>
+
+<p><strong>Контакт:</strong> <a href="mailto:oedante@gmail.com">oedante@gmail.com</a></p>
+
+<p><strong>Актуальная редакция:</strong> <a href="https://ogneliss.ru/mail/privacy">https://ogneliss.ru/mail/privacy</a></p>
+
+<h2>2. Какие данные обрабатывает Приложение</h2>
+
+<div class="table-wrap">
+<table>
+  <tr><th>Данные</th><th>Зачем</th><th>Куда передаются</th></tr>
+  <tr><td>Адрес, пароль или токены входа учётной записи</td><td>Вход на почтовый сервер</td><td>Только на ваш почтовый сервер; при входе через Google, Яндекс или Mail.ru — см. раздел 4</td></tr>
+  <tr><td>Письма, вложения, черновики</td><td>Чтение, поиск, отправка, работа без сети</td><td>Ваш почтовый сервер</td></tr>
+  <tr><td>Контакты, календарь и задачи учётной записи</td><td>Синхронизация с сервером</td><td>Ваш почтовый сервер</td></tr>
+  <tr><td>Контакты и календарь телефона (с вашего разрешения)</td><td>Подсказки адресов, показ событий в системном календаре</td><td>Остаются на устройстве</td></tr>
+  <tr><td>Подписи, правила, категории, настройки</td><td>Работа Приложения</td><td>Остаются на устройстве; правила сервера Exchange сохраняются на вашем сервере</td></tr>
+  <tr><td>Журнал диагностики</td><td>Поиск неполадок</td><td>Остаётся на устройстве; передаётся, только если вы сами им поделитесь</td></tr>
+</table>
+</div>
+
+<h2>3. Чего Приложение не делает</h2>
+
+<ul>
+  <li>не показывает рекламу и не содержит рекламных SDK;</li>
+  <li>не собирает аналитику, отчёты о сбоях и рекламный идентификатор;</li>
+  <li>не продаёт и не передаёт данные третьим лицам в рекламных или иных целях;</li>
+  <li>не отправляет текст писем никуда, кроме ваших почтовых серверов: облачных сервисов обработки текста в Приложении нет;</li>
+  <li>не даёт отправителям следить за прочтением: встроенный блокировщик отключает пиксели отслеживания в письмах.</li>
+</ul>
+
+<h2>4. Вход через Google, Яндекс и Mail.ru</h2>
+
+<p>Для входа через аккаунт этих служб (OAuth) используется сервер разработчика по адресу <code>ogneliss.ru/oauth</code>. Он получает от службы одноразовый код авторизации и обменивает его на токены доступа. Токен обновления возвращается в Приложение в зашифрованном виде; сервер не ведёт базу пользователей и не хранит токены. Когда срок доступа истекает, Приложение передаёт серверу зашифрованный токен, и тот запрашивает у службы новый.</p>
+
+<p>Через этот сервер не проходят письма, контакты и календарь — Приложение получает их напрямую от почтовой службы. Сервер ведёт стандартный журнал веб-сервера (IP-адрес, время и адрес запроса) для защиты от атак.</p>
+
+<p>Отозвать доступ можно в настройках безопасности вашего аккаунта Google, Яндекс или Mail.ru.</p>
+
+<h2>5. Рабочие учётные записи</h2>
+
+<p>Если вы подключаете рабочую почту (например, Microsoft Exchange вашей организации), данные этой учётной записи обрабатывает и ваша организация — на своём сервере и по своим правилам. Сервер организации может потребовать блокировку экрана и выполнить удалённую очистку: по такой команде Приложение удаляет данные рабочей учётной записи с устройства. Разработчик не имеет доступа к серверам вашей организации.</p>
+
+<h2>6. Разрешения</h2>
+
+<div class="table-wrap">
+<table>
+  <tr><th>Разрешение</th><th>Зачем</th></tr>
+  <tr><td>Интернет, состояние сети</td><td>Связь с почтовыми серверами</td></tr>
+  <tr><td>Уведомления</td><td>Сообщения о новых письмах и напоминания</td></tr>
+  <tr><td>Контакты</td><td>Подсказки адресов, синхронизация контактов по вашему выбору</td></tr>
+  <tr><td>Календарь</td><td>Показ и синхронизация событий, ответы на приглашения</td></tr>
+  <tr><td>Точные будильники, автозапуск, фоновая служба синхронизации</td><td>Своевременная доставка почты и напоминаний</td></tr>
+  <tr><td>Биометрия</td><td>Разблокировка Приложения отпечатком или лицом</td></tr>
+</table>
+</div>
+
+<p>Разрешения запрашиваются, когда нужна соответствующая функция. Отказ отключает только её. Текущее состояние — в разделе Приложения «Настройки → Разрешения».</p>
+
+<h2>7. Хранение и защита</h2>
+
+<ul>
+  <li>база данных на устройстве зашифрована, ключ хранится в защищённом хранилище Android;</li>
+  <li>пароли и токены — в защищённом хранилище Android;</li>
+  <li>резервное копирование данных Приложения в облако отключено;</li>
+  <li>блокировка Приложения PIN-кодом и биометрией;</li>
+  <li>соединения с серверами — только по TLS; доверенные центры сертификации — системные, установленные вами на устройство и, если вы их включили, сертификаты Минцифры России.</li>
+</ul>
+
+<h2 id="delete-ru">8. Удаление данных</h2>
+
+<ul>
+  <li><strong>Удалить учётную запись в Приложении</strong> — удаляются все её данные на устройстве: письма, вложения, контакты, события, токены.</li>
+  <li><strong>Удалить Приложение</strong> — удаляются все данные Приложения.</li>
+  <li><strong>Вход через Google, Яндекс, Mail.ru</strong> — отзовите доступ в настройках аккаунта службы. На сервере входа данных о вас не остаётся (см. раздел 4).</li>
+  <li><strong>Письма и контакты на сервере</strong> удаляются средствами вашей почтовой службы или вашей организации.</li>
+</ul>
+
+<p>Учётных записей у разработчика Приложение не создаёт, поэтому удалять у разработчика нечего. С вопросами пишите на <a href="mailto:oedante@gmail.com">oedante@gmail.com</a>.</p>
+
+<h2>9. Дети</h2>
+
+<p>Приложение не предназначено для детей и не собирает сознательно данные детей.</p>
+
+<h2>10. Изменения</h2>
+
+<p>Новая редакция публикуется по адресу <a href="https://ogneliss.ru/mail/privacy">https://ogneliss.ru/mail/privacy</a> и вступает в силу с момента публикации. О существенных изменениях Приложение сообщит при обновлении.</p>
+
+<h2>11. Контакт</h2>
+
+<p><a href="mailto:oedante@gmail.com">oedante@gmail.com</a></p>
+
+</div><!-- /lang-ru -->
+
+<!-- Английская версия -->
+<div id="lang-en" style="display:none;">
+
+<h1>Privacy Policy</h1>
+
+<p><strong>Ogneliss Mail</strong> · Version 1.0 · 4 October 2026</p>
+
+<hr>
+
+<h2>Summary</h2>
+
+<div class="important">
+<p>Ogneliss Mail talks directly to your mail servers. Messages, contacts and calendars are stored encrypted on your device and sent only to those servers. The app has no ads, no analytics and no crash reporting. The developer never receives the content of your mail.</p>
+</div>
+
+<h2>1. Who we are</h2>
+
+<p>Ogneliss Mail (the "App") is an email client for Android.</p>
+
+<p><strong>Developer:</strong> Ermishin Oleg Andreevich</p>
+
+<p><strong>Contact:</strong> <a href="mailto:oedante@gmail.com">oedante@gmail.com</a></p>
+
+<p><strong>Current version:</strong> <a href="https://ogneliss.ru/mail/privacy">https://ogneliss.ru/mail/privacy</a></p>
+
+<h2>2. Data the App processes</h2>
+
+<div class="table-wrap">
+<table>
+  <tr><th>Data</th><th>Purpose</th><th>Where it goes</th></tr>
+  <tr><td>Account address, password or sign-in tokens</td><td>Signing in to the mail server</td><td>Only your mail server; for Google, Yandex or Mail.ru sign-in see section 4</td></tr>
+  <tr><td>Messages, attachments, drafts</td><td>Reading, search, sending, offline use</td><td>Your mail server</td></tr>
+  <tr><td>Account contacts, calendar and tasks</td><td>Server synchronisation</td><td>Your mail server</td></tr>
+  <tr><td>Phone contacts and calendar (with your permission)</td><td>Address suggestions, showing events in the system calendar</td><td>Stay on the device</td></tr>
+  <tr><td>Signatures, rules, categories, settings</td><td>Running the App</td><td>Stay on the device; Exchange server rules are saved on your server</td></tr>
+  <tr><td>Diagnostic log</td><td>Troubleshooting</td><td>Stays on the device; shared only if you share it yourself</td></tr>
+</table>
+</div>
+
+<h2>3. What the App does not do</h2>
+
+<ul>
+  <li>show ads or include advertising SDKs;</li>
+  <li>collect analytics, crash reports or the advertising ID;</li>
+  <li>sell or share data with third parties for advertising or any other purpose;</li>
+  <li>send message text anywhere other than your mail servers: the App uses no cloud text processing services;</li>
+  <li>let senders track when you read their mail: a built-in blocker disables tracking pixels in messages.</li>
+</ul>
+
+<h2>4. Signing in with Google, Yandex and Mail.ru</h2>
+
+<p>Sign-in with these providers (OAuth) uses the developer's server at <code>ogneliss.ru/oauth</code>. It receives a one-time authorisation code from the provider and exchanges it for access tokens. The refresh token is returned to the App in encrypted form; the server keeps no user database and stores no tokens. When access expires, the App sends the encrypted token to the server, which requests a new one from the provider.</p>
+
+<p>Messages, contacts and calendars never pass through this server — the App receives them directly from the mail provider. The server keeps a standard web server log (IP address, time and requested URL) to protect against attacks.</p>
+
+<p>You can revoke access in the security settings of your Google, Yandex or Mail.ru account.</p>
+
+<h2>5. Work accounts</h2>
+
+<p>If you connect a work account (for example, your organisation's Microsoft Exchange), that account's data is also processed by your organisation, on its own server and under its own rules. The organisation's server may require a screen lock and may issue a remote wipe; on such a command the App deletes the work account's data from the device. The developer has no access to your organisation's servers.</p>
+
+<h2>6. Permissions</h2>
+
+<div class="table-wrap">
+<table>
+  <tr><th>Permission</th><th>Why</th></tr>
+  <tr><td>Internet, network state</td><td>Connecting to mail servers</td></tr>
+  <tr><td>Notifications</td><td>New mail alerts and reminders</td></tr>
+  <tr><td>Contacts</td><td>Address suggestions, contact sync if you choose it</td></tr>
+  <tr><td>Calendar</td><td>Showing and syncing events, answering invitations</td></tr>
+  <tr><td>Exact alarms, start at boot, background sync service</td><td>Timely delivery of mail and reminders</td></tr>
+  <tr><td>Biometrics</td><td>Unlocking the App with fingerprint or face</td></tr>
+</table>
+</div>
+
+<p>Permissions are requested when the related feature is needed. Declining disables only that feature. Current status is shown in the App under "Settings → Permissions".</p>
+
+<h2>7. Storage and security</h2>
+
+<ul>
+  <li>the on-device database is encrypted; the key is kept in the Android secure keystore;</li>
+  <li>passwords and tokens are kept in the Android secure storage;</li>
+  <li>cloud backup of App data is disabled;</li>
+  <li>App lock with PIN and biometrics;</li>
+  <li>server connections use TLS only; trusted certificate authorities are the system ones, those you installed on the device and, if you enable them, the Russian Ministry of Digital Development certificates.</li>
+</ul>
+
+<h2 id="delete-en">8. Data deletion</h2>
+
+<ul>
+  <li><strong>Remove an account in the App</strong> — all of its data on the device is deleted: messages, attachments, contacts, events, tokens.</li>
+  <li><strong>Uninstall the App</strong> — all App data is deleted.</li>
+  <li><strong>Google, Yandex, Mail.ru sign-in</strong> — revoke access in your provider account settings. No data about you remains on the sign-in server (see section 4).</li>
+  <li><strong>Messages and contacts on the server</strong> are deleted through your mail provider or your organisation.</li>
+</ul>
+
+<p>The App creates no accounts with the developer, so there is nothing to delete on the developer's side. Questions: <a href="mailto:oedante@gmail.com">oedante@gmail.com</a>.</p>
+
+<h2>9. Children</h2>
+
+<p>The App is not intended for children and does not knowingly collect children's data.</p>
+
+<h2>10. Changes</h2>
+
+<p>A new version is published at <a href="https://ogneliss.ru/mail/privacy">https://ogneliss.ru/mail/privacy</a> and takes effect on publication. The App will tell you about material changes when it updates.</p>
+
+<h2>11. Contact</h2>
+
+<p><a href="mailto:oedante@gmail.com">oedante@gmail.com</a></p>
+
+</div><!-- /lang-en -->
+
+<!-- Немецкая версия -->
+<div id="lang-de" style="display:none;">
+
+<h1>Datenschutzerklärung</h1>
+
+<p><strong>Ogneliss Mail</strong> · Version 1.0 · 4. Oktober 2026</p>
+
+<div class="important">
+<p><strong>Hinweis zur Übersetzung.</strong> Diese Fassung dient nur der besseren Verständlichkeit. Rechtlich verbindlich ist ausschließlich die russische Fassung dieses Dokuments.</p>
+</div>
+
+<hr>
+
+<h2>Kurzfassung</h2>
+
+<div class="important">
+<p>Ogneliss Mail arbeitet direkt mit Ihren Mailservern. E-Mails, Kontakte und Kalender werden verschlüsselt auf dem Gerät gespeichert und nur an diese Server übertragen. Die App enthält keine Werbung, keine Analyse und keine Absturzberichte. Der Entwickler erhält keine Inhalte Ihrer E-Mails.</p>
+</div>
+
+<h2>1. Wer wir sind</h2>
+
+<p>Ogneliss Mail („App“) ist ein E-Mail-Client für Android.</p>
+
+<p><strong>Entwickler:</strong> Ermishin Oleg Andreevich</p>
+
+<p><strong>Kontakt:</strong> <a href="mailto:oedante@gmail.com">oedante@gmail.com</a></p>
+
+<p><strong>Aktuelle Fassung:</strong> <a href="https://ogneliss.ru/mail/privacy">https://ogneliss.ru/mail/privacy</a></p>
+
+<h2>2. Welche Daten die App verarbeitet</h2>
+
+<div class="table-wrap">
+<table>
+  <tr><th>Daten</th><th>Zweck</th><th>Wohin sie übertragen werden</th></tr>
+  <tr><td>Adresse, Passwort oder Anmelde-Token des Kontos</td><td>Anmeldung am Mailserver</td><td>Nur an Ihren Mailserver; bei Anmeldung über Google, Yandex oder Mail.ru siehe Abschnitt 4</td></tr>
+  <tr><td>E-Mails, Anhänge, Entwürfe</td><td>Lesen, Suchen, Senden, Offline-Nutzung</td><td>Ihr Mailserver</td></tr>
+  <tr><td>Kontakte, Kalender und Aufgaben des Kontos</td><td>Synchronisierung mit dem Server</td><td>Ihr Mailserver</td></tr>
+  <tr><td>Kontakte und Kalender des Telefons (mit Ihrer Erlaubnis)</td><td>Adressvorschläge, Anzeige von Terminen im Systemkalender</td><td>Bleiben auf dem Gerät</td></tr>
+  <tr><td>Signaturen, Regeln, Kategorien, Einstellungen</td><td>Betrieb der App</td><td>Bleiben auf dem Gerät; Exchange-Serverregeln werden auf Ihrem Server gespeichert</td></tr>
+  <tr><td>Diagnoseprotokoll</td><td>Fehlersuche</td><td>Bleibt auf dem Gerät; wird nur weitergegeben, wenn Sie es selbst teilen</td></tr>
+</table>
+</div>
+
+<h2>3. Was die App nicht tut</h2>
+
+<ul>
+  <li>Werbung anzeigen oder Werbe-SDKs enthalten;</li>
+  <li>Analysedaten, Absturzberichte oder die Werbe-ID erfassen;</li>
+  <li>Daten an Dritte verkaufen oder zu Werbe- oder anderen Zwecken weitergeben;</li>
+  <li>E-Mail-Text an andere Stellen als Ihre Mailserver senden: Die App nutzt keine Cloud-Dienste zur Textverarbeitung;</li>
+  <li>Absendern erlauben, das Lesen zu verfolgen: ein integrierter Blocker deaktiviert Tracking-Pixel in E-Mails.</li>
+</ul>
+
+<h2>4. Anmeldung mit Google, Yandex und Mail.ru</h2>
+
+<p>Für die Anmeldung über diese Anbieter (OAuth) wird der Server des Entwicklers unter <code>ogneliss.ru/oauth</code> genutzt. Er erhält vom Anbieter einen einmaligen Autorisierungscode und tauscht ihn gegen Zugriffstoken. Das Aktualisierungstoken wird verschlüsselt an die App zurückgegeben; der Server führt keine Benutzerdatenbank und speichert keine Token. Läuft der Zugriff ab, sendet die App das verschlüsselte Token an den Server, der beim Anbieter ein neues anfordert.</p>
+
+<p>E-Mails, Kontakte und Kalender laufen nie über diesen Server — die App erhält sie direkt vom Mailanbieter. Der Server führt ein übliches Webserver-Protokoll (IP-Adresse, Zeit und aufgerufene Adresse) zum Schutz vor Angriffen.</p>
+
+<p>Den Zugriff können Sie in den Sicherheitseinstellungen Ihres Google-, Yandex- oder Mail.ru-Kontos widerrufen.</p>
+
+<h2>5. Dienstliche Konten</h2>
+
+<p>Wenn Sie ein dienstliches Konto verbinden (z. B. das Microsoft Exchange Ihrer Organisation), verarbeitet auch Ihre Organisation die Daten dieses Kontos — auf ihrem Server und nach ihren Regeln. Der Server der Organisation kann eine Bildschirmsperre verlangen und eine Fernlöschung auslösen; auf diesen Befehl löscht die App die Daten des dienstlichen Kontos vom Gerät. Der Entwickler hat keinen Zugriff auf die Server Ihrer Organisation.</p>
+
+<h2>6. Berechtigungen</h2>
+
+<div class="table-wrap">
+<table>
+  <tr><th>Berechtigung</th><th>Wozu</th></tr>
+  <tr><td>Internet, Netzwerkstatus</td><td>Verbindung zu Mailservern</td></tr>
+  <tr><td>Benachrichtigungen</td><td>Hinweise auf neue E-Mails und Erinnerungen</td></tr>
+  <tr><td>Kontakte</td><td>Adressvorschläge, Kontaktsynchronisierung nach Ihrer Wahl</td></tr>
+  <tr><td>Kalender</td><td>Anzeige und Synchronisierung von Terminen, Antworten auf Einladungen</td></tr>
+  <tr><td>Exakte Wecker, Start beim Hochfahren, Hintergrund-Synchronisierung</td><td>Rechtzeitige Zustellung von E-Mails und Erinnerungen</td></tr>
+  <tr><td>Biometrie</td><td>Entsperren der App per Fingerabdruck oder Gesicht</td></tr>
+</table>
+</div>
+
+<p>Berechtigungen werden angefragt, wenn die jeweilige Funktion benötigt wird. Eine Ablehnung deaktiviert nur diese Funktion. Den aktuellen Stand zeigt die App unter „Einstellungen → Berechtigungen“.</p>
+
+<h2>7. Speicherung und Schutz</h2>
+
+<ul>
+  <li>die Datenbank auf dem Gerät ist verschlüsselt, der Schlüssel liegt im geschützten Android-Schlüsselspeicher;</li>
+  <li>Passwörter und Token liegen im geschützten Speicher von Android;</li>
+  <li>die Cloud-Sicherung der App-Daten ist deaktiviert;</li>
+  <li>Sperre der App per PIN und Biometrie;</li>
+  <li>Serververbindungen nur über TLS; vertrauenswürdige Zertifizierungsstellen sind die des Systems, die von Ihnen auf dem Gerät installierten und, falls aktiviert, die Zertifikate des russischen Digitalministeriums.</li>
+</ul>
+
+<h2 id="delete-de">8. Datenlöschung</h2>
+
+<ul>
+  <li><strong>Konto in der App entfernen</strong> — alle Daten dieses Kontos auf dem Gerät werden gelöscht: E-Mails, Anhänge, Kontakte, Termine, Token.</li>
+  <li><strong>App deinstallieren</strong> — alle Daten der App werden gelöscht.</li>
+  <li><strong>Anmeldung über Google, Yandex, Mail.ru</strong> — widerrufen Sie den Zugriff in den Einstellungen Ihres Anbieterkontos. Auf dem Anmeldeserver bleiben keine Daten über Sie (siehe Abschnitt 4).</li>
+  <li><strong>E-Mails und Kontakte auf dem Server</strong> werden über Ihren Mailanbieter oder Ihre Organisation gelöscht.</li>
+</ul>
+
+<p>Die App legt keine Konten beim Entwickler an, daher gibt es dort nichts zu löschen. Fragen: <a href="mailto:oedante@gmail.com">oedante@gmail.com</a>.</p>
+
+<h2>9. Kinder</h2>
+
+<p>Die App ist nicht für Kinder bestimmt und erhebt wissentlich keine Daten von Kindern.</p>
+
+<h2>10. Änderungen</h2>
+
+<p>Eine neue Fassung wird unter <a href="https://ogneliss.ru/mail/privacy">https://ogneliss.ru/mail/privacy</a> veröffentlicht und gilt ab Veröffentlichung. Über wesentliche Änderungen informiert die App beim Update.</p>
+
+<h2>11. Kontakt</h2>
+
+<p><a href="mailto:oedante@gmail.com">oedante@gmail.com</a></p>
+
+</div><!-- /lang-de -->
+
+<!-- Французская версия -->
+<div id="lang-fr" style="display:none;">
+
+<h1>Politique de confidentialité</h1>
+
+<p><strong>Ogneliss Mail</strong> · Version 1.0 · 4 octobre 2026</p>
+
+<div class="important">
+<p><strong>Remarque sur la traduction.</strong> Cette version est fournie à titre de commodité. Seule la version russe de ce document fait foi juridiquement.</p>
+</div>
+
+<hr>
+
+<h2>En bref</h2>
+
+<div class="important">
+<p>Ogneliss Mail communique directement avec vos serveurs de messagerie. Les messages, contacts et agendas sont stockés chiffrés sur votre appareil et transmis uniquement à ces serveurs. L’application ne contient ni publicité, ni analyse, ni rapports de plantage. Le développeur ne reçoit jamais le contenu de vos e-mails.</p>
+</div>
+
+<h2>1. Qui sommes-nous</h2>
+
+<p>Ogneliss Mail (« l’application ») est un client de messagerie pour Android.</p>
+
+<p><strong>Développeur :</strong> Ermishin Oleg Andreevich</p>
+
+<p><strong>Contact :</strong> <a href="mailto:oedante@gmail.com">oedante@gmail.com</a></p>
+
+<p><strong>Version en vigueur :</strong> <a href="https://ogneliss.ru/mail/privacy">https://ogneliss.ru/mail/privacy</a></p>
+
+<h2>2. Données traitées par l’application</h2>
+
+<div class="table-wrap">
+<table>
+  <tr><th>Données</th><th>Finalité</th><th>Destination</th></tr>
+  <tr><td>Adresse, mot de passe ou jetons de connexion du compte</td><td>Connexion au serveur de messagerie</td><td>Uniquement votre serveur de messagerie ; pour la connexion via Google, Yandex ou Mail.ru, voir la section 4</td></tr>
+  <tr><td>Messages, pièces jointes, brouillons</td><td>Lecture, recherche, envoi, usage hors ligne</td><td>Votre serveur de messagerie</td></tr>
+  <tr><td>Contacts, agenda et tâches du compte</td><td>Synchronisation avec le serveur</td><td>Votre serveur de messagerie</td></tr>
+  <tr><td>Contacts et agenda du téléphone (avec votre autorisation)</td><td>Suggestions d’adresses, affichage des événements dans l’agenda du système</td><td>Restent sur l’appareil</td></tr>
+  <tr><td>Signatures, règles, catégories, paramètres</td><td>Fonctionnement de l’application</td><td>Restent sur l’appareil ; les règles du serveur Exchange sont enregistrées sur votre serveur</td></tr>
+  <tr><td>Journal de diagnostic</td><td>Résolution de problèmes</td><td>Reste sur l’appareil ; transmis seulement si vous le partagez vous-même</td></tr>
+</table>
+</div>
+
+<h2>3. Ce que l’application ne fait pas</h2>
+
+<ul>
+  <li>afficher de la publicité ou intégrer des SDK publicitaires ;</li>
+  <li>collecter des données d’analyse, des rapports de plantage ou l’identifiant publicitaire ;</li>
+  <li>vendre ou partager des données avec des tiers à des fins publicitaires ou autres ;</li>
+  <li>envoyer le texte des messages ailleurs qu’à vos serveurs de messagerie : l’application n’utilise aucun service cloud de traitement de texte ;</li>
+  <li>permettre aux expéditeurs de suivre la lecture : un bloqueur intégré désactive les pixels de suivi dans les messages.</li>
+</ul>
+
+<h2>4. Connexion avec Google, Yandex et Mail.ru</h2>
+
+<p>La connexion via ces fournisseurs (OAuth) utilise le serveur du développeur à l’adresse <code>ogneliss.ru/oauth</code>. Il reçoit du fournisseur un code d’autorisation à usage unique et l’échange contre des jetons d’accès. Le jeton d’actualisation est renvoyé à l’application sous forme chiffrée ; le serveur ne tient aucune base d’utilisateurs et ne conserve aucun jeton. Lorsque l’accès expire, l’application envoie le jeton chiffré au serveur, qui en demande un nouveau au fournisseur.</p>
+
+<p>Les messages, contacts et agendas ne transitent jamais par ce serveur : l’application les reçoit directement du fournisseur de messagerie. Le serveur tient un journal web standard (adresse IP, heure et adresse demandée) pour se protéger contre les attaques.</p>
+
+<p>Vous pouvez révoquer l’accès dans les paramètres de sécurité de votre compte Google, Yandex ou Mail.ru.</p>
+
+<h2>5. Comptes professionnels</h2>
+
+<p>Si vous connectez un compte professionnel (par exemple le Microsoft Exchange de votre organisation), les données de ce compte sont aussi traitées par votre organisation, sur son serveur et selon ses règles. Le serveur de l’organisation peut exiger un verrouillage de l’écran et ordonner un effacement à distance ; sur cette commande, l’application supprime les données du compte professionnel de l’appareil. Le développeur n’a aucun accès aux serveurs de votre organisation.</p>
+
+<h2>6. Autorisations</h2>
+
+<div class="table-wrap">
+<table>
+  <tr><th>Autorisation</th><th>Pourquoi</th></tr>
+  <tr><td>Internet, état du réseau</td><td>Connexion aux serveurs de messagerie</td></tr>
+  <tr><td>Notifications</td><td>Alertes de nouveaux messages et rappels</td></tr>
+  <tr><td>Contacts</td><td>Suggestions d’adresses, synchronisation des contacts si vous le choisissez</td></tr>
+  <tr><td>Agenda</td><td>Affichage et synchronisation des événements, réponses aux invitations</td></tr>
+  <tr><td>Alarmes exactes, démarrage au boot, service de synchronisation en arrière-plan</td><td>Réception à temps des messages et des rappels</td></tr>
+  <tr><td>Biométrie</td><td>Déverrouillage de l’application par empreinte ou visage</td></tr>
+</table>
+</div>
+
+<p>Les autorisations sont demandées lorsque la fonction correspondante est nécessaire. Un refus ne désactive que cette fonction. L’état actuel est affiché dans l’application sous « Paramètres → Autorisations ».</p>
+
+<h2>7. Stockage et sécurité</h2>
+
+<ul>
+  <li>la base de données sur l’appareil est chiffrée, la clé est conservée dans le magasin de clés sécurisé d’Android ;</li>
+  <li>les mots de passe et jetons sont conservés dans le stockage sécurisé d’Android ;</li>
+  <li>la sauvegarde cloud des données de l’application est désactivée ;</li>
+  <li>verrouillage de l’application par code PIN et biométrie ;</li>
+  <li>connexions aux serveurs uniquement via TLS ; les autorités de certification de confiance sont celles du système, celles que vous avez installées sur l’appareil et, si vous les activez, les certificats du ministère russe du Numérique.</li>
+</ul>
+
+<h2 id="delete-fr">8. Suppression des données</h2>
+
+<ul>
+  <li><strong>Supprimer un compte dans l’application</strong> — toutes ses données sur l’appareil sont supprimées : messages, pièces jointes, contacts, événements, jetons.</li>
+  <li><strong>Désinstaller l’application</strong> — toutes les données de l’application sont supprimées.</li>
+  <li><strong>Connexion via Google, Yandex, Mail.ru</strong> — révoquez l’accès dans les paramètres de votre compte fournisseur. Aucune donnée vous concernant ne reste sur le serveur de connexion (voir la section 4).</li>
+  <li><strong>Les messages et contacts sur le serveur</strong> sont supprimés via votre fournisseur de messagerie ou votre organisation.</li>
+</ul>
+
+<p>L’application ne crée aucun compte chez le développeur ; il n’y a donc rien à supprimer de son côté. Questions : <a href="mailto:oedante@gmail.com">oedante@gmail.com</a>.</p>
+
+<h2>9. Enfants</h2>
+
+<p>L’application n’est pas destinée aux enfants et ne collecte pas sciemment de données d’enfants.</p>
+
+<h2>10. Modifications</h2>
+
+<p>Une nouvelle version est publiée à l’adresse <a href="https://ogneliss.ru/mail/privacy">https://ogneliss.ru/mail/privacy</a> et prend effet dès sa publication. L’application vous informera des modifications importantes lors de la mise à jour.</p>
+
+<h2>11. Contact</h2>
+
+<p><a href="mailto:oedante@gmail.com">oedante@gmail.com</a></p>
+
+</div><!-- /lang-fr -->
+
+<script src="/dialer/lang.js" defer></script>
+
+</main>
+</body>
+</html>

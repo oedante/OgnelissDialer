@@ -1,22 +1,16 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.material.icons.filled.PersonOff
-import androidx.compose.material.icons.automirrored.filled.StickyNote2
-import androidx.compose.material.icons.filled.Alarm
 import com.ogneliss.dialer.ui.theme.NoteTeal
-import androidx.compose.material.icons.filled.Block
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.automirrored.filled.CallReceived
-import androidx.compose.material.icons.automirrored.filled.CallMissed
-import androidx.compose.material.icons.automirrored.filled.CallMade
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.*
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -90,10 +84,10 @@ fun FilterSheet(
                 }
             }
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(Space.l))
 
             GroupLabel(stringResource(R.string.filter_group_type))
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
                 TypeChip(filter, CallType.MISSED, R.string.call_missed, onFilterChange)
                 TypeChip(filter, CallType.INCOMING, R.string.call_incoming, onFilterChange)
                 TypeChip(filter, CallType.OUTGOING, R.string.call_outgoing, onFilterChange)
@@ -101,10 +95,10 @@ fun FilterSheet(
 
             // 12 dp вместо 20: шторку открывают часто, и на экран
             // должны помещаться все разделы без прокрутки
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(Space.m))
 
             GroupLabel(stringResource(R.string.filter_group_period))
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
                 CallLogFilter.Period.entries.forEach { period ->
                     FilterChip(
                         selected = filter.period == period,
@@ -115,7 +109,7 @@ fun FilterSheet(
                         leadingIcon = if (filter.period == period) {
                             {
                                 Icon(
-                                    Icons.Default.Check,
+                                    OgnelissIcons.Check,
                                     contentDescription = null,
                                     modifier = Modifier.size(FlowUi.iconSizeInline)
                                 )
@@ -130,9 +124,9 @@ fun FilterSheet(
             if (simCount > 1) {
                 // 12 dp вместо 20: шторку открывают часто, и на экран
             // должны помещаться все разделы без прокрутки
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(Space.m))
                 GroupLabel(stringResource(R.string.filter_group_sim))
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
                     repeat(simCount) { slot ->
                         FilterChip(
                             selected = filter.simSlot == slot,
@@ -151,17 +145,17 @@ fun FilterSheet(
 
             // 12 dp вместо 20: шторку открывают часто, и на экран
             // должны помещаться все разделы без прокрутки
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(Space.m))
 
             GroupLabel(stringResource(R.string.filter_group_other))
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
                 FilterChip(
                     selected = filter.unknownOnly,
                     onClick = { onFilterChange(filter.copy(unknownOnly = !filter.unknownOnly)) },
                     label = { Text(stringResource(R.string.filter_unknown)) },
                     leadingIcon = {
                         Icon(
-                            Icons.Default.PersonOff,
+                            OgnelissIcons.PersonOff,
                             contentDescription = null,
                             modifier = Modifier.size(FlowUi.iconSizeInline)
                         )
@@ -187,7 +181,7 @@ fun FilterSheet(
                     label = { Text(stringResource(R.string.filter_awaiting)) },
                     leadingIcon = {
                         Icon(
-                            Icons.AutoMirrored.Filled.CallMissed,
+                            OgnelissIcons.CallMissed,
                             contentDescription = null,
                             modifier = Modifier.size(FlowUi.iconSizeInline),
                             tint = MaterialTheme.colorScheme.error
@@ -202,7 +196,7 @@ fun FilterSheet(
                     label = { Text(stringResource(R.string.filter_with_note)) },
                     leadingIcon = {
                         Icon(
-                            Icons.AutoMirrored.Filled.StickyNote2,
+                            OgnelissIcons.StickyNote2,
                             contentDescription = null,
                             modifier = Modifier.size(FlowUi.iconSizeInline),
                             tint = NoteTeal
@@ -219,7 +213,7 @@ fun FilterSheet(
                     label = { Text(stringResource(R.string.filter_with_reminder)) },
                     leadingIcon = {
                         Icon(
-                            Icons.Default.Alarm,
+                            OgnelissIcons.Alarm,
                             contentDescription = null,
                             modifier = Modifier.size(FlowUi.iconSizeInline)
                         )
@@ -231,7 +225,7 @@ fun FilterSheet(
                     label = { Text(stringResource(R.string.filter_spam)) },
                     leadingIcon = {
                         Icon(
-                            Icons.Default.Block,
+                            OgnelissIcons.Block,
                             contentDescription = null,
                             modifier = Modifier.size(FlowUi.iconSizeInline),
                             tint = MaterialTheme.colorScheme.error
@@ -255,7 +249,7 @@ fun FilterSheet(
             if (filter.isActive) {
                 // 12 dp вместо 20: шторку открывают часто, и на экран
             // должны помещаться все разделы без прокрутки
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(Space.m))
 
                 Text(
                     if (matchCount == 0) {
@@ -286,14 +280,14 @@ fun FilterSheet(
 fun FilterButton(filter: CallLogFilter, onClick: () -> Unit) {
     if (filter.isActive) {
         FilledTonalButton(onClick = onClick) {
-            Icon(Icons.Default.FilterList, null, Modifier.size(FlowUi.iconSizeInline))
-            Spacer(Modifier.width(8.dp))
+            Icon(OgnelissIcons.FilterList, null, Modifier.size(FlowUi.iconSizeInline))
+            Spacer(Modifier.width(Space.s))
             Text(stringResource(R.string.filter_active_count, filter.activeCount))
         }
     } else {
         TextButton(onClick = onClick) {
-            Icon(Icons.Default.FilterList, null, Modifier.size(FlowUi.iconSizeInline))
-            Spacer(Modifier.width(8.dp))
+            Icon(OgnelissIcons.FilterList, null, Modifier.size(FlowUi.iconSizeInline))
+            Spacer(Modifier.width(Space.s))
             Text(stringResource(R.string.filter_title))
         }
     }
@@ -309,7 +303,7 @@ private fun GroupLabel(text: String) {
         // счётчики вызовов и выбранные значения
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
-    Spacer(Modifier.height(8.dp))
+    Spacer(Modifier.height(Space.s))
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -348,9 +342,9 @@ private fun TypeChip(
         leadingIcon = {
             Icon(
                 when (type) {
-                    CallType.MISSED -> Icons.AutoMirrored.Filled.CallMissed
-                    CallType.INCOMING -> Icons.AutoMirrored.Filled.CallReceived
-                    else -> Icons.AutoMirrored.Filled.CallMade
+                    CallType.MISSED -> OgnelissIcons.CallMissed
+                    CallType.INCOMING -> OgnelissIcons.CallReceived
+                    else -> OgnelissIcons.CallMade
                 },
                 contentDescription = null,
                 modifier = Modifier.size(FlowUi.iconSizeInline),

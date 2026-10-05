@@ -100,7 +100,7 @@ object MissedCallsNotifier {
             context.getString(R.string.missed_calls_last, PhoneFormatter.format(it))
         }
         val notification = NotificationCompat.Builder(context, CHANNEL)
-            .setSmallIcon(R.drawable.ic_call)
+            .setSmallIcon(R.drawable.ic_stat_missed)  // 1.3.4: свой значок у каждого типа уведомления
             .setContentTitle(title)
             .apply { if (text != null) setContentText(text) }
             .setNumber(count)

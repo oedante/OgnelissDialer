@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -82,7 +84,7 @@ fun RowScope.QuickAction(
             .weight(1f)
             .clip(MaterialTheme.shapes.medium)
             .clickable(onClick = onClick)
-            .padding(vertical = 8.dp, horizontal = 2.dp)
+            .padding(vertical = Space.s, horizontal = 2.dp)
     ) {
         Surface(
             shape = CircleShape,

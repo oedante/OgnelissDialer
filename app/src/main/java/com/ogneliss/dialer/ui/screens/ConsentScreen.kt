@@ -1,14 +1,13 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
-import androidx.compose.material.icons.filled.Gavel
-import androidx.compose.material.icons.filled.PrivacyTip
-import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -82,7 +81,7 @@ fun ConsentScreen(
                     Modifier
                         .fillMaxWidth()
                         .navigationBarsPadding()
-                        .padding(24.dp)
+                        .padding(Space.xl)
                 ) {
                     Button(
                         onClick = onAccept,
@@ -94,7 +93,7 @@ fun ConsentScreen(
                         Text(stringResource(R.string.consent_accept))
                     }
 
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(Space.s))
 
                     // Отказ подписан честно: не «Позже», а «Выйти».
                     // Расплывчатая формулировка здесь была бы обманом
@@ -112,9 +111,9 @@ fun ConsentScreen(
                 .padding(padding)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = Space.xl)
         ) {
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(Space.xxl))
 
             Text(
                 stringResource(R.string.app_name),
@@ -123,7 +122,7 @@ fun ConsentScreen(
                 textAlign = TextAlign.Center
             )
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(Space.s))
 
             Text(
                 stringResource(R.string.consent_title),
@@ -133,7 +132,7 @@ fun ConsentScreen(
                 textAlign = TextAlign.Center
             )
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(Space.xl))
 
             /*
              * Главное о приватности — до документов, а не после.
@@ -146,8 +145,8 @@ fun ConsentScreen(
                 color = MaterialTheme.colorScheme.primaryContainer
             ) {
                 Row(Modifier.padding(FlowUi.contentPadding), verticalAlignment = Alignment.Top) {
-                    Icon(Icons.Default.WifiOff, null)
-                    Spacer(Modifier.width(12.dp))
+                    Icon(OgnelissIcons.WifiOff, null)
+                    Spacer(Modifier.width(Space.m))
                     Text(
                         stringResource(R.string.consent_privacy_summary),
                         style = MaterialTheme.typography.bodyMedium
@@ -155,23 +154,23 @@ fun ConsentScreen(
                 }
             }
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(Space.xl))
 
             DocumentRow(
-                icon = Icons.Default.PrivacyTip,
+                icon = OgnelissIcons.PrivacyTip,
                 title = stringResource(R.string.settings_privacy_policy),
                 subtitle = stringResource(R.string.consent_privacy_hint),
                 onClick = { onOpenDocument(LegalDocument.PRIVACY) }
             )
 
             DocumentRow(
-                icon = Icons.Default.Gavel,
+                icon = OgnelissIcons.Gavel,
                 title = stringResource(R.string.settings_eula),
                 subtitle = stringResource(R.string.consent_eula_hint),
                 onClick = { onOpenDocument(LegalDocument.EULA) }
             )
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(Space.xl))
 
             /*
              * Галочка не отмечена заранее.
@@ -186,18 +185,18 @@ fun ConsentScreen(
                     .clip(MaterialTheme.shapes.medium)
                     .clickable { accepted = !accepted }
                     .testTag("consent_checkbox")
-                    .padding(vertical = 8.dp),
+                    .padding(vertical = Space.s),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(checked = accepted, onCheckedChange = { accepted = it })
-                Spacer(Modifier.width(8.dp))
+                Spacer(Modifier.width(Space.s))
                 Text(
                     stringResource(R.string.consent_checkbox),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(Space.xl))
         }
         }
     }
@@ -215,7 +214,7 @@ private fun DocumentRow(
         supporting = subtitle,
         leading = { Icon(icon, contentDescription = null) },
         trailing = {
-            Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null)
+            Icon(OgnelissIcons.OpenInNew, contentDescription = null)
         },
         onClick = onClick
     )

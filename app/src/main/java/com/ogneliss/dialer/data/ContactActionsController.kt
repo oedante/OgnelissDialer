@@ -43,6 +43,8 @@ class ContactActionsController @Inject constructor(
     suspend fun setSilent(contactId: Long, silent: Boolean): Boolean =
         writer.setSendToVoicemail(contactId, silent)
 
+    suspend fun isSilent(contactId: Long): Boolean = writer.isSendToVoicemail(contactId)
+
     suspend fun setRingtone(contactId: Long, uri: android.net.Uri?): Boolean =
         writer.setCustomRingtone(contactId, uri)
 

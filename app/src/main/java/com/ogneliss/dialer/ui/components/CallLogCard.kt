@@ -1,5 +1,9 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import com.ogneliss.dialer.ui.theme.NoteTeal
 import com.ogneliss.dialer.ui.theme.Dimens
 import androidx.compose.animation.AnimatedVisibility
@@ -10,18 +14,6 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import com.ogneliss.dialer.ui.theme.CallGreen
-import androidx.compose.material.icons.filled.Alarm
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.automirrored.filled.CallMade
-import androidx.compose.material.icons.automirrored.filled.CallMissed
-import androidx.compose.material.icons.automirrored.filled.CallReceived
-import androidx.compose.material.icons.filled.Block
-import androidx.compose.material.icons.filled.Report
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -200,15 +192,15 @@ fun CallLogCard(
                     // 6 dp вместо 10: строка из трёх коротких строчек
                     // не требует такого запаса, а на экран помещается
                     // на две записи больше
-                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                    .padding(horizontal = Space.m, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // В режиме выбора кружок вместо аватара: он показывает
                 // и что строку можно отметить, и отмечена ли она
                 if (selectionActive) {
                     Icon(
-                        if (selected) Icons.Default.CheckCircle
-                        else Icons.Default.RadioButtonUnchecked,
+                        if (selected) OgnelissIcons.CheckCircle
+                        else OgnelissIcons.RadioButtonUnchecked,
                         contentDescription = null,
                         tint = if (selected) MaterialTheme.colorScheme.primary
                         else MaterialTheme.colorScheme.outline,
@@ -239,7 +231,7 @@ fun CallLogCard(
                     }
                 }
 
-                Spacer(Modifier.width(12.dp))
+                Spacer(Modifier.width(Space.m))
 
                 Column(Modifier.weight(1f)) {
                     /*
@@ -272,7 +264,7 @@ fun CallLogCard(
                     if (row.hasReminder) {
                         Spacer(Modifier.width(6.dp))
                         Icon(
-                            Icons.Default.Alarm,
+                            OgnelissIcons.Alarm,
                             contentDescription = stringResource(R.string.filter_with_reminder),
                             modifier = Modifier.size(FlowUi.iconSizeSmall),
                             tint = MaterialTheme.colorScheme.primary
@@ -338,7 +330,7 @@ fun CallLogCard(
                         // раньше сюда попадал ноль независимо от карты,
                         // и понять, с какой SIM шёл вызов, было нельзя
                         row.simSlotIndex?.let { slot ->
-                            Spacer(Modifier.width(4.dp))
+                            Spacer(Modifier.width(Space.xs))
                             SimBadge(slot)
                         }
                         Spacer(Modifier.width(6.dp))
@@ -383,12 +375,12 @@ fun CallLogCard(
                         val label = row.blockedLabel.orEmpty()
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
-                                Icons.Default.Block,
+                                OgnelissIcons.Block,
                                 contentDescription = null,
                                 modifier = Modifier.size(FlowUi.iconSizeSmall),
                                 tint = MaterialTheme.colorScheme.error
                             )
-                            Spacer(Modifier.width(4.dp))
+                            Spacer(Modifier.width(Space.xs))
                             Text(
                                 label,
                                 style = MaterialTheme.typography.bodySmall,
@@ -410,12 +402,12 @@ fun CallLogCard(
                     if (row.blockedLabel == null) row.warningTag?.let { tag ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
-                                Icons.Default.Report,
+                                OgnelissIcons.Report,
                                 contentDescription = null,
                                 modifier = Modifier.size(FlowUi.iconSizeSmall),
                                 tint = MaterialTheme.colorScheme.error
                             )
-                            Spacer(Modifier.width(4.dp))
+                            Spacer(Modifier.width(Space.xs))
                             Text(
                                 tag,
                                 style = MaterialTheme.typography.bodySmall,
@@ -482,14 +474,14 @@ fun CallLogCard(
                  * был бы неприятной неожиданностью.
                  */
                 if (!selectionActive && onCall != null) {
-                    Spacer(Modifier.width(4.dp))
+                    Spacer(Modifier.width(Space.xs))
 
                     IconButton(
                         onClick = { onCall(row) },
                         modifier = Modifier.size(Dimens.MIN_TOUCH_TARGET)
                     ) {
                         Icon(
-                            Icons.Default.Call,
+                            OgnelissIcons.Call,
                             contentDescription = stringResource(
                                 R.string.a11y_call_number, row.title
                             ),
@@ -536,7 +528,7 @@ private fun Avatar(photoUri: String?, hasMissed: Boolean) {
              */
             Box(contentAlignment = Alignment.Center) {
                 Icon(
-                    Icons.Default.Person,
+                    OgnelissIcons.Person,
                     contentDescription = null,
                     modifier = Modifier.size(size * 0.55f),
                     tint = if (hasMissed) MaterialTheme.colorScheme.onErrorContainer
@@ -558,10 +550,10 @@ private fun Avatar(photoUri: String?, hasMissed: Boolean) {
 
 
 private fun typeIcon(type: CallType) = when (type) {
-    CallType.OUTGOING -> Icons.AutoMirrored.Filled.CallMade
-    CallType.MISSED -> Icons.AutoMirrored.Filled.CallMissed
-    CallType.REJECTED, CallType.BLOCKED -> Icons.Default.Block
-    else -> Icons.AutoMirrored.Filled.CallReceived
+    CallType.OUTGOING -> OgnelissIcons.CallMade
+    CallType.MISSED -> OgnelissIcons.CallMissed
+    CallType.REJECTED, CallType.BLOCKED -> OgnelissIcons.Block
+    else -> OgnelissIcons.CallReceived
 }
 
 private fun typeLabelRes(type: CallType) = when (type) {
@@ -620,7 +612,7 @@ private fun NoteAvatar(hasMissed: Boolean) {
                 // только там, где контур несёт смысл: булавка и звезда без
                 // заливки — «не закреплён», трубка псевдозвонка — иначе
                 // на 24 dp стрелка сливается с трубкой
-                Icons.Default.Info,
+                OgnelissIcons.Info,
                 contentDescription = null,
                 tint = if (hasMissed) MaterialTheme.colorScheme.onErrorContainer
                 else NoteTeal

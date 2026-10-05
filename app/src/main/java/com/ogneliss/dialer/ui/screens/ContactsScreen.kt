@@ -1,5 +1,9 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import com.ogneliss.dialer.ui.theme.Dimens
@@ -20,16 +24,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import com.ogneliss.dialer.settings.SwipeAction
 import com.ogneliss.dialer.ui.theme.CallGreen
 import androidx.compose.material3.SmallFloatingActionButton
-import androidx.compose.material.icons.filled.Alarm
-import androidx.compose.material.icons.filled.Block
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.PhoneCallback
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PersonAdd
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.*
@@ -486,7 +480,7 @@ fun ContactsScreen(
                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant
             ) {
                 Icon(
-                    Icons.AutoMirrored.Outlined.PhoneCallback,
+                    OgnelissIcons.PhoneCallback,
                     contentDescription = stringResource(R.string.fake_call_title)
                 )
             }
@@ -506,7 +500,7 @@ fun ContactsScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
+                            OgnelissIcons.ArrowBack,
                             contentDescription = stringResource(R.string.nav_back)
                         )
                     }
@@ -516,7 +510,7 @@ fun ContactsScreen(
                     // больше не нужна
                     IconButton(onClick = { vm.createContact("") }) {
                         Icon(
-                            Icons.Default.PersonAdd,
+                            OgnelissIcons.PersonAdd,
                             contentDescription = stringResource(R.string.action_add_contact)
                         )
                     }
@@ -641,7 +635,7 @@ fun ContactsScreen(
             ) {
                 Text(
                     stringResource(R.string.contacts_stale_hint),
-                    Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    Modifier.padding(horizontal = Space.l, vertical = Space.s),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -811,7 +805,7 @@ fun ContactsScreen(
                         )
                     }
                 }
-                item { Spacer(Modifier.height(32.dp)) }
+                item { Spacer(Modifier.height(Space.xxl)) }
             }
         }
     }
@@ -837,7 +831,7 @@ fun LetterHeader(letter: String) {
             .fillMaxWidth()
             // Сверху больше, чем снизу: заголовок должен льнуть
             // к своим записям, а не висеть между группами
-            .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 2.dp)
+            .padding(start = Space.l, end = Space.l, top = Space.l, bottom = 2.dp)
     ) {
         Text(
             letter,
@@ -846,7 +840,7 @@ fun LetterHeader(letter: String) {
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        Spacer(Modifier.height(4.dp))
+        Spacer(Modifier.height(Space.xs))
 
         HorizontalDivider(
             thickness = 1.dp,
@@ -955,7 +949,7 @@ private fun ContactRow(
                     .combinedClickable(onClick = onOpen, onLongClick = onOpen)
                     // Тот же отступ, что в журнале: экраны должны
                     // выглядеть одинаково
-                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                    .padding(horizontal = Space.m, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Аватар: силуэт всегда под фотографией, чтобы при сбое
@@ -967,7 +961,7 @@ private fun ContactRow(
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
-                            Icons.Default.Person,
+                            OgnelissIcons.Person,
                             contentDescription = null,
                             modifier = Modifier.size(appearance.avatarSize * 0.55f),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
@@ -983,7 +977,7 @@ private fun ContactRow(
                     }
                 }
 
-                Spacer(Modifier.width(12.dp))
+                Spacer(Modifier.width(Space.m))
 
                 Column(Modifier.weight(1f)) {
                     HighlightedName(
@@ -1027,9 +1021,9 @@ private fun ContactRow(
                          * выше соседей.
                          */
                         if (hasReminder) {
-                            Spacer(Modifier.width(8.dp))
+                            Spacer(Modifier.width(Space.s))
                             Icon(
-                                Icons.Default.Alarm,
+                                OgnelissIcons.Alarm,
                                 contentDescription = stringResource(
                                     R.string.filter_with_reminder
                                 ),
@@ -1039,14 +1033,14 @@ private fun ContactRow(
                         }
 
                         if (blocked) {
-                            Spacer(Modifier.width(8.dp))
+                            Spacer(Modifier.width(Space.s))
                             Icon(
-                                Icons.Default.Block,
+                                OgnelissIcons.Block,
                                 contentDescription = null,
                                 modifier = Modifier.size(FlowUi.iconSizeSmall),
                                 tint = MaterialTheme.colorScheme.error
                             )
-                            Spacer(Modifier.width(4.dp))
+                            Spacer(Modifier.width(Space.xs))
                             Text(
                                 stringResource(R.string.contact_blocked),
                                 style = MaterialTheme.typography.bodySmall,
@@ -1077,7 +1071,7 @@ private fun ContactRow(
                     modifier = Modifier.size(Dimens.MIN_TOUCH_TARGET)
                 ) {
                     Icon(
-                        Icons.Default.Call,
+                        OgnelissIcons.Call,
                         contentDescription = stringResource(
                             R.string.a11y_call_number, contact.displayName
                         ),
@@ -1094,8 +1088,8 @@ private fun ContactRow(
                  */
                 IconButton(onClick = onToggleStar) {
                     Icon(
-                        if (contact.starred) Icons.Default.Star
-                        else Icons.Default.StarBorder,
+                        if (contact.starred) OgnelissIcons.Star
+                        else OgnelissIcons.StarBorder,
                         contentDescription = stringResource(
                             R.string.contacts_favourite_toggle
                         ),

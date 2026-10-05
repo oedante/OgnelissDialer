@@ -1,5 +1,11 @@
 package com.ogneliss.dialer.call
 
+import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
+import androidx.compose.foundation.background
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import com.ogneliss.dialer.concurrency.suspendRunCatching
@@ -43,13 +49,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Message
-import androidx.compose.material.icons.automirrored.filled.Backspace
-import androidx.compose.material.icons.automirrored.filled.CallSplit
-import androidx.compose.material.icons.automirrored.filled.MergeType
-import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.focus.focusRequester
@@ -666,7 +665,28 @@ private fun InCallScreen(
      * Здесь, а не в каждой раскладке: портретная и альбомная ветки
      * рисуются внутри этой Surface, и отступ нужен обеим.
      */
-    Surface(Modifier.fillMaxSize().safeDrawingPadding()) {
+    /*
+     * ФОТО ЗВОНЯЩЕГО НА ВЕСЬ ЭКРАН (1.3.4, 04.10.2026, фаза 4; образец —
+     * экран вызова Google, скриншот автора 03.10).
+     *
+     * Было: круглый портрет 132 dp на сплошном фоне. Стало: фото контакта
+     * (PHOTO_URI — полноразмерное, не миниатюра) под всем экраном, включая
+     * строку состояния, с затемнением сверху для имени и значков; имя
+     * и состояние — светлым поверх фото; управление — в нижней панели.
+     * Только в обычной портретной раскладке: лёжа и в позе «ноутбук» места
+     * по высоте мало, там прежний вид. Нет фото — прежний вид с панелью.
+     */
+    val windowLayout0 = LocalWindowLayout.current
+    val tabletop0 = windowLayout0.posture == FoldPosture.TABLETOP &&
+        windowLayout0.hinge?.let { !it.vertical } == true
+    val photoBackground = !landscape && !tabletop0 && !photoUri.isNullOrBlank()
+    LightStatusIconsOnPhoto(photoBackground)
+    Box(Modifier.fillMaxSize()) {
+    if (photoBackground) CallPhotoBackground(photoUri.orEmpty())
+    Surface(
+        Modifier.fillMaxSize().safeDrawingPadding(),
+        color = if (photoBackground) Color.Transparent else MaterialTheme.colorScheme.surface
+    ) {
         /*
          * Кто звонит — фото, имя, оператор, состояние вызова. Общий блок
          * для раскладок «лёжа» и «ноутбук»: раньше жил только внутри
@@ -690,7 +710,7 @@ private fun InCallScreen(
                             photoUri = photoUri,
                             size = FlowUi.callPortraitSizeLandscape
                         )
-                        Spacer(Modifier.height(12.dp))
+                        Spacer(Modifier.height(Space.m))
                     }
 
                     CallerIdentity(
@@ -702,7 +722,7 @@ private fun InCallScreen(
                         titleSize = FlowUi.callNameSizeLandscape
                     )
 
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(Space.s))
                     CallStatusLine(state, call)
                 }
 
@@ -710,13 +730,13 @@ private fun InCallScreen(
         val mainButtons: @Composable () -> Unit = {
                     Row(
                         Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
+                        horizontalArrangement = Arrangement.spacedBy(Space.l, Alignment.CenterHorizontally)
                     ) {
                         if (state == Call.STATE_RINGING) {
                             BigButton(
                                 stringResource(R.string.incall_decline),
                                 DeclineRed,
-                                Icons.Default.CallEnd,
+                                OgnelissIcons.CallEnd,
                                 modifier = Modifier.weight(1f),
                                 shareRow = true
                             ) {
@@ -725,7 +745,7 @@ private fun InCallScreen(
                             BigButton(
                                 stringResource(R.string.incall_answer),
                                 CallGreen,
-                                Icons.Default.Call,
+                                OgnelissIcons.Call,
                                 modifier = Modifier.weight(1f),
                                 shareRow = true
                             ) {
@@ -735,7 +755,7 @@ private fun InCallScreen(
                             BigButton(
                                 stringResource(R.string.incall_hangup),
                                 DeclineRed,
-                                Icons.Default.CallEnd
+                                OgnelissIcons.CallEnd
                             ) {
                                 CallManager.hangup()
                             }
@@ -833,13 +853,19 @@ private fun InCallScreen(
          * и совсем прижимать к краю нечего) и 24 сверху вместо 40.
          */
         Column(
-            Modifier.fillMaxSize().padding(FlowUi.contentPadding),
+            // Поля — у верхнего блока: нижняя панель идёт на всю ширину (1.3.4)
+            Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             // --- Верх: кто звонит ---
+            OnPhotoColors(photoBackground) {
             Column(
-                Modifier.padding(top = 24.dp),
+                Modifier.padding(
+                    top = Space.xl,
+                    start = FlowUi.contentPadding,
+                    end = FlowUi.contentPadding
+                ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 /*
@@ -861,9 +887,9 @@ private fun InCallScreen(
                  * ничего — силуэт одинаков у всех. Без него имя
                  * поднимается наверх, и длинному хватает места.
                  */
-                if (!photoUri.isNullOrBlank()) {
+                if (!photoUri.isNullOrBlank() && !photoBackground) {
                     CallerAvatar(photoUri = photoUri, size = FlowUi.callPortraitSize)
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(Space.l))
                 }
 
                 CallerIdentity(
@@ -874,10 +900,10 @@ private fun InCallScreen(
                     danger = isDangerTagged,
                     titleSize = FlowUi.callNameSize
                 )
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(Space.m))
                 CallStatusLine(state, call)
                 secondary?.let {
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(Space.s))
                     Text(
                         stringResource(
                             R.string.incall_secondary,
@@ -901,9 +927,19 @@ private fun InCallScreen(
                  * дублировать их незачем.
                  */
             }
+            } // OnPhotoColors
 
-            // --- Низ: управление ---
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            // --- Низ: управление — в нижней панели, как в журнале (1.3.4) ---
+            Surface(
+                shape = OgnelissShapeTokens.bottomPanel,
+                color = MaterialTheme.colorScheme.surfaceContainer,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+            Column(
+                // На всю ширину панели: иначе узкое содержимое ушло бы влево
+                Modifier.fillMaxWidth().padding(top = Space.l, start = FlowUi.contentPadding, end = FlowUi.contentPadding),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
                 AnimatedVisibility(showDialpad) {
                     DtmfPanel(
@@ -930,7 +966,7 @@ private fun InCallScreen(
                 val waitingCall = remember(revision) { CallManager.waiting }
                 waitingCall?.let { incoming ->
                     WaitingCallBanner(incoming, contactsRepo)
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(Space.m))
                 }
 
                 /*
@@ -945,7 +981,7 @@ private fun InCallScreen(
                 val participants = remember(revision, call) { CallManager.conferenceParticipants }
                 if (participants.isNotEmpty()) {
                     ConferencePanel(participants, contactsRepo)
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(Space.m))
                 }
 
                 /*
@@ -996,7 +1032,7 @@ private fun InCallScreen(
                      * чем не обещать.
                      */
                     Box(
-                        Modifier.fillMaxWidth().padding(vertical = 8.dp, horizontal = 8.dp),
+                        Modifier.fillMaxWidth().padding(vertical = Space.s, horizontal = Space.s),
                         contentAlignment = Alignment.Center
                     ) {
                         // Возможности читаются заново на каждое событие
@@ -1021,7 +1057,7 @@ private fun InCallScreen(
                             onAddCall = { openDialerForSecondCall(context) }
                         )
                     }
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(Space.l))
                   }
                 }
 
@@ -1047,13 +1083,13 @@ private fun InCallScreen(
                     )
                     if (com.ogneliss.dialer.ui.theme.LocalAppearance.current.buttonLabels) {
                         TextButton(onClick = { showNote = !showNote }) {
-                            Icon(Icons.Default.EditNote, contentDescription = null)
-                            Spacer(Modifier.width(8.dp))
+                            Icon(OgnelissIcons.EditNote, contentDescription = null)
+                            Spacer(Modifier.width(Space.s))
                             Text(noteLabel)
                         }
                     } else {
                         IconButton(onClick = { showNote = !showNote }) {
-                            Icon(Icons.Default.EditNote, contentDescription = noteLabel)
+                            Icon(OgnelissIcons.EditNote, contentDescription = noteLabel)
                         }
                     }
                 }
@@ -1112,25 +1148,25 @@ private fun InCallScreen(
                             modifier = Modifier.size(56.dp)
                         ) {
                             Icon(
-                                Icons.AutoMirrored.Filled.Message,
+                                OgnelissIcons.Message,
                                 contentDescription = replyLabel
                             )
                         }
                     }
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(Space.m))
                 }
 
                 Row(
-                    Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    Modifier.fillMaxWidth().padding(horizontal = Space.s),
                     // По центру: при одной кнопке («Завершить») ряд не должен
                     // прижимать её к левому краю
-                    horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
+                    horizontalArrangement = Arrangement.spacedBy(Space.l, Alignment.CenterHorizontally)
                 ) {
                     if (state == Call.STATE_RINGING) {
                         BigButton(
                             stringResource(R.string.incall_decline),
                             DeclineRed,
-                            Icons.Default.CallEnd,
+                            OgnelissIcons.CallEnd,
                             modifier = Modifier.weight(1f),
                             shareRow = true
                         ) { CallManager.reject() }
@@ -1177,7 +1213,7 @@ private fun InCallScreen(
                             BigButton(
                                 stringResource(R.string.incall_answer),
                                 CallGreen,
-                                Icons.Default.Call,
+                                OgnelissIcons.Call,
                                 modifier = Modifier.fillMaxWidth(),
                                 shareRow = true
                             ) { CallManager.answer() }
@@ -1186,14 +1222,16 @@ private fun InCallScreen(
                         BigButton(
                             stringResource(R.string.incall_hangup),
                             DeclineRed,
-                            Icons.Default.CallEnd
+                            OgnelissIcons.CallEnd
                         ) { CallManager.hangup() }
                     }
                 }
-                Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(Space.xl))
             }
+            } // панель управления
         }
     }
+    } // Box с фото
 }
 
 /**
@@ -1276,17 +1314,17 @@ private fun CallStatusLine(state: Int, call: Call?) {
         contentColor = foreground
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier = Modifier.padding(horizontal = Space.l, vertical = Space.s),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                if (active) Icons.Default.Call else Icons.Default.Schedule,
+                if (active) OgnelissIcons.Call else OgnelissIcons.Schedule,
                 contentDescription = null,
                 // 20 dp вместо 18: значок рядом с titleMedium,
                 // и размер по сетке смотрится ровнее с текстом
                 modifier = Modifier.size(20.dp)
             )
-            Spacer(Modifier.width(8.dp))
+            Spacer(Modifier.width(Space.s))
             Text(text, style = MaterialTheme.typography.titleMedium)
         }
     }
@@ -1350,24 +1388,24 @@ private fun ControlsRow(
      */
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(Space.l),
         maxItemsInEachRow = 3,
         modifier = Modifier.fillMaxWidth()
     ) {
-            ToggleTile(muted, Icons.Default.MicOff, stringResource(R.string.incall_mute)) {
+            ToggleTile(muted, OgnelissIcons.MicOff, stringResource(R.string.incall_mute)) {
                 CallManager.setMuted(!muted)
             }
-            ToggleTile(speaker, Icons.AutoMirrored.Filled.VolumeUp, stringResource(R.string.incall_speaker)) {
+            ToggleTile(speaker, OgnelissIcons.VolumeUp, stringResource(R.string.incall_speaker)) {
                 onManualAudioChange()
                 CallManager.setAudioRoute(
                     if (speaker) CallAudioState.ROUTE_EARPIECE else CallAudioState.ROUTE_SPEAKER
                 )
             }
-            ToggleTile(false, Icons.Default.Dialpad, stringResource(R.string.incall_keypad), onDialpad)
+            ToggleTile(false, OgnelissIcons.Dialpad, stringResource(R.string.incall_keypad), onDialpad)
 
             // Только если сеть умеет: иначе кнопка молча не работала бы
             if (canHold) {
-                ToggleTile(isHolding, Icons.Default.Pause, stringResource(R.string.incall_hold), onHold)
+                ToggleTile(isHolding, OgnelissIcons.Pause, stringResource(R.string.incall_hold), onHold)
             }
 
             /*
@@ -1378,10 +1416,10 @@ private fun ControlsRow(
              * из экрана вызова в журнал, — и догадаться об этом нельзя.
              */
             if (canAddCall) {
-                ToggleTile(false, Icons.Default.AddIcCall, stringResource(R.string.incall_add_call), onAddCall)
+                ToggleTile(false, OgnelissIcons.AddIcCall, stringResource(R.string.incall_add_call), onAddCall)
             }
             if (btAvailable) {
-                ToggleTile(btActive, Icons.Default.Bluetooth, stringResource(R.string.incall_bluetooth)) {
+                ToggleTile(btActive, OgnelissIcons.Bluetooth, stringResource(R.string.incall_bluetooth)) {
                     onManualAudioChange()
                     CallManager.setAudioRoute(
                         if (btActive) CallAudioState.ROUTE_EARPIECE
@@ -1390,9 +1428,9 @@ private fun ControlsRow(
                 }
             }
             if (hasSecondary) {
-                ToggleTile(false, Icons.Default.SwapCalls, stringResource(R.string.incall_swap), onSwap)
+                ToggleTile(false, OgnelissIcons.SwapCalls, stringResource(R.string.incall_swap), onSwap)
                 if (canMerge) {
-                    ToggleTile(false, Icons.AutoMirrored.Filled.MergeType, stringResource(R.string.incall_merge), onMerge)
+                    ToggleTile(false, OgnelissIcons.MergeType, stringResource(R.string.incall_merge), onMerge)
                 }
         }
     }
@@ -1430,7 +1468,7 @@ private fun ToggleTile(
         // Подпись — если не выключена в настройках оформления.
         // Описание для TalkBack у значка есть и без неё
         if (com.ogneliss.dialer.ui.theme.LocalAppearance.current.buttonLabels) {
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(Space.s))
             // labelMedium: подпись под значком — тот же стиль,
             // что у подписей в нижней панели журнала
             Text(label, style = MaterialTheme.typography.labelMedium)
@@ -1458,17 +1496,17 @@ private fun QuickReplySheet(
     onDismiss: () -> Unit
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss) {
-        Column(Modifier.padding(bottom = 32.dp)) {
+        Column(Modifier.padding(bottom = Space.xxl)) {
             Text(
                 stringResource(R.string.quick_reply_title),
-                Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
+                Modifier.padding(horizontal = Space.xl, vertical = Space.s),
                 style = MaterialTheme.typography.titleLarge
             )
             // Ответы — в скруглённой панели, как строки остальных шторок (1.2.2)
             com.ogneliss.dialer.ui.components.SheetGroup {
                 templates.forEachIndexed { index, template ->
                     com.ogneliss.dialer.ui.components.SheetRow(
-                        Icons.AutoMirrored.Filled.Message,
+                        OgnelissIcons.Message,
                         template,
                         onClick = { onSend(template) }
                     )
@@ -1517,7 +1555,7 @@ private fun InCallNoteField(
         }
     }
 
-    Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp)) {
+    Column(Modifier.fillMaxWidth().padding(horizontal = Space.xl, vertical = Space.s)) {
         OutlinedTextField(
             value = text,
             onValueChange = onTextChange,
@@ -1557,10 +1595,10 @@ private fun InCallNoteField(
          * Ряд с прокруткой прятал бы часть меток за краем, а искать
          * их пальцем во время разговора неудобно вдвойне.
          */
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(Space.s))
 
         FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(Space.s),
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             TagCatalog.suggested.forEach { tag ->
@@ -1577,7 +1615,7 @@ private fun InCallNoteField(
             stringResource(R.string.incall_note_autosave),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.outline,
-            modifier = Modifier.padding(top = 8.dp, start = 8.dp)
+            modifier = Modifier.padding(top = Space.s, start = Space.s)
         )
     }
 }
@@ -1595,12 +1633,12 @@ private fun DtmfPanel(
         tonalElevation = 3.dp,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(Modifier.padding(vertical = 12.dp)) {
+        Column(Modifier.padding(vertical = Space.m)) {
 
             // Поле ввода отделено от клавиш чертой: без разделения
             // непонятно, где заканчивается результат и начинается набор
             Row(
-                Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                Modifier.fillMaxWidth().padding(horizontal = Space.l, vertical = Space.s),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -1615,7 +1653,7 @@ private fun DtmfPanel(
                 if (entered.isNotEmpty()) {
                     IconButton(onClick = onBackspace) {
                         Icon(
-                            Icons.AutoMirrored.Filled.Backspace,
+                            OgnelissIcons.Backspace,
                             contentDescription = stringResource(R.string.a11y_backspace)
                         )
                     }
@@ -1623,7 +1661,7 @@ private fun DtmfPanel(
 
                 IconButton(onClick = onClose) {
                     Icon(
-                        Icons.Default.KeyboardArrowDown,
+                        OgnelissIcons.KeyboardArrowDown,
                         contentDescription = stringResource(R.string.dialpad_hide)
                     )
                 }
@@ -1632,7 +1670,7 @@ private fun DtmfPanel(
             // Тот же разделитель, что везде: своя толщина здесь была
             // заметнее соседних линий на других экранах
             OgnelissDivider()
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(Space.s))
 
             // Та же клавиатура, что на главном экране: одинаковые размеры
             // и одинаковый отклик — переучиваться не приходится
@@ -1722,7 +1760,7 @@ private fun CallerIdentity(
     )
 
     display.subtitle?.let { note ->
-        Spacer(Modifier.height(4.dp))
+        Spacer(Modifier.height(Space.xs))
         Text(
             note,
             style = MaterialTheme.typography.bodyLarge,
@@ -1734,7 +1772,7 @@ private fun CallerIdentity(
 
     // Номер не дублируется, если он уже стоит заголовком
     if (display.title != PhoneFormatter.format(number)) {
-        Spacer(Modifier.height(4.dp))
+        Spacer(Modifier.height(Space.xs))
         Text(
             numberLine ?: PhoneFormatter.format(number),
             fontSize = FlowUi.callNumberSize,
@@ -1751,7 +1789,7 @@ private fun CallerIdentity(
      * на решение.
      */
     carrierLine?.let {
-        Spacer(Modifier.height(4.dp))
+        Spacer(Modifier.height(Space.xs))
         Text(
             it,
             style = MaterialTheme.typography.bodyMedium,
@@ -1882,7 +1920,7 @@ private fun BigButton(
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(containerColor = color),
-        contentPadding = PaddingValues(horizontal = 16.dp),
+        contentPadding = PaddingValues(horizontal = Space.l),
         /*
          * Высота из правил FlowUI.
          *
@@ -1901,7 +1939,7 @@ private fun BigButton(
             .then(if (shareRow) Modifier else Modifier.widthIn(min = FlowUi.callActionMinWidth))
     ) {
         Icon(icon, contentDescription = null, tint = Color.White)
-        Spacer(Modifier.width(8.dp))
+        Spacer(Modifier.width(Space.s))
         Text(
             text,
             color = Color.White,
@@ -1975,7 +2013,7 @@ private fun WaitingCallBanner(
         color = MaterialTheme.colorScheme.secondaryContainer,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(Modifier.padding(16.dp)) {
+        Column(Modifier.padding(Space.l)) {
             Text(
                 stringResource(R.string.incall_waiting_title),
                 style = MaterialTheme.typography.labelLarge,
@@ -1989,7 +2027,7 @@ private fun WaitingCallBanner(
                 overflow = TextOverflow.Ellipsis
             )
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(Space.m))
 
             Button(
                 onClick = { CallManager.answerWaitingHoldCurrent() },
@@ -1997,9 +2035,9 @@ private fun WaitingCallBanner(
                 modifier = Modifier.fillMaxWidth()
             ) { Text(stringResource(R.string.incall_waiting_hold_answer)) }
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(Space.s))
 
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
                 OutlinedButton(
                     onClick = { CallManager.answerWaitingEndCurrent() },
                     modifier = Modifier.weight(1f)
@@ -2037,12 +2075,12 @@ private fun ConferencePanel(
         color = MaterialTheme.colorScheme.surfaceContainer,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(Modifier.padding(vertical = 8.dp)) {
+        Column(Modifier.padding(vertical = Space.s)) {
             Text(
                 stringResource(R.string.incall_conference_title, participants.size),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                modifier = Modifier.padding(horizontal = Space.l, vertical = Space.s)
             )
 
             participants.forEach { child ->
@@ -2052,7 +2090,7 @@ private fun ConferencePanel(
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(min = 56.dp)
-                        .padding(start = 16.dp, end = 4.dp)
+                        .padding(start = Space.l, end = Space.xs)
                 ) {
                     Text(
                         label,
@@ -2065,7 +2103,7 @@ private fun ConferencePanel(
                     if (CallManager.canSplitParticipant(child)) {
                         IconButton(onClick = { CallManager.splitParticipant(child) }) {
                             Icon(
-                                Icons.AutoMirrored.Filled.CallSplit,
+                                OgnelissIcons.CallSplit,
                                 contentDescription = stringResource(R.string.incall_conference_split)
                             )
                         }
@@ -2074,7 +2112,7 @@ private fun ConferencePanel(
                     if (CallManager.canDropParticipant(child)) {
                         IconButton(onClick = { CallManager.dropParticipant(child) }) {
                             Icon(
-                                Icons.Default.CallEnd,
+                                OgnelissIcons.CallEnd,
                                 contentDescription = stringResource(R.string.incall_conference_drop),
                                 tint = DeclineRed
                             )

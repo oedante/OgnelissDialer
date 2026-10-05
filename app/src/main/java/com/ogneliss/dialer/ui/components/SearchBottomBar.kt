@@ -1,5 +1,9 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,9 +14,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -151,7 +152,7 @@ fun SearchBottomBar(
                     .height(FlowUi.panelRowHeight())
                     .padding(horizontal = FlowUi.screenPadding),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(Space.s)
             ) {
                 OutlinedTextField(
                 // Белое поле на серой панели — как клавиши и строка номера:
@@ -183,12 +184,12 @@ fun SearchBottomBar(
                     value = query,
                     onValueChange = onQueryChange,
                     placeholder = { Text(placeholder) },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                    leadingIcon = { Icon(OgnelissIcons.Search, contentDescription = null) },
                     trailingIcon = {
                         if (query.isNotEmpty()) {
                             IconButton(onClick = { onQueryChange("") }) {
                                 Icon(
-                                    Icons.Default.Clear,
+                                    OgnelissIcons.Clear,
                                     contentDescription = stringResource(
                                         R.string.empty_clear_search
                                     )

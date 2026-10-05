@@ -1,10 +1,11 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -59,7 +60,7 @@ fun SettingsCategoryCard(
             Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
         },
         trailing = {
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
+            Icon(OgnelissIcons.KeyboardArrowRight, contentDescription = null)
         },
         onClick = onClick,
         /*
@@ -98,7 +99,7 @@ fun SettingsSwitchRow(
             Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
                 if (dangerous) {
                     Icon(
-                        Icons.Default.Warning,
+                        OgnelissIcons.Warning,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier.size(FlowUi.iconSizeInline)
@@ -185,11 +186,11 @@ fun DangerousSettingDialog(
         content = {
             Row(verticalAlignment = Alignment.Top) {
                 Icon(
-                    Icons.Default.Warning,
+                    OgnelissIcons.Warning,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.error
                 )
-                Spacer(Modifier.width(12.dp))
+                Spacer(Modifier.width(Space.m))
                 Text(explanation)
             }
         },

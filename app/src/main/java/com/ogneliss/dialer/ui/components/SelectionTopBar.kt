@@ -1,10 +1,7 @@
 package com.ogneliss.dialer.ui.components
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Block
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.SelectAll
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.pluralStringResource
@@ -42,20 +39,20 @@ fun SelectionTopBar(
         },
         navigationIcon = {
             IconButton(onClick = onClose) {
-                Icon(Icons.Default.Close, contentDescription = stringResource(R.string.nav_close))
+                Icon(OgnelissIcons.Close, contentDescription = stringResource(R.string.nav_close))
             }
         },
         actions = {
             IconButton(onClick = onSelectAll) {
                 Icon(
-                    Icons.Default.SelectAll,
+                    OgnelissIcons.SelectAll,
                     contentDescription = stringResource(R.string.selection_select_all)
                 )
             }
             if (onBlock != null) {
                 IconButton(onClick = onBlock) {
                     Icon(
-                        Icons.Default.Block,
+                        OgnelissIcons.Block,
                         contentDescription = stringResource(R.string.action_block)
                     )
                 }
@@ -64,7 +61,7 @@ fun SelectionTopBar(
             // режима не должно попадать на разрушительное действие
             IconButton(onClick = onDelete) {
                 Icon(
-                    Icons.Default.Delete,
+                    OgnelissIcons.Delete,
                     contentDescription = stringResource(R.string.selection_delete),
                     tint = MaterialTheme.colorScheme.error
                 )

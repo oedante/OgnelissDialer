@@ -1,5 +1,12 @@
 package com.ogneliss.dialer.call
 
+import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
+import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
+import androidx.compose.ui.graphics.Color
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import com.ogneliss.dialer.concurrency.suspendRunCatching
@@ -16,9 +23,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.CallEnd
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -129,9 +133,17 @@ class FakeCallActivity : ComponentActivity() {
                 // Раскладка окна: телефон, лёжа, раскладушка, планшет.
                 // Разбор — в ui/adaptive/WindowLayout.kt
                 ProvideWindowLayout(this@FakeCallActivity) {
+                // Фото — тем же запросом, что у настоящего вызова (1.3.4)
+                val callerNumber = caller?.second.orEmpty()
+                val photo by produceState<String?>(initialValue = null, callerNumber) {
+                    value = callerNumber.takeIf { it.isNotBlank() }?.let {
+                        suspendRunCatching { contactsRepo.photoUriForNumber(it) }.getOrNull()
+                    }
+                }
                 FakeCallScreen(
                     name = caller?.first.orEmpty(),
-                    number = caller?.second.orEmpty(),
+                    number = callerNumber,
+                    photoUri = photo,
                     onAnswer = { stopRinging() },
                     onHangUp = { finish() }
                 )
@@ -189,6 +201,7 @@ class FakeCallActivity : ComponentActivity() {
 private fun FakeCallScreen(
     name: String,
     number: String,
+    photoUri: String?,
     onAnswer: () -> Unit,
     onHangUp: () -> Unit
 ) {
@@ -203,14 +216,26 @@ private fun FakeCallScreen(
         }
     }
 
-    Surface(Modifier.fillMaxSize().safeDrawingPadding()) {
+    /*
+     * Вид — как у настоящего вызова (1.3.4): фото на весь экран в портретной
+     * раскладке, светлый текст поверх, кнопки в нижней панели.
+     */
+    val photoBackground = !LocalWindowLayout.current.isShort && !photoUri.isNullOrBlank()
+    LightStatusIconsOnPhoto(photoBackground)
+    Box(Modifier.fillMaxSize()) {
+    if (photoBackground) CallPhotoBackground(photoUri.orEmpty())
+    Surface(
+        Modifier.fillMaxSize().safeDrawingPadding(),
+        color = if (photoBackground) Color.Transparent else MaterialTheme.colorScheme.surface
+    ) {
         Column(
-            Modifier.fillMaxSize().padding(FlowUi.contentPadding),
+            Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
+            OnPhotoColors(photoBackground) {
             Column(
-                Modifier.padding(top = 24.dp),
+                Modifier.padding(top = Space.xl, start = FlowUi.contentPadding, end = FlowUi.contentPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -221,7 +246,7 @@ private fun FakeCallScreen(
                 )
 
                 if (number.isNotBlank()) {
-                    Spacer(Modifier.height(4.dp))
+                    Spacer(Modifier.height(Space.xs))
                     Text(
                         PhoneFormatter.format(number),
                         fontSize = FlowUi.callNumberSize,
@@ -229,7 +254,7 @@ private fun FakeCallScreen(
                     )
                 }
 
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(Space.m))
                 Text(
                     if (answered) {
                         String.format(Locale.ROOT, "%d:%02d", seconds / 60, seconds % 60)
@@ -240,10 +265,17 @@ private fun FakeCallScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+            } // OnPhotoColors
 
+            Surface(
+                shape = OgnelissShapeTokens.bottomPanel,
+                color = MaterialTheme.colorScheme.surfaceContainer,
+                modifier = Modifier.fillMaxWidth()
+            ) {
             Row(
-                Modifier.padding(bottom = 24.dp),
-                horizontalArrangement = Arrangement.spacedBy(40.dp)
+                // На всю ширину панели: иначе ряд прижался бы к левому краю
+                Modifier.fillMaxWidth().padding(top = Space.xl, bottom = Space.xl),
+                horizontalArrangement = Arrangement.spacedBy(40.dp, Alignment.CenterHorizontally)
             ) {
                 if (!answered) {
                     FakeCallButton(
@@ -264,8 +296,10 @@ private fun FakeCallScreen(
                     )
                 }
             }
+            } // панель
         }
     }
+    } // Box с фото
 }
 
 @Composable
@@ -282,10 +316,10 @@ private fun FakeCallButton(
             .widthIn(min = FlowUi.callActionMinWidth)
     ) {
         Icon(
-            if (color == CallGreen) Icons.Default.Call else Icons.Default.CallEnd,
+            if (color == CallGreen) OgnelissIcons.Call else OgnelissIcons.CallEnd,
             contentDescription = null
         )
-        Spacer(Modifier.width(8.dp))
+        Spacer(Modifier.width(Space.s))
         Text(label)
     }
 }

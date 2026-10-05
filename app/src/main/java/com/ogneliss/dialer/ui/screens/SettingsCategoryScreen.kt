@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.layout.*
@@ -80,7 +82,7 @@ fun SettingsCategoryScreen(
                 .padding(pad)
                 .verticalScroll(rememberScrollState())
         ) {
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(Space.s))
 
             /*
              * ПОДГРУППЫ ВНУТРИ РАЗДЕЛА.
@@ -175,7 +177,7 @@ fun SettingsCategoryScreen(
             }
             }
             }
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(Space.xxl))
         }
     }
 

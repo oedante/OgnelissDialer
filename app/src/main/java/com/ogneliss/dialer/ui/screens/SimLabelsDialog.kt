@@ -1,11 +1,12 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.data.SimSlot
 import com.ogneliss.dialer.ui.components.OgnelissDialog
@@ -59,7 +60,7 @@ fun SimLabelsDialog(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.outline
                 )
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(Space.m))
 
                 if (sims.isEmpty()) {
                     Text(stringResource(R.string.settings_sim_none))
@@ -97,7 +98,7 @@ fun SimLabelsDialog(
                          */
                         supportingText = { Text(simIdentity(sim)) },
                         singleLine = true,
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                        modifier = Modifier.fillMaxWidth().padding(vertical = Space.xs)
                     )
                 }
             }

@@ -1,5 +1,9 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,8 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -121,11 +123,11 @@ fun LanguagePickerDialog(
                     value = query,
                     onValueChange = { query = it },
                     singleLine = true,
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                    leadingIcon = { Icon(OgnelissIcons.Search, contentDescription = null) },
                     placeholder = { Text(stringResource(R.string.language_search_hint)) },
                     modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(Modifier.padding(top = 8.dp))
+                Spacer(Modifier.padding(top = Space.s))
                 LazyColumn(Modifier.heightIn(max = 400.dp)) {
                     // «Как в системе» — всегда первым, в поиске не участвует
                     if (query.isBlank()) {
@@ -183,11 +185,11 @@ private fun LanguageRow(
             .fillMaxWidth()
             .heightIn(min = Dimens.MIN_TOUCH_TARGET)
             .selectable(selected = selected, role = Role.RadioButton, onClick = onSelect)
-            .padding(vertical = 4.dp),
+            .padding(vertical = Space.xs),
         verticalAlignment = Alignment.CenterVertically
     ) {
         RadioButton(selected = selected, onClick = null)
-        Spacer(Modifier.width(12.dp))
+        Spacer(Modifier.width(Space.m))
         Column {
             Text(title, style = MaterialTheme.typography.bodyLarge)
             if (subtitle != null) {

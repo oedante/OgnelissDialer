@@ -1,15 +1,15 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 
 import com.ogneliss.dialer.data.PinnedContacts
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.settings.ThemeMode
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material.icons.filled.DarkMode
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,17 +26,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.PhoneCallback
-import androidx.compose.material.icons.filled.Checklist
-import androidx.compose.material.icons.filled.DeleteSweep
-import androidx.compose.material.icons.automirrored.filled.StickyNote2
-import androidx.compose.material.icons.filled.Alarm
-import androidx.compose.material.icons.filled.Call
-import com.ogneliss.dialer.ui.theme.CallGreen
-import com.ogneliss.dialer.ui.theme.NoteTeal
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.*
@@ -50,7 +39,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.os.ConfigurationCompat
 import com.ogneliss.dialer.R
-import com.ogneliss.dialer.log.Logger
 import com.ogneliss.dialer.call.FakeCall
 import com.ogneliss.dialer.ui.theme.Dimens
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -1327,7 +1315,7 @@ fun MainDialerScreen(
                  * в плитке быстрых настроек и в меню.
                  */
                 Icon(
-                    Icons.AutoMirrored.Outlined.PhoneCallback,
+                    OgnelissIcons.PhoneCallback,
                     contentDescription = stringResource(R.string.fake_call_title)
                 )
             }
@@ -1418,7 +1406,7 @@ fun MainDialerScreen(
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.padding(padding).fillMaxSize(),
-                    contentPadding = PaddingValues(vertical = 4.dp)
+                    contentPadding = PaddingValues(vertical = Space.xs)
                 ) {
                     if (state.query.isNotEmpty() && contactRows.isNotEmpty()) {
                         itemsIndexed(
@@ -1660,7 +1648,7 @@ fun MainDialerScreen(
                             )
                             .width(SIDE_DIALPAD_WIDTH)
                             .fillMaxHeight()
-                            .padding(end = 8.dp, bottom = 8.dp)
+                            .padding(end = Space.s, bottom = Space.s)
                     ) {
                         // Ряды клавиш делят высоту сами: разбор в Dialpad.fillHeight
                         controlPanel(Modifier.fillMaxHeight(), true, null, false)
@@ -1675,7 +1663,7 @@ fun MainDialerScreen(
                         // Вырез камеры справа — полоса его обходит
                         .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.End))
                         .fillMaxHeight()
-                        .padding(end = 8.dp, bottom = 8.dp)
+                        .padding(end = Space.s, bottom = Space.s)
                 ) {
                     controlPanel(Modifier.fillMaxHeight(), false, null, true)
                 }
@@ -1809,11 +1797,21 @@ fun MainDialerScreen(
                         onOpenFakeCallPicker()
                     },
                     shape = MaterialTheme.shapes.large,
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    /*
+                     * Поле выбора, а не действие (1.3.4, 04.10.2026, аудит:
+                     * «Кто звонит» оформлен так же, как действия). Контурная
+                     * рамка без заливки и стрелка справа — это настройка;
+                     * залитые плитки ниже — действия.
+                     */
+                    color = androidx.compose.ui.graphics.Color.Transparent,
+                    border = androidx.compose.foundation.BorderStroke(
+                        1.dp, MaterialTheme.colorScheme.outlineVariant
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(min = Dimens.MIN_TOUCH_TARGET)
                 ) {
+                  Row(verticalAlignment = Alignment.CenterVertically) {
                     // Отступ как у соседних строк окна: подпись в две
                     // строки прижималась к краю плитки, остальные пункты
                     // стоят с полем
@@ -1822,7 +1820,7 @@ fun MainDialerScreen(
                         // не подходит, он PaddingValues и задаёт обе оси
                         Modifier.padding(
                             horizontal = FlowUi.contentPadding,
-                            vertical = 12.dp
+                            vertical = Space.m
                         ),
                         verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
@@ -1836,6 +1834,14 @@ fun MainDialerScreen(
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
+                    Spacer(Modifier.weight(1f))
+                    Icon(
+                        OgnelissIcons.KeyboardArrowRight,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(end = Space.m)
+                    )
+                  }
                 }
 
                 listOf(
@@ -1860,11 +1866,7 @@ fun MainDialerScreen(
                             .fillMaxWidth()
                             .heightIn(min = Dimens.MIN_TOUCH_TARGET)
                     ) {
-                        Text(
-                            stringResource(labelRes),
-                            Modifier.padding(FlowUi.cardPadding),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                        FakeCallTileText(stringResource(labelRes))
                     }
                 }
 
@@ -1879,11 +1881,7 @@ fun MainDialerScreen(
                         .fillMaxWidth()
                         .heightIn(min = Dimens.MIN_TOUCH_TARGET)
                 ) {
-                    Text(
-                        stringResource(R.string.fake_call_pick_time),
-                        Modifier.padding(FlowUi.cardPadding),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                    FakeCallTileText(stringResource(R.string.fake_call_pick_time))
                 }
             },
             confirmButton = {
@@ -1999,11 +1997,11 @@ fun MainDialerScreen(
             content = {
                 Row(verticalAlignment = Alignment.Top) {
                     Icon(
-                        Icons.Default.Warning,
+                        OgnelissIcons.Warning,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.error
                     )
-                    Spacer(Modifier.width(12.dp))
+                    Spacer(Modifier.width(Space.m))
                     Text(
                         pluralStringResource(
                             R.plurals.selection_delete_text, selection.count, selection.count
@@ -2044,11 +2042,11 @@ fun MainDialerScreen(
             content = {
                 Row(verticalAlignment = Alignment.Top) {
                     Icon(
-                        Icons.Default.Warning,
+                        OgnelissIcons.Warning,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.error
                     )
-                    Spacer(Modifier.width(12.dp))
+                    Spacer(Modifier.width(Space.m))
                     Text(
                         stringResource(
                             when (warning.category) {
@@ -2096,378 +2094,3 @@ private suspend fun handleLongDigit(
         }
     }
 }
-
-
-/**
- * Главное меню.
- *
- * Выпадающее от своей кнопки, а не диалог по центру экрана.
- * Разрушительное действие внизу и отделено чертой.
- * Переключение темы находится внутри меню.
- */
-// ModalBottomSheet в Material 3 1.3 ещё помечен как экспериментальный
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun OverflowMenu(
-    expanded: Boolean,
-    /** Собственный номер или пусто, если не указан. */
-    ownNumber: String = "",
-    onOwnNumber: () -> Unit = {},
-    onDismiss: () -> Unit,
-    /**
-     * Фильтры журнала.
-     *
-     * Переехали сюда с нижней панели: значок занимал там место
-     * постоянно, а включают их несколько раз в неделю.
-     */
-    settings: com.ogneliss.dialer.ui.SettingsState,
-    onThemeToggle: () -> Unit,
-    onClearLog: () -> Unit,
-    onSettings: () -> Unit,
-    /** Псевдозвонок: выбор, когда «позвонить». */
-    onFakeCall: () -> Unit,
-    /** Экран заметок. */
-    onNotes: () -> Unit,
-    /** Экран напоминаний. */
-    onReminders: () -> Unit,
-    onStartSelection: () -> Unit,
-    selectionActive: Boolean = false
-) {
-    /*
-     * ПОРЯДОК ПУНКТОВ МЕНЮ.
-     *
-     * ══════════════════════════════════════════════════════════════════════
-     * ПО ЧАСТОТЕ И ПО СМЫСЛУ, А НЕ ПО ИСТОРИИ ДОБАВЛЕНИЯ
-     * ══════════════════════════════════════════════════════════════════════
-     * Раньше пункты лежали в том порядке, в каком появлялись в коде.
-     * Теперь сгруппированы, и группы разделены линиями:
-     *
-     *   1. Псевдозвонок — единственный пункт, который нажимают
-     *      в спешке и не глядя. Первым, под большим пальцем.
-     *   2. Тема — переключатель, которым пользуются чаще прочего.
-     *   3. Мой контакт, заметки, напоминания — переходы к своим
-     *      данным.
-     *   4. Выбрать несколько, настройки — режимы и управление.
-     *   5. Очистить журнал — необратимое, отдельно и красным.
-     *
-     * ⚠️ «Очистить журнал» остаётся последним и за линией: пункт,
-     * который нельзя отменить, не должен оказаться рядом с тем,
-     * что нажимают часто.
-     */
-    /*
-     * ══════════════════════════════════════════════════════════════════════
-     * «ЕЩЁ» — ШТОРКА С ГРУППАМИ, А НЕ ВЫПАДАЮЩЕЕ МЕНЮ (1.2.1)
-     * ══════════════════════════════════════════════════════════════════════
-     * Было стандартное выпадающее меню: углы 4 dp и тень — единственный
-     * такой элемент в приложении, где скругления крупные, а теней нет.
-     * Выпадало от кнопки внизу, а выглядело как меню верхней строки.
-     *
-     * Теперь — шторка снизу, как у меню долгого нажатия: появляется
-     * там, где палец, и выглядит так же. Порядок и смысл групп прежние:
-     *
-     *   1. Псевдозвонок и свой номер — быстрые действия;
-     *   2. заметки, напоминания, выбор нескольких — свои данные и режимы;
-     *   3. тема и настройки — управление;
-     *   4. очистить журнал — необратимое, отдельно и красным.
-     */
-    if (!expanded) return
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-    val fakeCallLabel = stringResource(R.string.fake_call_title)
-    val ownLabel = stringResource(
-        if (ownNumber.isBlank()) R.string.menu_my_number_unknown else R.string.menu_my_contact
-    )
-    val notesLabel = stringResource(R.string.nav_notes)
-    val remindersLabel = stringResource(R.string.nav_reminders)
-    val selectionLabel = stringResource(
-        if (selectionActive) R.string.selection_exit else R.string.selection_start
-    )
-    val themeLabel = stringResource(
-        if (settings.theme == ThemeMode.DARK) R.string.menu_theme_light else R.string.menu_theme_dark
-    )
-    val settingsLabel = stringResource(R.string.nav_settings)
-    val clearLabel = stringResource(R.string.log_clear_all)
-
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        contentWindowInsets = { WindowInsets.navigationBars }
-    ) {
-        Column(Modifier.padding(bottom = 16.dp)) {
-            SheetGroup {
-                SheetRow(Icons.AutoMirrored.Outlined.PhoneCallback, fakeCallLabel, onClick = onFakeCall)
-                SheetDivider()
-                SheetRow(
-                    Icons.Default.Person,
-                    ownLabel,
-                    // Номер второй строкой: видно, какой задан, без похода в настройки
-                    supporting = ownNumber.takeIf { it.isNotBlank() }?.let { PhoneFormatter.format(it) },
-                    // Приглушённый, пока номера нет: не требует внимания, но и не прячется
-                    iconTint = if (ownNumber.isBlank()) MaterialTheme.colorScheme.outline else null,
-                    onClick = onOwnNumber
-                )
-            }
-            SheetGroup {
-                SheetRow(
-                    Icons.AutoMirrored.Filled.StickyNote2,
-                    notesLabel,
-                    iconTint = NoteTeal,
-                    onClick = onNotes
-                )
-                SheetDivider()
-                SheetRow(Icons.Default.Alarm, remindersLabel, onClick = onReminders)
-                SheetDivider()
-                SheetRow(
-                    if (selectionActive) Icons.Default.Close else Icons.Default.Checklist,
-                    selectionLabel,
-                    onClick = onStartSelection
-                )
-            }
-            SheetGroup {
-                SheetRow(
-                    if (settings.theme == ThemeMode.DARK) Icons.Default.LightMode else Icons.Default.DarkMode,
-                    themeLabel,
-                    onClick = onThemeToggle
-                )
-                SheetDivider()
-                SheetRow(Icons.Default.Settings, settingsLabel, onClick = onSettings)
-            }
-            SheetRow(
-                Icons.Default.DeleteSweep,
-                clearLabel,
-                color = MaterialTheme.colorScheme.error,
-                onClick = onClearLog,
-                // Вне панели — отступ как у групп выше
-                standalone = true
-            )
-        }
-    }
-}
-
-
-// Размеры пунктов меню — общие для приложения, разбор в FlowUi
-private val MENU_ITEM_HEIGHT = FlowUi.menuItemHeight
-private val MENU_ITEM_PADDING = FlowUi.menuItemPadding
-
-
-/**
- * СТРОКА ЖУРНАЛА.
- */
-@Composable
-private fun CallLogRow(
-    row: CallLogRowState,
-    vm: DialerViewModel,
-    state: com.ogneliss.dialer.ui.UiState,
-    settings: com.ogneliss.dialer.ui.SettingsState,
-    selection: SelectionState<String>,
-    swipeController: com.ogneliss.dialer.ui.components.swipe.SwipeRevealController,
-    swipeTuning: com.ogneliss.dialer.settings.SwipeTuning,
-    startHint: com.ogneliss.dialer.ui.components.swipe.RevealAction?,
-    endHint: com.ogneliss.dialer.ui.components.swipe.RevealAction?,
-    rightExtra: List<SwipeAction>,
-    leftExtra: List<SwipeAction>,
-    scope: kotlinx.coroutines.CoroutineScope,
-    listScrolling: Boolean,
-    swipeKeyPrefix: String = "",
-    onOpenSubscriber: (String) -> Unit,
-    onLongPress: (CallLogGroup) -> Unit,
-    onNeedNumberPicker: (CallLogGroup, List<NumberOption>) -> Unit,
-    groupPosition: GroupPosition = GroupPosition.SINGLE
-) {
-    val group = row.group
-    // Несколько действий на сторону — панель кнопок вместо мгновенного действия
-    val rightMulti = settings.swipeRight != SwipeAction.NONE && rightExtra.isNotEmpty()
-    val leftMulti = settings.swipeLeft != SwipeAction.NONE && leftExtra.isNotEmpty()
-
-
-    CallLogCard(
-        groupPosition = groupPosition,
-        row = row,
-        /*
-         * Кнопка вызова в строке.
-         *
-         * Тот же путь, что у свайпа: через onNeedNumberPicker, если
-         * у абонента несколько номеров. Иначе кнопка звонила бы
-         * на последний использованный, а свайп спрашивал — и человек
-         * получал разное от двух способов сделать одно.
-         */
-        onCall = {
-            /*
-             * Тот же путь, что у свайпа вызова.
-             *
-             * performSwipe сам решает, спросить ли номер и SIM: если
-             * у абонента их несколько, появится тот же выбор, что при
-             * свайпе. Звонить напрямую значило бы дать двум способам
-             * сделать одно разное поведение.
-             */
-            vm.performSwipe(SwipeAction.CALL, group) { swipeController.close() }
-        },
-        searchQuery = state.query,
-        selected = selection.isSelected(row.key),
-        selectionActive = selection.isActive,
-        swipeKey = swipeKeyPrefix + row.key,
-        swipeController = swipeController,
-        swipeTuning = swipeTuning,
-        directStartAction = startHint,
-        directEndAction = endHint,
-        /*
-         * ДВА-ТРИ ДЕЙСТВИЯ НА СВАЙП — ПАНЕЛЬ КНОПОК (1.2.5).
-         * Строка сдвигается и ждёт нажатия, как в почтовых клиентах;
-         * мгновенного действия в эту сторону нет (onDirect… ниже — null).
-         * Одно действие — как было: срабатывает сразу.
-         */
-        startActions = if (rightMulti) {
-            remember(row.key, settings.swipeRight, rightExtra, state.sims) {
-                vm.revealActionsFor(settings.swipeRight, rightExtra, group, state.sims)
-            }
-        } else emptyList(),
-        endActions = if (leftMulti) {
-            remember(row.key, settings.swipeLeft, leftExtra, state.sims) {
-                vm.revealActionsFor(settings.swipeLeft, leftExtra, group, state.sims)
-            }
-        } else emptyList(),
-        /*
-         * СВАЙП ВЫКЛЮЧЕН В НАСТРОЙКАХ — ОБРАБОТЧИКА НЕТ ВОВСЕ.
-         *
-         * Раньше обработчик передавался всегда, даже для «Нет действия».
-         * Строка свайпа считает направление рабочим, если обработчик есть
-         * (SwipeRevealRow.hasStartDirect), — и выключенный свайп всё равно
-         * тянулся: строка уезжала, возвращалась, только ничего не делала.
-         * А при обоих выключенных строка продолжала перехватывать
-         * горизонтальные движения пальца.
-         *
-         * Теперь для «Нет действия» — null: направление не тянется,
-         * а при обоих выключенных жест отключается целиком.
-         */
-        onDirectStart = remember(row.key, settings.swipeRight, rightMulti) {
-            if (settings.swipeRight == SwipeAction.NONE || rightMulti) null
-            else {
-                {
-                    vm.performSwipe(settings.swipeRight, group) {
-                        swipeController.close()
-                    }
-                }
-            }
-        },
-        onDirectEnd = remember(row.key, settings.swipeLeft, leftMulti) {
-            if (settings.swipeLeft == SwipeAction.NONE || leftMulti) null
-            else {
-                {
-                    vm.performSwipe(settings.swipeLeft, group) {
-                        swipeController.close()
-                    }
-                }
-            }
-        },
-        onClick = {
-            /*
-             * Нажатие — в журнал приложения. Жалоба «после звонка нажатие
-             * на запись ничего не делает» пришла с логом, где нажатий
-             * не было вовсе, и причину пришлось искать по коду. Теперь
-             * видно, какая ветка сработала и с каким ключом.
-             */
-            when {
-                selection.isActive -> {
-                    Logger.i("Journal", "Нажатие: режим выбора")
-                    selection.toggle(row.key)
-                }
-                swipeController.isOpen(row.key) -> {
-                    Logger.i("Journal", "Нажатие: закрыта раскрытая строка")
-                    swipeController.close()
-                }
-                else -> {
-                    Logger.i("Journal", "Нажатие: карточка ${Logger.maskKey(row.key)}")
-                    onOpenSubscriber(row.key)
-                }
-            }
-        },
-        onLongClick = {
-            if (selection.isActive) selection.toggle(row.key)
-            else onLongPress(group)
-        }
-    )
-}
-
-
-/** Подпись группы давности. */
-private fun dateGroupLabel(group: CallLogDateGroup): Int = when (group) {
-    CallLogDateGroup.TODAY -> R.string.date_group_today
-    CallLogDateGroup.YESTERDAY -> R.string.date_group_yesterday
-    CallLogDateGroup.THIS_WEEK -> R.string.date_group_this_week
-    CallLogDateGroup.LAST_WEEK -> R.string.date_group_last_week
-    CallLogDateGroup.EARLIER -> R.string.date_group_earlier
-}
-
-
-private const val LOAD_MORE_THRESHOLD = 5
-
-
-
-/** Закреплённый номер, по которому ещё не было звонков. */
-data class PinnedOnlyRow(
-    /** Запись закреплённого в настройках — ключ строки списка. */
-    val key: String,
-    val e164: String,
-    val title: String,
-    val photoUri: String?,
-    /** Ключ карточки: «contact:<id>» или «number:<e164>». */
-    val openKey: String
-)
-
-/**
- * Строка закреплённого номера без истории.
- *
- * Отличается от журнальной ровно тем, чего у неё нет: типа вызова,
- * даты и длительности. Всё остальное — фотография, имя, звонок
- * по нажатию — то же самое, чтобы строка не выглядела чужой
- * в списке.
- */
-@Composable
-private fun PinnedOnlyCard(
-    row: PinnedOnlyRow,
-    onCall: () -> Unit,
-    onOpen: () -> Unit
-) {
-    Surface(
-        onClick = onOpen,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        shape = MaterialTheme.shapes.large,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = FlowUi.screenPadding, vertical = FlowUi.cardSpacing)
-    ) {
-        Row(
-            Modifier.padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Фото — как у строк журнала (1.3.2): photoUri передавался,
-            // но не рисовался, и закреплённый «терял портрет»
-            RowAvatar(row.photoUri)
-            Spacer(Modifier.width(12.dp))
-            Column(Modifier.weight(1f)) {
-                Text(row.title, style = MaterialTheme.typography.titleMedium, maxLines = 1)
-                Text(
-                    PhoneFormatter.format(row.e164),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            IconButton(onClick = onCall) {
-                Icon(
-                    Icons.Default.Call,
-                    contentDescription = stringResource(R.string.action_call),
-                    tint = CallGreen
-                )
-            }
-        }
-    }
-}
-
-/**
- * Ширина клавиатуры сбоку. 360 dp — ширина обычного телефона:
- * клавиши того же размера, что человек привык видеть в портрете.
- */
-private val SIDE_DIALPAD_WIDTH = 360.dp
-
-

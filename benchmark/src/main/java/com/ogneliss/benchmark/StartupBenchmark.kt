@@ -6,6 +6,8 @@ import androidx.benchmark.macro.StartupTimingMetric
 import androidx.benchmark.macro.FrameTimingMetric
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import org.junit.Assume.assumeFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -51,7 +53,22 @@ class StartupBenchmark {
      * Показывает, что видит пользователь, если Baseline Profile не работает.
      */
     @Test
-    fun startupNoCompilation() = measureStartup(CompilationMode.None())
+    fun startupNoCompilation() {
+        /*
+         * Холодный запуск меряется отдельным ПЕРВЫМ прогоном, на остывшем
+         * телефоне (04.10.2026): после 6 минут других замеров он «вырос»
+         * на 18,7% при неизменном тёплом запуске — нагрев, а не код
+         * (повторы базы росли 207 → 266 мс внутри одного прогона).
+         * Во втором прогоне phone_check.ps1 передаёт skipColdStart=true.
+         * Свой аргумент, а не notClass: список через запятую в -P
+         * до телефона не доходит.
+         */
+        assumeFalse(
+            "Холодный запуск меряется отдельным первым прогоном",
+            InstrumentationRegistry.getArguments().getString("skipColdStart") == "true"
+        )
+        measureStartup(CompilationMode.None())
+    }
 
     /**
      * Холодный старт С Baseline Profile.

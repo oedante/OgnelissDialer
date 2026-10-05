@@ -89,6 +89,22 @@
     try { sessionStorage.setItem(KEY, code); } catch (e) {}
   }
 
+  /*
+   * Якорь на раздел: /mail/privacy#delete.
+   *
+   * Разделы повторяются в четырёх языковых блоках, а id на странице должен
+   * быть уникальным, поэтому у заголовков id с суффиксом языка: delete-ru,
+   * delete-en… Ссылка же одна на все языки — её указывают в консоли
+   * Google Play («удаление данных»). Здесь #delete превращается в переход
+   * к разделу видимого блока.
+   */
+  function scrollToAnchor(code) {
+    var h = (window.location.hash || '').slice(1);
+    if (!h || !/^[a-z-]+$/.test(h)) return;
+    var el = document.getElementById(h + '-' + code);
+    if (el) el.scrollIntoView();
+  }
+
   function build(container, current) {
     var cur = find(current);
 
@@ -168,6 +184,10 @@
     var code = saved || (known ? browser : 'ru');
 
     apply(code);
+    scrollToAnchor(code);
+    window.addEventListener('hashchange', function () {
+      scrollToAnchor(document.documentElement.getAttribute('lang') || code);
+    });
 
     var container = document.querySelector('.lang-switcher');
     if (!container) return;

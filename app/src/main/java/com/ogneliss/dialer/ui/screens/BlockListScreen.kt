@@ -1,5 +1,9 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.layout.*
@@ -8,13 +12,6 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.itemsIndexed
 import com.ogneliss.dialer.ui.components.OgnelissDivider
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Block
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -88,7 +85,7 @@ fun BlockListScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
+                            OgnelissIcons.ArrowBack,
                             contentDescription = stringResource(R.string.nav_back)
                         )
                     }
@@ -166,14 +163,14 @@ fun BlockListScreen(
 
             // ── Системный список ───────────────────────────────────────────
             item {
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(Space.l))
                 OgnelissListRow(
                     headline = stringResource(R.string.settings_blocked_system),
                     supporting = stringResource(R.string.settings_blocked_system_text),
-                    leading = { Icon(Icons.Default.Block, null) },
+                    leading = { Icon(OgnelissIcons.Block, null) },
                     onClick = { vm.openSystemBlockList() }
                 )
-                Spacer(Modifier.height(32.dp))
+                Spacer(Modifier.height(Space.xxl))
             }
         }
         }
@@ -191,7 +188,7 @@ fun BlockListScreen(
 @Composable
 private fun SectionHeaderWithAction(title: String, onAdd: () -> Unit) {
     Row(
-        Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 20.dp),
+        Modifier.fillMaxWidth().padding(start = Space.l, end = Space.s, top = 20.dp),
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
     ) {
         Text(
@@ -201,7 +198,7 @@ private fun SectionHeaderWithAction(title: String, onAdd: () -> Unit) {
             color = MaterialTheme.colorScheme.primary
         )
         IconButton(onClick = onAdd) {
-            Icon(Icons.Default.Add, contentDescription = stringResource(R.string.rule_add))
+            Icon(OgnelissIcons.Add, contentDescription = stringResource(R.string.rule_add))
         }
     }
 }
@@ -224,7 +221,7 @@ private fun RuleRow(
         ),
         leadingContent = {
             Icon(
-                if (isAllow) Icons.Default.CheckCircle else Icons.Default.Block,
+                if (isAllow) OgnelissIcons.CheckCircle else OgnelissIcons.Block,
                 contentDescription = null,
                 /*
                  * Зелёный — правило пропускает звонок, красный —
@@ -239,7 +236,7 @@ private fun RuleRow(
         supportingContent = comment?.let { { Text(it) } },
         trailingContent = {
             IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.rule_remove))
+                Icon(OgnelissIcons.Delete, contentDescription = stringResource(R.string.rule_remove))
             }
         },
         modifier = Modifier
@@ -253,14 +250,14 @@ private fun RuleRow(
 @Composable
 private fun InfoNote(text: String) {
     Row(
-        Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+        Modifier.padding(horizontal = Space.l, vertical = Space.xs),
         verticalAlignment = androidx.compose.ui.Alignment.Top
     ) {
         Icon(
-            Icons.Default.Info, contentDescription = null,
+            OgnelissIcons.Info, contentDescription = null,
             Modifier.size(FlowUi.iconSizeInline), tint = MaterialTheme.colorScheme.outline
         )
-        Spacer(Modifier.width(8.dp))
+        Spacer(Modifier.width(Space.s))
         Text(
             text,
             style = MaterialTheme.typography.bodySmall,
@@ -273,7 +270,7 @@ private fun InfoNote(text: String) {
 private fun EmptyNote(text: String) {
     Text(
         text,
-        Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+        Modifier.padding(horizontal = Space.l, vertical = Space.m),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )

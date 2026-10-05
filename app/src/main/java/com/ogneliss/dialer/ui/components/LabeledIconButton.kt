@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
 import androidx.compose.foundation.clickable
 import com.ogneliss.dialer.ui.theme.PanelColors
 import androidx.compose.foundation.shape.CircleShape
@@ -15,7 +17,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,7 +28,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
 import com.ogneliss.dialer.ui.theme.Dimens
@@ -82,7 +82,7 @@ fun LabeledIconButton(
                 contentDescription = label
                 role = Role.Button
             }
-            .padding(horizontal = 4.dp, vertical = 2.dp)
+            .padding(horizontal = Space.xs, vertical = 2.dp)
             .widthIn(min = Dimens.MIN_TOUCH_TARGET)
     ) {
         /*
@@ -113,14 +113,16 @@ fun LabeledIconButton(
 
         if (showLabel) {
             // 4 dp, а не 2: подпись прилипала к таблетке кнопки
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(Space.xs))
 
-            Text(
+            // FitText (1.3.4): длинная подпись («Напоминания» в боковой
+            // колонке) ужимается, а не обрезается многоточием
+            FitText(
                 label,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                minScale = 0.8f
             )
         }
     }

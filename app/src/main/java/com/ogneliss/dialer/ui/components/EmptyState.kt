@@ -1,9 +1,10 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.StickyNote2
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -90,11 +91,11 @@ fun EmptyState(
     if (compact) {
         // Одна строка: в ландшафте и на узкой панели места под иллюстрацию нет
         Row(
-            modifier.fillMaxWidth().padding(24.dp),
+            modifier.fillMaxWidth().padding(Space.xl),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(icon, null, tint = MaterialTheme.colorScheme.outline)
-            Spacer(Modifier.width(12.dp))
+            Spacer(Modifier.width(Space.m))
             Text(
                 title,
                 style = MaterialTheme.typography.bodyMedium,
@@ -123,7 +124,7 @@ fun EmptyState(
         modifier
             .fillMaxWidth()
             .graphicsLayer { this.alpha = alpha }
-            .padding(32.dp),
+            .padding(Space.xxl),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
@@ -131,14 +132,14 @@ fun EmptyState(
             Modifier.size(72.dp),
             tint = MaterialTheme.colorScheme.outlineVariant
         )
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(Space.l))
         Text(
             title,
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center
         )
         if (hint != null) {
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(Space.s))
             Text(
                 hint,
                 style = MaterialTheme.typography.bodyMedium,
@@ -154,13 +155,13 @@ fun EmptyState(
 }
 
 private fun iconFor(reason: EmptyReason): ImageVector = when (reason) {
-    EmptyReason.NoCalls -> Icons.Default.PhoneDisabled
-    EmptyReason.NoCallLogPermission, EmptyReason.NoContactsPermission -> Icons.Default.Lock
-    is EmptyReason.NoSearchResults -> Icons.Default.SearchOff
-    EmptyReason.NoContacts -> Icons.Default.PersonOff
-    EmptyReason.NoFavourites -> Icons.Default.StarBorder
-    EmptyReason.NoNotes -> Icons.AutoMirrored.Filled.StickyNote2
-    EmptyReason.NoReminders -> Icons.Default.Alarm
+    EmptyReason.NoCalls -> OgnelissIcons.PhoneDisabled
+    EmptyReason.NoCallLogPermission, EmptyReason.NoContactsPermission -> OgnelissIcons.Lock
+    is EmptyReason.NoSearchResults -> OgnelissIcons.SearchOff
+    EmptyReason.NoContacts -> OgnelissIcons.PersonOff
+    EmptyReason.NoFavourites -> OgnelissIcons.StarBorder
+    EmptyReason.NoNotes -> OgnelissIcons.StickyNote2
+    EmptyReason.NoReminders -> OgnelissIcons.Alarm
 }
 
 private fun titleFor(reason: EmptyReason): Int = when (reason) {

@@ -85,6 +85,9 @@
     <string name="confirm_block_unknown">Couriers, clinics, schools and banks call from numbers that are not in your contacts. They will stop reaching you. Add exceptions to the allow list first.</string>
     <string name="confirm_delete_contact_text">The contact will be removed from every account it is stored in, including Google. This cannot be undone from the phone.</string>
     <string name="confirm_delete_contact_title">Delete this contact?</string>
+    <string name="confirm_delete_contact_pinned">This contact is pinned to the top of the call log — it will be unpinned too.</string>
+    <string name="msg_contact_deleted">Contact deleted</string>
+    <string name="msg_contact_delete_failed">Couldn\'t delete the contact</string>
     <string name="confirm_enable">Enable</string>
     <string name="confirm_external_lookup">The incoming number will be passed to the app you choose, which may send it to its own servers.</string>
     <string name="confirm_reset">All settings return to their defaults. Notes, tags and lists are kept.</string>

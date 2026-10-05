@@ -1,99 +1,88 @@
 # Google Play listing — English
 
-Current as of 1.2.2.
+Current as of 1.4.0 (draft 04.10.2026: everything from 1.2.3–1.3.4).
 
 ## Title (30 chars)
 Ogneliss Dialer
 
 ## Short description (80 chars)
-An offline dialer: T9 search, notes on numbers, call blocking.
+Phone app with no internet: T9 search, notes for numbers, spam protection
 
 ## Full description (up to 4000)
 
-Ogneliss Dialer is a phone dialer that works entirely on your device.
-The app does not request the internet permission — you can verify this
-yourself in the installed app details.
+Ogneliss Dialer is a phone app that works entirely on your device. It has no internet permission — you can check this yourself in the installed app's details.
 
 DIALING AND SEARCH
-• T9 search across two alphabets at once
-• Matches the start of a first name, a surname or the digits of a number
+• T9 search in Cyrillic and Latin at the same time
+• Search by first name, last name and digits of the number
 • Speed dial on keys 2–9
-• Paste a number from the clipboard
-• Pause and wait characters for bank voice menus
+• Pause and wait for bank voice menus
 
 CALL LOG
 • Grouped by date: today, yesterday, this week
-• Three ways to merge repeated calls
-• “Awaiting callback” filter: missed calls you have not returned
-• Filters by type, SIM, period, notes and reminders
-• Pinned numbers stay at the top of the list
-• Export the whole log as a CSV table
+• Pinned contacts always on top — with calls from any of their numbers
+• "Awaiting reply" filter: missed calls you haven't returned
+• Filters by type, SIM card, period, notes and reminders
+• Missed call counter on the app icon
+• Clearing and deleting ask for confirmation
+• Export the call log as a CSV table
+
+SWIPES
+• Up to three actions per swipe — the row slides and reveals buttons, like in email apps
+• 14 actions to choose from: call, SMS, messenger, reminder, note, block…
+• Protection against accidental swipes: normal scrolling doesn't move rows sideways
+
+CONTACT CARD
+• "Message": SMS or a messenger — Telegram, WhatsApp, Viber, Max, if the contact uses it
+• Email: write or copy the address
+• Call summary, contact QR code, call history export
+• Custom ringtone, send calls to voicemail, home screen shortcut
+• Delete a contact with confirmation
 
 CARRIER AND REGION
-• Unknown numbers show which carrier the number belongs to and where
-  it was issued
-• Based on the official numbering plan, looked up offline
-• Russian numbers only for now
-• Configurable: all numbers, unknown only, or never
+• Unknown numbers show the carrier and region they were issued in
+• Works from the official numbering plan, offline (Russian numbers for now)
 
 NOTES AND REMINDERS
-• A note on any number, even one that is not in your contacts
-• The note appears while dialling that number and after a call
-• A separate screen with all notes and search across their text
-• A reminder to call back: today, tomorrow or any day you pick
-• A separate reminders screen grouped by day
+• A note for any number, even if it's not in your contacts
+• The note shows while dialing and in the after-call notification
+• Call-back reminders: today, tomorrow or any day
 
-CALL BLOCKING
-• An allow list that takes priority over the block list
-• Mask rules: 8 800 * covers every toll-free line
-• Tags on numbers: spam, fraud, survey, bank
-• A blocked call posts a silent notification with an Unblock button —
-  if a rule fired by mistake, you see it right away
-• A warning about premium-rate and international numbers before dialling
+SPAM PROTECTION
+• Whitelist takes priority over the blacklist
+• Mask rules: 8 800 * covers all toll-free lines
+• Number labels: spam, scam
+• A quiet notification with "Unblock" for every blocked call
+• Warning about premium-rate and international numbers before dialing
+• Emergency numbers — no needless warnings; after an emergency call the filter lets all incoming calls through for two hours, so a call-back is never blocked
 
 FAKE CALL
-The phone “rings”, giving you a reason to step away from an awkward
-conversation. Start it from a button, the menu, the launcher icon or
-a quick settings tile. No call is actually made: nothing is sent
-anywhere and nothing appears in the call log.
+Your phone "rings" — an excuse to step away from an awkward conversation. No real call happens: nothing is sent anywhere and nothing appears in the call log.
 
 DUAL SIM
-• A separate call button for each card — no extra step
-• The app remembers which card you use for a given person
-• Your own names for the slots: “Work”, “Personal”
+• A separate call button for each SIM
+• Remembers which SIM you use for each person
+• Your own names for slots: "Work", "Personal"
 
 CALL SCREEN
-• Turn off screen blanking near your ear if you wish
-• Show the number type instead of digits for contacts
 • Quick SMS reply to an incoming call
+• Audio to a Bluetooth headset
+• Screen-off near the ear can be disabled
 
-TABLETS AND FOLDABLES
-• Call log and contact card side by side, two-pane settings
-• Side navigation; phone in landscape — buttons under your thumb
-
-CONVENIENCE
-• Swipe between screens: call log, contacts, notes, reminders
-• Configurable row swipes: 14 actions to choose from
+COMFORT
 • Light, dark and AMOLED black themes
-• Large buttons for low vision
-• Button labels can be hidden
-• 48 interface languages, including English, Russian, German and French
-• Export notes and lists to a file
+• Large buttons for low vision; button labels can be hidden
+• Landscape, tablets and foldables: call log and contact card side by side
+• 48 interface languages
 
-WHAT THE APP DOES NOT HAVE
+WHAT THE APP DOESN'T HAVE
 • Ads
 • Subscriptions or paid features
 • Internet access
-• Call recording — since Android 10 the system has closed it to
-  third-party apps, and working around that is against Google Play rules
+• Call recording — since Android 10 the system blocks it for third-party apps
 
 ABOUT YOUR DATA
-The call log and contacts are read from the Android system providers
-and stay on the device. The app keeps no copy of its own, so switching
-back to the stock Phone app loses nothing.
-
-Ogneliss does not disable caller ID apps you already have: they hold
-a separate system role and keep working alongside it.
+The call log and contacts are read from Android's system providers and stay on your device. The app keeps no copy of its own, so if you switch back to the stock Phone app you lose nothing.
 
 ## Category
 Tools → Communication

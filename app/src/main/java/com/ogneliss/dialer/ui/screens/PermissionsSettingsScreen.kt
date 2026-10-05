@@ -1,15 +1,13 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.RadioButtonUnchecked
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
@@ -156,7 +154,7 @@ fun PermissionsSettingsScreen(
                 OgnelissListRow(
                     headline = stringResource(R.string.permissions_open_system),
                     supporting = stringResource(R.string.permissions_open_system_hint),
-                    leading = { Icon(Icons.Default.Settings, null) },
+                    leading = { Icon(OgnelissIcons.Settings, null) },
                     onClick = { AppPermissions.openAppSettings(context) }
                 )
             }
@@ -175,7 +173,7 @@ private fun PermissionRow(
     ListItem(
         leadingContent = {
             Icon(
-                if (granted) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
+                if (granted) OgnelissIcons.CheckCircle else OgnelissIcons.RadioButtonUnchecked,
                 contentDescription = null,
                 tint = when {
                     granted -> MaterialTheme.colorScheme.primary

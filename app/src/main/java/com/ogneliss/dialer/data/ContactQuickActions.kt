@@ -87,6 +87,18 @@ class ContactQuickActions @Inject constructor(
      *
      * Вызывать ТОЛЬКО после явного подтверждения с предупреждением.
      */
+    override suspend fun isSendToVoicemail(contactId: Long): Boolean = withContext(io) {
+        runCatching {
+            val uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId)
+            context.contentResolver.query(
+                uri, arrayOf(ContactsContract.Contacts.SEND_TO_VOICEMAIL), null, null, null
+            )?.use { c -> c.moveToFirst() && c.getInt(0) == 1 } ?: false
+        }.getOrElse {
+            Logger.e(TAG, "Не удалось прочитать «на голосовую почту»", it)
+            false
+        }
+    }
+
     override suspend fun delete(contactId: Long): Boolean = withContext(io) {
         runCatching {
             val uri = ContentUris.withAppendedId(

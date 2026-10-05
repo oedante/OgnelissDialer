@@ -1,5 +1,9 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.ui.unit.coerceAtLeast
@@ -7,10 +11,6 @@ import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.ui.theme.LocalAppearance
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Message
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.*
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.setValue
@@ -31,12 +31,12 @@ import com.ogneliss.dialer.ui.theme.BlockRed
 import com.ogneliss.dialer.ui.components.OgnelissDialog
 import com.ogneliss.dialer.ui.components.rememberActionHaptics
 import androidx.compose.ui.Alignment
-import androidx.compose.material.icons.automirrored.filled.StickyNote2
 import androidx.compose.ui.text.style.TextOverflow
 import com.ogneliss.dialer.ui.theme.NoteTeal
 import com.ogneliss.dialer.ui.theme.CallGreen
 import com.ogneliss.dialer.ui.components.RowAvatar
 import com.ogneliss.dialer.ui.components.SheetRow
+import com.ogneliss.dialer.ui.components.DeleteContactDialog
 import com.ogneliss.dialer.ui.components.SheetGroup
 import com.ogneliss.dialer.ui.components.SheetDivider
 import com.ogneliss.dialer.ui.components.QuickAction
@@ -109,6 +109,9 @@ fun ContactActionSheet(
 
     var pinLimitReached by remember { mutableStateOf(false) }
 
+    // id контакта, удаление которого подтверждается (1.3.4)
+    var deleteContactId by remember { mutableStateOf<Long?>(null) }
+
     if (pinLimitReached) {
         // Общий контейнер приложения вместо AlertDialog
         OgnelissDialog(
@@ -122,6 +125,18 @@ fun ContactActionSheet(
                     Text(stringResource(R.string.nav_close))
                 }
             }
+        )
+    }
+
+    deleteContactId?.let { id ->
+        DeleteContactDialog(
+            pinned = vm.isContactPinned(id),
+            onConfirm = {
+                vm.deleteContact(id)
+                deleteContactId = null
+                onDismiss()
+            },
+            onDismiss = { deleteContactId = null }
         )
     }
 
@@ -147,7 +162,7 @@ fun ContactActionSheet(
          * 4. работа с номером — второй панелью;
          * 5. «Удалить из журнала» — отдельно, красным, внизу.
          */
-        Column(Modifier.padding(bottom = 16.dp)) {
+        Column(Modifier.padding(bottom = Space.l)) {
             // Отклик на необратимое: блокировка, снятие, удаление
             val haptics = rememberActionHaptics()
 
@@ -187,7 +202,7 @@ fun ContactActionSheet(
                         ?: group.photoUri
                 }
                 RowAvatar(photoUri)
-                Spacer(Modifier.width(16.dp))
+                Spacer(Modifier.width(Space.l))
                 Column(Modifier.weight(1f)) {
                     Text(
                         group.displayName ?: PhoneFormatter.format(group.number),
@@ -213,18 +228,18 @@ fun ContactActionSheet(
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 4.dp)
+                    .padding(horizontal = Space.m, vertical = Space.xs)
             ) {
                 QuickAction(
-                    Icons.Default.Call,
+                    OgnelissIcons.Call,
                     R.string.action_call,
                     container = CallGreen,
                     tint = Color.White
                 ) { vm.call(group.number); onDismiss() }
-                QuickAction(Icons.AutoMirrored.Filled.Message, R.string.action_sms) {
+                QuickAction(OgnelissIcons.Message, R.string.action_sms) {
                     vm.openSms(group.number); onDismiss()
                 }
-                QuickAction(Icons.Default.Alarm, R.string.action_remind_short) {
+                QuickAction(OgnelissIcons.Alarm, R.string.action_remind_short) {
                     vm.requestReminder(group); onDismiss()
                 }
                 /*
@@ -234,7 +249,7 @@ fun ContactActionSheet(
                  * иначе снялась бы вся маска); не заблокирован — блокировать.
                  */
                 QuickAction(
-                    icon = Icons.Default.Block,
+                    icon = OgnelissIcons.Block,
                     labelRes = when {
                         exactRule != null -> R.string.action_unblock_short
                         maskRule != null -> R.string.action_blocked_by_mask
@@ -254,7 +269,7 @@ fun ContactActionSheet(
                 }
             }
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(Space.s))
 
             // ── 3. Контакт ──────────────────────────────────────────────
             val knownContactId = remember(state.contacts, group.e164) {
@@ -271,12 +286,12 @@ fun ContactActionSheet(
             val pinLabel = stringResource(if (pinned) R.string.action_unpin else R.string.action_pin)
             val noteLabel = stringResource(R.string.action_add_note)
             SheetGroup {
-                        SheetRow(Icons.Default.History, historyLabel, onClick = {
+                        SheetRow(OgnelissIcons.History, historyLabel, onClick = {
                             onOpenCard(); onDismiss()
                         })
                 SheetDivider()
                         SheetRow(
-                            if (knownContactId == null) Icons.Default.PersonAdd else Icons.Default.Edit,
+                            if (knownContactId == null) OgnelissIcons.PersonAdd else OgnelissIcons.Edit,
                             contactLabel,
                             onClick = {
                                 if (knownContactId == null) {
@@ -290,7 +305,7 @@ fun ContactActionSheet(
                 SheetDivider()
                         // Контурная булавка — «не закреплён», залитая — «закреплён»
                         SheetRow(
-                            if (pinned) Icons.Default.PushPin else Icons.Outlined.PushPin,
+                            if (pinned) OgnelissIcons.PushPin else OgnelissIcons.PushPin,
                             pinLabel,
                             onClick = {
                                 if (pinned) {
@@ -305,7 +320,7 @@ fun ContactActionSheet(
                         )
                 SheetDivider()
                         SheetRow(
-                            Icons.AutoMirrored.Filled.StickyNote2,
+                            OgnelissIcons.StickyNote2,
                             noteLabel,
                             iconTint = NoteTeal,
                             onClick = { vm.openNoteEditor(group); onDismiss() }
@@ -319,14 +334,14 @@ fun ContactActionSheet(
                 if (mark == null) R.string.action_mark_spam else R.string.action_unmark_spam
             )
             SheetGroup {
-                        SheetRow(Icons.Default.ContentCopy, copyLabel, onClick = {
+                        SheetRow(OgnelissIcons.ContentCopy, copyLabel, onClick = {
                             vm.copyNumber(group.number); onDismiss()
                         })
                 SheetDivider()
                         // Отметка «спам»: ставит, если нет; снимает любую, если есть.
                         // «Мошенники» — в карточке, где видны обе отметки
                         SheetRow(
-                            Icons.Default.Report,
+                            OgnelissIcons.Report,
                             spamLabel,
                             color = if (mark == null) BlockRed else MaterialTheme.colorScheme.primary,
                             onClick = {
@@ -339,13 +354,23 @@ fun ContactActionSheet(
 
             // ── 5. Необратимое — отдельно, внизу ───────────────────────
             SheetRow(
-                Icons.Default.Delete,
+                OgnelissIcons.Delete,
                 stringResource(R.string.action_delete_from_log),
                 color = BlockRed,
                 onClick = { haptics(); vm.deleteGroups(listOf(group)); onDismiss() },
                 // Вне панели — отступ как у групп выше
                 standalone = true
             )
+            // Удаление контакта — только у контактов, с подтверждением (1.3.4)
+            if (knownContactId != null) {
+                SheetRow(
+                    OgnelissIcons.PersonOff,
+                    stringResource(R.string.action_delete_contact),
+                    color = BlockRed,
+                    onClick = { deleteContactId = knownContactId },
+                    standalone = true
+                )
+            }
         }
     }
 }

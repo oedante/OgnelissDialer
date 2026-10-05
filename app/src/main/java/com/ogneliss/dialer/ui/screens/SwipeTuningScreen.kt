@@ -1,14 +1,14 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Restore
-import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -87,7 +87,7 @@ fun SwipeTuningScreen(
                     vm.resetSwipeTuning()
                 }) {
                     Icon(
-                        Icons.Default.Restore,
+                        OgnelissIcons.Restore,
                         contentDescription = stringResource(R.string.swipe_tuning_reset)
                     )
                 }
@@ -101,7 +101,7 @@ fun SwipeTuningScreen(
         ) {
             PreviewRow(draft)
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(Space.s))
 
             TuningSlider(
                 title = stringResource(R.string.swipe_trigger_title),
@@ -145,12 +145,12 @@ fun SwipeTuningScreen(
             // возникает вопрос «а где кнопка Сохранить»
             Text(
                 stringResource(R.string.swipe_tuning_autosave),
-                Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
+                Modifier.padding(horizontal = Space.xl, vertical = Space.l),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.outline
             )
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(Space.xl))
         }
     }
 }
@@ -172,15 +172,15 @@ private fun PreviewRow(tuning: SwipeTuning) {
 
     Column(Modifier.padding(FlowUi.contentPadding)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Default.TouchApp, contentDescription = null)
-            Spacer(Modifier.width(8.dp))
+            Icon(OgnelissIcons.TouchApp, contentDescription = null)
+            Spacer(Modifier.width(Space.s))
             Text(
                 stringResource(R.string.swipe_tuning_try),
                 style = MaterialTheme.typography.titleSmall
             )
         }
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(Space.s))
 
         OgnelissPanel {
             SwipeRevealRow(
@@ -195,13 +195,13 @@ private fun PreviewRow(tuning: SwipeTuning) {
                 OgnelissListRow(
                     headline = stringResource(R.string.swipe_tuning_sample_name),
                     supporting = stringResource(R.string.swipe_tuning_sample_hint),
-                    leading = { Icon(Icons.Default.Person, contentDescription = null) }
+                    leading = { Icon(OgnelissIcons.Person, contentDescription = null) }
                 )
             }
         }
 
         // Что сработало — иначе непонятно, засчитался жест или нет
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(Space.s))
         Text(
             lastAction?.let { stringResource(R.string.swipe_tuning_fired, it) }
                 ?: stringResource(R.string.swipe_tuning_nothing),
@@ -222,7 +222,7 @@ private fun TuningSlider(
     step: Int = 5,
     onChange: (Int) -> Unit
 ) {
-    Column(Modifier.padding(horizontal = 24.dp, vertical = 8.dp)) {
+    Column(Modifier.padding(horizontal = Space.xl, vertical = Space.s)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(title, style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
             // Значение показано числом: по положению ползунка вернуться

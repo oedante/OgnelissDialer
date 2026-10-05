@@ -1,14 +1,15 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Rule
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,7 +19,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.components.OgnelissPanel
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.R
@@ -77,7 +77,7 @@ fun SpamProtectionScreen(
             // почему один вызов блокируется, а другой проходит
             LayerCard(
                 order = 1,
-                icon = Icons.Default.PhonelinkLock,
+                icon = OgnelissIcons.PhonelinkLock,
                 title = stringResource(R.string.spam_layer_system),
                 text = stringResource(R.string.spam_layer_system_text),
                 active = true,
@@ -100,7 +100,7 @@ fun SpamProtectionScreen(
              */
             LayerCard(
                 order = 2,
-                icon = Icons.Default.Shield,
+                icon = OgnelissIcons.Shield,
                 title = stringResource(R.string.spam_layer_screening),
                 text = when {
                     roleState.weAreScreener ->
@@ -139,7 +139,7 @@ fun SpamProtectionScreen(
 
             LayerCard(
                 order = 3,
-                icon = Icons.AutoMirrored.Filled.Rule,
+                icon = OgnelissIcons.Rule,
                 title = stringResource(R.string.spam_layer_rules),
                 text = stringResource(R.string.spam_layer_rules_text, rules.size),
                 active = rules.isNotEmpty() || settings.blockTaggedSpam,
@@ -151,7 +151,7 @@ fun SpamProtectionScreen(
              * показывать слой защиты, которого нет, значит обещать
              * несуществующее.
              */
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(Space.xxl))
         }
     }
 }
@@ -180,21 +180,21 @@ private fun LayerCard(
                 tint = if (active) MaterialTheme.colorScheme.primary
                 else MaterialTheme.colorScheme.outline
             )
-            Spacer(Modifier.width(12.dp))
+            Spacer(Modifier.width(Space.m))
             Column(Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     // Порядковый номер показывает очерёдность срабатывания
                     Text("$order. ", style = MaterialTheme.typography.labelLarge)
                     Text(title, style = MaterialTheme.typography.titleSmall)
                 }
-                Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(Space.xs))
                 Text(
                     text,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            Spacer(Modifier.width(8.dp))
+            Spacer(Modifier.width(Space.s))
             AssistChip(
                 onClick = { },
                 label = {

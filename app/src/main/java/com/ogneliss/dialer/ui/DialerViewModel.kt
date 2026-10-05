@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui
 
+import com.ogneliss.dialer.data.PinnedController
+import com.ogneliss.dialer.data.PinnedEntry
 import com.ogneliss.dialer.concurrency.suspendRunCatching
 
 import android.os.Build
@@ -51,9 +53,6 @@ import com.ogneliss.dialer.data.PinnedContacts
 import com.ogneliss.dialer.data.RuleKind
 import com.ogneliss.dialer.call.PostCallCoordinator
 import com.ogneliss.dialer.R
-import com.ogneliss.dialer.backup.BackupManager
-import com.ogneliss.dialer.backup.CallLogCsvExport
-import com.ogneliss.dialer.backup.SubscriberHistoryExport
 import com.ogneliss.dialer.data.DirectoryLookupRepository
 import com.ogneliss.dialer.data.DirectoryProvider
 import com.ogneliss.dialer.data.ExternalCallerIdController
@@ -154,7 +153,8 @@ class DialerViewModel @Inject constructor(
     private val settingsCommands: SettingsCommands,
     private val contactActions: ContactActionsController,
     private val postCallCoordinator: PostCallCoordinator,
-    private val backupManager: BackupManager,
+    private val exporter: com.ogneliss.dialer.backup.ExportController,
+    private val pinned: com.ogneliss.dialer.data.PinnedController,
     private val directoryRepo: DirectoryLookupRepository,
     private val externalCallerId: ExternalCallerIdController,
     val prefs: Prefs
@@ -507,9 +507,6 @@ class DialerViewModel @Inject constructor(
          */
         val SIM_SETTLE_DELAYS_MS = longArrayOf(2_000L, 4_000L)
 
-        /** Предел записей в выгрузке журнала — разбор в buildCallLogCsv. */
-        const val CSV_EXPORT_LIMIT = 10_000
-
         /**
          * Пауза перед повторным чтением контактов.
          *
@@ -526,17 +523,6 @@ class DialerViewModel @Inject constructor(
          * телефоне.
          */
         const val MAX_CONTACTS_RETRIES = 4
-
-        /**
-         * Предел записей в выгрузке.
-         *
-         * Системный журнал хранит ограниченную историю, и упереться
-         * в этот предел на одном абоненте почти невозможно. Ограничение
-         * здесь на случай, если провайдер отдаст неожиданно много:
-         * файл на десятки тысяч строк никому не нужен, а собирать его
-         * долго.
-         */
-        const val EXPORT_LIMIT = 1000
     }
 
     private var refreshJob: Job? = null
@@ -2057,7 +2043,8 @@ class DialerViewModel @Inject constructor(
 
     /** Снятие избранного или удаление нескольких контактов сразу. */
     fun deleteContacts(contactIds: Collection<Long>) = viewModelScope.launch {
-        contactIds.forEach { contactActions.delete(it) }
+        // Тот же путь, что у одного контакта: с закреплёнными (1.3.4)
+        contactIds.forEach { deleteContactNow(it) }
         refresh()
     }
 
@@ -2312,64 +2299,16 @@ class DialerViewModel @Inject constructor(
      *
      * @return текст или null, если историю не удалось прочитать
      */
-    suspend fun buildHistoryExport(group: CallLogGroup): String? = suspendRunCatching {
-        withContext(defaultDispatcher) {
-            val entries = callLogRepo.historyFor(group.number, limit = EXPORT_LIMIT)
-            SubscriberHistoryExport.asText(
-                displayName = group.displayName,
-                number = group.number,
-                entries = entries,
-                note = state.value.notes[group.e164],
-                spamMark = state.value.spamMarks[group.e164]?.type
-            )
-        }
-    }.getOrElse {
-        Logger.e(TAG, "Не удалось собрать выгрузку по абоненту", it)
-        null
-    }
+    // ── Выгрузки — ExportController (1.3.4) ────────────────────────────────
 
-    /**
-     * ВЫГРУЗКА ВСЕГО ЖУРНАЛА В CSV.
-     *
-     * ══════════════════════════════════════════════════════════════════════
-     * ПОЧЕМУ ЭТО НУЖНО
-     * ══════════════════════════════════════════════════════════════════════
-     * Выгрузка по одному абоненту есть, но тем, кто ведёт учёт звонков
-     * по работе, нужен весь журнал за период — чтобы посчитать время
-     * разговоров, свести по номерам, приложить к отчёту.
-     *
-     * ── Предел в десять тысяч записей ──────────────────────────────────────
-     * Система хранит журнал сама и обрезает его по своему усмотрению,
-     * но на устройстве с долгой историей записей бывает десятки тысяч.
-     * Читать их все — это мегабайты в памяти и минуты ожидания.
-     *
-     * Десять тысяч — это годы обычного использования и файл около
-     * мегабайта. Кому нужно больше, тому нужен не телефон, а выгрузка
-     * у оператора.
-     */
-    suspend fun buildCallLogCsv(): String? = suspendRunCatching {
-        withContext(defaultDispatcher) {
-            val entries = callLogRepo.loadEntries(limit = CSV_EXPORT_LIMIT, offset = 0)
+    suspend fun buildHistoryExport(group: CallLogGroup): String? =
+        exporter.historyText(group, state.value.notes[group.e164], state.value.spamMarks[group.e164]?.type)
 
-            // Имена подставляются из книги: в журнале системы их нет,
-            // а в таблице «8 (918) …» без имени бесполезен
-            val names = buildMap {
-                state.value.contacts.forEach { contact ->
-                    contact.numbers.forEach { put(it.value, contact.displayName) }
-                }
-            }
+    suspend fun buildCallLogCsv(): String? = exporter.callLogCsv(state.value.contacts)
 
-            CallLogCsvExport.asCsv(entries = entries, nameByNumber = names)
-        }
-    }.getOrElse {
-        Logger.e(TAG, "Не удалось собрать выгрузку журнала", it)
-        null
-    }
+    fun callLogCsvFileName(): String = exporter.callLogCsvFileName()
 
-    fun callLogCsvFileName(): String = CallLogCsvExport.suggestedFileName()
-
-    fun exportFileName(group: CallLogGroup): String =
-        SubscriberHistoryExport.suggestedFileName(group.displayName, group.number)
+    fun exportFileName(group: CallLogGroup): String = exporter.historyFileName(group)
 
     // ── Выбор SIM для действия свайпа ──────────────────────────────────────
 
@@ -2571,24 +2510,26 @@ class DialerViewModel @Inject constructor(
     val pinnedNumbers = prefs.pinnedNumbers
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
+    /*
+     * Закрепление контакта, а не номера (1.3.2) — устройство в PinnedContacts,
+     * запись и сборка списка — в PinnedController (1.3.4). Снаружи
+     * по-прежнему передаётся номер: ViewModel сама находит, есть ли он в книге.
+     */
+    private fun lookupKeyFor(e164: String): String? =
+        state.value.contacts.firstOrNull { c -> c.numbers.any { it.e164 == e164 } }?.lookupKey
+
     /**
      * Закрепить номер вверху журнала.
      *
      * @return false, если достигнут предел — интерфейс тогда объяснит
      *         причину, а не сделает вид, что всё получилось
      */
-    /*
-     * Закрепление контакта, а не номера (1.3.2, 03.10.2026) — устройство
-     * и причины в PinnedContacts. Снаружи по-прежнему передаётся номер:
-     * ViewModel сама находит, есть ли он в книге.
-     */
-    private fun lookupKeyFor(e164: String): String? =
-        state.value.contacts.firstOrNull { c -> c.numbers.any { it.e164 == e164 } }?.lookupKey
-
     fun pinNumber(e164: String): Boolean {
-        val updated = PinnedContacts.pinSubscriber(pinnedNumbers.value, e164, lookupKeyFor(e164)) ?: return false
+        val lookupKey = lookupKeyFor(e164)
+        // Предел проверяется сразу: ответ нужен интерфейсу до записи
+        if (PinnedContacts.pinSubscriber(pinnedNumbers.value, e164, lookupKey) == null) return false
         viewModelScope.launch {
-            prefs.setPinnedNumbers(updated)
+            pinned.pin(pinnedNumbers.value, e164, lookupKey)
             /*
              * Полное обновление, а не только перестановка групп: закреплённый
              * мог не попасть в загруженную страницу журнала
@@ -2599,14 +2540,14 @@ class DialerViewModel @Inject constructor(
     }
 
     fun unpinNumber(e164: String) = viewModelScope.launch {
-        prefs.setPinnedNumbers(PinnedContacts.unpinSubscriber(pinnedNumbers.value, e164, lookupKeyFor(e164)))
+        pinned.unpin(pinnedNumbers.value, e164, lookupKeyFor(e164))
         // Как и закрепление: обновляем всё, а не только порядок групп
         refresh()
     }
 
     /** Открепление из списка «Закреплённые» — по записи, а не по номеру. */
     fun unpinKey(key: String) = viewModelScope.launch {
-        prefs.setPinnedNumbers(pinnedNumbers.value.filterNot { it == key })
+        pinned.unpinKey(pinnedNumbers.value, key)
         refresh()
     }
 
@@ -2614,14 +2555,13 @@ class DialerViewModel @Inject constructor(
         PinnedContacts.isSubscriberPinned(pinnedNumbers.value, e164, lookupKeyFor(e164))
 
     fun movePinned(key: String, up: Boolean) = viewModelScope.launch {
-        prefs.setPinnedNumbers(PinnedContacts.move(pinnedNumbers.value, key, up))
+        pinned.move(pinnedNumbers.value, key, up)
     }
 
     /*
      * Перевод старых закреплений по номеру на контакты — как только
      * загружены контакты, и после каждого их изменения (номер могли
-     * добавить в книгу). migrate() возвращает тот же список, если менять
-     * нечего: записи в настройки нет, цикла нет.
+     * добавить в книгу).
      */
     init {
         viewModelScope.launch {
@@ -2630,48 +2570,15 @@ class DialerViewModel @Inject constructor(
                 _state.map { it.contacts }.distinctUntilChanged()
             ) { pins, contacts -> pins to contacts }
                 .collect { (pins, contacts) ->
-                    if (pins.isEmpty() || contacts.isEmpty()) return@collect
-                    val byE164 = HashMap<String, String>()
-                    contacts.forEach { c -> c.numbers.forEach { byE164.putIfAbsent(it.e164, c.lookupKey) } }
-                    val migrated = PinnedContacts.migrate(pins) { byE164[it] }
-                    if (migrated !== pins) {
-                        Logger.i(TAG, "Закреплённые переведены на контакты: ${pins.size} → ${migrated.size}")
-                        prefs.setPinnedNumbers(migrated)
+                    pinned.migrateIfNeeded(pins, contacts)?.let { (before, after) ->
+                        Logger.i(TAG, "Закреплённые переведены на контакты: $before → $after")
                     }
                 }
         }
     }
 
-    fun pinnedEntries(): List<PinnedEntry> {
-        val contacts = state.value.contacts
-        val byLookup = contacts.associateBy { it.lookupKey }
-        return pinnedNumbers.value.map { raw ->
-            val pin = PinnedContacts.parse(raw)
-            val contact = pin.lookupKey?.let { byLookup[it] }
-                ?: contacts.firstOrNull { c -> c.numbers.any { it.e164 == pin.e164 } }
-            // Последний звонок этого контакта (с любого номера) или номера
-            val group = state.value.callLog.firstOrNull { g ->
-                (contact != null && g.contactId == contact.id) || g.e164 == pin.e164
-            }
-            val number = group?.number ?: contact?.numbers?.firstOrNull()?.value ?: pin.e164
-            PinnedEntry(
-                key = raw,
-                e164 = group?.e164 ?: contact?.numbers?.firstOrNull()?.e164 ?: pin.e164,
-                displayName = contact?.displayName ?: group?.displayName,
-                formattedNumber = PhoneFormatter.format(number),
-                photoUri = contact?.photoUri ?: group?.photoUri
-            )
-        }
-    }
-
-    data class PinnedEntry(
-        /** Запись в настройках — для перестановки и открепления. */
-        val key: String,
-        val e164: String,
-        val displayName: String?,
-        val formattedNumber: String,
-        val photoUri: String?
-    )
+    fun pinnedEntries(): List<PinnedEntry> =
+        PinnedController.entries(pinnedNumbers.value, state.value.contacts, state.value.callLog)
 
     // ── Фильтры журнала ────────────────────────────────────────────────────
 
@@ -2778,56 +2685,16 @@ class DialerViewModel @Inject constructor(
 
     // ── Резервное копирование ──────────────────────────────────────────────
 
-    fun suggestedBackupFileName(): String = backupManager.suggestedFileName()
+    fun suggestedBackupFileName(): String = exporter.backupFileName()
 
-    suspend fun exportBackup(uri: android.net.Uri): Boolean = backupManager.export(uri)
+    suspend fun exportBackup(uri: android.net.Uri): Boolean = exporter.exportBackup(uri)
 
-    /**
-     * Запись текста в выбранный человеком файл.
-     *
-     * Общий путь для выгрузки журнала и сохранения технического
-     * журнала: оба пишут текст в Uri, полученный от системного
-     * выбора файла. Разные тексты, одна запись — незачем повторять
-     * работу с потоками дважды.
-     *
-     * @return удалось ли записать
-     */
-    suspend fun writeTextToUri(uri: android.net.Uri, text: String): Boolean =
-        withContext(defaultDispatcher) {
-            runCatching {
-                app.contentResolver.openOutputStream(uri)?.use { out ->
-                    out.write(text.toByteArray(Charsets.UTF_8))
-                } ?: return@runCatching false
-                true
-            }.getOrElse {
-                Logger.e(TAG, "Не удалось записать файл", it)
-                false
-            }
-        }
+    suspend fun writeTextToUri(uri: android.net.Uri, text: String): Boolean = exporter.writeText(uri, text)
 
-    /**
-     * Текст технического журнала — для сохранения в файл.
-     *
-     * Файлов два: текущий и предыдущий (журнал переворачивается
-     * по размеру). Склеиваем в хронологическом порядке — сначала
-     * старый, потом новый, — иначе читать его придётся с середины.
-     */
-    suspend fun buildLogText(): String? = suspendRunCatching {
-        withContext(defaultDispatcher) {
-            Logger.files()
-                .sortedBy { it.name }
-                .reversed()
-                .joinToString("\n") { it.readText() }
-        }
-    }.getOrNull()
+    suspend fun buildLogText(): String? = exporter.logText()
 
-    /**
-     * Импорт ДОБАВЛЯЕТ данные к текущим, а не заменяет их.
-     * Пользователь, восстанавливающий копию на устройстве, где уже
-     * что-то настроено, не должен внезапно это потерять.
-     */
     suspend fun importBackup(uri: android.net.Uri): Boolean {
-        val ok = backupManager.import(uri)
+        val ok = exporter.importBackup(uri)
         if (ok) refresh()
         return ok
     }
@@ -3023,6 +2890,8 @@ class DialerViewModel @Inject constructor(
         refresh()
     }
 
+    suspend fun isSilentContact(contactId: Long): Boolean = contactActions.isSilent(contactId)
+
     fun setSilentContact(contactId: Long, silent: Boolean) = viewModelScope.launch {
         contactActions.setSilent(contactId, silent)
         refresh()
@@ -3036,9 +2905,35 @@ class DialerViewModel @Inject constructor(
      * Удаление контакта. Разрушительно: удаляется агрегат вместе
      * с записями из всех аккаунтов. Вызывать только после подтверждения.
      */
+    /** Закреплён ли контакт — для предупреждения в подтверждении удаления. */
+    fun isContactPinned(contactId: Long): Boolean =
+        state.value.contacts.firstOrNull { it.id == contactId }
+            ?.let { PinnedController.isContactPinned(pinnedNumbers.value, it) } == true
+
+    /*
+     * Удаление контакта (1.3.4, 04.10.2026, задача автора).
+     * Было: контакт удалялся из книги, а закрепление оставалось — в журнале
+     * висел закреплённый «по запасному номеру» без имени и фото.
+     * Стало: сначала удаление; только если оно прошло — снимаются все
+     * закрепления контакта (по ключу и по каждому номеру); сообщение
+     * об итоге — удаление необратимо, человек должен знать, получилось ли.
+     */
     fun deleteContact(contactId: Long) = viewModelScope.launch {
-        contactActions.delete(contactId)
+        deleteContactNow(contactId)
         refresh()
+    }
+
+    private suspend fun deleteContactNow(contactId: Long): Boolean {
+        val contact = state.value.contacts.firstOrNull { it.id == contactId }
+        if (!contactActions.delete(contactId)) {
+            notify(R.string.msg_contact_delete_failed)
+            return false
+        }
+        if (contact != null && pinned.unpinContact(pinnedNumbers.value, contact)) {
+            Logger.i(TAG, "Удалённый контакт снят с закреплённых")
+        }
+        notify(R.string.msg_contact_deleted)
+        return true
     }
 
     /**

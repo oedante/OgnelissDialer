@@ -82,11 +82,11 @@ function Show-TestResults([string]$name, [datetime]$started) {
 
 # Один прогон замеров; возвращает путь к сохранённому файлу или $null.
 # Файл берётся только свежий — старый от прошлого прогона не подхватится.
-function Run-Bench([string]$name, [string[]]$extra) {
+function Run-Bench([string]$name, [string[]]$extra, [string]$filter = $benchFilter) {
     Write-Host "--- Замеры: $name ---" -ForegroundColor Cyan
     $started = Get-Date
     adb logcat -c   # чистый logcat: при сбое сохраним только этот прогон
-    ./gradlew :benchmark:connectedBenchmarkReleaseAndroidTest @extra $benchFilter @benchExtra "-Pandroid.testInstrumentationRunnerArguments.cardNumber=$CardNumber" | Out-Host
+    ./gradlew :benchmark:connectedBenchmarkReleaseAndroidTest @extra $filter @benchExtra "-Pandroid.testInstrumentationRunnerArguments.cardNumber=$CardNumber" | Out-Host
     # | Out-Host: иначе вывод Gradle стал бы возвращаемым значением функции
     Show-TestResults $name $started
     $json = Get-ChildItem benchmark\build\outputs\connected_android_test_additional_output -Recurse -Filter *benchmarkData.json -ErrorAction SilentlyContinue |
@@ -114,18 +114,30 @@ function Run-Bench([string]$name, [string[]]$extra) {
 $hasPython = [bool](Get-Command python -ErrorAction SilentlyContinue)
 $base = "docs\baseline\benchmarkData-base.json"
 
-Step "2. Замеры: экраны и холодный запуск (15–25 минут, телефон не трогать)"
-$now = Run-Bench $Label @()
-if ($now) {
+# Два прогона (04.10.2026): холодный запуск — первым и отдельно, пока
+# телефон не нагрет остальными замерами; после 6 минут нагрузки он
+# «вырастал» на 18,7% без изменений в коде.
+function Compare-WithBase([string]$file) {
+    if (-not $file) { return }
     if (-not (Test-Path $base)) {
-        Copy-Item $now $base
+        Copy-Item $file $base
         Write-Host "Базовой точки не было — этот прогон стал базовой точкой: $base" -ForegroundColor Yellow
     } elseif ($hasPython) {
-        python scripts\compare_benchmarks.py $base $now --merge-new
+        python scripts\compare_benchmarks.py $base $file --merge-new
     } else {
         Write-Host "Python не найден — пришлите этот файл, сравню сам."
     }
 }
+
+Step "2а. Холодный запуск — первым, на остывшем телефоне (~5 минут)"
+Write-Host "Пауза 60 с, чтобы телефон остыл после сборки и юнит-тестов"
+Start-Sleep -Seconds 60
+$cold = Run-Bench "$Label-cold" @() "-Pandroid.testInstrumentationRunnerArguments.class=com.ogneliss.benchmark.StartupBenchmark#startupNoCompilation"
+Compare-WithBase $cold
+
+Step "2б. Экраны и прокрутка (15–20 минут, телефон не трогать)"
+$now = Run-Bench $Label @("-Pandroid.testInstrumentationRunnerArguments.skipColdStart=true")
+Compare-WithBase $now
 
 Step "3. Установка выпускной сборки"
 ./gradlew :app:installRelease

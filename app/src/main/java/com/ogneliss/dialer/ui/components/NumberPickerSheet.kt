@@ -1,12 +1,11 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Message
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.automirrored.filled.Chat
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -72,7 +71,7 @@ fun NumberPickerSheet(
         Column(Modifier.padding(bottom = FlowUi.sheetBottomPadding)) {
             Text(
                 title,
-                Modifier.padding(horizontal = FlowUi.sheetPadding).padding(bottom = 12.dp),
+                Modifier.padding(horizontal = FlowUi.sheetPadding).padding(bottom = Space.m),
                 style = MaterialTheme.typography.titleLarge
             )
 
@@ -85,7 +84,7 @@ fun NumberPickerSheet(
                 numbers.forEachIndexed { index, option ->
                     NumberRow(option, sims, onCall, onSms, onMessenger)
                     if (index < numbers.lastIndex) {
-                        OgnelissDivider(Modifier.padding(start = 16.dp))
+                        OgnelissDivider(Modifier.padding(start = Space.l))
                     }
                 }
             }
@@ -93,7 +92,7 @@ fun NumberPickerSheet(
             if (emails.isNotEmpty() && onEmail != null) {
                 SheetGroup {
                     emails.forEachIndexed { index, address ->
-                        SheetRow(Icons.Default.Email, address, onClick = { onEmail(address) })
+                        SheetRow(OgnelissIcons.Email, address, onClick = { onEmail(address) })
                         if (index < emails.lastIndex) SheetDivider()
                     }
                 }
@@ -123,7 +122,7 @@ private fun NumberRow(
     onMessenger: (String) -> Unit
 ) {
     // Поля — внутри панели: её собственный отступ от края уже есть
-    Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+    Column(Modifier.padding(horizontal = Space.l, vertical = Space.s)) {
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
@@ -161,14 +160,14 @@ private fun NumberRow(
             }
         }
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(Space.s))
 
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(Space.m)) {
             if (sims.size > 1) {
                 // Две SIM — две кнопки вызова с номером карты
                 sims.forEachIndexed { index, sim ->
                     ActionButton(
-                        icon = Icons.Default.Call,
+                        icon = OgnelissIcons.Call,
                         badge = (index + 1).toString(),
                         description = stringResource(
                             R.string.a11y_call_with_sim, sim.label, option.number.takeLast(4)
@@ -177,20 +176,20 @@ private fun NumberRow(
                 }
             } else {
                 ActionButton(
-                    icon = Icons.Default.Call,
+                    icon = OgnelissIcons.Call,
                     badge = null,
                     description = stringResource(R.string.action_call)
                 ) { onCall(option.number, -1) }
             }
 
             ActionButton(
-                icon = Icons.AutoMirrored.Filled.Message,
+                icon = OgnelissIcons.Message,
                 badge = null,
                 description = stringResource(R.string.action_sms)
             ) { onSms(option.number) }
 
             ActionButton(
-                icon = Icons.AutoMirrored.Filled.Chat,
+                icon = OgnelissIcons.Chat,
                 badge = null,
                 description = stringResource(R.string.action_whatsapp)
             ) { onMessenger(option.number) }
@@ -227,20 +226,36 @@ private fun ActionButton(
 @Composable
 fun SimBadge(slotIndex: Int) {
     // Описание для TalkBack (1.3.2): без него плашка читалась как «1»,
-    // похоже на счётчик звонков. Значок SIM вместо плашки — в фазе
-    // «Архитектура и интерфейс», вместе с дизайн-системой
+    // похоже на счётчик звонков
     val description = "SIM ${slotIndex + 1}"
     Surface(
         color = MaterialTheme.colorScheme.secondaryContainer,
         shape = MaterialTheme.shapes.extraSmall,
         modifier = Modifier.clearAndSetSemantics { contentDescription = description }
     ) {
-        Text(
-            (slotIndex + 1).toString(),
-            Modifier.padding(horizontal = 4.dp),
-            // labelSmall: подпись под номером — самый тихий текст
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSecondaryContainer
-        )
+        /*
+         * Значок SIM перед цифрой (1.3.4, 04.10.2026, дизайн-система).
+         * Было: одна цифра в плашке — глазом её принимали за число звонков
+         * (у строки журнала рядом и правда есть счётчик). Стало: «▯1» —
+         * значок SIM-карты 12 dp и номер слота; читается однозначно.
+         */
+        Row(
+            Modifier.padding(start = 2.dp, end = Space.xs),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                OgnelissIcons.SimCard,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                modifier = Modifier.size(12.dp)
+            )
+            Spacer(Modifier.width(1.dp))
+            Text(
+                (slotIndex + 1).toString(),
+                // labelSmall: подпись под номером — самый тихий текст
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+        }
     }
 }

@@ -51,11 +51,22 @@ for asset in lang.js lang.css logo.svg favicon.svg favicon-32.png apple-touch-ic
     echo "  $asset"
 done
 
+# Ogneliss Mail: страницы в подкаталоге mail/. Их собирает из текстов
+# на четырёх языках build_mail_pages.py в репозитории Mail
+# (docs/site); сюда кладутся готовые файлы.
+mkdir -p "$DIALER/mail"
+for f in index privacy terms eula licenses; do
+    cp "$HERE/mail/$f.html" "$DIALER/mail/$f.html"
+    echo "  mail/$f.html"
+done
+cp "$HERE/mail/app-icon.png" "$DIALER/mail/app-icon.png"
+echo "  mail/app-icon.png"
+
 # Проверка: у каждой страницы должны быть все четыре языковых блока.
 # Забыть один при правке легко, а заметит это только посетитель,
 # у которого браузер именно на этом языке.
 missing=0
-for page in index privacy terms eula licenses; do
+for page in index privacy terms eula licenses mail/index mail/privacy mail/terms mail/eula mail/licenses; do
     for lang in ru en de fr; do
         if ! grep -q "id=\"lang-$lang\"" "$DIALER/$page.html"; then
             echo "  ⚠️  $page.html: нет блока $lang" >&2
@@ -64,7 +75,7 @@ for page in index privacy terms eula licenses; do
     done
 done
 
-for page in index privacy terms eula licenses; do
+for page in index privacy terms eula licenses mail/index mail/privacy mail/terms mail/eula mail/licenses; do
     for need in "/dialer/lang.js" "/dialer/favicon.svg"; do
         if ! grep -q "$need" "$DIALER/$page.html"; then
             echo "  ⚠️  $page.html: нет ссылки на $need" >&2

@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -77,7 +79,7 @@ fun SwipeActionsDialog(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Spacer(Modifier.padding(top = 8.dp))
+                Spacer(Modifier.padding(top = Space.s))
                 LazyColumn(Modifier.heightIn(max = 400.dp)) {
                     items(options, key = { it.key }) { action ->
                         val order = chosen.indexOf(action)
@@ -129,7 +131,7 @@ private fun ActionRow(
             .fillMaxWidth()
             .heightIn(min = Dimens.MIN_TOUCH_TARGET)
             .toggleable(value = order >= 0, enabled = enabled, role = Role.Checkbox, onValueChange = { onToggle() })
-            .padding(vertical = 4.dp),
+            .padding(vertical = Space.xs),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Номер места на панели вместо галочки: порядок здесь важен
@@ -148,7 +150,7 @@ private fun ActionRow(
                 }
             }
         }
-        Spacer(Modifier.width(12.dp))
+        Spacer(Modifier.width(Space.m))
         if (visual != null) {
             Icon(
                 visual.first,
@@ -156,7 +158,7 @@ private fun ActionRow(
                 tint = if (enabled) visual.second else MaterialTheme.colorScheme.outline,
                 modifier = Modifier.size(24.dp)
             )
-            Spacer(Modifier.width(12.dp))
+            Spacer(Modifier.width(Space.m))
         }
         Text(
             stringResource(SettingsCommands.swipeActionLabelRes(action)),

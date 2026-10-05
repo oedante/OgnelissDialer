@@ -67,6 +67,9 @@
     <string name="confirm_block_unknown">Les livreurs, les cabinets médicaux, les écoles et les banques appellent depuis des numéros absents de vos contacts. Ils ne pourront plus vous joindre. Ajoutez d’abord vos exceptions à la liste blanche.</string>
     <string name="confirm_delete_contact_text">Le contact sera supprimé de tous les comptes où il est enregistré, y compris Google. Cette action est irréversible depuis le téléphone.</string>
     <string name="confirm_delete_contact_title">Supprimer ce contact ?</string>
+    <string name="confirm_delete_contact_pinned">Ce contact est épinglé en haut du journal — il en sera aussi retiré.</string>
+    <string name="msg_contact_deleted">Contact supprimé</string>
+    <string name="msg_contact_delete_failed">Impossible de supprimer le contact</string>
     <string name="confirm_enable">Activer</string>
     <string name="confirm_external_lookup">Le numéro entrant sera transmis à l’application que vous choisissez, qui peut l’envoyer à ses propres serveurs.</string>
     <string name="confirm_reset">Tous les réglages reviennent à leurs valeurs par défaut. Les notes, les étiquettes et les listes sont conservées.</string>

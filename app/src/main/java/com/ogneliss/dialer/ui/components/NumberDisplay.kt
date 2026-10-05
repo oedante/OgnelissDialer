@@ -1,11 +1,12 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Backspace
-import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -17,7 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.R
-import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.ui.platform.LocalContext
 import com.ogneliss.dialer.ui.theme.Dimens
 import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
@@ -133,10 +133,10 @@ fun NumberDisplay(
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 6.dp)
+                .padding(horizontal = Space.m, vertical = 6.dp)
                 .clip(OgnelissShapeTokens.dialKey)
                 .background(PanelColors.key())
-                .padding(horizontal = 4.dp, vertical = 2.dp),
+                .padding(horizontal = Space.xs, vertical = 2.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             /*
@@ -170,7 +170,7 @@ fun NumberDisplay(
                     enabled = hasClipboardText
                 ) {
                     Icon(
-                        Icons.Default.ContentPaste,
+                        OgnelissIcons.ContentPaste,
                         contentDescription = stringResource(R.string.action_paste_number),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -178,7 +178,7 @@ fun NumberDisplay(
             } else {
                 IconButton(onClick = { onAddContact(query) }) {
                     Icon(
-                        Icons.Default.PersonAdd,
+                        OgnelissIcons.PersonAdd,
                         contentDescription = stringResource(R.string.action_add_contact),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -253,7 +253,7 @@ fun NumberDisplay(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    Icons.AutoMirrored.Filled.Backspace,
+                    OgnelissIcons.Backspace,
                     contentDescription = stringResource(R.string.a11y_backspace),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )

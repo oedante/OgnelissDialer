@@ -50,6 +50,8 @@ Apache License 2.0
 - libphonenumber — © Google LLC
 - Coil — © Coil Contributors
 - Accompanist — © The Android Open Source Project
+- ZXing (QR-коды) — © ZXing authors
+- Material Symbols (иконки) — © Google LLC
 
 Полный текст лицензии: https://www.apache.org/licenses/LICENSE-2.0
 

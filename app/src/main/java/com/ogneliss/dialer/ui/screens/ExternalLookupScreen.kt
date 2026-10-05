@@ -1,18 +1,19 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.components.OgnelissDivider
 import com.ogneliss.dialer.ui.components.OgnelissPanel
 import com.ogneliss.dialer.ui.components.OgnelissListRow
@@ -75,8 +76,8 @@ fun ExternalLookupScreen(
             item {
                 OgnelissPanel(color = MaterialTheme.colorScheme.errorContainer) {
                     Row(Modifier.padding(FlowUi.contentPadding), verticalAlignment = Alignment.Top) {
-                        Icon(Icons.Default.Warning, null)
-                        Spacer(Modifier.width(12.dp))
+                        Icon(OgnelissIcons.Warning, null)
+                        Spacer(Modifier.width(Space.m))
                         Text(
                             stringResource(R.string.external_lookup_warning),
                             style = MaterialTheme.typography.bodySmall
@@ -111,7 +112,7 @@ fun ExternalLookupScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
-                        Spacer(Modifier.height(16.dp))
+                        Spacer(Modifier.height(Space.l))
 
                         Text(
                             stringResource(R.string.external_lookup_system_hint),
@@ -119,7 +120,7 @@ fun ExternalLookupScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
-                        Spacer(Modifier.height(12.dp))
+                        Spacer(Modifier.height(Space.m))
 
                         FilledTonalButton(
                             onClick = { openCallerIdSettings(context) },
@@ -165,11 +166,11 @@ fun ExternalLookupScreen(
             content = {
                 Row(verticalAlignment = Alignment.Top) {
                     Icon(
-                        Icons.Default.Warning,
+                        OgnelissIcons.Warning,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.error
                     )
-                    Spacer(Modifier.width(12.dp))
+                    Spacer(Modifier.width(Space.m))
                     // Называем конкретное приложение, а не «сторонний
                     // сервис»: человек должен понимать, кому именно
                     // уйдёт его номер

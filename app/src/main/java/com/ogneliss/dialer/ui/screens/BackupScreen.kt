@@ -1,20 +1,19 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FileDownload
-import androidx.compose.material.icons.filled.FileUpload
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.components.OgnelissDivider
 import com.ogneliss.dialer.ui.components.OgnelissPanel
 import com.ogneliss.dialer.ui.components.OgnelissListRow
@@ -96,8 +95,8 @@ fun BackupScreen(
             // выглядит необязательной и её не используют до потери данных
             OgnelissPanel(color = MaterialTheme.colorScheme.surfaceVariant) {
                 Row(verticalAlignment = Alignment.Top) {
-                    Icon(Icons.Default.Info, null)
-                    Spacer(Modifier.width(12.dp))
+                    Icon(OgnelissIcons.Info, null)
+                    Spacer(Modifier.width(Space.m))
                     Text(
                         stringResource(R.string.backup_why),
                         style = MaterialTheme.typography.bodySmall
@@ -108,7 +107,7 @@ fun BackupScreen(
             OgnelissListRow(
                 headline = stringResource(R.string.settings_backup_export),
                 supporting = stringResource(R.string.settings_backup_export_text),
-                leading = { Icon(Icons.Default.FileDownload, null) },
+                leading = { Icon(OgnelissIcons.FileDownload, null) },
                 onClick = { exportLauncher.launch(vm.suggestedBackupFileName()) }
             )
             OgnelissDivider()
@@ -116,7 +115,7 @@ fun BackupScreen(
             OgnelissListRow(
                 headline = stringResource(R.string.settings_backup_import),
                 supporting = stringResource(R.string.settings_backup_import_text),
-                leading = { Icon(Icons.Default.FileUpload, null) },
+                leading = { Icon(OgnelissIcons.FileUpload, null) },
                 // Тип фильтруем по JSON, но принимаем и произвольный:
                 // некоторые файловые менеджеры отдают octet-stream
                 onClick = { importLauncher.launch(arrayOf("application/json", "*/*")) }
@@ -130,7 +129,7 @@ fun BackupScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(Space.xxl))
         }
     }
 }

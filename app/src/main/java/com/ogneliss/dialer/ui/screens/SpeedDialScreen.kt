@@ -1,14 +1,14 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Voicemail
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -79,7 +79,7 @@ fun SpeedDialScreen(
                     headline = stringResource(R.string.speed_dial_voicemail),
                     supporting = stringResource(R.string.speed_dial_voicemail_hint),
                     leading = { DigitBadge("1") },
-                    trailing = { Icon(Icons.Default.Voicemail, null) }
+                    trailing = { Icon(OgnelissIcons.Voicemail, null) }
                 )
                 OgnelissDivider()
             }
@@ -97,7 +97,7 @@ fun SpeedDialScreen(
                 if (index < slots.lastIndex) OgnelissDivider()
             }
 
-            item { Spacer(Modifier.height(32.dp)) }
+            item { Spacer(Modifier.height(Space.xxl)) }
         }
     }
 
@@ -133,12 +133,12 @@ private fun SpeedDialRow(
             if (entry != null) {
                 IconButton(onClick = onClear) {
                     Icon(
-                        Icons.Default.Clear,
+                        OgnelissIcons.Clear,
                         contentDescription = stringResource(R.string.speed_dial_clear)
                     )
                 }
             } else {
-                Icon(Icons.Default.Add, contentDescription = null)
+                Icon(OgnelissIcons.Add, contentDescription = null)
             }
         },
         onClick = onAssign

@@ -105,7 +105,7 @@ object CallbackSuggestion {
             ?: context.getString(R.string.callback_suggestion_text)
 
         val builder = NotificationCompat.Builder(context, CallNotifications.CHANNEL_MISSED)
-            .setSmallIcon(R.drawable.ic_call)
+            .setSmallIcon(R.drawable.ic_stat_callback)  // 1.3.4: свой значок у каждого типа уведомления
             .setContentTitle(context.getString(R.string.callback_suggestion_title, title))
             .setContentText(text)
             // Длинная заметка иначе обрезается на середине слова:

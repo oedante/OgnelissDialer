@@ -1,8 +1,10 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Call
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -10,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.data.SimCallPlan
@@ -59,7 +60,7 @@ fun CallButtons(
         Modifier
             .fillMaxWidth()
             .padding(horizontal = FlowUi.contentPadding),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(Space.m)
     ) {
         if (layout is SimCallPlan.Layout.Single) {
             val label = stringResource(R.string.action_call)
@@ -72,7 +73,7 @@ fun CallButtons(
                     .height(height)
                     .semantics { contentDescription = label }
             ) {
-                Icon(Icons.Default.Call, contentDescription = null)
+                Icon(OgnelissIcons.Call, contentDescription = null)
             }
         } else {
             (layout as SimCallPlan.Layout.PerSim).sims.forEachIndexed { index, sim ->
@@ -89,8 +90,8 @@ fun CallButtons(
                         .height(height)
                         .semantics { contentDescription = label }
                 ) {
-                    Icon(Icons.Default.Call, contentDescription = null)
-                    Spacer(Modifier.width(8.dp))
+                    Icon(OgnelissIcons.Call, contentDescription = null)
+                    Spacer(Modifier.width(Space.s))
                     Column(horizontalAlignment = Alignment.Start) {
                         Text(
                             "SIM ${sim.slotIndex + 1}",

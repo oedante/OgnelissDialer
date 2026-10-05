@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.components.swipe
 
+import com.ogneliss.dialer.ui.theme.Space
+
 import kotlin.math.abs
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -757,7 +759,7 @@ private fun ActionCell(
                 ) {
                     Text(
                         action.simBadge.toString(),
-                        Modifier.padding(horizontal = 4.dp),
+                        Modifier.padding(horizontal = Space.xs),
                         color = Color.White,
                         // labelSmall: метка SIM на кнопке свайпа —
                         // самая мелкая подпись в приложении, и шкала
@@ -803,6 +805,14 @@ private fun ActionCell(
  *
  * Без обратной связи человек либо не доводит движение, либо доводит
  * с запасом; и то и другое утомляет.
+ *
+ * ── 1.3.4: фон сплошной, обратная связь — в значке ─────────────────────────
+ * Было: прозрачность нарастала у фона. Полупрозрачный зелёный поверх
+ * карточки — уже другой, бледный зелёный: в приложении было три оттенка
+ * «звонка», а синяя панель «Написать» бледнее основного синего (аудит,
+ * «Дизайн-система»). Стало: фон — сплошной цвет действия (тот же CallGreen
+ * и MessageBlue, что везде), а «засчитается ли» сообщает значок: проявляется
+ * и подрастает с 75% до полного размера по мере сдвига.
  */
 @Composable
 private fun DirectActionHint(
@@ -812,7 +822,7 @@ private fun DirectActionHint(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier.background(action.color.copy(alpha = 0.3f + 0.7f * progress)),
+        modifier.background(action.color),
         contentAlignment = alignment
     ) {
         action.icon?.let { icon ->
@@ -821,8 +831,13 @@ private fun DirectActionHint(
                 contentDescription = null,
                 tint = Color.White.copy(alpha = 0.45f + 0.55f * progress),
                 modifier = Modifier
-                    .padding(horizontal = 24.dp)
+                    .padding(horizontal = Space.xl)
                     .size(24.dp)
+                    .graphicsLayer {
+                        val scale = 0.75f + 0.25f * progress
+                        scaleX = scale
+                        scaleY = scale
+                    }
             )
         }
     }

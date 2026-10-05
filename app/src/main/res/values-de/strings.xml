@@ -69,6 +69,9 @@
     <string name="confirm_block_unknown">Kurierdienste, Arztpraxen, Schulen und Banken rufen von Nummern an, die nicht in Ihren Kontakten stehen. Sie erreichen Sie dann nicht mehr. Tragen Sie Ausnahmen zuerst in die Freigabeliste ein.</string>
     <string name="confirm_delete_contact_text">Der Kontakt wird aus allen Konten entfernt, in denen er gespeichert ist, auch aus Google. Vom Telefon aus lässt sich das nicht rückgängig machen.</string>
     <string name="confirm_delete_contact_title">Diesen Kontakt löschen?</string>
+    <string name="confirm_delete_contact_pinned">Dieser Kontakt ist oben in der Anrufliste angeheftet – er wird auch dort entfernt.</string>
+    <string name="msg_contact_deleted">Kontakt gelöscht</string>
+    <string name="msg_contact_delete_failed">Kontakt konnte nicht gelöscht werden</string>
     <string name="confirm_enable">Aktivieren</string>
     <string name="confirm_external_lookup">Die eingehende Nummer wird an die gewählte App übergeben, die sie an ihre eigenen Server senden kann.</string>
     <string name="confirm_reset">Alle Einstellungen kehren zu den Standardwerten zurück. Notizen, Markierungen und Listen bleiben erhalten.</string>

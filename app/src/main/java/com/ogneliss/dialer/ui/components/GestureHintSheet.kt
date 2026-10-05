@@ -1,11 +1,10 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.filled.SwipeUp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Message
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.SwipeLeft
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -52,13 +51,13 @@ fun GestureHintSheet(onDismiss: () -> Unit) {
         sheetState = sheetState,
         contentWindowInsets = { WindowInsets.navigationBars }
     ) {
-        Column(Modifier.padding(horizontal = 24.dp).padding(bottom = 24.dp)) {
+        Column(Modifier.padding(horizontal = Space.xl).padding(bottom = Space.xl)) {
             Text(
                 stringResource(R.string.gesture_hint_title),
                 style = MaterialTheme.typography.headlineSmall
             )
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(Space.s))
 
             Text(
                 stringResource(R.string.gesture_hint_subtitle),
@@ -69,15 +68,15 @@ fun GestureHintSheet(onDismiss: () -> Unit) {
             Spacer(Modifier.height(20.dp))
 
             HintRow(
-                icon = Icons.Default.Call,
+                icon = OgnelissIcons.Call,
                 text = stringResource(R.string.gesture_hint_swipe_right)
             )
             HintRow(
-                icon = Icons.AutoMirrored.Filled.Message,
+                icon = OgnelissIcons.Message,
                 text = stringResource(R.string.gesture_hint_swipe_left)
             )
             HintRow(
-                icon = Icons.Default.SwipeLeft,
+                icon = OgnelissIcons.SwipeLeft,
                 text = stringResource(R.string.gesture_hint_panel)
             )
 
@@ -90,11 +89,11 @@ fun GestureHintSheet(onDismiss: () -> Unit) {
              * сказать, что он есть, чем оставить догадываться.
              */
             HintRow(
-                icon = Icons.Default.SwipeUp,
+                icon = OgnelissIcons.SwipeUp,
                 text = stringResource(R.string.gesture_hint_keyboard)
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(Space.l))
 
             // Оговорка про настройки: человек должен знать, что жесты
             // можно поменять или выключить — иначе непривычный свайп
@@ -120,7 +119,7 @@ fun GestureHintSheet(onDismiss: () -> Unit) {
 @Composable
 private fun HintRow(icon: ImageVector, text: String) {
     Row(
-        Modifier.padding(vertical = 8.dp),
+        Modifier.padding(vertical = Space.s),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -129,7 +128,7 @@ private fun HintRow(icon: ImageVector, text: String) {
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(24.dp)
         )
-        Spacer(Modifier.width(16.dp))
+        Spacer(Modifier.width(Space.l))
         Text(text, style = MaterialTheme.typography.bodyLarge)
     }
 }

@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -116,7 +118,7 @@ fun Dialpad(
     val feedback = remember { DialpadFeedback() }
     DisposableEffect(Unit) { onDispose { feedback.release() } }
 
-    Column(modifier.fillMaxWidth().padding(horizontal = 12.dp)) {
+    Column(modifier.fillMaxWidth().padding(horizontal = Space.m)) {
         DIAL_KEYS.chunked(3).forEach { row ->
             Row(
                 Modifier

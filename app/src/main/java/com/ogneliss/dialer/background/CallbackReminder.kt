@@ -192,7 +192,7 @@ object CallbackReminder {
             )
 
             val n = NotificationCompat.Builder(context, CallNotifications.CHANNEL_REMINDER)
-                .setSmallIcon(R.drawable.ic_call)
+                .setSmallIcon(R.drawable.ic_stat_reminder)  // 1.3.4: свой значок у каждого типа уведомления
                 .setContentTitle(context.getString(R.string.reminder_title, name))
                 .setContentText(number)
                 .setAutoCancel(true)

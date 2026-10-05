@@ -20,6 +20,10 @@ Google Play требует политику конфиденциальности
 | `ogneliss.ru/dialer/terms` | Условия использования |
 | `ogneliss.ru/dialer/licenses` | Открытые компоненты |
 | `ogneliss.ru/dialer/` | Страница приложения со ссылками |
+| `ogneliss.ru/mail/` | Страница Ogneliss Mail |
+| `ogneliss.ru/mail/privacy` | Политика конфиденциальности Mail — **в консоль Play для Mail** |
+| `ogneliss.ru/mail/privacy#delete` | Раздел «Удаление данных» — **в консоль Play, поле удаления данных** |
+| `ogneliss.ru/mail/eula`, `/mail/terms`, `/mail/licenses` | Остальные документы Mail |
 
 ---
 
@@ -140,3 +144,30 @@ rsync -av --delete docs/www/dist/ user@ogneliss.ru:/var/www/ogneliss/
 
 Логотип на главной — те же пути, что в `logo.svg`. Если меняется логотип,
 пересобрать страницу: `python3 build-landing.py`.
+
+## Ogneliss Mail
+
+Страницы Mail выкладываются вместе со страницами Dialer: `build-pages.sh`
+копирует каталог `mail/` в `dist/dialer/mail/`, на статическом сервере
+он оказывается в `mail/` рядом с `home.html`.
+
+В Nginx Proxy Manager (Advanced) добавить блок «Ogneliss Mail» из
+`nginx-landing.conf` — **выше** блока главной: там стоит
+`location / { return 302 /; }`, и без своих правил все адреса `/mail/…`
+уходили бы на главную. Затем `nginx -t` и перезагрузка.
+
+Проверить:
+
+```bash
+for u in mail/ mail/privacy mail/eula mail/terms mail/licenses mail/app-icon.png; do
+  curl -s -o /dev/null -w "%{http_code} $u\n" https://ogneliss.ru/$u
+done
+```
+
+Всё должно отвечать `200`.
+
+**В Google Play Console для Mail:**
+
+- Политика конфиденциальности: `https://ogneliss.ru/mail/privacy`
+- Безопасность данных → удаление данных: `https://ogneliss.ru/mail/privacy#delete`
+- Сайт разработчика: `https://ogneliss.ru/`

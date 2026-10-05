@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -8,7 +10,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.util.PhoneFormatter
 import kotlinx.coroutines.launch
@@ -54,7 +55,7 @@ fun OwnNumberDialog(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(Space.l))
 
                 OutlinedTextField(
                     value = value,
@@ -69,7 +70,7 @@ fun OwnNumberDialog(
                 )
 
                 if (detectFailed) {
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(Space.s))
                     Text(
                         stringResource(R.string.my_number_not_detected),
                         style = MaterialTheme.typography.bodySmall,
@@ -77,7 +78,7 @@ fun OwnNumberDialog(
                     )
                 }
 
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(Space.s))
 
                 // Попытка определения — рядом с полем, а не вместо него:
                 // она может не сработать, и тогда поле уже под рукой

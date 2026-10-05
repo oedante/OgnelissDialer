@@ -1,5 +1,9 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Call
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -121,8 +123,8 @@ private fun SimRow(sim: SimSlot, onClick: () -> Unit) {
             modifier = Modifier.padding(FlowUi.cardPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(Icons.Default.Call, contentDescription = null, tint = CallGreen)
-            Spacer(Modifier.width(12.dp))
+            Icon(OgnelissIcons.Call, contentDescription = null, tint = CallGreen)
+            Spacer(Modifier.width(Space.m))
             Column {
                 Text(slotName, style = MaterialTheme.typography.titleMedium)
                 // Подпись показывается, только если отличается от номера

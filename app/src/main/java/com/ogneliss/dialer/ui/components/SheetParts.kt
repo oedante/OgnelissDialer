@@ -1,5 +1,8 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -42,7 +45,7 @@ fun SheetGroup(content: @Composable ColumnScope.() -> Unit) {
         shape = MaterialTheme.shapes.large,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = FlowUi.screenPadding, vertical = 4.dp)
+            .padding(horizontal = FlowUi.screenPadding, vertical = Space.xs)
     ) {
         Column(content = content)
     }
@@ -89,13 +92,50 @@ fun SheetRow(
             .then(
                 if (standalone) {
                     Modifier
-                        .padding(horizontal = FlowUi.screenPadding, vertical = 4.dp)
+                        .padding(horizontal = FlowUi.screenPadding, vertical = Space.xs)
                         // Отклик нажатия — в пределах скругления, как у панелей
                         .clip(MaterialTheme.shapes.large)
                 } else Modifier
             )
             .heightIn(min = Dimens.MIN_TOUCH_TARGET)
             .clickable(onClick = onClick)
+    )
+}
+
+/**
+ * Строка шторки с переключателем (1.3.4, 04.10.2026).
+ *
+ * Для действий-«состояний»: «Отправлять вызовы на голосовую почту» было
+ * обычной строкой — не видно, включено ли, и выключить было нельзя.
+ * Нажатие по всей строке переключает; переключатель лишь показывает
+ * состояние (onCheckedChange = null), чтобы TalkBack читал строку
+ * одним элементом с состоянием.
+ */
+@Composable
+fun SheetSwitchRow(
+    icon: ImageVector,
+    label: String,
+    checked: Boolean,
+    enabled: Boolean = true,
+    onToggle: (Boolean) -> Unit
+) {
+    ListItem(
+        leadingContent = {
+            Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+        },
+        headlineContent = { Text(label) },
+        trailingContent = {
+            androidx.compose.material3.Switch(checked = checked, onCheckedChange = null, enabled = enabled)
+        },
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+        modifier = Modifier
+            .heightIn(min = Dimens.MIN_TOUCH_TARGET)
+            .toggleable(
+                value = checked,
+                enabled = enabled,
+                role = androidx.compose.ui.semantics.Role.Switch,
+                onValueChange = onToggle
+            )
     )
 }
 

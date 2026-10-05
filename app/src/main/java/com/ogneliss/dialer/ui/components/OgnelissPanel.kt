@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +19,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.theme.FlowUi
 
 /**
@@ -78,11 +79,11 @@ fun OgnelissPanel(
             title?.let {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = Space.s)
                 ) {
                     icon?.let { drawIcon ->
                         drawIcon()
-                        Spacer(Modifier.width(8.dp))
+                        Spacer(Modifier.width(Space.s))
                     }
 
                     Text(

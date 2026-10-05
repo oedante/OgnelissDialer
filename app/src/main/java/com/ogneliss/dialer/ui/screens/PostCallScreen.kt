@@ -1,7 +1,9 @@
 package com.ogneliss.dialer.ui.screens
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Block
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -146,7 +148,7 @@ fun PostCallSheet(
                     // текст сразу начинал прокручиваться внутри поля
                     minLines = 3
                 )
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(Space.m))
 
                 Text(
                     stringResource(R.string.spam_mark_section),
@@ -164,7 +166,7 @@ fun PostCallSheet(
                  * шрифте фишки не помещались в строку.
                  */
                 FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(Space.s),
                     verticalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
                     listOf(
@@ -180,7 +182,7 @@ fun PostCallSheet(
                             leadingIcon = if (selected) {
                                 {
                                     Icon(
-                                        Icons.Default.Block,
+                                        OgnelissIcons.Block,
                                         contentDescription = null,
                                         modifier = Modifier.size(FlowUi.iconSizeInline)
                                     )
@@ -191,7 +193,7 @@ fun PostCallSheet(
                     }
                 }
 
-                Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(Space.xs))
 
                 /*
                  * То же объяснение, что в карточке.
@@ -207,23 +209,23 @@ fun PostCallSheet(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(Space.l))
 
                 // Действия тоже переносятся: подписи бывают длинными,
                 // и «Заблокировать номер» рядом с «В контакты» за край
                 // уходило целиком
                 FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(Space.s),
+                    verticalArrangement = Arrangement.spacedBy(Space.xs)
                 ) {
                     if (!isKnownContact) {
                         AssistChip(onClick = onAddContact, label = { Text(stringResource(R.string.action_add_contact)) })
-                        Spacer(Modifier.width(8.dp))
+                        Spacer(Modifier.width(Space.s))
                     }
                     AssistChip(onClick = { onRemind(30) }, label = { Text(stringResource(R.string.postcall_remind_30)) })
-                    Spacer(Modifier.width(8.dp))
+                    Spacer(Modifier.width(Space.s))
                     AssistChip(onClick = { onRemind(60 * 24) }, label = { Text(stringResource(R.string.postcall_remind_tomorrow)) })
-                    Spacer(Modifier.width(8.dp))
+                    Spacer(Modifier.width(Space.s))
                     // Блокировка красная и здесь: цвет действия
                     // одинаков во всех местах, где оно встречается
                     AssistChip(
@@ -231,7 +233,7 @@ fun PostCallSheet(
                         label = { Text(stringResource(R.string.action_block)) },
                         leadingIcon = {
                             Icon(
-                                Icons.Default.Block,
+                                OgnelissIcons.Block,
                                 contentDescription = null,
                                 modifier = Modifier.size(FlowUi.iconSizeInline),
                                 tint = BlockRed

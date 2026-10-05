@@ -1,5 +1,9 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.text.format.DateFormat
@@ -8,9 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -25,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.theme.Dimens
 import com.ogneliss.dialer.ui.theme.FlowUi
@@ -84,7 +84,7 @@ fun ReminderTimeDialog(
             )
 
             PickerRow(
-                icon = Icons.Default.CalendarMonth,
+                icon = OgnelissIcons.CalendarMonth,
                 value = dateFormat.format(Date(target))
             ) {
                 val c = Calendar.getInstance().apply { timeInMillis = target }
@@ -110,7 +110,7 @@ fun ReminderTimeDialog(
             }
 
             PickerRow(
-                icon = Icons.Default.Schedule,
+                icon = OgnelissIcons.Schedule,
                 value = timeFormat.format(Date(target))
             ) {
                 val c = Calendar.getInstance().apply { timeInMillis = target }
@@ -180,7 +180,7 @@ private fun PickerRow(
         Row(
             modifier = Modifier.padding(FlowUi.cardPadding),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(Space.m)
         ) {
             Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             Text(value, style = MaterialTheme.typography.bodyLarge)

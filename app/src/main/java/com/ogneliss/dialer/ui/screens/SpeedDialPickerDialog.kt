@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.layout.*
@@ -69,12 +71,12 @@ fun SpeedDialPickerDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(Space.s))
 
                 if (options.isEmpty()) {
                     Text(
                         stringResource(R.string.speed_dial_no_contacts),
-                        Modifier.padding(vertical = 16.dp),
+                        Modifier.padding(vertical = Space.l),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }

@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
 import com.ogneliss.dialer.ui.theme.FlowUi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
@@ -42,7 +44,7 @@ fun SettingsGroup(
                     // 12 сверху, а не 20: с подгруппами разделы стали длиннее,
                     // и прежний зазор между группами (36 dp вместе
                     // с разделителем подгрупп) растягивал экран втрое
-                    .padding(start = 8.dp, top = 12.dp, bottom = 8.dp)
+                    .padding(start = Space.s, top = Space.m, bottom = Space.s)
                     // heading() позволяет TalkBack прыгать по разделам,
                     // не прослушивая каждую строку
                     .semantics { heading() },
@@ -61,6 +63,6 @@ fun SettingsGroup(
             Column(content = content)
         }
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(Space.s))
     }
 }

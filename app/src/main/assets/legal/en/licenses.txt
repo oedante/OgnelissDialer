@@ -52,6 +52,8 @@ Apache License 2.0
 - libphonenumber - Google LLC
 - Coil - Coil Contributors
 - Accompanist - The Android Open Source Project
+- ZXing (QR codes) - ZXing authors
+- Material Symbols (icons) - Google LLC
 
 Full licence text: https://www.apache.org/licenses/LICENSE-2.0
 

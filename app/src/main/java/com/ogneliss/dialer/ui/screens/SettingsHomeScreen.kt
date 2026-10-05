@@ -1,13 +1,12 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -103,7 +102,7 @@ fun SettingsHomeScreen(
                         if (searching) { searching = false; query = "" } else onBack()
                     }) {
                         Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
+                            OgnelissIcons.ArrowBack,
                             contentDescription = stringResource(R.string.nav_back)
                         )
                     }
@@ -112,7 +111,7 @@ fun SettingsHomeScreen(
                     if (!searching) {
                         IconButton(onClick = { searching = true }) {
                             Icon(
-                                Icons.Default.Search,
+                                OgnelissIcons.Search,
                                 contentDescription = stringResource(R.string.settings_search)
                             )
                         }

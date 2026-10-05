@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -82,7 +84,7 @@ fun AddRuleDialog(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(Space.xs))
 
                 // Обратная связь по мере ввода
                 when (val p = parsed) {
@@ -120,7 +122,7 @@ fun AddRuleDialog(
                     }
                 }
 
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(Space.m))
 
                 OutlinedTextField(
                     value = comment,

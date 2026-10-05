@@ -1,5 +1,9 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.layout.Column
@@ -9,12 +13,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Alarm
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -169,7 +167,7 @@ fun RemindersScreen(
                     // Та же шторка, что в контактах и заметках:
                     // отбор одиночный. Разбор — в SingleChoiceSheet
                     LabeledIconButton(
-                        icon = Icons.Default.FilterList,
+                        icon = OgnelissIcons.FilterList,
                         labelRes = R.string.filter_title,
                         onClick = { filterOpen = true },
                         tint = if (days > 0) {
@@ -226,9 +224,9 @@ fun RemindersScreen(
                     Text(
                         day,
                         Modifier.padding(
-                            start = FlowUi.screenPadding + 4.dp,
+                            start = FlowUi.screenPadding + Space.xs,
                             top = FlowUi.sheetPadding,
-                            bottom = 4.dp
+                            bottom = Space.xs
                         ),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -270,11 +268,11 @@ private fun ReminderListRow(
             .padding(horizontal = FlowUi.screenPadding, vertical = FlowUi.cardSpacing)
     ) {
         Row(
-            Modifier.padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
+            Modifier.padding(start = Space.l, end = Space.xs, top = Space.s, bottom = Space.s),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                Icons.Default.Alarm,
+                OgnelissIcons.Alarm,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )
@@ -282,7 +280,7 @@ private fun ReminderListRow(
             Column(
                 Modifier
                     .weight(1f)
-                    .padding(horizontal = 12.dp)
+                    .padding(horizontal = Space.m)
             ) {
                 Text(title, style = MaterialTheme.typography.titleMedium, maxLines = 1)
                 // Время без даты: дата уже написана заголовком группы,
@@ -300,7 +298,7 @@ private fun ReminderListRow(
                 modifier = Modifier.heightIn(min = Dimens.MIN_TOUCH_TARGET)
             ) {
                 Icon(
-                    Icons.Default.Call,
+                    OgnelissIcons.Call,
                     contentDescription = stringResource(R.string.action_call),
                     tint = CallGreen
                 )
@@ -323,7 +321,7 @@ private fun ReminderListRow(
                 modifier = Modifier.heightIn(min = Dimens.MIN_TOUCH_TARGET)
             ) {
                 Icon(
-                    Icons.Default.Edit,
+                    OgnelissIcons.Edit,
                     contentDescription = stringResource(R.string.action_edit)
                 )
             }
@@ -333,7 +331,7 @@ private fun ReminderListRow(
                 modifier = Modifier.heightIn(min = Dimens.MIN_TOUCH_TARGET)
             ) {
                 Icon(
-                    Icons.Default.Delete,
+                    OgnelissIcons.Delete,
                     contentDescription = stringResource(R.string.action_delete),
                     tint = MaterialTheme.colorScheme.error
                 )

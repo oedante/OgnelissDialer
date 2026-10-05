@@ -1,6 +1,6 @@
 # Fiche Google Play — français
 
-À jour pour la version 1.2.2.
+À jour pour la version 1.4.0 (brouillon 04.10.2026 : tout ce qui est entré dans 1.2.3–1.3.4).
 
 ⚠️ **Non relu par un locuteur natif.** À faire vérifier avant
 publication : une faute dans la fiche est visible par tous et ne se
@@ -10,102 +10,83 @@ corrige qu’avec la mise à jour suivante de la fiche.
 Ogneliss Dialer
 
 ## Description courte (80 caractères)
-Téléphone hors ligne : recherche T9, notes sur les numéros, blocage.
+Téléphone sans Internet : recherche T9, notes sur les numéros, anti-spam
 
 ## Description complète (jusqu’à 4000)
 
-Ogneliss Dialer est une application de téléphone qui fonctionne
-entièrement sur votre appareil. Elle ne demande pas l’autorisation
-d’accès à Internet — vous pouvez le vérifier vous-même dans les détails
-de l’application installée.
+Ogneliss Dialer est une application de téléphone qui fonctionne entièrement sur votre appareil. Elle n'a pas l'autorisation d'accès à Internet — vous pouvez le vérifier vous-même dans les détails de l'application installée.
 
-COMPOSITION ET RECHERCHE
-• Recherche T9 sur deux alphabets à la fois
-• Correspond au début d’un prénom, d’un nom ou aux chiffres du numéro
-• Numérotation abrégée sur les touches 2 à 9
-• Coller un numéro depuis le presse-papiers
-• Caractères de pause et d’attente pour les serveurs vocaux des banques
+NUMÉROTATION ET RECHERCHE
+• Recherche T9 en cyrillique et en latin à la fois
+• Recherche par prénom, nom et chiffres du numéro
+• Numérotation rapide sur les touches 2 à 9
+• Pause et attente pour les menus vocaux des banques
 
-JOURNAL D’APPELS
-• Regroupé par date : aujourd’hui, hier, cette semaine
-• Trois façons de réunir les appels répétés
-• Filtre « En attente de rappel » : les appels manqués auxquels vous
-  n’avez pas répondu
+JOURNAL D'APPELS
+• Regroupement par date : aujourd'hui, hier, cette semaine
+• Contacts épinglés toujours en haut — avec les appels de n'importe lequel de leurs numéros
+• Filtre « En attente de rappel » : appels manqués que vous n'avez pas rappelés
 • Filtres par type, carte SIM, période, notes et rappels
-• Les numéros épinglés restent en haut de la liste
-• Export de tout le journal au format CSV
+• Compteur d'appels manqués sur l'icône de l'application
+• Effacer et supprimer demandent une confirmation
+• Export du journal en tableau CSV
+
+BALAYAGES
+• Jusqu'à trois actions par balayage — la ligne glisse et affiche des boutons, comme dans les applications de messagerie
+• 14 actions au choix : appel, SMS, messagerie, rappel, note, blocage…
+• Protection contre les déclenchements accidentels : un simple défilement ne décale pas les lignes
+
+FICHE DU CONTACT
+• « Écrire » : SMS ou messagerie — Telegram, WhatsApp, Viber, Max, si le contact l'utilise
+• E-mail : écrire ou copier l'adresse
+• Résumé des appels, code QR du contact, export de l'historique
+• Sonnerie personnalisée, renvoi des appels vers la messagerie vocale, raccourci sur l'écran d'accueil
+• Suppression d'un contact avec confirmation
 
 OPÉRATEUR ET RÉGION
-• Sous un numéro inconnu s’affichent l’opérateur et la région
-  d’attribution
-• D’après le plan de numérotation officiel, hors ligne
-• Pour l’instant uniquement pour les numéros russes
-• Réglable : tous les numéros, seulement les inconnus, ou jamais
+• Pour les numéros inconnus : l'opérateur et la région d'attribution
+• Fonctionne avec le plan de numérotation officiel, hors ligne (numéros russes pour l'instant)
 
 NOTES ET RAPPELS
-• Une note sur n’importe quel numéro, même absent de vos contacts
-• La note apparaît lorsque vous composez ce numéro et après l’appel
-• Un écran dédié à toutes les notes, avec recherche dans leur texte
-• Un rappel pour recontacter : aujourd’hui, demain ou le jour de votre
-  choix
-• Un écran dédié aux rappels, regroupés par jour
+• Une note pour n'importe quel numéro, même absent des contacts
+• La note s'affiche pendant la numérotation et dans la notification après l'appel
+• Rappels de rappel : aujourd'hui, demain ou n'importe quel jour
 
-BLOCAGE DES APPELS
-• Une liste d’exceptions prioritaire sur la liste de blocage
-• Des règles par masque : 8 800 * couvre toutes les lignes gratuites
-• Des étiquettes sur les numéros : spam, fraude, sondage, banque
-• Un appel bloqué déclenche une notification silencieuse avec un bouton
-  « Débloquer » : si une règle s’est déclenchée par erreur, cela se voit
-  tout de suite
-• Un avertissement avant d’appeler un numéro surtaxé ou international
+PROTECTION ANTI-SPAM
+• La liste blanche est prioritaire sur la liste noire
+• Règles par masque : 8 800 * couvre tous les numéros gratuits
+• Étiquettes de numéros : spam, arnaque
+• Notification discrète avec « Débloquer » pour chaque appel bloqué
+• Avertissement avant d'appeler un numéro surtaxé ou international
+• Numéros d'urgence — sans avertissement inutile ; après un appel d'urgence, le filtre laisse passer tous les appels entrants pendant deux heures, pour ne jamais bloquer un rappel
 
 FAUX APPEL
-Le téléphone « sonne » et vous donne un prétexte pour quitter une
-conversation gênante. Depuis un bouton, le menu, l’icône de
-l’application ou une tuile des réglages rapides. Aucun appel n’est
-réellement passé : rien n’est envoyé et rien n’apparaît dans le journal.
+Le téléphone « sonne » — un prétexte pour s'éloigner d'une conversation gênante. Aucun appel réel : rien n'est envoyé, rien n'apparaît dans le journal.
 
 DOUBLE SIM
-• Un bouton d’appel par carte — sans étape supplémentaire
-• L’application retient avec quelle carte vous appelez telle personne
-• Vos propres noms pour les emplacements : « Travail », « Perso »
+• Un bouton d'appel distinct pour chaque carte SIM
+• Mémorise quelle SIM vous utilisez pour chaque personne
+• Vos propres noms pour les emplacements : « Travail », « Personnel »
 
-ÉCRAN D’APPEL
-• Mise en veille près de l’oreille désactivable
-• Type de numéro au lieu des chiffres pour les contacts
+ÉCRAN D'APPEL
 • Réponse rapide par SMS à un appel entrant
-
-TABLETTES ET PLIABLES
-• Journal et fiche contact côte à côte
-• Navigation latérale ; à l’horizontale, boutons sous le pouce
+• Son vers un casque Bluetooth
+• L'extinction de l'écran près de l'oreille peut être désactivée
 
 CONFORT
-• Passage d’un écran à l’autre par balayage : journal, contacts, notes,
-  rappels
-• Balayages configurables sur les lignes : 14 actions au choix
 • Thèmes clair, sombre et noir AMOLED
-• Grands boutons pour une vue limitée
-• Libellés des boutons masquables
-• 48 langues, dont le français, l’anglais, l’allemand et le russe
-• Export des notes et des listes dans un fichier
+• Grands boutons pour la basse vision ; les libellés peuvent être masqués
+• Paysage, tablettes et pliables : journal et fiche du contact côte à côte
+• 48 langues d'interface
 
-CE QUE L’APPLICATION N’A PAS
-• De publicité
-• D’abonnements ni de fonctions payantes
-• D’accès à Internet
-• D’enregistrement des appels — depuis Android 10 le système l’a fermé
-  aux applications tierces, et le contourner est contraire aux règles
-  de Google Play
+CE QUE L'APPLICATION N'A PAS
+• Publicité
+• Abonnements ou fonctions payantes
+• Accès à Internet
+• Enregistrement des appels — depuis Android 10, le système le bloque pour les applications tierces
 
-À PROPOS DE VOS DONNÉES
-Le journal d’appels et les contacts sont lus dans les fournisseurs
-système d’Android et restent sur l’appareil. L’application n’en garde
-aucune copie : revenir à l’application Téléphone d’origine ne fait rien
-perdre.
-
-Ogneliss ne désactive pas les applications d’identification que vous
-avez déjà : elles occupent un rôle système distinct et continuent de
-fonctionner en parallèle.
+VOS DONNÉES
+Le journal d'appels et les contacts sont lus depuis les fournisseurs système d'Android et restent sur l'appareil. L'application ne crée pas sa propre copie : si vous revenez à l'application Téléphone d'origine, vous ne perdez rien.
 
 ## Catégorie
 Outils → Communication

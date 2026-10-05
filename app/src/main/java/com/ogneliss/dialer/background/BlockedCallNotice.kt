@@ -89,7 +89,7 @@ object BlockedCallNotice {
         )
 
         val builder = NotificationCompat.Builder(context, CallNotifications.CHANNEL_BLOCKED)
-            .setSmallIcon(R.drawable.ic_call)
+            .setSmallIcon(R.drawable.ic_stat_blocked)  // 1.3.4: свой значок у каждого типа уведомления
             .setContentTitle(context.getString(R.string.blocked_notice_title))
             .setContentText(PhoneFormatter.format(e164))
             .setAutoCancel(true)

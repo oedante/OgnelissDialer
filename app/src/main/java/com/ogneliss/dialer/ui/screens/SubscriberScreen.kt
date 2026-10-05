@@ -1,5 +1,10 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.components.DeleteContactDialog
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import com.ogneliss.dialer.concurrency.suspendRunCatching
@@ -9,26 +14,13 @@ import androidx.compose.material3.FilledTonalButton
 import com.ogneliss.dialer.ui.components.OgnelissDivider
 import androidx.compose.material3.TopAppBar
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.automirrored.filled.AddToHomeScreen
-import androidx.compose.material.icons.filled.NotificationsOff
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.material.icons.filled.StarBorder
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Share
 import com.ogneliss.dialer.ui.theme.BlockRed
 import com.ogneliss.dialer.ui.theme.CallGreen
 import com.ogneliss.dialer.ui.theme.NoteTeal
-import androidx.compose.material.icons.automirrored.filled.StickyNote2
 import com.ogneliss.dialer.ui.theme.FlowUi
 import androidx.compose.material3.ButtonDefaults
 import com.ogneliss.dialer.ui.components.QrCodeDialog
-import androidx.compose.material.icons.filled.QrCode2
 import com.ogneliss.dialer.ui.components.ReminderDialog
 import com.ogneliss.dialer.util.ExportShare
 import kotlinx.coroutines.launch
@@ -42,17 +34,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.Icons
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.CallMade
-import androidx.compose.material.icons.automirrored.filled.CallMissed
-import androidx.compose.material.icons.automirrored.filled.CallReceived
-import androidx.compose.material.icons.automirrored.filled.Message
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -66,12 +47,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.core.os.ConfigurationCompat
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -83,25 +60,18 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.foundation.lazy.rememberLazyListState
 import com.ogneliss.dialer.ui.components.OgnelissListRow
 import com.ogneliss.dialer.data.SpamMarkType
-import androidx.compose.material.icons.filled.Report
 import com.ogneliss.dialer.ui.components.OgnelissPanel
 import com.ogneliss.dialer.ui.components.QuickAction
-import com.ogneliss.dialer.ui.components.SheetDivider
-import com.ogneliss.dialer.ui.components.SheetRow
-import com.ogneliss.dialer.ui.components.SheetGroup
 import com.ogneliss.dialer.ui.components.rememberActionHaptics
 import com.ogneliss.dialer.R
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
-import com.ogneliss.dialer.settings.SwipeAction
-import com.ogneliss.dialer.ui.components.swipe.RevealActionFactory
 import com.ogneliss.dialer.data.ContactMessengers
 import com.ogneliss.dialer.log.Logger
 import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
 import com.ogneliss.dialer.data.RulePattern
 import com.ogneliss.dialer.ui.components.ReminderTimeDialog
 import com.ogneliss.dialer.ui.components.OgnelissDialog
-import com.ogneliss.dialer.data.CallLogEntry
 import com.ogneliss.dialer.data.CallLogGroup
 import com.ogneliss.dialer.data.CallType
 import com.ogneliss.dialer.ui.DialerViewModel
@@ -367,7 +337,7 @@ fun SubscriberScreen(
                         StatCell(group.missedCount, R.string.stat_missed, highlight = true)
                     }
 
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(Space.m))
 
                     Text(
                         /*
@@ -484,7 +454,7 @@ fun SubscriberScreen(
             content = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     CircularProgressIndicator(Modifier.size(24.dp))
-                    Spacer(Modifier.width(16.dp))
+                    Spacer(Modifier.width(Space.l))
                     Text(stringResource(R.string.subscriber_export_progress))
                 }
             },
@@ -858,7 +828,7 @@ fun SubscriberScreen(
                                         .size(32.dp)
                                         .clip(CircleShape)
                                 )
-                                Spacer(Modifier.width(12.dp))
+                                Spacer(Modifier.width(Space.m))
                             }
                             Text(
                                 title,
@@ -872,7 +842,7 @@ fun SubscriberScreen(
                     if (showBack) {
                         IconButton(onClick = onBack) {
                             Icon(
-                                Icons.AutoMirrored.Filled.ArrowBack,
+                                OgnelissIcons.ArrowBack,
                                 contentDescription = stringResource(R.string.nav_back)
                             )
                         }
@@ -894,11 +864,18 @@ fun SubscriberScreen(
                     if (starContact != null) {
                         IconButton(onClick = { vm.toggleStar(starContact) }) {
                             Icon(
-                                if (starContact.starred) Icons.Default.Star
-                                else Icons.Default.StarBorder,
+                                if (starContact.starred) OgnelissIcons.Star
+                                else OgnelissIcons.StarBorder,
                                 contentDescription = stringResource(R.string.action_favourite)
                             )
                         }
+                    }
+
+                    // Состояние «на голосовую почту» — из книги, при открытии
+                    // карточки и смене контакта (1.3.4)
+                    var silentContact by remember(knownContactId) { mutableStateOf<Boolean?>(null) }
+                    LaunchedEffect(knownContactId) {
+                        silentContact = knownContactId?.let { vm.isSilentContact(it) }
                     }
 
                     SubscriberMoreMenu(
@@ -911,11 +888,16 @@ fun SubscriberScreen(
                                 RingtonePicker.createIntent(null, ringtoneTitle)
                             )
                         },
-                        onSilent = { id -> vm.setSilentContact(id, true) },
+                        silent = silentContact,
+                        onSilent = { id, value ->
+                            silentContact = value
+                            vm.setSilentContact(id, value)
+                        },
                         onShortcut = {
                             vm.pinContactShortcut(title, group.number, group.e164)
                         },
-                        onEdit = { id -> vm.editContact(id) }
+                        onEdit = { id -> vm.editContact(id) },
+                        onDelete = { confirmDelete = true }
                     )
                 }
             )
@@ -1101,7 +1083,7 @@ fun SubscriberScreen(
                                     .padding(
                                         start = FlowUi.screenPadding * 2,
                                         end = FlowUi.screenPadding * 2,
-                                        bottom = 16.dp
+                                        bottom = Space.l
                                     )
                                     .onGloballyPositioned { coords ->
                                         nameBottomInRoot = coords.positionInRoot().y + coords.size.height
@@ -1239,7 +1221,7 @@ fun SubscriberScreen(
                     /*
                      * Отступ по ВЫСОТЕ.
                      *
-                     * Здесь стоял Spacer(Modifier.width(16.dp)) —
+                     * Здесь стоял Spacer(Modifier.width(Space.l)) —
                      * остаток от той версии, где портрет и кнопки
                      * стояли в строке. В колонке ширина ничего
                      * не делает, и кнопка «Позвонить» прижималась
@@ -1366,7 +1348,7 @@ fun SubscriberScreen(
                      */
                     Row(
                         Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(Space.s)
                     ) {
                         /*
                          * «ПОЗВОНИТЬ» — ПЛИТКА В ОБЩЕМ РЯДУ.
@@ -1396,7 +1378,7 @@ fun SubscriberScreen(
                          * не изменилось.
                          */
                         QuickAction(
-                            Icons.Default.Call,
+                            OgnelissIcons.Call,
                             R.string.action_call,
                             // Круг зелёный, значок в нём белый.
                             // Подпись под кругом — обычного цвета:
@@ -1416,7 +1398,7 @@ fun SubscriberScreen(
                          * в которых человек есть (ContactMessengers).
                          */
                         QuickAction(
-                            Icons.AutoMirrored.Filled.Message,
+                            OgnelissIcons.Message,
                             R.string.action_write
                         ) {
                             if (messengerLinks.isEmpty()) vm.openSms(group.number)
@@ -1439,7 +1421,7 @@ fun SubscriberScreen(
                          * сохранит контакт одним нажатием, а не будет
                          * переписывать цифры из текста.
                          */
-                        QuickAction(Icons.Default.Share, R.string.action_share) {
+                        QuickAction(OgnelissIcons.Share, R.string.action_share) {
                             val name = group.displayName
                                 ?: PhoneFormatter.format(group.number)
 
@@ -1473,7 +1455,7 @@ fun SubscriberScreen(
                          * в настройках свайпов и в названии канала
                          * уведомлений.
                          */
-                        QuickAction(Icons.Default.Alarm, R.string.action_remind_short) {
+                        QuickAction(OgnelissIcons.Alarm, R.string.action_remind_short) {
                             vm.requestReminder(group)
                         }
                         /*
@@ -1499,7 +1481,7 @@ fun SubscriberScreen(
                          * не помещалась под иконкой.
                          */
                         QuickAction(
-                            icon = Icons.Default.Block,
+                            icon = OgnelissIcons.Block,
                             labelRes = when {
                                 isBlocked -> R.string.action_unblock_short
                                 blockingMask != null -> R.string.action_blocked_by_mask
@@ -1725,17 +1707,17 @@ fun SubscriberScreen(
                             }
                         }
 
-                        NumberAction(Icons.Default.Call, R.string.action_call, tint = CallGreen) {
+                        NumberAction(OgnelissIcons.Call, R.string.action_call, tint = CallGreen) {
                             vm.call(number)
                         }
                         NumberAction(
-                            Icons.AutoMirrored.Filled.Message,
+                            OgnelissIcons.Message,
                             R.string.action_sms
                         ) {
                             vm.openSms(number)
                         }
                         NumberAction(
-                            Icons.Default.ContentCopy,
+                            OgnelissIcons.ContentCopy,
                             R.string.action_copy
                         ) {
                             vm.copyNumber(number)
@@ -1766,7 +1748,7 @@ fun SubscriberScreen(
                     color = null,
                     icon = {
                         Icon(
-                            Icons.AutoMirrored.Filled.StickyNote2,
+                            OgnelissIcons.StickyNote2,
                             contentDescription = null,
                             tint = NoteTeal,
                             modifier = Modifier.size(FlowUi.iconSizeInline)
@@ -1832,17 +1814,17 @@ fun SubscriberScreen(
                                 modifier = Modifier.weight(1f)
                             )
                             Icon(
-                                Icons.Default.Edit,
+                                OgnelissIcons.Edit,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
 
                         if (!note?.tags.isNullOrEmpty()) {
-                            Spacer(Modifier.height(12.dp))
+                            Spacer(Modifier.height(Space.m))
                             FlowRow(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                                horizontalArrangement = Arrangement.spacedBy(Space.s),
+                                verticalArrangement = Arrangement.spacedBy(Space.xs)
                             ) {
                                 note.tags.forEach { tagKey ->
                                     val labelRes = TagCatalog.labelResFor(tagKey)
@@ -1887,7 +1869,7 @@ fun SubscriberScreen(
                     title = stringResource(R.string.spam_mark_section),
                     icon = {
                         Icon(
-                            Icons.Default.Block,
+                            OgnelissIcons.Block,
                             contentDescription = null,
                             tint = BlockRed,
                             modifier = Modifier.size(FlowUi.iconSizeInline)
@@ -1895,8 +1877,8 @@ fun SubscriberScreen(
                     }
                 ) {
                     FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                        horizontalArrangement = Arrangement.spacedBy(Space.s),
+                        verticalArrangement = Arrangement.spacedBy(Space.xs)
                     ) {
                         listOf(
                             SpamMarkType.SPAM to R.string.tag_spam,
@@ -1916,7 +1898,7 @@ fun SubscriberScreen(
                                 leadingIcon = if (selected) {
                                     {
                                         Icon(
-                                            Icons.Default.Report,
+                                            OgnelissIcons.Report,
                                             contentDescription = null,
                                             modifier = Modifier.size(FlowUi.iconSizeInline),
                                             tint = BlockRed
@@ -1929,7 +1911,7 @@ fun SubscriberScreen(
                     }
 
                     if (spamMark != null) {
-                        Spacer(Modifier.height(8.dp))
+                        Spacer(Modifier.height(Space.s))
                         Text(
                             stringResource(R.string.note_spam_tag_warning),
                             style = MaterialTheme.typography.bodySmall,
@@ -1966,19 +1948,19 @@ fun SubscriberScreen(
                                  * Нажатие на строку оставлено: к нему привыкли.
                                  */
                                 DetailRow(
-                                    icon = Icons.Default.Email,
+                                    icon = OgnelissIcons.Email,
                                     value = email,
                                     label = null,
                                     onClick = { vm.openEmail(email) }
                                 ) {
                                     NumberAction(
-                                        Icons.AutoMirrored.Filled.Send,
+                                        OgnelissIcons.Send,
                                         R.string.action_write_email
                                     ) {
                                         vm.openEmail(email)
                                     }
                                     NumberAction(
-                                        Icons.Default.ContentCopy,
+                                        OgnelissIcons.ContentCopy,
                                         R.string.action_copy_email
                                     ) {
                                         vm.copyEmail(email)
@@ -1993,7 +1975,7 @@ fun SubscriberScreen(
                                     OgnelissDivider()
                                 }
                                 DetailRow(
-                                    icon = Icons.Default.Cake,
+                                    icon = OgnelissIcons.Cake,
                                     value = event.date,
                                     label = event.label,
                                     onClick = null
@@ -2024,11 +2006,11 @@ fun SubscriberScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                Icons.Default.Alarm,
+                                OgnelissIcons.Alarm,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary
                             )
-                            Spacer(Modifier.width(12.dp))
+                            Spacer(Modifier.width(Space.m))
                             Column(Modifier.weight(1f)) {
                                 Text(
                                     reminderDateFormat.format(
@@ -2051,7 +2033,7 @@ fun SubscriberScreen(
                             }
                         }
 
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
                             TextButton(onClick = { pendingReminderAt = active.atMillis }) {
                                 Text(stringResource(R.string.action_edit))
                             }
@@ -2096,7 +2078,7 @@ fun SubscriberScreen(
                             supporting = stringResource(R.string.subscriber_shown_here)
                                 .takeIf { contact.id == knownContactId },
                             leading = {
-                                Icon(Icons.Default.Person, contentDescription = null)
+                                Icon(OgnelissIcons.Person, contentDescription = null)
                             },
                             onClick = { vm.editContact(contact.id) }
                         )
@@ -2225,8 +2207,8 @@ fun SubscriberScreen(
                             .padding(
                                 start = FlowUi.screenPadding,
                                 end = FlowUi.screenPadding,
-                                top = 12.dp,
-                                bottom = 24.dp
+                                top = Space.m,
+                                bottom = Space.xl
                             )
                             .heightIn(min = Dimens.MIN_TOUCH_TARGET)
                     ) {
@@ -2242,10 +2224,10 @@ fun SubscriberScreen(
                         )
                         // Стрелка вплотную к тексту читалась как часть
                         // подписи: «Показать ещё 249˅»
-                        Spacer(Modifier.width(8.dp))
+                        Spacer(Modifier.width(Space.s))
                         Icon(
-                            if (historyExpanded) Icons.Default.ExpandLess
-                            else Icons.Default.ExpandMore,
+                            if (historyExpanded) OgnelissIcons.ExpandLess
+                            else OgnelissIcons.ExpandMore,
                             contentDescription = null
                         )
                     }
@@ -2276,51 +2258,22 @@ fun SubscriberScreen(
              * занимали место на каждом открытии карточки.
              */
 
-            item { Spacer(Modifier.height(32.dp)) }
+            item { Spacer(Modifier.height(Space.xxl)) }
         }
         }
     }
 
     // Удаление контакта необратимо и затрагивает все аккаунты —
-    // подтверждение обязательно, и текст должен объяснять последствия
+    // подтверждение обязательно (DeleteContactDialog, 1.3.4)
     if (confirmDelete && knownContactId != null) {
-        /*
-         * Удаление контакта — единственное необратимое действие
-         * в карточке, поэтому треугольник предупреждения сохранён:
-         * у OgnelissDialog места под значок в шапке нет, и он
-         * переехал в текст.
-         */
-        OgnelissDialog(
-            onDismissRequest = { confirmDelete = false },
-            title = stringResource(R.string.confirm_delete_contact_title),
-            content = {
-                Row(verticalAlignment = Alignment.Top) {
-                    Icon(
-                        Icons.Default.Warning,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                    Spacer(Modifier.width(12.dp))
-                    Text(stringResource(R.string.confirm_delete_contact_text))
-                }
+        DeleteContactDialog(
+            pinned = vm.isContactPinned(knownContactId),
+            onConfirm = {
+                vm.deleteContact(knownContactId)
+                confirmDelete = false
+                onBack()
             },
-            confirmButton = {
-                TextButton(onClick = {
-                    vm.deleteContact(knownContactId)
-                    confirmDelete = false
-                    onBack()
-                }) {
-                    Text(
-                        stringResource(R.string.action_delete_contact),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { confirmDelete = false }) {
-                    Text(stringResource(R.string.nav_cancel))
-                }
-            }
+            onDismiss = { confirmDelete = false }
         )
     }
 
@@ -2334,529 +2287,5 @@ fun SubscriberScreen(
             },
             onDismiss = { editingNote = false }
         )
-    }
-}
-
-/**
- * Скругление углов панели истории.
- *
- * Совпадает с shapes.large темы — тем же, каким скруглены панели
- * «Номера» и «Заметка»: разные радиусы у соседних блоков видны сразу.
- */
-private val HISTORY_CORNER = 16.dp
-
-/** Одна запись в ленте вызовов абонента. */
-@Composable
-private fun CallHistoryRow(
-    entry: CallLogEntry,
-    /**
-     * Показывать ли номер в строке.
-     *
-     * У абонента с одним номером он дублировал бы заголовок карточки —
-     * лишний шум. У абонента с несколькими это главное, чего не хватает:
-     * «звонил на рабочий или на личный» — вопрос, ради которого
-     * в историю и заходят.
-     */
-    showNumber: Boolean = false
-) {
-    // Формат даты зависит от локали, поэтому пересоздаётся при её смене.
-    // Статический форматтер показывал бы даты на прежнем языке
-    // после переключения языка приложения
-    val configuration = LocalConfiguration.current
-    val locale = ConfigurationCompat.getLocales(configuration)[0] ?: java.util.Locale.getDefault()
-
-    val typeRes = when (entry.type) {
-        CallType.INCOMING -> R.string.call_incoming
-        CallType.OUTGOING -> R.string.call_outgoing
-        CallType.MISSED -> R.string.call_missed
-        CallType.REJECTED -> R.string.call_rejected
-        CallType.BLOCKED -> R.string.call_blocked
-        CallType.VOICEMAIL -> R.string.call_voicemail
-    }
-    val icon = when (entry.type) {
-        CallType.OUTGOING -> Icons.AutoMirrored.Filled.CallMade
-        CallType.MISSED -> Icons.AutoMirrored.Filled.CallMissed
-        CallType.REJECTED, CallType.BLOCKED -> Icons.Default.Block
-        else -> Icons.AutoMirrored.Filled.CallReceived
-    }
-    val tint = when (entry.type) {
-        CallType.MISSED -> MaterialTheme.colorScheme.error
-        else -> MaterialTheme.colorScheme.outline
-    }
-
-    ListItem(
-        colors = ListItemDefaults.colors(
-            // Прозрачная: цвет даёт панель вокруг списка, а своя подложка
-            // легла бы вторым слоем поверх и была бы видна на тёмной теме
-            containerColor = androidx.compose.ui.graphics.Color.Transparent
-        ),
-        leadingContent = { Icon(icon, contentDescription = null, tint = tint) },
-        headlineContent = { Text(stringResource(typeRes)) },
-        supportingContent = {
-            Column {
-                Text(relativeDateLabel(entry.date, locale))
-
-                // Номер второй строкой: у абонента с несколькими номерами
-                // это главное, чего не хватает в истории
-                if (showNumber) {
-                    Text(
-                        PhoneFormatter.format(entry.number),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.outline
-                    )
-                }
-            }
-        },
-        trailingContent = {
-            if (entry.durationSec > 0) {
-                Text(
-                    String.format(
-                        java.util.Locale.getDefault(), "%d:%02d",
-                        entry.durationSec / 60, entry.durationSec % 60
-                    ),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-        }
-    )
-}
-
-/**
- * Высота строки в разделах карточки.
- *
- * Задаётся здесь, а не в каждом месте: строку номера растягивают кнопки
- * действий, а заметку — только текст, и без общей константы они
- * расходились по высоте на глаз.
- */
-private val NUMBER_ROW_HEIGHT = 56.dp
-
-/**
- * «Через 2 ч 15 мин» — сколько осталось до напоминания.
- *
- * Минуты показываются только когда их меньше суток: «через 3 дня
- * 4 часа» человек не считает, ему достаточно «через 3 дня».
- */
-@Composable
-private fun remainingLabel(remainingMillis: Long): String {
-    val minutes = (remainingMillis / 60_000L).coerceAtLeast(0)
-    val hours = minutes / 60
-    val days = hours / 24
-
-    return when {
-        days >= 1 -> pluralStringResource(R.plurals.reminder_in_days, days.toInt(), days.toInt())
-        hours >= 1 -> pluralStringResource(
-            R.plurals.reminder_in_hours, hours.toInt(), hours.toInt()
-        )
-        else -> pluralStringResource(
-            R.plurals.reminder_in_minutes, minutes.toInt(), minutes.toInt()
-        )
-    }
-}
-
-/**
- * ДАТА ЗВОНКА СЛОВАМИ ДЛЯ БЛИЖАЙШИХ ДНЕЙ.
- *
- * ── Зачем ──────────────────────────────────────────────────────────────────
- * «5 сент. 2026 г. 18:02» человек читает и сравнивает с сегодняшним
- * числом в уме. «Сегодня, 18:02» не требует ничего сравнивать —
- * а именно вчерашние и сегодняшние звонки в истории смотрят чаще всего.
- *
- * Дальше двух дней слова бесполезны: «12 дней назад» хуже даты, потому
- * что по дате видно и день недели, и месяц. Поэтому словами показываются
- * только сегодня и вчера, остальное — обычной датой.
- *
- * ── Почему не DateUtils ────────────────────────────────────────────────────
- * Системный DateUtils.getRelativeTimeSpanString для старых дат отдаёт
- * «N дней назад» и не даёт это отключить. Здесь нужен ровно один порог,
- * и он задан явно.
- */
-@Composable
-private fun relativeDateLabel(date: Long, locale: java.util.Locale): String {
-    val timeFormat = remember(locale) { DateFormat.getTimeInstance(DateFormat.SHORT, locale) }
-    val dateTimeFormat = remember(locale) {
-        DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale)
-    }
-    // «17 сентября» без года: шаблон берётся у системы, порядок слов
-    // в языках разный
-    val sameYearFormat = remember(locale) {
-        java.text.SimpleDateFormat(
-            android.text.format.DateFormat.getBestDateTimePattern(locale, "d MMMM"),
-            locale
-        )
-    }
-
-    val days = daysAgo(date)
-    val time = timeFormat.format(Date(date))
-    return when (days) {
-        0 -> stringResource(R.string.date_group_today) + ", " + time
-        1 -> stringResource(R.string.date_group_yesterday) + ", " + time
-        /*
-         * Старше вчерашнего — дата целиком. Но год показывается,
-         * только если он не текущий: «17 сент. 2026 г., 23:08»
-         * в сентябре 2026-го — четыре лишних знака в каждой строке,
-         * а у абонента таких строк десятки.
-         */
-        else -> {
-            val sameYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR) ==
-                java.util.Calendar.getInstance().apply { timeInMillis = date }
-                    .get(java.util.Calendar.YEAR)
-
-            if (sameYear) {
-                sameYearFormat.format(Date(date)) + ", " + time
-            } else {
-                dateTimeFormat.format(Date(date))
-            }
-        }
-    }
-}
-
-/**
- * Сколько КАЛЕНДАРНЫХ дней назад был момент.
- *
- * Считается по датам, а не по разнице в миллисекундах: звонок в 23:50
- * и звонок в 00:10 разделяют двадцать минут, но это «вчера» и «сегодня»,
- * и человек их так и различает.
- */
-private fun daysAgo(date: Long): Int {
-    fun startOfDay(millis: Long) = java.util.Calendar.getInstance().apply {
-        timeInMillis = millis
-        set(java.util.Calendar.HOUR_OF_DAY, 0)
-        set(java.util.Calendar.MINUTE, 0)
-        set(java.util.Calendar.SECOND, 0)
-        set(java.util.Calendar.MILLISECOND, 0)
-    }.timeInMillis
-
-    val diff = startOfDay(System.currentTimeMillis()) - startOfDay(date)
-    return (diff / (24L * 60 * 60 * 1000)).toInt()
-}
-
-
-/** Заголовок раздела, содержимое которого идёт отдельными элементами списка. */
-@Composable
-private fun SectionPanelHeader(text: String) {
-    Text(
-        text,
-        Modifier
-            .padding(
-                start = FlowUi.screenPadding + 16.dp,
-                end = FlowUi.screenPadding,
-                top = FlowUi.sheetPadding,
-                bottom = 4.dp
-            )
-            .semantics { heading() },
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
-}
-
-@Composable
-private fun SectionHeader(text: String) {
-    Text(
-        text,
-        // Отступ сверху больше, чем снизу: заголовок отделяет разделы,
-        // и воздух нужен перед ним, а не после
-        Modifier
-            .padding(start = 16.dp, top = FlowUi.sheetPadding, bottom = 4.dp)
-            .semantics { heading() },
-        style = MaterialTheme.typography.labelLarge,
-        /*
-         * Тёмно-серый, а не акцентный.
-         *
-         * Заголовок раздела — служебная разметка, а не то, ради чего
-         * экран открывают. Акцентный цвет притягивал взгляд к подписям
-         * вместо содержимого.
-         */
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
-}
-
-@Composable
-private fun StatCell(value: Int, labelRes: Int, highlight: Boolean = false) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            value.toString(),
-            // headlineSmall вместо числа: то же начертание, но из шкалы,
-            // и при системном крупном шрифте оно масштабируется вместе
-            // со всем остальным
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Medium,
-            color = if (highlight && value > 0) MaterialTheme.colorScheme.error
-            else MaterialTheme.colorScheme.onSurface
-        )
-        Text(stringResource(labelRes), style = MaterialTheme.typography.bodySmall)
-    }
-}
-
-/**
- * БЫСТРОЕ ДЕЙСТВИЕ В ШАПКЕ КАРТОЧКИ.
- *
- * ══════════════════════════════════════════════════════════════════════════
- * ПОЧЕМУ ПЛИТКА, А НЕ КРУГЛАЯ КНОПКА
- * ══════════════════════════════════════════════════════════════════════════
- * Были круглые кнопки с подписью снизу. Нажимаемым при этом был только
- * кружок 56 dp, а подпись под ним — нет: человек целился в слово
- * «Напомнить перезвонить» и промахивался мимо кнопки.
- *
- * Плитка нажимается целиком, вместе с подписью. Четыре плитки делят
- * ширину поровну через weight, поэтому подписи разной длины больше
- * не растаскивают ряд: «SMS» и «Напомнить перезвонить» занимают
- * одинаковые ячейки.
- *
- * Скруглённый прямоугольник — та же форма, что у карточек номеров
- * и заметки ниже. Круг был единственной круглой формой на экране.
- */
-/**
- * КНОПКА ДЕЙСТВИЯ У НОМЕРА.
- *
- * ── Почему без подписи ─────────────────────────────────────────────────────
- * Три кнопки в строке с номером: подписи под ними не поместились бы,
- * а сами значки узнаваемы — трубка, конверт, копия. Это те же значки,
- * что и в остальном приложении.
- *
- * Для TalkBack подпись есть: contentDescription читается вслух,
- * и незрячий человек получает то же, что зрячий видит.
- */
-@Composable
-private fun NumberAction(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    labelRes: Int,
-    /**
-     * Цвет значка.
-     *
-     * ══════════════════════════════════════════════════════════════════════
-     * ПОЧЕМУ НЕ ВСЕ СИНИЕ
-     * ══════════════════════════════════════════════════════════════════════
-     * Все три значка у номера были синими (primary). А звонок во всём
-     * остальном приложении зелёный: в журнале, в контактах, круглая кнопка
-     * в этой же карточке. Одно действие — два цвета на одном экране.
-     *
-     * Теперь: звонок — зелёный, как везде; SMS и копирование — нейтральные.
-     * Три синих значка в ряд спорили между собой, а главное действие
-     * у номера одно — позвонить.
-     */
-    tint: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurfaceVariant,
-    onClick: () -> Unit
-) {
-    IconButton(
-        onClick = onClick,
-        modifier = Modifier.size(Dimens.MIN_TOUCH_TARGET)
-    ) {
-        Icon(
-            icon,
-            contentDescription = stringResource(labelRes),
-            tint = tint
-        )
-    }
-}
-
-/**
- * МЕНЮ «ЕЩЁ» В ШАПКЕ КАРТОЧКИ.
- *
- * ── Что сюда попало ────────────────────────────────────────────────────────
- * Действия, которыми пользуются раз в месяц: QR-код, выгрузка истории,
- * мелодия звонка, беззвучный режим, ярлык, правка контакта.
- *
- * Каждое из них занимало строку списка на КАЖДОМ открытии карточки
- * ради случая, который может не наступить вовсе.
- *
- * ── Почему отдельным компонентом ───────────────────────────────────────────
- * Шапка и без него длинная: заголовок, звезда, шесть пунктов меню.
- * Читать её целиком в одном месте тяжело, а меню — самостоятельный
- * кусок, который к остальной шапке отношения не имеет.
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SubscriberMoreMenu(
-    knownContactId: Long?,
-    onStats: () -> Unit,
-    onQr: () -> Unit,
-    onExport: () -> Unit,
-    onRingtone: () -> Unit,
-    onSilent: (Long) -> Unit,
-    onShortcut: () -> Unit,
-    onEdit: (Long) -> Unit
-) {
-    var open by remember { mutableStateOf(false) }
-
-    IconButton(onClick = { open = true }) {
-        Icon(
-            Icons.Default.MoreVert,
-            contentDescription = stringResource(R.string.action_more)
-        )
-    }
-
-    /*
-     * Меню карточки — шторка снизу с группами, как «Ещё» в журнале
-     * и меню записи (1.2.2). Было стандартное выпадающее меню с углами
-     * 4 dp и тенью — последнее такое в приложении.
-     */
-    if (open) {
-        val summaryLabel = stringResource(R.string.subscriber_summary)
-        val qrLabel = stringResource(R.string.subscriber_qr)
-        val exportLabel = stringResource(R.string.subscriber_export)
-        val ringtoneLabel = stringResource(R.string.contact_ringtone)
-        val silentLabel = stringResource(R.string.contact_silent)
-        val shortcutLabel = stringResource(R.string.contact_pin_shortcut)
-        val editLabel = stringResource(R.string.action_edit_contact)
-        ModalBottomSheet(
-            onDismissRequest = { open = false },
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-            contentWindowInsets = { WindowInsets.navigationBars }
-        ) {
-            Column(Modifier.padding(bottom = 16.dp)) {
-                // Про номер: сводка, поделиться, выгрузить
-                SheetGroup {
-                    SheetRow(Icons.Default.BarChart, summaryLabel, onClick = { open = false; onStats() })
-                    SheetDivider()
-                    SheetRow(Icons.Default.QrCode2, qrLabel, onClick = { open = false; onQr() })
-                    SheetDivider()
-                    SheetRow(Icons.Default.Share, exportLabel, onClick = { open = false; onExport() })
-                }
-                // Про контакт в книге — только если он там есть
-                if (knownContactId != null) {
-                    SheetGroup {
-                        SheetRow(Icons.Default.MusicNote, ringtoneLabel, onClick = { open = false; onRingtone() })
-                        SheetDivider()
-                        SheetRow(
-                            Icons.Default.NotificationsOff,
-                            silentLabel,
-                            onClick = { open = false; onSilent(knownContactId) }
-                        )
-                        SheetDivider()
-                        SheetRow(
-                            Icons.AutoMirrored.Filled.AddToHomeScreen,
-                            shortcutLabel,
-                            onClick = { open = false; onShortcut() }
-                        )
-                        SheetDivider()
-                        SheetRow(Icons.Default.Edit, editLabel, onClick = { open = false; onEdit(knownContactId) })
-                    }
-                }
-            }
-        }
-    }
-}
-
-
-/**
- * Строка раздела «Сведения».
- *
- * @param label подпись типа («День рождения»). У почты её нет: адрес
- *   говорит сам за себя, а «Электронная почта: почта» — это шум.
- * @param onClick null, если нажимать не на что. Дата никуда не ведёт:
- *   открывать календарь на чужой день рождения человек не просил.
- */
-@Composable
-private fun DetailRow(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    value: String,
-    label: String?,
-    onClick: (() -> Unit)?,
-    // Кнопки справа, как у номеров (1.3.2)
-    trailing: @Composable RowScope.() -> Unit = {}
-) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .heightIn(min = NUMBER_ROW_HEIGHT)
-            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Spacer(Modifier.width(12.dp))
-        Column(Modifier.weight(1f)) {
-            Text(value, style = MaterialTheme.typography.bodyLarge)
-            label?.let {
-                Text(
-                    it,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-        trailing()
-    }
-}
-
-/**
- * Ширина левой колонки карточки — ширина обычного телефона: пять
- * круглых кнопок действий помещаются так же, как в портрете.
- * Та же, что у клавиатуры сбоку в журнале.
- */
-private val CARD_SIDE_COLUMN_WIDTH = 360.dp
-
-/**
- * Предел ширины правой колонки. 640, а не прежние 560: рядом с колонкой
- * шапки правая и так уже, а на планшете строка номера с тремя кнопками
- * во всю оставшуюся ширину растянулась бы на тысячу точек.
- */
-private val CARD_CONTENT_MAX_WIDTH = 640.dp
-
-/** Ключ карточки, который сам является номером: «+79101234567», «89101234567». */
-private val BARE_NUMBER = Regex("""^\+?\d{3,}$""")
-
-
-/**
- * Шторка «Написать»: SMS на каждый номер контакта — одной группой,
- * мессенджеры — второй, со значками и цветами тех же, что у свайпов.
- * Если один номер есть во всех четырёх мессенджерах — четыре строки:
- * шторка открывается только по нажатию и карточку не загромождает.
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun WriteSheet(
-    numbers: List<String>,
-    links: List<ContactMessengers.Link>,
-    onSms: (String) -> Unit,
-    onMessenger: (ContactMessengers.Link) -> Unit,
-    onDismiss: () -> Unit
-) {
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-        contentWindowInsets = { WindowInsets.navigationBars }
-    ) {
-        val smsLabel = stringResource(R.string.action_sms)
-        Column(Modifier.padding(bottom = 16.dp)) {
-            SheetGroup {
-                numbers.forEachIndexed { index, number ->
-                    SheetRow(
-                        Icons.AutoMirrored.Filled.Message,
-                        smsLabel,
-                        // Номер — вторая строка, только если номеров несколько
-                        supporting = PhoneFormatter.format(number).takeIf { numbers.size > 1 },
-                        onClick = { onSms(number) }
-                    )
-                    if (index < numbers.lastIndex) SheetDivider()
-                }
-            }
-            SheetGroup {
-                links.forEachIndexed { index, link ->
-                    val visual = RevealActionFactory.iconOf(link.kind)
-                    SheetRow(
-                        visual?.first ?: Icons.AutoMirrored.Filled.Message,
-                        stringResource(
-                            when (link.kind) {
-                                SwipeAction.WHATSAPP -> R.string.action_whatsapp
-                                SwipeAction.TELEGRAM -> R.string.action_telegram
-                                SwipeAction.VIBER -> R.string.action_viber
-                                else -> R.string.action_max
-                            }
-                        ),
-                        iconTint = visual?.second,
-                        // Номер — чтобы различать, если номеров у контакта несколько
-                        supporting = link.summary?.let {
-                            if (it.startsWith("+")) PhoneFormatter.format(it) else it
-                        }.takeIf { numbers.size > 1 || links.count { l -> l.kind == link.kind } > 1 },
-                        onClick = { onMessenger(link) }
-                    )
-                    if (index < links.lastIndex) SheetDivider()
-                }
-            }
-        }
     }
 }

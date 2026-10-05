@@ -1,5 +1,9 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.compose.runtime.Immutable
 
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -9,10 +13,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import com.ogneliss.dialer.util.AutoStart
-import androidx.compose.material.icons.filled.RestartAlt
-import androidx.compose.material.icons.filled.BatteryAlert
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -158,28 +158,28 @@ fun PermissionWizardScreen(
                 .padding(padding)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = Space.xl)
         ) {
             // Индикатор прогресса: видно, сколько осталось, и что процесс
             // конечен. Без него длинная череда запросов утомляет
             LinearProgressIndicator(
                 progress = { (stepIndex + 1f) / steps.size },
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+                modifier = Modifier.fillMaxWidth().padding(top = Space.l)
             )
             Text(
                 stringResource(R.string.wizard_step_of, stepIndex + 1, steps.size),
-                Modifier.padding(top = 8.dp),
+                Modifier.padding(top = Space.s),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.outline
             )
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(Space.xxl))
 
             AnimatedContent(targetState = step, label = "step") { current ->
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     StatusIcon(current.icon, current.isGranted)
 
-                    Spacer(Modifier.height(24.dp))
+                    Spacer(Modifier.height(Space.xl))
 
                     Text(
                         stringResource(current.titleRes),
@@ -187,13 +187,13 @@ fun PermissionWizardScreen(
                         textAlign = TextAlign.Center
                     )
 
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(Space.s))
 
                     // Обязательное или нет — сразу под заголовком,
                     // чтобы решение принималось осознанно
                     RequirementBadge(current.required, current.isGranted)
 
-                    Spacer(Modifier.height(24.dp))
+                    Spacer(Modifier.height(Space.xl))
 
                     Text(
                         stringResource(current.rationaleRes),
@@ -211,11 +211,11 @@ fun PermissionWizardScreen(
                         ) {
                             Row(Modifier.padding(FlowUi.contentPadding), verticalAlignment = Alignment.Top) {
                                 Icon(
-                                    Icons.Default.Info, null,
+                                    OgnelissIcons.Info, null,
                                     Modifier.size(FlowUi.iconSizeInline),
                                     tint = MaterialTheme.colorScheme.outline
                                 )
-                                Spacer(Modifier.width(12.dp))
+                                Spacer(Modifier.width(Space.m))
                                 Text(
                                     stringResource(current.consequenceRes),
                                     style = MaterialTheme.typography.bodyMedium
@@ -226,7 +226,7 @@ fun PermissionWizardScreen(
                 }
             }
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(Space.xxl))
         }
         }
     }
@@ -248,7 +248,7 @@ private fun StatusIcon(icon: ImageVector, granted: Boolean) {
         }
         if (granted) {
             Icon(
-                Icons.Default.CheckCircle, null,
+                OgnelissIcons.CheckCircle, null,
                 Modifier.size(32.dp),
                 tint = MaterialTheme.colorScheme.primary
             )
@@ -292,13 +292,13 @@ private fun WizardButtons(
             Modifier
                 .fillMaxWidth()
                 .windowInsetsPadding(WindowInsets.navigationBars)
-                .padding(24.dp)
+                .padding(Space.xl)
         ) {
             if (!isGranted) {
                 Button(onClick = onGrant, modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(R.string.wizard_grant))
                 }
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(Space.s))
             }
 
             TextButton(onClick = onNext, modifier = Modifier.fillMaxWidth()) {
@@ -350,7 +350,7 @@ private fun buildSteps(
     add(
         WizardStep(
             id = STEP_DIALER,
-            icon = Icons.Default.Smartphone,
+            icon = OgnelissIcons.Smartphone,
             titleRes = R.string.onboarding_default_title,
             rationaleRes = R.string.wizard_dialer_rationale,
             consequenceRes = R.string.wizard_dialer_consequence,
@@ -360,11 +360,11 @@ private fun buildSteps(
     )
 
     val icons = mapOf(
-        "phone" to Icons.Default.Call,
-        "call_log" to Icons.Default.History,
-        "contacts" to Icons.Default.Contacts,
-        "notifications" to Icons.Default.Notifications,
-        "audio" to Icons.Default.Headphones
+        "phone" to OgnelissIcons.Call,
+        "call_log" to OgnelissIcons.History,
+        "contacts" to OgnelissIcons.Contacts,
+        "notifications" to OgnelissIcons.Notifications,
+        "audio" to OgnelissIcons.Headphones
     )
     val consequences = mapOf(
         "phone" to R.string.wizard_phone_consequence,
@@ -383,7 +383,7 @@ private fun buildSteps(
             add(
                 WizardStep(
                     id = group.id,
-                    icon = icons[group.id] ?: Icons.Default.Lock,
+                    icon = icons[group.id] ?: OgnelissIcons.Lock,
                     titleRes = group.titleRes,
                     rationaleRes = group.rationaleRes,
                     consequenceRes = consequences[group.id] ?: R.string.wizard_generic_consequence,
@@ -423,7 +423,7 @@ private fun buildSteps(
     add(
         WizardStep(
             id = STEP_BATTERY,
-            icon = Icons.Default.BatteryAlert,
+            icon = OgnelissIcons.BatteryAlert,
             titleRes = R.string.settings_battery,
             rationaleRes = R.string.wizard_battery_rationale,
             consequenceRes = R.string.wizard_battery_consequence,
@@ -453,7 +453,7 @@ private fun buildSteps(
         add(
             WizardStep(
                 id = STEP_AUTOSTART,
-                icon = Icons.Default.RestartAlt,
+                icon = OgnelissIcons.RestartAlt,
                 titleRes = R.string.wizard_autostart_title,
                 rationaleRes = R.string.wizard_autostart_rationale,
                 consequenceRes = R.string.wizard_autostart_consequence,

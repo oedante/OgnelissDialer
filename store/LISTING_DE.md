@@ -1,6 +1,6 @@
 # Google-Play-Eintrag — Deutsch
 
-Stand 1.2.2.
+Stand 1.4.0 (Entwurf 04.10.2026: alles aus 1.2.3–1.3.4).
 
 ⚠️ **Nicht von einer Muttersprachlerin oder einem Muttersprachler
 gegengelesen.** Vor der Veröffentlichung prüfen lassen: ein Fehler im
@@ -11,98 +11,83 @@ nächsten Update des Eintrags.
 Ogneliss Dialer
 
 ## Kurzbeschreibung (80 Zeichen)
-Telefon-App ohne Internet: T9-Suche, Notizen zu Nummern, Anrufsperre.
+Telefon-App ohne Internet: T9-Suche, Notizen zu Nummern, Spamschutz
 
 ## Vollständige Beschreibung (bis 4000)
 
-Ogneliss Dialer ist eine Telefon-App, die vollständig auf Ihrem Gerät
-arbeitet. Die App fordert die Internet-Berechtigung nicht an — das
-können Sie selbst in den Details der installierten App nachprüfen.
+Ogneliss Dialer ist eine Telefon-App, die vollständig auf Ihrem Gerät arbeitet. Sie hat keine Internetberechtigung — das können Sie selbst in den App-Details prüfen.
 
 WÄHLEN UND SUCHEN
-• T9-Suche über zwei Alphabete gleichzeitig
-• Trifft den Anfang von Vorname, Nachname oder die Ziffern der Nummer
+• T9-Suche in kyrillischer und lateinischer Schrift gleichzeitig
+• Suche nach Vorname, Nachname und Ziffern der Nummer
 • Kurzwahl auf den Tasten 2–9
-• Nummer aus der Zwischenablage einfügen
-• Pause- und Wartezeichen für Sprachmenüs von Banken
+• Pause und Warten für Sprachmenüs von Banken
 
-ANRUFPROTOKOLL
+ANRUFLISTE
 • Nach Datum gruppiert: heute, gestern, diese Woche
-• Drei Arten, wiederholte Anrufe zusammenzufassen
-• Filter „Warten auf Rückruf“: verpasste Anrufe, die Sie nicht
-  erwidert haben
-• Filter nach Art, SIM, Zeitraum, Notizen und Erinnerungen
-• Angeheftete Nummern bleiben oben in der Liste
-• Das gesamte Protokoll als CSV-Tabelle exportieren
+• Angeheftete Kontakte immer oben — mit Anrufen von jeder ihrer Nummern
+• Filter „Warten auf Rückruf“: verpasste Anrufe ohne Rückruf
+• Filter nach Typ, SIM-Karte, Zeitraum, Notizen und Erinnerungen
+• Zähler verpasster Anrufe am App-Symbol
+• Leeren und Löschen fragen nach Bestätigung
+• Export der Anrufliste als CSV-Tabelle
 
-ANBIETER UND REGION
-• Bei unbekannten Nummern ist zu sehen, zu welchem Anbieter die Nummer
-  gehört und wo sie vergeben wurde
-• Aus dem offiziellen Nummernplan, ohne Internet
-• Vorerst nur für russische Nummern
-• Einstellbar: alle Nummern, nur unbekannte oder nie
+WISCHGESTEN
+• Bis zu drei Aktionen pro Wisch — die Zeile verschiebt sich und zeigt Schaltflächen, wie in E-Mail-Apps
+• 14 Aktionen zur Auswahl: Anruf, SMS, Messenger, Erinnerung, Notiz, Sperren…
+• Schutz vor versehentlichem Auslösen: normales Scrollen verschiebt keine Zeilen
+
+KONTAKTKARTE
+• „Schreiben“: SMS oder Messenger — Telegram, WhatsApp, Viber, Max, falls der Kontakt ihn nutzt
+• E-Mail: schreiben oder Adresse kopieren
+• Anrufübersicht, QR-Code des Kontakts, Export des Anrufverlaufs
+• Eigener Klingelton, Anrufe an die Mailbox, Verknüpfung auf dem Startbildschirm
+• Kontakt löschen mit Bestätigung
+
+NETZBETREIBER UND REGION
+• Bei unbekannten Nummern sehen Sie Netzbetreiber und Region
+• Arbeitet mit dem offiziellen Nummernplan, ohne Internet (vorerst für russische Nummern)
 
 NOTIZEN UND ERINNERUNGEN
-• Eine Notiz zu jeder Nummer, auch wenn sie nicht in den Kontakten steht
-• Die Notiz erscheint beim Wählen dieser Nummer und nach dem Anruf
-• Ein eigener Bildschirm mit allen Notizen und Suche in ihrem Text
-• Erinnerung zurückzurufen: heute, morgen oder an einem beliebigen Tag
-• Ein eigener Bildschirm für Erinnerungen, nach Tagen gruppiert
+• Eine Notiz zu jeder Nummer, auch wenn sie nicht in den Kontakten ist
+• Die Notiz erscheint beim Wählen und in der Benachrichtigung nach dem Anruf
+• Rückruf-Erinnerungen: heute, morgen oder an einem beliebigen Tag
 
-ANRUFSPERRE
-• Eine Ausnahmeliste, die Vorrang vor der Sperrliste hat
-• Regeln mit Masken: 8 800 * deckt alle gebührenfreien Nummern ab
-• Markierungen für Nummern: Spam, Betrug, Umfrage, Bank
-• Ein gesperrter Anruf erzeugt eine stille Benachrichtigung mit der
-  Schaltfläche „Entsperren“ — ein versehentlich ausgelöstes Regelwerk
-  fällt sofort auf
-• Ein Hinweis auf Sonderrufnummern und Auslandsnummern vor dem Wählen
+SPAMSCHUTZ
+• Die Weiße Liste hat Vorrang vor der Schwarzen Liste
+• Regeln mit Mustern: 8 800 * deckt alle gebührenfreien Nummern ab
+• Markierungen für Nummern: Spam, Betrug
+• Leise Benachrichtigung mit „Entsperren“ bei jedem blockierten Anruf
+• Warnung vor kostenpflichtigen und internationalen Nummern vor dem Wählen
+• Notrufnummern — ohne unnötige Warnungen; nach einem Notruf lässt der Filter zwei Stunden lang alle eingehenden Anrufe durch, damit ein Rückruf nie blockiert wird
 
-FINGIERTER ANRUF
-Das Telefon „klingelt“ und gibt Ihnen einen Grund, ein unangenehmes
-Gespräch zu verlassen. Start per Schaltfläche, Menü, Verknüpfung am
-Symbol oder Kachel in den Schnelleinstellungen. Es wird dabei nicht
-angerufen: nichts wird gesendet, und im Protokoll erscheint nichts.
+FAKE-ANRUF
+Das Telefon „klingelt“ — ein Anlass, sich aus einem unangenehmen Gespräch zurückzuziehen. Es findet kein echter Anruf statt: Nichts wird gesendet, nichts erscheint in der Anrufliste.
 
-ZWEI SIM-KARTEN
-• Eine eigene Anruftaste je Karte — ohne zusätzlichen Schritt
-• Die App merkt sich, mit welcher Karte Sie wen anrufen
+DUAL-SIM
+• Eigene Anruftaste für jede SIM-Karte
+• Merkt sich, mit welcher SIM Sie eine Person anrufen
 • Eigene Namen für die Steckplätze: „Arbeit“, „Privat“
 
 ANRUFBILDSCHIRM
-• Ausschalten des Displays am Ohr abschaltbar
-• Bei Kontakten Nummerntyp statt Ziffern
-• Schnelle SMS-Antwort auf eingehende Anrufe
+• Schnelle SMS-Antwort auf einen eingehenden Anruf
+• Ton über ein Bluetooth-Headset
+• Abschalten des Bildschirms am Ohr kann deaktiviert werden
 
-TABLETS UND FALTGERÄTE
-• Anrufliste und Kontaktkarte nebeneinander
-• Seitliche Navigation; quer: Tasten unter dem Daumen
-
-BEDIENUNG
-• Wischen zwischen den Bildschirmen: Protokoll, Kontakte, Notizen,
-  Erinnerungen
-• Einstellbare Wischgesten in der Zeile: 14 Aktionen zur Auswahl
+KOMFORT
 • Helles, dunkles und AMOLED-schwarzes Design
-• Große Schaltflächen bei eingeschränktem Sehvermögen
-• Beschriftungen unter Tasten ausblendbar
-• 48 Sprachen, darunter Deutsch, Englisch, Französisch und Russisch
-• Export von Notizen und Listen in eine Datei
+• Große Tasten für Sehschwache; Beschriftungen lassen sich ausblenden
+• Querformat, Tablets und Foldables: Anrufliste und Kontaktkarte nebeneinander
+• 48 Sprachen der Oberfläche
 
 WAS DIE APP NICHT HAT
 • Werbung
-• Abonnements oder kostenpflichtige Funktionen
+• Abos oder kostenpflichtige Funktionen
 • Internetzugang
-• Gesprächsaufzeichnung — seit Android 10 hat das System sie für
-  Drittanbieter geschlossen, und ein Umgehen verstößt gegen die Regeln
-  von Google Play
+• Gesprächsaufzeichnung — seit Android 10 sperrt das System sie für Apps von Drittanbietern
 
 ZU IHREN DATEN
-Anrufprotokoll und Kontakte werden aus den System-Providern von Android
-gelesen und bleiben auf dem Gerät. Die App legt keine eigene Kopie an —
-bei einer Rückkehr zur Standard-Telefon-App geht nichts verloren.
-
-Ogneliss deaktiviert vorhandene Anruferkennungs-Apps nicht: Sie halten
-eine eigene Systemrolle und arbeiten weiterhin parallel.
+Anrufliste und Kontakte werden aus den Systemanbietern von Android gelesen und bleiben auf dem Gerät. Die App legt keine eigene Kopie an — wenn Sie zur Standard-Telefon-App zurückkehren, geht nichts verloren.
 
 ## Kategorie
 Tools → Kommunikation

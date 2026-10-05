@@ -1,5 +1,9 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.layout.Arrangement
@@ -10,10 +14,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.automirrored.filled.StickyNote2
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -240,9 +240,9 @@ fun NotesScreen(
                     Text(
                         letter.toString(),
                         Modifier.padding(
-                            start = FlowUi.screenPadding + 4.dp,
+                            start = FlowUi.screenPadding + Space.xs,
                             top = FlowUi.sheetPadding,
-                            bottom = 4.dp
+                            bottom = Space.xs
                         ),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -287,11 +287,11 @@ private fun NoteListRow(
             .padding(horizontal = FlowUi.screenPadding, vertical = FlowUi.cardSpacing)
     ) {
         Row(
-            Modifier.padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
+            Modifier.padding(start = Space.l, end = Space.xs, top = Space.s, bottom = Space.s),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                Icons.AutoMirrored.Filled.StickyNote2,
+                OgnelissIcons.StickyNote2,
                 contentDescription = null,
                 tint = NoteTeal,
                 modifier = Modifier.heightIn(min = FlowUi.iconSizeDefault)
@@ -300,7 +300,7 @@ private fun NoteListRow(
             Column(
                 Modifier
                     .weight(1f)
-                    .padding(horizontal = 12.dp)
+                    .padding(horizontal = Space.m)
             ) {
                 /*
                  * Заметка — первой строкой, имя — второй.
@@ -336,7 +336,7 @@ private fun NoteListRow(
             Row(horizontalArrangement = Arrangement.spacedBy(0.dp)) {
                 IconButton(onClick = onCall, modifier = Modifier.heightIn(min = Dimens.MIN_TOUCH_TARGET)) {
                     Icon(
-                        Icons.Default.Call,
+                        OgnelissIcons.Call,
                         contentDescription = stringResource(R.string.action_call),
                         tint = com.ogneliss.dialer.ui.theme.CallGreen
                     )
@@ -351,7 +351,7 @@ private fun NoteListRow(
                  */
                 IconButton(onClick = onEdit, modifier = Modifier.heightIn(min = Dimens.MIN_TOUCH_TARGET)) {
                     Icon(
-                        Icons.Default.Edit,
+                        OgnelissIcons.Edit,
                         contentDescription = stringResource(R.string.action_edit)
                     )
                 }

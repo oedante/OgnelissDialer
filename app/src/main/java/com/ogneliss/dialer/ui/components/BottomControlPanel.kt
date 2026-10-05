@@ -1,24 +1,23 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.foundation.clickable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.automirrored.filled.StickyNote2
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import com.ogneliss.dialer.ui.theme.NoteTeal
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.ui.theme.PanelColors
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -237,7 +236,7 @@ fun BottomControlPanel(
                          * панели и с отступами: попасть в четыре пикселя
                          * высоты пальцем невозможно.
                          */
-                        .padding(vertical = 8.dp)
+                        .padding(vertical = Space.s)
                         .verticalSwipeGesture(
                             onSwipeUp = if (!expanded) onToggleExpanded else null,
                             onSwipeDown = if (expanded) onToggleExpanded else null
@@ -268,7 +267,7 @@ fun BottomControlPanel(
                     ) {}
                 }
             } else {
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(Space.s))
             }
 
             AnimatedVisibility(
@@ -364,16 +363,16 @@ fun BottomControlPanel(
                         Row(
                             Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = FlowUi.screenPadding, vertical = 4.dp),
+                                .padding(horizontal = FlowUi.screenPadding, vertical = Space.xs),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                Icons.AutoMirrored.Filled.StickyNote2,
+                                OgnelissIcons.StickyNote2,
                                 contentDescription = null,
                                 modifier = Modifier.size(FlowUi.iconSizeInline),
                                 tint = NoteTeal
                             )
-                            Spacer(Modifier.width(8.dp))
+                            Spacer(Modifier.width(Space.s))
                             Text(
                                 hint,
                                 style = MaterialTheme.typography.bodySmall,
@@ -394,7 +393,7 @@ fun BottomControlPanel(
                     )
 
 
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(Space.s))
 
 
                     /*
@@ -442,7 +441,7 @@ fun BottomControlPanel(
                                 label = "dialpadToggleIcon"
                             ) { open ->
                                 Icon(
-                                    if (open) Icons.Default.KeyboardHide else Icons.Default.Dialpad,
+                                    if (open) OgnelissIcons.KeyboardHide else OgnelissIcons.Dialpad,
                                     contentDescription = stringResource(R.string.a11y_hide_dialpad)
                                 )
                             }
@@ -460,7 +459,7 @@ fun BottomControlPanel(
                     }
 
 
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(Space.m))
                 }
             }
 
@@ -557,7 +556,7 @@ private fun ActionRow(
             // контактов: раньше обе набирали её из содержимого
             // и не совпадали
             .height(FlowUi.panelRowHeight())
-            .padding(horizontal = 8.dp),
+            .padding(horizontal = Space.s),
         /*
          * Подписи — на одной линии: с 1.2.0 все кнопки ряда одной высоты
          * (таблетки по 40 dp), поэтому достаточно выравнивания по центру.
@@ -591,7 +590,7 @@ private fun ActionRow(
              * Spacer того же размера держит кнопку клавиатуры по центру.
              */
             if (!railShown) {
-                LabeledIconButton(Icons.Default.Person, R.string.nav_contacts, onContacts)
+                LabeledIconButton(OgnelissIcons.Person, R.string.nav_contacts, onContacts)
             } else {
                 Spacer(Modifier.size(width = PILL_WIDTH, height = PILL_HEIGHT))
             }
@@ -610,7 +609,7 @@ private fun ActionRow(
              * отбор переставал бросаться в глаза.
              */
             Box {
-                LabeledIconButton(Icons.Default.FilterList, R.string.filter_title, onFilters)
+                LabeledIconButton(OgnelissIcons.FilterList, R.string.filter_title, onFilters)
 
                 // Без метки работающий фильтр невидим: журнал наполовину
                 // пуст, и это выглядит как потеря данных
@@ -660,7 +659,7 @@ private fun ActionRow(
                 )
         ) {
             Icon(
-                if (expanded) Icons.Default.KeyboardArrowDown else Icons.Default.Dialpad,
+                if (expanded) OgnelissIcons.KeyboardArrowDown else OgnelissIcons.Dialpad,
                 contentDescription = stringResource(
                     if (expanded) R.string.dialpad_hide else R.string.dialpad_show
                 )
@@ -672,7 +671,7 @@ private fun ActionRow(
             com.ogneliss.dialer.ui.theme.LocalAppearance.current.buttonLabels
         ) {
             // 4 dp, а не 2: подпись прилипала к таблетке кнопки
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(Space.xs))
 
             Text(
                 stringResource(R.string.bar_dialpad),
@@ -728,7 +727,7 @@ private fun ActionRow(
              */
             if (selectionActive && onStartSelection != null) {
                 LabeledIconButton(
-                    icon = Icons.Default.Close,
+                    icon = OgnelissIcons.Close,
                     // «Выйти», а не «Выйти из выбора»: под значком
                     // помещается одно слово
                     labelRes = R.string.bar_exit,
@@ -736,7 +735,7 @@ private fun ActionRow(
                     tint = MaterialTheme.colorScheme.primary
                 )
             } else if (onReminders != null && !railShown) {
-                LabeledIconButton(Icons.Default.Alarm, R.string.nav_reminders, onReminders)
+                LabeledIconButton(OgnelissIcons.Alarm, R.string.nav_reminders, onReminders)
             } else {
                 // Размером с кнопку-таблетку: пустое место не короче соседей
                 Spacer(Modifier.size(width = PILL_WIDTH, height = PILL_HEIGHT))
@@ -758,7 +757,7 @@ private fun ActionRow(
                     // Подпись короткая: «Открыть меню» под значком
                     // не поместилось бы, а рядом с ним стоят «Контакты»
                     // и «Напоминания» такой же длины
-                    LabeledIconButton(Icons.Default.MoreVert, R.string.bar_menu, onMenu)
+                    LabeledIconButton(OgnelissIcons.MoreVert, R.string.bar_menu, onMenu)
                     if (filter.isActive) {
                         Badge(Modifier.align(Alignment.TopEnd)) {
                             Text(filter.activeCount.toString())
@@ -802,17 +801,33 @@ private fun ActionRail(
     onMenu: () -> Unit,
     menuContent: @Composable () -> Unit
 ) {
-    Column(
+    /*
+     * ПОДПИСИ В БОКОВОЙ КОЛОНКЕ (1.3.4, 04.10.2026, замечание аудита
+     * «боковая панель без подписей»).
+     * Было: showLabel = false у всех кнопок — лёжа кнопки были немыми.
+     * Стало: подписи по той же настройке «Подписи под кнопками», что
+     * и в нижней панели, — если по высоте помещаются пять кнопок с подписями
+     * (около 340 dp). Колонка фиксированной ширины 80 dp — как стандартная
+     * боковая навигация Material; длинные слова ужимает FitText.
+     */
+    BoxWithConstraints(
         Modifier
             .fillMaxHeight()
             .navigationBarsPadding()
-            .padding(horizontal = 8.dp, vertical = 12.dp),
+            .width(RAIL_WIDTH)
+    ) {
+    val labels = com.ogneliss.dialer.ui.theme.LocalAppearance.current.buttonLabels &&
+        maxHeight >= RAIL_MIN_HEIGHT_WITH_LABELS
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(horizontal = Space.s, vertical = Space.m),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LabeledIconButton(Icons.Default.Person, R.string.nav_contacts, onContacts, showLabel = false)
+        LabeledIconButton(OgnelissIcons.Person, R.string.nav_contacts, onContacts, showLabel = labels)
         Box {
-            LabeledIconButton(Icons.Default.FilterList, R.string.filter_title, onFilters, showLabel = false)
+            LabeledIconButton(OgnelissIcons.FilterList, R.string.filter_title, onFilters, showLabel = labels)
             if (filter.isActive) {
                 Badge(Modifier.align(Alignment.TopEnd)) { Text(filter.activeCount.toString()) }
             }
@@ -824,7 +839,7 @@ private fun ActionRail(
         ) {
             Icon(
                 // Клавиатура открывается слева от полосы — стрелка туда же
-                if (expanded) Icons.AutoMirrored.Filled.KeyboardArrowRight else Icons.Default.Dialpad,
+                if (expanded) OgnelissIcons.KeyboardArrowRight else OgnelissIcons.Dialpad,
                 contentDescription = stringResource(
                     if (expanded) R.string.dialpad_hide else R.string.dialpad_show
                 )
@@ -832,18 +847,28 @@ private fun ActionRail(
         }
         if (selectionActive && onStartSelection != null) {
             LabeledIconButton(
-                icon = Icons.Default.Close,
+                icon = OgnelissIcons.Close,
                 labelRes = R.string.bar_exit,
                 onClick = onStartSelection,
                 tint = MaterialTheme.colorScheme.primary,
-                showLabel = false
+                showLabel = labels
             )
         } else if (onReminders != null) {
-            LabeledIconButton(Icons.Default.Alarm, R.string.nav_reminders, onReminders, showLabel = false)
+            LabeledIconButton(OgnelissIcons.Alarm, R.string.nav_reminders, onReminders, showLabel = labels)
         }
         Box {
-            LabeledIconButton(Icons.Default.MoreVert, R.string.bar_menu, onMenu, showLabel = false)
+            LabeledIconButton(OgnelissIcons.MoreVert, R.string.bar_menu, onMenu, showLabel = labels)
             menuContent()
         }
     }
+    }
 }
+
+/** Ширина боковой колонки — как у стандартной боковой навигации Material. */
+private val RAIL_WIDTH = 80.dp
+
+/**
+ * Высота, с которой подписи помещаются: четыре кнопки по 40 dp с подписью
+ * и отступами (~64 dp) + кнопка клавиатуры 56 dp + поля 24 dp ≈ 336 dp.
+ */
+private val RAIL_MIN_HEIGHT_WITH_LABELS = 340.dp

@@ -1,5 +1,9 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.Space
+
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.ui.theme.PanelColors
 import androidx.compose.foundation.layout.Row
@@ -7,13 +11,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.Alignment
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Badge
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -161,7 +161,7 @@ fun ContactsBottomBar(
                     // панели, и они сливались в одну линию
                     .padding(horizontal = FlowUi.screenPadding),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(Space.s)
             ) {
             OutlinedTextField(
                 // Белое поле на серой панели — как клавиши и строка номера:
@@ -192,7 +192,7 @@ fun ContactsBottomBar(
                 value = query,
                 onValueChange = onQueryChange,
                 placeholder = { Text(stringResource(R.string.contacts_search_hint)) },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                leadingIcon = { Icon(OgnelissIcons.Search, contentDescription = null) },
                 trailingIcon = {
                     /*
                      * Очистка или фильтры — в одном месте.
@@ -208,7 +208,7 @@ fun ContactsBottomBar(
                     if (query.isNotEmpty()) {
                         IconButton(onClick = { onQueryChange("") }) {
                             Icon(
-                                Icons.Default.Clear,
+                                OgnelissIcons.Clear,
                                 contentDescription = stringResource(R.string.empty_clear_search)
                             )
                         }
@@ -237,7 +237,7 @@ fun ContactsBottomBar(
                 // Та же кнопка с подписью, что на панели журнала:
                 // иначе панели разной высоты. Разбор — в LabeledIconButton
                 LabeledIconButton(
-                    icon = Icons.Default.FilterList,
+                    icon = OgnelissIcons.FilterList,
                     labelRes = R.string.filter_title,
                     onClick = onFilters,
                     tint = if (filter != ContactFilter.ALL) {
