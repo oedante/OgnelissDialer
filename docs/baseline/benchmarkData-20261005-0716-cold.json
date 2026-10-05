@@ -1,0 +1,109 @@
+{
+    "context": {
+        "build": {
+            "brand": "nubia",
+            "device": "PQ83A01",
+            "fingerprint": "nubia/PQ83A01-UN/PQ83A01:15/AQ3A.240812.002/20260106.015417:user/release-keys",
+            "id": "AQ3A.240812.002",
+            "model": "NX721J",
+            "type": "user",
+            "version": {
+                "codename": "REL",
+                "sdk": 35
+            }
+        },
+        "cpuCoreCount": 8,
+        "cpuLocked": false,
+        "cpuMaxFreqHz": 3302400000,
+        "memTotalBytes": 16092770304,
+        "sustainedPerformanceModeEnabled": false,
+        "artMainlineVersion": 372042580,
+        "osCodenameAbbreviated": "REL",
+        "compilationMode": "run-from-apk",
+        "payload": {}
+    },
+    "benchmarks": [
+        {
+            "name": "startupNoCompilation",
+            "params": {},
+            "className": "com.ogneliss.benchmark.StartupBenchmark",
+            "totalRunTimeNs": 165753092228,
+            "metrics": {
+                "timeToInitialDisplayMs": {
+                    "minimum": 228.808385,
+                    "maximum": 318.270468,
+                    "median": 276.087708,
+                    "coefficientOfVariation": 0.10359757166827407,
+                    "runs": [
+                        272.745677,
+                        318.270468,
+                        302.006666,
+                        256.97651,
+                        286.491667,
+                        285.613802,
+                        231.8425,
+                        268.134114,
+                        279.429739,
+                        228.808385
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 0,
+            "repeatIterations": 10,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 0",
+                    "filename": "StartupBenchmark_startupNoCompilation_iter000_2026-10-05-02-22-27.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 1",
+                    "filename": "StartupBenchmark_startupNoCompilation_iter001_2026-10-05-02-22-33.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 2",
+                    "filename": "StartupBenchmark_startupNoCompilation_iter002_2026-10-05-02-22-37.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 3",
+                    "filename": "StartupBenchmark_startupNoCompilation_iter003_2026-10-05-02-23-10.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 4",
+                    "filename": "StartupBenchmark_startupNoCompilation_iter004_2026-10-05-02-23-16.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 5",
+                    "filename": "StartupBenchmark_startupNoCompilation_iter005_2026-10-05-02-23-20.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 6",
+                    "filename": "StartupBenchmark_startupNoCompilation_iter006_2026-10-05-02-23-53.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 7",
+                    "filename": "StartupBenchmark_startupNoCompilation_iter007_2026-10-05-02-23-57.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 8",
+                    "filename": "StartupBenchmark_startupNoCompilation_iter008_2026-10-05-02-24-01.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 9",
+                    "filename": "StartupBenchmark_startupNoCompilation_iter009_2026-10-05-02-24-34.perfetto-trace"
+                }
+            ]
+        }
+    ]
+}

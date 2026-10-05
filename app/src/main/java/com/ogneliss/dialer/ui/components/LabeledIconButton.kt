@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.components
 
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.material3.Text
 import com.ogneliss.dialer.ui.theme.Space
 
 import androidx.compose.foundation.clickable
@@ -68,7 +70,14 @@ fun LabeledIconButton(
      * Описание для чтения с экрана остаётся в любом случае.
      */
     showLabel: Boolean = !LocalWindowLayout.current.isShort &&
-        com.ogneliss.dialer.ui.theme.LocalAppearance.current.buttonLabels
+        com.ogneliss.dialer.ui.theme.LocalAppearance.current.buttonLabels,
+    /**
+     * Ужимать длинную подпись через FitText (1.3.4, 05.10.2026). Только
+     * в узкой боковой колонке: FitText меряет текст и строит вложенную
+     * разметку, а нижняя панель журнала — на первом кадре запуска;
+     * в ней подпись помещается и обычный Text дешевле.
+     */
+    fitLabel: Boolean = false
 ) {
     val label = stringResource(labelRes)
 
@@ -115,15 +124,24 @@ fun LabeledIconButton(
             // 4 dp, а не 2: подпись прилипала к таблетке кнопки
             Spacer(Modifier.height(Space.xs))
 
-            // FitText (1.3.4): длинная подпись («Напоминания» в боковой
-            // колонке) ужимается, а не обрезается многоточием
-            FitText(
-                label,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                minScale = 0.8f
-            )
+            if (fitLabel) {
+                // Узкая колонка: длинное слово ужимается, а не обрезается
+                FitText(
+                    label,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    minScale = 0.8f
+                )
+            } else {
+                Text(
+                    label,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }

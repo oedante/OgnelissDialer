@@ -176,6 +176,10 @@ for k in sorted(action_keys - handled):
 for f in kt_files():
     rel = os.path.relpath(f, SRC)
     text = open(f, encoding='utf-8').read()
+    # Сгенерированный код (05.10.2026: OgnelissIcons — 5500 вызовов moveTo/
+    # lineTo) — доля комментариев к нему неприменима; пометка в заголовке
+    if '@generated' in text[:3000]:
+        continue
     lines = [l for l in text.split('\n') if l.strip()]
     comment_lines = [l for l in lines if l.strip().startswith(('//', '*', '/*'))]
     # Порог 10%: файл длиннее 40 строк без пояснений почти наверняка

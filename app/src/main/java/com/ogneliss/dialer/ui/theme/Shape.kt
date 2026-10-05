@@ -58,6 +58,9 @@ object OgnelissShapeTokens {
      */
     val bottomPanel = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
 
+    /** Фото в шапке карточки: нижние углы как у панелей (1.3.4). */
+    val coverBottom = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp)
+
     /**
      * Кнопка вызова. Полное скругление — это главная кнопка экрана,
      * и форма выделяет её среди прямоугольных клавиш.

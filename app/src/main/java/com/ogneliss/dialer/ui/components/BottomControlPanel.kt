@@ -825,9 +825,9 @@ private fun ActionRail(
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LabeledIconButton(OgnelissIcons.Person, R.string.nav_contacts, onContacts, showLabel = labels)
+        LabeledIconButton(OgnelissIcons.Person, R.string.nav_contacts, onContacts, showLabel = labels, fitLabel = true)
         Box {
-            LabeledIconButton(OgnelissIcons.FilterList, R.string.filter_title, onFilters, showLabel = labels)
+            LabeledIconButton(OgnelissIcons.FilterList, R.string.filter_title, onFilters, showLabel = labels, fitLabel = true)
             if (filter.isActive) {
                 Badge(Modifier.align(Alignment.TopEnd)) { Text(filter.activeCount.toString()) }
             }
@@ -851,13 +851,14 @@ private fun ActionRail(
                 labelRes = R.string.bar_exit,
                 onClick = onStartSelection,
                 tint = MaterialTheme.colorScheme.primary,
-                showLabel = labels
+                showLabel = labels,
+                fitLabel = true
             )
         } else if (onReminders != null) {
-            LabeledIconButton(OgnelissIcons.Alarm, R.string.nav_reminders, onReminders, showLabel = labels)
+            LabeledIconButton(OgnelissIcons.Alarm, R.string.nav_reminders, onReminders, showLabel = labels, fitLabel = true)
         }
         Box {
-            LabeledIconButton(OgnelissIcons.MoreVert, R.string.bar_menu, onMenu, showLabel = labels)
+            LabeledIconButton(OgnelissIcons.MoreVert, R.string.bar_menu, onMenu, showLabel = labels, fitLabel = true)
             menuContent()
         }
     }

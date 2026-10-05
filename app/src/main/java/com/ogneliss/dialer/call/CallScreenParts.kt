@@ -57,7 +57,8 @@ internal fun CallPhotoBackground(photoUri: String) {
  * Светлые цвета для блока «кто звонит» поверх фото (1.3.4).
  * Подмена цветов темы, а не правка CallerIdentity и CallStatusLine:
  * они берут onSurface, onSurfaceVariant и outline — здесь те же роли
- * становятся светлыми. Шрифты и формы — прежние.
+ * становятся светлыми, а фоны плашек (surfaceContainer*) — затемнением.
+ * Шрифты и формы — прежние.
  */
 @Composable
 internal fun OnPhotoColors(enabled: Boolean, content: @Composable () -> Unit) {
@@ -71,7 +72,15 @@ internal fun OnPhotoColors(enabled: Boolean, content: @Composable () -> Unit) {
             onSurface = Color.White,
             onSurfaceVariant = Color.White.copy(alpha = 0.85f),
             outline = Color.White.copy(alpha = 0.75f),
-            primary = Color.White
+            primary = Color.White,
+            /*
+             * Плашки («Соединение…») — затемнение, а не светлый контейнер
+             * темы (05.10.2026, скриншот автора): белый текст на светлой
+             * плашке поверх фото был почти не виден.
+             */
+            surfaceContainerHighest = Color.Black.copy(alpha = 0.40f),
+            surfaceContainerHigh = Color.Black.copy(alpha = 0.35f),
+            surfaceContainer = Color.Black.copy(alpha = 0.30f)
         ),
         shapes = MaterialTheme.shapes,
         typography = MaterialTheme.typography

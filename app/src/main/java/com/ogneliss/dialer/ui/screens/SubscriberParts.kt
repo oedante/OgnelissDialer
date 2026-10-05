@@ -65,7 +65,9 @@ internal fun CallHistoryRow(
      * «звонил на рабочий или на личный» — вопрос, ради которого
      * в историю и заходят.
      */
-    showNumber: Boolean = false
+    showNumber: Boolean = false,
+    /** Только время: день уже в заголовке группы («Сегодня», «Вчера») — 1.3.4. */
+    timeOnly: Boolean = false
 ) {
     // Формат даты зависит от локали, поэтому пересоздаётся при её смене.
     // Статический форматтер показывал бы даты на прежнем языке
@@ -98,22 +100,43 @@ internal fun CallHistoryRow(
             // легла бы вторым слоем поверх и была бы видна на тёмной теме
             containerColor = androidx.compose.ui.graphics.Color.Transparent
         ),
-        leadingContent = { Icon(icon, contentDescription = null, tint = tint) },
-        headlineContent = { Text(stringResource(typeRes)) },
-        supportingContent = {
-            Column {
-                Text(relativeDateLabel(entry.date, locale))
-
+        /*
+         * Компактная строка (1.3.4, 05.10.2026, задача автора: «история —
+         * как журнал»). Было: три строки — «Исходящий / Вчера, 14:35 /
+         * номер», тип словом дублировал значок, дата — заголовок группы.
+         * Стало: тип — значком (TalkBack читает его словом), пропущенный —
+         * красным; строка — время (в группах «Сегодня», «Вчера» — только
+         * время) и длительность справа; номер — второй строкой, только
+         * если у абонента номеров несколько.
+         */
+        leadingContent = { Icon(icon, contentDescription = stringResource(typeRes), tint = tint) },
+        headlineContent = {
+            Text(
+                if (timeOnly) {
+                    java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT, locale)
+                        .format(java.util.Date(entry.date))
+                } else {
+                    relativeDateLabel(entry.date, locale)
+                },
+                color = if (entry.type == CallType.MISSED) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                }
+            )
+        },
+        supportingContent = if (showNumber) {
+            {
                 // Номер второй строкой: у абонента с несколькими номерами
                 // это главное, чего не хватает в истории
-                if (showNumber) {
-                    Text(
-                        PhoneFormatter.format(entry.number),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.outline
-                    )
-                }
+                Text(
+                    PhoneFormatter.format(entry.number),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.outline
+                )
             }
+        } else {
+            null
         },
         trailingContent = {
             if (entry.durationSec > 0) {
@@ -386,7 +409,9 @@ internal fun SubscriberMoreMenu(
     onShortcut: () -> Unit,
     onEdit: (Long) -> Unit,
     /** Удаление контакта — с подтверждением в карточке (1.3.4). */
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    /** Показать блок отметки у контакта; null — блок и так виден (1.3.4). */
+    onMarkSpam: (() -> Unit)? = null
 ) {
     var open by remember { mutableStateOf(false) }
 
@@ -452,6 +477,14 @@ internal fun SubscriberMoreMenu(
                         )
                         SheetDivider()
                         SheetRow(OgnelissIcons.Edit, editLabel, onClick = { open = false; onEdit(knownContactId) })
+                        if (onMarkSpam != null) {
+                            SheetDivider()
+                            SheetRow(
+                                OgnelissIcons.Report,
+                                stringResource(R.string.action_mark_spam),
+                                onClick = { open = false; onMarkSpam() }
+                            )
+                        }
                         SheetDivider()
                         // Необратимое — красным, последним в группе (1.3.4)
                         SheetRow(

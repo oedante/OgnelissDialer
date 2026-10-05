@@ -1,5 +1,9 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.data.CallLogDateGroup
+import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Shadow
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.components.DeleteContactDialog
@@ -622,6 +626,15 @@ fun SubscriberScreen(
     val note = state.notes[group.e164]
     // С 1.1.1 отметка отдельно от заметки — разбор в SpamMarkEntity
     val spamMark = state.spamMarks[group.e164]?.type
+    /*
+     * Отметка «Спам / Мошенники» у контактов из книги (1.3.4, 05.10.2026,
+     * задача автора). Целый блок отметки у «Любимой» — лишний: своих
+     * контактов спамом не отмечают. Блок виден у незнакомых номеров,
+     * у контакта — если отметка уже стоит (её видно и можно снять) или
+     * если её попросили через «Ещё» → «Отметить как спам».
+     */
+    var markRequested by remember(group.e164) { mutableStateOf(false) }
+    val showMarkSection = knownContactId == null || spamMark != null || markRequested
     var editingNote by remember { mutableStateOf(false) }
     var confirmDelete by remember { mutableStateOf(false) }
 
@@ -897,7 +910,10 @@ fun SubscriberScreen(
                             vm.pinContactShortcut(title, group.number, group.e164)
                         },
                         onEdit = { id -> vm.editContact(id) },
-                        onDelete = { confirmDelete = true }
+                        onDelete = { confirmDelete = true },
+                        onMarkSpam = if (showMarkSection) null else {
+                            { markRequested = true }
+                        }
                     )
                 }
             )
@@ -962,6 +978,193 @@ fun SubscriberScreen(
         // В левой колонке шириной 360 dp обычные пропорции — как на телефоне
         val flatPhoto = windowLayout.isLandscape && !twoColumns
 
+        /*
+         * БЫСТРЫЕ ДЕЙСТВИЯ — ВНИЗУ (1.3.4, 05.10.2026, задача автора: «кнопки
+         * лучше расположить внизу, чтобы соблюсти наш принцип доступности»).
+         * Было: ряд из пяти кнопок в шапке под фото — уезжал вверх при прокрутке,
+         * и до «Позвонить» на большом телефоне не дотянуться одной рукой.
+         * Стало: стоя — неподвижная нижняя панель, как в журнале и на экране
+         * вызова (bottomPanel, surfaceContainer); список прокручивается над ней.
+         * Шапка отдельной колонкой (широкий экран) — ряд остаётся в ней.
+         * Сами действия не менялись — ряд перенесён целиком.
+         */
+        val quickActions: @Composable RowScope.() -> Unit = {
+            /*
+             * «ПОЗВОНИТЬ» — ПЛИТКА В ОБЩЕМ РЯДУ.
+             *
+             * ══════════════════════════════════════════════
+             * ПОЧЕМУ БОЛЬШЕ НЕ ОТДЕЛЬНАЯ КНОПКА
+             * ══════════════════════════════════════════════
+             * Широкая кнопка занимала отдельную строку
+             * высотой 56 dp плюс отступы — около 80 dp
+             * первого экрана. Под ней всё равно шёл ряд
+             * из четырёх плиток, то есть две полосы
+             * действий подряд.
+             *
+             * В один ряд помещается всё, и номера
+             * поднимаются выше на целую строку.
+             *
+             * ── Что сохранено ──────────────────────────────
+             * Зелёный цвет: это код телефонии, тот же,
+             * что у свайпа вызова и кнопки ответа.
+             * И место первой слева — там, куда палец
+             * идёт по привычке.
+             *
+             * ⚠️ Плитка нажимается целиком, как и раньше
+             * кнопка, и высота её не меньше обязательных
+             * 48 dp. Промахнуться не легче, чем прежде:
+             * ширина стала меньше, но по вертикали ничего
+             * не изменилось.
+             */
+            QuickAction(
+                OgnelissIcons.Call,
+                R.string.action_call,
+                // Круг зелёный, значок в нём белый.
+                // Подпись под кругом — обычного цвета:
+                // она лежит на фоне карточки, а не
+                // на заливке
+                container = CallGreen,
+                tint = Color.White
+            ) {
+                vm.call(group.number)
+            }
+
+            /*
+             * «НАПИСАТЬ» ВМЕСТО «SMS» (1.2.5).
+             * Нет мессенджеров у контакта — сразу SMS, как было:
+             * для таких контактов ничего не изменилось. Есть —
+             * шторка выбора: SMS и только те мессенджеры,
+             * в которых человек есть (ContactMessengers).
+             */
+            QuickAction(
+                OgnelissIcons.Message,
+                R.string.action_write
+            ) {
+                if (messengerLinks.isEmpty()) vm.openSms(group.number)
+                else writeSheetOpen = true
+            }
+            /*
+             * ПОДЕЛИТЬСЯ КОНТАКТОМ.
+             *
+             * ── Чем отличается от QR ───────────────────────
+             * QR работает при личной встрече: собеседник
+             * рядом и наводит камеру. Отправка — когда
+             * его нет рядом: письмо, мессенджер, заметки.
+             *
+             * Оба нужны, и подменять одно другим нельзя:
+             * показать код в переписке невозможно,
+             * а при встрече отправлять сообщение долго.
+             *
+             * ── Что отправляется ───────────────────────────
+             * Та же визитка vCard, что в коде. Получатель
+             * сохранит контакт одним нажатием, а не будет
+             * переписывать цифры из текста.
+             */
+            QuickAction(OgnelissIcons.Share, R.string.action_share) {
+                val name = group.displayName
+                    ?: PhoneFormatter.format(group.number)
+
+                ExportShare.shareText(
+                    context = context,
+                    // Читаемый текст, а не vCard: получатель
+                    // видит имя и номера, а не служебную
+                    // разметку. vCard остаётся в QR-коде,
+                    // где его читает камера
+                    text = ContactQr.plainText(
+                        name,
+                        group.numbers,
+                        cardContact?.emails.orEmpty()
+                    ),
+                    subject = name,
+                    chooserTitle = shareTitle
+                )
+            }
+            /*
+             * Короткая подпись «Напомнить».
+             *
+             * «Напомнить перезвонить» не помещалось
+             * в плитку и разъезжалось на две строки,
+             * из-за чего эта плитка была выше трёх
+             * соседних. Смысл не теряется: плитки стоят
+             * в карточке конкретного человека,
+             * и «напомнить» может значить только одно.
+             *
+             * Полная фраза осталась там, где места
+             * хватает: в меню длинного нажатия,
+             * в настройках свайпов и в названии канала
+             * уведомлений.
+             */
+            QuickAction(OgnelissIcons.Alarm, R.string.action_remind_short) {
+                vm.requestReminder(group)
+            }
+            /*
+             * БЛОКИРОВКА — ПЕРЕКЛЮЧАТЕЛЬ, А НЕ КНОПКА.
+             *
+             * ══════════════════════════════════════════════
+             * ЧТО БЫЛО НЕ ТАК
+             * ══════════════════════════════════════════════
+             * Кнопка блокировала, но выглядела одинаково
+             * до и после нажатия. Человек не понимал,
+             * сработало ли, и нажимал ещё раз — а второе
+             * нажатие снова добавляло то же правило.
+             *
+             * И обратного хода не было: снять блокировку
+             * из карточки было нельзя, только из настроек.
+             *
+             * ── Как теперь ─────────────────────────────────
+             * Заблокированный номер: значок перечёркнутого
+             * круга красный, подпись «Разблокировать».
+             * Нажатие снимает блокировку.
+             *
+             * Подпись сокращена до «Блок»: полная
+             * не помещалась под иконкой.
+             */
+            QuickAction(
+                icon = OgnelissIcons.Block,
+                labelRes = when {
+                    isBlocked -> R.string.action_unblock_short
+                    blockingMask != null -> R.string.action_blocked_by_mask
+                    else -> R.string.action_block_short
+                },
+                /*
+                 * ЦВЕТ ГОВОРИТ, ЧТО СДЕЛАЕТ НАЖАТИЕ.
+                 *
+                 * Красный — «заблокирует», зелёный —
+                 * «разблокирует». Поэтому у заблокированного
+                 * номера кнопка ЗЕЛЁНАЯ: она снимает
+                 * блокировку. Раньше она была красной,
+                 * то есть цвет показывал состояние,
+                 * а подпись — действие, и они спорили.
+                 *
+                 * Под маской нажатие не блокирует
+                 * и не снимает — оно объясняет. Красный:
+                 * звонки не проходят, и об этом надо
+                 * сказать тем же цветом, что у блокировки.
+                 */
+                tint = when {
+                    isBlocked -> MaterialTheme.colorScheme.primary
+                    blockingMask != null -> BlockRed
+                    else -> BlockRed
+                }
+            ) {
+                when {
+                    isBlocked -> {
+                        haptics()
+                        vm.removeRule(group.e164)
+                    }
+
+                    // Показ объяснения про маску ничего
+                    // не меняет — отклика здесь не нужно
+                    blockingMask != null -> maskWarning = blockingMask
+
+                    else -> {
+                        haptics()
+                        vm.blockNumber(group.e164)
+                    }
+                }
+            }
+        }
+
         val header: @Composable () -> Unit = {
             /*
              * Шапка карточки на цветном контейнере.
@@ -1006,10 +1209,21 @@ fun SubscriberScreen(
                      * Без фото — ничего вместо него: сразу имя и кнопки.
                      */
                     photoUri?.takeIf { it.isNotBlank() }?.let { uri ->
-                        val backdrop = MaterialTheme.colorScheme.background
+                        /*
+                         * ШАПКА С ФОТО — В КЛЮЧЕ ЭКРАНА ВЫЗОВА (1.3.4, 05.10.2026,
+                         * скриншот автора: имя мелкое и теряется на фото).
+                         * Было: фото внизу переходило в цвет фона страницы,
+                         * имя titleLarge цветом onSurface лежало на этом
+                         * переходе — под тёмным текстом ещё было видно фото.
+                         * Стало: внизу фото — затемнение, имя белым,
+                         * headlineMedium, с лёгкой тенью; нижние углы фото
+                         * скруглены на 28 dp, как у панелей, — страница
+                         * начинается с чистого края.
+                         */
                         Box(
                             Modifier
                                 .fillMaxWidth()
+                                .clip(OgnelissShapeTokens.coverBottom)
                                 /*
                                  * Лёжа в две колонки обложка — 3 : 1, а не 1,5 : 1.
                                  * Колонка шириной 360 dp давала обложку в 240 dp
@@ -1050,8 +1264,8 @@ fun SubscriberScreen(
                                     .fillMaxSize()
                                     .background(
                                         Brush.verticalGradient(
-                                            0.55f to Color.Transparent,
-                                            1f to backdrop
+                                            0.45f to Color.Transparent,
+                                            1f to Color.Black.copy(alpha = 0.65f)
                                         )
                                     )
                             )
@@ -1071,9 +1285,15 @@ fun SubscriberScreen(
                              */
                             Text(
                                 title,
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.headlineMedium.copy(
+                                    shadow = Shadow(
+                                        color = Color.Black.copy(alpha = 0.45f),
+                                        offset = Offset(0f, 2f),
+                                        blurRadius = 8f
+                                    )
+                                ),
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.White,
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis,
                                 modifier = Modifier
@@ -1346,184 +1566,13 @@ fun SubscriberScreen(
                      * номер» вылезало за край, переносясь на две строки
                      * с обрывом.
                      */
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(Space.s)
-                    ) {
-                        /*
-                         * «ПОЗВОНИТЬ» — ПЛИТКА В ОБЩЕМ РЯДУ.
-                         *
-                         * ══════════════════════════════════════════════
-                         * ПОЧЕМУ БОЛЬШЕ НЕ ОТДЕЛЬНАЯ КНОПКА
-                         * ══════════════════════════════════════════════
-                         * Широкая кнопка занимала отдельную строку
-                         * высотой 56 dp плюс отступы — около 80 dp
-                         * первого экрана. Под ней всё равно шёл ряд
-                         * из четырёх плиток, то есть две полосы
-                         * действий подряд.
-                         *
-                         * В один ряд помещается всё, и номера
-                         * поднимаются выше на целую строку.
-                         *
-                         * ── Что сохранено ──────────────────────────────
-                         * Зелёный цвет: это код телефонии, тот же,
-                         * что у свайпа вызова и кнопки ответа.
-                         * И место первой слева — там, куда палец
-                         * идёт по привычке.
-                         *
-                         * ⚠️ Плитка нажимается целиком, как и раньше
-                         * кнопка, и высота её не меньше обязательных
-                         * 48 dp. Промахнуться не легче, чем прежде:
-                         * ширина стала меньше, но по вертикали ничего
-                         * не изменилось.
-                         */
-                        QuickAction(
-                            OgnelissIcons.Call,
-                            R.string.action_call,
-                            // Круг зелёный, значок в нём белый.
-                            // Подпись под кругом — обычного цвета:
-                            // она лежит на фоне карточки, а не
-                            // на заливке
-                            container = CallGreen,
-                            tint = Color.White
-                        ) {
-                            vm.call(group.number)
-                        }
-
-                        /*
-                         * «НАПИСАТЬ» ВМЕСТО «SMS» (1.2.5).
-                         * Нет мессенджеров у контакта — сразу SMS, как было:
-                         * для таких контактов ничего не изменилось. Есть —
-                         * шторка выбора: SMS и только те мессенджеры,
-                         * в которых человек есть (ContactMessengers).
-                         */
-                        QuickAction(
-                            OgnelissIcons.Message,
-                            R.string.action_write
-                        ) {
-                            if (messengerLinks.isEmpty()) vm.openSms(group.number)
-                            else writeSheetOpen = true
-                        }
-                        /*
-                         * ПОДЕЛИТЬСЯ КОНТАКТОМ.
-                         *
-                         * ── Чем отличается от QR ───────────────────────
-                         * QR работает при личной встрече: собеседник
-                         * рядом и наводит камеру. Отправка — когда
-                         * его нет рядом: письмо, мессенджер, заметки.
-                         *
-                         * Оба нужны, и подменять одно другим нельзя:
-                         * показать код в переписке невозможно,
-                         * а при встрече отправлять сообщение долго.
-                         *
-                         * ── Что отправляется ───────────────────────────
-                         * Та же визитка vCard, что в коде. Получатель
-                         * сохранит контакт одним нажатием, а не будет
-                         * переписывать цифры из текста.
-                         */
-                        QuickAction(OgnelissIcons.Share, R.string.action_share) {
-                            val name = group.displayName
-                                ?: PhoneFormatter.format(group.number)
-
-                            ExportShare.shareText(
-                                context = context,
-                                // Читаемый текст, а не vCard: получатель
-                                // видит имя и номера, а не служебную
-                                // разметку. vCard остаётся в QR-коде,
-                                // где его читает камера
-                                text = ContactQr.plainText(
-                                    name,
-                                    group.numbers,
-                                    cardContact?.emails.orEmpty()
-                                ),
-                                subject = name,
-                                chooserTitle = shareTitle
-                            )
-                        }
-                        /*
-                         * Короткая подпись «Напомнить».
-                         *
-                         * «Напомнить перезвонить» не помещалось
-                         * в плитку и разъезжалось на две строки,
-                         * из-за чего эта плитка была выше трёх
-                         * соседних. Смысл не теряется: плитки стоят
-                         * в карточке конкретного человека,
-                         * и «напомнить» может значить только одно.
-                         *
-                         * Полная фраза осталась там, где места
-                         * хватает: в меню длинного нажатия,
-                         * в настройках свайпов и в названии канала
-                         * уведомлений.
-                         */
-                        QuickAction(OgnelissIcons.Alarm, R.string.action_remind_short) {
-                            vm.requestReminder(group)
-                        }
-                        /*
-                         * БЛОКИРОВКА — ПЕРЕКЛЮЧАТЕЛЬ, А НЕ КНОПКА.
-                         *
-                         * ══════════════════════════════════════════════
-                         * ЧТО БЫЛО НЕ ТАК
-                         * ══════════════════════════════════════════════
-                         * Кнопка блокировала, но выглядела одинаково
-                         * до и после нажатия. Человек не понимал,
-                         * сработало ли, и нажимал ещё раз — а второе
-                         * нажатие снова добавляло то же правило.
-                         *
-                         * И обратного хода не было: снять блокировку
-                         * из карточки было нельзя, только из настроек.
-                         *
-                         * ── Как теперь ─────────────────────────────────
-                         * Заблокированный номер: значок перечёркнутого
-                         * круга красный, подпись «Разблокировать».
-                         * Нажатие снимает блокировку.
-                         *
-                         * Подпись сокращена до «Блок»: полная
-                         * не помещалась под иконкой.
-                         */
-                        QuickAction(
-                            icon = OgnelissIcons.Block,
-                            labelRes = when {
-                                isBlocked -> R.string.action_unblock_short
-                                blockingMask != null -> R.string.action_blocked_by_mask
-                                else -> R.string.action_block_short
-                            },
-                            /*
-                             * ЦВЕТ ГОВОРИТ, ЧТО СДЕЛАЕТ НАЖАТИЕ.
-                             *
-                             * Красный — «заблокирует», зелёный —
-                             * «разблокирует». Поэтому у заблокированного
-                             * номера кнопка ЗЕЛЁНАЯ: она снимает
-                             * блокировку. Раньше она была красной,
-                             * то есть цвет показывал состояние,
-                             * а подпись — действие, и они спорили.
-                             *
-                             * Под маской нажатие не блокирует
-                             * и не снимает — оно объясняет. Красный:
-                             * звонки не проходят, и об этом надо
-                             * сказать тем же цветом, что у блокировки.
-                             */
-                            tint = when {
-                                isBlocked -> MaterialTheme.colorScheme.primary
-                                blockingMask != null -> BlockRed
-                                else -> BlockRed
-                            }
-                        ) {
-                            when {
-                                isBlocked -> {
-                                    haptics()
-                                    vm.removeRule(group.e164)
-                                }
-
-                                // Показ объяснения про маску ничего
-                                // не меняет — отклика здесь не нужно
-                                blockingMask != null -> maskWarning = blockingMask
-
-                                else -> {
-                                    haptics()
-                                    vm.blockNumber(group.e164)
-                                }
-                            }
-                        }
+                    // Стоя ряд — в нижней панели (quickActions); здесь — только когда
+                    // шапка отдельной колонкой слева: там он и так под рукой (1.3.4)
+                    if (twoColumns) {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(Space.s)
+                        ) { quickActions() }
                     }
                 }
             }
@@ -1533,7 +1582,7 @@ fun SubscriberScreen(
         // заголовка: так фото уходит до верха экрана. Без обложки —
         // как раньше, под строкой заголовка
         val layoutDir = LocalLayoutDirection.current
-        Row(
+        Column(
             Modifier
                 .padding(
                     start = pad.calculateStartPadding(layoutDir),
@@ -1543,6 +1592,7 @@ fun SubscriberScreen(
                 )
                 .fillMaxSize()
         ) {
+        Row(Modifier.weight(1f).fillMaxWidth()) {
 
         if (twoColumns) {
             /*
@@ -1729,8 +1779,16 @@ fun SubscriberScreen(
 
             // ── Заметка и метки ────────────────────────────────────────────
             item {
+                /*
+                 * Пустая заметка — одна строка (1.3.4, 05.10.2026, задача автора).
+                 * Было: целая панель с заголовком «Заметка» ради серой
+                 * надписи «Добавить заметку». Стало: без заголовка — значок
+                 * заметки, надпись и карандаш в одну строку; заметка есть —
+                 * прежняя панель с заголовком, текстом и метками.
+                 */
+                val noteEmpty = note?.note.isNullOrBlank() && note?.tags.isNullOrEmpty()
                 OgnelissPanel(
-                    title = stringResource(R.string.subscriber_note_section),
+                    title = if (noteEmpty) null else stringResource(R.string.subscriber_note_section),
                     /*
                      * ══════════════════════════════════════════════════════
                      * ПАНЕЛЬ ЗАМЕТКИ БОЛЬШЕ НЕ ЗАЛИТА ЦВЕТОМ
@@ -1746,7 +1804,7 @@ fun SubscriberScreen(
                      * общая, как у остальных разделов.
                      */
                     color = null,
-                    icon = {
+                    icon = if (noteEmpty) null else {
                         Icon(
                             OgnelissIcons.StickyNote2,
                             contentDescription = null,
@@ -1802,6 +1860,15 @@ fun SubscriberScreen(
                         Modifier.heightIn(min = NUMBER_ROW_HEIGHT),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                            if (noteEmpty) {
+                                Icon(
+                                    OgnelissIcons.StickyNote2,
+                                    contentDescription = null,
+                                    tint = NoteTeal,
+                                    modifier = Modifier.size(FlowUi.iconSizeInline)
+                                )
+                                Spacer(Modifier.width(Space.m))
+                            }
                             Text(
                                 note?.note?.takeIf { it.isNotBlank() }
                                     ?: stringResource(R.string.subscriber_note_add),
@@ -1861,7 +1928,7 @@ fun SubscriberScreen(
              * отметка стоит: пустая строка «при включённой блокировке…»
              * у каждого номера превратилась бы в шум.
              */
-            item {
+            if (showMarkSection) item {
                 // Значок блокировки у заголовка: «Отметка» сама по себе
                 // не говорит, о чём раздел, — значок сразу связывает его
                 // с защитой от нежелательных звонков
@@ -2117,54 +2184,68 @@ fun SubscriberScreen(
             val visibleHistory = if (historyExpanded) history
             else history.take(FlowUi.COLLAPSED_HISTORY)
 
-            itemsIndexed(visibleHistory, key = { _, entry -> entry.id }) { index, entry ->
-                /*
-                 * История — та же решётка из похожих строк: значок,
-                 * дата, длительность. Линии между ними нужны по той же
-                 * причине, что и у номеров.
-                 *
-                 * Первая строка без линии: над ней заголовок раздела.
-                 */
-                /*
-                 * ══════════════════════════════════════════════════════════
-                 * ИСТОРИЯ ВЫГЛЯДИТ КАК ОСТАЛЬНЫЕ ПАНЕЛИ КАРТОЧКИ
-                 * ══════════════════════════════════════════════════════════
-                 * Строки истории шли во всю ширину экрана, с подложкой
-                 * от края до края и без скруглений, — а «Номера»,
-                 * «Заметка» и «Сведения» над ними стоят панелями
-                 * с полями и скруглёнными углами. Из-за этого низ карточки
-                 * выглядел приклеенным к чужому экрану.
-                 *
-                 * Теперь список — одна панель: поля по бокам те же,
-                 * что у соседей, верхние углы скруглены у первой строки,
-                 * нижние — у последней. Кнопка «Показать ещё» идёт ниже
-                 * и панель не продолжает: это действие, а не запись.
-                 *
-                 * ⚠️ Углы считаются по позиции в списке, а не рисуются
-                 * панелью вокруг: история — это элементы LazyColumn,
-                 * и обернуть их одним контейнером значило бы собирать
-                 * все двести записей сразу.
-                 */
-                val shape = RoundedCornerShape(
-                    topStart = if (index == 0) HISTORY_CORNER else 0.dp,
-                    topEnd = if (index == 0) HISTORY_CORNER else 0.dp,
-                    bottomStart = if (index == visibleHistory.lastIndex) HISTORY_CORNER else 0.dp,
-                    bottomEnd = if (index == visibleHistory.lastIndex) HISTORY_CORNER else 0.dp
-                )
+            /*
+             * Группы по датам, как в журнале (1.3.4, 05.10.2026): заголовок
+             * «Сегодня», «Вчера», «На этой неделе» — тот же LetterHeader,
+             * деление — CallLogDateGroup.of, общий с журналом.
+             */
+            visibleHistory.groupBy { CallLogDateGroup.of(it.date) }.forEach { (bucket, entriesInBucket) ->
+                item(key = "history_${bucket.ordinal}") {
+                    LetterHeader(stringResource(dateGroupLabel(bucket)))
+                }
+                itemsIndexed(entriesInBucket, key = { _, entry -> entry.id }) { index, entry ->
+                    /*
+                     * История — та же решётка из похожих строк: значок,
+                     * дата, длительность. Линии между ними нужны по той же
+                     * причине, что и у номеров.
+                     *
+                     * Первая строка без линии: над ней заголовок раздела.
+                     */
+                    /*
+                     * ══════════════════════════════════════════════════════════
+                     * ИСТОРИЯ ВЫГЛЯДИТ КАК ОСТАЛЬНЫЕ ПАНЕЛИ КАРТОЧКИ
+                     * ══════════════════════════════════════════════════════════
+                     * Строки истории шли во всю ширину экрана, с подложкой
+                     * от края до края и без скруглений, — а «Номера»,
+                     * «Заметка» и «Сведения» над ними стоят панелями
+                     * с полями и скруглёнными углами. Из-за этого низ карточки
+                     * выглядел приклеенным к чужому экрану.
+                     *
+                     * Теперь список — одна панель: поля по бокам те же,
+                     * что у соседей, верхние углы скруглены у первой строки,
+                     * нижние — у последней. Кнопка «Показать ещё» идёт ниже
+                     * и панель не продолжает: это действие, а не запись.
+                     *
+                     * ⚠️ Углы считаются по позиции в списке, а не рисуются
+                     * панелью вокруг: история — это элементы LazyColumn,
+                     * и обернуть их одним контейнером значило бы собирать
+                     * все двести записей сразу.
+                     */
+                    val shape = RoundedCornerShape(
+                        topStart = if (index == 0) HISTORY_CORNER else 0.dp,
+                        topEnd = if (index == 0) HISTORY_CORNER else 0.dp,
+                        bottomStart = if (index == entriesInBucket.lastIndex) HISTORY_CORNER else 0.dp,
+                        bottomEnd = if (index == entriesInBucket.lastIndex) HISTORY_CORNER else 0.dp
+                    )
 
-                Column(
-                    Modifier
-                        .padding(horizontal = FlowUi.screenPadding)
-                        .clip(shape)
-                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                ) {
-                    // Линия между строками, но не над первой: там уже
-                    // заголовок раздела, и вторая граница рядом лишняя
-                    if (index > 0) {
-                        OgnelissDivider(Modifier.padding(horizontal = FlowUi.contentPadding))
+                    Column(
+                        Modifier
+                            .padding(horizontal = FlowUi.screenPadding)
+                            .clip(shape)
+                            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                    ) {
+                        // Линия между строками, но не над первой: там уже
+                        // заголовок раздела, и вторая граница рядом лишняя
+                        if (index > 0) {
+                            OgnelissDivider(Modifier.padding(horizontal = FlowUi.contentPadding))
+                        }
+
+                        CallHistoryRow(
+                            entry,
+                            showNumber = group.numbers.size > 1,
+                            timeOnly = bucket == CallLogDateGroup.TODAY || bucket == CallLogDateGroup.YESTERDAY
+                        )
                     }
-
-                    CallHistoryRow(entry, showNumber = group.numbers.size > 1)
                 }
             }
 
@@ -2259,6 +2340,23 @@ fun SubscriberScreen(
              */
 
             item { Spacer(Modifier.height(Space.xxl)) }
+        }
+        }
+
+        // Быстрые действия — в нижней панели (стоя); см. quickActions
+        if (!twoColumns) {
+            Surface(
+                shape = OgnelissShapeTokens.bottomPanel,
+                color = MaterialTheme.colorScheme.surfaceContainer,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = FlowUi.contentPadding, vertical = Space.m),
+                    horizontalArrangement = Arrangement.spacedBy(Space.s)
+                ) { quickActions() }
+            }
         }
         }
     }

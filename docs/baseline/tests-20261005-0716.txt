@@ -1,0 +1,6 @@
+﻿  пропуск BaselineProfileGenerator.generate
+  ок      ScreenBenchmark.startupWarm
+  ок      ScreenBenchmark.openCard
+  ок      ScreenBenchmark.openDialpad
+  пропуск StartupBenchmark.startupNoCompilation
+  ок      StartupBenchmark.scrollCallLog
