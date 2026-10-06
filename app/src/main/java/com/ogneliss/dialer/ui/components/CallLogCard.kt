@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.*
 import com.ogneliss.dialer.ui.theme.CallGreen
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -227,7 +228,9 @@ fun CallLogCard(
                     if (row.titleFromNote) {
                         NoteAvatar(row.hasMissed)
                     } else {
-                        Avatar(row.photoUri, row.hasMissed)
+                        // Имя — только у контактов: незнакомый номер с именем
+                        // из определителя остаётся значком (1.3.5)
+                        Avatar(row.photoUri, row.hasMissed, name = if (row.contactId != null) row.title else null)
                     }
                 }
 
@@ -290,7 +293,7 @@ fun CallLogCard(
                         )
                     }
 
-                    Spacer(Modifier.height(2.dp))
+                    Spacer(Modifier.height(Space.xxs))
 
                     // Вторая строка: направление, SIM, номер. Всё мелко
                     // и одним цветом — это справочная информация,
@@ -421,7 +424,7 @@ fun CallLogCard(
                     // ни метки, и есть что сказать: пустая строка съедала бы
                     // высоту зря
                     if (row.blockedLabel == null && row.warningTag == null) row.infoLabel?.let { summary ->
-                        Spacer(Modifier.height(2.dp))
+                        Spacer(Modifier.height(Space.xxs))
                         Text(
                             summary,
                             style = MaterialTheme.typography.bodySmall,
@@ -496,20 +499,42 @@ fun CallLogCard(
 
 /** Портрет абонента для шапки меню долгого нажатия — тот же, что в строке журнала. */
 @Composable
-internal fun RowAvatar(photoUri: String?) = Avatar(photoUri, hasMissed = false)
+internal fun RowAvatar(
+    photoUri: String?,
+    size: androidx.compose.ui.unit.Dp? = null,
+    /** Имя контакта — для букв без фото (1.3.5); null — значок человека. */
+    name: String? = null
+) = Avatar(photoUri, hasMissed = false, sizeOverride = size, name = name)
 
 @Composable
-private fun Avatar(photoUri: String?, hasMissed: Boolean) {
+private fun Avatar(
+    photoUri: String?,
+    hasMissed: Boolean,
+    /** Свой размер (шапка меню записи, 1.3.5); null — из настроек. */
+    sizeOverride: androidx.compose.ui.unit.Dp? = null,
+    /*
+     * БУКВЫ ВМЕСТО ЗНАЧКА У КОНТАКТОВ (1.3.5, 05.10.2026, задача автора:
+     * «чтобы контакты отделять от незнакомых номеров»). Имя передаётся
+     * только для контактов; буквы — Initials.of (две первые буквы слов).
+     * Фон — primaryContainer: контакт заметен среди серых значков
+     * незнакомых номеров. Пропущенный — прежняя подсветка errorContainer.
+     */
+    name: String? = null
+) {
     val appearance = LocalAppearance.current
-    val size = appearance.avatarSize
+    val size = sizeOverride ?: appearance.avatarSize
+    val initials = remember(name) { com.ogneliss.dialer.util.Initials.of(name) }
 
     Box(contentAlignment = Alignment.Center) {
         Surface(
             shape = MaterialTheme.shapes.extraLarge,
             // Пропущенные подсвечиваются на аватаре: это самый крупный
             // элемент карточки, и метка на нём заметна периферийным зрением
-            color = if (hasMissed) MaterialTheme.colorScheme.errorContainer
-            else MaterialTheme.colorScheme.surfaceContainerHighest,
+            color = when {
+                hasMissed -> MaterialTheme.colorScheme.errorContainer
+                initials != null -> MaterialTheme.colorScheme.primaryContainer
+                else -> MaterialTheme.colorScheme.surfaceContainerHighest
+            },
             modifier = Modifier.size(size)
         ) {
             /*
@@ -527,13 +552,28 @@ private fun Avatar(photoUri: String?, hasMissed: Boolean) {
              * оправдан: пустой круг читается как поломка.
              */
             Box(contentAlignment = Alignment.Center) {
-                Icon(
-                    OgnelissIcons.Person,
-                    contentDescription = null,
-                    modifier = Modifier.size(size * 0.55f),
-                    tint = if (hasMissed) MaterialTheme.colorScheme.onErrorContainer
-                    else MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                if (initials != null) {
+                    // 36% диаметра — в крупном режиме и при крупном шрифте
+                    // системы буквы растут вместе с кружком, а не вылезают
+                    Text(
+                        initials,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontSize = with(androidx.compose.ui.platform.LocalDensity.current) { (size * 0.36f).toSp() }
+                        ),
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                        color = if (hasMissed) MaterialTheme.colorScheme.onErrorContainer
+                        else MaterialTheme.colorScheme.onPrimaryContainer,
+                        maxLines = 1
+                    )
+                } else {
+                    Icon(
+                        OgnelissIcons.Person,
+                        contentDescription = null,
+                        modifier = Modifier.size(size * 0.55f),
+                        tint = if (hasMissed) MaterialTheme.colorScheme.onErrorContainer
+                        else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
 
                 if (appearance.showPhoto && photoUri != null) {
                     AsyncImage(

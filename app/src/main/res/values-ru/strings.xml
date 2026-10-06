@@ -281,6 +281,10 @@
     <string name="settings_section_spam">Защита от спама</string>
     <string name="settings_section_spam_summary">Чёрный и белый списки, метки</string>
     <string name="settings_show_photo">Показывать фото контактов</string>
+    <string name="settings_sheet_photo_tint">Цвет шапки меню из фото</string>
+    <string name="settings_sheet_photo_tint_text">Шапка меню записи окрашивается в основной цвет фото контакта</string>
+    <string name="settings_messengers_any_number">Мессенджеры для любого номера</string>
+    <string name="settings_messengers_any_number_text">«Написать» предлагает установленные WhatsApp, Telegram, Viber и Max, даже если номера нет в контактах. Telegram откроет чат, только если человек разрешил находить себя по номеру</string>
     <string name="settings_sim">SIM-карты и сети</string>
     <string name="settings_sim_labels">Названия SIM-карт</string>
     <string name="settings_sim_labels_hint">Две карты одного оператора получают одинаковое системное имя. Задайте слотам свои названия — «Рабочая», «Личная».</string>

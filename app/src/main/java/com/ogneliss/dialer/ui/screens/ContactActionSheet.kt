@@ -1,5 +1,12 @@
 package com.ogneliss.dialer.ui.screens
 
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
+import com.ogneliss.dialer.util.PhotoTint
+import androidx.compose.foundation.background
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.animation.animateColorAsState
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -17,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -32,7 +40,6 @@ import com.ogneliss.dialer.ui.components.OgnelissDialog
 import com.ogneliss.dialer.ui.components.rememberActionHaptics
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextOverflow
-import com.ogneliss.dialer.ui.theme.NoteTeal
 import com.ogneliss.dialer.ui.theme.CallGreen
 import com.ogneliss.dialer.ui.components.RowAvatar
 import com.ogneliss.dialer.ui.components.SheetRow
@@ -140,9 +147,52 @@ fun ContactActionSheet(
         )
     }
 
+    /*
+     * ЗАЛИВКА ШАПКИ ЦВЕТОМ ИЗ ФОТО (1.3.5, 05.10.2026, предложение автора;
+     * настройка «Цвет шапки меню из фото», по умолчанию выключена).
+     * Цвет считается вне главного потока, когда шторка уже открыта, и плавно
+     * проявляется — открытие не ждёт его. Закрашена полоса от верха шторки
+     * (вместе с ручкой) до ряда кнопок: 35% цвета фото поверх фона шторки —
+     * текст onSurface остаётся читаемым. Выключено или фото без цвета —
+     * цвет шапки равен фону шторки: вид прежний.
+     */
+    val settingsNow by vm.settingsState.collectAsStateWithLifecycle()
+    val headerPhotoUri = remember(state.contacts, group.contactId, group.e164) {
+        state.contacts.firstOrNull { it.id == group.contactId }?.photoUri
+            ?: state.contacts.firstOrNull { c -> c.numbers.any { it.e164 == group.e164 } }?.photoUri
+            ?: group.photoUri
+    }
+    // Имя контакта — для букв без фото (1.3.5); незнакомый номер — значок
+    val headerContactName = remember(state.contacts, group.contactId, group.e164) {
+        (state.contacts.firstOrNull { it.id == group.contactId }
+            ?: state.contacts.firstOrNull { c -> c.numbers.any { it.e164 == group.e164 } })?.displayName
+    }
+    val tintContext = LocalContext.current
+    val photoTint by produceState<Color?>(null, headerPhotoUri, settingsNow.sheetPhotoTint) {
+        value = if (settingsNow.sheetPhotoTint && !headerPhotoUri.isNullOrBlank()) {
+            withContext(Dispatchers.Default) {
+                PhotoTint.dominantColor(tintContext.contentResolver, headerPhotoUri)
+            }?.let { Color(it) }
+        } else {
+            null
+        }
+    }
+    val sheetColor = MaterialTheme.colorScheme.surfaceContainerLow
+    val headerColor by animateColorAsState(
+        targetValue = photoTint?.let { lerp(sheetColor, it, 0.35f) } ?: sheetColor,
+        label = "sheetHeaderTint"
+    )
+
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
+        containerColor = sheetColor,
+        dragHandle = {
+            Box(
+                Modifier.fillMaxWidth().background(headerColor),
+                contentAlignment = Alignment.Center
+            ) { BottomSheetDefaults.DragHandle() }
+        },
         contentWindowInsets = { WindowInsets.navigationBars }
     ) {
         /*
@@ -178,44 +228,53 @@ fun ContactActionSheet(
              * Размер кружка зависит от настройки «крупные кнопки» (48 или 60 dp),
              * поэтому отступ считается от него.
              */
-            val avatarSize = LocalAppearance.current.avatarSize
-            val iconColumnCenter = FlowUi.screenPadding + 16.dp + 12.dp
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(
-                    start = (iconColumnCenter - avatarSize / 2).coerceAtLeast(8.dp),
-                    end = 24.dp,
-                    top = 8.dp,
-                    bottom = 8.dp
-                )
-            ) {
-                /*
-                 * Фото — из книги, как у строки журнала (1.3.3, 03.10.2026).
-                 * Было: group.photoUri — кэш системного журнала звонков.
-                 * Его заполняет системное приложение для набора номера,
-                 * а не наше, поэтому он часто пуст: в журнале портрет
-                 * был, а в меню записи — пустой кружок.
-                 */
-                val photoUri = remember(state.contacts, group.contactId, group.e164) {
-                    state.contacts.firstOrNull { it.id == group.contactId }?.photoUri
-                        ?: state.contacts.firstOrNull { c -> c.numbers.any { it.e164 == group.e164 } }?.photoUri
-                        ?: group.photoUri
-                }
-                RowAvatar(photoUri)
-                Spacer(Modifier.width(Space.l))
-                Column(Modifier.weight(1f)) {
-                    Text(
-                        group.displayName ?: PhoneFormatter.format(group.number),
-                        style = MaterialTheme.typography.titleLarge,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+            /*
+             * 1.3.5, 05.10.2026 (скриншот автора: имя всё ещё правее подписей).
+             * Расчёт 1.3.3 ставил центр кружка 48 dp на центр колонки иконок
+             * (40 dp) — тогда имя с зазором 16 начиналось на 80 dp, а подписи
+             * пунктов — на 68 (поле группы 12 + поле строки 16 + иконка 24
+             * + зазор 16). При кружке 48 dp оба условия не выполнить.
+             * Стало: отсчёт от текста — имя ровно на начале подписей, зазор
+             * 8 dp, кружок 40 dp (в крупном режиме 48); у кружка 40 dp центр
+             * снова совпадает с колонкой иконок.
+             */
+            val textStart = FlowUi.screenPadding + 16.dp + 24.dp + 16.dp
+            val headerAvatar = if (LocalAppearance.current.avatarSize > 48.dp) 48.dp else 40.dp
+            val headerGap = Space.s
+            Box(Modifier.fillMaxWidth().background(headerColor)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(
+                        start = (textStart - headerGap - headerAvatar).coerceAtLeast(Space.s),
+                        end = 24.dp,
+                        top = 8.dp,
+                        bottom = 8.dp
                     )
-                    if (group.displayName != null) {
+                ) {
+                    /*
+                     * Фото — из книги, как у строки журнала (1.3.3, 03.10.2026).
+                     * Было: group.photoUri — кэш системного журнала звонков.
+                     * Его заполняет системное приложение для набора номера,
+                     * а не наше, поэтому он часто пуст: в журнале портрет
+                     * был, а в меню записи — пустой кружок.
+                     */
+                    val photoUri = headerPhotoUri
+                    RowAvatar(photoUri, size = headerAvatar, name = headerContactName)
+                    Spacer(Modifier.width(headerGap))
+                    Column(Modifier.weight(1f)) {
                         Text(
-                            PhoneFormatter.format(group.number),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            group.displayName ?: PhoneFormatter.format(group.number),
+                            style = MaterialTheme.typography.titleLarge,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
+                        if (group.displayName != null) {
+                            Text(
+                                PhoneFormatter.format(group.number),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
             }
@@ -322,7 +381,9 @@ fun ContactActionSheet(
                         SheetRow(
                             OgnelissIcons.StickyNote2,
                             noteLabel,
-                            iconTint = NoteTeal,
+                            // Нейтральная, как остальные (1.3.5, аудит: в шторках
+                            // цветные только опасные пункты); бирюзовый — у панели
+                            // заметки в карточке, где он и обозначает заметку
                             onClick = { vm.openNoteEditor(group); onDismiss() }
                         )
             }

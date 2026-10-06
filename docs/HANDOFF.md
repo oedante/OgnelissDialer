@@ -15,8 +15,11 @@ Android-звонилка (замена системной) — `com.ogneliss.dia
 - **1.3.1** (versionCode 29) — выпуск без обоев: подтверждение
   необратимых действий, закреплённые при пустом журнале, имя на обложке
   (`docs/RELEASE_NOTES_1.3.1.md`). Внутренний тест → рабочая версия.
-- **1.3.4** (versionCode 32) — в работе: фаза 4 «Архитектура
-  и интерфейс» (`docs/RELEASE_NOTES_1.3.4.md`).
+- **1.3.5** (versionCode 33) — к публикации после сборки и проверки
+  (`docs/RELEASE_NOTES_1.3.5.md`, «Что нового» — `store/whats_new_1.3.5.txt`).
+- **1.3.4** (32) — у пользователей в Google Play.
+- **1.3.4** (versionCode 32) — готова к внутреннему тесту (05.10): фаза 4
+  «Архитектура и интерфейс» (`docs/RELEASE_NOTES_1.3.4.md`).
 - **1.3.3** (versionCode 31) — готова к внутреннему тесту (архив
   `OgnelissDialer_1_3_3.zip`): фаза «Новые инструменты» закрыта
   (`docs/RELEASE_NOTES_1.3.3.md`). Каждый шаг — отдельная сборка
@@ -66,6 +69,7 @@ Android-звонилка (замена системной) — `com.ogneliss.dia
 - Номера в журнале приложения — только через `Logger.mask` / `maskKey`.
 - Подписки на потоки в Compose — `collectAsStateWithLifecycle`, не `collectAsState`.
 - Интерфейс — по `docs/DESIGN_SYSTEM.md`; отступы — `Space.*`, не числами.
+- Большие функции экранов делим при правке блока — выносим его в `*Parts.kt`.
 - Иконки — только `OgnelissIcons` (Material Symbols Rounded). Новая — строка
   в `scripts/icons_manifest.json` + `python scripts/build_icons.py`;
   `androidx.compose.material.icons` не подключать.

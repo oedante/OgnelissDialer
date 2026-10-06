@@ -3,7 +3,6 @@ package com.ogneliss.benchmark
 import androidx.benchmark.macro.junit4.BaselineProfileRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Direction
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -56,13 +55,19 @@ class BaselineProfileGenerator {
         packageName = "com.ogneliss.dialer",
         includeInStartupProfile = true
     ) {
+        // Журнал эмулятора — тестовыми звонками, иначе строки журнала и свайп
+        // не попадают в профиль (1.3.4). Здесь, а не в @Before: этот блок
+        // выполняется только там, где генератор работает, — не на телефоне
+        CallLogSeed.ensureOnEmulator()
+
         pressHome()
         startActivityAndWait()
 
-        // Журнал вызовов — первое, что видит пользователь
-        device.findObject(By.scrollable(true))?.let { list ->
-            list.setGestureMargin(device.displayWidth / 5)
-            list.scroll(Direction.DOWN, 0.6f)
+        // Журнал вызовов — первое, что видит пользователь. Жест по координатам,
+        // а не UiObject2.scroll: на Compose 1.12 объект списка устаревал (1.3.4)
+        val x = device.displayWidth / 2
+        repeat(2) {
+            device.swipe(x, device.displayHeight * 3 / 4, x, device.displayHeight / 4, 20)
             device.waitForIdle()
         }
 

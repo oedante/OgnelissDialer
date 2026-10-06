@@ -167,7 +167,7 @@ fun PostCallSheet(
                  */
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(Space.s),
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                    verticalArrangement = Arrangement.spacedBy(Space.xxs)
                 ) {
                     listOf(
                         SpamMarkType.SPAM to R.string.tag_spam,

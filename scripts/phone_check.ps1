@@ -135,6 +135,17 @@ Start-Sleep -Seconds 60
 $cold = Run-Bench "$Label-cold" @() "-Pandroid.testInstrumentationRunnerArguments.class=com.ogneliss.benchmark.StartupBenchmark#startupNoCompilation"
 Compare-WithBase $cold
 
+# Трассы холодного запуска — в docs\baseline\traces\<метка> (1.3.5): следующий
+# прогон их затирает, а для разбора (scripts\analyze_startup_trace.py) нужны
+# «до» и «после». Три первых повтора — их хватает, файлы по несколько МБ.
+$traceDir = "docs\baseline\traces\$Label-cold"
+$traces = Get-ChildItem benchmark\build\outputs\connected_android_test_additional_output -Recurse -Filter "StartupBenchmark_startupNoCompilation_iter00[0-2]*.perfetto-trace" -ErrorAction SilentlyContinue
+if ($traces) {
+    New-Item -ItemType Directory -Force -Path $traceDir | Out-Null
+    $traces | Copy-Item -Destination $traceDir
+    Write-Host "Трассы холодного запуска: $traceDir ($($traces.Count) шт.)"
+}
+
 Step "2б. Экраны и прокрутка (15–20 минут, телефон не трогать)"
 $now = Run-Bench $Label @("-Pandroid.testInstrumentationRunnerArguments.skipColdStart=true")
 Compare-WithBase $now

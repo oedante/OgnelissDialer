@@ -39,6 +39,10 @@ data class SettingsState(
     val proximityScreenOff: Boolean = true,
     /** Тип номера вместо номера у контакта на экране вызова. */
     val callHideContactNumber: Boolean = false,
+    /** Заливка шапки меню записи цветом из фото (1.3.5). */
+    val sheetPhotoTint: Boolean = false,
+    /** «Написать»: установленные мессенджеры для любого номера (1.3.5). */
+    val messengersAnyNumber: Boolean = false,
     val haptic: Boolean = true,
     val keyTones: Boolean = true,
     val mergeCalls: Boolean = true,
@@ -88,6 +92,8 @@ data class SettingsState(
         "button_labels" -> buttonLabels
         "proximity_screen_off" -> proximityScreenOff
         "call_hide_contact_number" -> callHideContactNumber
+        "sheet_photo_tint" -> sheetPhotoTint
+        "messengers_any_number" -> messengersAnyNumber
         "panel_swipe_nav" -> panelSwipeNav
         "fake_call_button" -> fakeCallButton
         "haptic" -> haptic
@@ -117,7 +123,8 @@ data class SettingsState(
             "block_hidden", "block_unknown", "block_tagged", "file_logging",
             // 1.3.3: переключатели обрабатывались (switchValue выше), но в список
             // не попали — SettingsRegistryTest падал ещё с 1.3.0
-            "button_labels", "proximity_screen_off", "call_hide_contact_number"
+            "button_labels", "proximity_screen_off", "call_hide_contact_number",
+            "sheet_photo_tint", "messengers_any_number"
         )
     }
 }

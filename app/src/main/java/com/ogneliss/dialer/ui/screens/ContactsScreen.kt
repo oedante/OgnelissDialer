@@ -1,5 +1,9 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.RowAvatar
+import androidx.compose.foundation.lazy.itemsIndexed
+import com.ogneliss.dialer.ui.components.OgnelissDivider
+import com.ogneliss.dialer.ui.components.GroupPosition
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -9,7 +13,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ogneliss.dialer.ui.theme.Dimens
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.background
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -17,7 +20,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -36,7 +38,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.data.CallLogGroup
@@ -665,8 +666,9 @@ fun ContactsScreen(
                     item(key = "favourites_header") {
                         LetterHeader(stringResource(R.string.contacts_favourites))
                     }
-                    items(favourites, key = { "fav_${it.id}" }) { contact ->
+                    itemsIndexed(favourites, key = { _, it -> "fav_${it.id}" }) { index, contact ->
                         ContactRow(
+                            groupPosition = GroupPosition.of(index, favourites.size),
                             contact = contact,
                             query = search,
                             blocked = contact.numbers.any { it.e164 in blockedNumbers },
@@ -739,8 +741,9 @@ fun ContactsScreen(
                     item(key = "header_$letter") {
                         LetterHeader(letter.toString())
                     }
-                    items(contacts, key = { it.id }) { contact ->
+                    itemsIndexed(contacts, key = { _, it -> it.id }) { index, contact ->
                         ContactRow(
+                            groupPosition = GroupPosition.of(index, contacts.size),
                             contact = contact,
                             query = search,
                             blocked = contact.numbers.any { it.e164 in blockedNumbers },
@@ -831,7 +834,7 @@ fun LetterHeader(letter: String) {
             .fillMaxWidth()
             // Сверху больше, чем снизу: заголовок должен льнуть
             // к своим записям, а не висеть между группами
-            .padding(start = Space.l, end = Space.l, top = Space.l, bottom = 2.dp)
+            .padding(start = Space.l, end = Space.l, top = Space.l, bottom = Space.xxs)
     ) {
         Text(
             letter,
@@ -899,16 +902,36 @@ private fun ContactRow(
     endHint: RevealAction?,
     onCall: () -> Unit,
     onOpen: () -> Unit,
-    onToggleStar: () -> Unit
+    onToggleStar: () -> Unit,
+    /*
+     * ОДИН ШАБЛОН СПИСКА С ЖУРНАЛОМ (1.3.5, 05.10.2026, аудит: «разные
+     * шаблоны списков — контакты / журнал»). Было: каждый контакт —
+     * отдельная карточка с промежутками даже внутри одной буквы. Стало —
+     * как группа журнала: контакты одной буквы в одной карточке,
+     * скругление у первой и последней строки, разделитель от начала текста.
+     * GroupPosition — тот же, что у CallLogCard.
+     */
+    groupPosition: GroupPosition = GroupPosition.SINGLE
 ) {
     val appearance = LocalAppearance.current
+    val corner = MaterialTheme.shapes.medium
+    val zero = androidx.compose.foundation.shape.CornerSize(0.dp)
+    val rowShape = when (groupPosition) {
+        GroupPosition.SINGLE -> corner
+        GroupPosition.FIRST -> corner.copy(bottomStart = zero, bottomEnd = zero)
+        GroupPosition.MIDDLE -> androidx.compose.ui.graphics.RectangleShape
+        GroupPosition.LAST -> corner.copy(topStart = zero, topEnd = zero)
+    }
+    val gap = FlowUi.cardSpacing / 2
+    val topGap = if (groupPosition == GroupPosition.SINGLE || groupPosition == GroupPosition.FIRST) gap else 0.dp
+    val bottomGap = if (groupPosition == GroupPosition.SINGLE || groupPosition == GroupPosition.LAST) gap else 0.dp
 
     Card(
         // Card прозрачна: цвет задаёт содержимое, иначе фон рисуется
         // дважды — то же решение, что в карточке журнала
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        shape = MaterialTheme.shapes.medium,
+        shape = rowShape,
         modifier = Modifier
             .fillMaxWidth()
             /*
@@ -920,10 +943,18 @@ private fun ContactRow(
              * правке разойдутся — поправят одно, забудут другое.
              */
             .padding(
-                horizontal = FlowUi.screenPadding,
-                vertical = FlowUi.cardSpacing / 2
+                start = FlowUi.screenPadding,
+                end = FlowUi.screenPadding,
+                top = topGap,
+                bottom = bottomGap
             )
     ) {
+        if (groupPosition == GroupPosition.MIDDLE || groupPosition == GroupPosition.LAST) {
+            // От начала текста, а не от края — как в журнале
+            Box(Modifier.background(MaterialTheme.colorScheme.surfaceContainerLow)) {
+                OgnelissDivider(Modifier.padding(start = Space.m + appearance.avatarSize + Space.m))
+            }
+        }
         SwipeRevealRow(
             key = swipeKey,
             controller = swipeController,
@@ -952,30 +983,9 @@ private fun ContactRow(
                     .padding(horizontal = Space.m, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Аватар: силуэт всегда под фотографией, чтобы при сбое
-                // загрузки не оставался пустой круг
-                Surface(
-                    shape = MaterialTheme.shapes.extraLarge,
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    modifier = Modifier.size(appearance.avatarSize)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            OgnelissIcons.Person,
-                            contentDescription = null,
-                            modifier = Modifier.size(appearance.avatarSize * 0.55f),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        if (appearance.showPhoto && contact.photoUri != null) {
-                            AsyncImage(
-                                model = contact.photoUri,
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.size(appearance.avatarSize)
-                            )
-                        }
-                    }
-                }
+                // Аватар — общий RowAvatar (1.3.5): буквы у контактов без фото,
+                // силуэт под фотографией на случай сбоя загрузки — как в журнале
+                RowAvatar(contact.photoUri, name = contact.displayName)
 
                 Spacer(Modifier.width(Space.m))
 

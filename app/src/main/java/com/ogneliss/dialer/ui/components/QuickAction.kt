@@ -84,7 +84,7 @@ fun RowScope.QuickAction(
             .weight(1f)
             .clip(MaterialTheme.shapes.medium)
             .clickable(onClick = onClick)
-            .padding(vertical = Space.s, horizontal = 2.dp)
+            .padding(vertical = Space.s, horizontal = Space.xxs)
     ) {
         Surface(
             shape = CircleShape,

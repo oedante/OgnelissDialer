@@ -1150,6 +1150,12 @@ for path in kt_files():
 # пропустила ровно тот случай, ради которого писалась.
 EXTENSIONS = {'clickable', 'background', 'clip'}
 
+# Функции Compose с «общими» именами (05.10.2026): у SimPreferenceRepository
+# свой метод remember(…) — «запомнить выбор SIM». Проверяем их только
+# в файлах с @Composable
+COMPOSE_ONLY = {'remember', 'produceState', 'LaunchedEffect', 'DisposableEffect',
+                'rememberCoroutineScope'}
+
 IMPORT_NEEDED = {
     'clickable': 'androidx.compose.foundation.clickable',
     'background': 'androidx.compose.foundation.background',
@@ -1168,6 +1174,17 @@ IMPORT_NEEDED = {
     'CircleShape': 'androidx.compose.foundation.shape.CircleShape',
     'Brush': 'androidx.compose.ui.graphics.Brush',
     'TextAlign': 'androidx.compose.ui.text.style.TextAlign',
+    # 05.10.2026: produceState в меню записи без импорта (пакет runtime
+    # там импортирован поштучно). Основные функции состояния Compose —
+    # раз уж они используются почти везде и импортируются по одной
+    'produceState': 'androidx.compose.runtime.produceState',
+    'remember': 'androidx.compose.runtime.remember',
+    'LaunchedEffect': 'androidx.compose.runtime.LaunchedEffect',
+    'DisposableEffect': 'androidx.compose.runtime.DisposableEffect',
+    'derivedStateOf': 'androidx.compose.runtime.derivedStateOf',
+    'rememberCoroutineScope': 'androidx.compose.runtime.rememberCoroutineScope',
+    'mutableStateOf': 'androidx.compose.runtime.mutableStateOf',
+    'animateColorAsState': 'androidx.compose.animation.animateColorAsState',
     'TextOverflow': 'androidx.compose.ui.text.style.TextOverflow',
     'FontWeight': 'androidx.compose.ui.text.font.FontWeight',
 }
@@ -1189,10 +1206,13 @@ for path in kt_files():
     body = re.sub(r'//[^\n]*', '', body)
 
     for symbol, full in IMPORT_NEEDED.items():
+        if symbol in COMPOSE_ONLY and '@Composable' not in source:
+            continue
         if symbol in EXTENSIONS:
             pattern = r'\.' + symbol + r'\s*[({]'
         else:
-            pattern = r'(?<![\w.])' + symbol + r'[(.\s]'
+            # «<» — вызов с параметром типа: produceState<Color?>(…) (05.10.2026)
+            pattern = r'(?<![\w.])' + symbol + r'[(.\s<]'
 
         found = re.search(pattern, body)
         if not found:
@@ -1269,7 +1289,7 @@ if os.path.exists(root_path):
 # Новое «16.dp» в padding/Spacer/spacedBy/PaddingValues — снова число
 # вместо ступени шкалы. Значения вне шкалы (2, 6, 20…) не трогаем:
 # это осознанные исключения, их решают «под глаз».
-_SPACE = {'4': 'xs', '8': 's', '12': 'm', '16': 'l', '24': 'xl', '32': 'xxl'}
+_SPACE = {'2': 'xxs', '4': 'xs', '8': 's', '12': 'm', '16': 'l', '24': 'xl', '32': 'xxl'}
 _SPACE_CTX = re.compile(r'(padding\([^()]*\)|Spacer\(Modifier\.(?:height|width)\([^()]*\)\)'
                         r'|spacedBy\([^()]*\)|PaddingValues\([^()]*\))')
 for f in kt_files():
@@ -1278,7 +1298,7 @@ for f in kt_files():
     text = open(f, encoding='utf-8').read()
     rel = os.path.relpath(f, SRC)
     for m in _SPACE_CTX.finditer(text):
-        for n in re.findall(r'\b(4|8|12|16|24|32)\.dp\b', m.group(0)):
+        for n in re.findall(r'\b(2|4|8|12|16|24|32)\.dp\b', m.group(0)):
             line = text[:m.start()].count('\n') + 1
             problems['Отступ числом со шкалы — нужен токен Space'].append(
                 f'{rel}:{line} — {n}.dp → Space.{_SPACE[n]}')
@@ -1312,6 +1332,55 @@ for f in kt_files():
         line = text[:m.start()].count('\n') + 1
         problems['Слот Compose через if: блок вместо лямбды'].append(
             f'{os.path.relpath(f, SRC)}:{line} — «{m.group(1)}(» вызывается сразу; нужно {{ {{ {m.group(1)}(…) }} }}')
+
+# ── 43. Локальная переменная используется раньше объявления (05.10.2026) ──
+# moreOpen / onBlockAction объявили в содержимом экрана, а меню из topBar
+# (соседний блок выше) ими пользовалось — «Unresolved reference». Правило:
+# имя объявлено в файле ОДИН раз (val/var с отступом — внутри функции),
+# а первое обращение (не через точку, не в комментарии) — выше объявления
+# в той же функции верхнего уровня.
+def _strip_comments_keep_lines(src):
+    src = re.sub(r'/\*.*?\*/', lambda m: '\n' * m.group(0).count('\n'), src, flags=re.S)
+    src = re.sub(r'//[^\n]*', '', src)
+    # Содержимое строк — не код: «"text/plain"» не обращение к text
+    return re.sub(r'"(?:[^"\\\n]|\\.)*"', '""', src)
+
+for f in kt_files():
+    raw = open(f, encoding='utf-8').read()
+    code = _strip_comments_keep_lines(raw)
+    lines = code.split('\n')
+    # границы функций верхнего уровня
+    starts = [i for i, l in enumerate(lines) if re.match(r'(?:private |internal |public )?(?:inline )?fun ', l)]
+    if not starts:
+        continue
+    def fn_of(i):
+        s = [x for x in starts if x <= i]
+        return s[-1] if s else -1
+    decls = {}
+    for i, l in enumerate(lines):
+        m = re.match(r'\s{4,}(?:val|var)\s+(\w+)\b', l)
+        if m:
+            decls.setdefault(m.group(1), []).append(i)
+    for name, where in decls.items():
+        if len(where) != 1 or len(name) < 4:
+            continue
+        d = where[0]
+        pat = re.compile(r'(?<![\w.])' + name + r'\b(?!\s*=[^=])')
+        fn_start = fn_of(d)
+        before = '\n'.join(lines[fn_start:d])
+        # Имя — ещё и параметр функции или лямбды выше («number: String»,
+        # «{ note ->», «distance ->»): одноимённая локальная ниже законна
+        if re.search(r'(?<![\w.])' + name + r'\s*:(?!:)', before) or \
+                re.search(r'(?<![\w.])' + name + r'\s*(?:,[^\n]*)?->', before) or \
+                re.search(r'(?:fun|class)\s+' + name + r'\b', before):
+            continue
+        for i in range(starts[0], d):
+            if fn_of(i) != fn_of(d):
+                continue
+            if pat.search(lines[i]) and not re.match(r'\s*(?:val|var)\s', lines[i]):
+                problems['Переменная используется раньше объявления'].append(
+                    f'{os.path.relpath(f, SRC)}:{i + 1} — {name} (объявлена в строке {d + 1})')
+                break
 
 # ── ОТЧЁТ ─────────────────────────────────────────────────────────────────
 total = sum(len(v) for v in problems.values())

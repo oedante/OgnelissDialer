@@ -240,7 +240,7 @@ fun SimBadge(slotIndex: Int) {
          * значок SIM-карты 12 dp и номер слота; читается однозначно.
          */
         Row(
-            Modifier.padding(start = 2.dp, end = Space.xs),
+            Modifier.padding(start = Space.xxs, end = Space.xs),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(

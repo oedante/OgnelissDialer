@@ -136,7 +136,7 @@ fun NumberDisplay(
                 .padding(horizontal = Space.m, vertical = 6.dp)
                 .clip(OgnelissShapeTokens.dialKey)
                 .background(PanelColors.key())
-                .padding(horizontal = Space.xs, vertical = 2.dp),
+                .padding(horizontal = Space.xs, vertical = Space.xxs),
             verticalAlignment = Alignment.CenterVertically
         ) {
             /*

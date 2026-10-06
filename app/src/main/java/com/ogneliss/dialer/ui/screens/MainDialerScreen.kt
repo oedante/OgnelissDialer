@@ -1822,7 +1822,7 @@ fun MainDialerScreen(
                             horizontal = FlowUi.contentPadding,
                             vertical = Space.m
                         ),
-                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                        verticalArrangement = Arrangement.spacedBy(Space.xxs)
                     ) {
                         Text(
                             stringResource(R.string.settings_fake_call_number),

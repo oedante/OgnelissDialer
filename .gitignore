@@ -18,3 +18,6 @@ keystore.properties
 
 # ВАЖНО: app/schemas НЕ игнорируется — схемы Room нужны для тестов миграций
 !app/schemas/
+
+# Трассы Perfetto холодного запуска — по несколько МБ, только для разбора (1.3.5)
+docs/baseline/traces/

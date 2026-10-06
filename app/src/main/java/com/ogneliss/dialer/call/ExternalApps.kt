@@ -55,6 +55,29 @@ object ExternalApps {
         launch(context, Intent(Intent.ACTION_VIEW,
             Uri.parse("https://max.ru/${number.filter { it.isDigit() }}")))
 
+    /**
+     * Установленные мессенджеры — для «Написать» по любому номеру (1.3.5,
+     * настройка «Мессенджеры для любого номера»). Порядок — как в выборе
+     * мессенджеров контакта (ContactMessengers): Telegram, WhatsApp, Max, Viber.
+     */
+    fun installedMessengers(context: Context): List<com.ogneliss.dialer.settings.SwipeAction> = listOf(
+        com.ogneliss.dialer.settings.SwipeAction.TELEGRAM to PKG_TELEGRAM,
+        com.ogneliss.dialer.settings.SwipeAction.WHATSAPP to PKG_WHATSAPP,
+        com.ogneliss.dialer.settings.SwipeAction.MAX to PKG_MAX,
+        com.ogneliss.dialer.settings.SwipeAction.VIBER to PKG_VIBER
+    ).filter { (_, pkg) -> isInstalled(context, pkg) }.map { it.first }
+
+    /** Чат по номеру в выбранном мессенджере (без записи в книге). */
+    fun messengerByNumber(context: Context, kind: com.ogneliss.dialer.settings.SwipeAction, number: String) {
+        when (kind) {
+            com.ogneliss.dialer.settings.SwipeAction.WHATSAPP -> whatsapp(context, number)
+            com.ogneliss.dialer.settings.SwipeAction.TELEGRAM -> telegram(context, number)
+            com.ogneliss.dialer.settings.SwipeAction.VIBER -> viber(context, number)
+            com.ogneliss.dialer.settings.SwipeAction.MAX -> max(context, number)
+            else -> Unit
+        }
+    }
+
     /** Установлен ли Max — для показа действия только когда оно сработает. */
     fun isMaxInstalled(context: Context): Boolean = isInstalled(context, PKG_MAX)
 

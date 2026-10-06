@@ -411,16 +411,18 @@ internal fun SubscriberMoreMenu(
     /** Удаление контакта — с подтверждением в карточке (1.3.4). */
     onDelete: () -> Unit,
     /** Показать блок отметки у контакта; null — блок и так виден (1.3.4). */
-    onMarkSpam: (() -> Unit)? = null
+    onMarkSpam: (() -> Unit)? = null,
+    /*
+     * Открывается кнопкой «Ещё» в нижнем ряду карточки (1.3.5): своей
+     * кнопки ⋮ в верхней панели у меню больше нет.
+     */
+    open: Boolean,
+    onDismiss: () -> Unit,
+    /** Пункт «Блок» / «Разблок.» — перенесён сюда из нижнего ряда (1.3.5). */
+    blockLabelRes: Int,
+    blockActive: Boolean,
+    onBlock: () -> Unit
 ) {
-    var open by remember { mutableStateOf(false) }
-
-    IconButton(onClick = { open = true }) {
-        Icon(
-            OgnelissIcons.MoreVert,
-            contentDescription = stringResource(R.string.action_more)
-        )
-    }
 
     /*
      * Меню карточки — шторка снизу с группами, как «Ещё» в журнале
@@ -436,23 +438,23 @@ internal fun SubscriberMoreMenu(
         val shortcutLabel = stringResource(R.string.contact_pin_shortcut)
         val editLabel = stringResource(R.string.action_edit_contact)
         ModalBottomSheet(
-            onDismissRequest = { open = false },
+            onDismissRequest = onDismiss,
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             contentWindowInsets = { WindowInsets.navigationBars }
         ) {
             Column(Modifier.padding(bottom = Space.l)) {
                 // Про номер: сводка, поделиться, выгрузить
                 SheetGroup {
-                    SheetRow(OgnelissIcons.BarChart, summaryLabel, onClick = { open = false; onStats() })
+                    SheetRow(OgnelissIcons.BarChart, summaryLabel, onClick = { onDismiss(); onStats() })
                     SheetDivider()
-                    SheetRow(OgnelissIcons.QrCode2, qrLabel, onClick = { open = false; onQr() })
+                    SheetRow(OgnelissIcons.QrCode2, qrLabel, onClick = { onDismiss(); onQr() })
                     SheetDivider()
-                    SheetRow(OgnelissIcons.Share, exportLabel, onClick = { open = false; onExport() })
+                    SheetRow(OgnelissIcons.Share, exportLabel, onClick = { onDismiss(); onExport() })
                 }
                 // Про контакт в книге — только если он там есть
                 if (knownContactId != null) {
                     SheetGroup {
-                        SheetRow(OgnelissIcons.MusicNote, ringtoneLabel, onClick = { open = false; onRingtone() })
+                        SheetRow(OgnelissIcons.MusicNote, ringtoneLabel, onClick = { onDismiss(); onRingtone() })
                         SheetDivider()
                         /*
                          * Переключатель с состоянием (1.3.4, 04.10.2026).
@@ -473,16 +475,16 @@ internal fun SubscriberMoreMenu(
                         SheetRow(
                             OgnelissIcons.AddToHomeScreen,
                             shortcutLabel,
-                            onClick = { open = false; onShortcut() }
+                            onClick = { onDismiss(); onShortcut() }
                         )
                         SheetDivider()
-                        SheetRow(OgnelissIcons.Edit, editLabel, onClick = { open = false; onEdit(knownContactId) })
+                        SheetRow(OgnelissIcons.Edit, editLabel, onClick = { onDismiss(); onEdit(knownContactId) })
                         if (onMarkSpam != null) {
                             SheetDivider()
                             SheetRow(
                                 OgnelissIcons.Report,
                                 stringResource(R.string.action_mark_spam),
-                                onClick = { open = false; onMarkSpam() }
+                                onClick = { onDismiss(); onMarkSpam() }
                             )
                         }
                         SheetDivider()
@@ -491,9 +493,20 @@ internal fun SubscriberMoreMenu(
                             OgnelissIcons.Delete,
                             stringResource(R.string.action_delete_contact),
                             color = BlockRed,
-                            onClick = { open = false; onDelete() }
+                            onClick = { onDismiss(); onDelete() }
                         )
                     }
+                }
+                // Блокировка — последней, отдельной группой (1.3.5): перенесена
+                // из нижнего ряда, где стояла над системной «Назад». Красным,
+                // пока номер не заблокирован; «Разблокировать» — основным цветом
+                SheetGroup {
+                    SheetRow(
+                        OgnelissIcons.Block,
+                        stringResource(blockLabelRes),
+                        color = if (blockActive) MaterialTheme.colorScheme.primary else BlockRed,
+                        onClick = { onDismiss(); onBlock() }
+                    )
                 }
             }
         }
@@ -576,7 +589,15 @@ internal fun WriteSheet(
     links: List<ContactMessengers.Link>,
     onSms: (String) -> Unit,
     onMessenger: (ContactMessengers.Link) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    /*
+     * Мессенджеры без записи в книге (1.3.5, настройка «Мессенджеры для
+     * любого номера», отзыв в Google Play): установленные, которых нет
+     * среди links; открываются по номеру карточки.
+     */
+    byNumber: List<SwipeAction> = emptyList(),
+    byNumberTarget: String = "",
+    onMessengerByNumber: (SwipeAction) -> Unit = {}
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -617,7 +638,26 @@ internal fun WriteSheet(
                         }.takeIf { numbers.size > 1 || links.count { l -> l.kind == link.kind } > 1 },
                         onClick = { onMessenger(link) }
                     )
-                    if (index < links.lastIndex) SheetDivider()
+                    if (index < links.lastIndex || byNumber.isNotEmpty()) SheetDivider()
+                }
+                byNumber.forEachIndexed { index, kind ->
+                    val visual = RevealActionFactory.iconOf(kind)
+                    SheetRow(
+                        visual?.first ?: OgnelissIcons.Message,
+                        stringResource(
+                            when (kind) {
+                                SwipeAction.WHATSAPP -> R.string.action_whatsapp
+                                SwipeAction.TELEGRAM -> R.string.action_telegram
+                                SwipeAction.VIBER -> R.string.action_viber
+                                else -> R.string.action_max
+                            }
+                        ),
+                        iconTint = visual?.second,
+                        // Номер — если у контакта их несколько: по какому откроется чат
+                        supporting = PhoneFormatter.format(byNumberTarget).takeIf { numbers.size > 1 },
+                        onClick = { onMessengerByNumber(kind) }
+                    )
+                    if (index < byNumber.lastIndex) SheetDivider()
                 }
             }
         }

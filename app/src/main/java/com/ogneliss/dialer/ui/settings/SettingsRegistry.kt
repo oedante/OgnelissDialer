@@ -235,6 +235,12 @@ object SettingsRegistry {
             R.string.settings_show_photo, null,
             SettingKind.Switch("show_photo")
         ),
+        // 1.3.5: заливка шапки меню записи цветом из фото — по умолчанию выкл.
+        SettingEntry(
+            "sheet_photo_tint", SettingsCategory.APPEARANCE,
+            R.string.settings_sheet_photo_tint, R.string.settings_sheet_photo_tint_text,
+            SettingKind.Switch("sheet_photo_tint")
+        ),
         SettingEntry(
             "sim_labels", SettingsCategory.SIM,
             R.string.settings_sim_labels, R.string.settings_sim_labels_text,
@@ -457,6 +463,12 @@ object SettingsRegistry {
             R.string.settings_callback_suggestion, R.string.settings_callback_suggestion_text,
             SettingKind.Switch("callback_suggestion"),
             groupRes = R.string.settings_group_after_call
+        ),
+        // 1.3.5: отзыв в Google Play — «Написать в WhatsApp тем, кого нет в контактах»
+        SettingEntry(
+            "messengers_any_number", SettingsCategory.CALLS,
+            R.string.settings_messengers_any_number, R.string.settings_messengers_any_number_text,
+            SettingKind.Switch("messengers_any_number")
         ),
         SettingEntry(
             "sys_dnd", SettingsCategory.SYSTEM,

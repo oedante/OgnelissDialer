@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.FlowUi
+
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -65,7 +67,7 @@ fun GestureHintSheet(onDismiss: () -> Unit) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(FlowUi.sheetPadding))
 
             HintRow(
                 icon = OgnelissIcons.Call,
@@ -104,7 +106,7 @@ fun GestureHintSheet(onDismiss: () -> Unit) {
                 color = MaterialTheme.colorScheme.outline
             )
 
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(FlowUi.sheetPadding))
 
             Button(
                 onClick = onDismiss,

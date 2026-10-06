@@ -91,7 +91,7 @@ fun LabeledIconButton(
                 contentDescription = label
                 role = Role.Button
             }
-            .padding(horizontal = Space.xs, vertical = 2.dp)
+            .padding(horizontal = Space.xs, vertical = Space.xxs)
             .widthIn(min = Dimens.MIN_TOUCH_TARGET)
     ) {
         /*

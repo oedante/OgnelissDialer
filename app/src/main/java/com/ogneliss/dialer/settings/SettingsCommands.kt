@@ -85,6 +85,8 @@ class SettingsCommands @Inject constructor(
             "dynamic_color" -> prefs.setDynamicColor(value)
             "large_buttons" -> prefs.setLargeButtons(value)
             "show_photo" -> prefs.setShowPhoto(value)
+            "sheet_photo_tint" -> prefs.setSheetPhotoTint(value)
+            "messengers_any_number" -> prefs.setMessengersAnyNumber(value)
             "button_labels" -> prefs.setButtonLabels(value)
             "proximity_screen_off" -> prefs.setProximityScreenOff(value)
             "call_hide_contact_number" -> prefs.setCallHideContactNumber(value)
@@ -321,7 +323,7 @@ class SettingsCommands @Inject constructor(
          * молча неработающий переключатель.
          */
         val SWITCH_KEYS = setOf(
-            "dynamic_color", "large_buttons", "show_photo", "button_labels", "proximity_screen_off", "call_hide_contact_number", "panel_swipe_nav",
+            "dynamic_color", "large_buttons", "show_photo", "button_labels", "proximity_screen_off", "call_hide_contact_number", "sheet_photo_tint", "messengers_any_number", "panel_swipe_nav",
             "fake_call_button",
             "haptic", "key_tones",
             "merge_calls", "remember_sim", "smart_speaker",

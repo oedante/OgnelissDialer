@@ -750,7 +750,7 @@ private fun ActionCell(
         ) {
             action.icon?.let {
                 Icon(it, contentDescription = null, tint = Color.White)
-                Spacer(Modifier.height(2.dp))
+                Spacer(Modifier.height(Space.xxs))
             }
             if (action.simBadge != null) {
                 Surface(
@@ -767,7 +767,7 @@ private fun ActionCell(
                         style = MaterialTheme.typography.labelSmall
                     )
                 }
-                Spacer(Modifier.height(2.dp))
+                Spacer(Modifier.height(Space.xxs))
             }
             /*
              * Подпись рисуется, только если она есть.

@@ -7,7 +7,6 @@ import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.settings.ThemeMode
 import androidx.compose.foundation.layout.*
 import com.ogneliss.dialer.ui.theme.CallGreen
-import com.ogneliss.dialer.ui.theme.NoteTeal
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -145,7 +144,7 @@ internal fun OverflowMenu(
                 SheetRow(
                     OgnelissIcons.StickyNote2,
                     notesLabel,
-                    iconTint = NoteTeal,
+                    // Нейтральная — правило шторок (1.3.5, аудит)
                     onClick = onNotes
                 )
                 SheetDivider()
@@ -376,7 +375,7 @@ internal fun PinnedOnlyCard(
         ) {
             // Фото — как у строк журнала (1.3.2): photoUri передавался,
             // но не рисовался, и закреплённый «терял портрет»
-            RowAvatar(row.photoUri)
+            RowAvatar(row.photoUri, name = row.title)
             Spacer(Modifier.width(Space.m))
             Column(Modifier.weight(1f)) {
                 Text(row.title, style = MaterialTheme.typography.titleMedium, maxLines = 1)

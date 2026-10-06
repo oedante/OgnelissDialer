@@ -224,6 +224,7 @@ private fun FakeCallScreen(
     LightStatusIconsOnPhoto(photoBackground)
     Box(Modifier.fillMaxSize()) {
     if (photoBackground) CallPhotoBackground(photoUri.orEmpty())
+    NavBarUnderPanel()
     Surface(
         Modifier.fillMaxSize().safeDrawingPadding(),
         color = if (photoBackground) Color.Transparent else MaterialTheme.colorScheme.surface

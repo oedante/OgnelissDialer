@@ -1,5 +1,11 @@
 package com.ogneliss.dialer.call
 
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.BoxScope
 import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -108,4 +114,21 @@ internal fun LightStatusIconsOnPhoto(enabled: Boolean) {
             if (before != null) controller.isAppearanceLightStatusBars = before
         }
     }
+}
+
+/**
+ * Полоса цвета нижней панели под системной навигацией (1.3.5, 05.10.2026,
+ * скриншот автора: в тёмной теме под кнопками ◁ ○ □ просвечивало фото —
+ * панель кончалась над навигацией). Высота — системный отступ навигации:
+ * лёжа, когда навигация сбоку, полоса нулевой высоты.
+ */
+@Composable
+internal fun BoxScope.NavBarUnderPanel() {
+    Box(
+        Modifier
+            .align(Alignment.BottomCenter)
+            .fillMaxWidth()
+            .windowInsetsBottomHeight(WindowInsets.navigationBars)
+            .background(MaterialTheme.colorScheme.surfaceContainer)
+    )
 }

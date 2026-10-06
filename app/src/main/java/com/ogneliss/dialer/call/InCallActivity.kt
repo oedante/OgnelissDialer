@@ -683,6 +683,7 @@ private fun InCallScreen(
     LightStatusIconsOnPhoto(photoBackground)
     Box(Modifier.fillMaxSize()) {
     if (photoBackground) CallPhotoBackground(photoUri.orEmpty())
+    NavBarUnderPanel()
     Surface(
         Modifier.fillMaxSize().safeDrawingPadding(),
         color = if (photoBackground) Color.Transparent else MaterialTheme.colorScheme.surface
@@ -1599,7 +1600,7 @@ private fun InCallNoteField(
 
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(Space.s),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+            verticalArrangement = Arrangement.spacedBy(Space.xxs)
         ) {
             TagCatalog.suggested.forEach { tag ->
                 FilterChip(

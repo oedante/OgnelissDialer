@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.settings.SwipeAction
+import com.ogneliss.dialer.call.ExternalApps
 import com.ogneliss.dialer.data.CallLogDateGroup
 import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
 import androidx.compose.ui.geometry.Offset
@@ -519,6 +521,18 @@ fun SubscriberScreen(
             withContext(Dispatchers.IO) { ContactMessengers.linksFor(appContext, id) }
         } ?: emptyList()
     }
+    // «Мессенджеры для любого номера» (1.3.5): установленные, которых нет
+    // у контакта в книге, — по номеру карточки
+    val settingsNow by vm.settingsState.collectAsStateWithLifecycle()
+    val byNumberMessengers by produceState(emptyList<SwipeAction>(), settingsNow.messengersAnyNumber, messengerLinks) {
+        value = if (settingsNow.messengersAnyNumber) {
+            val inBook = messengerLinks.map { it.kind }.toSet()
+            withContext(Dispatchers.IO) { ExternalApps.installedMessengers(appContext) }
+                .filter { it !in inBook }
+        } else {
+            emptyList()
+        }
+    }
     var writeSheetOpen by remember { mutableStateOf(false) }
     if (writeSheetOpen) {
         WriteSheet(
@@ -533,7 +547,13 @@ fun SubscriberScreen(
                 writeSheetOpen = false
                 ContactMessengers.open(appContext, link)
             },
-            onDismiss = { writeSheetOpen = false }
+            onDismiss = { writeSheetOpen = false },
+            byNumber = byNumberMessengers,
+            byNumberTarget = group.number,
+            onMessengerByNumber = { kind ->
+                writeSheetOpen = false
+                ExternalApps.messengerByNumber(appContext, kind, group.number)
+            }
         )
     }
 
@@ -622,6 +642,33 @@ fun SubscriberScreen(
      * напоминания. Разбор — в ActionHaptics.
      */
     val haptics = rememberActionHaptics()
+
+    // Блокировка — из меню «Ещё» (1.3.5); логика прежней кнопки «Блок».
+// На уровне функции, а не в содержимом экрана: меню вызывается из верхней
+// панели (topBar) — соседнего блока, откуда локальные переменные
+// содержимого не видны (ошибка сборки 05.10.2026)
+    var moreOpen by remember { mutableStateOf(false) }
+    // В меню места много — полные подписи, а не «Блок» / «Разблок.»
+    val blockLabelRes = when {
+        isBlocked -> R.string.action_unblock
+        blockingMask != null -> R.string.action_blocked_by_mask
+        else -> R.string.action_block
+    }
+    val onBlockAction: () -> Unit = {
+        when {
+            isBlocked -> {
+                haptics()
+                vm.removeRule(group.e164)
+            }
+            // Показ объяснения про маску ничего не меняет — отклика не нужно
+            blockingMask != null -> maskWarning = blockingMask
+            else -> {
+                haptics()
+                vm.blockNumber(group.e164)
+            }
+        }
+    }
+
 
     val note = state.notes[group.e164]
     // С 1.1.1 отметка отдельно от заметки — разбор в SpamMarkEntity
@@ -913,7 +960,12 @@ fun SubscriberScreen(
                         onDelete = { confirmDelete = true },
                         onMarkSpam = if (showMarkSection) null else {
                             { markRequested = true }
-                        }
+                        },
+                        open = moreOpen,
+                        onDismiss = { moreOpen = false },
+                        blockLabelRes = blockLabelRes,
+                        blockActive = isBlocked,
+                        onBlock = onBlockAction
                     )
                 }
             )
@@ -1040,7 +1092,9 @@ fun SubscriberScreen(
                 OgnelissIcons.Message,
                 R.string.action_write
             ) {
-                if (messengerLinks.isEmpty()) vm.openSms(group.number)
+                // Выбор — если есть что-то кроме SMS: мессенджер из книги или,
+                // с настройкой «для любого номера», установленный (1.3.5)
+                if (messengerLinks.isEmpty() && byNumberMessengers.isEmpty()) vm.openSms(group.number)
                 else writeSheetOpen = true
             }
             /*
@@ -1119,50 +1173,14 @@ fun SubscriberScreen(
              * Подпись сокращена до «Блок»: полная
              * не помещалась под иконкой.
              */
-            QuickAction(
-                icon = OgnelissIcons.Block,
-                labelRes = when {
-                    isBlocked -> R.string.action_unblock_short
-                    blockingMask != null -> R.string.action_blocked_by_mask
-                    else -> R.string.action_block_short
-                },
-                /*
-                 * ЦВЕТ ГОВОРИТ, ЧТО СДЕЛАЕТ НАЖАТИЕ.
-                 *
-                 * Красный — «заблокирует», зелёный —
-                 * «разблокирует». Поэтому у заблокированного
-                 * номера кнопка ЗЕЛЁНАЯ: она снимает
-                 * блокировку. Раньше она была красной,
-                 * то есть цвет показывал состояние,
-                 * а подпись — действие, и они спорили.
-                 *
-                 * Под маской нажатие не блокирует
-                 * и не снимает — оно объясняет. Красный:
-                 * звонки не проходят, и об этом надо
-                 * сказать тем же цветом, что у блокировки.
-                 */
-                tint = when {
-                    isBlocked -> MaterialTheme.colorScheme.primary
-                    blockingMask != null -> BlockRed
-                    else -> BlockRed
-                }
-            ) {
-                when {
-                    isBlocked -> {
-                        haptics()
-                        vm.removeRule(group.e164)
-                    }
-
-                    // Показ объяснения про маску ничего
-                    // не меняет — отклика здесь не нужно
-                    blockingMask != null -> maskWarning = blockingMask
-
-                    else -> {
-                        haptics()
-                        vm.blockNumber(group.e164)
-                    }
-                }
-            }
+            /*
+             * «Ещё» — на месте «Блока» (1.3.5, 05.10.2026, предложение автора).
+             * «Блок» нужен редко, а стоял в правом нижнем углу — прямо над
+             * системной «Назад», куда палец попадает случайно. Случайное «Ещё»
+             * лишь откроет шторку. «Блок» — в ней, последним, красным.
+             * Кнопка ⋮ в верхней панели убрана: меню одно, внизу.
+             */
+            QuickAction(OgnelissIcons.MoreVert, R.string.action_more) { moreOpen = true }
         }
 
         val header: @Composable () -> Unit = {
@@ -1715,7 +1733,7 @@ fun SubscriberScreen(
                         Modifier
                             .fillMaxWidth()
                             .heightIn(min = NUMBER_ROW_HEIGHT)
-                            .padding(vertical = 2.dp),
+                            .padding(vertical = Space.xxs),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         /*

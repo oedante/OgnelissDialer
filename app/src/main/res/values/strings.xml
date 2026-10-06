@@ -309,6 +309,10 @@
     <string name="settings_section_spam">Spam protection</string>
     <string name="settings_section_spam_summary">Block list, allow list, tags</string>
     <string name="settings_show_photo">Show contact photos</string>
+    <string name="settings_sheet_photo_tint">Menu header color from photo</string>
+    <string name="settings_sheet_photo_tint_text">The long-press menu header takes the main color of the contact\'s photo</string>
+    <string name="settings_messengers_any_number">Messengers for any number</string>
+    <string name="settings_messengers_any_number_text">«Message» offers the installed WhatsApp, Telegram, Viber and Max even if the number is not in contacts. Telegram opens a chat only if the person allows being found by number</string>
     <string name="settings_sim">SIM cards and networks</string>
     <string name="settings_sim_labels">SIM card names</string>
     <string name="settings_sim_labels_hint">Two cards from the same operator get the same system name. Give the slots your own names — Work, Personal.</string>
