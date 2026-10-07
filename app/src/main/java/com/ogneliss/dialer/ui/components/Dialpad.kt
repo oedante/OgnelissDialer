@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
 import com.ogneliss.dialer.ui.theme.Space
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -31,7 +32,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.theme.PanelColors
-import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.theme.Dimens
 import com.ogneliss.dialer.ui.theme.LocalAppearance
@@ -114,6 +114,9 @@ fun Dialpad(
     modifier: Modifier = Modifier
 ) {
     val appearance = LocalAppearance.current
+    // Лёжа ряды растянуты по высоте экрана, клавиша бывает ниже 52 dp —
+    // строка букв под цифрой не поместится; там только цифры (1.3.5)
+    val compactKeys = LocalWindowLayout.current.isShort
     val view = LocalView.current
     val feedback = remember { DialpadFeedback() }
     DisposableEffect(Unit) { onDispose { feedback.release() } }
@@ -243,44 +246,42 @@ fun Dialpad(
                         val primary = altText.ifEmpty { key.latin }
                         val secondary = if (altText.isNotEmpty()) key.latin else ""
 
-                        Row(
-                            Modifier.fillMaxSize().padding(horizontal = FlowUi.contentPadding),
-                            verticalAlignment = Alignment.CenterVertically
+                        /*
+                         * ЦИФРА ПО ЦЕНТРУ, БУКВЫ СТРОКОЙ ПОД НЕЙ (1.3.5).
+                         * Было: цифра прижата влево, буквы — столбиком справа:
+                         * так не устроена ни одна клавиатура телефона, и
+                         * клавиши выглядели чужими в приложении. Стало —
+                         * классическая клавиша: цифра крупно по центру, под
+                         * ней одна строка: буквы языка, рядом мельче и бледнее
+                         * латиница (справка, как и раньше). Строка под буквы
+                         * есть и у «1», «*», «#» — цифры стоят на одной линии.
+                         */
+                        Column(
+                            Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
                         ) {
                             Text(
                                 key.digit.toString(),
-                                // headlineLarge вместо Medium: цифра —
-                                // главное на клавише, её читают боковым
-                                // зрением при слепом наборе
-                                style = MaterialTheme.typography.headlineLarge,
-                                fontWeight = FontWeight.Normal
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Normal,
+                                maxLines = 1
                             )
-
-                            if (primary.isNotEmpty()) {
-                                Spacer(Modifier.width(10.dp))
-
-                                Column(
-                                    // Буквы прижаты к цифре, а не к краю:
-                                    // вместе они читаются как одна метка,
-                                    // и середина клавиши перестаёт пустовать
-                                    horizontalAlignment = Alignment.Start,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
+                            if (!compactKeys) Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    primary.ifEmpty { " " },
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    maxLines = 1
+                                )
+                                if (secondary.isNotEmpty()) {
+                                    Spacer(Modifier.width(Space.xs))
                                     Text(
-                                        primary,
-                                        style = MaterialTheme.typography.labelLarge,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        secondary,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.outline,
                                         maxLines = 1
                                     )
-
-                                    if (secondary.isNotEmpty()) {
-                                        Text(
-                                            secondary,
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = MaterialTheme.colorScheme.outline,
-                                            maxLines = 1
-                                        )
-                                    }
                                 }
                             }
                         }

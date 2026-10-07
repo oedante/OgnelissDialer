@@ -506,6 +506,7 @@ fun MainDialerScreen(
                 number = primary.value,
                 e164 = primary.e164,
                 contactId = contact.id,
+                isContact = true,
                 title = contact.displayName,
                 formattedNumber = PhoneFormatter.format(primary.value),
                 dateLabel = "",

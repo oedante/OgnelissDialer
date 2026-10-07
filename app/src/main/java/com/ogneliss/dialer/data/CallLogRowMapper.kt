@@ -97,11 +97,13 @@ object CallLogRowMapper {
              * и оптимизация превратилась бы в замедление. Целое число
              * сравнивается за наносекунды.
              */
+            // «Номер в книге» — часть отпечатка (1.3.5): номер сохранили
+            // в контакты — строка пересобирается и получает буквы
             val signature =
                 signatureOf(
                     group, numberInfo, notes, contactPhotos, simSlots,
                     blockedLabels, carrierInfo, remindedNumbers
-                )
+                ) * 31 + (if (group.e164 in knownNumbers) 1 else 0)
 
             if (cached != null && cached.signature == signature) cached else mapOne(
                 group, numberInfo, knownNumbers, simSlots,
@@ -312,6 +314,7 @@ object CallLogRowMapper {
             number = group.number,
             e164 = group.e164,
             contactId = group.contactId,
+            isContact = group.contactId != null || group.e164 in knownNumbers,
             title = display.title,
             noteLine = display.subtitle?.takeIf { display.titleFromNote.not() },
             hasReminder = group.e164 in remindedNumbers,

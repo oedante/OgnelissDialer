@@ -1,5 +1,8 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
+import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clip
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -20,10 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.R
 import androidx.compose.ui.platform.LocalContext
 import com.ogneliss.dialer.ui.theme.Dimens
-import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
 import com.ogneliss.dialer.ui.theme.PanelColors
-import androidx.compose.ui.draw.clip
-import androidx.compose.foundation.background
 import com.ogneliss.dialer.ui.theme.LocalAppearance
 import com.ogneliss.dialer.util.DialString
 
@@ -134,6 +134,9 @@ fun NumberDisplay(
             Modifier
                 .fillMaxWidth()
                 .padding(horizontal = Space.m, vertical = 6.dp)
+                // Подложка — пилюля, как клавиши (1.3.6, 07.10.2026). Попытка
+                // убрать её вернула бы проблему 1.1.2 (см. выше): подсказка
+                // и граница на фоне панели почти пропадают
                 .clip(OgnelissShapeTokens.dialKey)
                 .background(PanelColors.key())
                 .padding(horizontal = Space.xs, vertical = Space.xxs),
@@ -185,16 +188,28 @@ fun NumberDisplay(
                 }
             }
 
+            /*
+             * НОМЕР — ПО ЦЕНТРУ (1.3.6, 07.10.2026, автор: строка ввода «из
+             * другого приложения»). textAlign = Center не работал: текст лежит
+             * в прокручиваемой колонке, а она по ширине текста — подсказка
+             * прижималась к левому значку. Теперь колонка — в Box на всю
+             * ширину: короткий номер Box ставит по центру, длинный упирается
+             * в края и прокручивается, как раньше. Значки по краям — по 48 dp,
+             * так что центр строки — центр клавиатуры.
+             */
+            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
             Column(
-                Modifier
-                    .weight(1f)
-                    .horizontalScroll(scrollState, reverseScrolling = true)
+                Modifier.horizontalScroll(scrollState, reverseScrolling = true),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     DialString.formatForDisplay(query).ifEmpty {
                         stringResource(R.string.dialpad_number_hint)
                     },
-                    style = MaterialTheme.typography.displaySmall,
+                    // Подсказка — мельче набранного (1.3.6): пустое поле
+                    // не должно кричать «Номер» во всю высоту строки
+                    style = if (query.isEmpty()) MaterialTheme.typography.headlineSmall
+                    else MaterialTheme.typography.displaySmall,
                     // Подсказка бледнее набранного: иначе пустое поле
                     // выглядит как уже введённое слово
                     // outline, а не outlineVariant: на белом поле
@@ -230,6 +245,7 @@ fun NumberDisplay(
                     )
                 }
             }
+            } // Box: номер по центру
 
             // Короткое нажатие удаляет цифру, долгое очищает поле —
             // привычное поведение любой телефонной клавиатуры

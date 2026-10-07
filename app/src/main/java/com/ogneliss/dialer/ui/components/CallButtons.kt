@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.CallGreen
+import androidx.compose.ui.graphics.Color
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -56,6 +58,27 @@ fun CallButtons(
      */
     val layout = SimCallPlan.decide(sims, sims.map { it.subscriptionId }.toSet())
 
+    /*
+     * ЗЕЛЁНЫЕ, А НЕ СИНИЕ (1.3.5, 06.10.2026). Кнопки вызова брали цвета
+     * Button по умолчанию — primary (синий), хотя по дизайн-системе зелёный
+     * только у звонка (CallGreen), как в журнале и карточке. Пустое поле —
+     * тональный цвет панели (surfaceContainerHighest) вместо грязно-серого
+     * «отключено» по умолчанию: кнопка видна, но ясно, что номера нет.
+     */
+    val callColors = ButtonDefaults.buttonColors(
+        containerColor = CallGreen,
+        contentColor = Color.White,
+        /*
+         * Номер не набран (1.3.6, 07.10.2026, автор: клавиатура «из другого
+         * приложения»). Было: системный серый «недоступно» — такого серого
+         * больше нигде нет. Стало: тоновая зелёная — светлый фон (16%)
+         * и зелёные подпись и значок: видно, что это кнопка вызова, просто
+         * пока не активна. Белый текст на бледно-зелёном не читался бы.
+         */
+        disabledContainerColor = CallGreen.copy(alpha = 0.16f),
+        disabledContentColor = CallGreen.copy(alpha = 0.75f)
+    )
+
     Row(
         Modifier
             .fillMaxWidth()
@@ -68,6 +91,7 @@ fun CallButtons(
                 onClick = { onCall(-1) },
                 enabled = enabled,
                 shape = OgnelissShapeTokens.callButton,
+                colors = callColors,
                 modifier = Modifier
                     .weight(1f)
                     .height(height)
@@ -85,6 +109,7 @@ fun CallButtons(
                     onClick = { onCall(sim.slotIndex) },
                     enabled = enabled,
                     shape = OgnelissShapeTokens.callButton,
+                    colors = callColors,
                     modifier = Modifier
                         .weight(1f)
                         .height(height)

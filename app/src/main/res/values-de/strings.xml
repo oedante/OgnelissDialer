@@ -293,8 +293,8 @@
     <string name="settings_section_spam">Spamschutz</string>
     <string name="settings_section_spam_summary">Sperrliste, Ausnahmen, Markierungen</string>
     <string name="settings_show_photo">Kontaktfotos anzeigen</string>
-    <string name="settings_sheet_photo_tint">Menükopf in Fotofarbe</string>
-    <string name="settings_sheet_photo_tint_text">Der Kopf des Eintragsmenüs nimmt die Hauptfarbe des Kontaktfotos an</string>
+    <string name="settings_sheet_header_tint">Farbiger Menükopf</string>
+    <string name="settings_sheet_header_tint_text">Der Kopf des Eintragsmenüs erhält die Farbe des Designs</string>
     <string name="settings_messengers_any_number">Messenger für jede Nummer</string>
     <string name="settings_messengers_any_number_text">«Schreiben» bietet installierte WhatsApp, Telegram, Viber und Max an, auch wenn die Nummer nicht in den Kontakten ist. Telegram öffnet den Chat nur, wenn die Person die Suche nach Nummer erlaubt</string>
     <string name="settings_sim">SIM-Karten und Netze</string>

@@ -235,11 +235,11 @@ object SettingsRegistry {
             R.string.settings_show_photo, null,
             SettingKind.Switch("show_photo")
         ),
-        // 1.3.5: заливка шапки меню записи цветом из фото — по умолчанию выкл.
+        // 1.3.5: шапка меню записи в цвете темы — по умолчанию вкл.
         SettingEntry(
-            "sheet_photo_tint", SettingsCategory.APPEARANCE,
-            R.string.settings_sheet_photo_tint, R.string.settings_sheet_photo_tint_text,
-            SettingKind.Switch("sheet_photo_tint")
+            "sheet_header_tint", SettingsCategory.APPEARANCE,
+            R.string.settings_sheet_header_tint, R.string.settings_sheet_header_tint_text,
+            SettingKind.Switch("sheet_header_tint")
         ),
         SettingEntry(
             "sim_labels", SettingsCategory.SIM,

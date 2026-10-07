@@ -230,7 +230,12 @@ fun CallLogCard(
                     } else {
                         // Имя — только у контактов: незнакомый номер с именем
                         // из определителя остаётся значком (1.3.5)
-                        Avatar(row.photoUri, row.hasMissed, name = if (row.contactId != null) row.title else null)
+                        Avatar(
+                            row.photoUri,
+                            row.hasMissed,
+                            // Буквы — из имени контакта, а не из заметки в заголовке
+                            name = if (row.isContact && !row.titleFromNote) row.title else null
+                        )
                     }
                 }
 

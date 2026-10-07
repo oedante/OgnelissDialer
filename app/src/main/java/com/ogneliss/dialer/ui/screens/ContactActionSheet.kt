@@ -1,12 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.Dispatchers
-import com.ogneliss.dialer.util.PhotoTint
 import androidx.compose.foundation.background
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.graphics.lerp
-import androidx.compose.animation.animateColorAsState
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -24,7 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -148,13 +141,9 @@ fun ContactActionSheet(
     }
 
     /*
-     * ЗАЛИВКА ШАПКИ ЦВЕТОМ ИЗ ФОТО (1.3.5, 05.10.2026, предложение автора;
-     * настройка «Цвет шапки меню из фото», по умолчанию выключена).
-     * Цвет считается вне главного потока, когда шторка уже открыта, и плавно
-     * проявляется — открытие не ждёт его. Закрашена полоса от верха шторки
-     * (вместе с ручкой) до ряда кнопок: 35% цвета фото поверх фона шторки —
-     * текст onSurface остаётся читаемым. Выключено или фото без цвета —
-     * цвет шапки равен фону шторки: вид прежний.
+     * Шапка меню (от верха шторки до кнопок) — в цвете темы, если включена
+     * настройка «Цветная шапка меню» (1.3.5, по умолчанию вкл.); выключена —
+     * цвет шапки равен фону шторки.
      */
     val settingsNow by vm.settingsState.collectAsStateWithLifecycle()
     val headerPhotoUri = remember(state.contacts, group.contactId, group.e164) {
@@ -167,21 +156,19 @@ fun ContactActionSheet(
         (state.contacts.firstOrNull { it.id == group.contactId }
             ?: state.contacts.firstOrNull { c -> c.numbers.any { it.e164 == group.e164 } })?.displayName
     }
-    val tintContext = LocalContext.current
-    val photoTint by produceState<Color?>(null, headerPhotoUri, settingsNow.sheetPhotoTint) {
-        value = if (settingsNow.sheetPhotoTint && !headerPhotoUri.isNullOrBlank()) {
-            withContext(Dispatchers.Default) {
-                PhotoTint.dominantColor(tintContext.contentResolver, headerPhotoUri)
-            }?.let { Color(it) }
-        } else {
-            null
-        }
-    }
+    /*
+     * Цвет шапки — из темы, а не из фото (06.10.2026, автор: «не нравятся
+     * рандомные цвета»). secondaryContainer — тот же оттенок, что у круглых
+     * кнопок этого меню; есть в каждой теме и следует динамическому цвету.
+     * primaryContainer не взят: на нём буквы контактов — кружок слился бы
+     * с шапкой. Известен сразу — ни расчёта, ни проявления.
+     */
     val sheetColor = MaterialTheme.colorScheme.surfaceContainerLow
-    val headerColor by animateColorAsState(
-        targetValue = photoTint?.let { lerp(sheetColor, it, 0.35f) } ?: sheetColor,
-        label = "sheetHeaderTint"
-    )
+    val headerColor = if (settingsNow.sheetHeaderTint) {
+        MaterialTheme.colorScheme.secondaryContainer
+    } else {
+        sheetColor
+    }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,

@@ -263,8 +263,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val PINNED_NUMBERS = stringPreferencesKey("pinned_numbers")
         val DYNAMIC_COLOR = booleanPreferencesKey("dynamic_color")
         val SHOW_PHOTO = booleanPreferencesKey("show_photo")
-        /** Заливка шапки меню записи цветом из фото (1.3.5, по умолчанию выкл.). */
-        val SHEET_PHOTO_TINT = booleanPreferencesKey("sheet_photo_tint")
+        /** Шапка меню записи в цвете темы (1.3.5, по умолчанию вкл.). */
+        val SHEET_HEADER_TINT = booleanPreferencesKey("sheet_header_tint")
         /** «Написать»: установленные мессенджеры для любого номера (1.3.5, выкл.). */
         val MESSENGERS_ANY_NUMBER = booleanPreferencesKey("messengers_any_number")
         val LARGE_BUTTONS = booleanPreferencesKey("large_buttons")
@@ -468,7 +468,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      */
     val dynamicColor: Flow<Boolean> = data.map { it[Keys.DYNAMIC_COLOR] ?: false }
     val showPhoto: Flow<Boolean> = data.map { it[Keys.SHOW_PHOTO] ?: true }
-    val sheetPhotoTint: Flow<Boolean> = data.map { it[Keys.SHEET_PHOTO_TINT] ?: false }
+    val sheetHeaderTint: Flow<Boolean> = data.map { it[Keys.SHEET_HEADER_TINT] ?: true }
     val messengersAnyNumber: Flow<Boolean> = data.map { it[Keys.MESSENGERS_ANY_NUMBER] ?: false }
     val largeButtons: Flow<Boolean> = data.map { it[Keys.LARGE_BUTTONS] ?: false }
 
@@ -725,7 +725,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setTheme(v: ThemeMode) = edit("theme", v.name) { it[Keys.THEME] = v.name }
     suspend fun setDynamicColor(v: Boolean) = edit("dynamic_color", v) { it[Keys.DYNAMIC_COLOR] = v }
     suspend fun setShowPhoto(v: Boolean) = edit("show_photo", v) { it[Keys.SHOW_PHOTO] = v }
-    suspend fun setSheetPhotoTint(v: Boolean) = edit("sheet_photo_tint", v) { it[Keys.SHEET_PHOTO_TINT] = v }
+    suspend fun setSheetHeaderTint(v: Boolean) = edit("sheet_header_tint", v) { it[Keys.SHEET_HEADER_TINT] = v }
     suspend fun setMessengersAnyNumber(v: Boolean) = edit("messengers_any_number", v) { it[Keys.MESSENGERS_ANY_NUMBER] = v }
     suspend fun setLargeButtons(v: Boolean) = edit("large_buttons", v) { it[Keys.LARGE_BUTTONS] = v }
     suspend fun setButtonLabels(v: Boolean) = edit("button_labels", v) { it[Keys.BUTTON_LABELS] = v }

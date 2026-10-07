@@ -1,0 +1,189 @@
+<ru-RU>
+• Контакты без фото — с буквами имени: их сразу видно среди незнакомых номеров.
+• «Написать» в WhatsApp, Telegram, Viber и Max — и на номера не из контактов (Настройки → Вызовы).
+• В карточке на месте «Блок» — «Ещё»: блокировка в меню, её не нажать случайно.
+• Список контактов — как журнал; шапка меню записи — в цвете темы.
+• Клавиатура набора и строка номера — в едином стиле с приложением.
+</ru-RU>
+<ar>
+• جهات الاتصال بلا صورة تعرض الأحرف الأولى وتتميز عن الأرقام غير المعروفة.
+• «مراسلة» عبر واتساب وتيليجرام وفايبر وMax حتى للأرقام غير الموجودة في جهات الاتصال (الإعدادات ← المكالمات).
+• في البطاقة حل «المزيد» محل «حظر»: الحظر انتقل إلى القائمة فلا يُضغط بالخطأ.
+• قائمة جهات الاتصال مثل سجل المكالمات؛ رأس القائمة بلون المظهر.
+• لوحة الطلب وحقل الرقم بأسلوب التطبيق.
+</ar>
+<cs-CZ>
+• Kontakty bez fotky ukazují iniciály a odliší se od neznámých čísel.
+• „Napsat“ přes WhatsApp, Telegram, Viber a Max i na čísla mimo kontakty (Nastavení → Hovory).
+• Na kartě nahradilo „Další“ tlačítko „Blokovat“: blokování je v nabídce, náhodně ho nestisknete.
+• Seznam kontaktů jako historie hovorů; záhlaví nabídky v barvě motivu.
+• Klávesnice a pole čísla ve stylu aplikace.
+</cs-CZ>
+<da-DK>
+• Kontakter uden foto viser initialer og skiller sig ud fra ukendte numre.
+• "Skriv" via WhatsApp, Telegram, Viber og Max – nu også til numre uden for kontakter (Indstillinger → Opkald).
+• På kontaktkortet erstatter "Mere" knappen "Bloker": blokering ligger i menuen og trykkes ikke ved et uheld.
+• Kontaktlisten ligner opkaldsloggen; menuhovedet i temaets farve.
+• Tastatur og nummerfelt i appens stil.
+</da-DK>
+<de-DE>
+• Kontakte ohne Foto zeigen ihre Initialen und heben sich von unbekannten Nummern ab.
+• „Schreiben“ per WhatsApp, Telegram, Viber und Max – jetzt auch an Nummern außerhalb der Kontakte (Einstellungen → Anrufe).
+• In der Kontaktkarte ersetzt „Mehr“ die Taste „Sperren“: Sperren ist jetzt im Menü – kein versehentliches Tippen.
+• Kontaktliste wie die Anrufliste; Menükopf in der Designfarbe.
+• Wähltastatur und Nummernfeld im Stil der übrigen App.
+</de-DE>
+<en-US>
+• Contacts without a photo show their initials, so they stand out from unknown numbers.
+• "Message" via WhatsApp, Telegram, Viber and Max — now for numbers not in your contacts too (Settings → Calls).
+• In the contact card, "More" replaces "Block": blocking is in the menu, so it can't be tapped by accident.
+• Contacts list styled like the call log; the long-press menu header uses the theme color.
+• The dialpad and number field now match the rest of the app.
+</en-US>
+<es-ES>
+• Los contactos sin foto muestran sus iniciales y se distinguen de los números desconocidos.
+• «Escribir» por WhatsApp, Telegram, Viber y Max, también a números que no están en contactos (Ajustes → Llamadas).
+• En la ficha, «Más» sustituye a «Bloquear»: el bloqueo pasa al menú y no se pulsa por error.
+• Lista de contactos como el registro; cabecera del menú con el color del tema.
+• El teclado y el campo del número, con el estilo de la aplicación.
+</es-ES>
+<fi-FI>
+• Yhteystiedot ilman kuvaa näyttävät nimikirjaimet ja erottuvat tuntemattomista numeroista.
+• ”Kirjoita” WhatsAppilla, Telegramilla, Viberillä ja Maxilla myös numeroihin, jotka eivät ole yhteystiedoissa (Asetukset → Puhelut).
+• Kortilla ”Lisää” korvaa ”Estä”-painikkeen: esto on valikossa, eikä sitä paina vahingossa.
+• Yhteystietoluettelo kuin puheluhistoria; valikon otsikko teeman värissä.
+• Näppäimistö ja numerokenttä sovelluksen tyyliin.
+</fi-FI>
+<fr-FR>
+• Les contacts sans photo affichent leurs initiales et se distinguent des numéros inconnus.
+• « Écrire » via WhatsApp, Telegram, Viber et Max — aussi pour les numéros hors contacts (Paramètres → Appels).
+• Dans la fiche, « Plus » remplace « Bloquer » : le blocage passe dans le menu, impossible de le toucher par erreur.
+• Liste des contacts comme le journal ; en-tête du menu aux couleurs du thème.
+• Le clavier et le champ du numéro adoptent le style de l'application.
+</fr-FR>
+<hi-IN>
+• बिना फ़ोटो वाले संपर्क नाम के आद्यक्षर दिखाते हैं और अनजान नंबरों से अलग दिखते हैं।
+• WhatsApp, Telegram, Viber और Max से "संदेश" अब उन नंबरों पर भी जो संपर्कों में नहीं (सेटिंग्स → कॉल)।
+• संपर्क कार्ड में "ब्लॉक" की जगह "और": ब्लॉक मेनू में गया, गलती से नहीं दबेगा।
+• संपर्क सूची कॉल लॉग जैसी; मेनू शीर्ष थीम के रंग में।
+• डायल पैड और नंबर फ़ील्ड ऐप की शैली में।
+</hi-IN>
+<hu-HU>
+• A fotó nélküli névjegyek monogramot mutatnak, így elkülönülnek az ismeretlen számoktól.
+• „Üzenet” WhatsAppon, Telegramon, Viberen és Maxon a névjegyekben nem szereplő számokra is (Beállítások → Hívások).
+• A kártyán a „Továbbiak” váltja a „Letiltás” gombot: a letiltás a menüben van, véletlenül nem nyomható meg.
+• A névjegylista a hívásnaplóhoz hasonló; a menüfejléc a téma színében.
+• A tárcsázó és a számmező az alkalmazás stílusában.
+</hu-HU>
+<id>
+• Kontak tanpa foto menampilkan inisial dan mudah dibedakan dari nomor tak dikenal.
+• "Kirim pesan" lewat WhatsApp, Telegram, Viber, dan Max kini juga ke nomor di luar kontak (Setelan → Panggilan).
+• Di kartu kontak, "Lainnya" menggantikan "Blokir": blokir pindah ke menu agar tidak tertekan tak sengaja.
+• Daftar kontak seperti log panggilan; kepala menu berwarna tema.
+• Papan tombol dan kolom nomor bergaya aplikasi.
+</id>
+<it-IT>
+• I contatti senza foto mostrano le iniziali e si distinguono dai numeri sconosciuti.
+• «Scrivi» via WhatsApp, Telegram, Viber e Max, anche ai numeri non in rubrica (Impostazioni → Chiamate).
+• Nella scheda, «Altro» sostituisce «Blocca»: il blocco è nel menu, niente tocchi accidentali.
+• Elenco contatti come il registro; intestazione del menu nel colore del tema.
+• Tastierino e campo del numero nello stile dell'app.
+</it-IT>
+<iw-IL>
+• אנשי קשר ללא תמונה מציגים ראשי תיבות ובולטים בין מספרים לא מוכרים.
+• "כתיבה" ב-WhatsApp, Telegram, Viber ו-Max גם למספרים שאינם באנשי הקשר (הגדרות ← שיחות).
+• בכרטיס, "עוד" מחליף את "חסימה": החסימה עברה לתפריט ולא תילחץ בטעות.
+• רשימת אנשי הקשר כמו יומן השיחות; כותרת התפריט בצבע ערכת הנושא.
+• לוח החיוג ושדה המספר בסגנון האפליקציה.
+</iw-IL>
+<ja-JP>
+• 写真のない連絡先はイニシャルで表示され、知らない番号と区別しやすくなりました。
+• WhatsApp・Telegram・Viber・Maxでの「メッセージ」が連絡先にない番号にも対応（設定 → 通話）。
+• 連絡先カードの「ブロック」は「その他」に置き換え、ブロックはメニューへ。誤タップを防ぎます。
+• 連絡先リストを通話履歴と同じデザインに。メニュー上部はテーマの色に。
+• ダイヤルパッドと番号欄をアプリ全体のデザインに統一。
+</ja-JP>
+<ko-KR>
+• 사진이 없는 연락처는 이니셜로 표시되어 모르는 번호와 쉽게 구분됩니다.
+• WhatsApp, Telegram, Viber, Max로 '메시지'를 연락처에 없는 번호에도 보낼 수 있습니다(설정 → 통화).
+• 연락처 카드의 '차단' 자리에 '더보기': 차단은 메뉴로 옮겨 실수로 누르지 않습니다.
+• 연락처 목록을 통화 기록과 같은 모양으로; 메뉴 머리글은 테마 색상.
+• 다이얼패드와 번호 입력란을 앱 스타일로 통일.
+</ko-KR>
+<nl-NL>
+• Contacten zonder foto tonen hun initialen en vallen op tussen onbekende nummers.
+• "Bericht" via WhatsApp, Telegram, Viber en Max, nu ook naar nummers buiten je contacten (Instellingen → Oproepen).
+• Op de contactkaart vervangt "Meer" de knop "Blokkeren": blokkeren zit nu in het menu, niet per ongeluk te tikken.
+• Contactenlijst zoals de belgeschiedenis; menukop in de kleur van het thema.
+• Kiesblok en nummerveld in de stijl van de app.
+</nl-NL>
+<no-NO>
+• Kontakter uten bilde viser initialer og skiller seg ut fra ukjente numre.
+• «Skriv» via WhatsApp, Telegram, Viber og Max – nå også til numre utenfor kontaktene (Innstillinger → Anrop).
+• På kontaktkortet erstatter «Mer» knappen «Blokker»: blokkering ligger i menyen og trykkes ikke ved et uhell.
+• Kontaktlisten som anropsloggen; menyhodet i temaets farge.
+• Tastatur og nummerfelt i appens stil.
+</no-NO>
+<pl-PL>
+• Kontakty bez zdjęcia pokazują inicjały i odróżniają się od nieznanych numerów.
+• „Napisz” przez WhatsApp, Telegram, Viber i Max także do numerów spoza kontaktów (Ustawienia → Połączenia).
+• Na karcie „Więcej” zastępuje „Zablokuj”: blokowanie jest w menu, nie da się go nacisnąć przypadkiem.
+• Lista kontaktów jak rejestr połączeń; nagłówek menu w kolorze motywu.
+• Klawiatura i pole numeru w stylu aplikacji.
+</pl-PL>
+<pt-BR>
+• Contatos sem foto mostram as iniciais e se destacam dos números desconhecidos.
+• "Enviar mensagem" por WhatsApp, Telegram, Viber e Max também para números fora dos contatos (Configurações → Chamadas).
+• No cartão, "Mais" substitui "Bloquear": o bloqueio foi para o menu e não é tocado por acidente.
+• Lista de contatos como o registro; cabeçalho do menu na cor do tema.
+• Teclado e campo do número no estilo do aplicativo.
+</pt-BR>
+<ro>
+• Contactele fără fotografie afișează inițialele și se disting de numerele necunoscute.
+• „Scrie” prin WhatsApp, Telegram, Viber și Max și către numere care nu sunt în agendă (Setări → Apeluri).
+• În fișă, „Mai multe” înlocuiește „Blochează”: blocarea e în meniu și nu se apasă din greșeală.
+• Lista de contacte ca istoricul de apeluri; antetul meniului în culoarea temei.
+• Tastatura și câmpul numărului în stilul aplicației.
+</ro>
+<sk>
+• Kontakty bez fotky ukazujú iniciály a odlíšia sa od neznámych čísel.
+• „Napísať“ cez WhatsApp, Telegram, Viber a Max aj na čísla mimo kontaktov (Nastavenia → Hovory).
+• Na karte nahradilo „Ďalšie“ tlačidlo „Blokovať“: blokovanie je v ponuke, náhodne ho nestlačíte.
+• Zoznam kontaktov ako história hovorov; hlavička ponuky vo farbe motívu.
+• Klávesnica a pole čísla v štýle aplikácie.
+</sk>
+<sv-SE>
+• Kontakter utan foto visar initialer och syns tydligt bland okända nummer.
+• "Skriv" via WhatsApp, Telegram, Viber och Max – nu även till nummer utanför kontakterna (Inställningar → Samtal).
+• På kontaktkortet ersätter "Mer" knappen "Blockera": blockering finns i menyn och trycks inte av misstag.
+• Kontaktlistan som samtalsloggen; menyhuvudet i temats färg.
+• Knappsats och nummerfält i appens stil.
+</sv-SE>
+<th>
+• ผู้ติดต่อที่ไม่มีรูปแสดงตัวอักษรย่อ แยกจากหมายเลขที่ไม่รู้จักได้ทันที
+• "ส่งข้อความ" ผ่าน WhatsApp, Telegram, Viber และ Max ไปยังหมายเลขที่ไม่อยู่ในรายชื่อได้แล้ว (การตั้งค่า → การโทร)
+• ในการ์ดผู้ติดต่อ "เพิ่มเติม" แทนที่ "บล็อก" การบล็อกย้ายไปอยู่ในเมนู ไม่กดโดยไม่ตั้งใจ
+• รายชื่อผู้ติดต่อเหมือนประวัติการโทร หัวเมนูเป็นสีของธีม
+• แป้นกดและช่องหมายเลขในสไตล์ของแอป
+</th>
+<tr-TR>
+• Fotoğrafı olmayan kişiler baş harfleriyle görünür ve bilinmeyen numaralardan ayrılır.
+• WhatsApp, Telegram, Viber ve Max ile "Mesaj yaz" artık rehberde olmayan numaralara da (Ayarlar → Aramalar).
+• Kişi kartında "Engelle" yerine "Daha fazla": engelleme menüde, yanlışlıkla basılmaz.
+• Kişi listesi arama geçmişi gibi; menü başlığı tema renginde.
+• Tuş takımı ve numara alanı uygulamanın tarzında.
+</tr-TR>
+<vi>
+• Liên hệ không có ảnh hiển thị chữ cái đầu, dễ phân biệt với số lạ.
+• "Nhắn tin" qua WhatsApp, Telegram, Viber và Max cả với số không có trong danh bạ (Cài đặt → Cuộc gọi).
+• Trên thẻ liên hệ, "Thêm" thay cho "Chặn": chặn nằm trong menu, không bấm nhầm.
+• Danh sách liên hệ giống nhật ký cuộc gọi; đầu menu theo màu giao diện.
+• Bàn phím quay số và ô nhập số theo phong cách ứng dụng.
+</vi>
+<zh-CN>
+• 无照片的联系人显示姓名首字母，与陌生号码一目了然地区分。
+• 可通过 WhatsApp、Telegram、Viber 和 Max 向不在通讯录中的号码“发消息”（设置 → 通话）。
+• 联系人卡片中“更多”取代“屏蔽”：屏蔽移入菜单，避免误触。
+• 联系人列表与通话记录风格一致；菜单顶部采用主题颜色。
+• 拨号键盘和号码栏与应用整体风格统一。
+</zh-CN>

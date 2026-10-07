@@ -291,8 +291,8 @@
     <string name="settings_section_spam">Protection contre le spam</string>
     <string name="settings_section_spam_summary">Liste de blocage, exceptions, étiquettes</string>
     <string name="settings_show_photo">Afficher les photos des contacts</string>
-    <string name="settings_sheet_photo_tint">En-tête du menu aux couleurs de la photo</string>
-    <string name="settings_sheet_photo_tint_text">L\'en-tête du menu prend la couleur principale de la photo du contact</string>
+    <string name="settings_sheet_header_tint">En-tête de menu en couleur</string>
+    <string name="settings_sheet_header_tint_text">L\'en-tête du menu prend la couleur du thème</string>
     <string name="settings_messengers_any_number">Messageries pour tout numéro</string>
     <string name="settings_messengers_any_number_text">«Écrire» propose WhatsApp, Telegram, Viber et Max installés, même si le numéro n\'est pas dans les contacts. Telegram n\'ouvre la discussion que si la personne autorise la recherche par numéro</string>
     <string name="settings_sim">Cartes SIM et réseaux</string>
