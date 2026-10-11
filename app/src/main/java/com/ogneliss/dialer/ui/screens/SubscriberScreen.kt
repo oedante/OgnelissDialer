@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.PanelReachesNavBar
 import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.settings.SwipeAction
 import com.ogneliss.dialer.call.ExternalApps
@@ -2378,6 +2379,8 @@ fun SubscriberScreen(
                 color = PanelColors.panel(),
                 modifier = Modifier.fillMaxWidth()
             ) {
+                // Полоса под навигацией — цвета панели (NavBarStrip.kt, 1.5.1)
+                PanelReachesNavBar()
                 Row(
                     Modifier
                         .fillMaxWidth()

@@ -141,7 +141,7 @@ Compose делит типы на стабильные и нестабильны�
 ### Как проверить
 
 ```
-./gradlew assembleRelease -Pcompose.metrics=true
+./gradlew assembleRelease "-Pcompose.metrics=true"
 ```
 
 Результат в `app/build/compose_metrics/`. Искать в `*-classes.txt`

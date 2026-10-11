@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.PanelReachesNavBar
 import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.ui.theme.Space
 
@@ -79,6 +80,7 @@ fun ConsentScreen(
             // Цвет нижней панели, как на остальных экранах (1.4.0): прежний
             // тональный подъём давал голубую дымку, а без неё сливался с фоном
             Surface(color = PanelColors.panel()) {
+                PanelReachesNavBar()
                 Column(
                     Modifier
                         .fillMaxWidth()

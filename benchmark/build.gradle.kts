@@ -51,7 +51,7 @@ android {
         // Macrobenchmark требует API 28 и выше: на более старых
         // нет нужных системных трассировок
         minSdk = 28
-        targetSdk = 36
+        targetSdk = 37  // 1.5.1: вместе с app
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

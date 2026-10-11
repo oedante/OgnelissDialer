@@ -1,0 +1,162 @@
+<ru-RU>
+• Живой фон экрана вызова: мягкие пятна цветов темы, цвет по состоянию — входящий, разговор, удержание. Отключается в настройках.
+• Нижняя панель доходит до края экрана, под кнопки навигации.
+• TalkBack произносит смену состояния вызова.
+• Поддержка Android 17.
+</ru-RU>
+<ar>
+• خلفية حية لشاشة المكالمة: بقع ناعمة بألوان المظهر يتغير لونها حسب الحالة — واردة، محادثة، انتظار. يمكن إيقافها من الإعدادات.
+• اللوحة السفلية تمتد حتى حافة الشاشة تحت أزرار التنقل.
+• يعلن TalkBack عن تغيّر حالة المكالمة.
+• دعم Android 17.
+</ar>
+<cs-CZ>
+• Živé pozadí obrazovky hovoru: jemné skvrny v barvách motivu, barva podle stavu – příchozí, hovor, podržení. Lze vypnout v nastavení.
+• Spodní panel sahá až k okraji obrazovky pod navigační tlačítka.
+• TalkBack ohlašuje změnu stavu hovoru.
+• Podpora Androidu 17.
+</cs-CZ>
+<da-DK>
+• Levende baggrund på opkaldsskærmen: bløde pletter i temaets farver, farven følger status – indgående, samtale, venter. Kan slås fra i indstillinger.
+• Bundpanelet når helt ud til skærmkanten under navigationsknapperne.
+• TalkBack siger, når opkaldets status skifter.
+• Understøtter Android 17.
+</da-DK>
+<de-DE>
+• Lebendiger Hintergrund im Anrufbildschirm: weiche Flächen in Designfarben, Farbe je nach Status – eingehend, Gespräch, gehalten. In den Einstellungen abschaltbar.
+• Die untere Leiste reicht bis zum Bildschirmrand unter die Navigationstasten.
+• TalkBack sagt Statuswechsel des Anrufs an.
+• Unterstützung für Android 17.
+</de-DE>
+<en-US>
+• Live call screen background: soft shapes in theme colors that change with the call state – incoming, talking, on hold. Can be turned off in settings.
+• The bottom panel now reaches the screen edge, under the navigation buttons.
+• TalkBack announces call state changes.
+• Android 17 support.
+</en-US>
+<es-ES>
+• Fondo animado en la pantalla de llamada: manchas suaves con los colores del tema que cambian según el estado (entrante, en curso, en espera). Se puede desactivar en ajustes.
+• El panel inferior llega hasta el borde de la pantalla, bajo los botones de navegación.
+• TalkBack anuncia los cambios de estado de la llamada.
+• Compatible con Android 17.
+</es-ES>
+<fi-FI>
+• Elävä tausta puhelunäkymässä: pehmeät läiskät teeman väreissä, väri tilan mukaan – saapuva, puhelu, pidossa. Voi poistaa käytöstä asetuksista.
+• Alapaneeli ulottuu näytön reunaan navigointipainikkeiden alle.
+• TalkBack ilmoittaa puhelun tilan muutoksista.
+• Android 17 -tuki.
+</fi-FI>
+<fr-FR>
+• Fond animé de l'écran d'appel : taches douces aux couleurs du thème, selon l'état – entrant, en cours, en attente. Désactivable dans les réglages.
+• Le panneau du bas va jusqu'au bord de l'écran, sous les boutons de navigation.
+• TalkBack annonce les changements d'état de l'appel.
+• Prise en charge d'Android 17.
+</fr-FR>
+<hi-IN>
+• कॉल स्क्रीन की जीवंत पृष्ठभूमि: थीम के रंगों में नरम धब्बे, रंग स्थिति के अनुसार — आने वाली, बातचीत, होल्ड। सेटिंग में बंद की जा सकती है।
+• नीचे का पैनल नेविगेशन बटनों के नीचे स्क्रीन के किनारे तक जाता है।
+• TalkBack कॉल की स्थिति बदलने की घोषणा करता है।
+• Android 17 का समर्थन।
+</hi-IN>
+<hu-HU>
+• Élő háttér a hívásképernyőn: lágy foltok a téma színeiben, a szín az állapotot követi – bejövő, beszélgetés, tartás. A beállításokban kikapcsolható.
+• Az alsó panel a képernyő széléig, a navigációs gombok alá ér.
+• A TalkBack bemondja a hívás állapotának változását.
+• Android 17 támogatás.
+</hu-HU>
+<id>
+• Latar hidup di layar panggilan: bercak lembut warna tema, warnanya sesuai status – masuk, berbicara, ditahan. Bisa dimatikan di setelan.
+• Panel bawah kini sampai ke tepi layar, di bawah tombol navigasi.
+• TalkBack mengumumkan perubahan status panggilan.
+• Dukungan Android 17.
+</id>
+<it-IT>
+• Sfondo animato nella schermata di chiamata: macchie morbide nei colori del tema, colore in base allo stato – in arrivo, in corso, in attesa. Disattivabile nelle impostazioni.
+• Il pannello inferiore arriva fino al bordo dello schermo, sotto i pulsanti di navigazione.
+• TalkBack annuncia i cambi di stato della chiamata.
+• Supporto per Android 17.
+</it-IT>
+<iw-IL>
+• רקע חי למסך השיחה: כתמים רכים בצבעי ערכת הנושא, הצבע לפי המצב – נכנסת, שיחה, בהמתנה. אפשר לכבות בהגדרות.
+• הלוח התחתון מגיע עד קצה המסך, מתחת לכפתורי הניווט.
+• TalkBack מכריז על שינוי במצב השיחה.
+• תמיכה ב-Android 17.
+</iw-IL>
+<ja-JP>
+• 通話画面のライブ背景：テーマカラーのやわらかな模様が、着信・通話中・保留の状態に合わせて色を変えます。設定でオフにできます。
+• 下部パネルが画面の端、ナビゲーションボタンの下まで届くように。
+• TalkBack が通話状態の変化を読み上げます。
+• Android 17 に対応。
+</ja-JP>
+<ko-KR>
+• 통화 화면 라이브 배경: 테마 색의 부드러운 무늬가 수신·통화·보류 상태에 따라 색이 바뀝니다. 설정에서 끌 수 있습니다.
+• 하단 패널이 화면 가장자리, 내비게이션 버튼 아래까지 닿습니다.
+• TalkBack이 통화 상태 변경을 알려 줍니다.
+• Android 17 지원.
+</ko-KR>
+<nl-NL>
+• Levende achtergrond in het belscherm: zachte vlekken in themakleuren, kleur volgt de status – inkomend, in gesprek, in de wacht. Uit te zetten in instellingen.
+• Het onderpaneel loopt door tot de schermrand, onder de navigatieknoppen.
+• TalkBack meldt wijzigingen in de status van het gesprek.
+• Ondersteuning voor Android 17.
+</nl-NL>
+<no-NO>
+• Levende bakgrunn på anropsskjermen: myke flekker i temaets farger, fargen følger status – innkommende, samtale, venter. Kan slås av i innstillinger.
+• Bunnpanelet går helt ut til skjermkanten under navigasjonsknappene.
+• TalkBack sier ifra når anropets status endres.
+• Støtte for Android 17.
+</no-NO>
+<pl-PL>
+• Żywe tło ekranu połączenia: miękkie plamy w kolorach motywu, kolor zależny od stanu – przychodzące, rozmowa, wstrzymane. Można wyłączyć w ustawieniach.
+• Dolny panel sięga do krawędzi ekranu, pod przyciski nawigacji.
+• TalkBack ogłasza zmiany stanu połączenia.
+• Obsługa Androida 17.
+</pl-PL>
+<pt-BR>
+• Fundo animado na tela de chamada: manchas suaves nas cores do tema, a cor segue o estado – recebendo, em conversa, em espera. Pode ser desativado nas configurações.
+• O painel inferior vai até a borda da tela, sob os botões de navegação.
+• O TalkBack anuncia as mudanças de estado da chamada.
+• Compatível com Android 17.
+</pt-BR>
+<ro>
+• Fundal animat pe ecranul de apel: pete moi în culorile temei, culoarea după stare – primit, în convorbire, în așteptare. Se poate dezactiva din setări.
+• Panoul de jos ajunge până la marginea ecranului, sub butoanele de navigare.
+• TalkBack anunță schimbarea stării apelului.
+• Suport pentru Android 17.
+</ro>
+<sk>
+• Živé pozadie obrazovky hovoru: jemné škvrny vo farbách motívu, farba podľa stavu – prichádzajúci, hovor, podržanie. Dá sa vypnúť v nastaveniach.
+• Spodný panel siaha až k okraju obrazovky pod navigačné tlačidlá.
+• TalkBack ohlasuje zmenu stavu hovoru.
+• Podpora Androidu 17.
+</sk>
+<sv-SE>
+• Levande bakgrund på samtalsskärmen: mjuka fläckar i temats färger, färgen följer status – inkommande, samtal, parkerat. Kan stängas av i inställningar.
+• Bottenpanelen når ända ut till skärmkanten under navigeringsknapparna.
+• TalkBack säger till när samtalets status ändras.
+• Stöd för Android 17.
+</sv-SE>
+<th>
+• พื้นหลังมีชีวิตบนหน้าจอการโทร: ลวดลายนุ่มสีตามธีม เปลี่ยนสีตามสถานะ — สายเข้า กำลังคุย พักสาย ปิดได้ในการตั้งค่า
+• แผงด้านล่างยาวถึงขอบจอ ใต้ปุ่มนำทาง
+• TalkBack แจ้งเมื่อสถานะการโทรเปลี่ยน
+• รองรับ Android 17
+</th>
+<tr-TR>
+• Arama ekranında canlı arka plan: tema renklerinde yumuşak lekeler, renk duruma göre değişir – gelen, görüşme, beklemede. Ayarlardan kapatılabilir.
+• Alt panel, gezinme düğmelerinin altına, ekranın kenarına kadar uzanır.
+• TalkBack arama durumundaki değişiklikleri seslendirir.
+• Android 17 desteği.
+</tr-TR>
+<vi>
+• Nền động trên màn hình cuộc gọi: các mảng màu mềm theo chủ đề, đổi màu theo trạng thái – cuộc gọi đến, đang nói, giữ máy. Có thể tắt trong cài đặt.
+• Bảng phía dưới kéo tới mép màn hình, dưới các nút điều hướng.
+• TalkBack thông báo khi trạng thái cuộc gọi thay đổi.
+• Hỗ trợ Android 17.
+</vi>
+<zh-CN>
+• 通话界面动态背景：主题色的柔和色块随来电、通话中、保持等状态变换颜色，可在设置中关闭。
+• 底部面板延伸至屏幕边缘，位于导航按钮下方。
+• TalkBack 会播报通话状态的变化。
+• 支持 Android 17。
+</zh-CN>

@@ -447,6 +447,12 @@ object SettingsRegistry {
             groupRes = R.string.settings_group_during_call
         ),
         SettingEntry(
+            "call_animation", SettingsCategory.CALLS,
+            R.string.settings_call_animation, R.string.settings_call_animation_text,
+            SettingKind.Switch("call_animation"),
+            groupRes = R.string.settings_group_during_call
+        ),
+        SettingEntry(
             "post_call", SettingsCategory.CALLS,
             R.string.settings_post_call, R.string.settings_post_call_text,
             SettingKind.Switch("post_call"),

@@ -650,6 +650,8 @@
     <string name="settings_proximity">Éteindre l’écran près de l’oreille</string>
     <string name="settings_proximity_text">Le capteur de proximité éteint l’écran pendant un appel. Sans lui, la joue peut appuyer sur « Raccrocher » ou « Muet »</string>
     <string name="settings_hide_contact_number">Type de numéro au lieu du numéro</string>
+    <string name="settings_call_animation">Fond d’appel animé</string>
+    <string name="settings_call_animation_text">Des formes douces aux couleurs du thème glissent lentement derrière l’écran d’appel. Fond immobile si les animations sont désactivées dans les réglages du système</string>
     <string name="settings_hide_contact_number_text">Sur l’écran d’appel, les contacts enregistrés affichent « Mobile », « Travail », etc. au lieu des chiffres. Les numéros inconnus restent toujours visibles</string>
     <string name="language_search_hint">Rechercher une langue</string>
     <string name="language_auto_translated">traduction automatique</string>

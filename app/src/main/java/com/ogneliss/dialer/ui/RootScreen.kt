@@ -1,5 +1,16 @@
 package com.ogneliss.dialer.ui
 
+import androidx.compose.material3.MaterialTheme
+import com.ogneliss.dialer.ui.theme.LocalNavBarStrip
+import com.ogneliss.dialer.ui.theme.NavBarStripState
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.background
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.animateColorAsState
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -324,7 +335,23 @@ fun RootScreen(
      * вырез камеры и жестовую зону. Отдельные statusBars/navigationBars
      * покрыли бы не все случаи — например, вырез в ландшафте.
      */
+    // Полоса под системной навигацией — цвета нижней панели (1.5.1):
+    // разбор в ui/theme/NavBarStrip.kt
+    val navBarStrip = remember { NavBarStripState() }
+    val navBarStripColor by animateColorAsState(
+        if (navBarStrip.panels > 0) PanelColors.panel() else MaterialTheme.colorScheme.background,
+        animationSpec = tween(Motion.NORMAL_MS),
+        label = "navBarStrip"
+    )
+    CompositionLocalProvider(LocalNavBarStrip provides navBarStrip) {
     Box(Modifier.fillMaxSize()) {
+    Box(
+        Modifier
+            .align(Alignment.BottomCenter)
+            .fillMaxWidth()
+            .windowInsetsBottomHeight(WindowInsets.navigationBars)
+            .background(navBarStripColor)
+    )
     Column(
         Modifier
             .fillMaxSize()
@@ -760,6 +787,7 @@ fun RootScreen(
                 .navigationBarsPadding()
         )
     }
+    } // LocalNavBarStrip
 }
 }
 

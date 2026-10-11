@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.PanelReachesNavBar
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -182,6 +183,8 @@ fun BottomControlPanel(
          */
         tonalElevation = 0.dp
     ) {
+        // Внизу — полоса под навигацией её цвета (NavBarStrip.kt); сбоку — нет
+        if (!side) PanelReachesNavBar()
         Column(
             Modifier
                 .navigationBarsPadding()

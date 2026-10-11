@@ -72,6 +72,13 @@ baselineProfile {
 }
 ```
 
+## PowerShell: свойство `-P…` с точками — в кавычках
+
+`./gradlew help -Pandroid.debug.obsoleteApi=true` в PowerShell падает
+с «Task '.debug.obsoleteApi=true' not found»: PowerShell режет аргумент
+на первой точке. Аргумент `-P…` с точками пишется в кавычках:
+`./gradlew help "-Pandroid.debug.obsoleteApi=true"` (11.10.2026).
+
 ## Предупреждения AGP 9 про устаревший DSL
 
 Сообщения вида «API 'applicationVariants' is obsolete», «плагин
@@ -80,9 +87,9 @@ baselineProfile {
 Они приходят от плагинов (Hilt, Baseline Profile), а не от нашего кода.
 
 С 1.4.0 флаг `android.newDsl=false` снят (Baseline Profile 1.5.0), и этих
-предупреждений быть не должно. Если появятся — `./gradlew help
--Pandroid.debug.obsoleteApi=true` покажет, какой плагин зовёт старый API;
-откат описан в `RELEASE_NOTES_1.4.0.md`, §3.
+предупреждений быть не должно. Если появятся — команда
+`./gradlew help "-Pandroid.debug.obsoleteApi=true"` покажет, какой плагин
+зовёт старый API; откат описан в `RELEASE_NOTES_1.4.0.md`, §3.
 
 Пока сборка идёт, трогать не нужно. Миграция на встроенную поддержку
 Kotlin в AGP 9 — отдельная задача, и делать её стоит после того,

@@ -1,5 +1,9 @@
 package com.ogneliss.dialer.call
 
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.material3.IconButtonDefaults
 import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
@@ -196,6 +200,9 @@ class InCallActivity : ComponentActivity() {
             // нет, поэтому оформление ставится здесь
             val buttonLabels by prefs.buttonLabels.collectAsStateWithLifecycle(initialValue = true)
             val hideContactNumber by prefs.callHideContactNumber.collectAsStateWithLifecycle(initialValue = false)
+            // Живой фон (1.5.1): по настройке; в высоком контрасте — нет,
+            // там фон ровный ради различимости
+            val callAnimation by prefs.callAnimation.collectAsStateWithLifecycle(initialValue = true)
 
             OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic) {
                 // Раскладка окна: телефон, лёжа, раскладушка, планшет.
@@ -262,6 +269,7 @@ class InCallActivity : ComponentActivity() {
                     notesRepo = notesRepo,
                     spamMarksRepo = spamMarksRepo,
                     hideContactNumber = hideContactNumber,
+                    ambientBackground = callAnimation && theme != ThemeMode.HIGH_CONTRAST,
                     // Пользователь переключил звук сам — датчики умолкают
                     // до конца разговора
                     onManualAudioChange = { smartSpeaker?.notifyManualToggle() }
@@ -314,6 +322,8 @@ private fun InCallScreen(
     spamMarksRepo: com.ogneliss.dialer.data.SpamMarksRepository,
     /** У сохранённого контакта — тип номера вместо номера. */
     hideContactNumber: Boolean = false,
+    /** Живой фон за экраном (CallAmbientBackground.kt); без фото на весь экран. */
+    ambientBackground: Boolean = false,
     onManualAudioChange: () -> Unit = {}
 ) {
     // Мало места по высоте — раскладка в две колонки. Порог прежний
@@ -683,12 +693,16 @@ private fun InCallScreen(
         windowLayout0.hinge?.let { !it.vertical } == true
     val photoBackground = !landscape && !tabletop0 && !photoUri.isNullOrBlank()
     LightStatusIconsOnPhoto(photoBackground)
+    // Живой фон — когда нет фото на весь экран: фото само и есть фон
+    val ambient = ambientBackground && !photoBackground
     Box(Modifier.fillMaxSize()) {
     if (photoBackground) CallPhotoBackground(photoUri.orEmpty())
+    // Во весь экран, под строкой состояния тоже — как обои
+    if (ambient) CallAmbientBackground(ambientMoodOf(state))
     NavBarUnderPanel()
     Surface(
         Modifier.fillMaxSize().safeDrawingPadding(),
-        color = if (photoBackground) Color.Transparent else MaterialTheme.colorScheme.surface
+        color = if (photoBackground || ambient) Color.Transparent else MaterialTheme.colorScheme.surface
     ) {
         /*
          * Кто звонит — фото, имя, оператор, состояние вызова. Общий блок
@@ -1313,10 +1327,27 @@ private fun CallStatusLine(state: Int, call: Call?) {
         label = "statusForeground"
     )
 
+    /*
+     * СМЕНА СОСТОЯНИЯ — ВСЛУХ (1.5.1, проход по TalkBack).
+     *
+     * Человек с экранным диктором не видел, что вызов соединился, встал
+     * на удержание или завершился: строка менялась молча. Теперь плашка —
+     * «живая область»: TalkBack сам произносит новое состояние.
+     *
+     * Произносится только состояние («Идёт разговор», «На удержании»),
+     * а не таймер: он внутри, отдельным текстом, и меняется каждую
+     * секунду — живой областью он бы говорил без остановки. Время
+     * разговора слышно, если коснуться плашки.
+     */
+    val stateLabel = if (active) stringResource(R.string.incall_ongoing) else text
     Surface(
         shape = CircleShape,
         color = background,
-        contentColor = foreground
+        contentColor = foreground,
+        modifier = Modifier.semantics {
+            liveRegion = LiveRegionMode.Polite
+            contentDescription = stateLabel
+        }
     ) {
         Row(
             modifier = Modifier.padding(horizontal = Space.l, vertical = Space.s),

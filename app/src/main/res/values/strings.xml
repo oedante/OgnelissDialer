@@ -683,6 +683,8 @@ Open Settings → Security → Special app access and allow this app to modify s
     <string name="settings_proximity">Turn off screen near ear</string>
     <string name="settings_proximity_text">The proximity sensor turns the screen off during a call. Without it your cheek may press End call or Mute</string>
     <string name="settings_hide_contact_number">Number type instead of number</string>
+    <string name="settings_call_animation">Live call background</string>
+    <string name="settings_call_animation_text">Slow soft shapes in theme colors behind the call screen. Stays still if animations are turned off in system settings</string>
     <string name="settings_hide_contact_number_text">On the call screen, saved contacts show Mobile, Work and so on instead of digits. Unknown numbers are always shown</string>
     <string name="language_search_hint">Search languages</string>
     <string name="language_auto_translated">auto-translated</string>

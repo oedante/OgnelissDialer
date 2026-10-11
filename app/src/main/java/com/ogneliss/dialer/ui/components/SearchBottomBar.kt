@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.PanelReachesNavBar
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -111,6 +112,8 @@ fun SearchBottomBar(
             onSwipeRight = onSwipePrevious
         )
     ) {
+        // Полоса под навигацией — цвета этой панели (NavBarStrip.kt, 1.5.1)
+        PanelReachesNavBar()
         Column(
             Modifier
                 .navigationBarsPadding()

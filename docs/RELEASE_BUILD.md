@@ -134,7 +134,7 @@ adb install -r app/build/outputs/apk/release/app-release.apk
 нестабильными:
 
 ```bash
-./gradlew assembleRelease -Pcompose.metrics=true
+./gradlew assembleRelease "-Pcompose.metrics=true"
 ```
 
 Результат в `app/build/compose_metrics/`.

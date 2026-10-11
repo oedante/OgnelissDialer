@@ -59,6 +59,7 @@ class SettingsStateSource @Inject constructor(
         // ради двух переключателей не заводим
         .combine(prefs.proximityScreenOff) { a, v -> a.copy(proximityScreenOff = v) }
         .combine(prefs.callHideContactNumber) { a, v -> a.copy(callHideContactNumber = v) }
+        .combine(prefs.callAnimation) { a, v -> a.copy(callAnimation = v) }
         .combine(prefs.sheetHeaderTint) { a, v -> a.copy(sheetHeaderTint = v) }
         .combine(prefs.messengersAnyNumber) { a, v -> a.copy(messengersAnyNumber = v) }
 
@@ -153,6 +154,7 @@ class SettingsStateSource @Inject constructor(
             buttonLabels = a.buttonLabels,
             proximityScreenOff = a.proximityScreenOff,
             callHideContactNumber = a.callHideContactNumber,
+            callAnimation = a.callAnimation,
             sheetHeaderTint = a.sheetHeaderTint,
             messengersAnyNumber = a.messengersAnyNumber,
             notesRetention = n.retention,
@@ -199,6 +201,7 @@ class SettingsStateSource @Inject constructor(
         val buttonLabels: Boolean = true,
         val proximityScreenOff: Boolean = true,
         val callHideContactNumber: Boolean = false,
+        val callAnimation: Boolean = true,
         val sheetHeaderTint: Boolean = true,
         val messengersAnyNumber: Boolean = false
     )

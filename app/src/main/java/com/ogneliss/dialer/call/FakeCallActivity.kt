@@ -99,6 +99,8 @@ class FakeCallActivity : ComponentActivity() {
         setContent {
             val theme by prefs.theme.collectAsStateWithLifecycle(ThemeMode.SYSTEM)
             val dynamic by prefs.dynamicColor.collectAsStateWithLifecycle(false)
+            // Живой фон — как у настоящего вызова (1.5.1)
+            val callAnimation by prefs.callAnimation.collectAsStateWithLifecycle(true)
 
             /*
              * Кто «звонит».
@@ -145,6 +147,7 @@ class FakeCallActivity : ComponentActivity() {
                     name = caller?.first.orEmpty(),
                     number = callerNumber,
                     photoUri = photo,
+                    ambientBackground = callAnimation && theme != ThemeMode.HIGH_CONTRAST,
                     onAnswer = { stopRinging() },
                     onHangUp = { finish() }
                 )
@@ -203,6 +206,8 @@ private fun FakeCallScreen(
     name: String,
     number: String,
     photoUri: String?,
+    /** Живой фон (CallAmbientBackground.kt); без фото на весь экран. */
+    ambientBackground: Boolean = false,
     onAnswer: () -> Unit,
     onHangUp: () -> Unit
 ) {
@@ -223,12 +228,17 @@ private fun FakeCallScreen(
      */
     val photoBackground = !LocalWindowLayout.current.isShort && !photoUri.isNullOrBlank()
     LightStatusIconsOnPhoto(photoBackground)
+    // Живой фон: «входящий», после ответа — «разговор», как у настоящего вызова
+    val ambient = ambientBackground && !photoBackground
     Box(Modifier.fillMaxSize()) {
     if (photoBackground) CallPhotoBackground(photoUri.orEmpty())
+    if (ambient) {
+        CallAmbientBackground(if (answered) AmbientMood.ACTIVE else AmbientMood.INCOMING)
+    }
     NavBarUnderPanel()
     Surface(
         Modifier.fillMaxSize().safeDrawingPadding(),
-        color = if (photoBackground) Color.Transparent else MaterialTheme.colorScheme.surface
+        color = if (photoBackground || ambient) Color.Transparent else MaterialTheme.colorScheme.surface
     ) {
         Column(
             Modifier.fillMaxSize(),

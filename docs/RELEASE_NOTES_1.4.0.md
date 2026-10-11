@@ -98,7 +98,7 @@ UiAutomator 2.3.0 → **2.4.0**: macro 1.5.0 построен на нём (сц�
 (дата файла — сегодняшняя).
 
 **Если упадёт** с «applicationVariants» / «obsolete API»:
-`./gradlew help -Pandroid.debug.obsoleteApi=true` покажет, кто зовёт
+`./gradlew help "-Pandroid.debug.obsoleteApi=true"` покажет, кто зовёт
 старый API, — пришлите вывод. Откат за минуту: вернуть строку
 `android.newDsl=false` в `gradle.properties` и `"1.4.1"` для `benchmark`
 и `baselineprofile` в `gradle/libs.versions.toml`.
@@ -175,7 +175,7 @@ UiAutomator 2.3.0 → **2.4.0**: macro 1.5.0 построен на нём (сц�
 ```powershell
 ./gradlew assembleDebug
 ./gradlew testDebugUnitTest
-./gradlew help -Pandroid.debug.obsoleteApi=true   # без предупреждений про applicationVariants
+./gradlew help "-Pandroid.debug.obsoleteApi=true"   # без предупреждений про applicationVariants
 ./gradlew :app:generateBaselineProfile             # телефон отключён от компьютера
 ./gradlew bundleRelease
 git add -A

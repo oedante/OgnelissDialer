@@ -5,7 +5,7 @@
 
 ## Что это
 
-Android-звонилка (замена системной) — `com.ogneliss.dialer`, бесплатная,
+Android-диалер (замена системного) — `com.ogneliss.dialer`, бесплатная,
 без рекламы и **без доступа в интернет** (это принцип, проверяется
 `scripts/check_no_internet.sh`). В Google Play, сайт — ogneliss.ru/dialer.
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
@@ -15,7 +15,9 @@ Android-звонилка (замена системной) — `com.ogneliss.dia
 - **1.3.1** (versionCode 29) — выпуск без обоев: подтверждение
   необратимых действий, закреплённые при пустом журнале, имя на обложке
   (`docs/RELEASE_NOTES_1.3.1.md`). Внутренний тест → рабочая версия.
-- **1.4.0** (versionCode 35) — к публикации (`docs/RELEASE_NOTES_1.4.0.md`):
+- **1.5.1** (versionCode 36) — к внутреннему тесту (`docs/RELEASE_NOTES_1.5.1.md`): живой фон вызова, панель
+  до края экрана, состояние вызова для TalkBack, targetSdk 37.
+- **1.4.0** (versionCode 35) — внутренний тест → публикация, автор 11.10 (`docs/RELEASE_NOTES_1.4.0.md`):
   новый значок, клавиатура «цифра слева», спокойная палитра (§4), Baseline Profile 1.5.0; «Что нового» — `store/whats_new_1.4.0.txt`.
 - **1.3.6** (versionCode 34) — собрана (`docs/RELEASE_NOTES_1.3.6.md`):
   1.3.5 + исправления 06.10.2026; «Что нового» — `store/whats_new_1.3.6.txt`.
@@ -47,7 +49,7 @@ Android-звонилка (замена системной) — `com.ogneliss.dia
 
 ## Сборка и окружение
 
-- minSdk 26 · compileSdk 37 · targetSdk 36 · Gradle 9.7.1 (wrapper в проекте)
+- minSdk 26 · compileSdk 37 · targetSdk 37 (с 1.5.1) · Gradle 9.7.1 (wrapper в проекте)
 - AGP 9.4.1 · Kotlin 2.4.20 · KSP 2.3.12 · Room 2.8.5 · Hilt 2.60.1
 - Compose BOM 2026.09.00 (Compose 1.12.1, Material 3 1.4.0), одна активность + `InCallActivity`
 - Замеры: `scripts\\phone_check.ps1` (резервная копия → тесты → замеры → установка → память); `DeviceSetup` сам выдаёт разрешения, роль и принимает согласие

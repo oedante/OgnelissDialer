@@ -271,6 +271,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val BUTTON_LABELS = booleanPreferencesKey("button_labels")
         val PROXIMITY_SCREEN_OFF = booleanPreferencesKey("proximity_screen_off")
         val CALL_HIDE_CONTACT_NUMBER = booleanPreferencesKey("call_hide_contact_number")
+        /** Живой фон экрана вызова (1.5.1, по умолчанию вкл.). */
+        val CALL_ANIMATION = booleanPreferencesKey("call_animation")
         // Поведение
         val HAPTIC = booleanPreferencesKey("haptic")
         val KEY_TONES = booleanPreferencesKey("key_tones")
@@ -487,6 +489,13 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      * самого номера. По умолчанию — нет: номер показывается.
      */
     val callHideContactNumber: Flow<Boolean> = data.map { it[Keys.CALL_HIDE_CONTACT_NUMBER] ?: false }
+
+    /**
+     * Живой фон экрана вызова (1.5.1): медленные пятна цветов темы.
+     * По умолчанию — да; при системном «Убрать анимацию» фон неподвижен
+     * и без этой настройки (call/CallAmbientBackground.kt).
+     */
+    val callAnimation: Flow<Boolean> = data.map { it[Keys.CALL_ANIMATION] ?: true }
 
     // ── Поведение ──────────────────────────────────────────────────────────
     val haptic: Flow<Boolean> = data.map { it[Keys.HAPTIC] ?: true }
@@ -733,6 +742,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("proximity_screen_off", v) { it[Keys.PROXIMITY_SCREEN_OFF] = v }
     suspend fun setCallHideContactNumber(v: Boolean) =
         edit("call_hide_contact_number", v) { it[Keys.CALL_HIDE_CONTACT_NUMBER] = v }
+    suspend fun setCallAnimation(v: Boolean) =
+        edit("call_animation", v) { it[Keys.CALL_ANIMATION] = v }
     suspend fun setHaptic(v: Boolean) = edit("haptic", v) { it[Keys.HAPTIC] = v }
     suspend fun setKeyTones(v: Boolean) = edit("key_tones", v) { it[Keys.KEY_TONES] = v }
     suspend fun setGroupingMode(v: GroupingMode) =

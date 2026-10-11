@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.PanelReachesNavBar
 import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.ui.theme.Space
 
@@ -78,7 +79,7 @@ fun PermissionWizardScreen(
     var refreshTrigger by remember { mutableIntStateOf(0) }
 
     /*
-     * Оболочка заблокировала выбор звонилки по умолчанию.
+     * Оболочка заблокировала выбор диалера по умолчанию.
      *
      * Xiaomi, Samsung, Huawei, nubia требуют сперва разрешить изменение
      * системных настроек. Без объяснения человек упирается в стену:
@@ -291,6 +292,7 @@ private fun WizardButtons(
     // Цвет нижней панели, как на остальных экранах (1.4.0): прежний
     // тональный подъём давал голубую дымку, а без неё сливался с фоном
     Surface(color = PanelColors.panel()) {
+        PanelReachesNavBar()
         Column(
             Modifier
                 .fillMaxWidth()
