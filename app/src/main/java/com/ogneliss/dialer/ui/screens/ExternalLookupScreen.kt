@@ -124,7 +124,6 @@ fun ExternalLookupScreen(
                         Spacer(Modifier.height(Space.m))
 
                         FilledTonalButton(
-                            shape = MaterialTheme.shapes.medium,
                             onClick = { openCallerIdSettings(context) },
                             modifier = Modifier.fillMaxWidth()
                         ) {

@@ -642,7 +642,6 @@
     <string name="incall_hidden_number">Unterdrückte Nummer</string>
     <!-- Вид журнала: разбор в JournalStyle -->
     <string name="settings_journal_style">Protokollansicht</string>
-    <string name="settings_journal_style_text">Jeder Anruf als Karte oder Anrufe nach Tagen gruppiert</string>
     <string name="journal_style_cards">Karten</string>
     <string name="journal_style_groups">Gruppen nach Tagen</string>
     <string name="action_mark_spam">Als Spam markieren</string>

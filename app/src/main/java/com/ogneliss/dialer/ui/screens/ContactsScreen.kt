@@ -1,7 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
-import com.ogneliss.dialer.ui.components.groupOutline
-import com.ogneliss.dialer.ui.components.SectionCaption
+import com.ogneliss.dialer.ui.components.SectionBand
 import com.ogneliss.dialer.ui.components.RowAvatar
 import androidx.compose.foundation.lazy.itemsIndexed
 import com.ogneliss.dialer.ui.components.OgnelissDivider
@@ -825,6 +824,10 @@ fun ContactsScreen(
  * Разделение строится на пустоте: отступ сверху отделяет от предыдущей
  * группы, малый снизу привязывает заголовок к его карточке.
  *
+ * ── 1.5.3: полоса раздела (сплошной список) ────────────────────────────────
+ * Ниже — история: в 1.4.0–1.5.2 заголовок был подписью без черты над
+ * белой карточкой; с 1.5.3 карточек нет, раздел отмечает серая полоса.
+ *
  * ── Без черты снизу (1.4.0) ────────────────────────────────────────────────
  * Раньше под заголовком шла линия: карточка почти не отличалась от фона,
  * и без линии было неясно, где начинается группа. Теперь край карточки
@@ -835,18 +838,8 @@ fun ContactsScreen(
  */
 @Composable
 fun LetterHeader(letter: String) {
-    // Капителью, как все подписи разделов (строгий стиль, 1.5.1)
-    SectionCaption(
-        letter,
-        Modifier
-            .fillMaxWidth()
-            .padding(
-                start = FlowUi.screenPadding + Space.m,
-                end = FlowUi.screenPadding + Space.m,
-                top = Space.l,
-                bottom = Space.s
-            )
-    )
+    // Полоса раздела во всю ширину (сплошной список, 1.5.3)
+    SectionBand(letter)
 }
 
 /**
@@ -911,17 +904,14 @@ private fun ContactRow(
     groupPosition: GroupPosition = GroupPosition.SINGLE
 ) {
     val appearance = LocalAppearance.current
-    val corner = MaterialTheme.shapes.medium
-    val zero = androidx.compose.foundation.shape.CornerSize(0.dp)
-    val rowShape = when (groupPosition) {
-        GroupPosition.SINGLE -> corner
-        GroupPosition.FIRST -> corner.copy(bottomStart = zero, bottomEnd = zero)
-        GroupPosition.MIDDLE -> androidx.compose.ui.graphics.RectangleShape
-        GroupPosition.LAST -> corner.copy(topStart = zero, topEnd = zero)
-    }
-    val gap = FlowUi.cardSpacing / 2
-    val topGap = if (groupPosition == GroupPosition.SINGLE || groupPosition == GroupPosition.FIRST) gap else 0.dp
-    val bottomGap = if (groupPosition == GroupPosition.SINGLE || groupPosition == GroupPosition.LAST) gap else 0.dp
+    /*
+     * СПЛОШНОЙ СПИСОК (1.5.3, макет B): строка во всю ширину экрана, без
+     * скруглений и зазоров; между строками — тонкая линия от начала текста.
+     * Над первой строкой раздела линии нет — там полоса раздела.
+     */
+    val rowShape = androidx.compose.ui.graphics.RectangleShape
+    val topGap = 0.dp
+    val bottomGap = 0.dp
 
     Card(
         // Card прозрачна: цвет задаёт содержимое, иначе фон рисуется
@@ -940,18 +930,14 @@ private fun ContactRow(
              * правке разойдутся — поправят одно, забудут другое.
              */
             .padding(
-                start = FlowUi.screenPadding,
-                end = FlowUi.screenPadding,
                 top = topGap,
                 bottom = bottomGap
             )
-            // Своя часть общей рамки группы (строгий стиль, 1.5.1)
-            .groupOutline(groupPosition)
     ) {
         if (groupPosition == GroupPosition.MIDDLE || groupPosition == GroupPosition.LAST) {
             // От начала текста, а не от края — как в журнале
             Box(Modifier.background(MaterialTheme.colorScheme.surfaceContainerLow)) {
-                OgnelissDivider(Modifier.padding(start = Space.m + appearance.avatarSize + Space.m))
+                OgnelissDivider(Modifier.padding(start = Space.l + appearance.avatarSize + Space.m))
             }
         }
         SwipeRevealRow(
@@ -979,7 +965,7 @@ private fun ContactRow(
                     .combinedClickable(onClick = onOpen, onLongClick = onOpen)
                     // Тот же отступ, что в журнале: экраны должны
                     // выглядеть одинаково
-                    .padding(horizontal = Space.m, vertical = 6.dp),
+                    .padding(horizontal = Space.l, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Аватар — общий RowAvatar (1.3.5): буквы у контактов без фото,

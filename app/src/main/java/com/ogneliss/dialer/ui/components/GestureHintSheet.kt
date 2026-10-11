@@ -111,7 +111,6 @@ fun GestureHintSheet(onDismiss: () -> Unit) {
             Spacer(Modifier.height(FlowUi.sheetPadding))
 
             Button(
-                shape = MaterialTheme.shapes.medium,
                 onClick = onDismiss,
                 modifier = Modifier.fillMaxWidth()
             ) {

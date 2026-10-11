@@ -1,6 +1,9 @@
 package com.ogneliss.dialer.ui.screens
 
-import com.ogneliss.dialer.ui.components.SectionCaption
+import androidx.compose.foundation.background
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.heading
+import com.ogneliss.dialer.ui.components.SectionBand
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.BlockRed
@@ -50,7 +53,6 @@ import java.util.Date
  * Совпадает с shapes.large темы — тем же, каким скруглены панели
  * «Номера» и «Заметка»: разные радиусы у соседних блоков видны сразу.
  */
-internal val HISTORY_CORNER = 8.dp  // строгий стиль (1.5.1), было 16
 
 /** Одна запись в ленте вызовов абонента. */
 @Composable
@@ -264,26 +266,23 @@ internal fun daysAgo(date: Long): Int {
 /** Заголовок раздела, содержимое которого идёт отдельными элементами списка. */
 @Composable
 internal fun SectionPanelHeader(text: String) {
-    // Капителью, как все подписи разделов (строгий стиль, 1.5.1)
-    SectionCaption(
+    // Заголовок блока («История вызовов») — текстом на белом: под ним сразу
+    // полосы дат, и вторая полоса подряд читалась бы как пустой раздел (1.5.3)
+    Text(
         text,
-        Modifier.padding(
-            start = FlowUi.screenPadding + Space.l,
-            end = FlowUi.screenPadding,
-            top = FlowUi.sheetPadding,
-            bottom = Space.xs
-        )
+        Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .padding(start = Space.l, end = Space.l, top = FlowUi.sheetPadding, bottom = Space.s)
+            .semantics { heading() },
+        style = MaterialTheme.typography.titleMedium
     )
 }
 
 @Composable
 internal fun SectionHeader(text: String) {
-    // Отступ сверху больше, чем снизу: заголовок отделяет разделы,
-    // и воздух нужен перед ним, а не после. Капителью — строгий стиль (1.5.1)
-    SectionCaption(
-        text,
-        Modifier.padding(start = Space.l, top = FlowUi.sheetPadding, bottom = Space.xs)
-    )
+    // Полоса раздела во всю ширину (сплошной список, 1.5.3)
+    SectionBand(text)
 }
 
 @Composable

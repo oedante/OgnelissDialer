@@ -113,17 +113,14 @@ fun CallLogCard(
      * вместо зазора — тонкая линия. Снаружи группа выглядит одной
      * карточкой, как панели в карточке абонента и история вызовов в ней.
      */
-    val corner = MaterialTheme.shapes.medium
-    val zero = androidx.compose.foundation.shape.CornerSize(0.dp)
-    val shape = when (groupPosition) {
-        GroupPosition.SINGLE -> corner
-        GroupPosition.FIRST -> corner.copy(bottomStart = zero, bottomEnd = zero)
-        GroupPosition.MIDDLE -> androidx.compose.ui.graphics.RectangleShape
-        GroupPosition.LAST -> corner.copy(topStart = zero, topEnd = zero)
-    }
-    val gap = FlowUi.cardSpacing / 2
-    val topGap = if (groupPosition == GroupPosition.SINGLE || groupPosition == GroupPosition.FIRST) gap else 0.dp
-    val bottomGap = if (groupPosition == GroupPosition.SINGLE || groupPosition == GroupPosition.LAST) gap else 0.dp
+    /*
+     * СПЛОШНОЙ СПИСОК (1.5.3, макет B): строка во всю ширину экрана, без
+     * скруглений и зазоров; между строками — тонкая линия от начала текста.
+     * Над первой строкой раздела линии нет — там полоса раздела.
+     */
+    val shape = androidx.compose.ui.graphics.RectangleShape
+    val topGap = 0.dp
+    val bottomGap = 0.dp
 
     // Никаких вычислений: всё пришло готовым
 
@@ -152,13 +149,9 @@ fun CallLogCard(
              * правке разойдутся — поправят одно, забудут другое.
              */
             .padding(
-                start = FlowUi.screenPadding,
-                end = FlowUi.screenPadding,
                 top = topGap,
                 bottom = bottomGap
             )
-            // Своя часть общей рамки группы (строгий стиль, 1.5.1)
-            .groupOutline(groupPosition)
             .semantics(mergeDescendants = true) {
                 contentDescription = row.accessibilityLabel
             }
@@ -167,7 +160,7 @@ fun CallLogCard(
             // От начала текста, а не от края: под аватаром линия
             // разрезала бы колонку лиц, по которой глаз бежит вниз
             Box(Modifier.background(MaterialTheme.colorScheme.surfaceContainerLow)) {
-                OgnelissDivider(Modifier.padding(start = 76.dp))
+                OgnelissDivider(Modifier.padding(start = Space.l + LocalAppearance.current.avatarSize + Space.m))
             }
         }
         SwipeRevealRow(
@@ -196,7 +189,7 @@ fun CallLogCard(
                     // 6 dp вместо 10: строка из трёх коротких строчек
                     // не требует такого запаса, а на экран помещается
                     // на две записи больше
-                    .padding(horizontal = Space.m, vertical = 6.dp),
+                    .padding(horizontal = Space.l, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // В режиме выбора кружок вместо аватара: он показывает

@@ -83,16 +83,23 @@ private val LightColors = lightColorScheme(
      * «поднятое» и тёмное «под пальцем» нужны разным ролям, а четырёх
      * едва различимых серых между ними глаз всё равно не видит.
      */
-    background = LightPage,
+    /*
+     * 1.5.3 — «СПЛОШНОЙ СПИСОК» (макет B, автор 11.10): страница белая,
+     * строки на ней во всю ширину, разделы — серые полосы (surfaceContainer).
+     * В 1.5.1–1.5.2 (макет A) страница была серой, а группы — белыми
+     * карточками; после недели с приложением автор выбрал B.
+     */
+    background = LightRaised,
     onBackground = LightText,
-    surface = LightPage,
+    surface = LightRaised,
     onSurface = LightText,
     surfaceVariant = LightVariant,
     onSurfaceVariant = LightTextVariant,
 
     surfaceContainerLowest = LightRaised,
     surfaceContainerLow = LightRaised,
-    surfaceContainer = LightRaised,
+    // Полоса раздела и строка заголовка при прокрутке — светло-серые
+    surfaceContainer = LightPage,
     surfaceContainerHigh = LightRaised,
     surfaceContainerHighest = LightControl,
     surfaceBright = LightRaised,
@@ -152,7 +159,9 @@ private val DarkColors = darkColorScheme(
     onSurfaceVariant = DarkTextVariant,
 
     surfaceContainerLowest = DarkLowest,
-    surfaceContainerLow = DarkCard,
+    // 1.5.3: строки — цвета страницы (сплошной список), полосы разделов —
+    // surfaceContainer, светлее страницы
+    surfaceContainerLow = DarkPage,
     surfaceContainer = DarkContainer,
     surfaceContainerHigh = DarkHigh,
     surfaceContainerHighest = DarkHighest,
@@ -188,7 +197,7 @@ private val AmoledColors = DarkColors.copy(
     surface = Color.Black,
     surfaceDim = Color.Black,
     surfaceContainerLowest = Color.Black,
-    surfaceContainerLow = Color(0xFF0E0F11),
+    surfaceContainerLow = Color.Black,  // 1.5.3: строки — цвета страницы
     surfaceContainer = Color(0xFF15171A),
     surfaceContainerHigh = Color(0xFF1C1E22),
     surfaceContainerHighest = Color(0xFF26292E)

@@ -1,0 +1,108 @@
+<ru-RU>
+• Оформление — строгим сплошным списком: строки во всю ширину экрана, разделы отмечены серыми полосами с подписью.
+• Кнопки, клавиши набора и поле поиска снова со скруглёнными краями.
+</ru-RU>
+<ar>
+• تصميم بقائمة متصلة صارمة: صفوف بعرض الشاشة، والأقسام مميزة بأشرطة رمادية بعناوين.
+• عادت الأزرار ومفاتيح الطلب وحقل البحث بحواف مستديرة.
+</ar>
+<cs-CZ>
+• Vzhled souvislého seznamu: řádky přes celou šířku, sekce označené šedými pruhy s nadpisem.
+• Tlačítka, klávesy a pole hledání mají opět zaoblené okraje.
+</cs-CZ>
+<da-DK>
+• Udseende som en stram sammenhængende liste: rækker i fuld bredde, sektioner markeret med grå bjælker med overskrift.
+• Knapper, taster og søgefelt har igen afrundede kanter.
+</da-DK>
+<de-DE>
+• Gestaltung als durchgehende Liste: Zeilen über die volle Breite, Abschnitte mit grauen Leisten und Titel.
+• Schaltflächen, Wähltasten und Suchfeld sind wieder abgerundet.
+</de-DE>
+<en-US>
+• A clean continuous list: full-width rows, with sections marked by grey bars and labels.
+• Buttons, dialpad keys and the search field are rounded again.
+</en-US>
+<es-ES>
+• Diseño de lista continua: filas a todo el ancho y secciones marcadas con franjas grises con título.
+• Los botones, las teclas y el campo de búsqueda vuelven a tener bordes redondeados.
+</es-ES>
+<fi-FI>
+• Yhtenäinen luettelo: rivit koko näytön levyisinä, osiot merkitty harmailla otsikkopalkeilla.
+• Painikkeet, näppäimet ja hakukenttä ovat taas pyöristettyjä.
+</fi-FI>
+<fr-FR>
+• Présentation en liste continue : lignes sur toute la largeur, sections marquées par des bandes grises avec titre.
+• Les boutons, les touches et le champ de recherche sont de nouveau arrondis.
+</fr-FR>
+<hi-IN>
+• लगातार सूची वाला रूप: पूरी चौड़ाई की पंक्तियाँ, अनुभाग शीर्षक वाली धूसर पट्टियों से चिह्नित।
+• बटन, डायल कुंजियाँ और खोज फ़ील्ड फिर से गोल किनारों वाले।
+</hi-IN>
+<hu-HU>
+• Egybefüggő lista: teljes szélességű sorok, a szakaszokat szürke, feliratos sávok jelölik.
+• A gombok, a tárcsázó billentyűi és a keresőmező ismét lekerekítettek.
+</hu-HU>
+<id>
+• Tampilan daftar menyambung: baris selebar layar, bagian ditandai bilah abu-abu berjudul.
+• Tombol, tuts panggil, dan kolom pencarian kembali membulat.
+</id>
+<it-IT>
+• Aspetto a elenco continuo: righe a tutta larghezza, sezioni segnate da fasce grigie con titolo.
+• Pulsanti, tasti e campo di ricerca tornano arrotondati.
+</it-IT>
+<iw-IL>
+• עיצוב של רשימה רציפה: שורות לרוחב המסך, מקטעים מסומנים בפסים אפורים עם כותרת.
+• הכפתורים, מקשי החיוג ושדה החיפוש שוב מעוגלים.
+</iw-IL>
+<ja-JP>
+• すっきりした連続リスト表示に：行は画面幅いっぱい、セクションは見出し付きの灰色の帯で区切り。
+• ボタン、ダイヤルキー、検索欄は再び角丸に。
+</ja-JP>
+<ko-KR>
+• 깔끔한 연속 목록: 행은 화면 전체 너비, 섹션은 제목이 있는 회색 띠로 구분.
+• 버튼, 다이얼 키, 검색창이 다시 둥근 모양으로.
+</ko-KR>
+<nl-NL>
+• Doorlopende lijst: rijen over de volle breedte, secties gemarkeerd met grijze balken met titel.
+• Knoppen, kiestoetsen en het zoekveld zijn weer afgerond.
+</nl-NL>
+<no-NO>
+• Stram sammenhengende liste: rader i full bredde, seksjoner markert med grå felt med overskrift.
+• Knapper, taster og søkefelt er avrundet igjen.
+</no-NO>
+<pl-PL>
+• Wygląd ciągłej listy: wiersze na całą szerokość, sekcje oznaczone szarymi paskami z tytułem.
+• Przyciski, klawisze i pole wyszukiwania znów są zaokrąglone.
+</pl-PL>
+<pt-BR>
+• Visual de lista contínua: linhas na largura toda, seções marcadas por faixas cinza com título.
+• Botões, teclas e campo de busca voltam a ser arredondados.
+</pt-BR>
+<ro>
+• Aspect de listă continuă: rânduri pe toată lățimea, secțiuni marcate cu benzi gri cu titlu.
+• Butoanele, tastele și câmpul de căutare sunt din nou rotunjite.
+</ro>
+<sk>
+• Vzhľad súvislého zoznamu: riadky cez celú šírku, sekcie označené sivými pásmi s nadpisom.
+• Tlačidlá, klávesy a pole vyhľadávania majú opäť zaoblené okraje.
+</sk>
+<sv-SE>
+• Stram sammanhängande lista: rader i full bredd, avsnitt markerade med grå fält med rubrik.
+• Knappar, knappsats och sökfält är rundade igen.
+</sv-SE>
+<th>
+• รูปแบบรายการต่อเนื่อง: แถวเต็มความกว้างจอ แบ่งส่วนด้วยแถบสีเทาพร้อมหัวข้อ
+• ปุ่ม แป้นกด และช่องค้นหากลับมามีขอบมนอีกครั้ง
+</th>
+<tr-TR>
+• Sade kesintisiz liste: tam genişlikte satırlar, bölümler başlıklı gri şeritlerle ayrılır.
+• Düğmeler, tuşlar ve arama alanı yeniden yuvarlak köşeli.
+</tr-TR>
+<vi>
+• Giao diện danh sách liền mạch: các hàng rộng hết màn hình, mục được đánh dấu bằng dải xám có tiêu đề.
+• Nút, phím quay số và ô tìm kiếm lại được bo tròn.
+</vi>
+<zh-CN>
+• 简洁连续列表：各行铺满屏幕宽度，分区用带标题的灰色条区分。
+• 按钮、拨号键和搜索栏恢复圆角。
+</zh-CN>

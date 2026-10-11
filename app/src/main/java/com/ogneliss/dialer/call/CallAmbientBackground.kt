@@ -1,8 +1,5 @@
 package com.ogneliss.dialer.call
 
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.animation.core.animateFloatAsState
 import android.provider.Settings
 import android.telecom.Call
@@ -72,8 +69,8 @@ import kotlin.math.sin
  * • Перерисовывается только слой фона (чтение времени — внутри
  *   drawBehind), экран не пересобирается.
  * • 30 кадров в секунду, а не 60–120: движение медленное (периоды
- *   7–17 с), разницы глазом не видно, работы вдвое меньше. Кольца —
- *   три окружности обводкой, дешевле пятен.
+ *   7–17 с), разницы глазом не видно, работы вдвое меньше. Волны —
+ *   ещё одна текстура (256 × 256), три растянутые копии за кадр.
  * • Только пока экран на переднем плане (RESUMED): у уха экран гаснет —
  *   анимация стоит.
  *
@@ -140,14 +137,22 @@ fun CallAmbientBackground(mood: AmbientMood, modifier: Modifier = Modifier) {
     val tintC = remember(colorC) { ColorFilter.tint(colorC, BlendMode.SrcIn) }
 
     /*
-     * ВОЛНЫ — тонкие кольца, расходящиеся от имени звонящего, как круги
-     * по воде. Входящий и соединение — заметнее и чаще (зовёт), разговор —
-     * едва видны и реже (живёт), удержание и конец — нет.
+     * ВОЛНЫ — расходящиеся от имени звонящего кольца С ТОЛЩИНОЙ (1.5.3).
+     *
+     * Было: тонкая линия 1,5 dp — «слишком чёткие круги» (автор). Стало:
+     * мягкая полоса с градиентом поперёк — изнутри длинный подъём от фона
+     * к цвету (как тень за гребнем), на гребне полный цвет, наружу короткий
+     * спад в фон. Выглядит как волна на воде, а не как обводка.
+     *
+     * Полоса — одна текстура (softRing), растянутая до радиуса волны:
+     * толщина растёт вместе с радиусом, как у настоящей расходящейся волны.
+     * Входящий и соединение — заметнее и чаще (зовёт), разговор — едва
+     * видны и реже (живёт), удержание и конец — нет.
      */
     val ringStrength by animateFloatAsState(
         when (mood) {
-            AmbientMood.INCOMING, AmbientMood.CONNECTING -> 0.30f
-            AmbientMood.ACTIVE -> 0.12f
+            AmbientMood.INCOMING, AmbientMood.CONNECTING -> 0.34f
+            AmbientMood.ACTIVE -> 0.16f
             else -> 0f
         },
         tween(Motion.NORMAL_MS),
@@ -156,8 +161,10 @@ fun CallAmbientBackground(mood: AmbientMood, modifier: Modifier = Modifier) {
     val ringPeriod by rememberUpdatedState(
         if (mood == AmbientMood.ACTIVE) RING_PERIOD_CALM else RING_PERIOD_CALL
     )
-    val ringColor = scheme.primary
-    val ringStroke = with(LocalDensity.current) { remember { Stroke(width = 1.5.dp.toPx()) } }
+    // Цвет волны — подкраской текстуры; прозрачность — параметром кадра,
+    // так что подкраска создаётся один раз на тему, а не в каждом кадре
+    val ringTint = remember(scheme.primary) { ColorFilter.tint(scheme.primary, BlendMode.SrcIn) }
+    val ring = remember { softRing(RING_PX) }
 
     val blob = remember { softBlob(BLOB_PX) }
 
@@ -229,12 +236,17 @@ fun CallAmbientBackground(mood: AmbientMood, modifier: Modifier = Modifier) {
                     for (i in 0 until RINGS) {
                         val p = (ripple.floatValue + i.toFloat() / RINGS) % 1f
                         val fade = (1f - p) * (1f - p)
-                        drawCircle(
-                            color = ringColor,
-                            radius = w * (0.12f + 0.95f * p),
-                            center = center,
+                        val radius = w * (0.18f + 1.05f * p)
+                        val d = (radius * 2f).roundToInt()
+                        drawImage(
+                            image = ring,
+                            dstOffset = IntOffset(
+                                (center.x - radius).roundToInt(),
+                                (center.y - radius).roundToInt()
+                            ),
+                            dstSize = IntSize(d, d),
                             alpha = strength * fade,
-                            style = ringStroke
+                            colorFilter = ringTint
                         )
                     }
                 }
@@ -293,6 +305,37 @@ private fun softBlob(px: Int): ImageBitmap {
     return image
 }
 
+/**
+ * Волна: кольцо с мягким профилем поперёк. От центра до 58 % радиуса —
+ * пусто; дальше длинный подъём (тень за гребнем) до гребня на 91 %
+ * и короткий спад к краю. 256 px: кольцо растягивается до двух ширин
+ * экрана, и на меньшей текстуре гребень шёл бы ступеньками.
+ */
+private fun softRing(px: Int): ImageBitmap {
+    val image = ImageBitmap(px, px)
+    val canvas = androidx.compose.ui.graphics.Canvas(image)
+    val half = px / 2f
+    val paint = Paint().apply {
+        shader = RadialGradientShader(
+            center = Offset(half, half),
+            radius = half,
+            colors = listOf(
+                Color.Transparent,
+                Color.Transparent,
+                Color.White.copy(alpha = 0.18f),
+                Color.White.copy(alpha = 0.62f),
+                Color.White,
+                Color.White.copy(alpha = 0.45f),
+                Color.Transparent
+            ),
+            colorStops = listOf(0f, 0.58f, 0.72f, 0.84f, 0.91f, 0.955f, 1f)
+        )
+    }
+    canvas.drawRect(0f, 0f, px.toFloat(), px.toFloat(), paint)
+    return image
+}
+
+private const val RING_PX = 256
 private const val BLOB_PX = 96
 /** Волны: число колец, центр (доля высоты — у имени), период в секундах. */
 private const val RINGS = 3

@@ -1,7 +1,9 @@
 package com.ogneliss.dialer.ui.screens
 
-import com.ogneliss.dialer.ui.theme.groupBorder
-import com.ogneliss.dialer.ui.components.SectionCaption
+import androidx.compose.foundation.lazy.itemsIndexed
+import com.ogneliss.dialer.ui.components.GroupPosition
+import com.ogneliss.dialer.ui.components.GroupedRow
+import com.ogneliss.dialer.ui.components.SectionBand
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -44,7 +46,6 @@ import com.ogneliss.dialer.ui.components.SearchBottomBar
 import com.ogneliss.dialer.ui.components.SingleChoiceSheet
 import com.ogneliss.dialer.ui.theme.CallGreen
 import com.ogneliss.dialer.ui.theme.Dimens
-import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.util.PhoneFormatter
 import java.text.DateFormat
 import java.util.Calendar
@@ -222,27 +223,22 @@ fun RemindersScreen(
         ) {
             grouped.forEach { (day, items) ->
                 item(key = "day-$day") {
-                    // Подпись раздела без черты — как в журнале (строгий стиль, 1.5.1)
-                    SectionCaption(
-                        day,
-                        Modifier.padding(
-                            start = FlowUi.screenPadding + Space.m,
-                            top = Space.l,
-                            bottom = Space.xs
-                        )
-                    )
+                    // Полоса раздела (сплошной список, 1.5.3)
+                    SectionBand(day)
                 }
 
-                items(items, key = { it.e164 }) { reminder ->
-                    ReminderListRow(
-                        title = reminder.displayName?.takeIf { it.isNotBlank() }
-                            ?: PhoneFormatter.format(reminder.e164),
-                        time = timeFormat.format(Date(reminder.atMillis)),
-                        onOpen = { onOpenCard(reminder.e164) },
-                        onCall = { vm.call(reminder.e164) },
-                        onEdit = { editing = reminder },
-                        onDelete = { vm.cancelReminder(reminder.e164) }
-                    )
+                itemsIndexed(items, key = { _, r -> r.e164 }) { index, reminder ->
+                    GroupedRow(GroupPosition.of(index, items.size)) {
+                        ReminderListRow(
+                            title = reminder.displayName?.takeIf { it.isNotBlank() }
+                                ?: PhoneFormatter.format(reminder.e164),
+                            time = timeFormat.format(Date(reminder.atMillis)),
+                            onOpen = { onOpenCard(reminder.e164) },
+                            onCall = { vm.call(reminder.e164) },
+                            onEdit = { editing = reminder },
+                            onDelete = { vm.cancelReminder(reminder.e164) }
+                        )
+                    }
                 }
             }
         }
@@ -260,13 +256,9 @@ private fun ReminderListRow(
 ) {
     Surface(
         onClick = onOpen,
+        // Строка во всю ширину (сплошной список, 1.5.3)
         color = MaterialTheme.colorScheme.surfaceContainerLow,
-        shape = MaterialTheme.shapes.large,
-        // Рамка группы (строгий стиль, 1.5.1)
-        border = groupBorder(),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = FlowUi.screenPadding, vertical = FlowUi.cardSpacing)
+        modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             Modifier.padding(start = Space.l, end = Space.xs, top = Space.s, bottom = Space.s),

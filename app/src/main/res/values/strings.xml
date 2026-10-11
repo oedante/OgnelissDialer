@@ -670,7 +670,6 @@ Open Settings → Security → Special app access and allow this app to modify s
     <string name="incall_hidden_number">Hidden number</string>
     <!-- Вид журнала: разбор в JournalStyle -->
     <string name="settings_journal_style">Call log style</string>
-    <string name="settings_journal_style_text">Each call as a card, or calls grouped by day</string>
     <string name="journal_style_cards">Cards</string>
     <string name="journal_style_groups">Groups by day</string>
     <string name="action_mark_spam">Mark as spam</string>

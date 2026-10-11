@@ -1364,8 +1364,8 @@ internal fun CallStatusPill(active: Boolean, text: String) {
      */
     val stateLabel = if (active) stringResource(R.string.incall_ongoing) else text
     Surface(
-        // 8 dp, а не «пилюля» — строгий стиль (1.5.1)
-        shape = MaterialTheme.shapes.medium,
+        // Пилюля (1.5.3 — снова, как до 1.5.1)
+        shape = CircleShape,
         color = background,
         contentColor = foreground,
         modifier = Modifier.semantics {
@@ -1992,7 +1992,6 @@ internal fun BigButton(
     onClick: () -> Unit
 ) {
     Button(
-        // 8 dp, как кнопки вызова на клавиатуре (строгий стиль, 1.5.1)
         shape = OgnelissShapeTokens.callButton,
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(containerColor = color),
@@ -2109,7 +2108,6 @@ private fun WaitingCallBanner(
             Spacer(Modifier.height(Space.m))
 
             Button(
-                shape = MaterialTheme.shapes.medium,
                 onClick = { CallManager.answerWaitingHoldCurrent() },
                 colors = ButtonDefaults.buttonColors(containerColor = CallGreen),
                 modifier = Modifier.fillMaxWidth()
@@ -2119,7 +2117,6 @@ private fun WaitingCallBanner(
 
             Row(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
                 OutlinedButton(
-                    shape = MaterialTheme.shapes.medium,
                     onClick = { CallManager.answerWaitingEndCurrent() },
                     modifier = Modifier.weight(1f)
                 ) {
@@ -2130,7 +2127,6 @@ private fun WaitingCallBanner(
                     )
                 }
                 OutlinedButton(
-                    shape = MaterialTheme.shapes.medium,
                     onClick = { CallManager.rejectWaiting() },
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = DeclineRed),
                     modifier = Modifier.weight(1f)

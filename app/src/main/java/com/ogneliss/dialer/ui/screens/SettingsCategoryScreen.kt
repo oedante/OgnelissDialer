@@ -172,7 +172,8 @@ fun SettingsCategoryScreen(
                     )
                 }
                 if (entryIndex < chunkEntries.lastIndex) {
-                    OgnelissDivider()
+                    // От начала текста, как в списках (1.5.3)
+                    OgnelissDivider(Modifier.padding(start = Space.l))
                 }
             }
             }

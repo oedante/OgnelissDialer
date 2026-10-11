@@ -1,7 +1,9 @@
 package com.ogneliss.dialer.ui.screens
 
-import com.ogneliss.dialer.ui.theme.groupBorder
-import com.ogneliss.dialer.ui.components.SectionCaption
+import androidx.compose.foundation.lazy.itemsIndexed
+import com.ogneliss.dialer.ui.components.GroupPosition
+import com.ogneliss.dialer.ui.components.GroupedRow
+import com.ogneliss.dialer.ui.components.SectionBand
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -15,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -238,24 +239,19 @@ fun NotesScreen(
         ) {
             grouped.forEach { (letter, rows) ->
                 item(key = "letter-$letter") {
-                    // Подпись раздела без черты — как в журнале (строгий стиль, 1.5.1)
-                    SectionCaption(
-                        letter.toString(),
-                        Modifier.padding(
-                            start = FlowUi.screenPadding + Space.m,
-                            top = Space.l,
-                            bottom = Space.xs
-                        )
-                    )
+                    // Полоса раздела (сплошной список, 1.5.3)
+                    SectionBand(letter.toString())
                 }
 
-                items(rows, key = { it.e164 }) { row ->
-                    NoteListRow(
-                        row = row,
-                        onOpen = { onOpenCard(row.e164) },
-                        onCall = { vm.call(row.e164) },
-                        onEdit = { editing = row.e164 }
-                    )
+                itemsIndexed(rows, key = { _, r -> r.e164 }) { index, row ->
+                    GroupedRow(GroupPosition.of(index, rows.size)) {
+                        NoteListRow(
+                            row = row,
+                            onOpen = { onOpenCard(row.e164) },
+                            onCall = { vm.call(row.e164) },
+                            onEdit = { editing = row.e164 }
+                        )
+                    }
                 }
             }
         }
@@ -279,13 +275,9 @@ private fun NoteListRow(
 ) {
     Surface(
         onClick = onOpen,
+        // Строка во всю ширину (сплошной список, 1.5.3)
         color = MaterialTheme.colorScheme.surfaceContainerLow,
-        shape = MaterialTheme.shapes.large,
-        // Рамка группы (строгий стиль, 1.5.1)
-        border = groupBorder(),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = FlowUi.screenPadding, vertical = FlowUi.cardSpacing)
+        modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             Modifier.padding(start = Space.l, end = Space.xs, top = Space.s, bottom = Space.s),

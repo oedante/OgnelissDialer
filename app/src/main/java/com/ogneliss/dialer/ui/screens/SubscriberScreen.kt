@@ -1,7 +1,5 @@
 package com.ogneliss.dialer.ui.screens
 
-import com.ogneliss.dialer.ui.components.GroupPosition
-import com.ogneliss.dialer.ui.components.groupOutline
 import com.ogneliss.dialer.ui.theme.PanelReachesNavBar
 import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.settings.SwipeAction
@@ -48,7 +46,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.background
 import androidx.compose.foundation.verticalScroll
@@ -2235,6 +2232,10 @@ fun SubscriberScreen(
                      * ══════════════════════════════════════════════════════════
                      * ИСТОРИЯ ВЫГЛЯДИТ КАК ОСТАЛЬНЫЕ ПАНЕЛИ КАРТОЧКИ
                      * ══════════════════════════════════════════════════════════
+                     * 1.5.3: снова во всю ширину — вся карточка теперь сплошной
+                     * список (макет B), и панели над историей тоже во всю ширину.
+                     * Ниже — история решения 1.3.x.
+                     *
                      * Строки истории шли во всю ширину экрана, с подложкой
                      * от края до края и без скруглений, — а «Номера»,
                      * «Заметка» и «Сведения» над ними стоят панелями
@@ -2251,25 +2252,17 @@ fun SubscriberScreen(
                      * и обернуть их одним контейнером значило бы собирать
                      * все двести записей сразу.
                      */
-                    val shape = RoundedCornerShape(
-                        topStart = if (index == 0) HISTORY_CORNER else 0.dp,
-                        topEnd = if (index == 0) HISTORY_CORNER else 0.dp,
-                        bottomStart = if (index == entriesInBucket.lastIndex) HISTORY_CORNER else 0.dp,
-                        bottomEnd = if (index == entriesInBucket.lastIndex) HISTORY_CORNER else 0.dp
-                    )
 
+                    // Во всю ширину, без скруглений (сплошной список, 1.5.3)
                     Column(
                         Modifier
-                            .padding(horizontal = FlowUi.screenPadding)
-                            .clip(shape)
+                            .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                            // Рамка группы, как у журнала (строгий стиль, 1.5.1)
-                            .groupOutline(GroupPosition.of(index, entriesInBucket.size))
                     ) {
-                        // Линия между строками, но не над первой: там уже
-                        // заголовок раздела, и вторая граница рядом лишняя
+                        // Линия между строками, но не над первой: там полоса
+                        // даты, и вторая граница рядом лишняя
                         if (index > 0) {
-                            OgnelissDivider(Modifier.padding(horizontal = FlowUi.contentPadding))
+                            OgnelissDivider(Modifier.padding(start = Space.l))
                         }
 
                         CallHistoryRow(
@@ -2302,7 +2295,6 @@ fun SubscriberScreen(
                      * сильнее, чем заслуживает второстепенное действие.
                      */
                     FilledTonalButton(
-                        shape = MaterialTheme.shapes.medium,
                         onClick = { historyExpanded = !historyExpanded },
                         /*
                          * Отступы сверху и снизу.

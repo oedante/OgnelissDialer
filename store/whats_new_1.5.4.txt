@@ -1,0 +1,81 @@
+<ru-RU>
+• На экране вызова вместо тонких колец — мягкие волны с плавным переходом цвета.
+</ru-RU>
+<ar>
+• في شاشة المكالمة، موجات ناعمة بتدرج لوني سلس بدلاً من الحلقات الرفيعة.
+</ar>
+<cs-CZ>
+• Na obrazovce hovoru jsou místo tenkých kruhů jemné vlny s plynulým přechodem barvy.
+</cs-CZ>
+<da-DK>
+• På opkaldsskærmen er de tynde ringe erstattet af bløde bølger med glidende farveovergang.
+</da-DK>
+<de-DE>
+• Auf dem Anrufbildschirm ersetzen sanfte Wellen mit weichem Farbverlauf die dünnen Ringe.
+</de-DE>
+<en-US>
+• The call screen now shows soft waves with a smooth colour fade instead of thin rings.
+</en-US>
+<es-ES>
+• En la pantalla de llamada, ondas suaves con degradado de color en lugar de anillos finos.
+</es-ES>
+<fi-FI>
+• Puhelunäkymässä ohuiden renkaiden tilalla on pehmeitä aaltoja ja tasainen värisiirtymä.
+</fi-FI>
+<fr-FR>
+• Sur l’écran d’appel, des vagues douces en dégradé remplacent les anneaux fins.
+</fr-FR>
+<hi-IN>
+• कॉल स्क्रीन पर पतले छल्लों की जगह अब रंग के सहज बदलाव वाली कोमल तरंगें।
+</hi-IN>
+<hu-HU>
+• A hívásképernyőn a vékony gyűrűk helyett lágy, finom színátmenetes hullámok láthatók.
+</hu-HU>
+<id>
+• Layar panggilan kini menampilkan gelombang lembut dengan gradasi warna halus, bukan cincin tipis.
+</id>
+<it-IT>
+• Nella schermata di chiamata, onde morbide con sfumatura di colore al posto degli anelli sottili.
+</it-IT>
+<iw-IL>
+• במסך השיחה מוצגים כעת גלים רכים עם מעבר צבע חלק במקום טבעות דקות.
+</iw-IL>
+<ja-JP>
+• 通話画面の細い輪が、なめらかなグラデーションのやわらかい波になりました。
+</ja-JP>
+<ko-KR>
+• 통화 화면의 얇은 고리가 부드러운 색상 그라데이션의 물결로 바뀌었습니다.
+</ko-KR>
+<nl-NL>
+• Op het belscherm vervangen zachte golven met een vloeiend kleurverloop de dunne ringen.
+</nl-NL>
+<no-NO>
+• På samtaleskjermen er de tynne ringene byttet ut med myke bølger med jevn fargeovergang.
+</no-NO>
+<pl-PL>
+• Na ekranie połączenia zamiast cienkich okręgów są miękkie fale z płynnym przejściem koloru.
+</pl-PL>
+<pt-BR>
+• Na tela de chamada, ondas suaves com degradê de cor substituem os anéis finos.
+</pt-BR>
+<ro>
+• Pe ecranul de apel, unde line cu trecere fină de culoare înlocuiesc cercurile subțiri.
+</ro>
+<sk>
+• Na obrazovke hovoru sú namiesto tenkých kruhov jemné vlny s plynulým prechodom farby.
+</sk>
+<sv-SE>
+• På samtalsskärmen har de tunna ringarna ersatts av mjuka vågor med jämn färgövergång.
+</sv-SE>
+<th>
+• หน้าจอการโทรแสดงคลื่นนุ่มนวลที่ไล่สีอย่างลื่นไหลแทนวงแหวนเส้นบาง
+</th>
+<tr-TR>
+• Arama ekranında ince halkaların yerini yumuşak renk geçişli dalgalar aldı.
+</tr-TR>
+<vi>
+• Màn hình cuộc gọi giờ hiển thị sóng mềm với chuyển màu mượt thay cho vòng mảnh.
+</vi>
+<zh-CN>
+• 通话界面的细圆环改为色彩柔和渐变的波纹。
+</zh-CN>

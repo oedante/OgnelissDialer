@@ -1,6 +1,5 @@
 package com.ogneliss.dialer.ui.components
 
-import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.ui.theme.Space
 
 import androidx.compose.foundation.clickable
@@ -89,7 +88,7 @@ fun RowScope.QuickAction(
     ) {
         Surface(
             shape = CircleShape,
-            color = container ?: PanelColors.key(),
+            color = container ?: MaterialTheme.colorScheme.surfaceContainerHighest,
             modifier = Modifier.size(FlowUi.actionCircleSize)
         ) {
             Box(contentAlignment = Alignment.Center) {

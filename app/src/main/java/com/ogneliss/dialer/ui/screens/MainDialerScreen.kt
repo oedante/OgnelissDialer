@@ -42,7 +42,6 @@ import com.ogneliss.dialer.R
 import com.ogneliss.dialer.call.FakeCall
 import com.ogneliss.dialer.ui.theme.Dimens
 import androidx.compose.foundation.lazy.itemsIndexed
-import com.ogneliss.dialer.settings.JournalStyle
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
@@ -1399,9 +1398,11 @@ fun MainDialerScreen(
                  */
                 // Вид журнала «Группы по дням»: место строки в группе.
                 // В обычном виде каждая строка — отдельная карточка
+                // 1.5.3, сплошной список: строки во всю ширину без зазоров —
+                // в обоих видах журнала нужны линии между строками, иначе
+                // «Карточки» слились бы в сплошное поле
                 val groupPositionOf: (Int, Int) -> GroupPosition = { i, n ->
-                    if (settings.journalStyle == JournalStyle.GROUPS) GroupPosition.of(i, n)
-                    else GroupPosition.SINGLE
+                    GroupPosition.of(i, n)
                 }
 
                 LazyColumn(

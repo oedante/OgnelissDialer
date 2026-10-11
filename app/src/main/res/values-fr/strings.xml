@@ -638,7 +638,6 @@
     <string name="incall_hidden_number">Numéro masqué</string>
     <!-- Вид журнала: разбор в JournalStyle -->
     <string name="settings_journal_style">Style du journal</string>
-    <string name="settings_journal_style_text">Chaque appel en carte ou appels regroupés par jour</string>
     <string name="journal_style_cards">Cartes</string>
     <string name="journal_style_groups">Groupes par jour</string>
     <string name="action_mark_spam">Marquer comme spam</string>

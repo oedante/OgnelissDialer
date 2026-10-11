@@ -2,7 +2,7 @@ package com.ogneliss.dialer.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.itemsIndexed
-import com.ogneliss.dialer.ui.components.SectionCaption
+import com.ogneliss.dialer.ui.components.SectionBand
 import com.ogneliss.dialer.ui.components.GroupPosition
 import com.ogneliss.dialer.ui.components.GroupedRow
 import com.ogneliss.dialer.ui.theme.Space
@@ -72,7 +72,7 @@ fun StatsScreen(
                 }
             }
 
-            // Сводка — одной белой группой с рамкой (строгий стиль, 1.5.1)
+            // Сводка — строками во всю ширину (сплошной список, 1.5.3)
             item {
                 val minutes = (stats.totalDurationSec / 60).toInt()
                 GroupedRow(GroupPosition.SINGLE) {
@@ -114,15 +114,8 @@ fun StatsScreen(
             }
 
             item {
-                // Подпись раздела — как во всём приложении (строгий стиль, 1.5.1)
-                SectionCaption(
-                    stringResource(R.string.stats_top_contacts),
-                    Modifier.padding(
-                        start = FlowUi.screenPadding + Space.m,
-                        top = Space.xl,
-                        bottom = Space.s
-                    )
-                )
+                // Полоса раздела (сплошной список, 1.5.3)
+                SectionBand(stringResource(R.string.stats_top_contacts))
             }
 
             if (stats.topContacts.isEmpty()) {

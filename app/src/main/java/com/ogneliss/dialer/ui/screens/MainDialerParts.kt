@@ -1,7 +1,5 @@
 package com.ogneliss.dialer.ui.screens
 
-import com.ogneliss.dialer.ui.theme.groupBorder
-import com.ogneliss.dialer.ui.components.SectionCaption
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -132,12 +130,11 @@ internal fun OverflowMenu(
     ) {
         Column(Modifier.padding(bottom = Space.l)) {
             /*
-             * Строгий стиль (1.5.1, макет «A»): группы — белые с рамкой
-             * на серой шторке, над каждой подпись раздела капителью;
+             * Сплошной список (1.5.3, макет «B»): над группой подпись
+             * раздела заглавными, между группами — линия во всю ширину;
              * «Очистить журнал» — отдельной группой внизу.
              */
-            MenuCaption(stringResource(R.string.settings_section_calls))
-            SheetGroup {
+            SheetGroup(title = stringResource(R.string.settings_section_calls), first = true) {
                 SheetRow(OgnelissIcons.PhoneCallback, fakeCallLabel, onClick = onFakeCall)
                 SheetDivider()
                 SheetRow(
@@ -150,8 +147,7 @@ internal fun OverflowMenu(
                     onClick = onOwnNumber
                 )
             }
-            MenuCaption(stringResource(R.string.menu_section_lists))
-            SheetGroup {
+            SheetGroup(title = stringResource(R.string.menu_section_lists)) {
                 SheetRow(
                     OgnelissIcons.StickyNote2,
                     notesLabel,
@@ -167,8 +163,7 @@ internal fun OverflowMenu(
                     onClick = onStartSelection
                 )
             }
-            MenuCaption(stringResource(R.string.menu_section_app))
-            SheetGroup {
+            SheetGroup(title = stringResource(R.string.menu_section_app)) {
                 SheetRow(
                     if (settings.theme == ThemeMode.DARK) OgnelissIcons.LightMode else OgnelissIcons.DarkMode,
                     themeLabel,
@@ -177,7 +172,6 @@ internal fun OverflowMenu(
                 SheetDivider()
                 SheetRow(OgnelissIcons.Settings, settingsLabel, onClick = onSettings)
             }
-            Spacer(Modifier.height(Space.m))
             SheetGroup {
                 SheetRow(
                     OgnelissIcons.DeleteSweep,
@@ -190,19 +184,6 @@ internal fun OverflowMenu(
     }
 }
 
-/** Подпись раздела меню — вровень с текстом внутри групп. */
-@Composable
-private fun MenuCaption(text: String) {
-    SectionCaption(
-        text,
-        Modifier.padding(
-            start = FlowUi.screenPadding + Space.l,
-            end = FlowUi.screenPadding,
-            top = Space.m,
-            bottom = Space.xs
-        )
-    )
-}
 
 
 // Размеры пунктов меню — общие для приложения, разбор в FlowUi
@@ -390,12 +371,9 @@ internal fun PinnedOnlyCard(
 ) {
     Surface(
         onClick = onOpen,
+        // Строка во всю ширину (сплошной список, 1.5.3)
         color = MaterialTheme.colorScheme.surfaceContainerLow,
-        shape = MaterialTheme.shapes.large,
-        border = groupBorder(),  // строгий стиль (1.5.1)
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = FlowUi.screenPadding, vertical = FlowUi.cardSpacing)
+        modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             Modifier.padding(start = Space.l, end = Space.xs, top = Space.s, bottom = Space.s),

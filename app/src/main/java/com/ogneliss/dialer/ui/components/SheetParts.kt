@@ -1,6 +1,5 @@
 package com.ogneliss.dialer.ui.components
 
-import com.ogneliss.dialer.ui.theme.groupBorder
 import com.ogneliss.dialer.ui.theme.Space
 
 import androidx.compose.foundation.selection.toggleable
@@ -14,52 +13,59 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.theme.Dimens
 import com.ogneliss.dialer.ui.theme.FlowUi
 
 /**
- * ГРУППА ДЕЙСТВИЙ В ШТОРКЕ — СКРУГЛЁННАЯ ПАНЕЛЬ, КАК В КАРТОЧКЕ.
+ * ГРУППА ДЕЙСТВИЙ В ШТОРКЕ — СПЛОШНОЙ СПИСОК (1.5.3, макет B).
  *
- * Шторки «Ещё» и долгого нажатия до 1.2.1 были длинными плоскими списками
- * со стандартными разделителями во всю ширину — единственное место
- * в приложении, где действия не собраны в панели. Теперь действия
- * сгруппированы по смыслу, каждая группа — панель того же вида, что
- * «Номера» или «Сведения» в карточке, строки внутри разделены общим
- * тонким разделителем от начала текста.
+ * Шторка белая, действия — строками во всю ширину без разделителей между
+ * ними; группы отделены тонкой линией во всю ширину, над группой может быть
+ * подпись раздела заглавными ([title]). Так меню читается как оглавление:
+ * линия — граница смысла, а не каждой строки.
  *
- * Строки — в content, между ними — SheetDivider(). Слот, а не список
- * лямбд: список с составными лямбдами Kotlin выводит ненадёжно,
- * а слот — обычный для Compose способ.
+ * [first] — первая группа шторки: линия над ней не нужна, если сверху
+ * ничего нет (меню «Ещё»). В меню записи над первой группой шапка —
+ * там линия отделяет её от шапки, [first] = false.
+ *
+ * История: 1.2.1–1.5.0 — скруглённые панели; 1.5.1–1.5.2 — белые группы
+ * с рамкой на серой шторке (макет A).
  */
 @Composable
-fun SheetGroup(content: @Composable ColumnScope.() -> Unit) {
-    Surface(
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        shape = MaterialTheme.shapes.large,
-        // Строгий стиль (1.5.1): белая группа с рамкой на серой шторке
-        // (SheetColors.container). До этого шторка была того же белого,
-        // что и группы, — оставались одни разделители («белое полотно
-        // со стойками разной ширины», снимок автора 11.10)
-        border = groupBorder(),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = FlowUi.screenPadding, vertical = Space.xs)
-    ) {
+fun SheetGroup(
+    title: String? = null,
+    first: Boolean = false,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Column(Modifier.fillMaxWidth()) {
+        if (!first) {
+            OgnelissDivider(Modifier.padding(vertical = Space.xs))
+        }
+        title?.let {
+            SectionCaption(
+                it,
+                Modifier.padding(start = Space.xl, end = Space.l, top = Space.s, bottom = Space.xxs)
+            )
+        }
         Column(content = content)
     }
 }
 
-/** Разделитель между строками группы — от начала текста, под значком не проходит. */
+/**
+ * Разделитель между строками группы шторки.
+ *
+ * С 1.5.3 (сплошной список) строки внутри группы линиями не делятся —
+ * границы только между группами (SheetGroup). Функция оставлена, чтобы
+ * не править все шторки: вызов ничего не рисует.
+ */
 @Composable
-fun SheetDivider() = OgnelissDivider(Modifier.padding(start = 56.dp))
+fun SheetDivider() = Unit
 
 /**
  * Строка действия в шторке.

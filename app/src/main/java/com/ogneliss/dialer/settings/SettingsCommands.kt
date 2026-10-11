@@ -336,8 +336,8 @@ class SettingsCommands @Inject constructor(
         /** Ключи, которые обрабатывает setChoice. */
         val CHOICE_KEYS = setOf(
             "language", "theme", "swipe_right", "swipe_left", "grouping", "sort_order",
-            "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info",
-            "journal_style"
+            "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info"
+            // "journal_style" — снят из реестра в 1.5.3 (вид журнала один)
         )
     }
 }

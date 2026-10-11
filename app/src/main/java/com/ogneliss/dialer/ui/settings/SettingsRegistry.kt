@@ -356,12 +356,12 @@ object SettingsRegistry {
             SettingKind.Switch("merge_calls"),
             groupRes = R.string.settings_group_log_view
         ),
-        SettingEntry(
-            "journal_style", SettingsCategory.CALL_LOG,
-            R.string.settings_journal_style, R.string.settings_journal_style_text,
-            SettingKind.Choice("journal_style"),
-            groupRes = R.string.settings_group_log_view
-        ),
+        /*
+         * «Вид журнала» (Карточки / Группы по дням) убран в 1.5.3: в сплошном
+         * списке строки идут во всю ширину без зазоров, и оба вида выглядели
+         * одинаково. Сохранённое значение в настройках не трогаем — журнал
+         * его больше не читает (MainDialerScreen, groupPositionOf).
+         */
         SettingEntry(
             "carrier_info", SettingsCategory.CALL_LOG,
             R.string.settings_carrier_info, R.string.settings_carrier_info_text,

@@ -1,9 +1,11 @@
 package com.ogneliss.dialer.ui.components
 
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.background
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
-import com.ogneliss.dialer.ui.theme.groupBorder
 import com.ogneliss.dialer.ui.theme.Space
 
 import androidx.compose.foundation.layout.Column
@@ -72,37 +74,100 @@ fun OgnelissPanel(
     icon: (@Composable () -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Surface(
-        color = color ?: MaterialTheme.colorScheme.surfaceContainerLow,
-        shape = MaterialTheme.shapes.large,
-        // Тонкая рамка — строгий стиль (1.5.1): группа читается как блок
-        // и там, где подложка почти того же тона
-        border = groupBorder(),
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = FlowUi.screenPadding, vertical = FlowUi.cardSpacing)
-    ) {
-        Column(Modifier.padding(FlowUi.cardPadding)) {
-            title?.let {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(bottom = Space.s)
-                ) {
-                    icon?.let { drawIcon ->
-                        drawIcon()
-                        Spacer(Modifier.width(Space.s))
+    /*
+     * СПЛОШНОЙ СПИСОК (1.5.3, макет B).
+     *
+     * Обычный раздел — во всю ширину, без скругления и полей по бокам:
+     * сверху серая полоса с подписью (SectionBand), под ней содержимое
+     * на белом. Разделы идут друг за другом, их отделяют сами полосы.
+     *
+     * Цветная панель (предупреждение, пояснение) — по-прежнему отдельный
+     * скруглённый блок с полями: это выноска, а не часть списка.
+     */
+    if (color != null) {
+        Surface(
+            color = color,
+            shape = MaterialTheme.shapes.large,
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = FlowUi.screenPadding, vertical = FlowUi.cardSpacing)
+        ) {
+            Column(Modifier.padding(FlowUi.cardPadding)) {
+                title?.let {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(bottom = Space.s)
+                    ) {
+                        icon?.let { drawIcon ->
+                            drawIcon()
+                            Spacer(Modifier.width(Space.s))
+                        }
+                        SectionCaption(it)
                     }
-
-                    // Подпись раздела — капителью, как заголовки групп
-                    // (строгий стиль, 1.5.1); heading() — внутри
-                    SectionCaption(it)
                 }
+                content()
             }
-
-            content()
         }
+        return
+    }
+
+    Column(
+        modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+    ) {
+        // С подписью — полоса раздела; без подписи — линия во всю ширину,
+        // иначе две панели подряд слились бы в одну (слои защиты от спама,
+        // пустая заметка под номерами)
+        if (title != null) SectionBand(title, icon = icon) else OgnelissDivider()
+        Column(Modifier.padding(FlowUi.cardPadding), content = content)
     }
 }
+
+/**
+ * ПОЛОСА РАЗДЕЛА (1.5.3, «сплошной список», макет B).
+ *
+ * Серая полоса во всю ширину с подписью заглавными («СЕГОДНЯ», «НОМЕРА»),
+ * тонкие линии сверху и снизу. Разделяет списки на разделы вместо
+ * карточек и отступов: журнал, контакты, карточка, настройки, заметки,
+ * напоминания, статистика, списки блокировки.
+ *
+ * [action] — кнопка справа (например, «+» у чёрного списка).
+ * [icon] — значок перед подписью (бирюзовый у заметки).
+ */
+@Composable
+fun SectionBand(
+    text: String,
+    modifier: Modifier = Modifier,
+    icon: (@Composable () -> Unit)? = null,
+    action: (@Composable () -> Unit)? = null
+) {
+    Column(
+        modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceContainer)
+    ) {
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .heightIn(min = BAND_MIN_HEIGHT)
+                .padding(start = Space.l, end = if (action != null) Space.xs else Space.l),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            icon?.let { drawIcon ->
+                drawIcon()
+                Spacer(Modifier.width(Space.s))
+            }
+            SectionCaption(text, Modifier.weight(1f).padding(vertical = Space.s))
+            action?.invoke()
+        }
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+    }
+}
+
+/** Высота полосы раздела без кнопки: подпись и поля по 8 dp. */
+private val BAND_MIN_HEIGHT = 32.dp
 
 /**
  * РАЗДЕЛИТЕЛЬ МЕЖДУ СТРОКАМИ ПАНЕЛИ.

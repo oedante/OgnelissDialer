@@ -88,7 +88,6 @@ fun ConsentScreen(
                         .padding(Space.xl)
                 ) {
                     Button(
-                        shape = MaterialTheme.shapes.medium,
                         onClick = onAccept,
                         enabled = accepted,
                         modifier = Modifier

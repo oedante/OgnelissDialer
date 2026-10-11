@@ -301,7 +301,7 @@ private fun WizardButtons(
                 .padding(Space.xl)
         ) {
             if (!isGranted) {
-                Button(shape = MaterialTheme.shapes.medium, onClick = onGrant, modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = onGrant, modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(R.string.wizard_grant))
                 }
                 Spacer(Modifier.height(Space.s))

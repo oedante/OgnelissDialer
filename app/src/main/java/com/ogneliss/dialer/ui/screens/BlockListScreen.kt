@@ -1,6 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
-import com.ogneliss.dialer.ui.components.SectionCaption
+import com.ogneliss.dialer.ui.components.SectionBand
 import com.ogneliss.dialer.ui.components.GroupPosition
 import com.ogneliss.dialer.ui.components.GroupedRow
 import com.ogneliss.dialer.ui.theme.Space
@@ -112,8 +112,7 @@ fun BlockListScreen(
             // Белый список идёт первым и с пояснением приоритета: именно
             // его непонимание порождает жалобы «блокировка режет нужные звонки»
             itemsIndexed(allowed, key = { _, rule -> "allow_${rule.pattern}" }) { i, rule ->
-                // Правила — белой группой с рамкой, линии между строками
-                // внутри группы (строгий стиль, 1.5.1)
+                // Правила — строками во всю ширину, линии между ними (1.5.3)
                 GroupedRow(GroupPosition.of(i, allowed.size)) {
                 RuleRow(
                     pattern = rule.pattern,
@@ -191,16 +190,15 @@ fun BlockListScreen(
 
 @Composable
 private fun SectionHeaderWithAction(title: String, onAdd: () -> Unit) {
-    Row(
-        Modifier.fillMaxWidth().padding(start = FlowUi.screenPadding + Space.m, end = Space.s, top = 20.dp),
-        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-    ) {
-        // Подпись раздела — как во всём приложении (строгий стиль, 1.5.1)
-        SectionCaption(title, Modifier.weight(1f))
-        IconButton(onClick = onAdd) {
-            Icon(OgnelissIcons.Add, contentDescription = stringResource(R.string.rule_add))
+    // Полоса раздела с кнопкой «+» справа (сплошной список, 1.5.3)
+    SectionBand(
+        title,
+        action = {
+            IconButton(onClick = onAdd) {
+                Icon(OgnelissIcons.Add, contentDescription = stringResource(R.string.rule_add))
+            }
         }
-    }
+    )
 }
 
 @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)

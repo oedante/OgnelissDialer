@@ -281,7 +281,7 @@ fun FilterSheet(
 @Composable
 fun FilterButton(filter: CallLogFilter, onClick: () -> Unit) {
     if (filter.isActive) {
-        FilledTonalButton(shape = MaterialTheme.shapes.medium, onClick = onClick) {
+        FilledTonalButton(onClick = onClick) {
             Icon(OgnelissIcons.FilterList, null, Modifier.size(FlowUi.iconSizeInline))
             Spacer(Modifier.width(Space.s))
             Text(stringResource(R.string.filter_active_count, filter.activeCount))

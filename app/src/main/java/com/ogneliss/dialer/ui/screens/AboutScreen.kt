@@ -103,7 +103,7 @@ fun AboutScreen(
 
             Spacer(Modifier.height(Space.l))
 
-            // Документы и справка — белыми группами с рамкой (строгий стиль, 1.5.1)
+            // Документы и справка — строками во всю ширину (сплошной список, 1.5.3)
             SettingsGroup {
                 AboutRow(
                     OgnelissIcons.PrivacyTip,
@@ -129,9 +129,8 @@ fun AboutScreen(
                     stringResource(R.string.settings_licenses),
                     stringResource(R.string.about_licenses_hint)
                 ) { onOpenLegal(LegalDocument.LICENSES) }
-            }
 
-            SettingsGroup {
+                OgnelissDivider(Modifier.padding(start = 56.dp))
                 AboutRow(
                     OgnelissIcons.MicOff,
                     stringResource(R.string.settings_recording_title),
