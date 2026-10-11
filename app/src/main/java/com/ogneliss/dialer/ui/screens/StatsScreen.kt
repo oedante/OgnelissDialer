@@ -1,20 +1,22 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.itemsIndexed
+import com.ogneliss.dialer.ui.components.SectionCaption
+import com.ogneliss.dialer.ui.components.GroupPosition
+import com.ogneliss.dialer.ui.components.GroupedRow
 import com.ogneliss.dialer.ui.theme.Space
 
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.ogneliss.dialer.ui.components.OgnelissListRow
@@ -70,8 +72,11 @@ fun StatsScreen(
                 }
             }
 
+            // Сводка — одной белой группой с рамкой (строгий стиль, 1.5.1)
             item {
                 val minutes = (stats.totalDurationSec / 60).toInt()
+                GroupedRow(GroupPosition.SINGLE) {
+                Column {
                 OgnelissListRow(
                     headline = pluralStringResource(
                         R.plurals.duration_minutes, minutes, minutes
@@ -82,6 +87,7 @@ fun StatsScreen(
                 // Средняя длительность считается только по состоявшимся
                 // разговорам: пропущенные занизили бы её вдвое
                 if (stats.averageDurationSec > 0) {
+                    OgnelissDivider(Modifier.padding(start = Space.l))
                     OgnelissListRow(
                         headline = stringResource(
                             R.string.stats_average,
@@ -95,6 +101,7 @@ fun StatsScreen(
                 // Доля пропущенных от входящих — показатель, по которому
                 // видно, успеваете ли вы отвечать
                 if (stats.missedRatePercent > 0) {
+                    OgnelissDivider(Modifier.padding(start = Space.l))
                     OgnelissListRow(
                         headline = stringResource(
                             R.string.stats_missed_rate, stats.missedRatePercent
@@ -102,15 +109,19 @@ fun StatsScreen(
                         supporting = stringResource(R.string.stats_missed_rate_label)
                     )
                 }
-                OgnelissDivider()
+                }
+                }
             }
 
             item {
-                Text(
+                // Подпись раздела — как во всём приложении (строгий стиль, 1.5.1)
+                SectionCaption(
                     stringResource(R.string.stats_top_contacts),
-                    Modifier.padding(FlowUi.contentPadding).semantics { heading() },
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary
+                    Modifier.padding(
+                        start = FlowUi.screenPadding + Space.m,
+                        top = Space.xl,
+                        bottom = Space.s
+                    )
                 )
             }
 
@@ -124,7 +135,8 @@ fun StatsScreen(
                 }
             }
 
-            items(stats.topContacts, key = { it.key }) { entry ->
+            itemsIndexed(stats.topContacts, key = { _, e -> e.key }) { index, entry ->
+                GroupedRow(GroupPosition.of(index, stats.topContacts.size)) {
                 OgnelissListRow(
                     headline = entry.displayName ?: PhoneFormatter.format(entry.number),
                     supporting = run {
@@ -145,7 +157,7 @@ fun StatsScreen(
                     },
                     onClick = { vm.call(entry.number) }
                 )
-                OgnelissDivider()
+                }
             }
 
             // Честная оговорка: без неё пользователь решит, что видит

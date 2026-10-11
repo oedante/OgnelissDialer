@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.compose.ui.unit.dp
+import com.ogneliss.dialer.ui.components.SettingsGroup
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -104,23 +106,25 @@ fun BackupScreen(
                 }
             }
 
-            OgnelissListRow(
-                headline = stringResource(R.string.settings_backup_export),
-                supporting = stringResource(R.string.settings_backup_export_text),
-                leading = { Icon(OgnelissIcons.FileDownload, null) },
-                onClick = { exportLauncher.launch(vm.suggestedBackupFileName()) }
-            )
-            OgnelissDivider()
+            // Действия — белой группой с рамкой (строгий стиль, 1.5.1)
+            SettingsGroup {
+                OgnelissListRow(
+                    headline = stringResource(R.string.settings_backup_export),
+                    supporting = stringResource(R.string.settings_backup_export_text),
+                    leading = { Icon(OgnelissIcons.FileDownload, null) },
+                    onClick = { exportLauncher.launch(vm.suggestedBackupFileName()) }
+                )
+                OgnelissDivider(Modifier.padding(start = 56.dp))
 
-            OgnelissListRow(
-                headline = stringResource(R.string.settings_backup_import),
-                supporting = stringResource(R.string.settings_backup_import_text),
-                leading = { Icon(OgnelissIcons.FileUpload, null) },
-                // Тип фильтруем по JSON, но принимаем и произвольный:
-                // некоторые файловые менеджеры отдают octet-stream
-                onClick = { importLauncher.launch(arrayOf("application/json", "*/*")) }
-            )
-            OgnelissDivider()
+                OgnelissListRow(
+                    headline = stringResource(R.string.settings_backup_import),
+                    supporting = stringResource(R.string.settings_backup_import_text),
+                    leading = { Icon(OgnelissIcons.FileUpload, null) },
+                    // Тип фильтруем по JSON, но принимаем и произвольный:
+                    // некоторые файловые менеджеры отдают octet-stream
+                    onClick = { importLauncher.launch(arrayOf("application/json", "*/*")) }
+                )
+            }
 
             Text(
                 stringResource(R.string.backup_contents),

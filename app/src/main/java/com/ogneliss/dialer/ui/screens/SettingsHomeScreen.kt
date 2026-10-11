@@ -1,12 +1,17 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.lazy.itemsIndexed
+import com.ogneliss.dialer.ui.components.GroupPosition
+import com.ogneliss.dialer.ui.components.GroupedRow
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -136,15 +141,18 @@ fun SettingsHomeScreen(
                         )
                     }
                 } else {
-                    items(results, key = { it.id }) { entry ->
-                        OgnelissListRow(
-                            headline = stringResource(entry.titleRes),
-                            // Показываем, в какой категории лежит настройка —
-                            // иначе пользователь найдёт её, но не запомнит где
-                            supporting = stringResource(entry.category.titleRes),
-                            onClick = { onOpenEntry(entry) }
-                        )
-                        OgnelissDivider()
+                    // Найденное — белой группой с рамкой (строгий стиль, 1.5.1)
+                    item { Spacer(Modifier.height(Space.s)) }
+                    itemsIndexed(results, key = { _, e -> e.id }) { index, entry ->
+                        GroupedRow(GroupPosition.of(index, results.size), dividerStart = Space.l) {
+                            OgnelissListRow(
+                                headline = stringResource(entry.titleRes),
+                                // Показываем, в какой категории лежит настройка —
+                                // иначе пользователь найдёт её, но не запомнит где
+                                supporting = stringResource(entry.category.titleRes),
+                                onClick = { onOpenEntry(entry) }
+                            )
+                        }
                     }
                 }
             } else {

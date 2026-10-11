@@ -1,5 +1,6 @@
 package com.ogneliss.dialer
 
+import android.os.Build
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.ui.semantics.testTagsAsResourceId
@@ -144,6 +145,19 @@ class MainActivity : ComponentActivity() {
          * этот путь поддерживается и в Android 15.
          */
         enableEdgeToEdge()
+
+        /*
+         * БЕЗ БЕЛОЙ ПОДЛОЖКИ ПОД КНОПКАМИ НАВИГАЦИИ (1.5.1, снимки автора
+         * 11.10: под нижней панелью — почти белая полоса с ◁ ○ □).
+         * enableEdgeToEdge() по умолчанию оставляет включённым «контраст
+         * панели навигации», и при трёх кнопках система кладёт под них
+         * полупрозрачную белую (в тёмной — чёрную) подложку поверх нашей
+         * полосы цвета панели. Контраст значков задаёт Theme.kt
+         * (isAppearanceLightNavigationBars), подложка не нужна.
+         */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
         super.onCreate(savedInstanceState)
 
         // Намерение, с которым приложение открыли: дальше его меняет

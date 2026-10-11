@@ -144,6 +144,19 @@ class InCallActivity : ComponentActivity() {
          */
         enableEdgeToEdge()
 
+        /*
+         * БЕЗ БЕЛОЙ ПОДЛОЖКИ ПОД КНОПКАМИ НАВИГАЦИИ (1.5.1, снимки автора
+         * 11.10: под нижней панелью — почти белая полоса с ◁ ○ □).
+         * enableEdgeToEdge() по умолчанию оставляет включённым «контраст
+         * панели навигации», и при трёх кнопках система кладёт под них
+         * полупрозрачную белую (в тёмной — чёрную) подложку поверх нашей
+         * полосы цвета панели. Контраст значков задаёт Theme.kt
+         * (isAppearanceLightNavigationBars), подложка не нужна.
+         */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
+
         // Показ поверх экрана блокировки — обязателен для входящего вызова
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
@@ -1306,6 +1319,16 @@ private fun CallStatusLine(state: Int, call: Call?) {
     // как незагрузившийся элемент
     if (text.isBlank()) return
 
+    CallStatusPill(active, text)
+}
+
+/**
+ * Плашка состояния: «Соединение…», «Входящий вызов», таймер на зелёном.
+ * Общая с псевдозвонком (1.5.1): он должен выглядеть как настоящий вызов,
+ * а своя строка у него отличалась и видом, и форматом таймера (0:05 вместо 00:05).
+ */
+@Composable
+internal fun CallStatusPill(active: Boolean, text: String) {
     /*
      * ЦВЕТ ПЛАШКИ МЕНЯЕТСЯ ПЛАВНО.
      *
@@ -1341,7 +1364,8 @@ private fun CallStatusLine(state: Int, call: Call?) {
      */
     val stateLabel = if (active) stringResource(R.string.incall_ongoing) else text
     Surface(
-        shape = CircleShape,
+        // 8 dp, а не «пилюля» — строгий стиль (1.5.1)
+        shape = MaterialTheme.shapes.medium,
         color = background,
         contentColor = foreground,
         modifier = Modifier.semantics {
@@ -1473,7 +1497,7 @@ private fun ControlsRow(
 }
 
 @Composable
-private fun ToggleTile(
+internal fun ToggleTile(
     active: Boolean,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     label: String,
@@ -1544,7 +1568,7 @@ private fun QuickReplySheet(
     onSend: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    ModalBottomSheet(onDismissRequest = onDismiss) {
+    ModalBottomSheet(onDismissRequest = onDismiss, containerColor = MaterialTheme.colorScheme.background) {
         Column(Modifier.padding(bottom = Space.xxl)) {
             Text(
                 stringResource(R.string.quick_reply_title),
@@ -1670,7 +1694,7 @@ private fun InCallNoteField(
 }
 
 @Composable
-private fun DtmfPanel(
+internal fun DtmfPanel(
     entered: String,
     onDigit: (Char) -> Unit,
     onBackspace: () -> Unit,
@@ -1928,7 +1952,7 @@ private fun CallerAvatar(photoUri: String?, size: Dp) {
  * не вглядываясь.
  */
 @Composable
-private fun BigButton(
+internal fun BigButton(
     text: String,
     color: Color,
     /**
@@ -1968,6 +1992,8 @@ private fun BigButton(
     onClick: () -> Unit
 ) {
     Button(
+        // 8 dp, как кнопки вызова на клавиатуре (строгий стиль, 1.5.1)
+        shape = OgnelissShapeTokens.callButton,
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(containerColor = color),
         contentPadding = PaddingValues(horizontal = Space.l),
@@ -2083,6 +2109,7 @@ private fun WaitingCallBanner(
             Spacer(Modifier.height(Space.m))
 
             Button(
+                shape = MaterialTheme.shapes.medium,
                 onClick = { CallManager.answerWaitingHoldCurrent() },
                 colors = ButtonDefaults.buttonColors(containerColor = CallGreen),
                 modifier = Modifier.fillMaxWidth()
@@ -2092,6 +2119,7 @@ private fun WaitingCallBanner(
 
             Row(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
                 OutlinedButton(
+                    shape = MaterialTheme.shapes.medium,
                     onClick = { CallManager.answerWaitingEndCurrent() },
                     modifier = Modifier.weight(1f)
                 ) {
@@ -2102,6 +2130,7 @@ private fun WaitingCallBanner(
                     )
                 }
                 OutlinedButton(
+                    shape = MaterialTheme.shapes.medium,
                     onClick = { CallManager.rejectWaiting() },
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = DeclineRed),
                     modifier = Modifier.weight(1f)

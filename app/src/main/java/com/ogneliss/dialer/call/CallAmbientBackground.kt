@@ -1,5 +1,9 @@
 package com.ogneliss.dialer.call
 
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.animation.core.animateFloatAsState
 import android.provider.Settings
 import android.telecom.Call
 import androidx.compose.animation.animateColorAsState
@@ -24,7 +28,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.RadialGradientShader
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -33,7 +36,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.currentStateAsState
 import com.ogneliss.dialer.ui.components.Motion
 import kotlin.math.PI
-import kotlin.math.max
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
@@ -45,19 +47,20 @@ import kotlin.math.sin
  * ══════════════════════════════════════════════════════════════════════════
  * ЧТО НА ЭКРАНЕ
  * ══════════════════════════════════════════════════════════════════════════
- * Три больших мягких пятна цветов темы медленно плывут за содержимым
- * экрана вызова. Цвет говорит о состоянии вызова, не требуя чтения:
+ * Три мягких пятна цветов темы плывут за содержимым экрана вызова,
+ * от имени звонящего расходятся тонкие кольца — как круги по воде.
+ * Цвет говорит о состоянии вызова, не требуя чтения:
  *
- *   входящий, соединение — синие (primaryContainer), входящий плывёт
- *                          чуть быстрее — «зовёт»;
- *   разговор             — зелёное с синим (tertiaryContainer — зелёный
- *                          вызовов в схеме, как плашка «Текущий вызов»);
- *   удержание            — серые (secondaryContainer, surfaceVariant);
+ *   входящий, соединение — синие пятна (primary), кольца заметные
+ *                          и частые (4,2 с); входящий плывёт быстрее;
+ *   разговор             — зелёное с синим (tertiary — зелёный вызовов
+ *                          в схеме), кольца едва видны и реже (8 с);
+ *   удержание            — серые (secondary), без колец;
  *   завершён             — гаснут.
  *
- * Смена цвета — плавная (300 мс). Пятна — контейнерные цвета темы
- * с прозрачностью: текст поверх них читается так же, как на фоне —
- * onSurface на этих контейнерах контрастен в любой теме.
+ * Смена — плавная (300 мс). Акценты с прозрачностью 7–20 %: текст поверх
+ * читается как на ровном фоне. Прототип подбора — снимки в
+ * docs/RELEASE_NOTES_1.5.1.md, §5.
  *
  * ══════════════════════════════════════════════════════════════════════════
  * ПОЧЕМУ ЛЁГКИЙ
@@ -69,7 +72,8 @@ import kotlin.math.sin
  * • Перерисовывается только слой фона (чтение времени — внутри
  *   drawBehind), экран не пересобирается.
  * • 30 кадров в секунду, а не 60–120: движение медленное (периоды
- *   17–41 с), разницы глазом не видно, работы вдвое меньше.
+ *   7–17 с), разницы глазом не видно, работы вдвое меньше. Кольца —
+ *   три окружности обводкой, дешевле пятен.
  * • Только пока экран на переднем плане (RESUMED): у уха экран гаснет —
  *   анимация стоит.
  *
@@ -94,29 +98,66 @@ fun ambientMoodOf(state: Int): AmbientMood = when (state) {
 @Composable
 fun CallAmbientBackground(mood: AmbientMood, modifier: Modifier = Modifier) {
     val scheme = MaterialTheme.colorScheme
-    // В тёмной теме контейнеры насыщеннее на тёмном фоне — меньше
-    // прозрачности, иначе пятна спорят с текстом
-    val strength = if (scheme.surface.luminance() < 0.5f) 0.55f else 0.9f
 
-    val (first, second) = when (mood) {
-        AmbientMood.INCOMING, AmbientMood.CONNECTING ->
-            scheme.primaryContainer to scheme.secondaryContainer
-        AmbientMood.ACTIVE -> scheme.tertiaryContainer to scheme.primaryContainer
-        AmbientMood.HOLDING -> scheme.secondaryContainer to scheme.surfaceVariant
-        AmbientMood.ENDED -> Color.Transparent to Color.Transparent
+    /*
+     * ЦВЕТА — АКЦЕНТЫ ТЕМЫ С МАЛОЙ ПРОЗРАЧНОСТЬЮ (1.5.1, второй заход).
+     *
+     * Первый заход брал контейнерные цвета (primaryContainer и т. п.).
+     * На телефоне автора (11.10, снимки) экран вышел ровно-серым: в светлой
+     * теме контейнеры почти той же яркости, что фон страницы, а пятна
+     * радиусом в высоту экрана перекрывали друг друга и сливались в одну
+     * заливку — «живых волн не видно».
+     *
+     * Теперь — сами акценты (primary, tertiary, secondary) с прозрачностью
+     * 7–20 %: оттенок заметен и на светлом, и на тёмном фоне, а текст поверх
+     * читается как на ровном. Пятна — по ширине экрана, а не по высоте:
+     * между ними виден фон, и движение заметно.
+     */
+    val (first, second, third) = when (mood) {
+        AmbientMood.INCOMING, AmbientMood.CONNECTING -> Triple(
+            scheme.primary.copy(alpha = 0.20f),
+            scheme.primary.copy(alpha = 0.11f),
+            scheme.secondary.copy(alpha = 0.08f)
+        )
+        AmbientMood.ACTIVE -> Triple(
+            scheme.tertiary.copy(alpha = 0.17f),
+            scheme.primary.copy(alpha = 0.10f),
+            scheme.tertiary.copy(alpha = 0.08f)
+        )
+        AmbientMood.HOLDING -> Triple(
+            scheme.secondary.copy(alpha = 0.12f),
+            scheme.secondary.copy(alpha = 0.07f),
+            scheme.secondary.copy(alpha = 0.05f)
+        )
+        AmbientMood.ENDED -> Triple(Color.Transparent, Color.Transparent, Color.Transparent)
     }
-    val colorA by animateColorAsState(
-        first.copy(alpha = first.alpha * strength), tween(Motion.NORMAL_MS), label = "ambientA"
-    )
-    val colorB by animateColorAsState(
-        second.copy(alpha = second.alpha * strength), tween(Motion.NORMAL_MS), label = "ambientB"
-    )
+    val colorA by animateColorAsState(first, tween(Motion.NORMAL_MS), label = "ambientA")
+    val colorB by animateColorAsState(second, tween(Motion.NORMAL_MS), label = "ambientB")
+    val colorC by animateColorAsState(third, tween(Motion.NORMAL_MS), label = "ambientC")
     // Подкраска создаётся при смене цвета, а не в каждом кадре
     val tintA = remember(colorA) { ColorFilter.tint(colorA, BlendMode.SrcIn) }
     val tintB = remember(colorB) { ColorFilter.tint(colorB, BlendMode.SrcIn) }
-    val tintC = remember(colorA) {
-        ColorFilter.tint(colorA.copy(alpha = colorA.alpha * 0.6f), BlendMode.SrcIn)
-    }
+    val tintC = remember(colorC) { ColorFilter.tint(colorC, BlendMode.SrcIn) }
+
+    /*
+     * ВОЛНЫ — тонкие кольца, расходящиеся от имени звонящего, как круги
+     * по воде. Входящий и соединение — заметнее и чаще (зовёт), разговор —
+     * едва видны и реже (живёт), удержание и конец — нет.
+     */
+    val ringStrength by animateFloatAsState(
+        when (mood) {
+            AmbientMood.INCOMING, AmbientMood.CONNECTING -> 0.30f
+            AmbientMood.ACTIVE -> 0.12f
+            else -> 0f
+        },
+        tween(Motion.NORMAL_MS),
+        label = "ambientRings"
+    )
+    val ringPeriod by rememberUpdatedState(
+        if (mood == AmbientMood.ACTIVE) RING_PERIOD_CALM else RING_PERIOD_CALL
+    )
+    val ringColor = scheme.primary
+    val ringStroke = with(LocalDensity.current) { remember { Stroke(width = 1.5.dp.toPx()) } }
 
     val blob = remember { softBlob(BLOB_PX) }
 
@@ -124,7 +165,10 @@ fun CallAmbientBackground(mood: AmbientMood, modifier: Modifier = Modifier) {
     // от часов: при смене скорости (входящий → разговор) пятна
     // не перескакивают
     val motion = remember { mutableFloatStateOf(0f) }
-    val speed by rememberUpdatedState(if (mood == AmbientMood.INCOMING) 1.6f else 1f)
+    // Фаза волн — отдельно: у неё свой период, и при его смене кольца
+    // не должны прыгать
+    val ripple = remember { mutableFloatStateOf(0f) }
+    val speed by rememberUpdatedState(if (mood == AmbientMood.INCOMING) 1.3f else 1f)
 
     val context = LocalContext.current
     val animationsOff = remember {
@@ -144,7 +188,9 @@ fun CallAmbientBackground(mood: AmbientMood, modifier: Modifier = Modifier) {
                 if (last >= 0) pending += (now - last).coerceAtMost(MAX_STEP_MS)
                 last = now
                 if (pending >= FRAME_MS) {
-                    motion.floatValue += pending / 1000f * speed
+                    val seconds = pending / 1000f
+                    motion.floatValue += seconds * speed
+                    ripple.floatValue = (ripple.floatValue + seconds / ringPeriod) % 1f
                     pending = 0L
                 }
             }
@@ -156,25 +202,42 @@ fun CallAmbientBackground(mood: AmbientMood, modifier: Modifier = Modifier) {
             .fillMaxSize()
             .drawBehind {
                 val t = motion.floatValue
-                val big = max(size.width, size.height)
+                val w = size.width
                 drawBlob(
                     blob, tintA,
-                    x = 0.25f + 0.18f * wave(t, 23f),
-                    y = 0.22f + 0.12f * wave(t, 29f, PHASE_COS),
-                    radius = big * 0.62f * (1f + 0.06f * wave(t, 17f))
+                    x = 0.30f + 0.28f * wave(t, 11f),
+                    y = 0.20f + 0.07f * wave(t, 13f, PHASE_COS),
+                    radius = w * 0.95f * (1f + 0.05f * wave(t, 7f))
                 )
                 drawBlob(
                     blob, tintB,
-                    x = 0.78f + 0.16f * wave(t, 31f, 1f + PHASE_COS),
-                    y = 0.40f + 0.14f * wave(t, 19f, 2f),
-                    radius = big * 0.58f
+                    x = 0.75f + 0.25f * wave(t, 14f, 1f + PHASE_COS),
+                    y = 0.48f + 0.08f * wave(t, 9f, 2f),
+                    radius = w * 0.85f
                 )
                 drawBlob(
                     blob, tintC,
-                    x = 0.50f + 0.25f * wave(t, 37f, 3f),
-                    y = 0.66f + 0.10f * wave(t, 41f, PHASE_COS),
-                    radius = big * 0.5f
+                    x = 0.45f + 0.30f * wave(t, 17f, 3f),
+                    y = 0.76f + 0.05f * wave(t, 15f, PHASE_COS),
+                    radius = w * 0.8f
                 )
+
+                // Волны: три кольца со сдвигом в треть периода
+                val strength = ringStrength
+                if (strength > 0f) {
+                    val center = Offset(w / 2f, size.height * RING_CENTER_Y)
+                    for (i in 0 until RINGS) {
+                        val p = (ripple.floatValue + i.toFloat() / RINGS) % 1f
+                        val fade = (1f - p) * (1f - p)
+                        drawCircle(
+                            color = ringColor,
+                            radius = w * (0.12f + 0.95f * p),
+                            center = center,
+                            alpha = strength * fade,
+                            style = ringStroke
+                        )
+                    }
+                }
             }
     )
 }
@@ -231,6 +294,11 @@ private fun softBlob(px: Int): ImageBitmap {
 }
 
 private const val BLOB_PX = 96
+/** Волны: число колец, центр (доля высоты — у имени), период в секундах. */
+private const val RINGS = 3
+private const val RING_CENTER_Y = 0.13f
+private const val RING_PERIOD_CALL = 4.2f
+private const val RING_PERIOD_CALM = 8f
 /** 30 кадров в секунду: медленному движению больше не нужно. */
 private const val FRAME_MS = 33L
 /** Шаг после паузы (экран гас) — не больше 0,1 с: без рывка при возврате. */

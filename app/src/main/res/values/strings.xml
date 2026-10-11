@@ -705,4 +705,7 @@ Open Settings → Security → Special app access and allow this app to modify s
     <string name="action_copy_email">Copy address</string>
     <string name="msg_email_copied">Address copied</string>
     <string name="msg_no_email_app">No email app found</string>
+    <!-- Подписи разделов меню «Ещё» (строгий стиль, 1.5.1) -->
+    <string name="menu_section_lists">Sections</string>
+    <string name="menu_section_app">App</string>
 </resources>

@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.GroupPosition
+import com.ogneliss.dialer.ui.components.groupOutline
 import com.ogneliss.dialer.ui.theme.PanelReachesNavBar
 import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.settings.SwipeAction
@@ -2261,6 +2263,8 @@ fun SubscriberScreen(
                             .padding(horizontal = FlowUi.screenPadding)
                             .clip(shape)
                             .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                            // Рамка группы, как у журнала (строгий стиль, 1.5.1)
+                            .groupOutline(GroupPosition.of(index, entriesInBucket.size))
                     ) {
                         // Линия между строками, но не над первой: там уже
                         // заголовок раздела, и вторая граница рядом лишняя
@@ -2298,6 +2302,7 @@ fun SubscriberScreen(
                      * сильнее, чем заслуживает второстепенное действие.
                      */
                     FilledTonalButton(
+                        shape = MaterialTheme.shapes.medium,
                         onClick = { historyExpanded = !historyExpanded },
                         /*
                          * Отступы сверху и снизу.

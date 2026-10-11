@@ -679,4 +679,7 @@
     <string name="action_copy_email">Копировать адрес</string>
     <string name="msg_email_copied">Адрес скопирован</string>
     <string name="msg_no_email_app">Не найдено почтовое приложение</string>
+    <!-- Подписи разделов меню «Ещё» (строгий стиль, 1.5.1) -->
+    <string name="menu_section_lists">Разделы</string>
+    <string name="menu_section_app">Приложение</string>
 </resources>

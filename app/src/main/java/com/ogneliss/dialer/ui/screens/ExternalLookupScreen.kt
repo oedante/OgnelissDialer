@@ -1,5 +1,8 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.compose.foundation.lazy.itemsIndexed
+import com.ogneliss.dialer.ui.components.GroupPosition
+import com.ogneliss.dialer.ui.components.GroupedRow
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -8,13 +11,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.ogneliss.dialer.ui.components.OgnelissDivider
 import com.ogneliss.dialer.ui.components.OgnelissPanel
 import com.ogneliss.dialer.ui.components.OgnelissListRow
 import com.ogneliss.dialer.ui.theme.FlowUi
@@ -123,6 +124,7 @@ fun ExternalLookupScreen(
                         Spacer(Modifier.height(Space.m))
 
                         FilledTonalButton(
+                            shape = MaterialTheme.shapes.medium,
                             onClick = { openCallerIdSettings(context) },
                             modifier = Modifier.fillMaxWidth()
                         ) {
@@ -132,8 +134,10 @@ fun ExternalLookupScreen(
                 }
             }
 
-            items(providers, key = { it.id }) { provider ->
+            itemsIndexed(providers, key = { _, pr -> pr.id }) { index, provider ->
                 val isOn = provider.id.toString() in enabled
+                // Белой группой с рамкой (строгий стиль, 1.5.1)
+                GroupedRow(GroupPosition.of(index, providers.size), dividerStart = Space.l) {
                 OgnelissListRow(
                     headline = provider.displayName,
                     supporting = provider.packageName,
@@ -146,7 +150,7 @@ fun ExternalLookupScreen(
                         else confirming = provider
                     }
                 )
-                OgnelissDivider()
+                }
             }
         }
     }

@@ -149,7 +149,7 @@ fun EmptyState(
         }
         if (actionLabel != null && onAction != null) {
             Spacer(Modifier.height(20.dp))
-            Button(onClick = onAction) { Text(actionLabel) }
+            Button(shape = MaterialTheme.shapes.medium, onClick = onAction) { Text(actionLabel) }
         }
     }
 }

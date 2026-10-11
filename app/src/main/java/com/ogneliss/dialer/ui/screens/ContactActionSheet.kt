@@ -163,7 +163,8 @@ fun ContactActionSheet(
      * primaryContainer не взят: на нём буквы контактов — кружок слился бы
      * с шапкой. Известен сразу — ни расчёта, ни проявления.
      */
-    val sheetColor = MaterialTheme.colorScheme.surfaceContainerLow
+    // Цвета страницы: группы действий на ней белые (строгий стиль, 1.5.1)
+    val sheetColor = MaterialTheme.colorScheme.background
     val headerColor = if (settingsNow.sheetHeaderTint) {
         MaterialTheme.colorScheme.secondaryContainer
     } else {

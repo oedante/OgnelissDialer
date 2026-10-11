@@ -1,85 +1,102 @@
 package com.ogneliss.dialer.ui.theme
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.unit.dp
 
 /**
- * ФОРМЫ MATERIAL 3.
+ * ФОРМЫ — СТРОГИЙ СТИЛЬ (1.5.1, 11.10.2026).
  *
- * ── Зачем система форм ─────────────────────────────────────────────────────
- * Скругление в Material 3 несёт смысл, а не украшает. Радиус говорит
- * о размере и роли элемента: чем крупнее блок, тем сильнее скругление.
- * Одинаковый радиус у чипа и у диалога делает интерфейс плоским
- * и невыразительным — глазу не за что зацепиться при поиске нужного.
+ * ══════════════════════════════════════════════════════════════════════════
+ * ЧТО ПОМЕНЯЛОСЬ И ПОЧЕМУ
+ * ══════════════════════════════════════════════════════════════════════════
+ * Автор: «стиль всего приложения — на более строгий, корпоративный»;
+ * из двух макетов выбран «A. Строгий, группы» (docs/strict_style_1.5.1.png):
+ * белые группы со скруглением 8 dp и тонкой рамкой на сером фоне, подписи
+ * разделов капителью; кнопки и клавиши — прямоугольники 8 dp вместо «пилюль».
  *
- * ── Где что используется у нас ─────────────────────────────────────────────
+ * Было по спецификации Material 3: 4 · 8 · 12 · 16 · 28 dp, клавиши
+ * и кнопки вызова — полное скругление. Мягко и «по-домашнему»; рядом
+ * с почтой и офисными приложениями выглядело игрушечно.
+ *
+ * ── Где что ────────────────────────────────────────────────────────────────
  * extraSmall (4)  — бейджи SIM, мелкие метки
- * small (8)       — чипы фильтров
- * medium (12)     — карточки списка, поля ввода
- * large (16)      — клавиши набора, группы настроек
- * extraLarge (28) — шторки, диалоги, кнопка вызова
+ * small (6)       — чипы фильтров
+ * medium (8)      — строки и группы списков, поля ввода, плашки
+ * large (8)       — панели карточки, группы настроек и шторок
+ * extraLarge (12) — шторки, диалоги, нижние панели, поиск
  *
- * Значения взяты из спецификации Material 3, а не подобраны на глаз:
- * они согласованы с формами системных элементов Android, и интерфейс
- * не выглядит чужеродным среди них.
+ * Круглыми остаются только аватары и круглые кнопки-значки (быстрые
+ * действия, кнопки разговора): круг там — форма лица и знака, а не
+ * украшение. Для них — CircleShape явно, а не extraLarge (раньше
+ * extraLarge 28 dp на 48 dp и давал круг — теперь дал бы квадрат).
  */
 val OgnelissShapes = Shapes(
     extraSmall = RoundedCornerShape(4.dp),
-    small = RoundedCornerShape(8.dp),
-    medium = RoundedCornerShape(12.dp),
-    large = RoundedCornerShape(16.dp),
-    extraLarge = RoundedCornerShape(28.dp)
+    small = RoundedCornerShape(6.dp),
+    medium = RoundedCornerShape(8.dp),
+    large = RoundedCornerShape(8.dp),
+    extraLarge = RoundedCornerShape(12.dp)
 )
 
 /** Формы для случаев, которых нет в стандартном наборе. */
 object OgnelissShapeTokens {
 
-    /**
-     * Клавиша набора. Скругление 20 dp при высоте 72 — форма ближе
-     * к «таблетке», чем к квадрату: пальцу так проще целиться, край
-     * читается как граница нажимаемой области.
-     */
     /*
-     * Клавиша набора — «пилюля» (1.3.5, 06.10.2026, автор: «клавиатура
-     * кажется совершенно не из этого приложения»). Было 20 dp — прямоугольные
-     * плиты, которых больше нигде нет; стало скругление на всю высоту, как
-     * у кнопок нижней панели и полей поиска.
+     * Клавиша набора и строка номера — прямоугольник 8 dp (1.5.1, строгий
+     * стиль; до этого — «пилюля» с 1.3.5, а ещё раньше 20 dp).
      */
-    val dialKey = RoundedCornerShape(percent = 50)
+    val dialKey = RoundedCornerShape(8.dp)
 
     /**
      * НИЖНЯЯ ПАНЕЛЬ.
      *
      * Скруглены только верхние углы: панель прижата к низу экрана,
-     * и нижние углы всё равно не видны — скруглять их значило бы
-     * оставить полосу фона под ними.
+     * и нижние углы всё равно не видны. 12 dp (было 28) — строгий стиль.
      *
      * ── Почему в токенах ───────────────────────────────────────────────────
      * Форма задавалась числами в двух местах: в панели журнала
      * и в панели контактов. При правке одного второе осталось бы
-     * прежним, и панели различались бы при переходе между вкладками —
-     * заметно ровно настолько, чтобы раздражать, не позволяя понять,
-     * что не так.
+     * прежним, и панели различались бы при переходе между вкладками.
      */
-    val bottomPanel = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
+    val bottomPanel = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
 
-    /** Фото в шапке карточки: нижние углы как у панелей (1.3.4). */
-    val coverBottom = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp)
+    /** Фото в шапке карточки: нижние углы как у панелей. */
+    val coverBottom = RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)
 
     /**
-     * Кнопка вызова. Полное скругление — это главная кнопка экрана,
-     * и форма выделяет её среди прямоугольных клавиш.
+     * Кнопки вызова: «Позвонить», SIM, «Ответить», «Отклонить», «Завершить».
+     * 8 dp, как клавиши (1.5.1; было полное скругление). Главную кнопку
+     * выделяет цвет, а не форма.
      */
-    val callButton = RoundedCornerShape(percent = 50)
+    val callButton = RoundedCornerShape(8.dp)
 
     /**
      * Группа настроек. Скруглены только внешние углы группы,
      * внутренние разделители остаются прямыми — так группа читается
      * как единый блок, а не как набор отдельных карточек.
      */
-    val settingsGroupTop = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-    val settingsGroupBottom = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
-    val settingsGroupSingle = RoundedCornerShape(16.dp)
+    val settingsGroupTop = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+    val settingsGroupBottom = RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)
+    val settingsGroupSingle = RoundedCornerShape(8.dp)
     val settingsGroupMiddle = RoundedCornerShape(0.dp)
+
+    /** Толщина рамки группы (строгий стиль, 1.5.1). */
+    val groupBorderWidth = 1.dp
 }
+
+/**
+ * РАМКА ГРУППЫ (1.5.1, строгий стиль).
+ *
+ * Тонкая линия outlineVariant вокруг белых групп: группа читается как
+ * блок и там, где подложка почти того же тона (тёмная тема, шторки).
+ * Одна функция — один цвет и одна толщина у всех групп приложения.
+ */
+@Composable
+@ReadOnlyComposable
+fun groupBorder(): BorderStroke =
+    BorderStroke(OgnelissShapeTokens.groupBorderWidth, MaterialTheme.colorScheme.outlineVariant)

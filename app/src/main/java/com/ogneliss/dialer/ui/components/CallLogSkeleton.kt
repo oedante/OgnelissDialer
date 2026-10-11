@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.components
 
+import androidx.compose.foundation.shape.CircleShape
 import com.ogneliss.dialer.ui.theme.Space
 
 import androidx.compose.animation.core.RepeatMode
@@ -95,7 +96,7 @@ private fun SkeletonRow(alpha: Float) {
         Box(
             Modifier
                 .size(44.dp)
-                .clip(MaterialTheme.shapes.extraLarge)
+                .clip(CircleShape)
                 .background(color)
         )
 

@@ -1,0 +1,162 @@
+<ru-RU>
+• Живой фон экрана вызова теперь виден: мягкие пятна цветов темы и волны от имени звонящего, цвет — по состоянию вызова.
+• Строгое оформление на всех экранах: группы с тонкой рамкой, подписи разделов, прямоугольные клавиши и кнопки.
+• Псевдозвонок выглядит как настоящий вызов и после ответа; его значок в меню ярлыков — как кнопка «Ответить».
+• Под кнопками навигации больше нет белой полосы.
+</ru-RU>
+<ar>
+• أصبحت الخلفية الحية لشاشة المكالمة ظاهرة: بقع ناعمة بألوان المظهر وموجات من اسم المتصل، ولونها حسب حالة المكالمة.
+• تصميم أكثر رسمية في كل الشاشات: مجموعات بإطار رفيع وعناوين أقسام ومفاتيح وأزرار مستطيلة.
+• المكالمة الوهمية تبدو كمكالمة حقيقية حتى بعد الرد، وأيقونتها في قائمة الاختصارات مثل زر «رد».
+• لا يوجد بعد الآن شريط أبيض تحت أزرار التنقل.
+</ar>
+<cs-CZ>
+• Živé pozadí obrazovky hovoru je teď vidět: jemné skvrny v barvách motivu a vlny od jména volajícího, barva podle stavu hovoru.
+• Střízlivější vzhled na všech obrazovkách: skupiny s tenkým rámečkem, nadpisy sekcí, obdélníková tlačítka a klávesy.
+• Falešný hovor vypadá jako skutečný i po přijetí; jeho ikona v nabídce zkratek je jako tlačítko „Přijmout“.
+• Pod navigačními tlačítky už není bílý pruh.
+</cs-CZ>
+<da-DK>
+• Den levende baggrund på opkaldsskærmen kan nu ses: bløde pletter i temaets farver og bølger fra opkalderens navn, farven følger status.
+• Mere stramt udseende på alle skærme: grupper med tynd ramme, sektionsoverskrifter, firkantede taster og knapper.
+• Falsk opkald ligner et rigtigt opkald, også efter svar; ikonet i genvejsmenuen ligner knappen "Besvar".
+• Ingen hvid stribe under navigationsknapperne længere.
+</da-DK>
+<de-DE>
+• Der lebendige Anrufhintergrund ist jetzt sichtbar: weiche Flächen in Designfarben und Wellen vom Namen des Anrufers, Farbe je nach Status.
+• Sachlicheres Design auf allen Bildschirmen: Gruppen mit feinem Rahmen, Abschnittstitel, eckige Tasten und Schaltflächen.
+• Der fingierte Anruf sieht auch nach dem Annehmen echt aus; sein Symbol im Verknüpfungsmenü gleicht der Taste „Annehmen“.
+• Kein weißer Streifen mehr unter den Navigationstasten.
+</de-DE>
+<en-US>
+• The live call screen background is now visible: soft shapes in theme colors and ripples from the caller's name, colored by call state.
+• A more businesslike look on every screen: groups with thin borders, section labels, rectangular keys and buttons.
+• Fake calls look real even after answering; the shortcut menu icon now matches the Answer button.
+• No more white strip under the navigation buttons.
+</en-US>
+<es-ES>
+• El fondo animado de la pantalla de llamada ya se ve: manchas suaves con los colores del tema y ondas desde el nombre de quien llama, según el estado.
+• Aspecto más sobrio en todas las pantallas: grupos con borde fino, títulos de sección, teclas y botones rectangulares.
+• La llamada falsa parece real también después de contestar; su icono en el menú de accesos directos es como el botón «Contestar».
+• Ya no hay franja blanca bajo los botones de navegación.
+</es-ES>
+<fi-FI>
+• Puhelunäkymän elävä tausta näkyy nyt: pehmeät läiskät teeman väreissä ja aallot soittajan nimestä, väri tilan mukaan.
+• Asiallisempi ulkoasu kaikissa näkymissä: ohuet reunukset, osioiden otsikot, suorakulmaiset näppäimet ja painikkeet.
+• Valepuhelu näyttää oikealta myös vastaamisen jälkeen; sen kuvake pikakuvakevalikossa on kuin Vastaa-painike.
+• Navigointipainikkeiden alla ei enää ole valkoista raitaa.
+</fi-FI>
+<fr-FR>
+• Le fond animé de l'écran d'appel est désormais visible : taches douces aux couleurs du thème et ondes depuis le nom de l'appelant, selon l'état.
+• Style plus sobre sur tous les écrans : groupes à bordure fine, titres de section, touches et boutons rectangulaires.
+• Le faux appel ressemble à un vrai, même après avoir répondu ; son icône de raccourci reprend le bouton « Répondre ».
+• Plus de bande blanche sous les boutons de navigation.
+</fr-FR>
+<hi-IN>
+• कॉल स्क्रीन की जीवंत पृष्ठभूमि अब दिखती है: थीम रंगों के नरम धब्बे और कॉलर के नाम से लहरें, रंग कॉल की स्थिति के अनुसार।
+• सभी स्क्रीन पर अधिक औपचारिक रूप: पतली किनारी वाले समूह, अनुभाग शीर्षक, आयताकार कुंजियाँ और बटन।
+• नकली कॉल जवाब देने के बाद भी असली जैसी दिखती है; शॉर्टकट मेनू में उसका आइकन «जवाब दें» बटन जैसा है।
+• नेविगेशन बटनों के नीचे अब सफ़ेद पट्टी नहीं है।
+</hi-IN>
+<hu-HU>
+• A hívásképernyő élő háttere most már látszik: lágy foltok a téma színeiben és hullámok a hívó nevétől, a szín az állapotot követi.
+• Letisztultabb megjelenés minden képernyőn: vékony keretes csoportok, szakaszcímek, szögletes billentyűk és gombok.
+• Az álhívás fogadás után is valódinak látszik; ikonja a parancsikon-menüben olyan, mint a Fogadás gomb.
+• Nincs többé fehér csík a navigációs gombok alatt.
+</hu-HU>
+<id>
+• Latar hidup layar panggilan kini terlihat: bercak lembut warna tema dan gelombang dari nama penelepon, warnanya sesuai status.
+• Tampilan lebih formal di semua layar: grup berbingkai tipis, judul bagian, tombol dan tuts persegi.
+• Panggilan palsu terlihat asli juga setelah dijawab; ikonnya di menu pintasan seperti tombol "Jawab".
+• Tidak ada lagi garis putih di bawah tombol navigasi.
+</id>
+<it-IT>
+• Lo sfondo animato della schermata di chiamata ora si vede: macchie morbide nei colori del tema e onde dal nome di chi chiama, secondo lo stato.
+• Aspetto più sobrio in tutte le schermate: gruppi con bordo sottile, titoli di sezione, tasti e pulsanti rettangolari.
+• La chiamata finta sembra vera anche dopo la risposta; la sua icona nel menu scorciatoie è come il pulsante «Rispondi».
+• Niente più striscia bianca sotto i pulsanti di navigazione.
+</it-IT>
+<iw-IL>
+• הרקע החי של מסך השיחה גלוי עכשיו: כתמים רכים בצבעי ערכת הנושא וגלים משם המתקשר, הצבע לפי מצב השיחה.
+• עיצוב רשמי יותר בכל המסכים: קבוצות עם מסגרת דקה, כותרות מקטעים, מקשים וכפתורים מלבניים.
+• שיחה מדומה נראית אמיתית גם אחרי המענה; הסמל שלה בתפריט הקיצורים נראה כמו כפתור "מענה".
+• אין יותר פס לבן מתחת לכפתורי הניווט.
+</iw-IL>
+<ja-JP>
+• 通話画面のライブ背景がはっきり見えるように：テーマカラーのやわらかな模様と発信者名から広がる波紋、色は通話状態に連動。
+• すべての画面をより端正に：細い枠のグループ、セクション見出し、四角いキーとボタン。
+• フェイク着信は応答後も本物そっくり。ショートカットメニューのアイコンは「応答」ボタンと同じ見た目に。
+• ナビゲーションボタンの下の白い帯がなくなりました。
+</ja-JP>
+<ko-KR>
+• 통화 화면 라이브 배경이 이제 잘 보입니다: 테마 색의 부드러운 무늬와 발신자 이름에서 퍼지는 물결, 색은 통화 상태에 따라.
+• 모든 화면이 더 단정해졌습니다: 얇은 테두리의 그룹, 섹션 제목, 사각형 키와 버튼.
+• 가짜 전화가 받은 후에도 실제처럼 보입니다. 바로가기 메뉴 아이콘은 「받기」 버튼과 같습니다.
+• 내비게이션 버튼 아래의 흰색 줄이 사라졌습니다.
+</ko-KR>
+<nl-NL>
+• De levende achtergrond van het belscherm is nu zichtbaar: zachte vlekken in themakleuren en golven vanaf de naam van de beller, kleur volgt de status.
+• Zakelijker uiterlijk op alle schermen: groepen met dunne rand, sectiekoppen, rechthoekige toetsen en knoppen.
+• Nepoproep ziet er ook na opnemen echt uit; het pictogram in het snelkoppelingenmenu lijkt op de knop "Opnemen".
+• Geen witte streep meer onder de navigatieknoppen.
+</nl-NL>
+<no-NO>
+• Den levende bakgrunnen på anropsskjermen synes nå: myke flekker i temaets farger og bølger fra innringerens navn, fargen følger status.
+• Strammere utseende på alle skjermer: grupper med tynn ramme, seksjonsoverskrifter, firkantede taster og knapper.
+• Falskt anrop ser ekte ut også etter svar; ikonet i snarveismenyen ligner knappen «Svar».
+• Ingen hvit stripe under navigasjonsknappene lenger.
+</no-NO>
+<pl-PL>
+• Żywe tło ekranu połączenia jest teraz widoczne: miękkie plamy w kolorach motywu i fale od nazwy dzwoniącego, kolor zależny od stanu.
+• Bardziej stonowany wygląd na wszystkich ekranach: grupy z cienką ramką, nagłówki sekcji, prostokątne klawisze i przyciski.
+• Fałszywe połączenie wygląda jak prawdziwe także po odebraniu; jego ikona w menu skrótów przypomina przycisk „Odbierz”.
+• Pod przyciskami nawigacji nie ma już białego paska.
+</pl-PL>
+<pt-BR>
+• O fundo animado da tela de chamada agora aparece: manchas suaves nas cores do tema e ondas a partir do nome de quem liga, conforme o estado.
+• Visual mais sóbrio em todas as telas: grupos com borda fina, títulos de seção, teclas e botões retangulares.
+• A chamada falsa parece real também depois de atender; o ícone no menu de atalhos é como o botão "Atender".
+• Não há mais faixa branca sob os botões de navegação.
+</pt-BR>
+<ro>
+• Fundalul animat al ecranului de apel se vede acum: pete moi în culorile temei și unde de la numele apelantului, culoarea după stare.
+• Aspect mai sobru pe toate ecranele: grupuri cu chenar subțire, titluri de secțiune, taste și butoane dreptunghiulare.
+• Apelul fals arată real și după răspuns; pictograma lui din meniul de comenzi rapide seamănă cu butonul „Răspunde”.
+• Nu mai există o bandă albă sub butoanele de navigare.
+</ro>
+<sk>
+• Živé pozadie obrazovky hovoru je teraz vidieť: jemné škvrny vo farbách motívu a vlny od mena volajúceho, farba podľa stavu.
+• Striedmejší vzhľad na všetkých obrazovkách: skupiny s tenkým rámom, nadpisy sekcií, obdĺžnikové klávesy a tlačidlá.
+• Falošný hovor vyzerá ako skutočný aj po prijatí; jeho ikona v ponuke skratiek je ako tlačidlo „Prijať“.
+• Pod navigačnými tlačidlami už nie je biely pás.
+</sk>
+<sv-SE>
+• Den levande bakgrunden på samtalsskärmen syns nu: mjuka fläckar i temats färger och vågor från uppringarens namn, färgen följer status.
+• Stramare utseende på alla skärmar: grupper med tunn ram, avsnittsrubriker, rektangulära tangenter och knappar.
+• Falskt samtal ser äkta ut även efter svar; ikonen i genvägsmenyn liknar knappen ”Svara”.
+• Ingen vit rand under navigeringsknapparna längre.
+</sv-SE>
+<th>
+• พื้นหลังมีชีวิตบนหน้าจอการโทรมองเห็นได้แล้ว: ลวดลายนุ่มสีตามธีมและคลื่นจากชื่อผู้โทร สีตามสถานะการโทร
+• ทุกหน้าจอดูเรียบร้อยขึ้น: กลุ่มมีกรอบบาง หัวข้อส่วน ปุ่มและแป้นทรงสี่เหลี่ยม
+• สายปลอมดูเหมือนจริงแม้หลังรับสาย ไอคอนในเมนูทางลัดเหมือนปุ่ม "รับสาย"
+• ไม่มีแถบสีขาวใต้ปุ่มนำทางอีกต่อไป
+</th>
+<tr-TR>
+• Arama ekranındaki canlı arka plan artık görünüyor: tema renklerinde yumuşak lekeler ve arayanın adından yayılan dalgalar, renk duruma göre.
+• Tüm ekranlarda daha sade görünüm: ince çerçeveli gruplar, bölüm başlıkları, dikdörtgen tuşlar ve düğmeler.
+• Sahte arama cevaplandıktan sonra da gerçek görünür; kısayol menüsündeki simgesi "Cevapla" düğmesine benzer.
+• Gezinme düğmelerinin altında artık beyaz şerit yok.
+</tr-TR>
+<vi>
+• Nền động trên màn hình cuộc gọi giờ đã hiện rõ: các mảng màu mềm theo chủ đề và gợn sóng từ tên người gọi, màu theo trạng thái.
+• Giao diện trang nhã hơn trên mọi màn hình: nhóm có viền mảnh, tiêu đề mục, phím và nút hình chữ nhật.
+• Cuộc gọi giả trông như thật kể cả sau khi trả lời; biểu tượng trong menu lối tắt giống nút "Trả lời".
+• Không còn dải trắng dưới các nút điều hướng.
+</vi>
+<zh-CN>
+• 通话界面动态背景现在清晰可见：主题色的柔和色块和从来电者姓名扩散的波纹，颜色随通话状态变化。
+• 所有界面更简洁正式：细边框分组、分区标题、方形按键和按钮。
+• 假来电接听后也与真实通话一致；快捷方式菜单中的图标与"接听"按钮相同。
+• 导航按钮下方不再有白色条带。
+</zh-CN>

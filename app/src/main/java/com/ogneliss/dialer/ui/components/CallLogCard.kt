@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.components
 
+import androidx.compose.foundation.shape.CircleShape
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -156,6 +157,8 @@ fun CallLogCard(
                 top = topGap,
                 bottom = bottomGap
             )
+            // Своя часть общей рамки группы (строгий стиль, 1.5.1)
+            .groupOutline(groupPosition)
             .semantics(mergeDescendants = true) {
                 contentDescription = row.accessibilityLabel
             }
@@ -538,7 +541,7 @@ private fun Avatar(
 
     Box(contentAlignment = Alignment.Center) {
         Surface(
-            shape = MaterialTheme.shapes.extraLarge,
+            shape = CircleShape,
             // Пропущенные подсвечиваются на аватаре: это самый крупный
             // элемент карточки, и метка на нём заметна периферийным зрением
             color = when {
@@ -640,7 +643,7 @@ private fun NoteAvatar() {
     val size = LocalAppearance.current.avatarSize
 
     Surface(
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = CircleShape,
         // Подложка бирюзовая всегда — разбор цвета выше
         color = NoteTeal.copy(alpha = 0.18f),
         modifier = Modifier.size(size)

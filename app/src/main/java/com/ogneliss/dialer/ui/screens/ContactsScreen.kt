@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.groupOutline
+import com.ogneliss.dialer.ui.components.SectionCaption
 import com.ogneliss.dialer.ui.components.RowAvatar
 import androidx.compose.foundation.lazy.itemsIndexed
 import com.ogneliss.dialer.ui.components.OgnelissDivider
@@ -35,8 +37,6 @@ import kotlinx.coroutines.Dispatchers
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.R
@@ -835,7 +835,8 @@ fun ContactsScreen(
  */
 @Composable
 fun LetterHeader(letter: String) {
-    Text(
+    // Капителью, как все подписи разделов (строгий стиль, 1.5.1)
+    SectionCaption(
         letter,
         Modifier
             .fillMaxWidth()
@@ -843,11 +844,8 @@ fun LetterHeader(letter: String) {
                 start = FlowUi.screenPadding + Space.m,
                 end = FlowUi.screenPadding + Space.m,
                 top = Space.l,
-                bottom = Space.xs
+                bottom = Space.s
             )
-            .semantics { heading() },
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }
 
@@ -947,6 +945,8 @@ private fun ContactRow(
                 top = topGap,
                 bottom = bottomGap
             )
+            // Своя часть общей рамки группы (строгий стиль, 1.5.1)
+            .groupOutline(groupPosition)
     ) {
         if (groupPosition == GroupPosition.MIDDLE || groupPosition == GroupPosition.LAST) {
             // От начала текста, а не от края — как в журнале

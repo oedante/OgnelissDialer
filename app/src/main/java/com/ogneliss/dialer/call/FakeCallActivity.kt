@@ -1,5 +1,8 @@
 package com.ogneliss.dialer.call
 
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.ui.graphics.graphicsLayer
 import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
 import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
@@ -24,7 +27,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -86,6 +88,19 @@ class FakeCallActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        /*
+         * БЕЗ БЕЛОЙ ПОДЛОЖКИ ПОД КНОПКАМИ НАВИГАЦИИ (1.5.1, снимки автора
+         * 11.10: под нижней панелью — почти белая полоса с ◁ ○ □).
+         * enableEdgeToEdge() по умолчанию оставляет включённым «контраст
+         * панели навигации», и при трёх кнопках система кладёт под них
+         * полупрозрачную белую (в тёмной — чёрную) подложку поверх нашей
+         * полосы цвета панели. Контраст значков задаёт Theme.kt
+         * (isAppearanceLightNavigationBars), подложка не нужна.
+         */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
 
         // Поверх экрана блокировки: телефон обычно лежит заблокированным,
         // а звонок должен быть виден так же, как настоящий
@@ -214,8 +229,29 @@ private fun FakeCallScreen(
     var answered by remember { mutableStateOf(false) }
     var seconds by remember { mutableIntStateOf(0) }
 
-    LaunchedEffect(answered) {
-        if (!answered) return@LaunchedEffect
+    /*
+     * КАК НАСТОЯЩИЙ ВЫЗОВ — И ПОСЛЕ ОТВЕТА (1.5.1, автор: «псевдозвонок
+     * должен быть похож на обычный вызов»).
+     *
+     * Было: после «Ответить» — таймер простой строкой («0:05») и одна
+     * кнопка «Завершить». Настоящий вызов в это время показывает зелёную
+     * плашку «00:05» и панель «Звук · Динамик · Клавиши · Удержать» —
+     * кто стоит рядом, видел разницу.
+     *
+     * Теперь — те же плашка, кнопки и клавиатура, что у настоящего вызова
+     * (CallStatusPill, ToggleTile, DtmfPanel, BigButton из InCallActivity).
+     * Кнопки переключаются, но ничего не делают: разговора нет. «Удержать»
+     * ставит плашку «На удержании», останавливает таймер и делает фон серым —
+     * как у настоящего.
+     */
+    var muted by remember { mutableStateOf(false) }
+    var speaker by remember { mutableStateOf(false) }
+    var holding by remember { mutableStateOf(false) }
+    var showDialpad by remember { mutableStateOf(false) }
+    var dtmf by remember { mutableStateOf("") }
+
+    LaunchedEffect(answered, holding) {
+        if (!answered || holding) return@LaunchedEffect
         while (true) {
             delay(1000)
             seconds++
@@ -228,12 +264,18 @@ private fun FakeCallScreen(
      */
     val photoBackground = !LocalWindowLayout.current.isShort && !photoUri.isNullOrBlank()
     LightStatusIconsOnPhoto(photoBackground)
-    // Живой фон: «входящий», после ответа — «разговор», как у настоящего вызова
+    // Живой фон — по тем же состояниям, что у настоящего вызова
     val ambient = ambientBackground && !photoBackground
     Box(Modifier.fillMaxSize()) {
     if (photoBackground) CallPhotoBackground(photoUri.orEmpty())
     if (ambient) {
-        CallAmbientBackground(if (answered) AmbientMood.ACTIVE else AmbientMood.INCOMING)
+        CallAmbientBackground(
+            when {
+                !answered -> AmbientMood.INCOMING
+                holding -> AmbientMood.HOLDING
+                else -> AmbientMood.ACTIVE
+            }
+        )
     }
     NavBarUnderPanel()
     Surface(
@@ -267,14 +309,14 @@ private fun FakeCallScreen(
                 }
 
                 Spacer(Modifier.height(Space.m))
-                Text(
-                    if (answered) {
-                        String.format(Locale.ROOT, "%d:%02d", seconds / 60, seconds % 60)
-                    } else {
-                        stringResource(R.string.incall_incoming)
-                    },
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                CallStatusPill(
+                    active = answered && !holding,
+                    text = when {
+                        !answered -> stringResource(R.string.incall_incoming)
+                        holding -> stringResource(R.string.incall_on_hold)
+                        // Формат и Locale — как у настоящего таймера (CallStatusLine)
+                        else -> String.format(Locale.ROOT, "%02d:%02d", seconds / 60, seconds % 60)
+                    }
                 )
             }
             } // OnPhotoColors
@@ -285,29 +327,85 @@ private fun FakeCallScreen(
                 color = PanelColors.panel(),
                 modifier = Modifier.fillMaxWidth()
             ) {
-            Row(
-                // На всю ширину панели: иначе ряд прижался бы к левому краю
-                Modifier.fillMaxWidth().padding(top = Space.xl, bottom = Space.xl),
-                horizontalArrangement = Arrangement.spacedBy(40.dp, Alignment.CenterHorizontally)
+            Column(
+                Modifier.fillMaxWidth().padding(top = Space.l, start = FlowUi.contentPadding, end = FlowUi.contentPadding),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (!answered) {
-                    FakeCallButton(
-                        label = stringResource(R.string.incall_decline),
-                        color = DeclineRed,
-                        onClick = onHangUp
-                    )
-                    FakeCallButton(
-                        label = stringResource(R.string.incall_answer),
-                        color = CallGreen,
-                        onClick = { answered = true; onAnswer() }
-                    )
-                } else {
-                    FakeCallButton(
-                        label = stringResource(R.string.incall_hangup),
-                        color = DeclineRed,
-                        onClick = onHangUp
+                androidx.compose.animation.AnimatedVisibility(answered && showDialpad) {
+                    DtmfPanel(
+                        entered = dtmf,
+                        onDigit = { dtmf += it },
+                        onBackspace = { dtmf = dtmf.dropLast(1) },
+                        onClose = { showDialpad = false }
                     )
                 }
+
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = answered,
+                    enter = androidx.compose.animation.expandVertically() + androidx.compose.animation.fadeIn(),
+                    exit = androidx.compose.animation.shrinkVertically() + androidx.compose.animation.fadeOut()
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        FakeControlsRow(
+                            muted = muted,
+                            speaker = speaker,
+                            holding = holding,
+                            onMute = { muted = !muted },
+                            onSpeaker = { speaker = !speaker },
+                            onDialpad = { showDialpad = !showDialpad },
+                            onHold = { holding = !holding }
+                        )
+                        Spacer(Modifier.height(Space.l))
+                    }
+                }
+
+                Row(
+                    Modifier.fillMaxWidth().padding(horizontal = Space.s),
+                    horizontalArrangement = Arrangement.spacedBy(Space.l, Alignment.CenterHorizontally)
+                ) {
+                    if (!answered) {
+                        BigButton(
+                            stringResource(R.string.incall_decline),
+                            DeclineRed,
+                            OgnelissIcons.CallEnd,
+                            modifier = Modifier.weight(1f),
+                            shareRow = true,
+                            onClick = onHangUp
+                        )
+                        // Та же «дышащая» кнопка ответа, что у настоящего входящего
+                        val pulse = androidx.compose.animation.core.rememberInfiniteTransition(label = "fakeAnswer")
+                        val scale by pulse.animateFloat(
+                            initialValue = 1f,
+                            targetValue = 1.04f,
+                            animationSpec = androidx.compose.animation.core.infiniteRepeatable(
+                                androidx.compose.animation.core.tween(
+                                    1100, easing = androidx.compose.animation.core.FastOutSlowInEasing
+                                ),
+                                androidx.compose.animation.core.RepeatMode.Reverse
+                            ),
+                            label = "fakeAnswerScale"
+                        )
+                        Box(
+                            Modifier.weight(1f).graphicsLayer { scaleX = scale; scaleY = scale }
+                        ) {
+                            BigButton(
+                                stringResource(R.string.incall_answer),
+                                CallGreen,
+                                OgnelissIcons.Call,
+                                modifier = Modifier.fillMaxWidth(),
+                                shareRow = true
+                            ) { answered = true; onAnswer() }
+                        }
+                    } else {
+                        BigButton(
+                            stringResource(R.string.incall_hangup),
+                            DeclineRed,
+                            OgnelissIcons.CallEnd,
+                            onClick = onHangUp
+                        )
+                    }
+                }
+                Spacer(Modifier.height(Space.xl))
             }
             } // панель
         }
@@ -315,24 +413,37 @@ private fun FakeCallScreen(
     } // Box с фото
 }
 
+/**
+ * Кнопки разговора псевдозвонка — те же плитки и та же раскладка, что
+ * ControlsRow настоящего вызова (три в ряд, перенос, зазоры 20 dp и 16 dp).
+ * Без «Добавить вызов», Bluetooth и «Объединить»: у настоящего они видны
+ * только когда доступны, а чаще — нет.
+ */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun FakeCallButton(
-    label: String,
-    color: androidx.compose.ui.graphics.Color,
-    onClick: () -> Unit
+private fun FakeControlsRow(
+    muted: Boolean,
+    speaker: Boolean,
+    holding: Boolean,
+    onMute: () -> Unit,
+    onSpeaker: () -> Unit,
+    onDialpad: () -> Unit,
+    onHold: () -> Unit
 ) {
-    androidx.compose.material3.Button(
-        onClick = onClick,
-        colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = color),
-        modifier = Modifier
-            .heightIn(min = FlowUi.primaryActionHeight)
-            .widthIn(min = FlowUi.callActionMinWidth)
+    Box(
+        Modifier.fillMaxWidth().padding(vertical = Space.s, horizontal = Space.s),
+        contentAlignment = Alignment.Center
     ) {
-        Icon(
-            if (color == CallGreen) OgnelissIcons.Call else OgnelissIcons.CallEnd,
-            contentDescription = null
-        )
-        Spacer(Modifier.width(Space.s))
-        Text(label)
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally),
+            verticalArrangement = Arrangement.spacedBy(Space.l),
+            maxItemsInEachRow = 3,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            ToggleTile(muted, OgnelissIcons.MicOff, stringResource(R.string.incall_mute), onMute)
+            ToggleTile(speaker, OgnelissIcons.VolumeUp, stringResource(R.string.incall_speaker), onSpeaker)
+            ToggleTile(false, OgnelissIcons.Dialpad, stringResource(R.string.incall_keypad), onDialpad)
+            ToggleTile(holding, OgnelissIcons.Pause, stringResource(R.string.incall_hold), onHold)
+        }
     }
 }

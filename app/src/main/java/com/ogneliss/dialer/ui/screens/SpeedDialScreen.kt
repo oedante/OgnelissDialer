@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.GroupPosition
+import com.ogneliss.dialer.ui.components.GroupedRow
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -17,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.components.OgnelissListRow
-import com.ogneliss.dialer.ui.components.OgnelissDivider
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.components.ScreenScaffold
@@ -74,27 +75,28 @@ fun SpeedDialScreen(
             }
 
             // Единица — голосовая почта, менять нельзя
+            // Строки — одной белой группой с рамкой (строгий стиль, 1.5.1)
             item {
-                OgnelissListRow(
-                    headline = stringResource(R.string.speed_dial_voicemail),
-                    supporting = stringResource(R.string.speed_dial_voicemail_hint),
-                    leading = { DigitBadge("1") },
-                    trailing = { Icon(OgnelissIcons.Voicemail, null) }
-                )
-                OgnelissDivider()
+                GroupedRow(GroupPosition.FIRST) {
+                    OgnelissListRow(
+                        headline = stringResource(R.string.speed_dial_voicemail),
+                        supporting = stringResource(R.string.speed_dial_voicemail_hint),
+                        leading = { DigitBadge("1") },
+                        trailing = { Icon(OgnelissIcons.Voicemail, null) }
+                    )
+                }
             }
 
             itemsIndexed(slots, key = { _, slot -> slot.first }) { index, (digit, entry) ->
-                SpeedDialRow(
-                    digit = digit,
-                    entry = entry,
-                    onAssign = { assigning = digit },
-                    onClear = { vm.clearSpeedDial(digit) }
-                )
-                // Общий разделитель и только между строками: прежде здесь
-                // стоял HorizontalDivider со своей толщиной, и под последней
-                // клавишей висела черта, которой нигде больше нет
-                if (index < slots.lastIndex) OgnelissDivider()
+                // Разделитель — внутри группы, только между строками
+                GroupedRow(if (index == slots.lastIndex) GroupPosition.LAST else GroupPosition.MIDDLE) {
+                    SpeedDialRow(
+                        digit = digit,
+                        entry = entry,
+                        onAssign = { assigning = digit },
+                        onClear = { vm.clearSpeedDial(digit) }
+                    )
+                }
             }
 
             item { Spacer(Modifier.height(Space.xxl)) }

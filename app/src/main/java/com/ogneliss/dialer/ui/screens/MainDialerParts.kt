@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.groupBorder
+import com.ogneliss.dialer.ui.components.SectionCaption
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -122,11 +124,19 @@ internal fun OverflowMenu(
     val clearLabel = stringResource(R.string.log_clear_all)
 
     ModalBottomSheet(
+        // Шторка — цвета страницы, группы на ней белые (строгий стиль, 1.5.1)
+        containerColor = MaterialTheme.colorScheme.background,
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         contentWindowInsets = { WindowInsets.navigationBars }
     ) {
         Column(Modifier.padding(bottom = Space.l)) {
+            /*
+             * Строгий стиль (1.5.1, макет «A»): группы — белые с рамкой
+             * на серой шторке, над каждой подпись раздела капителью;
+             * «Очистить журнал» — отдельной группой внизу.
+             */
+            MenuCaption(stringResource(R.string.settings_section_calls))
             SheetGroup {
                 SheetRow(OgnelissIcons.PhoneCallback, fakeCallLabel, onClick = onFakeCall)
                 SheetDivider()
@@ -140,6 +150,7 @@ internal fun OverflowMenu(
                     onClick = onOwnNumber
                 )
             }
+            MenuCaption(stringResource(R.string.menu_section_lists))
             SheetGroup {
                 SheetRow(
                     OgnelissIcons.StickyNote2,
@@ -156,6 +167,7 @@ internal fun OverflowMenu(
                     onClick = onStartSelection
                 )
             }
+            MenuCaption(stringResource(R.string.menu_section_app))
             SheetGroup {
                 SheetRow(
                     if (settings.theme == ThemeMode.DARK) OgnelissIcons.LightMode else OgnelissIcons.DarkMode,
@@ -165,16 +177,31 @@ internal fun OverflowMenu(
                 SheetDivider()
                 SheetRow(OgnelissIcons.Settings, settingsLabel, onClick = onSettings)
             }
-            SheetRow(
-                OgnelissIcons.DeleteSweep,
-                clearLabel,
-                color = MaterialTheme.colorScheme.error,
-                onClick = onClearLog,
-                // Вне панели — отступ как у групп выше
-                standalone = true
-            )
+            Spacer(Modifier.height(Space.m))
+            SheetGroup {
+                SheetRow(
+                    OgnelissIcons.DeleteSweep,
+                    clearLabel,
+                    color = MaterialTheme.colorScheme.error,
+                    onClick = onClearLog
+                )
+            }
         }
     }
+}
+
+/** Подпись раздела меню — вровень с текстом внутри групп. */
+@Composable
+private fun MenuCaption(text: String) {
+    SectionCaption(
+        text,
+        Modifier.padding(
+            start = FlowUi.screenPadding + Space.l,
+            end = FlowUi.screenPadding,
+            top = Space.m,
+            bottom = Space.xs
+        )
+    )
 }
 
 
@@ -365,6 +392,7 @@ internal fun PinnedOnlyCard(
         onClick = onOpen,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         shape = MaterialTheme.shapes.large,
+        border = groupBorder(),  // строгий стиль (1.5.1)
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = FlowUi.screenPadding, vertical = FlowUi.cardSpacing)

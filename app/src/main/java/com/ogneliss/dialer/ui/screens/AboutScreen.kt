@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.OgnelissDivider
+import com.ogneliss.dialer.ui.components.SettingsGroup
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -101,35 +103,41 @@ fun AboutScreen(
 
             Spacer(Modifier.height(Space.l))
 
-            AboutRow(
-                OgnelissIcons.PrivacyTip,
-                stringResource(R.string.settings_privacy_policy)
-            ) { onOpenLegal(LegalDocument.PRIVACY) }
+            // Документы и справка — белыми группами с рамкой (строгий стиль, 1.5.1)
+            SettingsGroup {
+                AboutRow(
+                    OgnelissIcons.PrivacyTip,
+                    stringResource(R.string.settings_privacy_policy)
+                ) { onOpenLegal(LegalDocument.PRIVACY) }
 
-            AboutRow(
-                OgnelissIcons.Gavel,
-                stringResource(R.string.settings_eula),
-                stringResource(R.string.consent_eula_hint)
-            ) { onOpenLegal(LegalDocument.EULA) }
+                OgnelissDivider(Modifier.padding(start = 56.dp))
+                AboutRow(
+                    OgnelissIcons.Gavel,
+                    stringResource(R.string.settings_eula),
+                    stringResource(R.string.consent_eula_hint)
+                ) { onOpenLegal(LegalDocument.EULA) }
 
-            AboutRow(
-                OgnelissIcons.Article,
-                stringResource(R.string.settings_terms)
-            ) { onOpenLegal(LegalDocument.TERMS) }
+                OgnelissDivider(Modifier.padding(start = 56.dp))
+                AboutRow(
+                    OgnelissIcons.Article,
+                    stringResource(R.string.settings_terms)
+                ) { onOpenLegal(LegalDocument.TERMS) }
 
-            AboutRow(
-                OgnelissIcons.Code,
-                stringResource(R.string.settings_licenses),
-                stringResource(R.string.about_licenses_hint)
-            ) { onOpenLegal(LegalDocument.LICENSES) }
+                OgnelissDivider(Modifier.padding(start = 56.dp))
+                AboutRow(
+                    OgnelissIcons.Code,
+                    stringResource(R.string.settings_licenses),
+                    stringResource(R.string.about_licenses_hint)
+                ) { onOpenLegal(LegalDocument.LICENSES) }
+            }
 
-            HorizontalDivider(Modifier.padding(vertical = Space.s))
-
-            AboutRow(
-                OgnelissIcons.MicOff,
-                stringResource(R.string.settings_recording_title),
-                stringResource(R.string.about_recording_hint)
-            ) { showRecordingInfo = true }
+            SettingsGroup {
+                AboutRow(
+                    OgnelissIcons.MicOff,
+                    stringResource(R.string.settings_recording_title),
+                    stringResource(R.string.about_recording_hint)
+                ) { showRecordingInfo = true }
+            }
 
             Spacer(Modifier.height(Space.xxl))
         }

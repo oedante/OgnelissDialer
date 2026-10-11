@@ -1,5 +1,11 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.Space
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.lazy.itemsIndexed
+import com.ogneliss.dialer.ui.components.GroupPosition
+import com.ogneliss.dialer.ui.components.GroupedRow
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -7,7 +13,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
@@ -19,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.ogneliss.dialer.ui.components.OgnelissDivider
 import com.ogneliss.dialer.ui.components.OgnelissListRow
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.components.OgnelissDialog
@@ -112,7 +116,9 @@ fun PermissionsSettingsScreen(
 
             // Роль диалера отдельной строкой: это не разрешение,
             // а системная роль, и запрашивается иначе
+            // Роль и разрешения — одной группой с рамкой (строгий стиль, 1.5.1)
             item {
+                GroupedRow(GroupPosition.FIRST) {
                 PermissionRow(
                     title = stringResource(R.string.onboarding_default_title),
                     description = stringResource(R.string.wizard_dialer_rationale),
@@ -124,13 +130,14 @@ fun PermissionsSettingsScreen(
                         }
                     }
                 )
-                OgnelissDivider()
+                }
             }
 
-            items(
-                AppPermissions.groups.filter { it.permissions.isNotEmpty() },
-                key = { it.id }
-            ) { group ->
+            val permissionGroups = AppPermissions.groups.filter { it.permissions.isNotEmpty() }
+            itemsIndexed(permissionGroups, key = { _, g -> g.id }) { index, group ->
+                GroupedRow(
+                    if (index == permissionGroups.lastIndex) GroupPosition.LAST else GroupPosition.MIDDLE
+                ) {
                 PermissionRow(
                     title = stringResource(group.titleRes),
                     description = stringResource(group.rationaleRes),
@@ -142,7 +149,7 @@ fun PermissionsSettingsScreen(
                         }
                     }
                 )
-                OgnelissDivider()
+                }
             }
 
             // Путь для случая, когда система больше не показывает диалог:
@@ -151,12 +158,15 @@ fun PermissionsSettingsScreen(
             item {
                 // Общая строка списка: высота и подложка одни на всё
                 // приложение. Разбор — в OgnelissListRow
-                OgnelissListRow(
-                    headline = stringResource(R.string.permissions_open_system),
-                    supporting = stringResource(R.string.permissions_open_system_hint),
-                    leading = { Icon(OgnelissIcons.Settings, null) },
-                    onClick = { AppPermissions.openAppSettings(context) }
-                )
+                Spacer(Modifier.height(Space.l))
+                GroupedRow(GroupPosition.SINGLE) {
+                    OgnelissListRow(
+                        headline = stringResource(R.string.permissions_open_system),
+                        supporting = stringResource(R.string.permissions_open_system_hint),
+                        leading = { Icon(OgnelissIcons.Settings, null) },
+                        onClick = { AppPermissions.openAppSettings(context) }
+                    )
+                }
             }
         }
     }

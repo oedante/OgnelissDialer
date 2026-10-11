@@ -221,7 +221,7 @@ fun ContactsBottomBar(
                 // Поиск идёт по мере ввода, поэтому кнопка ввода
                 // просто закрывает клавиатуру
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                shape = MaterialTheme.shapes.extraLarge,
+                shape = MaterialTheme.shapes.medium,  // 8 dp, как клавиши (строгий стиль, 1.5.1)
                 // weight, а не fillMaxWidth: рядом стоит кнопка
                 // фильтров, и поле должно оставить ей место
                 modifier = Modifier.weight(1f)

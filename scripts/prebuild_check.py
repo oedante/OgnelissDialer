@@ -242,7 +242,9 @@ for f in kt_files():
     pkg = pkg_match.group(1)
     rel = os.path.relpath(f, SRC)
     for m in re.finditer(
-        r'^(?:@\w+\s*\n)*(?:internal )?(?:val|fun|class|object|data class|enum class|interface)\s+(\w+)',
+        # Функция-расширение «fun Modifier.x» объявляет x, а не Modifier
+        # (1.5.1: два файла с расширениями Modifier давали ложный дубль)
+        r'^(?:@\w+\s*\n)*(?:internal )?(?:val|fun|class|object|data class|enum class|interface)\s+(?:<[^>]*>\s*)?(?:\w+\.)?(\w+)',
         text, re.M
     ):
         package_decls[(pkg, m.group(1))].add(rel)

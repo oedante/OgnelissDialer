@@ -1,17 +1,14 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.groupBorder
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.FlowUi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
 
 /**
@@ -38,19 +35,11 @@ fun SettingsGroup(
 ) {
     Column(Modifier.padding(horizontal = FlowUi.contentPadding)) {
         title?.let {
-            Text(
+            // 12 сверху, а не 20: с подгруппами разделы стали длиннее.
+            // Подпись — капителью, как во всём приложении (1.5.1)
+            SectionCaption(
                 it,
-                Modifier
-                    // 12 сверху, а не 20: с подгруппами разделы стали длиннее,
-                    // и прежний зазор между группами (36 dp вместе
-                    // с разделителем подгрупп) растягивал экран втрое
-                    .padding(start = Space.s, top = Space.m, bottom = Space.s)
-                    // heading() позволяет TalkBack прыгать по разделам,
-                    // не прослушивая каждую строку
-                    .semantics { heading() },
-                style = MaterialTheme.typography.labelLarge,
-                // Тёмно-серый: заголовок группы — разметка, а не акцент
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                Modifier.padding(start = Space.s, top = Space.m, bottom = Space.s)
             )
         }
 
@@ -58,6 +47,7 @@ fun SettingsGroup(
             shape = OgnelissShapeTokens.settingsGroupSingle,
             // Уровень выше фона: группа читается как приподнятый блок
             color = MaterialTheme.colorScheme.surfaceContainerLow,
+            border = groupBorder(),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(content = content)

@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.SectionCaption
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.BlockRed
@@ -18,8 +19,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.core.os.ConfigurationCompat
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.components.SheetDivider
@@ -51,7 +50,7 @@ import java.util.Date
  * Совпадает с shapes.large темы — тем же, каким скруглены панели
  * «Номера» и «Заметка»: разные радиусы у соседних блоков видны сразу.
  */
-internal val HISTORY_CORNER = 16.dp
+internal val HISTORY_CORNER = 8.dp  // строгий стиль (1.5.1), было 16
 
 /** Одна запись в ленте вызовов абонента. */
 @Composable
@@ -265,39 +264,25 @@ internal fun daysAgo(date: Long): Int {
 /** Заголовок раздела, содержимое которого идёт отдельными элементами списка. */
 @Composable
 internal fun SectionPanelHeader(text: String) {
-    Text(
+    // Капителью, как все подписи разделов (строгий стиль, 1.5.1)
+    SectionCaption(
         text,
-        Modifier
-            .padding(
-                start = FlowUi.screenPadding + Space.l,
-                end = FlowUi.screenPadding,
-                top = FlowUi.sheetPadding,
-                bottom = Space.xs
-            )
-            .semantics { heading() },
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
+        Modifier.padding(
+            start = FlowUi.screenPadding + Space.l,
+            end = FlowUi.screenPadding,
+            top = FlowUi.sheetPadding,
+            bottom = Space.xs
+        )
     )
 }
 
 @Composable
 internal fun SectionHeader(text: String) {
-    Text(
+    // Отступ сверху больше, чем снизу: заголовок отделяет разделы,
+    // и воздух нужен перед ним, а не после. Капителью — строгий стиль (1.5.1)
+    SectionCaption(
         text,
-        // Отступ сверху больше, чем снизу: заголовок отделяет разделы,
-        // и воздух нужен перед ним, а не после
-        Modifier
-            .padding(start = Space.l, top = FlowUi.sheetPadding, bottom = Space.xs)
-            .semantics { heading() },
-        style = MaterialTheme.typography.labelLarge,
-        /*
-         * Тёмно-серый, а не акцентный.
-         *
-         * Заголовок раздела — служебная разметка, а не то, ради чего
-         * экран открывают. Акцентный цвет притягивал взгляд к подписям
-         * вместо содержимого.
-         */
-        color = MaterialTheme.colorScheme.onSurfaceVariant
+        Modifier.padding(start = Space.l, top = FlowUi.sheetPadding, bottom = Space.xs)
     )
 }
 
@@ -438,6 +423,8 @@ internal fun SubscriberMoreMenu(
         val shortcutLabel = stringResource(R.string.contact_pin_shortcut)
         val editLabel = stringResource(R.string.action_edit_contact)
         ModalBottomSheet(
+            // Шторка — цвета страницы, группы на ней белые (строгий стиль, 1.5.1)
+            containerColor = MaterialTheme.colorScheme.background,
             onDismissRequest = onDismiss,
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             contentWindowInsets = { WindowInsets.navigationBars }
@@ -600,6 +587,8 @@ internal fun WriteSheet(
     onMessengerByNumber: (SwipeAction) -> Unit = {}
 ) {
     ModalBottomSheet(
+        // Шторка — цвета страницы, группы на ней белые (строгий стиль, 1.5.1)
+        containerColor = MaterialTheme.colorScheme.background,
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         contentWindowInsets = { WindowInsets.navigationBars }

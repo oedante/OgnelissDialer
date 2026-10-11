@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.groupBorder
+import com.ogneliss.dialer.ui.components.SectionCaption
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -30,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.ogneliss.dialer.ui.components.OgnelissDivider
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
 import com.ogneliss.dialer.ui.DialerViewModel
@@ -237,17 +238,15 @@ fun NotesScreen(
         ) {
             grouped.forEach { (letter, rows) ->
                 item(key = "letter-$letter") {
-                    Text(
+                    // Подпись раздела без черты — как в журнале (строгий стиль, 1.5.1)
+                    SectionCaption(
                         letter.toString(),
                         Modifier.padding(
-                            start = FlowUi.screenPadding + Space.xs,
-                            top = FlowUi.sheetPadding,
+                            start = FlowUi.screenPadding + Space.m,
+                            top = Space.l,
                             bottom = Space.xs
-                        ),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     )
-                    OgnelissDivider()
                 }
 
                 items(rows, key = { it.e164 }) { row ->
@@ -282,6 +281,8 @@ private fun NoteListRow(
         onClick = onOpen,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         shape = MaterialTheme.shapes.large,
+        // Рамка группы (строгий стиль, 1.5.1)
+        border = groupBorder(),
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = FlowUi.screenPadding, vertical = FlowUi.cardSpacing)

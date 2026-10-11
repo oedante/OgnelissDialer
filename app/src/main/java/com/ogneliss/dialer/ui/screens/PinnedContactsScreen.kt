@@ -1,5 +1,8 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.GroupPosition
+import com.ogneliss.dialer.ui.components.GroupedRow
+import androidx.compose.foundation.shape.CircleShape
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -18,7 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.ogneliss.dialer.ui.components.OgnelissDivider
 import com.ogneliss.dialer.ui.components.OgnelissListRow
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.data.PinnedContacts
@@ -118,18 +120,20 @@ fun PinnedContactsScreen(
             }
 
             itemsIndexed(entries) { index, entry ->
-                PinnedRow(
-                    position = index + 1,
-                    entry = entry,
-                    canMoveUp = index > 0,
-                    canMoveDown = index < entries.lastIndex,
-                    // По записи, а не по номеру (1.3.2): у закреплённого
-                    // контакта номер в записи может быть не тем, что в строке
-                    onMoveUp = { vm.movePinned(entry.key, up = true) },
-                    onMoveDown = { vm.movePinned(entry.key, up = false) },
-                    onUnpin = { vm.unpinKey(entry.key) }
-                )
-                OgnelissDivider()
+                // Одной группой с рамкой (строгий стиль, 1.5.1)
+                GroupedRow(GroupPosition.of(index, entries.size), dividerStart = 96.dp) {
+                    PinnedRow(
+                        position = index + 1,
+                        entry = entry,
+                        canMoveUp = index > 0,
+                        canMoveDown = index < entries.lastIndex,
+                        // По записи, а не по номеру (1.3.2): у закреплённого
+                        // контакта номер в записи может быть не тем, что в строке
+                        onMoveUp = { vm.movePinned(entry.key, up = true) },
+                        onMoveDown = { vm.movePinned(entry.key, up = false) },
+                        onUnpin = { vm.unpinKey(entry.key) }
+                    )
+                }
             }
 
             item {
@@ -144,6 +148,8 @@ fun PinnedContactsScreen(
                  * о недоступности раньше, чем человек нажмёт и получит
                  * отказ.
                  */
+                if (entries.isNotEmpty()) Spacer(Modifier.height(Space.l))
+                GroupedRow(GroupPosition.SINGLE) {
                 OgnelissListRow(
                     headline = stringResource(R.string.pinned_add),
                     /*
@@ -177,6 +183,7 @@ fun PinnedContactsScreen(
                     },
                     onClick = if (canAdd) onAddFromContacts else null
                 )
+                }
             }
 
             item { Spacer(Modifier.height(Space.xxl)) }
@@ -211,7 +218,7 @@ private fun PinnedRow(
                     modifier = Modifier.width(24.dp)
                 )
                 Surface(
-                    shape = MaterialTheme.shapes.extraLarge,
+                    shape = CircleShape,
                     color = MaterialTheme.colorScheme.surfaceContainerHighest,
                     modifier = Modifier.size(40.dp)
                 ) {

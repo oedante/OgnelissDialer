@@ -61,6 +61,8 @@ fun FilterSheet(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     ModalBottomSheet(
+        // Шторка — цвета страницы, группы на ней белые (строгий стиль, 1.5.1)
+        containerColor = MaterialTheme.colorScheme.background,
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         contentWindowInsets = { WindowInsets.navigationBars }
@@ -279,7 +281,7 @@ fun FilterSheet(
 @Composable
 fun FilterButton(filter: CallLogFilter, onClick: () -> Unit) {
     if (filter.isActive) {
-        FilledTonalButton(onClick = onClick) {
+        FilledTonalButton(shape = MaterialTheme.shapes.medium, onClick = onClick) {
             Icon(OgnelissIcons.FilterList, null, Modifier.size(FlowUi.iconSizeInline))
             Spacer(Modifier.width(Space.s))
             Text(stringResource(R.string.filter_active_count, filter.activeCount))
@@ -295,14 +297,8 @@ fun FilterButton(filter: CallLogFilter, onClick: () -> Unit) {
 
 @Composable
 private fun GroupLabel(text: String) {
-    Text(
-        text,
-        style = MaterialTheme.typography.labelLarge,
-        // Тёмно-серый: подпись группы — разметка, а не акцент.
-        // Акцентным остаётся только то, что несёт данные, —
-        // счётчики вызовов и выбранные значения
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
+    // Подпись раздела — как во всём приложении (строгий стиль, 1.5.1)
+    SectionCaption(text)
     Spacer(Modifier.height(Space.s))
 }
 

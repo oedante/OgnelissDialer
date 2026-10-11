@@ -58,7 +58,7 @@ fun <T> SingleChoiceSheet(
      */
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState, containerColor = MaterialTheme.colorScheme.background) {
         Column(Modifier.padding(bottom = FlowUi.sheetBottomPadding)) {
             Text(
                 stringResource(titleRes),

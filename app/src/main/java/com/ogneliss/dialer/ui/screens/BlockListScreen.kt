@@ -1,5 +1,8 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.SectionCaption
+import com.ogneliss.dialer.ui.components.GroupPosition
+import com.ogneliss.dialer.ui.components.GroupedRow
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -10,15 +13,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.itemsIndexed
-import com.ogneliss.dialer.ui.components.OgnelissDivider
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.components.OgnelissListRow
 import com.ogneliss.dialer.ui.theme.FlowUi
@@ -112,9 +112,9 @@ fun BlockListScreen(
             // Белый список идёт первым и с пояснением приоритета: именно
             // его непонимание порождает жалобы «блокировка режет нужные звонки»
             itemsIndexed(allowed, key = { _, rule -> "allow_${rule.pattern}" }) { i, rule ->
-                // Линии между правилами: строки одинаковые по виду,
-                // и без них список читается решёткой. Разбор — в UI_STYLE
-                if (i > 0) OgnelissDivider(Modifier.padding(horizontal = FlowUi.contentPadding))
+                // Правила — белой группой с рамкой, линии между строками
+                // внутри группы (строгий стиль, 1.5.1)
+                GroupedRow(GroupPosition.of(i, allowed.size)) {
                 RuleRow(
                     pattern = rule.pattern,
                     comment = rule.comment,
@@ -124,6 +124,7 @@ fun BlockListScreen(
                     onClick = { if (selection.isActive) selection.toggle(rule.pattern) },
                     onDelete = { vm.removeRule(rule.pattern) }
                 )
+                }
             }
 
             // ── Чёрный список ──────────────────────────────────────────────
@@ -149,7 +150,7 @@ fun BlockListScreen(
                 item { EmptyNote(stringResource(R.string.block_list_empty)) }
             }
             itemsIndexed(blocked, key = { _, rule -> "block_${rule.pattern}" }) { i, rule ->
-                if (i > 0) OgnelissDivider(Modifier.padding(horizontal = FlowUi.contentPadding))
+                GroupedRow(GroupPosition.of(i, blocked.size)) {
                 RuleRow(
                     pattern = rule.pattern,
                     comment = rule.comment,
@@ -159,17 +160,20 @@ fun BlockListScreen(
                     onClick = { if (selection.isActive) selection.toggle(rule.pattern) },
                     onDelete = { vm.removeRule(rule.pattern) }
                 )
+                }
             }
 
             // ── Системный список ───────────────────────────────────────────
             item {
                 Spacer(Modifier.height(Space.l))
-                OgnelissListRow(
-                    headline = stringResource(R.string.settings_blocked_system),
-                    supporting = stringResource(R.string.settings_blocked_system_text),
-                    leading = { Icon(OgnelissIcons.Block, null) },
-                    onClick = { vm.openSystemBlockList() }
-                )
+                GroupedRow(GroupPosition.SINGLE) {
+                    OgnelissListRow(
+                        headline = stringResource(R.string.settings_blocked_system),
+                        supporting = stringResource(R.string.settings_blocked_system_text),
+                        leading = { Icon(OgnelissIcons.Block, null) },
+                        onClick = { vm.openSystemBlockList() }
+                    )
+                }
                 Spacer(Modifier.height(Space.xxl))
             }
         }
@@ -188,15 +192,11 @@ fun BlockListScreen(
 @Composable
 private fun SectionHeaderWithAction(title: String, onAdd: () -> Unit) {
     Row(
-        Modifier.fillMaxWidth().padding(start = Space.l, end = Space.s, top = 20.dp),
+        Modifier.fillMaxWidth().padding(start = FlowUi.screenPadding + Space.m, end = Space.s, top = 20.dp),
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
     ) {
-        Text(
-            title,
-            Modifier.weight(1f).semantics { heading() },
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
+        // Подпись раздела — как во всём приложении (строгий стиль, 1.5.1)
+        SectionCaption(title, Modifier.weight(1f))
         IconButton(onClick = onAdd) {
             Icon(OgnelissIcons.Add, contentDescription = stringResource(R.string.rule_add))
         }

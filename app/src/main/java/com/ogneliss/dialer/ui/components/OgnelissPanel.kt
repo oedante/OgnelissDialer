@@ -1,5 +1,9 @@
 package com.ogneliss.dialer.ui.components
 
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
+import com.ogneliss.dialer.ui.theme.groupBorder
 import com.ogneliss.dialer.ui.theme.Space
 
 import androidx.compose.foundation.layout.Column
@@ -71,6 +75,9 @@ fun OgnelissPanel(
     Surface(
         color = color ?: MaterialTheme.colorScheme.surfaceContainerLow,
         shape = MaterialTheme.shapes.large,
+        // Тонкая рамка — строгий стиль (1.5.1): группа читается как блок
+        // и там, где подложка почти того же тона
+        border = groupBorder(),
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = FlowUi.screenPadding, vertical = FlowUi.cardSpacing)
@@ -86,20 +93,9 @@ fun OgnelissPanel(
                         Spacer(Modifier.width(Space.s))
                     }
 
-                    Text(
-                        it,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        /*
-                         * heading() — для чтения с экрана.
-                         *
-                         * TalkBack умеет перескакивать по заголовкам;
-                         * без этой пометки человек с экранным диктором
-                         * вынужден слушать панель целиком, чтобы понять,
-                         * куда попал.
-                         */
-                        modifier = Modifier.semantics { heading() }
-                    )
+                    // Подпись раздела — капителью, как заголовки групп
+                    // (строгий стиль, 1.5.1); heading() — внутри
+                    SectionCaption(it)
                 }
             }
 
@@ -134,3 +130,33 @@ fun OgnelissDivider(modifier: Modifier = Modifier) {
  * но не спорить с текстом: полная выглядит как рамка таблицы.
  */
 private const val DIVIDER_ALPHA = 0.5f
+
+
+/**
+ * ПОДПИСЬ РАЗДЕЛА — СТРОГИЙ СТИЛЬ (1.5.1).
+ *
+ * Заглавными, мелко, с разрядкой: «СЕГОДНЯ», «НОМЕРА», «ВЫЗОВЫ». Так
+ * подписывают разделы офисные приложения — подпись размечает экран,
+ * а не спорит с содержимым. Одна функция на все заголовки групп:
+ * журнал, контакты, панели карточки, настройки, шторки.
+ *
+ * Для чтения с экрана — исходный текст, а не заглавные: часть
+ * синтезаторов речи читает слово заглавными по буквам. heading() —
+ * TalkBack перескакивает по разделам, не слушая каждую строку.
+ */
+@Composable
+fun SectionCaption(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text.uppercase(),
+        modifier = modifier.semantics {
+            heading()
+            contentDescription = text
+        },
+        style = MaterialTheme.typography.labelMedium.copy(
+            fontWeight = FontWeight.SemiBold,
+            letterSpacing = 0.8.sp
+        ),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 1
+    )
+}

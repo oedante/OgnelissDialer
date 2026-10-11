@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.groupBorder
 import com.ogneliss.dialer.ui.theme.Space
 
 import androidx.compose.foundation.selection.toggleable
@@ -43,6 +44,11 @@ fun SheetGroup(content: @Composable ColumnScope.() -> Unit) {
     Surface(
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         shape = MaterialTheme.shapes.large,
+        // Строгий стиль (1.5.1): белая группа с рамкой на серой шторке
+        // (SheetColors.container). До этого шторка была того же белого,
+        // что и группы, — оставались одни разделители («белое полотно
+        // со стойками разной ширины», снимок автора 11.10)
+        border = groupBorder(),
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = FlowUi.screenPadding, vertical = Space.xs)

@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.components
 
+import androidx.compose.foundation.shape.CircleShape
 import com.ogneliss.dialer.ui.theme.PanelReachesNavBar
 import com.ogneliss.dialer.ui.theme.Space
 
@@ -265,7 +266,7 @@ fun BottomControlPanel(
                 ) {
                     Surface(
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
-                        shape = MaterialTheme.shapes.extraLarge,
+                        shape = CircleShape,
                         modifier = Modifier.size(width = 32.dp, height = 4.dp)
                     ) {}
                 }

@@ -49,6 +49,8 @@ fun GestureHintSheet(onDismiss: () -> Unit) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     ModalBottomSheet(
+        // Шторка — цвета страницы, группы на ней белые (строгий стиль, 1.5.1)
+        containerColor = MaterialTheme.colorScheme.background,
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         contentWindowInsets = { WindowInsets.navigationBars }
@@ -109,6 +111,7 @@ fun GestureHintSheet(onDismiss: () -> Unit) {
             Spacer(Modifier.height(FlowUi.sheetPadding))
 
             Button(
+                shape = MaterialTheme.shapes.medium,
                 onClick = onDismiss,
                 modifier = Modifier.fillMaxWidth()
             ) {

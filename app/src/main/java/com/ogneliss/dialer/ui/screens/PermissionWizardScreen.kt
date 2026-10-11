@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.compose.foundation.shape.CircleShape
 import com.ogneliss.dialer.ui.theme.PanelReachesNavBar
 import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.ui.theme.Space
@@ -239,7 +240,7 @@ fun PermissionWizardScreen(
 private fun StatusIcon(icon: ImageVector, granted: Boolean) {
     Box(contentAlignment = Alignment.BottomEnd) {
         Surface(
-            shape = MaterialTheme.shapes.extraLarge,
+            shape = CircleShape,
             color = if (granted) MaterialTheme.colorScheme.primaryContainer
             else MaterialTheme.colorScheme.surfaceVariant,
             modifier = Modifier.size(96.dp)
@@ -300,7 +301,7 @@ private fun WizardButtons(
                 .padding(Space.xl)
         ) {
             if (!isGranted) {
-                Button(onClick = onGrant, modifier = Modifier.fillMaxWidth()) {
+                Button(shape = MaterialTheme.shapes.medium, onClick = onGrant, modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(R.string.wizard_grant))
                 }
                 Spacer(Modifier.height(Space.s))
