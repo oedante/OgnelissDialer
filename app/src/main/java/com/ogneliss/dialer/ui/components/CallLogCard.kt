@@ -226,13 +226,12 @@ fun CallLogCard(
                      * ваша пометка, а не имя из телефонной книги.
                      */
                     if (row.titleFromNote) {
-                        NoteAvatar(row.hasMissed)
+                        NoteAvatar()
                     } else {
                         // Имя — только у контактов: незнакомый номер с именем
                         // из определителя остаётся значком (1.3.5)
                         Avatar(
                             row.photoUri,
-                            row.hasMissed,
                             // Буквы — из имени контакта, а не из заметки в заголовке
                             name = if (row.isContact && !row.titleFromNote) row.title else null
                         )
@@ -345,7 +344,10 @@ fun CallLogCard(
                         Text(
                             row.dateLabel,
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            // Пропущенный — красная дата рядом с красной стрелкой
+                            // (1.4.0): единственный цветной сигнал строки
+                            color = if (row.hasMissed) MaterialTheme.colorScheme.error
+                            else MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -509,12 +511,11 @@ internal fun RowAvatar(
     size: androidx.compose.ui.unit.Dp? = null,
     /** Имя контакта — для букв без фото (1.3.5); null — значок человека. */
     name: String? = null
-) = Avatar(photoUri, hasMissed = false, sizeOverride = size, name = name)
+) = Avatar(photoUri, sizeOverride = size, name = name)
 
 @Composable
 private fun Avatar(
     photoUri: String?,
-    hasMissed: Boolean,
     /** Свой размер (шапка меню записи, 1.3.5); null — из настроек. */
     sizeOverride: androidx.compose.ui.unit.Dp? = null,
     /*
@@ -522,7 +523,12 @@ private fun Avatar(
      * «чтобы контакты отделять от незнакомых номеров»). Имя передаётся
      * только для контактов; буквы — Initials.of (две первые буквы слов).
      * Фон — primaryContainer: контакт заметен среди серых значков
-     * незнакомых номеров. Пропущенный — прежняя подсветка errorContainer.
+     * незнакомых номеров.
+     *
+     * Пропущенный больше не красит аватар (1.4.0, «спокойнее»): розовые
+     * круги во весь рост строки были самым громким на экране журнала —
+     * громче имён. Пропущенный отмечен красной строкой даты со стрелкой:
+     * сигнал тот же, площадь вчетверо меньше.
      */
     name: String? = null
 ) {
@@ -536,7 +542,6 @@ private fun Avatar(
             // Пропущенные подсвечиваются на аватаре: это самый крупный
             // элемент карточки, и метка на нём заметна периферийным зрением
             color = when {
-                hasMissed -> MaterialTheme.colorScheme.errorContainer
                 initials != null -> MaterialTheme.colorScheme.primaryContainer
                 else -> MaterialTheme.colorScheme.surfaceContainerHighest
             },
@@ -566,8 +571,7 @@ private fun Avatar(
                             fontSize = with(androidx.compose.ui.platform.LocalDensity.current) { (size * 0.36f).toSp() }
                         ),
                         fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
-                        color = if (hasMissed) MaterialTheme.colorScheme.onErrorContainer
-                        else MaterialTheme.colorScheme.onPrimaryContainer,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         maxLines = 1
                     )
                 } else {
@@ -575,8 +579,7 @@ private fun Avatar(
                         OgnelissIcons.Person,
                         contentDescription = null,
                         modifier = Modifier.size(size * 0.55f),
-                        tint = if (hasMissed) MaterialTheme.colorScheme.onErrorContainer
-                        else MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -621,12 +624,12 @@ private fun typeLabelRes(type: CallType) = when (type) {
  * записали об этом номере.
  *
  * ── Цвет ───────────────────────────────────────────────────────────────────
- * Тот же, что у пропущенного, когда вызов пропущен: тревожность строки
- * важнее происхождения подписи. В остальных случаях приглушённый —
- * значок поясняет, а не требует внимания.
+ * Приглушённый бирюзовый — значок поясняет, а не требует внимания.
+ * Пропущенный его не перекрашивает (1.4.0): о пропуске говорит красная
+ * строка даты, как у остальных записей.
  */
 @Composable
-private fun NoteAvatar(hasMissed: Boolean) {
+private fun NoteAvatar() {
     /*
      * Размер из настроек внешнего вида — тот же, что у обычного значка.
      *
@@ -638,17 +641,8 @@ private fun NoteAvatar(hasMissed: Boolean) {
 
     Surface(
         shape = MaterialTheme.shapes.extraLarge,
-        /*
-         * Подложка бирюзовая, пока вызов не пропущен.
-         *
-         * Пропущенный важнее: тревожность строки должна читаться
-         * раньше, чем происхождение подписи. Поэтому красный
-         * перекрывает.
-         */
-        color = when {
-            hasMissed -> MaterialTheme.colorScheme.errorContainer
-            else -> NoteTeal.copy(alpha = 0.18f)
-        },
+        // Подложка бирюзовая всегда — разбор цвета выше
+        color = NoteTeal.copy(alpha = 0.18f),
         modifier = Modifier.size(size)
     ) {
         Box(contentAlignment = Alignment.Center) {
@@ -659,8 +653,7 @@ private fun NoteAvatar(hasMissed: Boolean) {
                 // на 24 dp стрелка сливается с трубкой
                 OgnelissIcons.Info,
                 contentDescription = null,
-                tint = if (hasMissed) MaterialTheme.colorScheme.onErrorContainer
-                else NoteTeal
+                tint = NoteTeal
             )
         }
     }

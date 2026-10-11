@@ -822,34 +822,33 @@ fun ContactsScreen(
  * и полоса того же семейства читалась как ещё одна карточка, только
  * пустая.
  *
- * Разделение строится на пустоте и черте: отступ сверху отделяет
- * от предыдущей группы, тонкая линия снизу привязывает заголовок
- * к тому, что под ним. Пустое место читается одинаково в любой теме,
- * а подобранный оттенок пришлось бы проверять во всех четырёх.
+ * Разделение строится на пустоте: отступ сверху отделяет от предыдущей
+ * группы, малый снизу привязывает заголовок к его карточке.
+ *
+ * ── Без черты снизу (1.4.0) ────────────────────────────────────────────────
+ * Раньше под заголовком шла линия: карточка почти не отличалась от фона,
+ * и без линии было неясно, где начинается группа. Теперь край карточки
+ * виден сам (белая на сером в светлой теме), и линия в 6 dp над ним
+ * читалась как двойная граница. Заголовок — вровень с содержимым строк
+ * (поле экрана + поле карточки, по левому краю аватаров), а не с краем
+ * карточки: глаз идёт по одной вертикали от заголовка вниз.
  */
 @Composable
 fun LetterHeader(letter: String) {
-    Column(
+    Text(
+        letter,
         Modifier
             .fillMaxWidth()
-            // Сверху больше, чем снизу: заголовок должен льнуть
-            // к своим записям, а не висеть между группами
-            .padding(start = Space.l, end = Space.l, top = Space.l, bottom = Space.xxs)
-    ) {
-        Text(
-            letter,
-            Modifier.semantics { heading() },
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
-        Spacer(Modifier.height(Space.xs))
-
-        HorizontalDivider(
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant
-        )
-    }
+            .padding(
+                start = FlowUi.screenPadding + Space.m,
+                end = FlowUi.screenPadding + Space.m,
+                top = Space.l,
+                bottom = Space.xs
+            )
+            .semantics { heading() },
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
 }
 
 /**

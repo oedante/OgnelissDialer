@@ -19,17 +19,36 @@ import androidx.compose.ui.graphics.Color
  * возможности это проверить у нас нет. Диалером пользуются в спешке,
  * и читаемость здесь важнее индивидуальности.
  *
- * Теперь взяты нейтральные поверхности и служебные акценты — те же,
- * что в системных приложениях Android. Интерфейс выглядит частью системы,
- * а контраст предсказуем и проверен расчётом.
+ * Взяты нейтральные поверхности и служебные акценты — как в системных
+ * приложениях Android. Интерфейс выглядит частью системы, а контраст
+ * предсказуем и проверен расчётом.
  *
- * ── Проверенный контраст ───────────────────────────────────────────────────
- * Все пары «текст на фоне» посчитаны по формуле WCAG:
+ * ══════════════════════════════════════════════════════════════════════════
+ * 1.4.0 (11.10.2026): СПОКОЙНЕЕ И С ЯСНЫМИ ЗОНАМИ (автор: «более спокойные
+ * цвета, улучшить зонирование»)
+ * ══════════════════════════════════════════════════════════════════════════
+ * Что мешало:
+ * • серые были вперемешку — часть чисто серые (#F2F2F2, #FAFAFA), часть
+ *   с синевой (#E9EEF6, #DDE3EA). Соседние поверхности отличались не только
+ *   яркостью, но и оттенком, и экран выглядел пёстрым без видимой причины;
+ * • в светлой теме карточка (#FAFAFA) на белом фоне — 1,04 : 1: границ
+ *   групп почти не видно, зоны держались только на отступах;
+ * • синий акцент #0B57D0 (насыщенность 90 %) и контейнер #0842A0 в тёмной
+ *   теме — самые яркие пятна экрана, ярче имён, ради которых его открывают.
  *
- *   Светлая: основной текст 17.2:1, второстепенный 9.4:1
- *   Тёмная:  основной текст 14.5:1, второстепенный 10.9:1
+ * Что стало:
+ * • одна нейтральная гамма с лёгким холодным оттенком — того же семейства,
+ *   что фон значка #2E3138. Все поверхности — один тон разной яркости;
+ * • светлая тема: страница светло-серая, карточки белые (1,10 : 1) — группы
+ *   читаются сразу, как в настройках Android и iOS. Тёмная: как и была,
+ *   страница темнее карточек. Модель в обеих темах одна: всё, что лежит
+ *   над страницей, светлее неё; нижняя панель — своя зона (PanelColors);
+ * • синий того же тона, но спокойнее (насыщенность 55 % вместо 90 %);
+ *   контраст с белым 6,5 : 1 — норма AA с запасом.
  *
- * При требовании AA в 4.5:1 и AAA в 7:1 запас есть даже у подписей.
+ * Проверено расчётом WCAG: текст основной 15,4 : 1 (светлая) / 13,1 : 1
+ * (тёмная), второстепенный 8,2 / 9,9, синий на карточке 6,5 / 9,2.
+ * ⚠️ Меняя значения — пересчитать (scripts/palette_check.py).
  *
  * ── Зачем зелёный отдельной ролью ──────────────────────────────────────────
  * Зелёная кнопка вызова — код, устоявшийся в телефонии за десятилетия.
@@ -37,13 +56,13 @@ import androidx.compose.ui.graphics.Color
  * что человек узнаёт не глядя.
  */
 
-// ── Синий: основной акцент ─────────────────────────────────────────────────
-// Тот же служебный синий, что в системных приложениях Android
-internal val Blue20 = Color(0xFF041E49)
-internal val Blue30 = Color(0xFF0842A0)
-internal val Blue40 = Color(0xFF0B57D0)
-internal val Blue80 = Color(0xFFA8C7FA)
-internal val Blue90 = Color(0xFFD3E3FD)
+// ── Синий: основной акцент (1.4.0 — спокойнее, тот же тон) ────────────────
+internal val Blue20 = Color(0xFF14294D)     // текст на светлом контейнере
+internal val Blue30 = Color(0xFF2E4A78)     // контейнер в тёмной (было #0842A0)
+internal val Blue40 = Color(0xFF2F5DA3)     // акцент светлой (было #0B57D0)
+internal val Blue80 = Color(0xFFA8C2EC)     // акцент тёмной (было #A8C7FA)
+internal val Blue90 = Color(0xFFDCE4F3)     // контейнер светлой (было #D3E3FD)
+internal val Blue95 = Color(0xFFD8E3F6)     // текст на тёмном контейнере
 
 // ── Зелёный: вызовы ────────────────────────────────────────────────────────
 // Отдельная роль, а не оттенок основного: зелёная кнопка вызова
@@ -54,34 +73,37 @@ internal val Green40 = Color(0xFF146C2E)
 internal val Green80 = Color(0xFF6DD58C)
 internal val Green90 = Color(0xFFC4EED0)
 
-// ── Нейтральные: чистый серый без цветового сдвига ─────────────────────────
-// Раньше серые были сдвинуты к оранжевому ради единства с логотипом.
-// На практике это читалось как выцветший экран
-internal val Grey0 = Color(0xFF000000)
-internal val Grey10 = Color(0xFF1B1B1B)
-internal val Grey12 = Color(0xFF1E1F20)
-internal val Grey17 = Color(0xFF232427)
-internal val Grey20 = Color(0xFF2D2F31)
-internal val Grey22 = Color(0xFF303134)
-internal val Grey24 = Color(0xFF37393B)
-internal val Grey30 = Color(0xFF444746)
-internal val Grey40 = Color(0xFF5E6165)
-internal val Grey50 = Color(0xFF74777F)
-internal val Grey60 = Color(0xFF8E918F)
-internal val Grey70 = Color(0xFFA9ACAA)
-internal val Grey80 = Color(0xFFC4C7C5)
-internal val Grey87 = Color(0xFFDDE3EA)
-internal val Grey90 = Color(0xFFE1E3E1)
-internal val Grey92 = Color(0xFFE9EEF6)
-internal val Grey94 = Color(0xFFEFF2F5)
-internal val Grey95 = Color(0xFFF2F2F2)
-internal val Grey96 = Color(0xFFF6F8FC)
-internal val Grey98 = Color(0xFFFAFAFA)
-internal val Grey99 = Color(0xFFFDFCFF)
-internal val Grey100 = Color(0xFFFFFFFF)
+// ── Нейтральные светлой темы: холодный серый, один оттенок ────────────────
+internal val LightPage = Color(0xFFF3F4F7)          // фон страницы
+internal val LightRaised = Color(0xFFFFFFFF)        // карточки, шторки, диалоги, меню
+internal val LightControl = Color(0xFFE3E6EC)       // нижняя панель; кнопки на белом
+internal val LightVariant = Color(0xFFE1E4EA)       // surfaceVariant
+internal val LightSelected = Color(0xFFE3E7EE)      // выделение строки
+internal val LightDim = Color(0xFFDADDE3)
+internal val LightText = Color(0xFF1B1D21)
+internal val LightTextVariant = Color(0xFF454951)
+internal val LightOutline = Color(0xFF6F747E)       // 4,6 : 1 на белом — подсказки
+internal val LightOutlineVariant = Color(0xFFDADDE3)
+internal val LightSecondary = Color(0xFF5A606B)
 
-// Фон тёмной темы: не чистый чёрный, иначе карточки на нём не читаются
-internal val DarkBackground = Color(0xFF131314)
+// ── Нейтральные тёмной темы: тот же холодный серый ────────────────────────
+// Фон не чистый чёрный: иначе карточки на нём не читаются (AMOLED — отдельно)
+internal val DarkPage = Color(0xFF121316)
+internal val DarkLowest = Color(0xFF0B0C0E)
+internal val DarkCard = Color(0xFF1C1E22)           // surfaceContainerLow
+internal val DarkContainer = Color(0xFF222429)      // нижняя панель
+internal val DarkHigh = Color(0xFF2A2D32)           // диалоги
+internal val DarkHighest = Color(0xFF33363C)        // клавиши, кнопки
+internal val DarkVariant = Color(0xFF40444C)
+internal val DarkSelected = Color(0xFF343840)
+internal val DarkText = Color(0xFFE2E4E9)
+internal val DarkTextVariant = Color(0xFFC3C7CF)
+internal val DarkOutline = Color(0xFF9298A1)
+internal val DarkOutlineVariant = Color(0xFF3D4148)
+internal val DarkSecondary = Color(0xFFC1C6D0)
+
+/** Фон значка приложения (#2E3138) — подложка всплывающих сообщений светлой темы. */
+internal val BrandDark = Color(0xFF2E3138)
 
 // ── Ошибки ─────────────────────────────────────────────────────────────────
 internal val Error10 = Color(0xFF410E0B)

@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.call
 
+import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
 import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
 import androidx.compose.ui.graphics.Color
@@ -270,7 +271,8 @@ private fun FakeCallScreen(
 
             Surface(
                 shape = OgnelissShapeTokens.bottomPanel,
-                color = MaterialTheme.colorScheme.surfaceContainer,
+                // Как у настоящего вызова: общий цвет нижней панели (1.4.0)
+                color = PanelColors.panel(),
                 modifier = Modifier.fillMaxWidth()
             ) {
             Row(

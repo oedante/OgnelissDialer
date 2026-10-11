@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.call
 
+import com.ogneliss.dialer.ui.theme.PanelColors
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.navigationBars
@@ -129,6 +130,6 @@ internal fun BoxScope.NavBarUnderPanel() {
             .align(Alignment.BottomCenter)
             .fillMaxWidth()
             .windowInsetsBottomHeight(WindowInsets.navigationBars)
-            .background(MaterialTheme.colorScheme.surfaceContainer)
+            .background(PanelColors.panel())
     )
 }

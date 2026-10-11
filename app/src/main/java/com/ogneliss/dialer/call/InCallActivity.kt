@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.call
 
+import androidx.compose.material3.IconButtonDefaults
+import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
 import androidx.compose.foundation.background
 import com.ogneliss.dialer.ui.theme.Space
@@ -933,7 +935,9 @@ private fun InCallScreen(
             // --- Низ: управление — в нижней панели, как в журнале (1.3.4) ---
             Surface(
                 shape = OgnelissShapeTokens.bottomPanel,
-                color = MaterialTheme.colorScheme.surfaceContainer,
+                // Цвет нижней панели — общий с журналом (PanelColors, 1.4.0):
+                // в светлой теме серая панель с белыми кнопками, как клавиатура
+                color = PanelColors.panel(),
                 modifier = Modifier.fillMaxWidth()
             ) {
             Column(
@@ -1460,6 +1464,19 @@ private fun ToggleTile(
         FilledIconToggleButton(
             checked = active,
             onCheckedChange = { onClick() },
+            /*
+             * Цвета кнопки (1.4.0). По умолчанию Material красит значок
+             * выключенной кнопки синим — на панели было шесть синих значков,
+             * и включённый динамик не выделялся среди выключенных. Теперь
+             * выключенная — клавиша панели с нейтральным значком, включённая —
+             * залита синим: цвет означает «включено», а не «кнопка».
+             */
+            colors = IconButtonDefaults.filledIconToggleButtonColors(
+                containerColor = PanelColors.key(),
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                checkedContainerColor = MaterialTheme.colorScheme.primary,
+                checkedContentColor = MaterialTheme.colorScheme.onPrimary
+            ),
             // Размер из правил: тот же, что у быстрых действий
             // в карточке абонента — они и по смыслу одно и то же
             modifier = Modifier.size(FlowUi.quickActionSize + 16.dp)
@@ -1629,9 +1646,10 @@ private fun DtmfPanel(
     onClose: () -> Unit
 ) {
     Surface(
-        color = MaterialTheme.colorScheme.surfaceContainer,
+        // Клавиши лежат на той же панели, что и кнопки разговора (1.4.0):
+        // своя подложка с тоном поверх панели давала третий оттенок серого
+        color = PanelColors.key(),
         shape = MaterialTheme.shapes.extraLarge,
-        tonalElevation = 3.dp,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(Modifier.padding(vertical = Space.m)) {
@@ -2011,19 +2029,22 @@ private fun WaitingCallBanner(
 
     Surface(
         shape = MaterialTheme.shapes.extraLarge,
-        color = MaterialTheme.colorScheme.secondaryContainer,
+        // В нижней панели — цвет клавиши (1.4.0): secondaryContainer
+        // в светлой теме совпадал с панелью по яркости. «Второй вызов» —
+        // синим заголовком: событие видно и без цветной заливки
+        color = PanelColors.key(),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(Modifier.padding(Space.l)) {
             Text(
                 stringResource(R.string.incall_waiting_title),
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
+                color = MaterialTheme.colorScheme.primary
             )
             Text(
                 label,
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -2073,7 +2094,8 @@ private fun ConferencePanel(
 ) {
     Surface(
         shape = MaterialTheme.shapes.extraLarge,
-        color = MaterialTheme.colorScheme.surfaceContainer,
+        // Лежит в нижней панели: цвет клавиши, а не панели — иначе сливался бы
+        color = PanelColors.key(),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(Modifier.padding(vertical = Space.s)) {

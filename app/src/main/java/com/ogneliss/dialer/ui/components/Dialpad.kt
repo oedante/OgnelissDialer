@@ -1,6 +1,5 @@
 package com.ogneliss.dialer.ui.components
 
-import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
 import com.ogneliss.dialer.ui.theme.Space
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -114,9 +113,6 @@ fun Dialpad(
     modifier: Modifier = Modifier
 ) {
     val appearance = LocalAppearance.current
-    // Лёжа ряды растянуты по высоте экрана, клавиша бывает ниже 52 dp —
-    // строка букв под цифрой не поместится; там только цифры (1.3.5)
-    val compactKeys = LocalWindowLayout.current.isShort
     val view = LocalView.current
     val feedback = remember { DialpadFeedback() }
     DisposableEffect(Unit) { onDispose { feedback.release() } }
@@ -247,40 +243,55 @@ fun Dialpad(
                         val secondary = if (altText.isNotEmpty()) key.latin else ""
 
                         /*
-                         * ЦИФРА ПО ЦЕНТРУ, БУКВЫ СТРОКОЙ ПОД НЕЙ (1.3.5).
-                         * Было: цифра прижата влево, буквы — столбиком справа:
-                         * так не устроена ни одна клавиатура телефона, и
-                         * клавиши выглядели чужими в приложении. Стало —
-                         * классическая клавиша: цифра крупно по центру, под
-                         * ней одна строка: буквы языка, рядом мельче и бледнее
-                         * латиница (справка, как и раньше). Строка под буквы
-                         * есть и у «1», «*», «#» — цифры стоят на одной линии.
+                         * ЦИФРА СЛЕВА, БУКВЫ СТОЛБИКОМ СПРАВА — ПАРА ПО ЦЕНТРУ
+                         * (1.4.0, автор: «удобнее, когда цифры слева, а буквы
+                         * друг над другом… так всё легко читается и
+                         * помещается»). Попытка 1.3.5–1.3.6 — цифра по центру,
+                         * буквы строкой под ней — лёжа не помещалась (буквы
+                         * пропадали) и читалась хуже.
+                         *
+                         * Пара «цифра + буквы» — по центру пилюли, а не у края:
+                         * на скруглённой клавише содержимое у края выглядит
+                         * криво. Ячейки фиксированной ширины — цифры всех рядов
+                         * стоят ровным столбцом, в том числе у «1», «*», «#»,
+                         * где букв нет. Буквы языка сверху и крупнее, латиница
+                         * под ними мельче и бледнее. Две короткие строки
+                         * не выше цифры — помещаются и лёжа.
                          */
-                        Column(
+                        Row(
                             Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                key.digit.toString(),
-                                style = MaterialTheme.typography.headlineMedium,
-                                fontWeight = FontWeight.Normal,
-                                maxLines = 1
-                            )
-                            if (!compactKeys) Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(Modifier.width(DIGIT_SLOT), contentAlignment = Alignment.Center) {
                                 Text(
-                                    primary.ifEmpty { " " },
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    key.digit.toString(),
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    fontWeight = FontWeight.Normal,
                                     maxLines = 1
                                 )
+                            }
+                            Spacer(Modifier.width(Space.s))
+                            Column(
+                                Modifier.width(LETTERS_SLOT),
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                if (primary.isNotEmpty()) {
+                                    Text(
+                                        primary,
+                                        style = MaterialTheme.typography.labelLarge,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        maxLines = 1,
+                                        softWrap = false
+                                    )
+                                }
                                 if (secondary.isNotEmpty()) {
-                                    Spacer(Modifier.width(Space.xs))
                                     Text(
                                         secondary,
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.outline,
-                                        maxLines = 1
+                                        maxLines = 1,
+                                        softWrap = false
                                     )
                                 }
                             }
@@ -291,3 +302,11 @@ fun Dialpad(
         }
     }
 }
+
+/*
+ * Ячейки клавиши (1.4.0): фиксированная ширина — цифры всех рядов в одном
+ * столбце. Цифра headlineMedium ≈ 18 dp, «*» и «#» тоже; самая широкая
+ * строка букв — «ШЩЪЫ» labelLarge ≈ 40 dp.
+ */
+private val DIGIT_SLOT = 24.dp
+private val LETTERS_SLOT = 44.dp

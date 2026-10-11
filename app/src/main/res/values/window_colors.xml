@@ -4,5 +4,5 @@
       расхождение было бы заметно в момент запуска, до первой отрисовки
       Compose.
     -->
-    <color name="window_background">#FFFFFF</color>
+    <color name="window_background">#F3F4F7</color>
 </resources>

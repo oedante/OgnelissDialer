@@ -1,119 +1,177 @@
 #!/usr/bin/env python3
-# Генерация всех размеров значка Ogneliss Dialer из одного исходника.
-# Исходник: квадрат 1254x1254 со скруглёнными углами, кремовый фон внутри,
-# прозрачные углы.
+"""
+Все размеры значка Ogneliss Dialer из одного исходника.
+
+    python3 scripts/make_icons.py
+    python3 scripts/make_monochrome.py      # монохромный слой (Android 13+)
+    python3 scripts/build_feature_graphic.py
+
+Исходник — store/source/icon_master_1024.png: квадрат 1024 × 1024 без
+прозрачности — тёмный фон #2E3138, белая трубка, оранжевое пламя с белой
+лисой (значок 1.4.0, 11.10.2026, автор; в том же стиле, что значок
+Ogneliss Mail). Новый значок — новый файл на это место и три команды выше.
+
+Что получается:
+  app/src/main/res/mipmap-*/ic_launcher_foreground.png   слой рисунка (адаптивный значок)
+  app/src/main/res/mipmap-*/ic_launcher.png              квадрат со скруглением (до API 26)
+  app/src/main/res/mipmap-*/ic_launcher_round.png        круг (до API 26)
+  store/play_icon_512.png                                Google Play
+  docs/www/app-icon.png                                  сайт, 256 px со скруглением
+Фон адаптивного значка и заставки — цвет BG в res/values (сверяется ниже).
+
+══════════════════════════════════════════════════════════════════════════
+ПОЧЕМУ РИСУНОК ОТДЕЛЯЕТСЯ ОТ ФОНА
+══════════════════════════════════════════════════════════════════════════
+Адаптивный значок Android — два слоя: фон и рисунок. Лаунчер обрезает
+их своей маской (круг, капля, скруглённый квадрат) и двигает рисунок
+относительно фона при анимации. Картинка целиком в слое рисунка дала бы
+обрезанные углы трубки и «плавающий» квадрат.
+
+Фон исходника ровный (#2E3138, разброс ±1,5), рисунок — два чистых цвета:
+белый и оранжевый #F7A901. Каждый пиксель края — смесь фона с одним
+из них. Для пикселя P и цвета F ищем долю a, при которой
+P ≈ a·F + (1 − a)·BG (проекция на отрезок BG → F; выбираем F с меньшей
+невязкой). Цвет слоя — BG + (P − BG) / a. Поверх фона BG такой слой
+даёт исходный пиксель в точности; поверх другого — чистый край без серой
+каймы. Пиксели не с этого отрезка — смесь белого с оранжевым (лиса
+в пламени) и тёмно-коричневая кайма пламени — получают долю по
+удалённости от фона; поверх BG они тоже восстанавливаются точно.
+
+══════════════════════════════════════════════════════════════════════════
+ГЕОМЕТРИЯ
+══════════════════════════════════════════════════════════════════════════
+Слой 108 dp, видна центральная часть 72 dp, безопасная зона — круг
+радиусом 33 dp. Исходник целиком ложится в видимые 72 dp — композиция
+та же, что у автора. Самая дальняя точка рисунка (кончик трубки) —
+455 px от центра из 512, то есть 32,0 dp: внутри безопасной зоны.
+"""
+
+from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw
-from scipy import ndimage
-from pathlib import Path
 
-# Исходник лежит в репозитории: если значок снова поменяется, кладём новый
-# файл на его место и запускаем скрипт — все 17 файлов пересобираются разом.
-SRC = Path(__file__).resolve().parent.parent / 'store' / 'source' / 'icon_master_1254.png'
 ROOT = Path(__file__).resolve().parent.parent
+SRC = ROOT / 'store' / 'source' / 'icon_master_1024.png'
 RES = ROOT / 'app' / 'src' / 'main' / 'res'
 STORE = ROOT / 'store'
+WWW = ROOT / 'docs' / 'www'
 
-CREAM = (249, 245, 233)
-
-# ── подготовка исходника ───────────────────────────────────────────────────
-src = Image.open(SRC).convert('RGBA')
-a = np.array(src)
-rgb, al = a[..., :3], a[..., 3]
-# внутри картинки альфа 251-252 — доводим до 255, иначе на тёмной заставке
-# кремовый выглядит грязным
-# Внутри картинки альфа 251-254, по краю скругления — плавный спад
-# к нулю, и RGB у этих пикселей тёмный (сглаживание рисовалось по чёрному).
-# Если оставить как есть, слой foreground ляжет на фон того же цвета
-# с тёмной каймой по краю квадрата — на 48 dp она видна.
-# Поэтому: край делаем жёстким (уменьшение в 20 раз всё равно его сгладит),
-# а RGB полупрозрачных пикселей заливаем кремовым.
-rgb = rgb.copy()
-# Фон исходника не идеально ровный: к верхнему краю он светлее кремового
-# примерно на 7%. На адаптивном значке фон задан плоским цветом, и этот
-# перепад проявился бы светлой каймой по краю слоя foreground.
-# Поэтому весь внешний фон (всё, что связано с краем картинки) выравниваем
-# в точный #F9F5E9. Лису и блик на трубке это не затрагивает:
-# они не связаны с краем и в маску не попадают.
-bg_like = (al < 40) | (np.abs(rgb - np.array(CREAM)).max(axis=2) <= 20)
-lab, _ = ndimage.label(bg_like)
-edge_labels = set(lab[0]) | set(lab[-1]) | set(lab[:, 0]) | set(lab[:, -1])
-edge_labels.discard(0)
-outer = np.isin(lab, list(edge_labels))
-rgb[outer] = CREAM
-rgb[al < 250] = CREAM
-al = np.where(al >= 128, 255, 0).astype(np.uint8)
-src = Image.fromarray(np.dstack([rgb, al]))
+BG = np.array([46, 49, 56], float)          # #2E3138 — медиана фона исходника
+INKS = np.array([[255, 255, 255],            # белый: трубка, лиса
+                 [247, 169, 1]], float)      # #F7A901 — пламя
+NOISE = 6.0                                  # шум фона исходника (3σ ≈ 4,5)
 
 DENS = {'mdpi': 1, 'hdpi': 1.5, 'xhdpi': 2, 'xxhdpi': 3, 'xxxhdpi': 4}
+VISIBLE = 72 / 108                           # видимая доля слоя адаптивного значка
+CORNER = 0.225                               # скругление — как у значка Mail на сайте
 
 
-def scaled(size):
-    # Каналы уменьшаем раздельно. Pillow при уменьшении RGBA домножает цвет
-    # на альфу и делит обратно, и на границе скругления это даёт кольцо
-    # звона: цвет там отходит от кремового примерно на 20 единиц,
-    # и на значке видна светлая дуга по углам. Отдельно RGB (он в фоне
-    # постоянный) и отдельно альфа такого эффекта не дают.
-    rgb_i = Image.fromarray(np.array(src)[..., :3]).resize((size, size), Image.LANCZOS)
-    a_i = Image.fromarray(np.array(src)[..., 3]).resize((size, size), Image.LANCZOS)
-    out = rgb_i.convert('RGBA')
-    out.putalpha(a_i)
+def hexcolor(c):
+    return '#%02X%02X%02X' % tuple(int(round(v)) for v in c)
+
+
+# ── 1. исходник → рисунок с прозрачным фоном ──────────────────────────────
+P = np.asarray(Image.open(SRC).convert('RGB'), float)
+assert P.shape[:2] == (1024, 1024), f'исходник должен быть 1024 × 1024, а он {P.shape[1]} × {P.shape[0]}'
+D = P - BG
+best_a = np.zeros(P.shape[:2])
+best_r = np.full(P.shape[:2], np.inf)
+for ink in INKS:
+    v = ink - BG
+    a = np.clip((D @ v) / (v @ v), 0, 1)
+    r = np.linalg.norm(D - a[..., None] * v, axis=-1)
+    take = r < best_r
+    best_a[take], best_r[take] = a[take], r[take]
+
+dist = np.linalg.norm(D, axis=-1)
+# Пиксель не на отрезке «фон → белый / оранжевый» (невязка > ON_LINE):
+# смесь белого с оранжевым внутри рисунка или тёмно-коричневая кайма
+# по краю пламени, например (43, 37, 18). Для них доля — по удалённости
+# от фона: до FULL — частично, дальше — непрозрачно. Поверх BG пиксель
+# восстанавливается точно и так.
+ON_LINE, FULL = 12.0, 60.0
+general = np.clip((dist - NOISE) / (FULL - NOISE), 0, 1)
+alpha = np.where(best_r <= ON_LINE, best_a, general)
+# Наименьшая доля, при которой цвет BG + D / a не выходит за 0…255:
+# малая доля при оттенке чуть в сторону от линии дала бы обрезку цвета
+# и расхождение с исходником
+need = np.max(np.where(D < 0, -D / BG, D / (255 - BG)), axis=-1)
+alpha = np.maximum(alpha, need)
+alpha[dist < NOISE] = 0.0                    # шум фона — фон
+alpha[alpha > 0.985] = 1.0
+color = np.where(alpha[..., None] > 0, BG + D / np.maximum(alpha, 1e-6)[..., None], 0)
+color = np.clip(color, 0, 255)
+
+# Сверка: рисунок поверх BG обязан дать исходник
+back = alpha[..., None] * color + (1 - alpha[..., None]) * BG
+err = np.abs(back - P).max()
+assert err < 8, f'рисунок поверх фона расходится с исходником на {err:.1f}'
+
+
+def art(size):
+    """Рисунок нужного размера. Уменьшение в домноженных на альфу
+    каналах: иначе на краю цвет и альфа «разъезжаются» и появляется кайма."""
+    pm = Image.fromarray(np.uint8(np.round(color * alpha[..., None])))
+    al = Image.fromarray(np.uint8(np.round(alpha * 255)))
+    pm = np.asarray(pm.resize((size, size), Image.LANCZOS), float)
+    al = np.asarray(al.resize((size, size), Image.LANCZOS), float)
+    al = np.clip(al, 0, 255)
+    rgb = np.clip(pm / np.maximum(al / 255, 1e-6)[..., None], 0, 255)
+    rgb[al == 0] = 0
+    return Image.fromarray(np.dstack([rgb, al]).astype(np.uint8), 'RGBA')
+
+
+def flat(size):
+    """Значок целиком — рисунок на фоне BG."""
+    out = Image.new('RGBA', (size, size), tuple(int(c) for c in BG) + (255,))
+    out.alpha_composite(art(size))
     return out
 
 
-def circle_mask(size, ss=4):
+def mask(size, shape, ss=4):
     m = Image.new('L', (size * ss, size * ss), 0)
-    ImageDraw.Draw(m).ellipse([0, 0, size * ss - 1, size * ss - 1], fill=255)
+    d = ImageDraw.Draw(m)
+    if shape == 'circle':
+        d.ellipse([0, 0, size * ss - 1, size * ss - 1], fill=255)
+    else:
+        d.rounded_rectangle([0, 0, size * ss - 1, size * ss - 1], radius=CORNER * size * ss, fill=255)
     return m.resize((size, size), Image.LANCZOS)
 
 
-# ── 1. foreground для адаптивного значка ───────────────────────────────────
-# Сетка 108 dp, видно только центральные 72 dp, любая штатная маска
-# вписана в круг радиусом 36 dp. Самая дальняя точка рисунка лежит
-# на 0.614 стороны от центра, значит сторона 55 dp даёт радиус 33.8 dp —
-# внутри круга с запасом.
-SIDE_DP = 55.0
+def masked(size, shape):
+    im = flat(size)
+    im.putalpha(mask(size, shape))
+    return im
+
+
+# ── 2. слой рисунка адаптивного значка ────────────────────────────────────
 for d, k in DENS.items():
     S = int(round(108 * k))
-    inner = int(round(S * SIDE_DP / 108))
+    inner = int(round(S * VISIBLE))
     canvas = Image.new('RGBA', (S, S), (0, 0, 0, 0))
-    canvas.paste(scaled(inner), ((S - inner) // 2, (S - inner) // 2))
-    canvas.save(RES / f'mipmap-{d}' / 'ic_launcher_foreground.png')
+    canvas.alpha_composite(art(inner), ((S - inner) // 2, (S - inner) // 2))
+    canvas.save(RES / f'mipmap-{d}' / 'ic_launcher_foreground.png', optimize=True)
 
-# ── 2. запасные растровые значки (используются до API 26) ──────────────────
+# ── 3. запасные растровые значки (до API 26; minSdk 26 — для лаунчеров,
+#       которые адаптивные значки не умеют) ─────────────────────────────────
 for d, k in DENS.items():
     S = int(round(48 * k))
-    scaled(S).save(RES / f'mipmap-{d}' / 'ic_launcher.png')
+    masked(S, 'square').save(RES / f'mipmap-{d}' / 'ic_launcher.png', optimize=True)
+    # Круг по всему квадрату: кончики трубки — на 0,89 радиуса, не срезаются
+    masked(S, 'circle').save(RES / f'mipmap-{d}' / 'ic_launcher_round.png', optimize=True)
 
-    # круглый: кремовый круг, рисунок вписан так, чтобы кончики трубки
-    # не срезались краем круга
-    inner = int(round(S * 0.765))
-    base = Image.new('RGBA', (S, S), CREAM + (255,))
-    base.paste(scaled(inner), ((S - inner) // 2, (S - inner) // 2), scaled(inner))
-    base.putalpha(circle_mask(S))
-    base.save(RES / f'mipmap-{d}' / 'ic_launcher_round.png')
+# ── 4. Google Play: квадрат целиком, углы скругляет сам магазин ───────────
+flat(512).convert('RGB').save(STORE / 'play_icon_512.png', optimize=True)
 
-# ── 3. значок для Google Play ──────────────────────────────────────────────
-# Play сам скругляет углы, поэтому квадрат заливаем целиком,
-# а рисунок держим внутри безопасной зоны.
-S = 512
-inner = 448
-play = Image.new('RGBA', (S, S), CREAM + (255,))
-sc = scaled(inner)
-play.paste(sc, ((S - inner) // 2, (S - inner) // 2), sc)
-play.save(STORE / 'play_icon_512.png')
+# ── 5. сайт: 256 px со скруглением (страница показывает 88 и 64 px) ───────
+masked(256, 'square').save(WWW / 'app-icon.png', optimize=True)
 
-# ── 4. Feature graphic: меняем только логотип, фон и текст не трогаем ───────
-# ВНИМАНИЕ: шаг не идемпотентен — он рисует поверх текущего файла.
-# Повторный запуск на уже обновлённом файле безопасен (область логотипа
-# заново затирается фоном), но если менялась вёрстка баннера,
-# координаты придётся поправить.
-fg = Image.open(STORE / 'play_feature_1024x500.png').convert('RGBA')
-draw = ImageDraw.Draw(fg)
-draw.rectangle([60, 80, 340, 420], fill=(46, 46, 48, 255))  # стираем старый логотип
-badge = scaled(260)
-fg.paste(badge, (190 - 130, 250 - 130), badge)
-fg.convert('RGB').save(STORE / 'play_feature_1024x500.png')
+# ── 6. сверка цветов в ресурсах ───────────────────────────────────────────
+want = hexcolor(BG)
+for xml, name in [(RES / 'values' / 'ic_launcher_background.xml', 'ic_launcher_background'),
+                  (RES / 'values' / 'splash_colors.xml', 'splash_background')]:
+    text = xml.read_text(encoding='utf-8')
+    assert f'<color name="{name}">{want}</color>' in text, f'{xml.name}: {name} должен быть {want}'
 
-print('растр готов')
+print(f'растр готов: фон {want}, сверка с исходником — расхождение {err:.1f} из 255')

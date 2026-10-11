@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.settings.SwipeAction
 import com.ogneliss.dialer.call.ExternalApps
 import com.ogneliss.dialer.data.CallLogDateGroup
@@ -1041,6 +1042,9 @@ fun SubscriberScreen(
          * Сами действия не менялись — ряд перенесён целиком.
          */
         val quickActions: @Composable RowScope.() -> Unit = {
+            // Круги — цвета клавиши нижней панели (1.4.0): в светлой теме
+            // белые на серой панели, как клавиатура и кнопки разговора
+            val actionKey = PanelColors.key()
             /*
              * «ПОЗВОНИТЬ» — ПЛИТКА В ОБЩЕМ РЯДУ.
              *
@@ -1090,7 +1094,8 @@ fun SubscriberScreen(
              */
             QuickAction(
                 OgnelissIcons.Message,
-                R.string.action_write
+                R.string.action_write,
+                container = actionKey
             ) {
                 // Выбор — если есть что-то кроме SMS: мессенджер из книги или,
                 // с настройкой «для любого номера», установленный (1.3.5)
@@ -1114,7 +1119,7 @@ fun SubscriberScreen(
              * сохранит контакт одним нажатием, а не будет
              * переписывать цифры из текста.
              */
-            QuickAction(OgnelissIcons.Share, R.string.action_share) {
+            QuickAction(OgnelissIcons.Share, R.string.action_share, container = actionKey) {
                 val name = group.displayName
                     ?: PhoneFormatter.format(group.number)
 
@@ -1148,7 +1153,7 @@ fun SubscriberScreen(
              * в настройках свайпов и в названии канала
              * уведомлений.
              */
-            QuickAction(OgnelissIcons.Alarm, R.string.action_remind_short) {
+            QuickAction(OgnelissIcons.Alarm, R.string.action_remind_short, container = actionKey) {
                 vm.requestReminder(group)
             }
             /*
@@ -1180,7 +1185,7 @@ fun SubscriberScreen(
              * лишь откроет шторку. «Блок» — в ней, последним, красным.
              * Кнопка ⋮ в верхней панели убрана: меню одно, внизу.
              */
-            QuickAction(OgnelissIcons.MoreVert, R.string.action_more) { moreOpen = true }
+            QuickAction(OgnelissIcons.MoreVert, R.string.action_more, container = actionKey) { moreOpen = true }
         }
 
         val header: @Composable () -> Unit = {
@@ -2369,7 +2374,8 @@ fun SubscriberScreen(
         if (!twoColumns) {
             Surface(
                 shape = OgnelissShapeTokens.bottomPanel,
-                color = MaterialTheme.colorScheme.surfaceContainer,
+                // Общий цвет нижней панели (PanelColors, 1.4.0)
+                color = PanelColors.panel(),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(

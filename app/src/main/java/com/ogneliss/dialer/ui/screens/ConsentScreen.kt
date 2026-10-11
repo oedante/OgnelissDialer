@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -19,7 +20,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.components.OgnelissListRow
 import com.ogneliss.dialer.ui.components.OgnelissPanel
 import com.ogneliss.dialer.ui.theme.FlowUi
@@ -76,7 +76,9 @@ fun ConsentScreen(
         modifier = Modifier.semantics { testTagsAsResourceId = true },
         contentWindowInsets = WindowInsets.safeDrawing,
         bottomBar = {
-            Surface(tonalElevation = 3.dp) {
+            // Цвет нижней панели, как на остальных экранах (1.4.0): прежний
+            // тональный подъём давал голубую дымку, а без неё сливался с фоном
+            Surface(color = PanelColors.panel()) {
                 Column(
                     Modifier
                         .fillMaxWidth()

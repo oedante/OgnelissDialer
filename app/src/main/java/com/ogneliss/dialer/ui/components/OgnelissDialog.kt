@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.ogneliss.dialer.ui.theme.FlowUi
 
@@ -54,8 +53,9 @@ fun OgnelissDialog(
     Dialog(onDismissRequest = onDismissRequest) {
         Surface(
             shape = MaterialTheme.shapes.extraLarge,
+            // Без tonalElevation (1.4.0): с цветом surfaceContainerHigh
+            // он ничего не менял, а читался как намерение подкрасить
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
-            tonalElevation = 6.dp,
             modifier = modifier.fillMaxWidth()
         ) {
             Column(Modifier.padding(FlowUi.sheetPadding)) {

@@ -46,66 +46,79 @@ import com.ogneliss.dialer.settings.ThemeMode
 
 private val LightColors = lightColorScheme(
     primary = Blue40,
-    onPrimary = Grey100,
+    onPrimary = Color.White,
     primaryContainer = Blue90,
     onPrimaryContainer = Blue20,
     inversePrimary = Blue80,
 
     // Вторичная роль нейтральная: выделения и контейнеры не должны
     // спорить с основным акцентом за внимание
-    secondary = Grey40,
-    onSecondary = Grey100,
-    secondaryContainer = Grey92,
-    onSecondaryContainer = Grey10,
+    secondary = LightSecondary,
+    onSecondary = Color.White,
+    secondaryContainer = LightSelected,
+    onSecondaryContainer = LightText,
 
-    // Третичная роль отдана «зелени телефонии»: приём вызова,
-    // признак знакомого номера. Зелёный в звонках — устоявшийся код,
-    // и переопределять его брендовым оранжевым было бы вредно
     // Зелёный отдан вызовам: код телефонии, узнаваемый без чтения
     tertiary = Green40,
-    onTertiary = Grey100,
+    onTertiary = Color.White,
     tertiaryContainer = Green90,
     onTertiaryContainer = Green20,
 
     error = Error40,
-    onError = Grey100,
+    onError = Color.White,
     errorContainer = Error90,
     onErrorContainer = Error10,
 
-    background = Grey100,
-    onBackground = Grey10,
-    surface = Grey100,
-    onSurface = Grey10,
-    surfaceVariant = Grey90,
-    onSurfaceVariant = Grey30,
+    /*
+     * СТРАНИЦА СЕРАЯ, ВСЁ НАД НЕЙ — БЕЛОЕ (1.4.0).
+     *
+     * Было наоборот: белая страница и почти белые (#FAFAFA) карточки,
+     * 1,04 : 1 — группы журнала и блоки карточки контакта сливались.
+     * Теперь карточки, шторки, диалоги и меню (Low, Container, High) —
+     * белые на светло-сером, 1,10 : 1: зоны видны сразу, без рамок и теней.
+     *
+     * Highest — серый темнее страницы: нижняя панель (белые клавиши на ней)
+     * и кнопки на белом — круги быстрых действий, строки выбора в диалогах.
+     * Шкала не монотонна, как в базовой схеме Material, — намеренно: светлое
+     * «поднятое» и тёмное «под пальцем» нужны разным ролям, а четырёх
+     * едва различимых серых между ними глаз всё равно не видит.
+     */
+    background = LightPage,
+    onBackground = LightText,
+    surface = LightPage,
+    onSurface = LightText,
+    surfaceVariant = LightVariant,
+    onSurfaceVariant = LightTextVariant,
 
-    // Уровни поверхностей: карточки, шторки, клавиатура
-    surfaceContainerLowest = Grey100,
-    surfaceContainerLow = Grey98,
-    surfaceContainer = Grey95,
-    surfaceContainerHigh = Grey94,
-    surfaceContainerHighest = Grey92,
-    surfaceBright = Grey100,
-    surfaceDim = Grey90,
+    surfaceContainerLowest = LightRaised,
+    surfaceContainerLow = LightRaised,
+    surfaceContainer = LightRaised,
+    surfaceContainerHigh = LightRaised,
+    surfaceContainerHighest = LightControl,
+    surfaceBright = LightRaised,
+    surfaceDim = LightDim,
+    // Без голубой дымки на приподнятых Surface: оттенок даёт цвет поверхности
+    surfaceTint = Color.Transparent,
 
-    outline = Grey50,
-    outlineVariant = Grey90,
-    scrim = Grey0,
-    inverseSurface = Grey20,
-    inverseOnSurface = Grey95
+    outline = LightOutline,
+    outlineVariant = LightOutlineVariant,
+    scrim = Color.Black,
+    // Всплывающие сообщения — цвет значка приложения
+    inverseSurface = BrandDark,
+    inverseOnSurface = Color(0xFFEEF0F4)
 )
 
 private val DarkColors = darkColorScheme(
     primary = Blue80,
     onPrimary = Blue20,
     primaryContainer = Blue30,
-    onPrimaryContainer = Blue90,
+    onPrimaryContainer = Blue95,
     inversePrimary = Blue40,
 
-    secondary = Grey80,
-    onSecondary = Grey20,
-    secondaryContainer = Grey24,
-    onSecondaryContainer = Grey90,
+    secondary = DarkSecondary,
+    onSecondary = DarkPage,
+    secondaryContainer = DarkSelected,
+    onSecondaryContainer = DarkText,
 
     tertiary = Green80,
     onTertiary = Green20,
@@ -126,37 +139,34 @@ private val DarkColors = darkColorScheme(
      *
      * Для тех, кому нужен чистый чёрный ради экономии батареи,
      * есть отдельный режим AMOLED.
+     *
+     * 1.4.0: тот же холодный серый, что в светлой теме и на значке;
+     * уровни — с ровным шагом (карточка 1,11 : 1 к странице, клавиша
+     * 1,28 : 1 к панели).
      */
-    background = DarkBackground,
-    onBackground = Grey87,
-    surface = DarkBackground,
-    onSurface = Grey87,
-    surfaceVariant = Grey30,
-    onSurfaceVariant = Grey80,
+    background = DarkPage,
+    onBackground = DarkText,
+    surface = DarkPage,
+    onSurface = DarkText,
+    surfaceVariant = DarkVariant,
+    onSurfaceVariant = DarkTextVariant,
 
-    surfaceContainerLowest = Grey0,
-    surfaceContainerLow = Grey12,
-    surfaceContainer = Grey17,
-    surfaceContainerHigh = Grey22,
-    surfaceContainerHighest = Grey24,
-    surfaceBright = Grey24,
-    surfaceDim = Grey0,
+    surfaceContainerLowest = DarkLowest,
+    surfaceContainerLow = DarkCard,
+    surfaceContainer = DarkContainer,
+    surfaceContainerHigh = DarkHigh,
+    surfaceContainerHighest = DarkHighest,
+    surfaceBright = DarkHighest,
+    surfaceDim = DarkLowest,
+    surfaceTint = Color.Transparent,
 
-    outline = Grey60,
-    outlineVariant = Grey30,
-    scrim = Grey0,
-    inverseSurface = Grey90,
-    inverseOnSurface = Grey20
+    outline = DarkOutline,
+    outlineVariant = DarkOutlineVariant,
+    scrim = Color.Black,
+    inverseSurface = DarkText,
+    inverseOnSurface = BrandDark
 )
 
-/**
- * AMOLED-режим.
- *
- * Отличается от тёмной темы только уровнями поверхностей: фон чисто
- * чёрный, а «высокие» контейнеры остаются различимыми. Если сделать
- * чёрными все уровни, пропадёт глубина и карточки сольются с фоном —
- * экономия батареи не стоит потери читаемости.
- */
 /**
  * AMOLED-РЕЖИМ.
  *
@@ -171,17 +181,17 @@ private val DarkColors = darkColorScheme(
  * превращается в сплошное полотно текста.
  *
  * Карточки остаются приподнятыми, но темнее, чем в обычной тёмной теме:
- * экономия сохраняется, читаемость тоже.
+ * экономия сохраняется, читаемость тоже. Оттенок — тот же холодный (1.4.0).
  */
 private val AmoledColors = DarkColors.copy(
     background = Color.Black,
     surface = Color.Black,
     surfaceDim = Color.Black,
     surfaceContainerLowest = Color.Black,
-    surfaceContainerLow = Color(0xFF0B0B0C),
-    surfaceContainer = Color(0xFF121314),
-    surfaceContainerHigh = Color(0xFF1A1B1C),
-    surfaceContainerHighest = Color(0xFF222324)
+    surfaceContainerLow = Color(0xFF0E0F11),
+    surfaceContainer = Color(0xFF15171A),
+    surfaceContainerHigh = Color(0xFF1C1E22),
+    surfaceContainerHighest = Color(0xFF26292E)
 )
 
 /**

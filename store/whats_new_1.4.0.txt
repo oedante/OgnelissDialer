@@ -1,189 +1,189 @@
 <ru-RU>
-• Новый вид: современные иконки и экран вызова с фото контакта на весь экран.
-• Карточка контакта: кнопки действий внизу, под большим пальцем; история вызовов по дням; удаление контакта.
-• Свайпы точнее: обычная прокрутка журнала больше не сдвигает строки.
-• Закрепляется контакт целиком — со звонками с любого его номера.
-• Почту контакта можно написать или скопировать; отправку вызовов на голосовую почту — включить и выключить.
+• Новая иконка — в одном стиле с Ogneliss Mail.
+• Спокойнее цвета; в светлой теме белые карточки на сером фоне — группы журнала видно сразу.
+• Клавиатура: цифра слева, буквы столбиком справа — видны и в горизонтальном положении.
+• Экран вызова и карточка: включённая кнопка выделена цветом, остальные нейтральные.
+• Пропущенный вызов отмечен красной датой вместо цветного значка.
 </ru-RU>
 <ar>
-• مظهر جديد: أيقونات حديثة وشاشة مكالمة تعرض صورة جهة الاتصال بملء الشاشة.
-• بطاقة جهة الاتصال: أزرار الإجراءات في الأسفل في متناول الإبهام؛ سجل المكالمات حسب الأيام؛ حذف جهة الاتصال.
-• سحب أدق: التمرير العادي لم يعد يحرك الصفوف جانبًا.
-• يتم تثبيت جهة الاتصال كاملة مع المكالمات من أي من أرقامها.
-• راسل جهة الاتصال بالبريد أو انسخ العنوان؛ تشغيل وإيقاف تحويل المكالمات إلى البريد الصوتي.
+• أيقونة جديدة بنفس أسلوب Ogneliss Mail.
+• ألوان أهدأ؛ في المظهر الفاتح بطاقات بيضاء على خلفية رمادية فتظهر مجموعات السجل فورًا.
+• لوحة الطلب: الرقم يسارًا والأحرف في عمود يمينه، وتظهر أيضًا في الوضع الأفقي.
+• شاشة المكالمة والبطاقة: الزر المفعّل مميز باللون والبقية محايدة.
+• المكالمة الفائتة تُعلَّم بتاريخ أحمر بدل أيقونة ملونة.
 </ar>
 <cs-CZ>
-• Nový vzhled: moderní ikony a obrazovka hovoru s fotkou kontaktu přes celou obrazovku.
-• Karta kontaktu: tlačítka akcí dole, na dosah palce; historie hovorů po dnech; smazání kontaktu.
-• Přesnější přejetí: běžné posouvání už neposouvá řádky do strany.
-• Připíná se celý kontakt — s hovory z kteréhokoli jeho čísla.
-• Napsat kontaktu e-mail nebo zkopírovat adresu; zapnout a vypnout přesměrování do hlasové schránky.
+• Nová ikona ve stejném stylu jako Ogneliss Mail.
+• Klidnější barvy; ve světlém motivu bílé karty na šedém pozadí – skupiny v historii jsou hned vidět.
+• Klávesnice: číslice vlevo, písmena ve sloupci vpravo – viditelná i na šířku.
+• Obrazovka hovoru a karta: zapnuté tlačítko je barevné, ostatní neutrální.
+• Zmeškaný hovor označuje červené datum místo barevné ikony.
 </cs-CZ>
 <da-DK>
-• Nyt udseende: moderne ikoner og en opkaldsskærm med kontaktens foto i fuld skærm.
-• Kontaktkort: handlingsknapper nederst, inden for tommelfingerens rækkevidde; opkaldshistorik pr. dag; slet kontakt.
-• Mere præcise swipes: almindelig rulning flytter ikke længere rækker.
-• Hele kontakten fastgøres — med opkald fra alle dens numre.
-• Skriv til kontakten eller kopiér adressen; slå viderestilling til telefonsvarer til og fra.
+• Nyt ikon i samme stil som Ogneliss Mail.
+• Roligere farver; i lyst tema hvide kort på grå baggrund – grupperne i opkaldsloggen ses med det samme.
+• Tastatur: tal til venstre, bogstaver i en kolonne til højre – synlige også på tværs.
+• Opkaldsskærm og kontaktkort: den aktive knap er farvet, resten neutrale.
+• Ubesvaret opkald markeres med rød dato i stedet for et farvet ikon.
 </da-DK>
 <de-DE>
-• Neues Aussehen: moderne Symbole und ein Anrufbildschirm mit dem Kontaktfoto im Vollbild.
-• Kontaktkarte: Aktionstasten unten, in Daumenreichweite; Anrufverlauf nach Tagen; Kontakt löschen.
-• Präzisere Wischgesten: normales Scrollen verschiebt keine Zeilen mehr.
-• Angeheftet wird der ganze Kontakt — mit Anrufen von jeder seiner Nummern.
-• E-Mail an den Kontakt schreiben oder Adresse kopieren; Anrufe an die Mailbox ein- und ausschalten.
+• Neues Symbol im selben Stil wie Ogneliss Mail.
+• Ruhigere Farben; im hellen Design weiße Karten auf grauem Grund – Gruppen im Anrufprotokoll sofort erkennbar.
+• Wähltastatur: Ziffer links, Buchstaben rechts untereinander – auch im Querformat sichtbar.
+• Anrufbildschirm und Kontaktkarte: aktive Taste farbig, die übrigen neutral.
+• Verpasste Anrufe: rotes Datum statt farbigem Symbol.
 </de-DE>
 <en-US>
-• New look: modern icons and a call screen with the contact's photo in full screen.
-• Contact card: action buttons at the bottom, within thumb reach; call history by day; delete a contact.
-• More precise swipes: normal scrolling no longer moves rows sideways.
-• Pinning now keeps the whole contact — with calls from any of their numbers.
-• Email a contact or copy their address; turn sending calls to voicemail on and off.
+• New icon in the same style as Ogneliss Mail.
+• Calmer colors; the light theme puts white cards on a grey background, so call log groups stand out.
+• Dialpad: digit on the left, letters stacked on the right – visible in landscape too.
+• Call screen and contact card: the active button is highlighted, the rest stay neutral.
+• Missed calls are marked with a red date instead of a colored icon.
 </en-US>
 <es-ES>
-• Nuevo aspecto: iconos modernos y pantalla de llamada con la foto del contacto a pantalla completa.
-• Ficha del contacto: botones de acción abajo, al alcance del pulgar; historial por días; eliminar el contacto.
-• Deslizamientos más precisos: el desplazamiento normal ya no mueve las filas.
-• Se fija el contacto completo, con las llamadas de cualquiera de sus números.
-• Escribir al contacto o copiar su correo; activar y desactivar el desvío al buzón de voz.
+• Nuevo icono con el mismo estilo que Ogneliss Mail.
+• Colores más serenos; en el tema claro, tarjetas blancas sobre fondo gris: los grupos del registro se ven al instante.
+• Teclado: el dígito a la izquierda y las letras en columna a la derecha, visibles también en horizontal.
+• Pantalla de llamada y ficha: el botón activo se resalta en color; el resto, neutros.
+• La llamada perdida se marca con la fecha en rojo en lugar de un icono de color.
 </es-ES>
 <fi-FI>
-• Uusi ilme: modernit kuvakkeet ja puhelunäkymä, jossa yhteystiedon kuva koko näytöllä.
-• Yhteystietokortti: toimintopainikkeet alhaalla peukalon ulottuvilla; puheluhistoria päivittäin; yhteystiedon poisto.
-• Tarkemmat pyyhkäisyt: tavallinen vieritys ei enää siirrä rivejä sivuttain.
-• Kiinnitetään koko yhteystieto – puheluineen kaikista sen numeroista.
-• Lähetä yhteystiedolle sähköpostia tai kopioi osoite; ohjaus vastaajaan päälle ja pois.
+• Uusi kuvake samaan tyyliin kuin Ogneliss Mail.
+• Rauhallisemmat värit; vaaleassa teemassa valkoiset kortit harmaalla pohjalla – puheluhistorian ryhmät erottuvat heti.
+• Näppäimistö: numero vasemmalla, kirjaimet allekkain oikealla – näkyvät myös vaakatasossa.
+• Puhelunäkymä ja yhteystietokortti: päällä oleva painike korostuu värillä, muut neutraaleja.
+• Vastaamaton puhelu merkitään punaisella päivämäärällä värillisen kuvakkeen sijaan.
 </fi-FI>
 <fr-FR>
-• Nouveau look : icônes modernes et écran d'appel avec la photo du contact en plein écran.
-• Fiche du contact : boutons d'action en bas, à portée du pouce ; historique par jour ; suppression du contact.
-• Balayages plus précis : le simple défilement ne décale plus les lignes.
-• On épingle désormais le contact entier, avec les appels de tous ses numéros.
-• Écrire au contact ou copier son e-mail ; activer et désactiver le renvoi vers la messagerie vocale.
+• Nouvelle icône, dans le style d'Ogneliss Mail.
+• Couleurs plus douces ; en thème clair, cartes blanches sur fond gris : les groupes du journal se voient tout de suite.
+• Clavier : chiffre à gauche, lettres en colonne à droite, visibles aussi en paysage.
+• Écran d'appel et fiche : le bouton actif est en couleur, les autres restent neutres.
+• Appel manqué : date en rouge au lieu d'une icône colorée.
 </fr-FR>
 <hi-IN>
-• नया रूप: आधुनिक आइकन और कॉल स्क्रीन पर संपर्क की फ़ोटो पूरी स्क्रीन में।
-• संपर्क कार्ड: कार्रवाई बटन नीचे, अंगूठे की पहुँच में; दिन के अनुसार कॉल इतिहास; संपर्क हटाना।
-• अधिक सटीक स्वाइप: सामान्य स्क्रॉल अब पंक्तियों को नहीं खिसकाता।
-• पूरा संपर्क पिन होता है — उसके किसी भी नंबर से आए कॉल के साथ।
-• संपर्क को ईमेल लिखें या पता कॉपी करें; वॉइसमेल पर कॉल भेजना चालू और बंद करें।
+• नया आइकन, Ogneliss Mail जैसी ही शैली में।
+• शांत रंग; हल्की थीम में ग्रे पृष्ठभूमि पर सफ़ेद कार्ड — कॉल लॉग के समूह तुरंत दिखते हैं।
+• डायल पैड: अंक बाईं ओर, अक्षर दाईं ओर एक के नीचे एक — क्षैतिज स्थिति में भी दिखते हैं।
+• कॉल स्क्रीन और संपर्क कार्ड: चालू बटन रंग से अलग दिखता है, बाकी सामान्य।
+• छूटी कॉल रंगीन आइकन के बजाय लाल तारीख से चिह्नित होती है।
 </hi-IN>
 <hu-HU>
-• Új megjelenés: modern ikonok és hívásképernyő a névjegy fotójával teljes képernyőn.
-• Névjegykártya: műveletgombok alul, hüvelykujjnyi távolságban; hívásnapló naponként; névjegy törlése.
-• Pontosabb húzás: a sima görgetés már nem tolja el a sorokat.
-• Az egész névjegy rögzíthető, bármelyik számáról érkező hívásokkal.
-• E-mail írása a névjegynek vagy a cím másolása; hangpostára irányítás be- és kikapcsolása.
+• Új ikon, az Ogneliss Mail stílusában.
+• Nyugodtabb színek; világos témában fehér kártyák szürke háttéren – a híváslista csoportjai azonnal látszanak.
+• Tárcsázó: a számjegy balra, a betűk jobbra egymás alatt – fekvő helyzetben is látszanak.
+• Hívásképernyő és névjegykártya: a bekapcsolt gomb színes, a többi semleges.
+• A nem fogadott hívást piros dátum jelzi színes ikon helyett.
 </hu-HU>
 <id>
-• Tampilan baru: ikon modern dan layar panggilan dengan foto kontak layar penuh.
-• Kartu kontak: tombol tindakan di bawah, dalam jangkauan jempol; riwayat panggilan per hari; hapus kontak.
-• Geser lebih presisi: gulir biasa tidak lagi menggeser baris.
-• Seluruh kontak disematkan, dengan panggilan dari nomor mana pun miliknya.
-• Kirim email ke kontak atau salin alamatnya; aktifkan dan nonaktifkan pengalihan ke kotak suara.
+• Ikon baru dengan gaya yang sama seperti Ogneliss Mail.
+• Warna lebih tenang; tema terang memakai kartu putih di latar abu-abu, grup riwayat panggilan langsung terlihat.
+• Papan tombol: angka di kiri, huruf bertumpuk di kanan – tetap terlihat dalam mode lanskap.
+• Layar panggilan dan kartu kontak: tombol yang aktif diberi warna, lainnya netral.
+• Panggilan tak terjawab ditandai tanggal merah, bukan ikon berwarna.
 </id>
 <it-IT>
-• Nuovo aspetto: icone moderne e schermata di chiamata con la foto del contatto a schermo intero.
-• Scheda contatto: pulsanti d'azione in basso, a portata di pollice; cronologia per giorni; eliminazione del contatto.
-• Scorrimenti più precisi: lo scorrimento normale non sposta più le righe.
-• Si fissa l'intero contatto, con le chiamate da tutti i suoi numeri.
-• Scrivere al contatto o copiarne l'e-mail; attivare e disattivare l'inoltro alla segreteria.
+• Nuova icona, nello stesso stile di Ogneliss Mail.
+• Colori più tenui; nel tema chiaro schede bianche su fondo grigio: i gruppi del registro si vedono subito.
+• Tastierino: cifra a sinistra, lettere in colonna a destra, visibili anche in orizzontale.
+• Schermata di chiamata e scheda: il pulsante attivo è colorato, gli altri neutri.
+• Chiamata persa segnata con la data in rosso invece di un'icona colorata.
 </it-IT>
 <iw-IL>
-• מראה חדש: סמלים מודרניים ומסך שיחה עם תמונת איש הקשר במסך מלא.
-• כרטיס איש קשר: לחצני פעולה למטה, בהישג האגודל; היסטוריית שיחות לפי ימים; מחיקת איש קשר.
-• החלקות מדויקות יותר: גלילה רגילה כבר לא מזיזה שורות הצידה.
-• מצמידים את איש הקשר כולו — עם שיחות מכל המספרים שלו.
-• כתבו לאיש הקשר בדוא"ל או העתיקו את הכתובת; הפעלה וכיבוי של העברת שיחות לתא הקולי.
+• סמל חדש באותו סגנון של Ogneliss Mail.
+• צבעים רגועים יותר; בערכת הנושא הבהירה כרטיסים לבנים על רקע אפור – קבוצות היומן נראות מיד.
+• לוח החיוג: הספרה משמאל והאותיות בעמודה מימין – נראות גם במצב לרוחב.
+• מסך השיחה וכרטיס איש הקשר: הכפתור הפעיל מודגש בצבע, השאר ניטרליים.
+• שיחה שלא נענתה מסומנת בתאריך אדום במקום בסמל צבעוני.
 </iw-IL>
 <ja-JP>
-• 新しいデザイン：モダンなアイコンと、連絡先の写真を全画面表示する通話画面。
-• 連絡先カード：操作ボタンを親指の届く下部に配置、日ごとの通話履歴、連絡先の削除。
-• スワイプがより正確に：通常のスクロールで行が横にずれなくなりました。
-• 連絡先ごとピン留めでき、どの番号からの通話も表示されます。
-• 連絡先へのメール作成やアドレスのコピー、ボイスメールへの転送のオン・オフ。
+• Ogneliss Mail と同じスタイルの新しいアイコン。
+• 落ち着いた配色に。ライトテーマでは灰色の背景に白いカードで、履歴のグループがひと目で分かります。
+• ダイヤルパッド：数字は左、文字は右に縦並び。横向きでも表示されます。
+• 通話画面と連絡先カード：オンのボタンだけ色付きで、他は控えめに。
+• 不在着信は色付きアイコンではなく赤い日付で表示。
 </ja-JP>
 <ko-KR>
-• 새로운 디자인: 현대적인 아이콘과 연락처 사진을 전체 화면으로 보여주는 통화 화면.
-• 연락처 카드: 엄지가 닿는 아래쪽 작업 버튼, 날짜별 통화 기록, 연락처 삭제.
-• 더 정확한 스와이프: 일반 스크롤로 행이 옆으로 밀리지 않습니다.
-• 연락처 전체를 고정하며, 모든 번호의 통화가 함께 표시됩니다.
-• 연락처에 이메일 쓰기 또는 주소 복사, 음성사서함 연결 켜기와 끄기.
+• Ogneliss Mail과 같은 스타일의 새 아이콘.
+• 차분한 색상; 밝은 테마에서 회색 배경 위 흰색 카드로 통화 기록 그룹이 바로 보입니다.
+• 다이얼패드: 숫자는 왼쪽, 글자는 오른쪽에 세로로 — 가로 화면에서도 보입니다.
+• 통화 화면과 연락처 카드: 켜진 버튼만 색으로 강조, 나머지는 중립색.
+• 부재중 전화는 색 아이콘 대신 빨간 날짜로 표시됩니다.
 </ko-KR>
 <nl-NL>
-• Nieuw uiterlijk: moderne pictogrammen en een belscherm met de contactfoto op volledig scherm.
-• Contactkaart: actieknoppen onderaan, binnen bereik van je duim; belgeschiedenis per dag; contact verwijderen.
-• Nauwkeuriger vegen: gewoon scrollen verschuift geen rijen meer.
-• Het hele contact wordt vastgezet, met oproepen van al zijn nummers.
-• Het contact mailen of het adres kopiëren; doorsturen naar voicemail aan- en uitzetten.
+• Nieuw pictogram in dezelfde stijl als Ogneliss Mail.
+• Rustigere kleuren; in het lichte thema witte kaarten op grijze achtergrond – groepen in de oproeplijst zie je meteen.
+• Kiesblok: cijfer links, letters onder elkaar rechts – ook liggend zichtbaar.
+• Belscherm en contactkaart: de actieve knop is gekleurd, de rest neutraal.
+• Gemiste oproep gemarkeerd met een rode datum in plaats van een gekleurd pictogram.
 </nl-NL>
 <no-NO>
-• Nytt utseende: moderne ikoner og en samtaleskjerm med kontaktens bilde i fullskjerm.
-• Kontaktkort: handlingsknapper nederst, innenfor tommelens rekkevidde; anropslogg per dag; slett kontakt.
-• Mer presise sveip: vanlig rulling flytter ikke lenger rader til siden.
-• Hele kontakten festes — med anrop fra alle numrene.
-• Send e-post til kontakten eller kopier adressen; slå viderekobling til talepost av og på.
+• Nytt ikon i samme stil som Ogneliss Mail.
+• Roligere farger; i lyst tema hvite kort på grå bakgrunn – gruppene i anropsloggen ses med en gang.
+• Tastatur: tall til venstre, bokstaver i kolonne til høyre – synlige også liggende.
+• Anropsskjerm og kontaktkort: aktiv knapp er farget, resten nøytrale.
+• Tapt anrop markeres med rød dato i stedet for et farget ikon.
 </no-NO>
 <pl-PL>
-• Nowy wygląd: nowoczesne ikony i ekran połączenia ze zdjęciem kontaktu na pełnym ekranie.
-• Karta kontaktu: przyciski akcji na dole, pod kciukiem; historia połączeń według dni; usuwanie kontaktu.
-• Dokładniejsze przesunięcia: zwykłe przewijanie nie przesuwa już wierszy.
-• Przypina się cały kontakt — z połączeniami z każdego jego numeru.
-• Napisz e-mail do kontaktu lub skopiuj adres; włączanie i wyłączanie przekierowania na pocztę głosową.
+• Nowa ikona w stylu Ogneliss Mail.
+• Spokojniejsze kolory; w jasnym motywie białe karty na szarym tle – grupy w historii połączeń widać od razu.
+• Klawiatura: cyfra po lewej, litery w kolumnie po prawej – widoczne także w poziomie.
+• Ekran połączenia i karta kontaktu: włączony przycisk wyróżniony kolorem, pozostałe neutralne.
+• Nieodebrane połączenie oznaczone czerwoną datą zamiast kolorowej ikony.
 </pl-PL>
 <pt-BR>
-• Novo visual: ícones modernos e tela de chamada com a foto do contato em tela cheia.
-• Cartão do contato: botões de ação embaixo, ao alcance do polegar; histórico por dia; excluir contato.
-• Deslizes mais precisos: a rolagem normal não move mais as linhas.
-• Fixa-se o contato inteiro, com chamadas de qualquer um dos números.
-• Enviar e-mail ao contato ou copiar o endereço; ativar e desativar o envio de chamadas ao correio de voz.
+• Novo ícone no mesmo estilo do Ogneliss Mail.
+• Cores mais suaves; no tema claro, cartões brancos sobre fundo cinza: os grupos do histórico aparecem de imediato.
+• Teclado: dígito à esquerda e letras em coluna à direita, visíveis também na horizontal.
+• Tela de chamada e cartão do contato: o botão ativo fica colorido; os demais, neutros.
+• Chamada perdida marcada com data em vermelho em vez de um ícone colorido.
 </pt-BR>
 <ro>
-• Aspect nou: pictograme moderne și ecran de apel cu fotografia contactului pe tot ecranul.
-• Fișa contactului: butoane de acțiune jos, la îndemâna degetului mare; istoric pe zile; ștergerea contactului.
-• Glisări mai precise: derularea obișnuită nu mai mută rândurile.
-• Se fixează întregul contact, cu apelurile de pe oricare dintre numerele sale.
-• Scrieți un e-mail contactului sau copiați adresa; activați și dezactivați redirecționarea către mesageria vocală.
+• Pictogramă nouă, în același stil cu Ogneliss Mail.
+• Culori mai calme; în tema deschisă, carduri albe pe fundal gri – grupurile din jurnal se văd imediat.
+• Tastatura: cifra în stânga, literele în coloană în dreapta – vizibile și pe orizontală.
+• Ecranul apelului și fișa contactului: butonul activ e colorat, celelalte neutre.
+• Apelul pierdut e marcat cu data în roșu în loc de o pictogramă colorată.
 </ro>
 <sk>
-• Nový vzhľad: moderné ikony a obrazovka hovoru s fotkou kontaktu na celú obrazovku.
-• Karta kontaktu: tlačidlá akcií dole, na dosah palca; história hovorov po dňoch; odstránenie kontaktu.
-• Presnejšie potiahnutia: bežné posúvanie už neposúva riadky do strany.
-• Pripína sa celý kontakt — s hovormi z ktoréhokoľvek jeho čísla.
-• Napísať kontaktu e-mail alebo skopírovať adresu; zapnúť a vypnúť presmerovanie do hlasovej schránky.
+• Nová ikona v rovnakom štýle ako Ogneliss Mail.
+• Pokojnejšie farby; vo svetlom motíve biele karty na sivom pozadí – skupiny v histórii hovorov vidno hneď.
+• Klávesnica: číslica vľavo, písmená v stĺpci vpravo – viditeľné aj na šírku.
+• Obrazovka hovoru a karta kontaktu: zapnuté tlačidlo je farebné, ostatné neutrálne.
+• Zmeškaný hovor označuje červený dátum namiesto farebnej ikony.
 </sk>
 <sv-SE>
-• Nytt utseende: moderna ikoner och en samtalsskärm med kontaktens foto i helskärm.
-• Kontaktkort: åtgärdsknappar längst ned, inom tummens räckvidd; samtalshistorik per dag; ta bort kontakt.
-• Precisare svep: vanlig rullning flyttar inte längre rader i sidled.
-• Hela kontakten fästs — med samtal från alla dess nummer.
-• Mejla kontakten eller kopiera adressen; slå på och av vidarekoppling till röstbrevlådan.
+• Ny ikon i samma stil som Ogneliss Mail.
+• Lugnare färger; i ljust tema vita kort på grå bakgrund – grupperna i samtalsloggen syns direkt.
+• Knappsats: siffra till vänster, bokstäver i kolumn till höger – syns även liggande.
+• Samtalsskärm och kontaktkort: den aktiva knappen är färgad, övriga neutrala.
+• Missat samtal markeras med rött datum i stället för en färgad ikon.
 </sv-SE>
 <th>
-• รูปลักษณ์ใหม่: ไอคอนทันสมัยและหน้าจอการโทรที่แสดงรูปผู้ติดต่อเต็มจอ
-• การ์ดผู้ติดต่อ: ปุ่มการทำงานอยู่ด้านล่างในระยะนิ้วโป้ง ประวัติการโทรแยกตามวัน ลบผู้ติดต่อได้
-• ปัดได้แม่นยำขึ้น: การเลื่อนปกติไม่ทำให้แถวเลื่อนออกด้านข้างอีกต่อไป
-• ปักหมุดผู้ติดต่อทั้งคน พร้อมสายจากทุกหมายเลขของเขา
-• ส่งอีเมลถึงผู้ติดต่อหรือคัดลอกที่อยู่ เปิดและปิดการโอนสายไปยังข้อความเสียงได้
+• ไอคอนใหม่ในสไตล์เดียวกับ Ogneliss Mail
+• สีสบายตาขึ้น ธีมสว่างใช้การ์ดสีขาวบนพื้นเทา เห็นกลุ่มในประวัติการโทรได้ทันที
+• แป้นกด: ตัวเลขอยู่ซ้าย ตัวอักษรเรียงแนวตั้งด้านขวา มองเห็นได้แม้ในแนวนอน
+• หน้าจอการโทรและการ์ดผู้ติดต่อ: ปุ่มที่เปิดอยู่จะมีสี ปุ่มอื่นเป็นสีกลาง
+• สายที่ไม่ได้รับแสดงด้วยวันที่สีแดงแทนไอคอนสี
 </th>
 <tr-TR>
-• Yeni görünüm: modern simgeler ve kişinin fotoğrafını tam ekran gösteren arama ekranı.
-• Kişi kartı: işlem düğmeleri altta, başparmağın erişiminde; günlere göre arama geçmişi; kişiyi silme.
-• Daha hassas kaydırma: normal kaydırma artık satırları yana kaydırmıyor.
-• Kişinin tamamı sabitlenir; tüm numaralarından gelen aramalarla birlikte.
-• Kişiye e-posta yazın veya adresi kopyalayın; sesli mesaja yönlendirmeyi açıp kapatın.
+• Ogneliss Mail ile aynı tarzda yeni simge.
+• Daha sakin renkler; açık temada gri zemin üzerinde beyaz kartlar – arama geçmişindeki gruplar hemen seçiliyor.
+• Tuş takımı: rakam solda, harfler sağda alt alta – yatay konumda da görünür.
+• Arama ekranı ve kişi kartı: açık olan düğme renkli, diğerleri nötr.
+• Cevapsız arama, renkli simge yerine kırmızı tarihle işaretlenir.
 </tr-TR>
 <vi>
-• Giao diện mới: biểu tượng hiện đại và màn hình cuộc gọi với ảnh liên hệ toàn màn hình.
-• Thẻ liên hệ: nút thao tác ở dưới, trong tầm ngón cái; lịch sử cuộc gọi theo ngày; xóa liên hệ.
-• Vuốt chính xác hơn: cuộn thông thường không còn làm lệch hàng.
-• Ghim toàn bộ liên hệ, kèm cuộc gọi từ bất kỳ số nào của họ.
-• Gửi email cho liên hệ hoặc sao chép địa chỉ; bật và tắt chuyển cuộc gọi vào hộp thư thoại.
+• Biểu tượng mới cùng phong cách với Ogneliss Mail.
+• Màu sắc dịu hơn; giao diện sáng dùng thẻ trắng trên nền xám, các nhóm trong nhật ký cuộc gọi hiện rõ ngay.
+• Bàn phím: chữ số bên trái, chữ cái xếp dọc bên phải – vẫn hiện khi xoay ngang.
+• Màn hình cuộc gọi và thẻ liên hệ: nút đang bật được tô màu, các nút khác trung tính.
+• Cuộc gọi nhỡ được đánh dấu bằng ngày màu đỏ thay cho biểu tượng màu.
 </vi>
 <zh-CN>
-• 全新外观：现代化图标，通话界面全屏显示联系人照片。
-• 联系人卡片：操作按钮移至底部，拇指即可触及；通话记录按日分组；可删除联系人。
-• 滑动更精准：正常滚动不再使行左右移动。
-• 置顶整个联系人，显示其所有号码的通话。
-• 可给联系人写邮件或复制地址；可开启或关闭将来电转至语音信箱。
+• 全新图标，与 Ogneliss Mail 风格一致。
+• 配色更柔和；浅色主题为灰色背景上的白色卡片，通话记录分组一目了然。
+• 拨号键盘：数字在左，字母竖排在右，横屏时同样可见。
+• 通话界面和联系人卡片：开启的按钮以颜色突出，其余为中性色。
+• 未接来电以红色日期标记，不再使用彩色图标。
 </zh-CN>

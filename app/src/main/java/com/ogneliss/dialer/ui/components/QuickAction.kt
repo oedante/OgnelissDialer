@@ -98,7 +98,9 @@ fun RowScope.QuickAction(
                     // С подписью описание не нужно: TalkBack прочёл бы
                     // его дважды. Без подписи — нужно, иначе кнопка немая
                     contentDescription = if (labelsShown) null else label,
-                    tint = tint ?: MaterialTheme.colorScheme.primary
+                    // Нейтральный, а не синий (1.4.0): цвет остаётся у действий
+                    // со смыслом — зелёный звонок, красная блокировка
+                    tint = tint ?: MaterialTheme.colorScheme.onSurface
                 )
             }
         }
