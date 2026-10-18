@@ -447,6 +447,12 @@ object SettingsRegistry {
             groupRes = R.string.settings_group_during_call
         ),
         SettingEntry(
+            "call_photo_style", SettingsCategory.CALLS,
+            R.string.settings_call_photo, R.string.settings_call_photo_text,
+            SettingKind.Choice("call_photo_style"),
+            groupRes = R.string.settings_group_during_call
+        ),
+        SettingEntry(
             "call_animation", SettingsCategory.CALLS,
             R.string.settings_call_animation, R.string.settings_call_animation_text,
             SettingKind.Switch("call_animation"),

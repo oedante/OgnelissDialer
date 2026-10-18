@@ -656,6 +656,11 @@
     <string name="settings_hide_contact_number">Тип номера вместо номера</string>
     <string name="settings_call_animation">Живой фон вызова</string>
     <string name="settings_call_animation_text">За экраном вызова медленно плывут мягкие пятна цветов темы. Неподвижен, если анимация отключена в настройках системы</string>
+    <string name="settings_call_photo">Фото на экране вызова</string>
+    <string name="settings_call_photo_text">Как показывать фото звонящего: фоном на весь экран или портретом в круге или квадрате над именем</string>
+    <string name="call_photo_full_screen">На весь экран</string>
+    <string name="call_photo_circle">Круг</string>
+    <string name="call_photo_square">Квадрат</string>
     <string name="settings_hide_contact_number_text">На экране вызова у сохранённых контактов — «Мобильный», «Рабочий» вместо цифр. Незнакомые номера показываются всегда</string>
     <string name="language_search_hint">Поиск языка</string>
     <string name="language_auto_translated">автоперевод</string>

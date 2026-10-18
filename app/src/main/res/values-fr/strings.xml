@@ -651,6 +651,11 @@
     <string name="settings_hide_contact_number">Type de numéro au lieu du numéro</string>
     <string name="settings_call_animation">Fond d’appel animé</string>
     <string name="settings_call_animation_text">Des formes douces aux couleurs du thème glissent lentement derrière l’écran d’appel. Fond immobile si les animations sont désactivées dans les réglages du système</string>
+    <string name="settings_call_photo">Photo du contact pendant l’appel</string>
+    <string name="settings_call_photo_text">Affichage de la photo de l’appelant : en arrière-plan plein écran ou en portrait dans un cercle ou un carré au-dessus du nom</string>
+    <string name="call_photo_full_screen">Plein écran</string>
+    <string name="call_photo_circle">Cercle</string>
+    <string name="call_photo_square">Carré</string>
     <string name="settings_hide_contact_number_text">Sur l’écran d’appel, les contacts enregistrés affichent « Mobile », « Travail », etc. au lieu des chiffres. Les numéros inconnus restent toujours visibles</string>
     <string name="language_search_hint">Rechercher une langue</string>
     <string name="language_auto_translated">traduction automatique</string>

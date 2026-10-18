@@ -655,6 +655,11 @@
     <string name="settings_hide_contact_number">Nummerntyp statt Nummer</string>
     <string name="settings_call_animation">Lebendiger Anrufhintergrund</string>
     <string name="settings_call_animation_text">Hinter dem Anrufbildschirm ziehen langsam weiche Flächen in den Farben des Designs. Bleibt still, wenn Animationen in den Systemeinstellungen aus sind</string>
+    <string name="settings_call_photo">Kontaktfoto beim Anruf</string>
+    <string name="settings_call_photo_text">Wie das Foto des Anrufers erscheint: als Vollbild-Hintergrund oder als Porträt im Kreis oder Quadrat über dem Namen</string>
+    <string name="call_photo_full_screen">Vollbild</string>
+    <string name="call_photo_circle">Kreis</string>
+    <string name="call_photo_square">Quadrat</string>
     <string name="settings_hide_contact_number_text">Im Anrufbildschirm zeigen gespeicherte Kontakte „Mobil“, „Arbeit“ usw. statt Ziffern. Unbekannte Nummern werden immer angezeigt</string>
     <string name="language_search_hint">Sprache suchen</string>
     <string name="language_auto_translated">automatisch übersetzt</string>

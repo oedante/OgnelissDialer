@@ -122,6 +122,31 @@ enum class CarrierInfoMode {
 }
 
 /**
+ * ФОТО ЗВОНЯЩЕГО НА ЭКРАНЕ ВЫЗОВА (1.5.5, отзыв в Google Play: «можно ли
+ * при звонках фото контакта не на весь экран, а в круге или квадрате,
+ * среднего размера»).
+ *
+ * • CIRCLE — портрет в круге над именем, за ним живой фон, волны
+ *   расходятся от края портрета. ПО УМОЛЧАНИЮ (автор, 18.10: «этот режим
+ *   сделаем по умолчанию») — и для тех, кто настройку не трогал.
+ * • FULL_SCREEN — фото фоном на весь экран (как в 1.3.4–1.5.4).
+ * • SQUARE — то же в скруглённом квадрате.
+ *
+ * Лёжа и в позе «ноутбук» фото на весь экран не помещается и раньше —
+ * там всегда портрет; квадрат и круг там выбираются этой настройкой.
+ */
+enum class CallPhotoStyle {
+    CIRCLE,
+    SQUARE,
+    FULL_SCREEN;
+
+    companion object {
+        fun from(name: String?): CallPhotoStyle =
+            entries.firstOrNull { it.name == name } ?: CIRCLE
+    }
+}
+
+/**
  * ВИД ЖУРНАЛА: КАЖДАЯ ЗАПИСЬ КАРТОЧКОЙ ИЛИ ЗАПИСИ ГРУППОЙ.
  *
  * CARDS — каждая запись — отдельная скруглённая карточка с зазором.
@@ -273,6 +298,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val CALL_HIDE_CONTACT_NUMBER = booleanPreferencesKey("call_hide_contact_number")
         /** Живой фон экрана вызова (1.5.1, по умолчанию вкл.). */
         val CALL_ANIMATION = booleanPreferencesKey("call_animation")
+        /** Фото звонящего: на весь экран, круг или квадрат (1.5.5). */
+        val CALL_PHOTO_STYLE = stringPreferencesKey("call_photo_style")
         // Поведение
         val HAPTIC = booleanPreferencesKey("haptic")
         val KEY_TONES = booleanPreferencesKey("key_tones")
@@ -496,6 +523,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      * и без этой настройки (call/CallAmbientBackground.kt).
      */
     val callAnimation: Flow<Boolean> = data.map { it[Keys.CALL_ANIMATION] ?: true }
+
+    /** Фото звонящего на экране вызова (1.5.5): разбор в CallPhotoStyle. */
+    val callPhotoStyle: Flow<CallPhotoStyle> = data.map { CallPhotoStyle.from(it[Keys.CALL_PHOTO_STYLE]) }
 
     // ── Поведение ──────────────────────────────────────────────────────────
     val haptic: Flow<Boolean> = data.map { it[Keys.HAPTIC] ?: true }
@@ -744,6 +774,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("call_hide_contact_number", v) { it[Keys.CALL_HIDE_CONTACT_NUMBER] = v }
     suspend fun setCallAnimation(v: Boolean) =
         edit("call_animation", v) { it[Keys.CALL_ANIMATION] = v }
+    suspend fun setCallPhotoStyle(v: CallPhotoStyle) =
+        edit("call_photo_style", v.name) { it[Keys.CALL_PHOTO_STYLE] = v.name }
     suspend fun setHaptic(v: Boolean) = edit("haptic", v) { it[Keys.HAPTIC] = v }
     suspend fun setKeyTones(v: Boolean) = edit("key_tones", v) { it[Keys.KEY_TONES] = v }
     suspend fun setGroupingMode(v: GroupingMode) =

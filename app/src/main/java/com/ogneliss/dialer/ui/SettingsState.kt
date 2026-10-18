@@ -3,6 +3,7 @@ package com.ogneliss.dialer.ui
 import androidx.compose.runtime.Immutable
 
 import com.ogneliss.dialer.settings.CarrierInfoMode
+import com.ogneliss.dialer.settings.CallPhotoStyle
 import com.ogneliss.dialer.settings.JournalStyle
 import com.ogneliss.dialer.settings.GroupingMode
 import com.ogneliss.dialer.data.NotesRetention
@@ -41,6 +42,8 @@ data class SettingsState(
     val callHideContactNumber: Boolean = false,
     /** Живой фон экрана вызова (1.5.1). */
     val callAnimation: Boolean = true,
+    /** Фото звонящего: на весь экран, круг или квадрат (1.5.5). */
+    val callPhotoStyle: CallPhotoStyle = CallPhotoStyle.CIRCLE,
     /** Шапка меню записи в цвете темы (1.3.5). */
     val sheetHeaderTint: Boolean = true,
     /** «Написать»: установленные мессенджеры для любого номера (1.3.5). */

@@ -86,6 +86,9 @@ fun SettingsChoiceDialog(
             "GROUPS" to stringResource(R.string.journal_style_groups)
         )
 
+        "call_photo_style" -> com.ogneliss.dialer.settings.CallPhotoStyle.entries.map {
+            it.name to stringResource(SettingsCommands.callPhotoStyleLabelRes(it))
+        }
         "carrier_info" -> listOf(
             "UNKNOWN_ONLY" to stringResource(R.string.carrier_info_unknown),
             "ALL" to stringResource(R.string.carrier_info_all),

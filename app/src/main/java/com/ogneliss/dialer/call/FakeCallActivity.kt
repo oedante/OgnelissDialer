@@ -45,6 +45,9 @@ import com.ogneliss.dialer.ui.theme.DeclineRed
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.ui.theme.OgnelissDialerTheme
 import com.ogneliss.dialer.settings.ThemeMode
+import com.ogneliss.dialer.settings.CallPhotoStyle
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
 import com.ogneliss.dialer.util.PhoneFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -116,6 +119,8 @@ class FakeCallActivity : ComponentActivity() {
             val dynamic by prefs.dynamicColor.collectAsStateWithLifecycle(false)
             // Живой фон — как у настоящего вызова (1.5.1)
             val callAnimation by prefs.callAnimation.collectAsStateWithLifecycle(true)
+            // Фото звонящего — как у настоящего вызова (1.5.5); null — ещё не прочитано
+            val callPhotoStyle by prefs.callPhotoStyle.collectAsStateWithLifecycle<CallPhotoStyle?>(null)
 
             /*
              * Кто «звонит».
@@ -163,6 +168,7 @@ class FakeCallActivity : ComponentActivity() {
                     number = callerNumber,
                     photoUri = photo,
                     ambientBackground = callAnimation && theme != ThemeMode.HIGH_CONTRAST,
+                    photoStyle = callPhotoStyle,
                     onAnswer = { stopRinging() },
                     onHangUp = { finish() }
                 )
@@ -223,6 +229,8 @@ private fun FakeCallScreen(
     photoUri: String?,
     /** Живой фон (CallAmbientBackground.kt); без фото на весь экран. */
     ambientBackground: Boolean = false,
+    /** Фото: круг, квадрат или на весь экран (1.5.5); null — ещё не прочитано. */
+    photoStyle: CallPhotoStyle? = CallPhotoStyle.CIRCLE,
     onAnswer: () -> Unit,
     onHangUp: () -> Unit
 ) {
@@ -262,7 +270,12 @@ private fun FakeCallScreen(
      * Вид — как у настоящего вызова (1.3.4): фото на весь экран в портретной
      * раскладке, светлый текст поверх, кнопки в нижней панели.
      */
-    val photoBackground = !LocalWindowLayout.current.isShort && !photoUri.isNullOrBlank()
+    val short = LocalWindowLayout.current.isShort
+    val photoBackground = photoStyle == CallPhotoStyle.FULL_SCREEN && !short && !photoUri.isNullOrBlank()
+    // Портрет над именем и волны от него — как у настоящего вызова (1.5.5)
+    val showPortrait = photoStyle != null && !photoUri.isNullOrBlank() && !photoBackground
+    val squarePortrait = photoStyle == CallPhotoStyle.SQUARE
+    var portraitFocus by remember { mutableStateOf<AmbientFocus?>(null) }
     LightStatusIconsOnPhoto(photoBackground)
     // Живой фон — по тем же состояниям, что у настоящего вызова
     val ambient = ambientBackground && !photoBackground
@@ -274,7 +287,8 @@ private fun FakeCallScreen(
                 !answered -> AmbientMood.INCOMING
                 holding -> AmbientMood.HOLDING
                 else -> AmbientMood.ACTIVE
-            }
+            },
+            focus = { if (showPortrait) portraitFocus else null }
         )
     }
     NavBarUnderPanel()
@@ -292,6 +306,20 @@ private fun FakeCallScreen(
                 Modifier.padding(top = Space.xl, start = FlowUi.contentPadding, end = FlowUi.contentPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                if (showPortrait) {
+                    CallerAvatar(
+                        photoUri = photoUri,
+                        size = if (short) FlowUi.callPortraitSizeLandscape else FlowUi.callPortraitSize,
+                        square = squarePortrait,
+                        modifier = Modifier.onGloballyPositioned { coords ->
+                            val bounds = coords.boundsInRoot()
+                            val half = bounds.width / 2f
+                            // У квадрата волна — от углов (как SQUARE_FOCUS в InCallActivity)
+                            portraitFocus = AmbientFocus(bounds.center, if (squarePortrait) half * 1.25f else half)
+                        }
+                    )
+                    Spacer(Modifier.height(if (short) Space.m else Space.l))
+                }
                 Text(
                     name,
                     fontSize = FlowUi.callNameSize,

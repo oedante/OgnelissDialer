@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -37,6 +38,7 @@ import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.hypot
+import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -104,8 +106,25 @@ fun ambientMoodOf(state: Int): AmbientMood = when (state) {
     else -> AmbientMood.CONNECTING
 }
 
+/**
+ * Откуда расходятся волны: центр и радиус портрета звонящего в координатах
+ * окна (1.5.5). Волна рождается гребнем у края портрета, свечение — вокруг
+ * него. Нет портрета (фото нет) — волны идут от имени (RING_CENTER_Y).
+ */
+@Immutable
+data class AmbientFocus(val center: Offset, val radius: Float)
+
 @Composable
-fun CallAmbientBackground(mood: AmbientMood, modifier: Modifier = Modifier) {
+fun CallAmbientBackground(
+    mood: AmbientMood,
+    modifier: Modifier = Modifier,
+    /**
+     * Портрет, от которого расходятся волны. Лямбда, а не значение:
+     * читается в кадре, и сдвиг портрета (ответ на вызов меняет высоту
+     * блока) не пересобирает экран, а только перерисовывает фон.
+     */
+    focus: () -> AmbientFocus? = { null }
+) {
     val scheme = MaterialTheme.colorScheme
 
     /*
@@ -277,14 +296,23 @@ fun CallAmbientBackground(mood: AmbientMood, modifier: Modifier = Modifier) {
                 )
 
                 val strength = ringStrength
-                val center = Offset(w / 2f, size.height * RING_CENTER_Y)
+                val target = focus()
+                val center = target?.center ?: Offset(w / 2f, size.height * RING_CENTER_Y)
+                // С портретом волна рождается гребнем у его края: гребень
+                // текстуры — на RING_CREST[0] её радиуса
+                val ringStart = target?.let { it.radius / RING_CREST[0] } ?: (w * RING_START)
+                // От портрета волна видна сразу у края; без него — проявляется
+                // по пути, иначе возникала бы из ниоткуда посреди экрана
+                val appear = if (target != null) RING_APPEAR_FROM_PORTRAIT else RING_APPEAR
+                val haloBase = target?.let { max(w * HALO_RADIUS, it.radius * HALO_OVER_PORTRAIT) }
+                    ?: (w * HALO_RADIUS)
                 val ripplePhase = ripple.floatValue
 
                 // Свечение за именем: вспыхивает с рождением каждой волны
                 if (strength > 0f) {
                     val since = (ripplePhase * RINGS) % 1f
                     val pulse = (1f - since) * (1f - since)
-                    val haloR = w * HALO_RADIUS * (1f + 0.08f * pulse)
+                    val haloR = haloBase * (1f + 0.08f * pulse)
                     val haloD = (haloR * 2f).roundToInt()
                     drawImage(
                         image = blob,
@@ -301,8 +329,8 @@ fun CallAmbientBackground(mood: AmbientMood, modifier: Modifier = Modifier) {
                 // Волны: RINGS колец со сдвигом в долю периода
                 for (i in 0 until RINGS) {
                     val p = (ripplePhase + i.toFloat() / RINGS) % 1f
-                    val alpha = strength * smoothstep(0f, RING_APPEAR, p) * (1f - p).pow(RING_FADE_POWER)
-                    val radius = w * (RING_START + RING_TRAVEL * p)
+                    val alpha = strength * smoothstep(0f, appear, p) * (1f - p).pow(RING_FADE_POWER)
+                    val radius = ringStart + w * RING_TRAVEL * p
                     // Толщина: 0 — узкий гребень, last — широкая полоса
                     val spread = p.pow(0.75f) * (rings.size - 1)
                     val k = spread.toInt().coerceAtMost(rings.size - 2)
@@ -495,11 +523,14 @@ private const val RING_START = 0.16f
 private const val RING_TRAVEL = 1.10f
 /** Доля пути, за которую волна проявляется, и крутизна угасания. */
 private const val RING_APPEAR = 0.10f
+private const val RING_APPEAR_FROM_PORTRAIT = 0.03f
 private const val RING_FADE_POWER = 2.4f
 /** «Дыхание» волны: сплюснутость ± 3,5 %. */
 private const val RING_WOBBLE = 0.035f
 /** Свечение за именем — радиус в долях ширины экрана. */
 private const val HALO_RADIUS = 0.30f
+/** Свечение вокруг портрета — не меньше 1,7 его радиуса: видно из-за краёв. */
+private const val HALO_OVER_PORTRAIT = 1.7f
 /** Искры: число, чисел на искру, нижняя граница и путь (доли высоты). */
 private const val SPARKS = 10
 private const val SPARK_FIELDS = 5

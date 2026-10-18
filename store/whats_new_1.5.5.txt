@@ -1,134 +1,161 @@
 <ru-RU>
+• Фото звонящего — в круге (по умолчанию), в квадрате или на весь экран: Настройки → Вызовы. Волны расходятся от портрета.
 • Новый значок приложения в спокойных тонах.
 • Оформление мягче: скруглённые углы, лёгкие разделы без жёстких линий.
 • На экране вызова волны расширяются и тают по мере удаления, добавлены мягкое свечение и искры.
 </ru-RU>
 <ar>
+• صورة المتصل داخل دائرة (افتراضيًا) أو مربع أو بملء الشاشة: الإعدادات ← المكالمات. تنطلق الموجات من الصورة.
 • أيقونة جديدة للتطبيق بألوان هادئة.
 • تصميم أنعم: زوايا مستديرة وأقسام خفيفة بلا خطوط حادة.
 • في شاشة المكالمة تتسع الموجات وتتلاشى كلما ابتعدت، مع توهج ناعم وشرارات.
 </ar>
 <cs-CZ>
+• Fotka volajícího v kruhu (výchozí), ve čtverci nebo přes celou obrazovku: Nastavení → Hovory. Vlny vycházejí z portrétu.
 • Nová ikona aplikace v klidných tónech.
 • Jemnější vzhled: zaoblené rohy a lehké sekce bez ostrých čar.
 • Na obrazovce hovoru se vlny s rostoucí vzdáleností rozšiřují a mizí, přibyla jemná záře a jiskry.
 </cs-CZ>
 <da-DK>
+• Opkalderens foto i en cirkel (standard), et kvadrat eller i fuld skærm: Indstillinger → Opkald. Bølgerne udgår fra portrættet.
 • Nyt appikon i rolige farver.
 • Blødere udseende: afrundede hjørner og lette sektioner uden skarpe linjer.
 • På opkaldsskærmen bliver bølgerne bredere og falmer med afstanden, med blødt skær og gnister.
 </da-DK>
 <de-DE>
+• Foto des Anrufers im Kreis (Standard), im Quadrat oder als Vollbild: Einstellungen → Anrufe. Die Wellen gehen vom Porträt aus.
 • Neues App-Symbol in ruhigen Farben.
 • Sanftere Gestaltung: abgerundete Ecken und leichte Abschnitte ohne harte Linien.
 • Auf dem Anrufbildschirm werden die Wellen mit der Entfernung breiter und blasser, dazu sanftes Leuchten und Funken.
 </de-DE>
 <en-US>
+• Caller photo in a circle (default), a square or full screen: Settings → Calls. Waves now ripple out from the portrait.
 • New app icon in calm tones.
 • Softer look: rounded corners and light sections without harsh lines.
 • On the call screen, waves widen and fade as they spread, with a soft glow and sparkles.
 </en-US>
 <es-ES>
+• Foto de quien llama en un círculo (predeterminado), un cuadrado o a pantalla completa: Ajustes → Llamadas. Las ondas salen del retrato.
 • Nuevo icono de la app en tonos tranquilos.
 • Aspecto más suave: esquinas redondeadas y secciones ligeras sin líneas duras.
 • En la pantalla de llamada, las ondas se ensanchan y se desvanecen al alejarse, con un brillo suave y destellos.
 </es-ES>
 <fi-FI>
+• Soittajan kuva ympyrässä (oletus), neliössä tai koko näytöllä: Asetukset → Puhelut. Aallot lähtevät muotokuvasta.
 • Uusi sovelluskuvake rauhallisin sävyin.
 • Pehmeämpi ulkoasu: pyöristetyt kulmat ja kevyet osiot ilman teräviä viivoja.
 • Puhelunäkymässä aallot levenevät ja haalistuvat etääntyessään, lisäksi pehmeä hehku ja kipinät.
 </fi-FI>
 <fr-FR>
+• Photo de l’appelant dans un cercle (par défaut), un carré ou en plein écran : Paramètres → Appels. Les vagues partent du portrait.
 • Nouvelle icône de l’application aux tons apaisés.
 • Style plus doux : coins arrondis et sections légères sans lignes dures.
 • Sur l’écran d’appel, les vagues s’élargissent et s’estompent en s’éloignant, avec une lueur douce et des étincelles.
 </fr-FR>
 <hi-IN>
+• कॉल करने वाले की फ़ोटो गोले (डिफ़ॉल्ट), वर्ग या पूरी स्क्रीन में: सेटिंग्स → कॉल। तरंगें पोर्ट्रेट से फैलती हैं।
 • शांत रंगों में ऐप का नया आइकन।
 • नरम रूप: गोल कोने और बिना कठोर रेखाओं वाले हल्के अनुभाग।
 • कॉल स्क्रीन पर तरंगें दूर जाते हुए चौड़ी और धुंधली होती हैं, साथ में कोमल चमक और चिंगारियाँ।
 </hi-IN>
 <hu-HU>
+• A hívó fotója körben (alapértelmezett), négyzetben vagy teljes képernyőn: Beállítások → Hívások. A hullámok a portréból indulnak.
 • Új, nyugodt tónusú alkalmazásikon.
 • Lágyabb megjelenés: lekerekített sarkok, könnyed szakaszok éles vonalak nélkül.
 • A hívásképernyőn a hullámok távolodva kiszélesednek és elhalványulnak, lágy ragyogással és szikrákkal.
 </hu-HU>
 <id>
+• Foto penelepon dalam lingkaran (bawaan), persegi, atau layar penuh: Setelan → Panggilan. Gelombang memancar dari potret.
 • Ikon aplikasi baru dengan warna yang tenang.
 • Tampilan lebih lembut: sudut membulat dan bagian ringan tanpa garis tegas.
 • Di layar panggilan, gelombang melebar dan memudar saat menjauh, dengan cahaya lembut dan percikan.
 </id>
 <it-IT>
+• Foto di chi chiama in un cerchio (predefinito), in un quadrato o a schermo intero: Impostazioni → Chiamate. Le onde partono dal ritratto.
 • Nuova icona dell’app in toni tranquilli.
 • Aspetto più morbido: angoli arrotondati e sezioni leggere senza linee nette.
 • Nella schermata di chiamata le onde si allargano e svaniscono allontanandosi, con un bagliore morbido e scintille.
 </it-IT>
 <iw-IL>
+• תמונת המתקשר בעיגול (ברירת מחדל), בריבוע או במסך מלא: הגדרות ← שיחות. הגלים מתפשטים מהתמונה.
 • סמל אפליקציה חדש בגוונים רגועים.
 • מראה רך יותר: פינות מעוגלות ומקטעים קלים ללא קווים חדים.
 • במסך השיחה הגלים מתרחבים ודועכים ככל שהם מתרחקים, עם זוהר רך וניצוצות.
 </iw-IL>
 <ja-JP>
+• 発信者の写真を円（既定）、四角、全画面から選べます：設定 → 通話。波は写真から広がります。
 • 落ち着いた色合いの新しいアプリアイコン。
 • やわらかなデザイン：角を丸くし、区切りから強い線をなくしました。
 • 通話画面の波は離れるほど広がって薄れ、やわらかな光ときらめきが加わりました。
 </ja-JP>
 <ko-KR>
+• 발신자 사진을 원형(기본), 정사각형, 전체 화면 중에서 선택: 설정 → 통화. 물결이 사진에서 퍼져 나갑니다.
 • 차분한 색감의 새 앱 아이콘.
 • 더 부드러운 디자인: 둥근 모서리와 딱딱한 선 없는 가벼운 구역.
 • 통화 화면의 물결이 멀어질수록 넓어지고 옅어지며, 부드러운 빛과 반짝임이 더해졌습니다.
 </ko-KR>
 <nl-NL>
+• Foto van de beller in een cirkel (standaard), een vierkant of schermvullend: Instellingen → Gesprekken. De golven komen uit het portret.
 • Nieuw app-pictogram in rustige tinten.
 • Zachtere vormgeving: afgeronde hoeken en lichte secties zonder harde lijnen.
 • Op het belscherm worden de golven breder en vager naarmate ze verder gaan, met een zachte gloed en vonkjes.
 </nl-NL>
 <no-NO>
+• Innringers bilde i en sirkel (standard), et kvadrat eller i fullskjerm: Innstillinger → Samtaler. Bølgene sprer seg fra portrettet.
 • Nytt appikon i rolige farger.
 • Mykere utseende: avrundede hjørner og lette seksjoner uten skarpe linjer.
 • På samtaleskjermen blir bølgene bredere og blekere med avstanden, med mykt skjær og gnister.
 </no-NO>
 <pl-PL>
+• Zdjęcie dzwoniącego w kole (domyślnie), w kwadracie lub na pełnym ekranie: Ustawienia → Połączenia. Fale rozchodzą się od portretu.
 • Nowa ikona aplikacji w spokojnych barwach.
 • Łagodniejszy wygląd: zaokrąglone rogi i lekkie sekcje bez ostrych linii.
 • Na ekranie połączenia fale rozszerzają się i bledną wraz z odległością, z miękką poświatą i iskrami.
 </pl-PL>
 <pt-BR>
+• Foto de quem liga em círculo (padrão), quadrado ou tela cheia: Configurações → Chamadas. As ondas saem do retrato.
 • Novo ícone do app em tons tranquilos.
 • Visual mais suave: cantos arredondados e seções leves sem linhas duras.
 • Na tela de chamada, as ondas se alargam e desaparecem ao se afastar, com um brilho suave e faíscas.
 </pt-BR>
 <ro>
+• Fotografia apelantului în cerc (implicit), în pătrat sau pe tot ecranul: Setări → Apeluri. Undele pornesc din portret.
 • Pictogramă nouă a aplicației, în tonuri calme.
 • Aspect mai blând: colțuri rotunjite și secțiuni ușoare, fără linii dure.
 • Pe ecranul de apel, undele se lărgesc și se estompează pe măsură ce se depărtează, cu o strălucire blândă și scântei.
 </ro>
 <sk>
+• Fotka volajúceho v kruhu (predvolené), v štvorci alebo na celú obrazovku: Nastavenia → Hovory. Vlny vychádzajú z portrétu.
 • Nová ikona aplikácie v pokojných tónoch.
 • Jemnejší vzhľad: zaoblené rohy a ľahké sekcie bez ostrých čiar.
 • Na obrazovke hovoru sa vlny so vzdialenosťou rozširujú a miznú, pribudla jemná žiara a iskry.
 </sk>
 <sv-SE>
+• Uppringarens foto i en cirkel (standard), en kvadrat eller i helskärm: Inställningar → Samtal. Vågorna sprids från porträttet.
 • Ny appikon i lugna toner.
 • Mjukare utseende: rundade hörn och lätta avsnitt utan skarpa linjer.
 • På samtalsskärmen blir vågorna bredare och blekare med avståndet, med mjukt sken och gnistor.
 </sv-SE>
 <th>
+• รูปผู้โทรแสดงในวงกลม (ค่าเริ่มต้น) สี่เหลี่ยม หรือเต็มจอ: การตั้งค่า → การโทร คลื่นแผ่ออกจากรูป
 • ไอคอนแอปใหม่ในโทนสีสงบ
 • หน้าตานุ่มนวลขึ้น: มุมโค้งมนและส่วนต่างๆ ที่เบาตาไม่มีเส้นแข็ง
 • หน้าจอการโทรมีคลื่นที่กว้างขึ้นและจางลงเมื่อแผ่ออกไป พร้อมแสงเรืองนุ่มและประกายเล็กๆ
 </th>
 <tr-TR>
+• Arayanın fotoğrafı daire (varsayılan), kare veya tam ekran: Ayarlar → Aramalar. Dalgalar portreden yayılıyor.
 • Sakin tonlarda yeni uygulama simgesi.
 • Daha yumuşak görünüm: yuvarlatılmış köşeler ve sert çizgisiz hafif bölümler.
 • Arama ekranında dalgalar uzaklaştıkça genişleyip soluyor; yumuşak bir parıltı ve kıvılcımlar eklendi.
 </tr-TR>
 <vi>
+• Ảnh người gọi trong hình tròn (mặc định), hình vuông hoặc toàn màn hình: Cài đặt → Cuộc gọi. Sóng lan ra từ ảnh chân dung.
 • Biểu tượng ứng dụng mới với tông màu dịu.
 • Giao diện mềm mại hơn: góc bo tròn, các mục nhẹ nhàng không còn đường kẻ cứng.
 • Trên màn hình cuộc gọi, sóng rộng ra và mờ dần khi lan xa, kèm ánh sáng dịu và đốm lấp lánh.
 </vi>
 <zh-CN>
+• 来电者照片可选圆形（默认）、方形或全屏：设置 → 通话。波纹从头像向外扩散。
 • 全新应用图标，色调更沉静。
 • 界面更柔和：圆角设计，分区轻盈，不再有生硬的线条。
 • 通话界面的波纹越远越宽、越淡，并加入柔和光晕与点点闪光。

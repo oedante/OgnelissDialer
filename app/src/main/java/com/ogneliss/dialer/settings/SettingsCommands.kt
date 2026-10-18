@@ -158,6 +158,7 @@ class SettingsCommands @Inject constructor(
             )
             "swipe_sim" -> prefs.setSwipeSimMode(SwipeSimMode.from(value))
             "carrier_info" -> prefs.setCarrierInfo(CarrierInfoMode.from(value))
+            "call_photo_style" -> prefs.setCallPhotoStyle(CallPhotoStyle.from(value))
             "journal_style" -> prefs.setJournalStyle(JournalStyle.from(value))
             "sort_order" -> prefs.setSortOrder(
                 runCatching { SortOrder.valueOf(value) }.getOrDefault(SortOrder.RELEVANCE)
@@ -181,6 +182,7 @@ class SettingsCommands @Inject constructor(
         "sort_order" -> state.sortOrder.name
         "swipe_sim" -> state.swipeSimMode.name
         "carrier_info" -> state.carrierInfo.name
+        "call_photo_style" -> state.callPhotoStyle.name
         "journal_style" -> state.journalStyle.name
         "notes_retention" -> state.notesRetention.name
         "notes_retention_scope" -> state.notesRetentionScope.name
@@ -238,6 +240,8 @@ class SettingsCommands @Inject constructor(
             }
         )
 
+        "call_photo_style" -> context.getString(callPhotoStyleLabelRes(state.callPhotoStyle))
+
         "swipe_sim" -> context.getString(
             when (state.swipeSimMode) {
                 SwipeSimMode.ASK -> R.string.swipe_sim_ask
@@ -285,6 +289,7 @@ class SettingsCommands @Inject constructor(
             "sort_order" -> R.string.settings_sort_order
             "swipe_sim" -> R.string.settings_swipe_sim
             "carrier_info" -> R.string.settings_carrier_info
+            "call_photo_style" -> R.string.settings_call_photo
             "journal_style" -> R.string.settings_journal_style
             "notes_retention" -> R.string.settings_notes_retention
             "notes_retention_scope" -> R.string.settings_notes_scope
@@ -295,6 +300,13 @@ class SettingsCommands @Inject constructor(
     companion object {
 
         private const val TAG = "Settings"
+
+        /** Подпись варианта фото на экране вызова — для строки настройки и диалога. */
+        fun callPhotoStyleLabelRes(style: CallPhotoStyle): Int = when (style) {
+            CallPhotoStyle.FULL_SCREEN -> R.string.call_photo_full_screen
+            CallPhotoStyle.CIRCLE -> R.string.call_photo_circle
+            CallPhotoStyle.SQUARE -> R.string.call_photo_square
+        }
         /**
          * Единственное место сопоставления действия свайпа с подписью.
          * Публично, потому что то же соответствие нужно панели свайпа.
@@ -336,7 +348,8 @@ class SettingsCommands @Inject constructor(
         /** Ключи, которые обрабатывает setChoice. */
         val CHOICE_KEYS = setOf(
             "language", "theme", "swipe_right", "swipe_left", "grouping", "sort_order",
-            "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info"
+            "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info",
+            "call_photo_style"
             // "journal_style" — снят из реестра в 1.5.3 (вид журнала один)
         )
     }

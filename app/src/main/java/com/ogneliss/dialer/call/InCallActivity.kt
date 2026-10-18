@@ -76,6 +76,9 @@ import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
 import androidx.compose.ui.platform.LocalDensity
 import com.ogneliss.dialer.ui.adaptive.FoldPosture
 import com.ogneliss.dialer.settings.CarrierInfoMode
+import com.ogneliss.dialer.settings.CallPhotoStyle
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
 import com.ogneliss.dialer.data.NoteDisplay
 import com.ogneliss.dialer.log.Logger
 import com.ogneliss.dialer.ui.components.OgnelissDivider
@@ -216,6 +219,11 @@ class InCallActivity : ComponentActivity() {
             // Живой фон (1.5.1): по настройке; в высоком контрасте — нет,
             // там фон ровный ради различимости
             val callAnimation by prefs.callAnimation.collectAsStateWithLifecycle(initialValue = true)
+            // Фото звонящего (1.5.5). null — настройка ещё не прочитана:
+            // фото не показываем ни так, ни так, чтобы оно не мигнуло
+            // на весь экран перед кругом
+            val callPhotoStyle by prefs.callPhotoStyle
+                .collectAsStateWithLifecycle<CallPhotoStyle?>(initialValue = null)
 
             OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic) {
                 // Раскладка окна: телефон, лёжа, раскладушка, планшет.
@@ -283,6 +291,7 @@ class InCallActivity : ComponentActivity() {
                     spamMarksRepo = spamMarksRepo,
                     hideContactNumber = hideContactNumber,
                     ambientBackground = callAnimation && theme != ThemeMode.HIGH_CONTRAST,
+                    photoStyle = callPhotoStyle,
                     // Пользователь переключил звук сам — датчики умолкают
                     // до конца разговора
                     onManualAudioChange = { smartSpeaker?.notifyManualToggle() }
@@ -337,6 +346,8 @@ private fun InCallScreen(
     hideContactNumber: Boolean = false,
     /** Живой фон за экраном (CallAmbientBackground.kt); без фото на весь экран. */
     ambientBackground: Boolean = false,
+    /** Фото звонящего: круг, квадрат или на весь экран; null — ещё не прочитано. */
+    photoStyle: CallPhotoStyle? = CallPhotoStyle.CIRCLE,
     onManualAudioChange: () -> Unit = {}
 ) {
     // Мало места по высоте — раскладка в две колонки. Порог прежний
@@ -704,14 +715,36 @@ private fun InCallScreen(
     val windowLayout0 = LocalWindowLayout.current
     val tabletop0 = windowLayout0.posture == FoldPosture.TABLETOP &&
         windowLayout0.hinge?.let { !it.vertical } == true
-    val photoBackground = !landscape && !tabletop0 && !photoUri.isNullOrBlank()
+    /*
+     * 1.5.5: фото на весь экран — только если так выбрано в настройках
+     * (Настройки → Вызовы → «Фото на экране вызова»). По умолчанию —
+     * портрет в круге, и волны живого фона расходятся от него.
+     */
+    val photoBackground = photoStyle == CallPhotoStyle.FULL_SCREEN &&
+        !landscape && !tabletop0 && !photoUri.isNullOrBlank()
+    // Портрет над именем: фото есть, настройка прочитана, и не фон
+    val showPortrait = photoStyle != null && !photoUri.isNullOrBlank() && !photoBackground
+    val squarePortrait = photoStyle == CallPhotoStyle.SQUARE
+    // Где портрет на экране — от него расходятся волны (CallAmbientBackground)
+    var portraitFocus by remember { mutableStateOf<AmbientFocus?>(null) }
+    val trackPortrait = Modifier.onGloballyPositioned { coords ->
+        val bounds = coords.boundsInRoot()
+        // У квадрата волна начинается у углов, а не у середины стороны
+        val half = bounds.width / 2f
+        portraitFocus = AmbientFocus(bounds.center, if (squarePortrait) half * SQUARE_FOCUS else half)
+    }
     LightStatusIconsOnPhoto(photoBackground)
     // Живой фон — когда нет фото на весь экран: фото само и есть фон
     val ambient = ambientBackground && !photoBackground
     Box(Modifier.fillMaxSize()) {
     if (photoBackground) CallPhotoBackground(photoUri.orEmpty())
     // Во весь экран, под строкой состояния тоже — как обои
-    if (ambient) CallAmbientBackground(ambientMoodOf(state))
+    if (ambient) {
+        CallAmbientBackground(
+            ambientMoodOf(state),
+            focus = { if (showPortrait) portraitFocus else null }
+        )
+    }
     NavBarUnderPanel()
     Surface(
         Modifier.fillMaxSize().safeDrawingPadding(),
@@ -735,10 +768,12 @@ private fun InCallScreen(
                     // Отступ только вместе с портретом: без фотографии
                     // экран начинается с имени, и зазор сверху был бы
                     // отступом от пустоты
-                    if (!photoUri.isNullOrBlank()) {
+                    if (showPortrait) {
                         CallerAvatar(
                             photoUri = photoUri,
-                            size = FlowUi.callPortraitSizeLandscape
+                            size = FlowUi.callPortraitSizeLandscape,
+                            square = squarePortrait,
+                            modifier = trackPortrait
                         )
                         Spacer(Modifier.height(Space.m))
                     }
@@ -917,8 +952,13 @@ private fun InCallScreen(
                  * ничего — силуэт одинаков у всех. Без него имя
                  * поднимается наверх, и длинному хватает места.
                  */
-                if (!photoUri.isNullOrBlank() && !photoBackground) {
-                    CallerAvatar(photoUri = photoUri, size = FlowUi.callPortraitSize)
+                if (showPortrait) {
+                    CallerAvatar(
+                        photoUri = photoUri,
+                        size = FlowUi.callPortraitSize,
+                        square = squarePortrait,
+                        modifier = trackPortrait
+                    )
                     Spacer(Modifier.height(Space.l))
                 }
 
@@ -1896,7 +1936,13 @@ private fun CallerIdentity(
  * висеть зазор от несуществующего элемента.
  */
 @Composable
-private fun CallerAvatar(photoUri: String?, size: Dp) {
+internal fun CallerAvatar(
+    photoUri: String?,
+    size: Dp,
+    /** Скруглённый квадрат вместо круга (настройка «Фото на экране вызова», 1.5.5). */
+    square: Boolean = false,
+    modifier: Modifier = Modifier
+) {
     // Пустой путь и путь на удалённый файл — одно и то же: показывать
     // нечего. Проверка на пустую строку нужна, потому что часть
     // прошивок отдаёт "" вместо null
@@ -1919,11 +1965,16 @@ private fun CallerAvatar(photoUri: String?, size: Dp) {
      * при беглом взгляде. Больше — и тень начинает выглядеть грязным
      * ореолом на тёмной теме.
      */
+    /*
+     * 1.5.5: круг — по умолчанию; квадрат — по выбору пользователя
+     * (отзыв в магазине), со скруглением шторок и диалогов (24 dp):
+     * в мягком стиле острый угол выбивался бы.
+     */
     Surface(
-        shape = CircleShape,
+        shape = if (square) MaterialTheme.shapes.extraLarge else CircleShape,
         color = MaterialTheme.colorScheme.surfaceContainerHighest,
         shadowElevation = 4.dp,
-        modifier = Modifier.size(size)
+        modifier = modifier.size(size)
     ) {
         AsyncImage(
             model = uri,
@@ -2202,3 +2253,10 @@ private fun ConferencePanel(
         }
     }
 }
+
+/**
+ * Квадратный портрет: волна рождается у скруглённых углов, а не у середины
+ * стороны — радиус до угла с учётом скругления 24 dp у портрета 132 dp
+ * (≈ 1,25 половины стороны).
+ */
+private const val SQUARE_FOCUS = 1.25f

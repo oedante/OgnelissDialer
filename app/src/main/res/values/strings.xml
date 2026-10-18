@@ -684,6 +684,11 @@ Open Settings → Security → Special app access and allow this app to modify s
     <string name="settings_hide_contact_number">Number type instead of number</string>
     <string name="settings_call_animation">Live call background</string>
     <string name="settings_call_animation_text">Slow soft shapes in theme colors behind the call screen. Stays still if animations are turned off in system settings</string>
+    <string name="settings_call_photo">Contact photo during a call</string>
+    <string name="settings_call_photo_text">How to show the caller’s photo: as a full-screen background, or as a portrait in a circle or a square above the name</string>
+    <string name="call_photo_full_screen">Full screen</string>
+    <string name="call_photo_circle">Circle</string>
+    <string name="call_photo_square">Square</string>
     <string name="settings_hide_contact_number_text">On the call screen, saved contacts show Mobile, Work and so on instead of digits. Unknown numbers are always shown</string>
     <string name="language_search_hint">Search languages</string>
     <string name="language_auto_translated">auto-translated</string>

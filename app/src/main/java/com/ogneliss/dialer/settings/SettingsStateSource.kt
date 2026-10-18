@@ -60,6 +60,7 @@ class SettingsStateSource @Inject constructor(
         .combine(prefs.proximityScreenOff) { a, v -> a.copy(proximityScreenOff = v) }
         .combine(prefs.callHideContactNumber) { a, v -> a.copy(callHideContactNumber = v) }
         .combine(prefs.callAnimation) { a, v -> a.copy(callAnimation = v) }
+        .combine(prefs.callPhotoStyle) { a, v -> a.copy(callPhotoStyle = v) }
         .combine(prefs.sheetHeaderTint) { a, v -> a.copy(sheetHeaderTint = v) }
         .combine(prefs.messengersAnyNumber) { a, v -> a.copy(messengersAnyNumber = v) }
 
@@ -155,6 +156,7 @@ class SettingsStateSource @Inject constructor(
             proximityScreenOff = a.proximityScreenOff,
             callHideContactNumber = a.callHideContactNumber,
             callAnimation = a.callAnimation,
+            callPhotoStyle = a.callPhotoStyle,
             sheetHeaderTint = a.sheetHeaderTint,
             messengersAnyNumber = a.messengersAnyNumber,
             notesRetention = n.retention,
@@ -202,6 +204,7 @@ class SettingsStateSource @Inject constructor(
         val proximityScreenOff: Boolean = true,
         val callHideContactNumber: Boolean = false,
         val callAnimation: Boolean = true,
+        val callPhotoStyle: CallPhotoStyle = CallPhotoStyle.CIRCLE,
         val sheetHeaderTint: Boolean = true,
         val messengersAnyNumber: Boolean = false
     )
