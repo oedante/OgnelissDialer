@@ -38,7 +38,7 @@ import androidx.compose.ui.graphics.Color
  *
  * Что стало:
  * • одна нейтральная гамма с лёгким холодным оттенком — того же семейства,
- *   что фон значка #2E3138. Все поверхности — один тон разной яркости;
+ *   что фон значка (#2E3138 в 1.4.0, #3A4450 с 1.5.5). Все поверхности — один тон разной яркости;
  * • светлая тема: страница светло-серая, карточки белые (1,10 : 1) — группы
  *   читаются сразу, как в настройках Android и iOS. Тёмная: как и была,
  *   страница темнее карточек. Модель в обеих темах одна: всё, что лежит
@@ -74,16 +74,18 @@ internal val Green80 = Color(0xFF6DD58C)
 internal val Green90 = Color(0xFFC4EED0)
 
 // ── Нейтральные светлой темы: холодный серый, один оттенок ────────────────
-internal val LightPage = Color(0xFFF3F4F7)          // фон страницы
-internal val LightRaised = Color(0xFFFFFFFF)        // карточки, шторки, диалоги, меню
-internal val LightControl = Color(0xFFE3E6EC)       // нижняя панель; кнопки на белом
+internal val LightPage = Color(0xFFF0F2F5)  // 1.5.5: полоса раздела без линий — чуть глубже (было #F3F4F7)          // фон страницы
+internal val LightRaised = Color(0xFFFFFFFF)        // диалоги, меню, клавиши
+/** 1.5.5: страница, строки и шторки — не чисто белые, мягче для глаз. */
+internal val LightCanvas = Color(0xFFFAFBFC)
+internal val LightControl = Color(0xFFE7EAEF)       // нижняя панель; кнопки на белом
 internal val LightVariant = Color(0xFFE1E4EA)       // surfaceVariant
 internal val LightSelected = Color(0xFFE3E7EE)      // выделение строки
 internal val LightDim = Color(0xFFDADDE3)
-internal val LightText = Color(0xFF1B1D21)
-internal val LightTextVariant = Color(0xFF454951)
+internal val LightText = Color(0xFF22252B)
+internal val LightTextVariant = Color(0xFF50555E)
 internal val LightOutline = Color(0xFF6F747E)       // 4,6 : 1 на белом — подсказки
-internal val LightOutlineVariant = Color(0xFFDADDE3)
+internal val LightOutlineVariant = Color(0xFFE1E4E9)
 internal val LightSecondary = Color(0xFF5A606B)
 
 // ── Нейтральные тёмной темы: тот же холодный серый ────────────────────────
@@ -102,8 +104,8 @@ internal val DarkOutline = Color(0xFF9298A1)
 internal val DarkOutlineVariant = Color(0xFF3D4148)
 internal val DarkSecondary = Color(0xFFC1C6D0)
 
-/** Фон значка приложения (#2E3138) — подложка всплывающих сообщений светлой темы. */
-internal val BrandDark = Color(0xFF2E3138)
+/** Фон значка приложения (#3A4450, значок 1.5.5) — подложка всплывающих сообщений светлой темы. */
+internal val BrandDark = Color(0xFF3A4450)
 
 // ── Ошибки ─────────────────────────────────────────────────────────────────
 internal val Error10 = Color(0xFF410E0B)

@@ -48,7 +48,10 @@ PAIRS = [
     ('Blue40', 'LightRaised', TEXT), ('Blue40', 'LightPage', TEXT), ('White', 'Blue40', TEXT),
     ('Blue20', 'Blue90', TEXT), ('LightText', 'LightSelected', TEXT),
     ('Error40', 'LightRaised', TEXT), ('CallGreen', 'LightRaised', TEXT), ('White', 'CallGreen', TEXT),
-    ('LightRaised', 'LightPage', ZONE), ('LightControl', 'LightPage', ZONE),
+    # 1.5.5: страница и строки — LightCanvas, полоса раздела — LightPage (без линий)
+    ('LightText', 'LightCanvas', TEXT), ('LightTextVariant', 'LightCanvas', TEXT),
+    ('LightOutline', 'LightCanvas', TEXT), ('Blue40', 'LightCanvas', TEXT),
+    ('LightPage', 'LightCanvas', ZONE), ('LightControl', 'LightCanvas', ZONE),
     ('LightRaised', 'LightControl', ZONE),
     # тёмная
     ('DarkText', 'DarkCard', TEXT), ('DarkTextVariant', 'DarkCard', TEXT),

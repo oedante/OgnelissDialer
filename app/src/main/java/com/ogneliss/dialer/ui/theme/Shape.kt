@@ -16,27 +16,32 @@ import androidx.compose.ui.unit.dp
  * строки во всю ширину без карточек, разделы — серые полосы с подписью
  * капителью; кнопки, клавиши, строка номера и поиск — снова «пилюли».
  *
+ * 1.5.5 — МЯГЧЕ (автор, 18.10: «стиль стал резким и угловатым, лучше
+ * смягчить»): радиусы 6 · 10 · 14 · 18 · 24 dp вместо 4 · 6 · 8 · 8 · 12,
+ * шторки, диалоги и нижняя панель — 24 dp. Сплошной список (строки во всю
+ * ширину) остался; угловатость давали мелкие радиусы и жёсткие линии.
+ *
  * Было по спецификации Material 3: 4 · 8 · 12 · 16 · 28 dp, клавиши
  * и кнопки вызова — полное скругление. Мягко и «по-домашнему»; рядом
  * с почтой и офисными приложениями выглядело игрушечно.
  *
  * ── Где что ────────────────────────────────────────────────────────────────
- * extraSmall (4)  — бейджи SIM, мелкие метки
- * small (6)       — чипы фильтров
- * medium (8)      — поля ввода, мелкие плашки
- * large (8)       — цветные пояснения (предупреждение, «без интернета»)
- * extraLarge (12) — шторки, диалоги, нижние панели
+ * extraSmall (6)  — бейджи SIM, мелкие метки
+ * small (10)      — чипы фильтров
+ * medium (14)     — поля ввода, мелкие плашки
+ * large (18)      — цветные пояснения (предупреждение, «без интернета»)
+ * extraLarge (24) — шторки, диалоги, нижние панели
  *
  * Круглые — аватары и круглые кнопки-значки; «пилюли» — кнопки
  * (Button), клавиши, строка номера, поиск, плашка состояния вызова. Для них — CircleShape явно, а не extraLarge (раньше
  * extraLarge 28 dp на 48 dp и давал круг — теперь дал бы квадрат).
  */
 val OgnelissShapes = Shapes(
-    extraSmall = RoundedCornerShape(4.dp),
-    small = RoundedCornerShape(6.dp),
-    medium = RoundedCornerShape(8.dp),
-    large = RoundedCornerShape(8.dp),
-    extraLarge = RoundedCornerShape(12.dp)
+    extraSmall = RoundedCornerShape(6.dp),
+    small = RoundedCornerShape(10.dp),
+    medium = RoundedCornerShape(14.dp),
+    large = RoundedCornerShape(18.dp),
+    extraLarge = RoundedCornerShape(24.dp)
 )
 
 /** Формы для случаев, которых нет в стандартном наборе. */
@@ -53,17 +58,17 @@ object OgnelissShapeTokens {
      * НИЖНЯЯ ПАНЕЛЬ.
      *
      * Скруглены только верхние углы: панель прижата к низу экрана,
-     * и нижние углы всё равно не видны. 12 dp (было 28) — строгий стиль.
+     * и нижние углы всё равно не видны. 24 dp (1.5.5; в 1.5.1–1.5.4 — 12, до того 28).
      *
      * ── Почему в токенах ───────────────────────────────────────────────────
      * Форма задавалась числами в двух местах: в панели журнала
      * и в панели контактов. При правке одного второе осталось бы
      * прежним, и панели различались бы при переходе между вкладками.
      */
-    val bottomPanel = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
+    val bottomPanel = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
 
     /** Фото в шапке карточки: нижние углы как у панелей. */
-    val coverBottom = RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)
+    val coverBottom = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
 
     /**
      * Кнопки вызова: «Позвонить», SIM, «Ответить», «Отклонить», «Завершить» —
@@ -76,8 +81,8 @@ object OgnelissShapeTokens {
      * внутренние разделители остаются прямыми — так группа читается
      * как единый блок, а не как набор отдельных карточек.
      */
-    val settingsGroupTop = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
-    val settingsGroupBottom = RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)
-    val settingsGroupSingle = RoundedCornerShape(8.dp)
+    val settingsGroupTop = RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp)
+    val settingsGroupBottom = RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp)
+    val settingsGroupSingle = RoundedCornerShape(18.dp)
     val settingsGroupMiddle = RoundedCornerShape(0.dp)
 }

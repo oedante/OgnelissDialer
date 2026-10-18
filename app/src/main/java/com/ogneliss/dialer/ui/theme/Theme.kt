@@ -89,15 +89,22 @@ private val LightColors = lightColorScheme(
      * В 1.5.1–1.5.2 (макет A) страница была серой, а группы — белыми
      * карточками; после недели с приложением автор выбрал B.
      */
-    background = LightRaised,
+    /*
+     * 1.5.5 — МЯГЧЕ (автор, 13 и 18.10: «стиль стал ярким, резким
+     * и угловатым, потерял лёгкость»). Страница и шторки — #FAFBFC
+     * вместо чисто белого, текст — #22252B вместо почти чёрного: меньше
+     * слепящей разницы. Белыми остались диалоги, меню и клавиши —
+     * то, что лежит над страницей.
+     */
+    background = LightCanvas,
     onBackground = LightText,
-    surface = LightRaised,
+    surface = LightCanvas,
     onSurface = LightText,
     surfaceVariant = LightVariant,
     onSurfaceVariant = LightTextVariant,
 
     surfaceContainerLowest = LightRaised,
-    surfaceContainerLow = LightRaised,
+    surfaceContainerLow = LightCanvas,
     // Полоса раздела и строка заголовка при прокрутке — светло-серые
     surfaceContainer = LightPage,
     surfaceContainerHigh = LightRaised,

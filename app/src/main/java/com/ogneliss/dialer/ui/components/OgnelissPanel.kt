@@ -3,7 +3,6 @@ package com.ogneliss.dialer.ui.components
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.background
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import com.ogneliss.dialer.ui.theme.Space
@@ -127,8 +126,10 @@ fun OgnelissPanel(
 /**
  * ПОЛОСА РАЗДЕЛА (1.5.3, «сплошной список», макет B).
  *
- * Серая полоса во всю ширину с подписью заглавными («СЕГОДНЯ», «НОМЕРА»),
- * тонкие линии сверху и снизу. Разделяет списки на разделы вместо
+ * Мягкая серая полоса во всю ширину с подписью («Сегодня», «Номера»).
+ * 1.5.5: без линий сверху и снизу и без заглавных — с ними экран выглядел
+ * таблицей, «резким и угловатым» (автор, 18.10); полосу отделяет её тон.
+ * Разделяет списки на разделы вместо
  * карточек и отступов: журнал, контакты, карточка, настройки, заметки,
  * напоминания, статистика, списки блокировки.
  *
@@ -147,7 +148,6 @@ fun SectionBand(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceContainer)
     ) {
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         Row(
             Modifier
                 .fillMaxWidth()
@@ -162,12 +162,11 @@ fun SectionBand(
             SectionCaption(text, Modifier.weight(1f).padding(vertical = Space.s))
             action?.invoke()
         }
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
     }
 }
 
-/** Высота полосы раздела без кнопки: подпись и поля по 8 dp. */
-private val BAND_MIN_HEIGHT = 32.dp
+/** Высота полосы раздела без кнопки: подпись и поля — 36 dp (1.5.5; было 32 с линиями). */
+private val BAND_MIN_HEIGHT = 36.dp
 
 /**
  * РАЗДЕЛИТЕЛЬ МЕЖДУ СТРОКАМИ ПАНЕЛИ.
@@ -198,28 +197,24 @@ private const val DIVIDER_ALPHA = 0.5f
 
 
 /**
- * ПОДПИСЬ РАЗДЕЛА — СТРОГИЙ СТИЛЬ (1.5.1).
+ * ПОДПИСЬ РАЗДЕЛА (1.5.5 — мягче).
  *
- * Заглавными, мелко, с разрядкой: «СЕГОДНЯ», «НОМЕРА», «ВЫЗОВЫ». Так
- * подписывают разделы офисные приложения — подпись размечает экран,
- * а не спорит с содержимым. Одна функция на все заголовки групп:
- * журнал, контакты, панели карточки, настройки, шторки.
+ * Обычный регистр, средняя насыщенность: «Сегодня», «Номера», «Вызовы».
+ * В 1.5.1–1.5.4 — заглавными с разрядкой и полужирным: строго, но вместе
+ * с линиями давало «резкий, угловатый» экран (автор, 18.10). Одна функция
+ * на все заголовки групп: журнал, контакты, панели карточки, настройки,
+ * шторки.
  *
- * Для чтения с экрана — исходный текст, а не заглавные: часть
- * синтезаторов речи читает слово заглавными по буквам. heading() —
- * TalkBack перескакивает по разделам, не слушая каждую строку.
+ * heading() — TalkBack перескакивает по разделам, не слушая каждую строку.
  */
 @Composable
 fun SectionCaption(text: String, modifier: Modifier = Modifier) {
     Text(
-        text.uppercase(),
-        modifier = modifier.semantics {
-            heading()
-            contentDescription = text
-        },
-        style = MaterialTheme.typography.labelMedium.copy(
-            fontWeight = FontWeight.SemiBold,
-            letterSpacing = 0.8.sp
+        text,
+        modifier = modifier.semantics { heading() },
+        style = MaterialTheme.typography.labelLarge.copy(
+            fontWeight = FontWeight.Medium,
+            letterSpacing = 0.1.sp
         ),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         maxLines = 1

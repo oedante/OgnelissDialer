@@ -45,7 +45,8 @@ fun SheetGroup(
 ) {
     Column(Modifier.fillMaxWidth()) {
         if (!first) {
-            OgnelissDivider(Modifier.padding(vertical = Space.xs))
+            // 1.5.5: линия с полями по бокам, а не во всю ширину — мягче
+            OgnelissDivider(Modifier.padding(horizontal = Space.xl, vertical = Space.xs))
         }
         title?.let {
             SectionCaption(
