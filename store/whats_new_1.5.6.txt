@@ -1,0 +1,135 @@
+<ru-RU>
+• Обновлённое оформление: скруглённые разделы, настройки и карточка контакта — карточками, кольца вокруг фото.
+• Интерфейс подстраивается под размер экрана; масштаб можно выбрать: Настройки → Оформление → Масштаб интерфейса.
+• На экране вызова портрет крупнее и зависит от размера экрана.
+</ru-RU>
+<ar>
+• تصميم محدث: أقسام بحواف مستديرة، والإعدادات وبطاقة جهة الاتصال على شكل بطاقات، وحلقات حول الصور.
+• تتكيف الواجهة مع حجم الشاشة، ويمكن اختيار المقياس من: الإعدادات ← المظهر ← مقياس الواجهة.
+• صورة المتصل في شاشة المكالمة أكبر وتتبع حجم الشاشة.
+</ar>
+<cs-CZ>
+• Nový vzhled: zaoblené sekce, nastavení a karta kontaktu jako karty, kroužky kolem fotek.
+• Rozhraní se přizpůsobí velikosti obrazovky; měřítko lze zvolit v Nastavení → Vzhled → Měřítko rozhraní.
+• Portrét na obrazovce hovoru je větší a řídí se velikostí obrazovky.
+</cs-CZ>
+<da-DK>
+• Nyt udseende: afrundede sektioner, indstillinger og kontaktkort som kort, ringe om fotos.
+• Brugerfladen tilpasser sig skærmstørrelsen; skaleringen kan vælges under Indstillinger → Udseende → Skalering.
+• Portrættet på opkaldsskærmen er større og følger skærmstørrelsen.
+</da-DK>
+<de-DE>
+• Neues Design: abgerundete Abschnitte, Einstellungen und Kontaktkarte als Karten, Ringe um Fotos.
+• Die Oberfläche passt sich der Bildschirmgröße an; die Skalierung ist wählbar unter Einstellungen → Darstellung → Skalierung der Oberfläche.
+• Das Porträt auf dem Anrufbildschirm ist größer und richtet sich nach der Bildschirmgröße.
+</de-DE>
+<en-US>
+• Refreshed look: rounded sections, settings and the contact card as cards, rings around photos.
+• The interface adapts to the screen size; choose the scale in Settings → Appearance → Interface scale.
+• The caller portrait on the call screen is larger and follows the screen size.
+</en-US>
+<es-ES>
+• Nuevo aspecto: secciones redondeadas, ajustes y ficha de contacto en tarjetas, aros alrededor de las fotos.
+• La interfaz se adapta al tamaño de la pantalla; la escala se elige en Ajustes → Apariencia → Escala de la interfaz.
+• El retrato en la pantalla de llamada es más grande y depende del tamaño de la pantalla.
+</es-ES>
+<fi-FI>
+• Uusi ulkoasu: pyöristetyt osiot, asetukset ja yhteystietokortti kortteina, renkaat kuvien ympärillä.
+• Käyttöliittymä mukautuu näytön kokoon; mittakaavan voi valita: Asetukset → Ulkoasu → Käyttöliittymän mittakaava.
+• Puhelunäkymän muotokuva on suurempi ja seuraa näytön kokoa.
+</fi-FI>
+<fr-FR>
+• Nouveau look : sections arrondies, réglages et fiche contact en cartes, anneaux autour des photos.
+• L’interface s’adapte à la taille de l’écran ; l’échelle se choisit dans Paramètres → Apparence → Échelle de l’interface.
+• Le portrait sur l’écran d’appel est plus grand et suit la taille de l’écran.
+</fr-FR>
+<hi-IN>
+• नया रूप: गोल किनारों वाले अनुभाग, सेटिंग्स और संपर्क कार्ड कार्डों के रूप में, फ़ोटो के चारों ओर छल्ले।
+• इंटरफ़ेस स्क्रीन के आकार के अनुसार ढलता है; स्केल यहाँ चुनें: सेटिंग्स → रूप → इंटरफ़ेस स्केल।
+• कॉल स्क्रीन पर कॉलर की फ़ोटो बड़ी है और स्क्रीन के आकार के अनुसार बदलती है।
+</hi-IN>
+<hu-HU>
+• Megújult megjelenés: lekerekített szakaszok, kártyás beállítások és névjegykártya, gyűrűk a fotók körül.
+• A felület alkalmazkodik a képernyőmérethez; a méretezés választható: Beállítások → Megjelenés → Felület méretezése.
+• A hívásképernyőn a portré nagyobb, és a képernyő méretéhez igazodik.
+</hu-HU>
+<id>
+• Tampilan baru: bagian membulat, setelan dan kartu kontak berbentuk kartu, lingkaran di sekitar foto.
+• Antarmuka menyesuaikan ukuran layar; skala dapat dipilih di Setelan → Tampilan → Skala antarmuka.
+• Potret penelepon di layar panggilan lebih besar dan mengikuti ukuran layar.
+</id>
+<it-IT>
+• Nuovo aspetto: sezioni arrotondate, impostazioni e scheda contatto a schede, anelli attorno alle foto.
+• L’interfaccia si adatta alle dimensioni dello schermo; la scala si sceglie in Impostazioni → Aspetto → Scala dell’interfaccia.
+• Il ritratto nella schermata di chiamata è più grande e segue le dimensioni dello schermo.
+</it-IT>
+<iw-IL>
+• מראה חדש: מקטעים מעוגלים, הגדרות וכרטיס איש קשר בכרטיסים, טבעות סביב התמונות.
+• הממשק מותאם לגודל המסך; את קנה המידה בוחרים בהגדרות ← מראה ← קנה מידה של הממשק.
+• תמונת המתקשר במסך השיחה גדולה יותר ותלויה בגודל המסך.
+</iw-IL>
+<ja-JP>
+• デザインを刷新：角の丸いセクション、設定と連絡先をカード表示、写真のまわりにリング。
+• 画面サイズに合わせて表示を調整。拡大率は 設定 → 外観 → 表示の拡大率 で選べます。
+• 通話画面の相手の写真が大きくなり、画面サイズに合わせて変わります。
+</ja-JP>
+<ko-KR>
+• 새로운 디자인: 둥근 섹션, 카드 형태의 설정과 연락처 카드, 사진 테두리 링.
+• 화면 크기에 맞춰 인터페이스가 조정되며, 배율은 설정 → 화면 → 인터페이스 배율에서 선택할 수 있습니다.
+• 통화 화면의 발신자 사진이 더 커지고 화면 크기에 맞춰 바뀝니다.
+</ko-KR>
+<nl-NL>
+• Vernieuwd uiterlijk: afgeronde secties, instellingen en contactkaart als kaarten, ringen rond foto’s.
+• De interface past zich aan de schermgrootte aan; kies de schaal via Instellingen → Weergave → Schaal van de interface.
+• Het portret op het belscherm is groter en volgt de schermgrootte.
+</nl-NL>
+<no-NO>
+• Nytt utseende: avrundede seksjoner, innstillinger og kontaktkort som kort, ringer rundt bilder.
+• Grensesnittet tilpasser seg skjermstørrelsen; skaleringen velges under Innstillinger → Utseende → Skalering.
+• Portrettet på samtaleskjermen er større og følger skjermstørrelsen.
+</no-NO>
+<pl-PL>
+• Nowy wygląd: zaokrąglone sekcje, ustawienia i karta kontaktu jako karty, obwódki wokół zdjęć.
+• Interfejs dopasowuje się do rozmiaru ekranu; skalę wybierzesz w Ustawienia → Wygląd → Skala interfejsu.
+• Portret na ekranie połączenia jest większy i zależy od rozmiaru ekranu.
+</pl-PL>
+<pt-BR>
+• Visual renovado: seções arredondadas, configurações e ficha do contato em cartões, anéis ao redor das fotos.
+• A interface se ajusta ao tamanho da tela; escolha a escala em Configurações → Aparência → Escala da interface.
+• O retrato na tela de chamada está maior e acompanha o tamanho da tela.
+</pt-BR>
+<ro>
+• Aspect nou: secțiuni rotunjite, setările și fișa contactului sub formă de carduri, inele în jurul fotografiilor.
+• Interfața se adaptează la dimensiunea ecranului; scara se alege din Setări → Aspect → Scara interfeței.
+• Portretul de pe ecranul de apel este mai mare și urmează dimensiunea ecranului.
+</ro>
+<sk>
+• Nový vzhľad: zaoblené sekcie, nastavenia a karta kontaktu ako karty, krúžky okolo fotiek.
+• Rozhranie sa prispôsobí veľkosti obrazovky; mierku zvolíte v Nastavenia → Vzhľad → Mierka rozhrania.
+• Portrét na obrazovke hovoru je väčší a riadi sa veľkosťou obrazovky.
+</sk>
+<sv-SE>
+• Nytt utseende: rundade avsnitt, inställningar och kontaktkort som kort, ringar runt foton.
+• Gränssnittet anpassar sig till skärmstorleken; välj skala under Inställningar → Utseende → Gränssnittets skala.
+• Porträttet på samtalsskärmen är större och följer skärmstorleken.
+</sv-SE>
+<th>
+• หน้าตาใหม่: ส่วนต่างๆ ขอบมน การตั้งค่าและบัตรผู้ติดต่อเป็นการ์ด และวงแหวนรอบรูป
+• อินเทอร์เฟซปรับตามขนาดหน้าจอ เลือกสเกลได้ที่ การตั้งค่า → ลักษณะ → สเกลอินเทอร์เฟซ
+• รูปผู้โทรบนหน้าจอการโทรใหญ่ขึ้นและปรับตามขนาดหน้าจอ
+</th>
+<tr-TR>
+• Yenilenen görünüm: yuvarlatılmış bölümler, kart biçiminde ayarlar ve kişi kartı, fotoğrafların çevresinde halkalar.
+• Arayüz ekran boyutuna uyum sağlar; ölçek Ayarlar → Görünüm → Arayüz ölçeği bölümünden seçilir.
+• Arama ekranındaki portre daha büyük ve ekran boyutuna göre değişiyor.
+</tr-TR>
+<vi>
+• Giao diện mới: các mục bo tròn, cài đặt và thẻ liên hệ dạng thẻ, viền tròn quanh ảnh.
+• Giao diện tự điều chỉnh theo kích thước màn hình; chọn tỷ lệ tại Cài đặt → Giao diện → Tỷ lệ giao diện.
+• Ảnh người gọi trên màn hình cuộc gọi lớn hơn và theo kích thước màn hình.
+</vi>
+<zh-CN>
+• 全新外观：圆角分区，设置与联系人卡片以卡片呈现，照片外加圆环。
+• 界面随屏幕尺寸自动调整；可在 设置 → 外观 → 界面缩放 中选择比例。
+• 通话界面的来电者头像更大，并随屏幕尺寸变化。
+</zh-CN>
