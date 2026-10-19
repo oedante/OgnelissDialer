@@ -77,110 +77,150 @@ fun SettingsHomeScreen(
         else index.filter { (_, text) -> text.contains(q) }.keys.toList()
     }
 
-    Scaffold(
-        // В edge-to-edge содержимое иначе уезжает под системные панели
-        contentWindowInsets = WindowInsets.safeDrawing,
-        topBar = {
-            TopAppBar(
-                title = {
-                    if (searching) {
-                        TextField(
-                            value = query,
-                            onValueChange = { query = it },
-                            placeholder = { Text(stringResource(R.string.settings_search_hint)) },
-                            singleLine = true,
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = androidx.compose.ui.graphics.Color.Transparent,
-                                unfocusedContainerColor = androidx.compose.ui.graphics.Color.Transparent
-                            ),
-                            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
-                                imeAction = ImeAction.Search
-                            ),
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    } else {
-                        Text(stringResource(R.string.nav_settings))
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        if (searching) { searching = false; query = "" } else onBack()
-                    }) {
-                        Icon(
-                            OgnelissIcons.ArrowBack,
-                            contentDescription = stringResource(R.string.nav_back)
-                        )
-                    }
-                },
-                actions = {
-                    if (!searching) {
-                        IconButton(onClick = { searching = true }) {
+    androidx.compose.runtime.CompositionLocalProvider(
+        com.ogneliss.dialer.ui.theme.LocalPageTone provides com.ogneliss.dialer.ui.theme.PageTone.TINTED
+    ) {
+        Scaffold(
+            // Как настройки Ogneliss Mail: серо-голубая страница, группы — карточками (1.5.6)
+            containerColor = com.ogneliss.dialer.ui.theme.OgnelissTheme.pageColor(com.ogneliss.dialer.ui.theme.PageTone.TINTED),
+            // В edge-to-edge содержимое иначе уезжает под системные панели
+            contentWindowInsets = WindowInsets.safeDrawing,
+            topBar = {
+                TopAppBar(
+                    title = {
+                        if (searching) {
+                            TextField(
+                                value = query,
+                                onValueChange = { query = it },
+                                placeholder = { Text(stringResource(R.string.settings_search_hint)) },
+                                singleLine = true,
+                                colors = TextFieldDefaults.colors(
+                                    focusedContainerColor = androidx.compose.ui.graphics.Color.Transparent,
+                                    unfocusedContainerColor = androidx.compose.ui.graphics.Color.Transparent
+                                ),
+                                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                                    imeAction = ImeAction.Search
+                                ),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        } else {
+                            Text(stringResource(R.string.nav_settings))
+                        }
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            if (searching) { searching = false; query = "" } else onBack()
+                        }) {
                             Icon(
-                                OgnelissIcons.Search,
-                                contentDescription = stringResource(R.string.settings_search)
+                                OgnelissIcons.ArrowBack,
+                                contentDescription = stringResource(R.string.nav_back)
                             )
                         }
-                    }
-                }
-            )
-        }
-    ) { pad ->
-        // Не шире 640 dp по центру на широком окне: разбор в ReadableWidth
-        ReadableWidth {
-        LazyColumn(Modifier.padding(pad).fillMaxSize()) {
-
-            if (searching && query.trim().length >= 2) {
-                if (results.isEmpty()) {
-                    item {
-                        Text(
-                            stringResource(R.string.settings_search_empty, query),
-                            // Отступ пустого состояния из общих правил:
-                            // в журнале и контактах он такой же
-                            Modifier.padding(FlowUi.sheetPadding),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                } else {
-                    // Найденное — белой группой с рамкой (строгий стиль, 1.5.1)
-                    item { Spacer(Modifier.height(Space.s)) }
-                    itemsIndexed(results, key = { _, e -> e.id }) { index, entry ->
-                        GroupedRow(GroupPosition.of(index, results.size), dividerStart = Space.l) {
-                            OgnelissListRow(
-                                headline = stringResource(entry.titleRes),
-                                // Показываем, в какой категории лежит настройка —
-                                // иначе пользователь найдёт её, но не запомнит где
-                                supporting = stringResource(entry.category.titleRes),
-                                onClick = { onOpenEntry(entry) }
-                            )
-                        }
-                    }
-                }
-            } else {
-                /*
-                 * Категории одной карточкой, а не отдельными строками
-                 * с разделителями. Семь пунктов сплошным списком читаются
-                 * как таблица; собранные в блок — как оглавление.
-                 */
-                item {
-                    SettingsGroup {
-                        SettingsCategory.entries.forEachIndexed { index, category ->
-                            SettingsCategoryCard(
-                                icon = category.icon,
-                                title = stringResource(category.titleRes),
-                                summary = stringResource(category.summaryRes),
-                                onClick = { onOpenCategory(category) }
-                            )
-                            // Разделитель между строками, но не после последней:
-                            // черта у нижней границы карточки выглядит обрывом
-                            if (index < SettingsCategory.entries.lastIndex) {
-                                OgnelissDivider(Modifier.padding(start = 56.dp))
+                    },
+                    actions = {
+                        if (!searching) {
+                            IconButton(onClick = { searching = true }) {
+                                Icon(
+                                    OgnelissIcons.Search,
+                                    contentDescription = stringResource(R.string.settings_search)
+                                )
                             }
                         }
                     }
+                )
+            }
+        ) { pad ->
+            // Не шире 640 dp по центру на широком окне: разбор в ReadableWidth
+            ReadableWidth {
+            LazyColumn(Modifier.padding(pad).fillMaxSize()) {
+
+                if (searching && query.trim().length >= 2) {
+                    if (results.isEmpty()) {
+                        item {
+                            Text(
+                                stringResource(R.string.settings_search_empty, query),
+                                // Отступ пустого состояния из общих правил:
+                                // в журнале и контактах он такой же
+                                Modifier.padding(FlowUi.sheetPadding),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    } else {
+                        // Найденное — белой группой с рамкой (строгий стиль, 1.5.1)
+                        item { Spacer(Modifier.height(Space.s)) }
+                        itemsIndexed(results, key = { _, e -> e.id }) { index, entry ->
+                            GroupedRow(GroupPosition.of(index, results.size), dividerStart = Space.l) {
+                                OgnelissListRow(
+                                    headline = stringResource(entry.titleRes),
+                                    // Показываем, в какой категории лежит настройка —
+                                    // иначе пользователь найдёт её, но не запомнит где
+                                    supporting = stringResource(entry.category.titleRes),
+                                    onClick = { onOpenEntry(entry) }
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    /*
+                     * Категории одной карточкой, а не отдельными строками
+                     * с разделителями. Семь пунктов сплошным списком читаются
+                     * как таблица; собранные в блок — как оглавление.
+                     */
+                    /*
+                     * 1.5.6 — КАК НАСТРОЙКИ OGNELISS MAIL: разделы собраны
+                     * в три группы под скруглёнными полосами («ОСНОВНОЕ»,
+                     * «ВЫЗОВЫ», «ПРИЛОЖЕНИЕ»), каждая — белая карточка.
+                     * Десять пунктов одной карточкой читались длинным
+                     * перечнем; три коротких группы — оглавлением.
+                     */
+                    HOME_GROUPS.forEach { (titleRes, categories) ->
+                        item(key = "group_$titleRes") {
+                            SettingsGroup(title = stringResource(titleRes)) {
+                                categories.forEachIndexed { index, category ->
+                                    SettingsCategoryCard(
+                                        icon = category.icon,
+                                        title = stringResource(category.titleRes),
+                                        summary = stringResource(category.summaryRes),
+                                        onClick = { onOpenCategory(category) }
+                                    )
+                                    // Разделитель между строками, но не после последней:
+                                    // черта у нижней границы карточки выглядит обрывом
+                                    if (index < categories.lastIndex) {
+                                        OgnelissDivider(Modifier.padding(start = 56.dp))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    item { Spacer(Modifier.height(Space.xxl)) }
                 }
             }
-        }
+            }
         }
     }
 }
 
+/**
+ * Группы главного экрана настроек (1.5.6). Порядок разделов — как
+ * в SettingsCategory; каждый раздел — ровно в одной группе: иначе
+ * забытый раздел пропал бы с экрана настроек. Проверяет
+ * SettingsRegistryTest («каждый раздел — в одной группе главного экрана»).
+ */
+internal val HOME_GROUPS: List<Pair<Int, List<SettingsCategory>>> = listOf(
+    R.string.settings_home_group_main to listOf(
+        SettingsCategory.APPEARANCE,
+        SettingsCategory.GESTURES
+    ),
+    R.string.settings_section_calls to listOf(
+        SettingsCategory.CALLS,
+        SettingsCategory.CALL_LOG,
+        SettingsCategory.SIM,
+        SettingsCategory.QUICK_ACCESS,
+        SettingsCategory.SPAM
+    ),
+    R.string.menu_section_app to listOf(
+        SettingsCategory.MAINTENANCE,
+        SettingsCategory.SYSTEM,
+        SettingsCategory.ABOUT
+    )
+)

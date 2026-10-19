@@ -25,6 +25,14 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.ogneliss.dialer.ui.theme.FlowUi
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.contentDescription
+import com.ogneliss.dialer.ui.theme.LocalPageTone
+import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
+import com.ogneliss.dialer.ui.theme.OgnelissTheme
+import com.ogneliss.dialer.ui.theme.PageTone
 
 /**
  * ЕДИНАЯ ПАНЕЛЬ ПРИЛОЖЕНИЯ.
@@ -74,14 +82,15 @@ fun OgnelissPanel(
     content: @Composable ColumnScope.() -> Unit
 ) {
     /*
-     * СПЛОШНОЙ СПИСОК (1.5.3, макет B).
+     * 1.5.6 — КАК В OGNELISS MAIL.
      *
-     * Обычный раздел — во всю ширину, без скругления и полей по бокам:
-     * сверху серая полоса с подписью (SectionBand), под ней содержимое
-     * на белом. Разделы идут друг за другом, их отделяют сами полосы.
+     * Цветная панель (предупреждение, пояснение) — скруглённая выноска
+     * с полями, как и была.
      *
-     * Цветная панель (предупреждение, пояснение) — по-прежнему отдельный
-     * скруглённый блок с полями: это выноска, а не часть списка.
+     * Обычная — по виду страницы (PageTone, Surfaces.kt):
+     * • TINTED (настройки, карточка контакта): полоса раздела, под ней
+     *   белая карточка с рамкой — как группы настроек Mail;
+     * • LIST (списки): полоса раздела и содержимое на белом, во всю ширину.
      */
     if (color != null) {
         Surface(
@@ -89,7 +98,7 @@ fun OgnelissPanel(
             shape = MaterialTheme.shapes.large,
             modifier = modifier
                 .fillMaxWidth()
-                .padding(horizontal = FlowUi.screenPadding, vertical = FlowUi.cardSpacing)
+                .padding(horizontal = FlowUi.groupInset, vertical = FlowUi.cardSpacing)
         ) {
             Column(Modifier.padding(FlowUi.cardPadding)) {
                 title?.let {
@@ -110,6 +119,16 @@ fun OgnelissPanel(
         return
     }
 
+    if (LocalPageTone.current == PageTone.TINTED) {
+        Column(modifier.fillMaxWidth()) {
+            if (title != null) SectionBand(title, icon = icon) else Spacer(Modifier.height(Space.m))
+            OgnelissCard {
+                Column(Modifier.padding(FlowUi.cardPadding), content = content)
+            }
+        }
+        return
+    }
+
     Column(
         modifier
             .fillMaxWidth()
@@ -124,14 +143,52 @@ fun OgnelissPanel(
 }
 
 /**
- * ПОЛОСА РАЗДЕЛА (1.5.3, «сплошной список», макет B).
+ * КАРТОЧКА ГРУППЫ — КАК В OGNELISS MAIL (1.5.6).
  *
- * Мягкая серая полоса во всю ширину с подписью («Сегодня», «Номера»).
- * 1.5.5: без линий сверху и снизу и без заглавных — с ними экран выглядел
- * таблицей, «резким и угловатым» (автор, 18.10); полосу отделяет её тон.
- * Разделяет списки на разделы вместо
- * карточек и отступов: журнал, контакты, карточка, настройки, заметки,
- * напоминания, статистика, списки блокировки.
+ * Белая (в тёмной — на ступень светлее страницы), скругление 22 dp, рамка
+ * в один dp светлее линий между строками, поля 14 dp от краёв. Внутри
+ * ListItem и прочие поверхности цвета surface получают цвет карточки:
+ * в тёмной теме страница и карточка разные, а ListItem красится в surface.
+ */
+@Composable
+fun OgnelissCard(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    val surfaces = OgnelissTheme.surfaces
+    val shape = OgnelissShapeTokens.card
+    Column(
+        modifier
+            .fillMaxWidth()
+            .padding(horizontal = FlowUi.groupInset)
+            .clip(shape)
+            .background(surfaces.card)
+            .border(CARD_BORDER, surfaces.cardBorder, shape)
+    ) {
+        val scheme = MaterialTheme.colorScheme
+        MaterialTheme(
+            colorScheme = scheme.copy(surface = surfaces.card, surfaceContainerLow = surfaces.card),
+            shapes = MaterialTheme.shapes,
+            typography = MaterialTheme.typography
+        ) {
+            Column(content = content)
+        }
+    }
+}
+
+/** Рамка карточки: 1 dp, как в Mail. */
+internal val CARD_BORDER = 1.dp
+
+/**
+ * ПОЛОСА РАЗДЕЛА — КАК В OGNELISS MAIL (1.5.6).
+ *
+ * Скруглённая полоса (12 dp) с полями 14 dp от краёв, подпись заглавными
+ * с разрядкой: «СЕГОДНЯ», «НОМЕРА», «ВЫЗОВЫ». Цвет — по странице:
+ * на белом списке #F2F5FA, на серо-голубых настройках #E3E8EE.
+ *
+ * История: 1.5.3–1.5.4 — серая полоса во всю ширину с линиями; 1.5.5 —
+ * без линий и обычным регистром («мягче»); 1.5.6 — как в Mail: мягкость
+ * дают скругление и поля, а не отказ от заглавных.
  *
  * [action] — кнопка справа (например, «+» у чёрного списка).
  * [icon] — значок перед подписью (бирюзовый у заметки).
@@ -143,29 +200,34 @@ fun SectionBand(
     icon: (@Composable () -> Unit)? = null,
     action: (@Composable () -> Unit)? = null
 ) {
-    Column(
+    val tinted = LocalPageTone.current == PageTone.TINTED
+    Row(
         modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceContainer)
+            // Поля вокруг полосы: на белом списке полоса стоит между строками
+            // (8 dp над ней, 4 под), в настройках — над карточкой (16 и 8)
+            .padding(
+                start = FlowUi.groupInset,
+                end = FlowUi.groupInset,
+                top = if (tinted) Space.l else Space.s,
+                bottom = if (tinted) Space.s else Space.xs
+            )
+            .clip(OgnelissShapeTokens.band)
+            .background(OgnelissTheme.bandColor())
+            .heightIn(min = BAND_MIN_HEIGHT)
+            .padding(start = Space.l, end = if (action != null) Space.xs else Space.l),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .heightIn(min = BAND_MIN_HEIGHT)
-                .padding(start = Space.l, end = if (action != null) Space.xs else Space.l),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            icon?.let { drawIcon ->
-                drawIcon()
-                Spacer(Modifier.width(Space.s))
-            }
-            SectionCaption(text, Modifier.weight(1f).padding(vertical = Space.s))
-            action?.invoke()
+        icon?.let { drawIcon ->
+            drawIcon()
+            Spacer(Modifier.width(Space.s))
         }
+        SectionCaption(text, Modifier.weight(1f).padding(vertical = Space.s))
+        action?.invoke()
     }
 }
 
-/** Высота полосы раздела без кнопки: подпись и поля — 36 dp (1.5.5; было 32 с линиями). */
+/** Высота полосы раздела без кнопки — 36 dp (Mail: 32 в списке, 37 в настройках). */
 private val BAND_MIN_HEIGHT = 36.dp
 
 /**
@@ -178,43 +240,40 @@ private val BAND_MIN_HEIGHT = 36.dp
  * Правило одно: линия ставится ТОЛЬКО между строками, не над первой
  * и не под последней. Там уже есть край панели, и вторая граница рядом
  * читается как ошибка вёрстки.
+ *
+ * 1.5.6: цвет — готовый непрозрачный (OgnelissSurfaces.divider, #E2E5EA
+ * в светлой, как у Mail), а не outlineVariant с прозрачностью 0,5.
  */
 @Composable
 fun OgnelissDivider(modifier: Modifier = Modifier) {
     HorizontalDivider(
         modifier = modifier,
-        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = DIVIDER_ALPHA)
+        color = OgnelissTheme.surfaces.divider
     )
 }
 
 /**
- * Прозрачность разделителя.
+ * ПОДПИСЬ РАЗДЕЛА — КАК В OGNELISS MAIL (1.5.6).
  *
- * 0.5 — середина между тем, что было. Линия должна отделять строки,
- * но не спорить с текстом: полная выглядит как рамка таблицы.
- */
-private const val DIVIDER_ALPHA = 0.5f
-
-
-/**
- * ПОДПИСЬ РАЗДЕЛА (1.5.5 — мягче).
+ * Заглавными, мелко, полужирным, с разрядкой: «СЕГОДНЯ», «НОМЕРА»,
+ * «ВЫЗОВЫ», — как подписи разделов Mail. Одна функция на все заголовки
+ * групп: журнал, контакты, панели карточки, настройки, шторки.
  *
- * Обычный регистр, средняя насыщенность: «Сегодня», «Номера», «Вызовы».
- * В 1.5.1–1.5.4 — заглавными с разрядкой и полужирным: строго, но вместе
- * с линиями давало «резкий, угловатый» экран (автор, 18.10). Одна функция
- * на все заголовки групп: журнал, контакты, панели карточки, настройки,
- * шторки.
- *
- * heading() — TalkBack перескакивает по разделам, не слушая каждую строку.
+ * Для чтения с экрана — исходный текст, а не заглавные: часть
+ * синтезаторов речи читает слово заглавными по буквам. heading() —
+ * TalkBack перескакивает по разделам, не слушая каждую строку.
  */
 @Composable
 fun SectionCaption(text: String, modifier: Modifier = Modifier) {
     Text(
-        text,
-        modifier = modifier.semantics { heading() },
-        style = MaterialTheme.typography.labelLarge.copy(
-            fontWeight = FontWeight.Medium,
-            letterSpacing = 0.1.sp
+        text.uppercase(),
+        modifier = modifier.semantics {
+            heading()
+            contentDescription = text
+        },
+        style = MaterialTheme.typography.labelMedium.copy(
+            fontWeight = FontWeight.SemiBold,
+            letterSpacing = 0.9.sp
         ),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         maxLines = 1

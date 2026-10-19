@@ -182,7 +182,10 @@ fun BottomControlPanel(
          * и почти сливалась с панелью, хотя в коде ей задан белый.
          * Найдено по пикселям снимка: клавиши #FFFFFF, кнопка #EAF1FB.
          */
-        tonalElevation = 0.dp
+        tonalElevation = 0.dp,
+        // 1.5.6: тень сверху, как у нижней навигации Ogneliss Mail —
+        // список уходит под панель, а не обрывается у её края
+        shadowElevation = if (side) 0.dp else PANEL_SHADOW
     ) {
         // Внизу — полоса под навигацией её цвета (NavBarStrip.kt); сбоку — нет
         if (!side) PanelReachesNavBar()
@@ -613,7 +616,11 @@ private fun ActionRow(
              * отбор переставал бросаться в глаза.
              */
             Box {
-                LabeledIconButton(OgnelissIcons.FilterList, R.string.filter_title, onFilters)
+                LabeledIconButton(
+                    OgnelissIcons.FilterList, R.string.filter_title, onFilters,
+                    // Работающий фильтр — голубая подложка, как активный раздел Mail
+                    selected = filter.isActive
+                )
 
                 // Без метки работающий фильтр невидим: журнал наполовину
                 // пуст, и это выглядит как потеря данных
@@ -643,17 +650,26 @@ private fun ActionRow(
          * но без неё кнопка оказалась бы единственной неподписанной
          * в ряду, и ряд читался бы кривым.
          */
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-        FilledIconButton(
+        /*
+         * 1.5.6 — КАК ЦЕНТРАЛЬНАЯ КНОПКА OGNELISS MAIL: голубая
+         * (primaryContainer) плашка 64 × 56 с тенью, приподнятая над
+         * панелью, без подписи — её узнают по месту и значку. Было
+         * (1.2.0–1.5.5): синяя таблетка 72 × 40 с подписью «Клавиатура».
+         * Описание для TalkBack — прежнее.
+         */
+        FloatingActionButton(
             onClick = onToggleExpanded,
             shape = OgnelissShapeTokens.callButton,
+            containerColor = com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.navIndicator,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            elevation = FloatingActionButtonDefaults.elevation(
+                defaultElevation = FAB_ELEVATION,
+                pressedElevation = FAB_ELEVATION,
+                focusedElevation = FAB_ELEVATION,
+                hoveredElevation = FAB_ELEVATION
+            ),
             modifier = Modifier
-                // Высота — как у боковых кнопок (PILL_HEIGHT): ряд ровный.
-                // Шире соседей и залита цветом — главная кнопка видна сразу
-                .size(width = 72.dp, height = PILL_HEIGHT)
+                .size(width = FAB_WIDTH, height = FAB_HEIGHT)
                 .verticalSwipeGesture(
                     // Вверх раскрывает только если ещё закрыта, вниз —
                     // только если открыта: жест в сторону текущего
@@ -668,22 +684,6 @@ private fun ActionRow(
                     if (expanded) R.string.dialpad_hide else R.string.dialpad_show
                 )
             )
-        }
-
-        // Подпись — как у соседей: на телефоне лёжа прячется вместе с ними
-        if (!com.ogneliss.dialer.ui.adaptive.LocalWindowLayout.current.isShort &&
-            com.ogneliss.dialer.ui.theme.LocalAppearance.current.buttonLabels
-        ) {
-            // 4 dp, а не 2: подпись прилипала к таблетке кнопки
-            Spacer(Modifier.height(Space.xs))
-
-            Text(
-                stringResource(R.string.bar_dialpad),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1
-            )
-        }
         }
 
 
@@ -736,7 +736,8 @@ private fun ActionRow(
                     // помещается одно слово
                     labelRes = R.string.bar_exit,
                     onClick = onStartSelection,
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = MaterialTheme.colorScheme.primary,
+                    selected = true
                 )
             } else if (onReminders != null && !railShown) {
                 LabeledIconButton(OgnelissIcons.Alarm, R.string.nav_reminders, onReminders)
@@ -831,15 +832,24 @@ private fun ActionRail(
     ) {
         LabeledIconButton(OgnelissIcons.Person, R.string.nav_contacts, onContacts, showLabel = labels, fitLabel = true)
         Box {
-            LabeledIconButton(OgnelissIcons.FilterList, R.string.filter_title, onFilters, showLabel = labels, fitLabel = true)
+            LabeledIconButton(OgnelissIcons.FilterList, R.string.filter_title, onFilters, showLabel = labels, fitLabel = true, selected = filter.isActive)
             if (filter.isActive) {
                 Badge(Modifier.align(Alignment.TopEnd)) { Text(filter.activeCount.toString()) }
             }
         }
-        FilledIconButton(
+        // Как центральная кнопка нижней панели (1.5.6): голубая, с тенью
+        FloatingActionButton(
             onClick = onToggleExpanded,
             shape = OgnelissShapeTokens.callButton,
-            modifier = Modifier.size(width = PILL_WIDTH, height = 56.dp)
+            containerColor = com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.navIndicator,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            elevation = FloatingActionButtonDefaults.elevation(
+                defaultElevation = FAB_ELEVATION,
+                pressedElevation = FAB_ELEVATION,
+                focusedElevation = FAB_ELEVATION,
+                hoveredElevation = FAB_ELEVATION
+            ),
+            modifier = Modifier.size(width = FAB_HEIGHT, height = FAB_HEIGHT)
         ) {
             Icon(
                 // Клавиатура открывается слева от полосы — стрелка туда же
@@ -856,7 +866,8 @@ private fun ActionRail(
                 onClick = onStartSelection,
                 tint = MaterialTheme.colorScheme.primary,
                 showLabel = labels,
-                fitLabel = true
+                fitLabel = true,
+                selected = true
             )
         } else if (onReminders != null) {
             LabeledIconButton(OgnelissIcons.Alarm, R.string.nav_reminders, onReminders, showLabel = labels, fitLabel = true)
@@ -877,3 +888,14 @@ private val RAIL_WIDTH = 80.dp
  * и отступами (~64 dp) + кнопка клавиатуры 56 dp + поля 24 dp ≈ 336 dp.
  */
 private val RAIL_MIN_HEIGHT_WITH_LABELS = 340.dp
+
+/**
+ * Центральная кнопка клавиатуры (1.5.6) — как в Ogneliss Mail: 64 × 56,
+ * тень 3 dp. Высота — минимальная у FloatingActionButton (56 dp).
+ */
+private val FAB_WIDTH = 64.dp
+private val FAB_HEIGHT = 56.dp
+private val FAB_ELEVATION = 3.dp
+
+/** Тень нижней панели сверху (1.5.6), как у навигации Mail. */
+private val PANEL_SHADOW = 6.dp

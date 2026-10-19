@@ -23,6 +23,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import coil.compose.AsyncImage
+import com.ogneliss.dialer.ui.theme.Space
+import com.ogneliss.dialer.ui.theme.FlowUi
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.layout.Layout
 
 /*
  * Общий вид экранов вызова (1.3.4, 04.10.2026): фото звонящего на весь
@@ -132,4 +137,74 @@ internal fun BoxScope.NavBarUnderPanel() {
             .windowInsetsBottomHeight(WindowInsets.navigationBars)
             .background(PanelColors.panel())
     )
+}
+
+/**
+ * ПОРТРЕТ И ПОДПИСИ ПОД НИМ — РАЗМЕР ПОРТРЕТА ПО МЕСТУ (1.5.6).
+ *
+ * Сначала меряются подписи (имя, номер, состояние), потом портрету
+ * отдаётся меньшее из: [widthFraction] ширины, оставшейся высоты
+ * и [maxSize]. Меньше [minSize] — портрета нет: имя важнее лица, по нему
+ * решают, брать ли трубку. Высота считается при каждой раскладке, поэтому
+ * при раскрытии клавиатуры тонов портрет уменьшается вместе с местом,
+ * кадр за кадром её анимации.
+ *
+ * [portrait] получает точный квадрат — свой размер внутри не важен.
+ */
+@Composable
+internal fun AdaptivePortraitColumn(
+    portrait: (@Composable () -> Unit)?,
+    modifier: Modifier = Modifier,
+    gap: Dp = Space.l,
+    minSize: Dp = FlowUi.callPortraitMin,
+    maxSize: Dp = FlowUi.callPortraitMax,
+    widthFraction: Float = FlowUi.CALL_PORTRAIT_WIDTH_FRACTION,
+    text: @Composable () -> Unit
+) {
+    val portraitContent: @Composable () -> Unit = portrait ?: {}
+    Layout(
+        contents = listOf(portraitContent, text),
+        modifier = modifier
+    ) { (portraitMeasurables, textMeasurables), constraints ->
+        val textPlaceables = textMeasurables.map {
+            it.measure(Constraints(maxWidth = constraints.maxWidth))
+        }
+        val textHeight = textPlaceables.sumOf { it.height }
+        val width = if (constraints.hasBoundedWidth) constraints.maxWidth
+        else textPlaceables.maxOfOrNull { it.width } ?: 0
+        val gapPx = gap.roundToPx()
+
+        var size = 0
+        if (portrait != null && portraitMeasurables.isNotEmpty()) {
+            val byWidth = (width * widthFraction).toInt()
+            val byHeight = if (constraints.hasBoundedHeight) {
+                constraints.maxHeight - textHeight - gapPx
+            } else {
+                Int.MAX_VALUE
+            }
+            size = minOf(byWidth, byHeight, maxSize.roundToPx())
+            if (size < minSize.roundToPx()) size = 0
+        }
+        val portraitPlaceables = if (size > 0) {
+            portraitMeasurables.map { it.measure(Constraints.fixed(size, size)) }
+        } else {
+            emptyList()
+        }
+
+        val contentHeight = (if (size > 0) size + gapPx else 0) + textHeight
+        val height = if (constraints.hasBoundedHeight) {
+            contentHeight.coerceIn(constraints.minHeight, constraints.maxHeight)
+        } else {
+            contentHeight.coerceAtLeast(constraints.minHeight)
+        }
+        layout(width, height) {
+            var y = 0
+            portraitPlaceables.forEach { it.placeRelative((width - it.width) / 2, y) }
+            if (size > 0) y += size + gapPx
+            textPlaceables.forEach {
+                it.placeRelative((width - it.width) / 2, y)
+                y += it.height
+            }
+        }
+    }
 }

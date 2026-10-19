@@ -67,6 +67,18 @@ object OgnelissShapeTokens {
      */
     val bottomPanel = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
 
+    /**
+     * ПОЛОСА РАЗДЕЛА И КАРТОЧКА ГРУППЫ — КАК В OGNELISS MAIL (1.5.6).
+     *
+     * Сняты по снимкам Mail: полоса — скругление ≈ 11 dp при высоте 32–37,
+     * карточка настроек — ≈ 22 dp. Полоса не «пилюля»: с полным скруглением
+     * она читалась бы кнопкой.
+     */
+    val band = RoundedCornerShape(12.dp)
+    val card = RoundedCornerShape(22.dp)
+    /** Радиус карточки отдельно — для рамки сегментов группы (GroupedRow). */
+    val cardRadius = 22.dp
+
     /** Фото в шапке карточки: нижние углы как у панелей. */
     val coverBottom = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
 

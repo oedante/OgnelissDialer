@@ -86,6 +86,9 @@ fun SettingsChoiceDialog(
             "GROUPS" to stringResource(R.string.journal_style_groups)
         )
 
+        "ui_scale" -> com.ogneliss.dialer.settings.UiScale.entries.map {
+            it.name to stringResource(SettingsCommands.uiScaleLabelRes(it))
+        }
         "call_photo_style" -> com.ogneliss.dialer.settings.CallPhotoStyle.entries.map {
             it.name to stringResource(SettingsCommands.callPhotoStyleLabelRes(it))
         }

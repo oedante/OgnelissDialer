@@ -60,6 +60,8 @@ fun SpamProtectionScreen(
     val roleState = remember { ScreeningRoleInfo.state(context) }
 
     ScreenScaffold(
+        // Как настройки Ogneliss Mail: серо-голубая страница, группы — карточками (1.5.6)
+        tone = com.ogneliss.dialer.ui.theme.PageTone.TINTED,
         title = stringResource(R.string.settings_section_spam),
         onBack = onBack,
         // Настройки: заголовок остаётся на месте, как в разделах

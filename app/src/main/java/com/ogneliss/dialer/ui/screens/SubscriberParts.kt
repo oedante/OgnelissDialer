@@ -272,8 +272,9 @@ internal fun SectionPanelHeader(text: String) {
         text,
         Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .padding(start = Space.l, end = Space.l, top = FlowUi.sheetPadding, bottom = Space.s)
+            // 1.5.6: без своей подложки — на странице карточки (серо-голубой,
+            // как настройки Mail); поле слева — как у полос и карточек
+            .padding(start = FlowUi.groupInset + Space.xs, end = Space.l, top = FlowUi.sheetPadding, bottom = Space.xs)
             .semantics { heading() },
         style = MaterialTheme.typography.titleMedium
     )

@@ -82,6 +82,8 @@ fun ContactsBottomBar(
         color = PanelColors.panel(),
         // Без тонального подъёма — разбор в BottomControlPanel
         tonalElevation = 0.dp,
+        // 1.5.6: тень сверху, как у панели журнала и навигации Ogneliss Mail
+        shadowElevation = 6.dp,
         shape = OgnelissShapeTokens.bottomPanel,
         // Свайп вправо возвращает к вызовам: то же направление,
         // что у системного жеста «назад», и запоминать нечего
@@ -247,7 +249,8 @@ fun ContactsBottomBar(
                         MaterialTheme.colorScheme.primary
                     } else {
                         LocalContentColor.current
-                    }
+                    },
+                    selected = filter != ContactFilter.ALL
                 )
 
                 if (filter != ContactFilter.ALL) {

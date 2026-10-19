@@ -185,9 +185,12 @@ fun ProvideWindowLayout(activity: Activity, content: @Composable () -> Unit) {
             }
     }
 
-    val layout = remember(configuration.screenWidthDp, configuration.screenHeightDp, fold, density) {
-        val width = configuration.screenWidthDp
-        val height = configuration.screenHeightDp
+    // Масштаб интерфейса (1.5.6): размеры окна — в тех же «dp», что
+    // и раскладка внутри темы, иначе доли ширины считались бы не от того
+    val uiScale = com.ogneliss.dialer.ui.theme.LocalUiScaleFactor.current
+    val layout = remember(configuration.screenWidthDp, configuration.screenHeightDp, fold, density, uiScale) {
+        val width = (configuration.screenWidthDp / uiScale).toInt()
+        val height = (configuration.screenHeightDp / uiScale).toInt()
 
         val posture = when {
             fold == null || fold?.state != FoldingFeature.State.HALF_OPENED -> FoldPosture.FLAT

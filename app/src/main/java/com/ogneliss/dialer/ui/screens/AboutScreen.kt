@@ -65,6 +65,8 @@ fun AboutScreen(
      * экран короткий, и уезжающий заголовок на нём выглядит нервно.
      */
     ScreenScaffold(
+        // Как настройки Ogneliss Mail: серо-голубая страница, группы — карточками (1.5.6)
+        tone = com.ogneliss.dialer.ui.theme.PageTone.TINTED,
         title = stringResource(R.string.settings_section_about),
         onBack = onBack,
         pinnedTopBar = true

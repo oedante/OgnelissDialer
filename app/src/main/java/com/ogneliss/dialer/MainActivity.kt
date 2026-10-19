@@ -168,8 +168,10 @@ class MainActivity : ComponentActivity() {
             val vm: DialerViewModel = hiltViewModel()
             val theme by vm.prefs.theme.collectAsStateWithLifecycle(ThemeMode.SYSTEM)
             val dynamic by vm.prefs.dynamicColor.collectAsStateWithLifecycle(false)
+            // Масштаб интерфейса под экран (1.5.6): разбор в ui/theme/UiScale.kt
+            val uiScale by vm.prefs.uiScale.collectAsStateWithLifecycle(com.ogneliss.dialer.settings.UiScale.AUTO)
 
-            OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic) {
+            OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic, uiScale = uiScale) {
                 // Раскладка окна: телефон, лёжа, раскладушка, планшет.
                 // Разбор — в ui/adaptive/WindowLayout.kt
                 ProvideWindowLayout(this@MainActivity) {

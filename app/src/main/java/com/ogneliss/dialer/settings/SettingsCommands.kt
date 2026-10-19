@@ -159,6 +159,7 @@ class SettingsCommands @Inject constructor(
             "swipe_sim" -> prefs.setSwipeSimMode(SwipeSimMode.from(value))
             "carrier_info" -> prefs.setCarrierInfo(CarrierInfoMode.from(value))
             "call_photo_style" -> prefs.setCallPhotoStyle(CallPhotoStyle.from(value))
+            "ui_scale" -> prefs.setUiScale(UiScale.from(value))
             "journal_style" -> prefs.setJournalStyle(JournalStyle.from(value))
             "sort_order" -> prefs.setSortOrder(
                 runCatching { SortOrder.valueOf(value) }.getOrDefault(SortOrder.RELEVANCE)
@@ -183,6 +184,7 @@ class SettingsCommands @Inject constructor(
         "swipe_sim" -> state.swipeSimMode.name
         "carrier_info" -> state.carrierInfo.name
         "call_photo_style" -> state.callPhotoStyle.name
+        "ui_scale" -> state.uiScale.name
         "journal_style" -> state.journalStyle.name
         "notes_retention" -> state.notesRetention.name
         "notes_retention_scope" -> state.notesRetentionScope.name
@@ -242,6 +244,19 @@ class SettingsCommands @Inject constructor(
 
         "call_photo_style" -> context.getString(callPhotoStyleLabelRes(state.callPhotoStyle))
 
+        // «Авто» — с тем, что выбрано для этого экрана: видно, что оно делает
+        "ui_scale" -> if (state.uiScale == UiScale.AUTO) {
+            val config = context.resources.configuration
+            val percent = Math.round(
+                com.ogneliss.dialer.ui.theme.UiScaleMath.autoFactor(
+                    config.smallestScreenWidthDp, config.densityDpi
+                ) * 100
+            )
+            context.getString(R.string.ui_scale_auto_now, percent)
+        } else {
+            context.getString(uiScaleLabelRes(state.uiScale))
+        }
+
         "swipe_sim" -> context.getString(
             when (state.swipeSimMode) {
                 SwipeSimMode.ASK -> R.string.swipe_sim_ask
@@ -290,6 +305,7 @@ class SettingsCommands @Inject constructor(
             "swipe_sim" -> R.string.settings_swipe_sim
             "carrier_info" -> R.string.settings_carrier_info
             "call_photo_style" -> R.string.settings_call_photo
+            "ui_scale" -> R.string.settings_ui_scale
             "journal_style" -> R.string.settings_journal_style
             "notes_retention" -> R.string.settings_notes_retention
             "notes_retention_scope" -> R.string.settings_notes_scope
@@ -300,6 +316,15 @@ class SettingsCommands @Inject constructor(
     companion object {
 
         private const val TAG = "Settings"
+
+        /** Подпись варианта масштаба — для строки настройки и диалога. */
+        fun uiScaleLabelRes(scale: UiScale): Int = when (scale) {
+            UiScale.AUTO -> R.string.ui_scale_auto
+            UiScale.S90 -> R.string.ui_scale_90
+            UiScale.S100 -> R.string.ui_scale_100
+            UiScale.S110 -> R.string.ui_scale_110
+            UiScale.S125 -> R.string.ui_scale_125
+        }
 
         /** Подпись варианта фото на экране вызова — для строки настройки и диалога. */
         fun callPhotoStyleLabelRes(style: CallPhotoStyle): Int = when (style) {
@@ -349,7 +374,7 @@ class SettingsCommands @Inject constructor(
         val CHOICE_KEYS = setOf(
             "language", "theme", "swipe_right", "swipe_left", "grouping", "sort_order",
             "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info",
-            "call_photo_style"
+            "call_photo_style", "ui_scale"
             // "journal_style" — снят из реестра в 1.5.3 (вид журнала один)
         )
     }

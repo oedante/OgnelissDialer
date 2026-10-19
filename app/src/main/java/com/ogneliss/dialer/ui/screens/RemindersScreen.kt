@@ -176,7 +176,8 @@ fun RemindersScreen(
                             MaterialTheme.colorScheme.primary
                         } else {
                             MaterialTheme.colorScheme.onSurfaceVariant
-                        }
+                        },
+                        selected = days > 0
                     )
                 }
             )

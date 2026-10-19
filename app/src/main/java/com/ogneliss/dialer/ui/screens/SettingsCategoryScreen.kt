@@ -60,6 +60,8 @@ fun SettingsCategoryScreen(
     val state by vm.settingsState.collectAsStateWithLifecycle()
 
     ScreenScaffold(
+        // Как настройки Ogneliss Mail: серо-голубая страница, группы — карточками (1.5.6)
+        tone = com.ogneliss.dialer.ui.theme.PageTone.TINTED,
         title = stringResource(category.titleRes),
         onBack = onBack,
         showBack = showBack,

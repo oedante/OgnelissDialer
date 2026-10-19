@@ -211,6 +211,8 @@ class InCallActivity : ComponentActivity() {
              */
             val theme by prefs.theme.collectAsStateWithLifecycle(initialValue = ThemeMode.SYSTEM)
             val dynamic by prefs.dynamicColor.collectAsStateWithLifecycle(initialValue = false)
+            // Масштаб интерфейса — тот же, что в приложении (1.5.6)
+            val uiScale by prefs.uiScale.collectAsStateWithLifecycle(initialValue = com.ogneliss.dialer.settings.UiScale.AUTO)
             // Подписи под кнопками — та же настройка, что во всём приложении.
             // Экран вызова — отдельная активность, корня приложения у него
             // нет, поэтому оформление ставится здесь
@@ -225,7 +227,7 @@ class InCallActivity : ComponentActivity() {
             val callPhotoStyle by prefs.callPhotoStyle
                 .collectAsStateWithLifecycle<CallPhotoStyle?>(initialValue = null)
 
-            OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic) {
+            OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic, uiScale = uiScale) {
                 // Раскладка окна: телефон, лёжа, раскладушка, планшет.
                 // Разбор — в ui/adaptive/WindowLayout.kt
                 ProvideWindowLayout(this@InCallActivity) {
@@ -769,9 +771,12 @@ private fun InCallScreen(
                     // экран начинается с имени, и зазор сверху был бы
                     // отступом от пустоты
                     if (showPortrait) {
+                        // Лёжа — по высоте окна (1.5.6): 30 % высоты,
+                        // от 72 до 140 dp; было 88 dp на любом экране
                         CallerAvatar(
                             photoUri = photoUri,
-                            size = FlowUi.callPortraitSizeLandscape,
+                            size = (windowLayout0.heightDp * 0.30f).dp
+                                .coerceIn(FlowUi.callPortraitMin, LANDSCAPE_PORTRAIT_MAX),
                             square = squarePortrait,
                             modifier = trackPortrait
                         )
@@ -926,11 +931,17 @@ private fun InCallScreen(
             // --- Верх: кто звонит ---
             OnPhotoColors(photoBackground) {
             Column(
-                Modifier.padding(
-                    top = Space.xl,
-                    start = FlowUi.contentPadding,
-                    end = FlowUi.contentPadding
-                ),
+                Modifier
+                    // 1.5.6: всё место над панелью — портрету и подписям;
+                    // размер портрета считается от него (AdaptivePortraitColumn)
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(
+                        top = Space.xl,
+                        start = FlowUi.contentPadding,
+                        end = FlowUi.contentPadding,
+                        bottom = Space.m
+                    ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 /*
@@ -941,27 +952,33 @@ private fun InCallScreen(
                  * на экране оставались только имя и номер. Узнать
                  * звонящего в лицо было нельзя.
                  *
-                 * ── Почему такой крупный ───────────────────────────────────
-                 * 140 dp — экран вызова смотрят издалека, на вытянутой
-                 * руке или мельком, когда телефон лежит на столе.
-                 * Портрет тут работает быстрее текста: лицо узнаётся
-                 * раньше, чем прочитано имя.
+                 * ── Размер — по экрану (1.5.6) ─────────────────────────────
+                 * Было 132 dp на любом телефоне — на широком экране автора
+                 * четверть ширины («очень маленький»). Теперь до 46 %
+                 * ширины и не выше места над панелью: разбор во FlowUi
+                 * (callPortraitMax) и в AdaptivePortraitColumn.
                  *
                  * Если фотографии нет, портрета нет вовсе: серый круг
                  * с силуэтом занимал верхнюю треть экрана и не сообщал
                  * ничего — силуэт одинаков у всех. Без него имя
                  * поднимается наверх, и длинному хватает места.
                  */
-                if (showPortrait) {
-                    CallerAvatar(
-                        photoUri = photoUri,
-                        size = FlowUi.callPortraitSize,
-                        square = squarePortrait,
-                        modifier = trackPortrait
-                    )
-                    Spacer(Modifier.height(Space.l))
-                }
-
+                AdaptivePortraitColumn(
+                    portrait = if (showPortrait) {
+                        {
+                            CallerAvatar(
+                                photoUri = photoUri,
+                                size = FlowUi.callPortraitMax,
+                                square = squarePortrait,
+                                modifier = trackPortrait
+                            )
+                        }
+                    } else {
+                        null
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 CallerIdentity(
                     display = callerDisplay,
                     number = number,
@@ -986,16 +1003,10 @@ private fun InCallScreen(
                         color = MaterialTheme.colorScheme.outline
                     )
                 }
+                }
+                }
                 // Набранное показывает сама панель: дублировать
                 // не нужно, иначе цифры видны в двух местах
-                /*
-                 * Введённые тоны здесь не показываются.
-                 *
-                 * Блок стоял под `if (false)` — мёртвый код, который
-                 * компилятор пропускает, а читатель принимает
-                 * за работающий. Цифры видны в самом поле набора,
-                 * дублировать их незачем.
-                 */
             }
             } // OnPhotoColors
 
@@ -1980,7 +1991,8 @@ internal fun CallerAvatar(
             model = uri,
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.size(size)
+            // Во весь портрет: размер может задать и раскладка (1.5.6)
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
@@ -2260,3 +2272,6 @@ private fun ConferencePanel(
  * (≈ 1,25 половины стороны).
  */
 private const val SQUARE_FOCUS = 1.25f
+
+/** Портрет лёжа — не крупнее 140 dp: по высоте места вдвое меньше (1.5.6). */
+private val LANDSCAPE_PORTRAIT_MAX = 140.dp

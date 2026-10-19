@@ -53,6 +53,9 @@ PAIRS = [
     ('LightOutline', 'LightCanvas', TEXT), ('Blue40', 'LightCanvas', TEXT),
     ('LightPage', 'LightCanvas', ZONE), ('LightControl', 'LightCanvas', ZONE),
     ('LightRaised', 'LightControl', ZONE),
+    # 1.5.6, как Ogneliss Mail: подпись раздела на полосе настроек, карточка на странице
+    ('LightTextVariant', 'LightBand', TEXT), ('LightBand', 'LightPage', 1.05),
+    ('LightRaised', 'LightPage', ZONE),
     # тёмная
     ('DarkText', 'DarkCard', TEXT), ('DarkTextVariant', 'DarkCard', TEXT),
     ('DarkTextVariant', 'DarkHighest', TEXT), ('DarkOutline', 'DarkCard', TEXT),

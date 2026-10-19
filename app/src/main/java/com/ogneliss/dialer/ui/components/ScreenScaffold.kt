@@ -5,6 +5,10 @@ import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import com.ogneliss.dialer.ui.theme.LocalPageTone
+import com.ogneliss.dialer.ui.theme.OgnelissTheme
+import com.ogneliss.dialer.ui.theme.PageTone
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
@@ -61,6 +65,11 @@ fun ScreenScaffold(
      * на месте, прокручивается только содержимое.
      */
     pinnedTopBar: Boolean = false,
+    /**
+     * Вид страницы (1.5.6, как в Ogneliss Mail): LIST — белый список,
+     * TINTED — серо-голубые настройки с карточками. Разбор — Surfaces.kt.
+     */
+    tone: PageTone = PageTone.LIST,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val scrollBehavior = if (pinnedTopBar) {
@@ -72,6 +81,7 @@ fun ScreenScaffold(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         contentWindowInsets = WindowInsets.safeDrawing,
+        containerColor = OgnelissTheme.pageColor(tone),
         topBar = {
             TopAppBar(
                 title = { Text(title) },
@@ -88,15 +98,26 @@ fun ScreenScaffold(
                 actions = actions,
                 scrollBehavior = scrollBehavior,
                 colors = TopAppBarDefaults.topAppBarColors(
-                    // Панель окрашивается при прокрутке: видно, что под ней
-                    // есть содержимое, а не пустое место
-                    scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    // Белый список: панель окрашивается при прокрутке — видно,
+                    // что под ней есть содержимое. Серо-голубые настройки:
+                    // панель остаётся белой, как в Mail, — она и так отличается
+                    // от страницы
+                    scrolledContainerColor = if (tone == PageTone.TINTED) {
+                        MaterialTheme.colorScheme.surface
+                    } else {
+                        MaterialTheme.colorScheme.surfaceContainer
+                    }
                 )
             )
         },
         bottomBar = bottomBar,
         snackbarHost = snackbarHost,
         // Не шире 640 dp по центру на широком окне: разбор в ReadableWidth
-        content = { pad -> ReadableWidth { content(pad) } }
+        content = { pad ->
+            CompositionLocalProvider(LocalPageTone provides tone) {
+                ReadableWidth { content(pad) }
+            }
+        }
     )
 }

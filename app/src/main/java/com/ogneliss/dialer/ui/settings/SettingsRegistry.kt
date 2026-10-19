@@ -219,6 +219,13 @@ object SettingsRegistry {
             R.string.settings_dynamic_color, R.string.settings_dynamic_color_text,
             SettingKind.Switch("dynamic_color")
         ),
+        // 1.5.6: масштаб интерфейса под экран — разбор в ui/theme/UiScale.kt
+        SettingEntry(
+            "ui_scale", SettingsCategory.APPEARANCE,
+            R.string.settings_ui_scale, R.string.settings_ui_scale_text,
+            SettingKind.Choice("ui_scale"),
+            keywordsRes = R.string.keywords_accessibility
+        ),
         SettingEntry(
             "large_buttons", SettingsCategory.APPEARANCE,
             R.string.settings_large_buttons, R.string.settings_large_buttons_text,

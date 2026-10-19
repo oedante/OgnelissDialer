@@ -127,110 +127,116 @@ fun PermissionWizardScreen(
         return
     }
 
-    Scaffold(
-        // Insets обрабатывает Scaffold: без него содержимое уезжает
-        // под строку состояния и под кнопки навигации
-        contentWindowInsets = WindowInsets.safeDrawing,
-        bottomBar = {
-            WizardButtons(
-                isLastStep = stepIndex == steps.lastIndex,
-                isGranted = step.isGranted,
-                isRequired = step.required,
-                onGrant = {
-                    when {
-                        step.id == STEP_DIALER -> {
-                            // false означает, что оболочка заблокировала
-                            // системное окно: показываем объяснение
-                            if (!onRequestDefaultDialer()) roleBlocked = true
+    androidx.compose.runtime.CompositionLocalProvider(
+        com.ogneliss.dialer.ui.theme.LocalPageTone provides com.ogneliss.dialer.ui.theme.PageTone.TINTED
+    ) {
+        Scaffold(
+            // Как настройки Ogneliss Mail: серо-голубая страница, группы — карточками (1.5.6)
+            containerColor = com.ogneliss.dialer.ui.theme.OgnelissTheme.pageColor(com.ogneliss.dialer.ui.theme.PageTone.TINTED),
+            // Insets обрабатывает Scaffold: без него содержимое уезжает
+            // под строку состояния и под кнопки навигации
+            contentWindowInsets = WindowInsets.safeDrawing,
+            bottomBar = {
+                WizardButtons(
+                    isLastStep = stepIndex == steps.lastIndex,
+                    isGranted = step.isGranted,
+                    isRequired = step.required,
+                    onGrant = {
+                        when {
+                            step.id == STEP_DIALER -> {
+                                // false означает, что оболочка заблокировала
+                                // системное окно: показываем объяснение
+                                if (!onRequestDefaultDialer()) roleBlocked = true
+                            }
+                            step.permissions.isNotEmpty() ->
+                                permissionLauncher.launch(step.permissions.toTypedArray())
+                            else -> step.openSettings?.invoke()
                         }
-                        step.permissions.isNotEmpty() ->
-                            permissionLauncher.launch(step.permissions.toTypedArray())
-                        else -> step.openSettings?.invoke()
+                    },
+                    onNext = {
+                        if (stepIndex == steps.lastIndex) onFinished() else stepIndex++
                     }
-                },
-                onNext = {
-                    if (stepIndex == steps.lastIndex) onFinished() else stepIndex++
-                }
-            )
-        }
-    ) { padding ->
-        // Не шире 640 dp по центру на широком окне: разбор в ReadableWidth
-        ReadableWidth {
-        Column(
-            Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = Space.xl)
-        ) {
-            // Индикатор прогресса: видно, сколько осталось, и что процесс
-            // конечен. Без него длинная череда запросов утомляет
-            LinearProgressIndicator(
-                progress = { (stepIndex + 1f) / steps.size },
-                modifier = Modifier.fillMaxWidth().padding(top = Space.l)
-            )
-            Text(
-                stringResource(R.string.wizard_step_of, stepIndex + 1, steps.size),
-                Modifier.padding(top = Space.s),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.outline
-            )
+                )
+            }
+        ) { padding ->
+            // Не шире 640 dp по центру на широком окне: разбор в ReadableWidth
+            ReadableWidth {
+            Column(
+                Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = Space.xl)
+            ) {
+                // Индикатор прогресса: видно, сколько осталось, и что процесс
+                // конечен. Без него длинная череда запросов утомляет
+                LinearProgressIndicator(
+                    progress = { (stepIndex + 1f) / steps.size },
+                    modifier = Modifier.fillMaxWidth().padding(top = Space.l)
+                )
+                Text(
+                    stringResource(R.string.wizard_step_of, stepIndex + 1, steps.size),
+                    Modifier.padding(top = Space.s),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.outline
+                )
 
-            Spacer(Modifier.height(Space.xxl))
+                Spacer(Modifier.height(Space.xxl))
 
-            AnimatedContent(targetState = step, label = "step") { current ->
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    StatusIcon(current.icon, current.isGranted)
+                AnimatedContent(targetState = step, label = "step") { current ->
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        StatusIcon(current.icon, current.isGranted)
 
-                    Spacer(Modifier.height(Space.xl))
+                        Spacer(Modifier.height(Space.xl))
 
-                    Text(
-                        stringResource(current.titleRes),
-                        style = MaterialTheme.typography.headlineSmall,
-                        textAlign = TextAlign.Center
-                    )
+                        Text(
+                            stringResource(current.titleRes),
+                            style = MaterialTheme.typography.headlineSmall,
+                            textAlign = TextAlign.Center
+                        )
 
-                    Spacer(Modifier.height(Space.s))
+                        Spacer(Modifier.height(Space.s))
 
-                    // Обязательное или нет — сразу под заголовком,
-                    // чтобы решение принималось осознанно
-                    RequirementBadge(current.required, current.isGranted)
+                        // Обязательное или нет — сразу под заголовком,
+                        // чтобы решение принималось осознанно
+                        RequirementBadge(current.required, current.isGranted)
 
-                    Spacer(Modifier.height(Space.xl))
+                        Spacer(Modifier.height(Space.xl))
 
-                    Text(
-                        stringResource(current.rationaleRes),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center
-                    )
+                        Text(
+                            stringResource(current.rationaleRes),
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center
+                        )
 
-                    // Что перестанет работать: главное отличие от старого
-                    // экрана. Пользователь должен понимать цену отказа
-                    // до того, как откажется
-                    if (!current.isGranted) {
-                        Spacer(Modifier.height(20.dp))
-                        OgnelissPanel(
-                            color = MaterialTheme.colorScheme.surfaceVariant
-                        ) {
-                            Row(Modifier.padding(FlowUi.contentPadding), verticalAlignment = Alignment.Top) {
-                                Icon(
-                                    OgnelissIcons.Info, null,
-                                    Modifier.size(FlowUi.iconSizeInline),
-                                    tint = MaterialTheme.colorScheme.outline
-                                )
-                                Spacer(Modifier.width(Space.m))
-                                Text(
-                                    stringResource(current.consequenceRes),
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
+                        // Что перестанет работать: главное отличие от старого
+                        // экрана. Пользователь должен понимать цену отказа
+                        // до того, как откажется
+                        if (!current.isGranted) {
+                            Spacer(Modifier.height(20.dp))
+                            OgnelissPanel(
+                                color = MaterialTheme.colorScheme.surfaceVariant
+                            ) {
+                                Row(Modifier.padding(FlowUi.contentPadding), verticalAlignment = Alignment.Top) {
+                                    Icon(
+                                        OgnelissIcons.Info, null,
+                                        Modifier.size(FlowUi.iconSizeInline),
+                                        tint = MaterialTheme.colorScheme.outline
+                                    )
+                                    Spacer(Modifier.width(Space.m))
+                                    Text(
+                                        stringResource(current.consequenceRes),
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            Spacer(Modifier.height(Space.xxl))
-        }
+                Spacer(Modifier.height(Space.xxl))
+            }
+            }
         }
     }
 }

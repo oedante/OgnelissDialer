@@ -978,7 +978,10 @@ private fun ContactRow(
                     HighlightedName(
                         name = contact.displayName,
                         query = query,
-                        style = MaterialTheme.typography.titleMedium
+                        // Имя полужирным, как отправитель в списке писем Ogneliss Mail (1.5.6)
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+                        )
                     )
 
                     /*

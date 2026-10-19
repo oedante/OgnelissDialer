@@ -14,8 +14,13 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import com.ogneliss.dialer.settings.UiScale
 import androidx.core.view.WindowCompat
 import com.ogneliss.dialer.settings.ThemeMode
 
@@ -96,6 +101,13 @@ private val LightColors = lightColorScheme(
      * слепящей разницы. Белыми остались диалоги, меню и клавиши —
      * то, что лежит над страницей.
      */
+    /*
+     * 1.5.6 — КАК OGNELISS MAIL (автор, 18.10, снимки Mail). Список —
+     * белый (#FFFFFF), страница настроек — серо-голубая #F2F5FA
+     * (OgnelissSurfaces.tintedPage), полосы разделов — скруглённые.
+     * Мягкость теперь дают формы и серо-голубые тона, а не приглушённый
+     * белый 1.5.5. Разбор — ui/theme/Surfaces.kt.
+     */
     background = LightCanvas,
     onBackground = LightText,
     surface = LightCanvas,
@@ -105,7 +117,7 @@ private val LightColors = lightColorScheme(
 
     surfaceContainerLowest = LightRaised,
     surfaceContainerLow = LightCanvas,
-    // Полоса раздела и строка заголовка при прокрутке — светло-серые
+    // Полоса раздела в списке, меню, строка заголовка при прокрутке — #F2F5FA
     surfaceContainer = LightPage,
     surfaceContainerHigh = LightRaised,
     surfaceContainerHighest = LightControl,
@@ -300,6 +312,8 @@ private val HighContrastDark = darkColorScheme(
 fun OgnelissDialerTheme(
     themeMode: ThemeMode = ThemeMode.SYSTEM,
     dynamicColor: Boolean = false,
+    /** Масштаб интерфейса (1.5.6): разбор в UiScale.kt. */
+    uiScale: UiScale = UiScale.AUTO,
     content: @Composable () -> Unit
 ) {
     val systemDark = isSystemInDarkTheme()
@@ -358,6 +372,34 @@ fun OgnelissDialerTheme(
         }
     }
 
+    // Поверхности в стиле Ogneliss Mail (1.5.6) — под режим темы
+    val surfaces = when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> dynamicSurfaces(scheme, darkTheme)
+        themeMode == ThemeMode.HIGH_CONTRAST ->
+            if (darkTheme) HighContrastDarkSurfaces else HighContrastLightSurfaces
+        themeMode == ThemeMode.BLACK_AMOLED -> AmoledSurfaces
+        darkTheme -> DarkSurfaces
+        else -> LightSurfaces
+    }
+
+    /*
+     * МАСШТАБ ИНТЕРФЕЙСА ПОД ЭКРАН (1.5.6) — разбор в UiScale.kt.
+     * Подменяется плотность для всего, что внутри темы: размеры в dp
+     * умножаются на коэффициент, текст — мягче (корень коэффициента
+     * при уменьшении), чтобы не стать мелким.
+     */
+    val baseDensity = LocalDensity.current
+    val configuration = LocalConfiguration.current
+    val scaleFactor = remember(uiScale, configuration.smallestScreenWidthDp, configuration.densityDpi) {
+        UiScaleMath.factor(uiScale, configuration.smallestScreenWidthDp, configuration.densityDpi)
+    }
+    val density = remember(baseDensity, scaleFactor) { UiScaleMath.scaledDensity(baseDensity, scaleFactor) }
+
+    CompositionLocalProvider(
+        LocalDensity provides density,
+        LocalUiScaleFactor provides scaleFactor,
+        LocalOgnelissSurfaces provides surfaces
+    ) {
     MaterialTheme(
         colorScheme = scheme,
         typography = OgnelissTypography,
@@ -392,5 +434,6 @@ fun OgnelissDialerTheme(
             color = MaterialTheme.colorScheme.background,
             content = content
         )
+    }
     }
 }

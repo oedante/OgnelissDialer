@@ -117,6 +117,7 @@ class FakeCallActivity : ComponentActivity() {
         setContent {
             val theme by prefs.theme.collectAsStateWithLifecycle(ThemeMode.SYSTEM)
             val dynamic by prefs.dynamicColor.collectAsStateWithLifecycle(false)
+            val uiScale by prefs.uiScale.collectAsStateWithLifecycle(com.ogneliss.dialer.settings.UiScale.AUTO)
             // Живой фон — как у настоящего вызова (1.5.1)
             val callAnimation by prefs.callAnimation.collectAsStateWithLifecycle(true)
             // Фото звонящего — как у настоящего вызова (1.5.5); null — ещё не прочитано
@@ -152,7 +153,7 @@ class FakeCallActivity : ComponentActivity() {
                 }
             }
 
-            OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic) {
+            OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic, uiScale = uiScale) {
                 // Раскладка окна: телефон, лёжа, раскладушка, планшет.
                 // Разбор — в ui/adaptive/WindowLayout.kt
                 ProvideWindowLayout(this@FakeCallActivity) {
@@ -303,23 +304,37 @@ private fun FakeCallScreen(
         ) {
             OnPhotoColors(photoBackground) {
             Column(
-                Modifier.padding(top = Space.xl, start = FlowUi.contentPadding, end = FlowUi.contentPadding),
+                Modifier
+                    // 1.5.6: всё место над панелью — портрету и подписям,
+                    // размер портрета по нему (как у настоящего вызова)
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(top = Space.xl, start = FlowUi.contentPadding, end = FlowUi.contentPadding, bottom = Space.m),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (showPortrait) {
-                    CallerAvatar(
-                        photoUri = photoUri,
-                        size = if (short) FlowUi.callPortraitSizeLandscape else FlowUi.callPortraitSize,
-                        square = squarePortrait,
-                        modifier = Modifier.onGloballyPositioned { coords ->
-                            val bounds = coords.boundsInRoot()
-                            val half = bounds.width / 2f
-                            // У квадрата волна — от углов (как SQUARE_FOCUS в InCallActivity)
-                            portraitFocus = AmbientFocus(bounds.center, if (squarePortrait) half * 1.25f else half)
-                        }
-                    )
-                    Spacer(Modifier.height(if (short) Space.m else Space.l))
+                val trackPortrait = Modifier.onGloballyPositioned { coords ->
+                    val bounds = coords.boundsInRoot()
+                    val half = bounds.width / 2f
+                    // У квадрата волна — от углов (как SQUARE_FOCUS в InCallActivity)
+                    portraitFocus = AmbientFocus(bounds.center, if (squarePortrait) half * 1.25f else half)
                 }
+                AdaptivePortraitColumn(
+                    portrait = if (showPortrait) {
+                        {
+                            CallerAvatar(
+                                photoUri = photoUri,
+                                size = FlowUi.callPortraitMax,
+                                square = squarePortrait,
+                                modifier = trackPortrait
+                            )
+                        }
+                    } else {
+                        null
+                    },
+                    gap = if (short) Space.m else Space.l,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     name,
                     fontSize = FlowUi.callNameSize,
@@ -346,6 +361,8 @@ private fun FakeCallScreen(
                         else -> String.format(Locale.ROOT, "%02d:%02d", seconds / 60, seconds % 60)
                     }
                 )
+                }
+                }
             }
             } // OnPhotoColors
 

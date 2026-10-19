@@ -73,135 +73,141 @@ fun ConsentScreen(
      * как resource-id. На поведение для пользователя не влияет.
      */
     @OptIn(ExperimentalComposeUiApi::class)
-    Scaffold(
-        modifier = Modifier.semantics { testTagsAsResourceId = true },
-        contentWindowInsets = WindowInsets.safeDrawing,
-        bottomBar = {
-            // Цвет нижней панели, как на остальных экранах (1.4.0): прежний
-            // тональный подъём давал голубую дымку, а без неё сливался с фоном
-            Surface(color = PanelColors.panel()) {
-                PanelReachesNavBar()
-                Column(
-                    Modifier
-                        .fillMaxWidth()
-                        .navigationBarsPadding()
-                        .padding(Space.xl)
-                ) {
-                    Button(
-                        onClick = onAccept,
-                        enabled = accepted,
-                        modifier = Modifier
+    androidx.compose.runtime.CompositionLocalProvider(
+        com.ogneliss.dialer.ui.theme.LocalPageTone provides com.ogneliss.dialer.ui.theme.PageTone.TINTED
+    ) {
+        Scaffold(
+            // Как настройки Ogneliss Mail: серо-голубая страница, группы — карточками (1.5.6)
+            containerColor = com.ogneliss.dialer.ui.theme.OgnelissTheme.pageColor(com.ogneliss.dialer.ui.theme.PageTone.TINTED),
+            modifier = Modifier.semantics { testTagsAsResourceId = true },
+            contentWindowInsets = WindowInsets.safeDrawing,
+            bottomBar = {
+                // Цвет нижней панели, как на остальных экранах (1.4.0): прежний
+                // тональный подъём давал голубую дымку, а без неё сливался с фоном
+                Surface(color = PanelColors.panel()) {
+                    PanelReachesNavBar()
+                    Column(
+                        Modifier
                             .fillMaxWidth()
-                            .testTag("consent_accept")
+                            .navigationBarsPadding()
+                            .padding(Space.xl)
                     ) {
-                        Text(stringResource(R.string.consent_accept))
-                    }
+                        Button(
+                            onClick = onAccept,
+                            enabled = accepted,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("consent_accept")
+                        ) {
+                            Text(stringResource(R.string.consent_accept))
+                        }
 
-                    Spacer(Modifier.height(Space.s))
+                        Spacer(Modifier.height(Space.s))
 
-                    // Отказ подписан честно: не «Позже», а «Выйти».
-                    // Расплывчатая формулировка здесь была бы обманом
-                    TextButton(onClick = onDecline, modifier = Modifier.fillMaxWidth()) {
-                        Text(stringResource(R.string.consent_decline))
+                        // Отказ подписан честно: не «Позже», а «Выйти».
+                        // Расплывчатая формулировка здесь была бы обманом
+                        TextButton(onClick = onDecline, modifier = Modifier.fillMaxWidth()) {
+                            Text(stringResource(R.string.consent_decline))
+                        }
                     }
                 }
             }
-        }
-    ) { padding ->
-        // Не шире 640 dp по центру на широком окне: разбор в ReadableWidth
-        ReadableWidth {
-        Column(
-            Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = Space.xl)
-        ) {
-            Spacer(Modifier.height(Space.xxl))
-
-            Text(
-                stringResource(R.string.app_name),
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(Modifier.height(Space.s))
-
-            Text(
-                stringResource(R.string.consent_title),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(Modifier.height(Space.xl))
-
-            /*
-             * Главное о приватности — до документов, а не после.
-             *
-             * Человек, открывший приложение впервые, читает первые
-             * два абзаца и решает, ставить ли галочку. Прятать самое
-             * важное в конце десятистраничного текста бессмысленно.
-             */
-            OgnelissPanel(
-                color = MaterialTheme.colorScheme.primaryContainer
+        ) { padding ->
+            // Не шире 640 dp по центру на широком окне: разбор в ReadableWidth
+            ReadableWidth {
+            Column(
+                Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = Space.xl)
             ) {
-                Row(Modifier.padding(FlowUi.contentPadding), verticalAlignment = Alignment.Top) {
-                    Icon(OgnelissIcons.WifiOff, null)
-                    Spacer(Modifier.width(Space.m))
+                Spacer(Modifier.height(Space.xxl))
+
+                Text(
+                    stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(Modifier.height(Space.s))
+
+                Text(
+                    stringResource(R.string.consent_title),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(Modifier.height(Space.xl))
+
+                /*
+                 * Главное о приватности — до документов, а не после.
+                 *
+                 * Человек, открывший приложение впервые, читает первые
+                 * два абзаца и решает, ставить ли галочку. Прятать самое
+                 * важное в конце десятистраничного текста бессмысленно.
+                 */
+                OgnelissPanel(
+                    color = MaterialTheme.colorScheme.primaryContainer
+                ) {
+                    Row(Modifier.padding(FlowUi.contentPadding), verticalAlignment = Alignment.Top) {
+                        Icon(OgnelissIcons.WifiOff, null)
+                        Spacer(Modifier.width(Space.m))
+                        Text(
+                            stringResource(R.string.consent_privacy_summary),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(Space.xl))
+
+                DocumentRow(
+                    icon = OgnelissIcons.PrivacyTip,
+                    title = stringResource(R.string.settings_privacy_policy),
+                    subtitle = stringResource(R.string.consent_privacy_hint),
+                    onClick = { onOpenDocument(LegalDocument.PRIVACY) }
+                )
+
+                DocumentRow(
+                    icon = OgnelissIcons.Gavel,
+                    title = stringResource(R.string.settings_eula),
+                    subtitle = stringResource(R.string.consent_eula_hint),
+                    onClick = { onOpenDocument(LegalDocument.EULA) }
+                )
+
+                Spacer(Modifier.height(Space.xl))
+
+                /*
+                 * Галочка не отмечена заранее.
+                 *
+                 * Предустановленное согласие обесценивает сам факт согласия:
+                 * человек ничего не выбирал. Это и тёмный приём,
+                 * и юридически слабая позиция.
+                 */
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable { accepted = !accepted }
+                        .testTag("consent_checkbox")
+                        .padding(vertical = Space.s),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(checked = accepted, onCheckedChange = { accepted = it })
+                    Spacer(Modifier.width(Space.s))
                     Text(
-                        stringResource(R.string.consent_privacy_summary),
+                        stringResource(R.string.consent_checkbox),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
+
+                Spacer(Modifier.height(Space.xl))
             }
-
-            Spacer(Modifier.height(Space.xl))
-
-            DocumentRow(
-                icon = OgnelissIcons.PrivacyTip,
-                title = stringResource(R.string.settings_privacy_policy),
-                subtitle = stringResource(R.string.consent_privacy_hint),
-                onClick = { onOpenDocument(LegalDocument.PRIVACY) }
-            )
-
-            DocumentRow(
-                icon = OgnelissIcons.Gavel,
-                title = stringResource(R.string.settings_eula),
-                subtitle = stringResource(R.string.consent_eula_hint),
-                onClick = { onOpenDocument(LegalDocument.EULA) }
-            )
-
-            Spacer(Modifier.height(Space.xl))
-
-            /*
-             * Галочка не отмечена заранее.
-             *
-             * Предустановленное согласие обесценивает сам факт согласия:
-             * человек ничего не выбирал. Это и тёмный приём,
-             * и юридически слабая позиция.
-             */
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .clip(MaterialTheme.shapes.medium)
-                    .clickable { accepted = !accepted }
-                    .testTag("consent_checkbox")
-                    .padding(vertical = Space.s),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Checkbox(checked = accepted, onCheckedChange = { accepted = it })
-                Spacer(Modifier.width(Space.s))
-                Text(
-                    stringResource(R.string.consent_checkbox),
-                    style = MaterialTheme.typography.bodyMedium
-                )
             }
-
-            Spacer(Modifier.height(Space.xl))
-        }
         }
     }
 }

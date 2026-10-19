@@ -624,7 +624,6 @@
     <string name="settings_group_diagnostics">Diagnostic</string>
     <string name="settings_group_reset">Réinitialisation</string>
     <!-- Короткие подписи под кнопками нижней панели -->
-    <string name="bar_dialpad">Clavier</string>
     <string name="bar_menu">Plus</string>
     <string name="bar_exit">Quitter</string>
     <!-- Вторая линия и конференция на экране вызова -->
@@ -656,6 +655,15 @@
     <string name="call_photo_full_screen">Plein écran</string>
     <string name="call_photo_circle">Cercle</string>
     <string name="call_photo_square">Carré</string>
+    <string name="settings_ui_scale">Échelle de l’interface</string>
+    <string name="settings_ui_scale_text">Taille des boutons, des marges et du texte. « Auto » s’adapte à la largeur de l’écran : un peu plus compact sur les téléphones étroits, inchangé sur les larges</string>
+    <string name="ui_scale_auto">Auto (selon l’écran)</string>
+    <string name="ui_scale_auto_now">Auto — actuellement %1$d %%</string>
+    <string name="ui_scale_90" formatted="false">Plus petit — 90 %</string>
+    <string name="ui_scale_100" formatted="false">Normal — 100 %</string>
+    <string name="ui_scale_110" formatted="false">Plus grand — 110 %</string>
+    <string name="ui_scale_125" formatted="false">Grand — 125 %</string>
+    <string name="settings_home_group_main">Général</string>
     <string name="settings_hide_contact_number_text">Sur l’écran d’appel, les contacts enregistrés affichent « Mobile », « Travail », etc. au lieu des chiffres. Les numéros inconnus restent toujours visibles</string>
     <string name="language_search_hint">Rechercher une langue</string>
     <string name="language_auto_translated">traduction automatique</string>

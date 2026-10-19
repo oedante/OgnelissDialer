@@ -74,18 +74,18 @@ internal val Green80 = Color(0xFF6DD58C)
 internal val Green90 = Color(0xFFC4EED0)
 
 // ── Нейтральные светлой темы: холодный серый, один оттенок ────────────────
-internal val LightPage = Color(0xFFF0F2F5)  // 1.5.5: полоса раздела без линий — чуть глубже (было #F3F4F7)          // фон страницы
+internal val LightPage = Color(0xFFF2F5FA)  // 1.5.6 (как Ogneliss Mail): страница настроек, полоса раздела в списке
 internal val LightRaised = Color(0xFFFFFFFF)        // диалоги, меню, клавиши
 /** 1.5.5: страница, строки и шторки — не чисто белые, мягче для глаз. */
-internal val LightCanvas = Color(0xFFFAFBFC)
-internal val LightControl = Color(0xFFE7EAEF)       // нижняя панель; кнопки на белом
+internal val LightCanvas = Color(0xFFFFFFFF)  // 1.5.6: список белый, как в Mail (1.5.5 — #FAFBFC)
+internal val LightControl = Color(0xFFE8EBF0)       // нижняя панель (как навигация Mail); кнопки на белом
 internal val LightVariant = Color(0xFFE1E4EA)       // surfaceVariant
 internal val LightSelected = Color(0xFFE3E7EE)      // выделение строки
 internal val LightDim = Color(0xFFDADDE3)
 internal val LightText = Color(0xFF22252B)
-internal val LightTextVariant = Color(0xFF50555E)
+internal val LightTextVariant = Color(0xFF5B636E)  // 1.5.6: как подписи Mail (1.5.5 — #50555E)
 internal val LightOutline = Color(0xFF6F747E)       // 4,6 : 1 на белом — подсказки
-internal val LightOutlineVariant = Color(0xFFE1E4E9)
+internal val LightOutlineVariant = Color(0xFFE2E5EA)  // линия между строками, непрозрачная (Mail)
 internal val LightSecondary = Color(0xFF5A606B)
 
 // ── Нейтральные тёмной темы: тот же холодный серый ────────────────────────
@@ -102,6 +102,14 @@ internal val DarkText = Color(0xFFE2E4E9)
 internal val DarkTextVariant = Color(0xFFC3C7CF)
 internal val DarkOutline = Color(0xFF9298A1)
 internal val DarkOutlineVariant = Color(0xFF3D4148)
+
+// ── 1.5.6: поверхности в стиле Ogneliss Mail (разбор — Surfaces.kt) ──────────
+internal val LightBand = Color(0xFFE3E8EE)          // полоса раздела на странице настроек
+internal val LightCardBorder = Color(0xFFEAEDF2)    // рамка карточки группы
+internal val LightAvatarRing = Color(0xFFC4CBD5)    // кольцо аватара
+internal val DarkCardBorder = Color(0xFF2A2D33)
+internal val DarkAvatarRing = Color(0xFF4A4F57)
+internal val DarkDivider = Color(0xFF2C2F35)
 internal val DarkSecondary = Color(0xFFC1C6D0)
 
 /** Фон значка приложения (#3A4450, значок 1.5.5) — подложка всплывающих сообщений светлой темы. */

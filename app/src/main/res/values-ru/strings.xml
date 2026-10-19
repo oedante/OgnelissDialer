@@ -629,7 +629,6 @@
     <string name="settings_group_diagnostics">Диагностика</string>
     <string name="settings_group_reset">Сброс</string>
     <!-- Короткие подписи под кнопками нижней панели -->
-    <string name="bar_dialpad">Клавиатура</string>
     <string name="bar_menu">Ещё</string>
     <string name="bar_exit">Выйти</string>
     <!-- Вторая линия и конференция на экране вызова -->
@@ -661,6 +660,15 @@
     <string name="call_photo_full_screen">На весь экран</string>
     <string name="call_photo_circle">Круг</string>
     <string name="call_photo_square">Квадрат</string>
+    <string name="settings_ui_scale">Масштаб интерфейса</string>
+    <string name="settings_ui_scale_text">Размер кнопок, отступов и текста. «Авто» подстраивает под ширину экрана: на узких телефонах — чуть плотнее, на широких — без изменений</string>
+    <string name="ui_scale_auto">Авто (по экрану)</string>
+    <string name="ui_scale_auto_now">Авто — сейчас %1$d %%</string>
+    <string name="ui_scale_90" formatted="false">Мельче — 90 %</string>
+    <string name="ui_scale_100" formatted="false">Обычный — 100 %</string>
+    <string name="ui_scale_110" formatted="false">Крупнее — 110 %</string>
+    <string name="ui_scale_125" formatted="false">Крупный — 125 %</string>
+    <string name="settings_home_group_main">Основное</string>
     <string name="settings_hide_contact_number_text">На экране вызова у сохранённых контактов — «Мобильный», «Рабочий» вместо цифр. Незнакомые номера показываются всегда</string>
     <string name="language_search_hint">Поиск языка</string>
     <string name="language_auto_translated">автоперевод</string>

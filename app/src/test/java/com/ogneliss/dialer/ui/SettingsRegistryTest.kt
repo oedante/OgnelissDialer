@@ -19,6 +19,14 @@ import org.junit.Test
 class SettingsRegistryTest {
 
     @Test
+    fun `каждый раздел — в одной группе главного экрана`() {
+        // 1.5.6: главный экран настроек собран группами, как в Ogneliss Mail.
+        // Забытый раздел пропал бы с экрана, повторённый — встал бы дважды
+        val grouped = com.ogneliss.dialer.ui.screens.HOME_GROUPS.flatMap { it.second }
+        assertEquals(SettingsCategory.entries.toList(), grouped)
+    }
+
+    @Test
     fun `у всех настроек уникальные идентификаторы`() {
         val ids = SettingsRegistry.entries.map { it.id }
         assertEquals("Обнаружены дублирующиеся id", ids.size, ids.distinct().size)

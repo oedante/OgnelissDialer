@@ -248,7 +248,10 @@ fun CallLogCard(
                     HighlightedName(
                         name = row.title,
                         query = searchQuery,
-                        style = MaterialTheme.typography.titleMedium,
+                        // Имя полужирным, как отправитель в списке писем Ogneliss Mail (1.5.6)
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+                        ),
                         modifier = Modifier.weight(1f, fill = false)
                     )
 
@@ -541,6 +544,15 @@ private fun Avatar(
                 initials != null -> MaterialTheme.colorScheme.primaryContainer
                 else -> MaterialTheme.colorScheme.surfaceContainerHighest
             },
+            /*
+             * КОЛЬЦО, КАК У АВАТАРОВ OGNELISS MAIL (1.5.6): тонкая
+             * серо-голубая обводка (#C4CBD5 в светлой). Рисуется поверх
+             * фото: светлый край снимка не сливается с белым списком.
+             */
+            border = androidx.compose.foundation.BorderStroke(
+                AVATAR_RING_WIDTH,
+                com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.avatarRing
+            ),
             modifier = Modifier.size(size)
         ) {
             /*
@@ -671,3 +683,6 @@ enum class GroupPosition {
         }
     }
 }
+
+/** Толщина кольца аватара (1.5.6): у Mail ≈ 2 dp при аватаре 57 dp, у нас 48 dp. */
+private val AVATAR_RING_WIDTH = 1.5.dp

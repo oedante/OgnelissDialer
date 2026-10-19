@@ -55,6 +55,8 @@ fun StatsScreen(
     val stats = remember(state.callLog) { vm.computeStats() }
 
     ScreenScaffold(
+        // Как настройки Ogneliss Mail: серо-голубая страница, группы — карточками (1.5.6)
+        tone = com.ogneliss.dialer.ui.theme.PageTone.TINTED,
         title = stringResource(R.string.stats_title),
         onBack = onBack
     ) { pad ->

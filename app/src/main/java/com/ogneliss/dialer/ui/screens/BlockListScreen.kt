@@ -63,119 +63,125 @@ fun BlockListScreen(
     val allowed = rules.filter { it.kind == RuleKind.ALLOW.key }
     val blocked = rules.filter { it.kind == RuleKind.BLOCK.key }
 
-    Scaffold(
-        // Отступы под системные панели: в edge-to-edge содержимое
-        // иначе уезжает под строку состояния и кнопки навигации
-        contentWindowInsets = WindowInsets.safeDrawing,
-        topBar = {
-            if (selection.isActive) {
-                SelectionTopBar(
-                    count = selection.count,
-                    onClose = { selection.clear() },
-                    onSelectAll = { selection.selectAll(rules.map { it.pattern }) },
-                    onDelete = {
-                        vm.removeRules(selection.selected)
-                        selection.clear()
+    androidx.compose.runtime.CompositionLocalProvider(
+        com.ogneliss.dialer.ui.theme.LocalPageTone provides com.ogneliss.dialer.ui.theme.PageTone.TINTED
+    ) {
+        Scaffold(
+            // Как настройки Ogneliss Mail: серо-голубая страница, группы — карточками (1.5.6)
+            containerColor = com.ogneliss.dialer.ui.theme.OgnelissTheme.pageColor(com.ogneliss.dialer.ui.theme.PageTone.TINTED),
+            // Отступы под системные панели: в edge-to-edge содержимое
+            // иначе уезжает под строку состояния и кнопки навигации
+            contentWindowInsets = WindowInsets.safeDrawing,
+            topBar = {
+                if (selection.isActive) {
+                    SelectionTopBar(
+                        count = selection.count,
+                        onClose = { selection.clear() },
+                        onSelectAll = { selection.selectAll(rules.map { it.pattern }) },
+                        onDelete = {
+                            vm.removeRules(selection.selected)
+                            selection.clear()
+                        }
+                    )
+                    return@Scaffold
+                }
+                TopAppBar(
+                    title = { Text(stringResource(R.string.settings_section_spam)) },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                OgnelissIcons.ArrowBack,
+                                contentDescription = stringResource(R.string.nav_back)
+                            )
+                        }
                     }
                 )
-                return@Scaffold
             }
-            TopAppBar(
-                title = { Text(stringResource(R.string.settings_section_spam)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            OgnelissIcons.ArrowBack,
-                            contentDescription = stringResource(R.string.nav_back)
+        ) { pad ->
+            // Не шире 640 dp по центру на широком окне: разбор в ReadableWidth
+            ReadableWidth {
+            LazyColumn(Modifier.padding(pad).fillMaxSize()) {
+
+                // ── Белый список: первым и с объяснением приоритета ────────────
+                item {
+                    SectionHeaderWithAction(
+                        title = stringResource(R.string.settings_allow_list),
+                        onAdd = { adding = RuleKind.ALLOW }
+                    )
+                    InfoNote(stringResource(R.string.allow_list_priority_note))
+                }
+
+                if (allowed.isEmpty()) {
+                    item { EmptyNote(stringResource(R.string.allow_list_empty)) }
+                }
+                // Белый список идёт первым и с пояснением приоритета: именно
+                // его непонимание порождает жалобы «блокировка режет нужные звонки»
+                itemsIndexed(allowed, key = { _, rule -> "allow_${rule.pattern}" }) { i, rule ->
+                    // Правила — строками во всю ширину, линии между ними (1.5.3)
+                    GroupedRow(GroupPosition.of(i, allowed.size)) {
+                    RuleRow(
+                        pattern = rule.pattern,
+                        comment = rule.comment,
+                        isAllow = true,
+                        selected = selection.isSelected(rule.pattern),
+                        onLongClick = { selection.start(rule.pattern) },
+                        onClick = { if (selection.isActive) selection.toggle(rule.pattern) },
+                        onDelete = { vm.removeRule(rule.pattern) }
+                    )
+                    }
+                }
+
+                // ── Чёрный список ──────────────────────────────────────────────
+                item {
+                    SectionHeaderWithAction(
+                        title = stringResource(R.string.settings_block_list),
+                        onAdd = { adding = RuleKind.BLOCK }
+                    )
+                    // Счётчик со склонением: «1 номер», «2 номера», «5 номеров»
+                    if (blocked.isNotEmpty()) {
+                        Text(
+                            pluralStringResource(
+                                R.plurals.blocked_count, blocked.size, blocked.size
+                            ),
+                            Modifier.padding(horizontal = FlowUi.contentPadding),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
-            )
-        }
-    ) { pad ->
-        // Не шире 640 dp по центру на широком окне: разбор в ReadableWidth
-        ReadableWidth {
-        LazyColumn(Modifier.padding(pad).fillMaxSize()) {
 
-            // ── Белый список: первым и с объяснением приоритета ────────────
-            item {
-                SectionHeaderWithAction(
-                    title = stringResource(R.string.settings_allow_list),
-                    onAdd = { adding = RuleKind.ALLOW }
-                )
-                InfoNote(stringResource(R.string.allow_list_priority_note))
-            }
-
-            if (allowed.isEmpty()) {
-                item { EmptyNote(stringResource(R.string.allow_list_empty)) }
-            }
-            // Белый список идёт первым и с пояснением приоритета: именно
-            // его непонимание порождает жалобы «блокировка режет нужные звонки»
-            itemsIndexed(allowed, key = { _, rule -> "allow_${rule.pattern}" }) { i, rule ->
-                // Правила — строками во всю ширину, линии между ними (1.5.3)
-                GroupedRow(GroupPosition.of(i, allowed.size)) {
-                RuleRow(
-                    pattern = rule.pattern,
-                    comment = rule.comment,
-                    isAllow = true,
-                    selected = selection.isSelected(rule.pattern),
-                    onLongClick = { selection.start(rule.pattern) },
-                    onClick = { if (selection.isActive) selection.toggle(rule.pattern) },
-                    onDelete = { vm.removeRule(rule.pattern) }
-                )
+                if (blocked.isEmpty()) {
+                    item { EmptyNote(stringResource(R.string.block_list_empty)) }
                 }
-            }
-
-            // ── Чёрный список ──────────────────────────────────────────────
-            item {
-                SectionHeaderWithAction(
-                    title = stringResource(R.string.settings_block_list),
-                    onAdd = { adding = RuleKind.BLOCK }
-                )
-                // Счётчик со склонением: «1 номер», «2 номера», «5 номеров»
-                if (blocked.isNotEmpty()) {
-                    Text(
-                        pluralStringResource(
-                            R.plurals.blocked_count, blocked.size, blocked.size
-                        ),
-                        Modifier.padding(horizontal = FlowUi.contentPadding),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                itemsIndexed(blocked, key = { _, rule -> "block_${rule.pattern}" }) { i, rule ->
+                    GroupedRow(GroupPosition.of(i, blocked.size)) {
+                    RuleRow(
+                        pattern = rule.pattern,
+                        comment = rule.comment,
+                        isAllow = false,
+                        selected = selection.isSelected(rule.pattern),
+                        onLongClick = { selection.start(rule.pattern) },
+                        onClick = { if (selection.isActive) selection.toggle(rule.pattern) },
+                        onDelete = { vm.removeRule(rule.pattern) }
                     )
+                    }
                 }
-            }
 
-            if (blocked.isEmpty()) {
-                item { EmptyNote(stringResource(R.string.block_list_empty)) }
-            }
-            itemsIndexed(blocked, key = { _, rule -> "block_${rule.pattern}" }) { i, rule ->
-                GroupedRow(GroupPosition.of(i, blocked.size)) {
-                RuleRow(
-                    pattern = rule.pattern,
-                    comment = rule.comment,
-                    isAllow = false,
-                    selected = selection.isSelected(rule.pattern),
-                    onLongClick = { selection.start(rule.pattern) },
-                    onClick = { if (selection.isActive) selection.toggle(rule.pattern) },
-                    onDelete = { vm.removeRule(rule.pattern) }
-                )
+                // ── Системный список ───────────────────────────────────────────
+                item {
+                    Spacer(Modifier.height(Space.l))
+                    GroupedRow(GroupPosition.SINGLE) {
+                        OgnelissListRow(
+                            headline = stringResource(R.string.settings_blocked_system),
+                            supporting = stringResource(R.string.settings_blocked_system_text),
+                            leading = { Icon(OgnelissIcons.Block, null) },
+                            onClick = { vm.openSystemBlockList() }
+                        )
+                    }
+                    Spacer(Modifier.height(Space.xxl))
                 }
             }
-
-            // ── Системный список ───────────────────────────────────────────
-            item {
-                Spacer(Modifier.height(Space.l))
-                GroupedRow(GroupPosition.SINGLE) {
-                    OgnelissListRow(
-                        headline = stringResource(R.string.settings_blocked_system),
-                        supporting = stringResource(R.string.settings_blocked_system_text),
-                        leading = { Icon(OgnelissIcons.Block, null) },
-                        onClick = { vm.openSystemBlockList() }
-                    )
-                }
-                Spacer(Modifier.height(Space.xxl))
             }
-        }
         }
     }
 

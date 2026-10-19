@@ -248,7 +248,8 @@ fun SimBadge(slotIndex: Int) {
             Icon(
                 OgnelissIcons.SimCard,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                // Серым, как подписи-метки писем в Ogneliss Mail (1.5.6)
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(12.dp)
             )
             Spacer(Modifier.width(1.dp))
@@ -256,7 +257,7 @@ fun SimBadge(slotIndex: Int) {
                 (slotIndex + 1).toString(),
                 // labelSmall: подпись под номером — самый тихий текст
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

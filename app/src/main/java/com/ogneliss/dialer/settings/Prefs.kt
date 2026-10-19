@@ -135,6 +135,22 @@ enum class CarrierInfoMode {
  * Лёжа и в позе «ноутбук» фото на весь экран не помещается и раньше —
  * там всегда портрет; квадрат и круг там выбираются этой настройкой.
  */
+/**
+ * МАСШТАБ ИНТЕРФЕЙСА (1.5.6): «Авто» — по ширине экрана, остальное —
+ * постоянный множитель. Разбор — ui/theme/UiScale.kt.
+ */
+enum class UiScale(val fixed: Float?) {
+    AUTO(null),
+    S90(0.9f),
+    S100(1f),
+    S110(1.1f),
+    S125(1.25f);
+
+    companion object {
+        fun from(name: String?): UiScale = entries.firstOrNull { it.name == name } ?: AUTO
+    }
+}
+
 enum class CallPhotoStyle {
     CIRCLE,
     SQUARE,
@@ -300,6 +316,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val CALL_ANIMATION = booleanPreferencesKey("call_animation")
         /** Фото звонящего: на весь экран, круг или квадрат (1.5.5). */
         val CALL_PHOTO_STYLE = stringPreferencesKey("call_photo_style")
+        /** Масштаб интерфейса (1.5.6). */
+        val UI_SCALE = stringPreferencesKey("ui_scale")
         // Поведение
         val HAPTIC = booleanPreferencesKey("haptic")
         val KEY_TONES = booleanPreferencesKey("key_tones")
@@ -523,6 +541,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      * и без этой настройки (call/CallAmbientBackground.kt).
      */
     val callAnimation: Flow<Boolean> = data.map { it[Keys.CALL_ANIMATION] ?: true }
+
+    /** Масштаб интерфейса (1.5.6): «Авто» по умолчанию — разбор в ui/theme/UiScale.kt. */
+    val uiScale: Flow<UiScale> = data.map { UiScale.from(it[Keys.UI_SCALE]) }
 
     /** Фото звонящего на экране вызова (1.5.5): разбор в CallPhotoStyle. */
     val callPhotoStyle: Flow<CallPhotoStyle> = data.map { CallPhotoStyle.from(it[Keys.CALL_PHOTO_STYLE]) }
@@ -774,6 +795,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("call_hide_contact_number", v) { it[Keys.CALL_HIDE_CONTACT_NUMBER] = v }
     suspend fun setCallAnimation(v: Boolean) =
         edit("call_animation", v) { it[Keys.CALL_ANIMATION] = v }
+    suspend fun setUiScale(v: UiScale) =
+        edit("ui_scale", v.name) { it[Keys.UI_SCALE] = v.name }
     suspend fun setCallPhotoStyle(v: CallPhotoStyle) =
         edit("call_photo_style", v.name) { it[Keys.CALL_PHOTO_STYLE] = v.name }
     suspend fun setHaptic(v: Boolean) = edit("haptic", v) { it[Keys.HAPTIC] = v }

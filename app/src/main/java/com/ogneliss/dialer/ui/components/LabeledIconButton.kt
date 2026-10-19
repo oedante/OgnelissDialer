@@ -5,7 +5,6 @@ import androidx.compose.material3.Text
 import com.ogneliss.dialer.ui.theme.Space
 
 import androidx.compose.foundation.clickable
-import com.ogneliss.dialer.ui.theme.PanelColors
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Box
@@ -30,6 +29,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
 import com.ogneliss.dialer.ui.theme.Dimens
@@ -77,7 +77,13 @@ fun LabeledIconButton(
      * разметку, а нижняя панель журнала — на первом кадре запуска;
      * в ней подпись помещается и обычный Text дешевле.
      */
-    fitLabel: Boolean = false
+    fitLabel: Boolean = false,
+    /**
+     * Кнопка «включена»: работает фильтр, идёт выбор нескольких (1.5.6).
+     * Как активный раздел нижней навигации Ogneliss Mail — голубая
+     * подложка за значком и подпись темнее и плотнее.
+     */
+    selected: Boolean = false
 ) {
     val label = stringResource(labelRes)
 
@@ -90,6 +96,7 @@ fun LabeledIconButton(
             .semantics(mergeDescendants = true) {
                 contentDescription = label
                 role = Role.Button
+                if (selected) this.selected = true
             }
             .padding(horizontal = Space.xs, vertical = Space.xxs)
             .widthIn(min = Dimens.MIN_TOUCH_TARGET)
@@ -110,11 +117,21 @@ fun LabeledIconButton(
          * Совмещены оба ваших варианта: боковые кнопки больше,
          * клавиатура — меньше (но всё ещё шире соседей и выделена цветом).
          */
+        /*
+         * 1.5.6 — КАК НИЖНЯЯ НАВИГАЦИЯ OGNELISS MAIL: значок без белой
+         * подложки, подложка (голубая) — только у включённой кнопки.
+         * Место таблетки остаётся (ряд той же высоты, область нажатия
+         * та же), меняется только заливка. Было: белые таблетки у всех
+         * кнопок (1.2.0–1.5.5).
+         */
         Box(
             Modifier
                 .size(width = PILL_WIDTH, height = PILL_HEIGHT)
                 .clip(CircleShape)
-                .background(PanelColors.key()),
+                .then(
+                    if (selected) Modifier.background(com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.navIndicator)
+                    else Modifier
+                ),
             contentAlignment = Alignment.Center
         ) {
             Icon(icon, contentDescription = null, tint = tint)
@@ -124,20 +141,27 @@ fun LabeledIconButton(
             // 4 dp, а не 2: подпись прилипала к таблетке кнопки
             Spacer(Modifier.height(Space.xs))
 
+            // Подписи — 12 sp, как в навигации Mail (было 11); включённая —
+            // темнее и плотнее
+            val labelStyle = MaterialTheme.typography.labelMedium.let {
+                if (selected) it.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold) else it
+            }
+            val labelColor = if (selected) MaterialTheme.colorScheme.onSurface
+            else MaterialTheme.colorScheme.onSurfaceVariant
             if (fitLabel) {
                 // Узкая колонка: длинное слово ужимается, а не обрезается
                 FitText(
                     label,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = labelStyle,
+                    color = labelColor,
                     maxLines = 1,
                     minScale = 0.8f
                 )
             } else {
                 Text(
                     label,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = labelStyle,
+                    color = labelColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )

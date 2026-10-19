@@ -656,7 +656,6 @@ Open Settings → Security → Special app access and allow this app to modify s
     <string name="settings_group_diagnostics">Diagnostics</string>
     <string name="settings_group_reset">Reset</string>
     <!-- Короткие подписи под кнопками нижней панели -->
-    <string name="bar_dialpad">Keypad</string>
     <string name="bar_menu">More</string>
     <string name="bar_exit">Exit</string>
     <!-- Вторая линия и конференция на экране вызова -->
@@ -689,6 +688,15 @@ Open Settings → Security → Special app access and allow this app to modify s
     <string name="call_photo_full_screen">Full screen</string>
     <string name="call_photo_circle">Circle</string>
     <string name="call_photo_square">Square</string>
+    <string name="settings_ui_scale">Interface scale</string>
+    <string name="settings_ui_scale_text">Size of buttons, spacing and text. “Auto” adapts to the screen width: a little denser on narrow phones, unchanged on wide ones</string>
+    <string name="ui_scale_auto">Auto (by screen)</string>
+    <string name="ui_scale_auto_now">Auto — now %1$d %%</string>
+    <string name="ui_scale_90" formatted="false">Smaller — 90 %</string>
+    <string name="ui_scale_100" formatted="false">Normal — 100 %</string>
+    <string name="ui_scale_110" formatted="false">Larger — 110 %</string>
+    <string name="ui_scale_125" formatted="false">Large — 125 %</string>
+    <string name="settings_home_group_main">General</string>
     <string name="settings_hide_contact_number_text">On the call screen, saved contacts show Mobile, Work and so on instead of digits. Unknown numbers are always shown</string>
     <string name="language_search_hint">Search languages</string>
     <string name="language_auto_translated">auto-translated</string>
