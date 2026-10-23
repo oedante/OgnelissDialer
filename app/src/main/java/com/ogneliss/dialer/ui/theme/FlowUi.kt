@@ -340,6 +340,20 @@ object FlowUi {
     const val CALL_PORTRAIT_WIDTH_FRACTION = 0.46f
 
     /**
+     * «Крупный» портрет (1.5.7, настройка «Размер фото», отзыв valmikk:
+     * «увеличить раза в полтора»): до 60 % ширины и 300 dp — на треть
+     * больше обычного. Место под имя сохраняется тем же расчётом
+     * (AdaptivePortraitColumn): где высоты не хватает, крупный портрет
+     * ужимается так же, как обычный.
+     */
+    val callPortraitMaxLarge = 300.dp
+    const val CALL_PORTRAIT_WIDTH_FRACTION_LARGE = 0.60f
+
+    fun callPortraitMaxFor(large: Boolean) = if (large) callPortraitMaxLarge else callPortraitMax
+    fun callPortraitFractionFor(large: Boolean) =
+        if (large) CALL_PORTRAIT_WIDTH_FRACTION_LARGE else CALL_PORTRAIT_WIDTH_FRACTION
+
+    /**
      * Портрет в альбомной ориентации.
      *
      * По высоте места вдвое меньше, и крупный портрет вытеснил бы

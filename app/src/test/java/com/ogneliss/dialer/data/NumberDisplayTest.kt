@@ -15,14 +15,14 @@ class NumberDisplayTest {
 
     @Test
     fun `последние четыре цифры извлекаются из форматированного номера`() {
-        assertEquals("0512", NumberDisplay.lastFour("8 (967) 666-05-12"))
-        assertEquals("0512", NumberDisplay.lastFour("+79676660512"))
+        assertEquals("2233", NumberDisplay.lastFour("8 (967) 111-22-33"))
+        assertEquals("2233", NumberDisplay.lastFour("+79671112233"))
     }
 
     @Test
     fun `короткая подпись читается как окончание номера`() {
-        assertEquals("…05-12", NumberDisplay.shortLabel("8 (967) 666-05-12"))
-        assertEquals("…40-92", NumberDisplay.shortLabel("8 (910) 521-40-92"))
+        assertEquals("…22-33", NumberDisplay.shortLabel("8 (967) 111-22-33"))
+        assertEquals("…55-66", NumberDisplay.shortLabel("8 (910) 444-55-66"))
     }
 
     @Test
@@ -33,7 +33,7 @@ class NumberDisplayTest {
     @Test
     fun `осмысленная метка предпочитается цифрам`() {
         val label = NumberDisplay.chipLabel(
-            number = "8 (484) 275-87-59",
+            number = "8 (484) 222-33-44",
             label = "Рабочий",
             allLabels = listOf("Рабочий", "Домашний", "Мобильный")
         )
@@ -44,20 +44,20 @@ class NumberDisplayTest {
     fun `одинаковые метки не различают номера и заменяются цифрами`() {
         // Три «Мобильный» ничего не различают — нужны цифры
         val label = NumberDisplay.chipLabel(
-            number = "8 (967) 666-05-12",
+            number = "8 (967) 111-22-33",
             label = "Мобильный",
             allLabels = listOf("Мобильный", "Мобильный", "Мобильный")
         )
-        assertEquals("…05-12", label)
+        assertEquals("…22-33", label)
     }
 
     @Test
     fun `отсутствие метки заменяется цифрами`() {
         val label = NumberDisplay.chipLabel(
-            number = "8 (910) 521-40-92",
+            number = "8 (910) 444-55-66",
             label = null,
             allLabels = emptyList()
         )
-        assertEquals("…40-92", label)
+        assertEquals("…55-66", label)
     }
 }

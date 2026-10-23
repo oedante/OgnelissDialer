@@ -4,7 +4,10 @@ import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -88,6 +91,8 @@ fun SettingsSwitchRow(
     summary: String?,
     checked: Boolean,
     dangerous: Boolean = false,
+    /** Значение отличается от исходного — точка после заголовка (1.5.8). */
+    changed: Boolean = false,
     onChange: (Boolean) -> Unit
 ) {
     val stateText = stringResource(
@@ -107,6 +112,7 @@ fun SettingsSwitchRow(
                     Spacer(Modifier.width(6.dp))
                 }
                 Text(title)
+                if (changed) ChangedDot()
             }
         },
         supportingContent = summary?.let { { Text(it) } },
@@ -136,15 +142,64 @@ fun SettingsSwitchRow(
 fun SettingsChoiceRow(
     title: String,
     currentValue: String,
+    /** Значение отличается от исходного — точка после заголовка (1.5.8). */
+    changed: Boolean = false,
     onClick: () -> Unit
 ) {
-    OgnelissListRow(
-        headline = title,
-        supporting = currentValue,
-        onClick = onClick,
-        modifier = Modifier.semantics(mergeDescendants = true) { role = Role.Button }
+    if (!changed) {
+        OgnelissListRow(
+            headline = title,
+            supporting = currentValue,
+            onClick = onClick,
+            modifier = Modifier.semantics(mergeDescendants = true) { role = Role.Button }
+        )
+        return
+    }
+    // С отметкой — заголовок строкой со значком, как у переключателя
+    ListItem(
+        headlineContent = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(title)
+                ChangedDot()
+            }
+        },
+        supportingContent = {
+            Text(
+                currentValue,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        },
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+        modifier = Modifier
+            .heightIn(min = FlowUi.rowHeight)
+            .clickable(onClick = onClick)
+            .semantics(mergeDescendants = true) { role = Role.Button }
     )
 }
+
+/**
+ * ОТМЕТКА «ИЗМЕНЕНО» (1.5.8, обзор интерфейса, У7).
+ *
+ * Точка цвета акцента после заголовка — у настройки, которая отличается
+ * от исходного значения. Видно, что вернёт «Вернуть как было» внизу
+ * раздела, и что в нём вообще трогали. Для TalkBack — слово «изменено»
+ * в описании строки.
+ */
+@Composable
+fun ChangedDot(modifier: Modifier = Modifier) {
+    val label = stringResource(R.string.a11y_setting_changed)
+    Box(
+        modifier
+            .padding(start = Space.s)
+            .size(CHANGED_DOT)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.primary)
+            .semantics { contentDescription = label }
+    )
+}
+
+private val CHANGED_DOT = 6.dp
 
 /** Строка-действие: экспорт, очистка, переход. */
 @Composable

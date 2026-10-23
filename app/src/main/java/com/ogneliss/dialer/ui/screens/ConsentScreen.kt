@@ -172,11 +172,18 @@ fun ConsentScreen(
                     onClick = { onOpenDocument(LegalDocument.PRIVACY) }
                 )
 
+                /*
+                 * Второй документ — условия использования (1.5.7). До 1.5.7
+                 * здесь было лицензионное соглашение закрытой программы;
+                 * код открыт по Apache 2.0, а лицензия ничего не требует
+                 * принять — она только разрешает. Принимать стоит условия: в них
+                 * экстренные вызовы и отсутствие гарантий.
+                 */
                 DocumentRow(
-                    icon = OgnelissIcons.Gavel,
-                    title = stringResource(R.string.settings_eula),
-                    subtitle = stringResource(R.string.consent_eula_hint),
-                    onClick = { onOpenDocument(LegalDocument.EULA) }
+                    icon = OgnelissIcons.Article,
+                    title = stringResource(R.string.settings_terms),
+                    subtitle = stringResource(R.string.consent_terms_hint),
+                    onClick = { onOpenDocument(LegalDocument.TERMS) }
                 )
 
                 Spacer(Modifier.height(Space.xl))

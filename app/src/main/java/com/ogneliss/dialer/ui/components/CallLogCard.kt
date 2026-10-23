@@ -185,7 +185,13 @@ fun CallLogCard(
                         if (selected) MaterialTheme.colorScheme.secondaryContainer
                         else MaterialTheme.colorScheme.surfaceContainerLow
                     )
-                    .combinedClickableCompat(onClick, onLongClick)
+                    // Подписи для TalkBack: долгое нажатие — карточки действий (1.5.8);
+                    // в режиме выбора нажатие выбирает — подпись общая
+                    .combinedClickableCompat(
+                        onClick, onLongClick,
+                        onClickLabel = if (selectionActive) null else stringResource(R.string.a11y_cards_open),
+                        onLongClickLabel = if (selectionActive) null else stringResource(R.string.a11y_record_actions)
+                    )
                     // 6 dp вместо 10: строка из трёх коротких строчек
                     // не требует такого запаса, а на экран помещается
                     // на две записи больше

@@ -1384,6 +1384,47 @@ for f in kt_files():
                     f'{os.path.relpath(f, SRC)}:{i + 1} — {name} (объявлена в строке {d + 1})')
                 break
 
+# ── 44. «Вопросы и ответы»: подстановки путей в ответах (1.6.0) ───────────
+# Пути к настройкам («Настройки → Вызовы → «Ответ на вызов»») подставляются
+# в ответ по порядку ссылок FaqLink.Setting и FaqLink.Section (Faq.kt).
+# Лишняя или забытая %N$s в одном из языков компилятор не заметит, а ответ
+# упадёт (MissingFormatArgumentException) или покажет «%2$s» буквально.
+# Ссылки на пункты настроек — на существующие id реестра.
+faq_path = os.path.join(SRC, 'com/ogneliss/dialer/ui/help/Faq.kt')
+if os.path.exists(faq_path):
+    faq_src = open(faq_path, encoding='utf-8').read()
+    registry_src = open(os.path.join(SRC, 'com/ogneliss/dialer/ui/settings/SettingsRegistry.kt'),
+                        encoding='utf-8').read()
+    registry_nc = re.sub(r'//[^\n]*', '', re.sub(r'/\*.*?\*/', '', registry_src, flags=re.S))
+    registry_ids = set(re.findall(r'SettingEntry\(\s*"(\w+)"', registry_nc))
+    locales = {d: open(os.path.join(RES, d, 'strings.xml'), encoding='utf-8').read()
+               for d in ('values', 'values-ru', 'values-de', 'values-fr')
+               if os.path.exists(os.path.join(RES, d, 'strings.xml'))}
+    item_rx = re.compile(r'FaqItem\(\s*"(\w+)",\s*R\.string\.(\w+),\s*R\.string\.(\w+)'
+                         r'(?:,\s*listOf\(((?:[^()]|\([^()]*\))*)\))?\s*\)')
+    items = item_rx.findall(faq_src)
+    if not items:
+        problems['«Вопросы и ответы»: Faq.kt не разобран'].append('нет записей FaqItem(…)')
+    for qid, q_res, a_res, links in items:
+        kinds = re.findall(r'FaqLink\.(\w+)(?:\(([^()]*)\))?', links or '')
+        in_text = [k for k, _ in kinds if k in ('Setting', 'Section')]
+        for k, args in kinds:
+            if k == 'Setting':
+                sid = re.match(r'\s*"(\w+)"', args)
+                if not sid or sid.group(1) not in registry_ids:
+                    problems['«Вопросы и ответы»: ссылка на несуществующий пункт'].append(f'{qid}: {args}')
+        for d, xml in locales.items():
+            for res in (q_res, a_res):
+                if f'name="{res}"' not in xml:
+                    problems['«Вопросы и ответы»: нет строки'].append(f'{d}: {res}')
+            m = re.search(rf'<string name="{a_res}">(.*?)</string>', xml, re.S)
+            if not m:
+                continue
+            found = sorted(set(int(n) for n in re.findall(r'%(\d+)\$s', m.group(1))))
+            if found != list(range(1, len(in_text) + 1)):
+                problems['«Вопросы и ответы»: подстановки не совпадают со ссылками'].append(
+                    f'{d}: {a_res} — в тексте {found or "нет"}, путей {len(in_text)}')
+
 # ── ОТЧЁТ ─────────────────────────────────────────────────────────────────
 total = sum(len(v) for v in problems.values())
 print(f'\n{"="*70}\nПРОВЕРКА ПЕРЕД СБОРКОЙ: замечаний — {total}\n{"="*70}')

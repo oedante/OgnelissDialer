@@ -1,108 +1,41 @@
-# Privacy Policy — Ogneliss Dialer
-**Effective date:** 6 August 2026 · **Version:** 1.0
-
-> Русская версия ниже. / Russian version below.
-
-## Short version
-Ogneliss Dialer does not collect, transmit or sell any data. The application
-does not request the `android.permission.INTERNET` permission and therefore
-cannot establish a network connection at all. You can verify this yourself in
-the installed application details on your device.
-
-## 1. Who we are
-Ogneliss Dialer ("the App") is an Android dialer application.
-Contact: **[YOUR CONTACT EMAIL]**  ← replace before publishing
-Developer: **[YOUR NAME OR COMPANY]** ← replace before publishing
-
-## 2. What data the App accesses
-The App accesses the following data **on your device only**:
-
-| Data | Purpose | Leaves the device? |
-|---|---|---|
-| Call log | Show, group and manage call history | No |
-| Contacts | Match names and photos, T9 search, editing | No |
-| Phone state and SIM info | Place calls, show which SIM was used | No |
-| Notes and tags you create | Your own annotations for numbers | No |
-| Block and allow lists | Filtering unwanted calls | No |
-| App settings | Remember your preferences | No |
-
-## 3. What data the App collects
-**None.** There is no analytics, no crash reporting, no advertising SDK,
-no user account and no telemetry.
-
-## 4. Where data is stored
-All data is stored in the App's private storage area on your device,
-inaccessible to other applications. Cloud backup and device-to-device transfer
-of this data are explicitly disabled. Uninstalling the App deletes it.
-
-Note: your call log and contacts also live in Android's own system providers,
-which are managed by the operating system and any accounts you have configured
-(for example a Google account). That is outside the App's control.
-
-## 5. Optional external caller ID
-Android allows third-party caller ID applications to publish directories.
-If — and only if — you explicitly enable such a provider in the App's settings,
-the incoming phone number is passed to that third-party application, which may
-transmit it to its own servers under its own privacy policy.
-
-This feature is **disabled by default**. The App never enables it on your behalf.
-The App itself still makes no network connections.
-
-## 6. Permissions
-Each permission and its purpose is explained inside the App before it is
-requested. Permissions are only used for the stated purposes. You may revoke
-any permission in Android settings at any time; the App will continue to work
-with reduced functionality.
-
-## 7. Children
-The App is a general-purpose utility and is not directed at children.
-It does not knowingly collect any data from anyone, including children.
-
-## 8. Your rights
-Because no data is collected or transmitted, there is nothing for us to
-disclose, correct, export or erase on your behalf. All your data is under your
-control on your device and can be deleted by clearing app data or uninstalling.
-
-## 9. Changes
-Material changes to this policy will be published together with an App update
-and the version number above will change.
-
-## 10. Contact
-**[YOUR CONTACT EMAIL]**
-
----
----
-
 # Политика конфиденциальности — Ogneliss Dialer
-**Дата вступления в силу:** 6 августа 2026 г. · **Версия:** 1.0
 
-## Кратко
+> Копия текстов из приложения (`app/src/main/assets/legal/`). Правите здесь — поправьте и там, и на сайте (`docs/www/`).
+> *English version below.*
+
+Дата вступления в силу: 22 октября 2026 г. · Версия: 1.1
+
+Кратко
 Ogneliss Dialer не собирает, не передаёт и не продаёт никакие данные.
-Приложение не запрашивает разрешение `android.permission.INTERNET`
+Приложение не запрашивает разрешение android.permission.INTERNET
 и поэтому в принципе не способно установить сетевое соединение. Это можно
 самостоятельно проверить в свойствах установленного приложения на устройстве.
 
+Исходный код приложения открыт (лицензия Apache 2.0): каждое утверждение этой
+политики можно проверить по коду —
+https://github.com/oedante/OgnelissDialer
+
 ## 1. Кто мы
 Ogneliss Dialer («Приложение») — номеронабиратель для Android.
-Контакт: **oedante@gmail.com**
-**Актуальная редакция:** https://ogneliss.ru/dialer/privacy
+Контакт: oedante@gmail.com
+Актуальная редакция: https://ogneliss.ru/dialer/privacy
 
-Разработчик: **Ермишин Олег Андреевич**
+Разработчик: Ермишин Олег Андреевич
 
 ## 2. К каким данным обращается Приложение
-Приложение обращается к следующим данным **исключительно на вашем устройстве**:
+Приложение обращается к следующим данным исключительно на вашем устройстве:
 
-| Данные | Назначение | Покидают устройство? |
-|---|---|---|
-| Журнал вызовов | Показ, группировка и управление историей | Нет |
-| Контакты | Имена и фото к номерам, T9-поиск, редактирование | Нет |
-| Состояние телефона и SIM | Совершение вызовов, отображение SIM | Нет |
-| Ваши заметки и метки | Ваши собственные пометки к номерам | Нет |
-| Списки блокировки и разрешений | Фильтрация нежелательных вызовов | Нет |
-| Настройки приложения | Сохранение ваших предпочтений | Нет |
+  Данные   Назначение   Покидают устройство?  
+ --- --- --- 
+  Журнал вызовов   Показ, группировка и управление историей   Нет  
+  Контакты   Имена и фото к номерам, T9-поиск, редактирование   Нет  
+  Состояние телефона и SIM   Совершение вызовов, отображение SIM   Нет  
+  Ваши заметки и метки   Ваши собственные пометки к номерам   Нет  
+  Списки блокировки и разрешений   Фильтрация нежелательных вызовов   Нет  
+  Настройки приложения   Сохранение ваших предпочтений   Нет  
 
 ## 3. Какие данные Приложение собирает
-**Никаких.** Нет аналитики, нет сбора отчётов о сбоях, нет рекламных SDK,
+Никаких. Нет аналитики, нет сбора отчётов о сбоях, нет рекламных SDK,
 нет учётной записи и нет телеметрии.
 
 ## 4. Где хранятся данные
@@ -120,7 +53,7 @@ Android позволяет сторонним приложениям-опред�
 входящий номер будет передан этому стороннему приложению, которое может
 отправить его на свои серверы согласно собственной политике.
 
-Эта функция **выключена по умолчанию**. Приложение никогда не включает её
+Эта функция выключена по умолчанию. Приложение никогда не включает её
 самостоятельно. Само Приложение по-прежнему не выходит в сеть.
 
 ## 6. Разрешения
@@ -143,5 +76,123 @@ Android позволяет сторонним приложениям-опред�
 Существенные изменения политики публикуются вместе с обновлением Приложения,
 номер версии выше при этом меняется.
 
+Версия 1.1 (22 октября 2026 г.): добавлена ссылка на открытый исходный
+код. Порядок работы с данными не изменился.
+
 ## 10. Контакт
-**oedante@gmail.com**
+oedante@gmail.com
+
+---
+
+# Privacy Policy
+
+Ogneliss Dialer
+Last updated: 22 October 2026
+
+THE SHORT VERSION
+
+Ogneliss Dialer does not collect, transmit or sell any data. The
+Application does not request the android.permission.INTERNET permission
+and is therefore technically unable to establish a network connection.
+You can verify this yourself in the installed application details on your
+device.
+
+The source code is open (Apache License 2.0), so every statement in this policy
+can be checked against the code:
+https://github.com/oedante/OgnelissDialer
+
+
+## 1. Who we are
+
+Ogneliss Dialer (the "Application") is a phone dialer for Android.
+
+Developer: Ermishin Oleg
+Contact: oedante@gmail.com
+
+
+## 2. What data the Application accesses
+
+The Application accesses the following data exclusively on your device:
+
+Call log — to display, group and manage history. Leaves the device: no.
+Contacts — to match names and photos to numbers, T9 search. No.
+SIM card state — to detect active cards and choose one for a call. No.
+Notes and tags you create — stored in the app database. No.
+Block and allow lists — call filtering. No.
+
+None of this data is transmitted anywhere. There is no server, no
+analytics, no advertising identifiers, no crash reporting service.
+
+
+## 3. Where the data is stored
+
+Call log and contacts are not copied. The Application reads them from
+Android system providers and displays them. Your own data — notes, tags,
+rules, settings — is stored in the application's private storage, which
+is not accessible to other applications.
+
+Uninstalling the Application deletes all of this data.
+
+
+## 4. The only case where data may leave the device
+
+The Application allows enabling third-party caller ID services
+(ContactsContract.Directory). This feature is disabled by default and
+requires explicit confirmation for each provider.
+
+When enabled, an incoming number is passed to the application you
+selected. What that application does with the number is governed by its
+own privacy policy, not by ours. We do not receive, store or process the
+result.
+
+You may disable this at any time in Settings.
+
+
+## 5. Permissions and why they are needed
+
+Phone and calls — placing and receiving calls, detecting the active SIM.
+Call log — displaying call history and deleting entries at your request.
+Contacts — matching names to numbers, T9 search, starring, editing.
+Notifications — incoming call notifications and call-back reminders.
+Audio settings — switching speaker and Bluetooth headset during a call.
+
+Each permission is requested separately with an explanation of what it is
+for and what will stop working without it. You may decline any of them.
+
+
+## 6. Diagnostic log
+
+The Application can write a log to a file on your device for
+troubleshooting. Phone numbers and names in the log are masked.
+
+The log is never sent automatically. You decide whether to share it, and
+with whom, using the standard Android share sheet.
+
+
+## 7. Children
+
+The Application is not directed at children and does not knowingly
+collect data from anyone, regardless of age — because it does not collect
+data at all.
+
+
+## 8. Your rights
+
+Since no data is collected or transmitted, there is nothing for us to
+provide, correct or delete on request. All data is under your control on
+your device:
+
+- export — Settings, Backup;
+- deletion — remove individual entries, or uninstall the Application.
+
+
+## 9. Changes to this Policy
+
+If the Policy changes materially, the Application will request consent
+again on first launch after the update. The date of the last revision is
+shown at the top of this document.
+
+
+## 10. Contact
+
+Questions regarding this Policy: oedante@gmail.com

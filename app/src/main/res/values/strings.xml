@@ -96,7 +96,6 @@
     <string name="contact_ringtone">Ringtone for this contact</string>
     <string name="contact_silent">Send calls to voicemail</string>
     <string name="contacts_all">All</string>
-    <string name="contacts_favourite_toggle">Favourite</string>
     <string name="contacts_favourites">Favourites</string>
     <string name="contact_blocked">Blocked</string>
     <string name="contacts_search_hint">Name</string>
@@ -309,8 +308,6 @@
     <string name="settings_section_spam">Spam protection</string>
     <string name="settings_section_spam_summary">Block list, allow list, tags</string>
     <string name="settings_show_photo">Show contact photos</string>
-    <string name="settings_sheet_header_tint">Colored menu header</string>
-    <string name="settings_sheet_header_tint_text">The long-press menu header uses the theme color</string>
     <string name="settings_messengers_any_number">Messengers for any number</string>
     <string name="settings_messengers_any_number_text">«Message» offers the installed WhatsApp, Telegram, Viber and Max even if the number is not in contacts. Telegram opens a chat only if the person allows being found by number</string>
     <string name="settings_sim">SIM cards and networks</string>
@@ -471,11 +468,9 @@
     <string name="consent_title">Before we start, please read two short documents</string>
     <string name="consent_privacy_summary">Ogneliss has no internet permission. Your call log, contacts and notes never leave this device — you can verify that yourself in the installed app details.</string>
     <string name="consent_privacy_hint">What data the app touches and where it stays</string>
-    <string name="consent_eula_hint">Terms of use, warranty disclaimer, emergency calls</string>
-    <string name="consent_checkbox">I have read and accept the Privacy Policy and the Licence Agreement</string>
+    <string name="consent_checkbox">I have read and accept the Privacy Policy and the Terms of Use</string>
     <string name="consent_accept">Accept and continue</string>
     <string name="consent_decline">Exit</string>
-    <string name="settings_eula">Licence Agreement</string>
     <string name="settings_swipe_tuning">Swipe sensitivity</string>
     <string name="settings_swipe_tuning_text">Adjust how far and how fast you need to swipe</string>
     <string name="swipe_tuning_try">Try it here</string>
@@ -672,7 +667,6 @@ Open Settings → Security → Special app access and allow this app to modify s
     <string name="journal_style_cards">Cards</string>
     <string name="journal_style_groups">Groups by day</string>
     <string name="action_mark_spam">Mark as spam</string>
-    <string name="action_unmark_spam">Remove spam mark</string>
     <string name="detail_placeholder">Select a call to see the contact card here</string>
     <string name="sim_kind_esim" translatable="false">eSIM</string>
     <string name="sim_kind_physical">SIM card</string>
@@ -712,7 +706,7 @@ Open Settings → Security → Special app access and allow this app to modify s
     <string name="log_clear_confirm_text">All call history entries will be deleted, here and in the phone system call log. This cannot be undone. Notes, pinned numbers, reminders and block lists are kept.</string>
     <string name="log_clear_confirm_action">Clear</string>
     <string name="delete_entry_confirm_title">Delete from history?</string>
-    <string name="delete_entry_confirm_text">Calls with %1$s will be deleted, here and in the phone system call log. This cannot be undone.</string>
+    <string name="delete_entry_confirm_text">Calls with %1$s will be deleted, here and in the phone system call log. For a few seconds afterwards you can undo it.</string>
     <string name="action_write_email">Write email</string>
     <string name="action_copy_email">Copy address</string>
     <string name="msg_email_copied">Address copied</string>
@@ -720,4 +714,117 @@ Open Settings → Security → Special app access and allow this app to modify s
     <!-- Подписи разделов меню «Ещё» (строгий стиль, 1.5.1) -->
     <string name="menu_section_lists">Sections</string>
     <string name="menu_section_app">App</string>
+    <!-- 1.5.7: карточки долгого нажатия, «Наверх», удаление с отменой, размер фото -->
+    <string name="a11y_cards_expand">More actions</string>
+    <string name="a11y_cards_collapse">Fewer actions</string>
+    <string name="a11y_cards_open">Open details</string>
+    <string name="cards_section_write">Message</string>
+    <string name="cards_section_contact">Contact</string>
+    <string name="cards_section_number">Number</string>
+    <string name="cards_section_delete">Delete</string>
+    <string name="cards_open">Details</string>
+    <string name="cards_add_to_existing">Add to contact</string>
+    <string name="cards_note">Note</string>
+    <string name="cards_unfavourite">Unfavourite</string>
+    <string name="cards_spam">Spam</string>
+    <string name="cards_not_spam">Not spam</string>
+    <string name="cards_email">Email</string>
+    <string name="cards_scroll_top">Back to top</string>
+    <string name="msg_deleted_from_log_many">Deleted from call history: %1$s</string>
+    <string name="action_create_contact">Create contact</string>
+    <string name="settings_call_photo_size">Photo size during a call</string>
+    <string name="settings_call_photo_size_text">Size of the round or square portrait. It never grows into the space the name needs</string>
+    <string name="call_photo_size_normal">Normal</string>
+    <string name="call_photo_size_large">Large</string>
+    <!-- 1.5.7: открытый код, лицензия Apache 2.0 -->
+    <string name="settings_license">License (Apache 2.0)</string>
+    <string name="about_license_hint">Open source: free to use, change and share</string>
+    <string name="consent_terms_hint">No warranty, emergency calls, your data</string>
+    <string name="settings_source_code">Source code</string>
+    <string name="settings_source_code_text">Open under the Apache License 2.0 · GitHub</string>
+    <!-- 1.5.8: строка номера в карточке — долгое нажатие -->
+    <string name="a11y_number_actions">Number actions</string>
+    <!-- 1.5.8: «Наверх» с числом новых вызовов -->
+    <plurals name="scroll_top_new">
+        <item quantity="one">%1$d new</item>
+        <item quantity="other">%1$d new</item>
+    </plurals>
+    <plurals name="a11y_scroll_top_new">
+        <item quantity="one">Back to top, %1$d new call</item>
+        <item quantity="other">Back to top, %1$d new calls</item>
+    </plurals>
+    <!-- 1.5.8: ответ на вызов сдвигом -->
+    <string name="settings_answer_mode">Answering calls</string>
+    <string name="settings_answer_mode_text">Slide — so a call isn\'t answered or declined by accident when you take the phone out of your pocket</string>
+    <string name="answer_mode_tap">Tap</string>
+    <string name="answer_mode_slide">Slide</string>
+    <string name="incall_slide_hint">Slide right to answer, left to decline</string>
+    <!-- 1.5.8: настройки — «Дополнительно», отметка изменённых, «Вернуть как было» -->
+    <string name="settings_advanced">Advanced</string>
+    <plurals name="settings_advanced_count">
+        <item quantity="one">%1$d more setting</item>
+        <item quantity="other">%1$d more settings</item>
+    </plurals>
+    <string name="settings_reset_section">Restore defaults</string>
+    <string name="settings_reset_section_text">Changed: %1$d — back to the default values</string>
+    <string name="settings_reset_section_confirm">Restore the default values in “%1$s”? Changed settings: %2$d. Other sections, notes and lists stay as they are.</string>
+    <string name="settings_reset_section_action">Restore</string>
+    <string name="a11y_setting_changed">changed</string>
+    <string name="a11y_expanded">expanded</string>
+    <string name="a11y_collapsed">collapsed</string>
+    <!-- 1.5.8: подпись долгого нажатия для TalkBack -->
+    <string name="a11y_record_actions">Actions</string>
+    <!-- 1.5.8: ответ сдвигом в раскладке справа налево — ответ влево -->
+    <string name="incall_slide_hint_rtl">Slide left to answer, right to decline</string>
+    <!-- 1.6.0: журнал и контакты соседями — переключатель, поиск в панели, напоминания на сегодня -->
+    <string name="nav_search">Search</string>
+    <string name="journal_search_hint">Name, number or note</string>
+    <string name="search_close">Close search</string>
+    <string name="a11y_switch_to">Switch to %1$s</string>
+    <string name="a11y_all_sections">All sections</string>
+    <string name="today_strip_text">call back %1$s · %2$s</string>
+    <plurals name="today_strip_more">
+        <item quantity="one">%1$d more</item>
+        <item quantity="other">%1$d more</item>
+    </plurals>
+    <!-- Вопросы и ответы (1.6.0): экран FAQ, пути к настройкам, вопросы и ответы -->
+    <string name="faq_title">Questions and answers</string>
+    <string name="faq_summary">Default app, search, spam, moving notes</string>
+    <string name="faq_lead">Short answers to common questions. The button under an answer opens the setting it is about.</string>
+    <string name="faq_keywords">help faq how question answer</string>
+    <string name="faq_path">%1$s → %2$s → “%3$s”</string>
+    <string name="faq_path_advanced">%1$s → %2$s → %3$s → “%4$s”</string>
+    <string name="faq_path_section">%1$s → %2$s</string>
+    <string name="faq_make_default">Make default</string>
+    <string name="faq_write">Write an email</string>
+    <string name="faq_section_start">Getting started</string>
+    <string name="faq_section_lists">Call log and contacts</string>
+    <string name="faq_section_calls">Calls</string>
+    <string name="faq_section_about">About the app</string>
+    <string name="faq_q_default">How do I make Ogneliss Dialer my default phone app?</string>
+    <string name="faq_a_default">On first launch the app offers to become the default phone app. If you declined, open %1$s and choose Ogneliss Dialer under “Phone” — the name varies slightly between phones. Your call log and contacts stay as they are: Android keeps them, not the app, so nothing is lost if you switch back.</string>
+    <string name="faq_q_internet">Why doesn’t the app have internet access?</string>
+    <string name="faq_a_internet">So that your data cannot leave the phone. Without the internet permission the app cannot send anything — not the call log, not contacts, not notes; you can see this in the installed app details. The operator and region of an unknown number come from a directory inside the app, and whether to show them is up to you: %1$s.</string>
+    <string name="faq_q_transfer">How do I move notes and lists to a new phone?</string>
+    <string name="faq_a_transfer">With a file. They won’t move by themselves: the app keeps its data out of cloud backups and phone-to-phone transfers, so it stays with you only. Open %1$s — your notes, tags, block and allow lists and speed dial are saved to a file you choose. On the new phone use %2$s: the data is added to what is already there. The call log and contacts are moved by Android and your account.</string>
+    <string name="faq_q_switch">How do I switch from the call log to contacts?</string>
+    <string name="faq_a_switch">With the first button on the bottom bar. The large icon is the list that is open now; the small circle next to it is where a tap takes you. A long press opens all sections: call log, contacts, notes and reminders. You can also swipe along the bar: left for contacts, right to go back to the call log.</string>
+    <string name="faq_q_search">How do I find a contact by name?</string>
+    <string name="faq_a_search">With the “Search” button on the bottom bar. In the call log it searches names, numbers and notes; in contacts, names. The dial pad searches with digits too — by number and by T9, in Cyrillic and Latin at once.</string>
+    <string name="faq_q_undo">I deleted a call log entry by mistake. Can I get it back?</string>
+    <string name="faq_a_undo">Yes, if you act right away. After deleting, “Removed from the call list” with an “Undo” button appears at the bottom for a few seconds — tap it while the message is shown. After that the entries are removed from the phone’s system call log too and cannot be restored. Clearing the whole call log from the menu cannot be undone, which is why the app asks first.</string>
+    <string name="faq_q_spam">How do I block spam and unwanted numbers?</string>
+    <string name="faq_a_spam">Long-press an entry → “Block”: the number goes to the block list and can no longer get through. In the same place, under “More”, there is the “Spam” tag: such numbers can’t get through either, and the tag is shown in the call log and on the call screen. Number masks, hidden and unknown numbers and an allow list of exceptions are in %1$s.</string>
+    <string name="faq_q_slide">How do I answer calls by sliding — or get the buttons back?</string>
+    <string name="faq_a_slide">%1$s. “Tap” gives two ordinary buttons. With “Slide” you move the button: right to answer, left to decline — so a call is not answered or rejected by accident while you take the phone out of your pocket. With TalkBack, calls are always answered with buttons.</string>
+    <string name="faq_q_sim">How do I choose the SIM card for a call?</string>
+    <string name="faq_a_sim">Each SIM card has its own call button. The app remembers the card chosen for a number and offers it again next time (%1$s). To tell the cards apart, name them: %2$s.</string>
+    <string name="faq_q_missed">Missed calls only appear when I open the app. What can I do?</string>
+    <string name="faq_a_missed">Most likely the system puts the app to sleep to save battery. Allow it to work in the background — %1$s — and missed calls will appear right away.</string>
+    <string name="faq_q_recording">Can I record calls?</string>
+    <string name="faq_a_recording">No. On Android 10 and later the system gives third-party apps no access to call audio, and working around this breaks Google Play rules. If your phone records calls, that is a feature built in by the manufacturer — it works regardless of the dialer you use.</string>
+    <string name="faq_q_work">Can I use the app at work? Where is the source code?</string>
+    <string name="faq_a_work">Yes. The app’s code is open under the Apache License 2.0: you may use it for any lawful purpose, including work and business. You may also share the APK and your own versions — together with the license text and the NOTICE file; the name and icon stay with the original. The source code is on GitHub.</string>
+    <string name="faq_q_contact">How do I report a bug or suggest an idea?</string>
+    <string name="faq_a_contact">Write to oedante@gmail.com. If something doesn’t work right, attach the technical log — %1$s: numbers and names in it are masked.</string>
 </resources>

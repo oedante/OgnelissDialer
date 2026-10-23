@@ -193,7 +193,19 @@ data class SettingEntry(
      * режет список по смене этого поля, а не собирает группы заново.
      * Проверяется тестом «подгруппы не разорваны».
      */
-    @StringRes val groupRes: Int? = null
+    @StringRes val groupRes: Int? = null,
+    /**
+     * Редкая настройка — в свёрнутой группе «Дополнительно» внизу раздела
+     * (1.5.8, обзор интерфейса, У7).
+     *
+     * В разделах по восемь-одиннадцать пунктов: нужное искали прокруткой
+     * среди того, что меняют раз в жизни, — тонкая настройка свайпа,
+     * журнал диагностики, ссылки в системные настройки. Такие пункты
+     * никуда не делись: они под «Дополнительно» и в поиске по настройкам.
+     * Группа появляется, только если в ней хотя бы два пункта, — один
+     * спрятанный пункт хуже, чем пункт на виду (проверяет тест).
+     */
+    val advanced: Boolean = false
 )
 
 /** Полный список настроек приложения. */
@@ -240,14 +252,11 @@ object SettingsRegistry {
         SettingEntry(
             "show_photo", SettingsCategory.APPEARANCE,
             R.string.settings_show_photo, null,
-            SettingKind.Switch("show_photo")
+            SettingKind.Switch("show_photo"),
+            advanced = true
         ),
-        // 1.3.5: шапка меню записи в цвете темы — по умолчанию вкл.
-        SettingEntry(
-            "sheet_header_tint", SettingsCategory.APPEARANCE,
-            R.string.settings_sheet_header_tint, R.string.settings_sheet_header_tint_text,
-            SettingKind.Switch("sheet_header_tint")
-        ),
+        // «Цветная шапка меню» (1.3.5) снята в 1.5.7: меню долгого нажатия
+        // стало карточками (ActionCards), шапки у него больше нет
         SettingEntry(
             "sim_labels", SettingsCategory.SIM,
             R.string.settings_sim_labels, R.string.settings_sim_labels_text,
@@ -329,13 +338,15 @@ object SettingsRegistry {
             "swipe_tuning", SettingsCategory.GESTURES,
             R.string.settings_swipe_tuning, R.string.settings_swipe_tuning_text,
             SettingKind.Action("swipe_tuning"),
-            groupRes = R.string.settings_group_row_swipe
+            groupRes = R.string.settings_group_row_swipe,
+            advanced = true
         ),
         SettingEntry(
             "panel_swipe_nav", SettingsCategory.GESTURES,
             R.string.settings_panel_swipe_nav, R.string.settings_panel_swipe_nav_text,
             SettingKind.Switch("panel_swipe_nav"),
-            groupRes = R.string.settings_group_screen_swipe
+            groupRes = R.string.settings_group_screen_swipe,
+            advanced = true
         ),
         SettingEntry(
             "haptic", SettingsCategory.GESTURES,
@@ -361,7 +372,8 @@ object SettingsRegistry {
             "merge_calls", SettingsCategory.CALL_LOG,
             R.string.settings_merge_calls, R.string.settings_merge_calls_text,
             SettingKind.Switch("merge_calls"),
-            groupRes = R.string.settings_group_log_view
+            groupRes = R.string.settings_group_log_view,
+            advanced = true
         ),
         /*
          * «Вид журнала» (Карточки / Группы по дням) убран в 1.5.3: в сплошном
@@ -379,7 +391,8 @@ object SettingsRegistry {
             "sort_order", SettingsCategory.CALL_LOG,
             R.string.settings_sort_order, R.string.settings_sort_order_text,
             SettingKind.Choice("sort_order"),
-            groupRes = R.string.settings_group_search_stats
+            groupRes = R.string.settings_group_search_stats,
+            advanced = true
         ),
         SettingEntry(
             "stats", SettingsCategory.CALL_LOG,
@@ -397,7 +410,8 @@ object SettingsRegistry {
             "notes_retention_scope", SettingsCategory.CALL_LOG,
             R.string.settings_notes_scope, R.string.settings_notes_scope_text,
             SettingKind.Choice("notes_retention_scope"),
-            groupRes = R.string.settings_group_notes
+            groupRes = R.string.settings_group_notes,
+            advanced = true
         ),
         /*
          * Кто «звонит» при псевдозвонке.
@@ -433,7 +447,15 @@ object SettingsRegistry {
         SettingEntry(
             "dialpad_open_at_start", SettingsCategory.APPEARANCE,
             R.string.settings_dialpad_open, R.string.settings_dialpad_open_text,
-            SettingKind.Switch("dialpad_open_at_start")
+            SettingKind.Switch("dialpad_open_at_start"),
+            advanced = true
+        ),
+        // 1.5.8, обзор интерфейса (У6): ответ сдвигом — от случайного касания
+        SettingEntry(
+            "answer_mode", SettingsCategory.CALLS,
+            R.string.settings_answer_mode, R.string.settings_answer_mode_text,
+            SettingKind.Choice("answer_mode"),
+            groupRes = R.string.settings_group_during_call
         ),
         SettingEntry(
             "smart_speaker", SettingsCategory.CALLS,
@@ -445,13 +467,15 @@ object SettingsRegistry {
             "proximity_screen_off", SettingsCategory.CALLS,
             R.string.settings_proximity, R.string.settings_proximity_text,
             SettingKind.Switch("proximity_screen_off"),
-            groupRes = R.string.settings_group_during_call
+            groupRes = R.string.settings_group_during_call,
+            advanced = true
         ),
         SettingEntry(
             "call_hide_contact_number", SettingsCategory.CALLS,
             R.string.settings_hide_contact_number, R.string.settings_hide_contact_number_text,
             SettingKind.Switch("call_hide_contact_number"),
-            groupRes = R.string.settings_group_during_call
+            groupRes = R.string.settings_group_during_call,
+            advanced = true
         ),
         SettingEntry(
             "call_photo_style", SettingsCategory.CALLS,
@@ -459,11 +483,19 @@ object SettingsRegistry {
             SettingKind.Choice("call_photo_style"),
             groupRes = R.string.settings_group_during_call
         ),
+        // 1.5.7: отзыв valmikk — портрет крупнее (разбор в CallPhotoSize)
+        SettingEntry(
+            "call_photo_size", SettingsCategory.CALLS,
+            R.string.settings_call_photo_size, R.string.settings_call_photo_size_text,
+            SettingKind.Choice("call_photo_size"),
+            groupRes = R.string.settings_group_during_call
+        ),
         SettingEntry(
             "call_animation", SettingsCategory.CALLS,
             R.string.settings_call_animation, R.string.settings_call_animation_text,
             SettingKind.Switch("call_animation"),
-            groupRes = R.string.settings_group_during_call
+            groupRes = R.string.settings_group_during_call,
+            advanced = true
         ),
         SettingEntry(
             "post_call", SettingsCategory.CALLS,
@@ -481,13 +513,15 @@ object SettingsRegistry {
             "callback_suggestion", SettingsCategory.CALLS,
             R.string.settings_callback_suggestion, R.string.settings_callback_suggestion_text,
             SettingKind.Switch("callback_suggestion"),
-            groupRes = R.string.settings_group_after_call
+            groupRes = R.string.settings_group_after_call,
+            advanced = true
         ),
         // 1.3.5: отзыв в Google Play — «Написать в WhatsApp тем, кого нет в контактах»
         SettingEntry(
             "messengers_any_number", SettingsCategory.CALLS,
             R.string.settings_messengers_any_number, R.string.settings_messengers_any_number_text,
-            SettingKind.Switch("messengers_any_number")
+            SettingKind.Switch("messengers_any_number"),
+            advanced = true
         ),
         SettingEntry(
             "sys_dnd", SettingsCategory.SYSTEM,
@@ -570,14 +604,16 @@ object SettingsRegistry {
             "sys_blocked", SettingsCategory.SPAM,
             R.string.settings_blocked_system, R.string.settings_blocked_system_text,
             SettingKind.SystemLink("blocked_numbers"),
-            groupRes = R.string.settings_group_lists
+            groupRes = R.string.settings_group_lists,
+            advanced = true
         ),
         SettingEntry(
             "external_lookup", SettingsCategory.SPAM,
             R.string.settings_external_lookup, R.string.settings_external_lookup_text,
             SettingKind.Action("external_lookup"),
             dangerous = true,
-            groupRes = R.string.settings_group_lookup
+            groupRes = R.string.settings_group_lookup,
+            advanced = true
         ),
 
         // ── Резервная копия ────────────────────────────────────────────────
@@ -613,25 +649,29 @@ object SettingsRegistry {
             "file_logging", SettingsCategory.MAINTENANCE,
             R.string.settings_file_logging, R.string.settings_file_logging_text,
             SettingKind.Switch("file_logging"),
-            groupRes = R.string.settings_group_diagnostics
+            groupRes = R.string.settings_group_diagnostics,
+            advanced = true
         ),
         SettingEntry(
             "log_save", SettingsCategory.MAINTENANCE,
             R.string.settings_log_save, R.string.settings_log_save_text,
             SettingKind.Action("log_save"),
-            groupRes = R.string.settings_group_diagnostics
+            groupRes = R.string.settings_group_diagnostics,
+            advanced = true
         ),
         SettingEntry(
             "log_share", SettingsCategory.MAINTENANCE,
             R.string.settings_log_share, null,
             SettingKind.Action("log_share"),
-            groupRes = R.string.settings_group_diagnostics
+            groupRes = R.string.settings_group_diagnostics,
+            advanced = true
         ),
         SettingEntry(
             "log_clear", SettingsCategory.MAINTENANCE,
             R.string.settings_log_clear, null,
             SettingKind.Action("log_clear"),
-            groupRes = R.string.settings_group_diagnostics
+            groupRes = R.string.settings_group_diagnostics,
+            advanced = true
         ),
         SettingEntry(
             "reset", SettingsCategory.MAINTENANCE,
@@ -664,6 +704,17 @@ object SettingsRegistry {
         SettingEntry(
             "terms", SettingsCategory.ABOUT,
             R.string.settings_terms, null, SettingKind.Action("terms")
+        ),
+        // 1.5.7: код открыт по лицензии Apache 2.0
+        SettingEntry(
+            "license", SettingsCategory.ABOUT,
+            R.string.settings_license, R.string.about_license_hint,
+            SettingKind.Action("license")
+        ),
+        SettingEntry(
+            "source_code", SettingsCategory.ABOUT,
+            R.string.settings_source_code, R.string.settings_source_code_text,
+            SettingKind.Action("source_code")
         ),
         SettingEntry(
             "licenses", SettingsCategory.ABOUT,
@@ -716,4 +767,17 @@ object SettingsRegistry {
         entries.filter { it.category == category }
 
     fun byId(id: String): SettingEntry? = entries.firstOrNull { it.id == id }
+
+    /**
+     * Пункты свёрнутой группы «Дополнительно» раздела (1.5.8): редкие,
+     * если их хотя бы два, — один спрятанный пункт хуже, чем пункт
+     * на виду. Одно правило для экрана раздела и путей в «Вопросах
+     * и ответах» (1.6.0): путь к спрятанному пункту называет и группу.
+     */
+    fun advancedEntries(category: SettingsCategory): List<SettingEntry> =
+        byCategory(category).filter { it.advanced }.takeIf { it.size >= 2 }.orEmpty()
+
+    /** Пункт лежит в свёрнутой группе «Дополнительно». */
+    fun isInAdvancedGroup(entry: SettingEntry): Boolean =
+        entry.advanced && advancedEntries(entry.category).size >= 2
 }

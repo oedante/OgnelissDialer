@@ -80,7 +80,6 @@
     <string name="contact_ringtone">Klingelton für diesen Kontakt</string>
     <string name="contact_silent">Anrufe an die Mailbox weiterleiten</string>
     <string name="contacts_all">Alle</string>
-    <string name="contacts_favourite_toggle">Favorit</string>
     <string name="contacts_favourites">Favoriten</string>
     <string name="contact_blocked">Gesperrt</string>
     <string name="contacts_search_hint">Name</string>
@@ -293,8 +292,6 @@
     <string name="settings_section_spam">Spamschutz</string>
     <string name="settings_section_spam_summary">Sperrliste, Ausnahmen, Markierungen</string>
     <string name="settings_show_photo">Kontaktfotos anzeigen</string>
-    <string name="settings_sheet_header_tint">Farbiger Menükopf</string>
-    <string name="settings_sheet_header_tint_text">Der Kopf des Eintragsmenüs erhält die Farbe des Designs</string>
     <string name="settings_messengers_any_number">Messenger für jede Nummer</string>
     <string name="settings_messengers_any_number_text">«Schreiben» bietet installierte WhatsApp, Telegram, Viber und Max an, auch wenn die Nummer nicht in den Kontakten ist. Telegram öffnet den Chat nur, wenn die Person die Suche nach Nummer erlaubt</string>
     <string name="settings_sim">SIM-Karten und Netze</string>
@@ -443,11 +440,9 @@
     <string name="consent_title">Bitte lesen Sie vor dem Start zwei kurze Dokumente</string>
     <string name="consent_privacy_summary">Ogneliss hat keine Internetberechtigung. Ihre Anrufliste, Kontakte und Notizen verlassen dieses Gerät nicht — das können Sie in den Details der installierten App selbst nachprüfen.</string>
     <string name="consent_privacy_hint">Welche Daten die App berührt und wo sie bleiben</string>
-    <string name="consent_eula_hint">Nutzungsbedingungen, Gewährleistungsausschluss, Notrufe</string>
-    <string name="consent_checkbox">Ich habe die Datenschutzerklärung und die Lizenzvereinbarung gelesen und akzeptiere sie</string>
+    <string name="consent_checkbox">Ich habe die Datenschutzerklärung und die Nutzungsbedingungen gelesen und akzeptiere sie</string>
     <string name="consent_accept">Akzeptieren und fortfahren</string>
     <string name="consent_decline">Beenden</string>
-    <string name="settings_eula">Lizenzvereinbarung</string>
     <string name="settings_swipe_tuning">Wischempfindlichkeit</string>
     <string name="settings_swipe_tuning_text">Einstellen, wie weit und wie schnell gewischt werden muss</string>
     <string name="swipe_tuning_try">Hier ausprobieren</string>
@@ -644,7 +639,6 @@
     <string name="journal_style_cards">Karten</string>
     <string name="journal_style_groups">Gruppen nach Tagen</string>
     <string name="action_mark_spam">Als Spam markieren</string>
-    <string name="action_unmark_spam">Spam-Markierung entfernen</string>
     <string name="detail_placeholder">Wählen Sie einen Anruf aus – die Kontaktkarte erscheint hier</string>
     <string name="sim_kind_physical">SIM-Karte</string>
     <string name="settings_button_labels">Beschriftungen unter Tasten</string>
@@ -683,7 +677,7 @@
     <string name="log_clear_confirm_text">Alle Einträge der Anrufliste werden gelöscht, hier und in der Systemanrufliste des Telefons. Das lässt sich nicht rückgängig machen. Notizen, angeheftete Nummern, Erinnerungen und Sperrlisten bleiben erhalten.</string>
     <string name="log_clear_confirm_action">Leeren</string>
     <string name="delete_entry_confirm_title">Aus dem Verlauf löschen?</string>
-    <string name="delete_entry_confirm_text">Anrufe mit %1$s werden gelöscht, hier und in der Systemanrufliste des Telefons. Das lässt sich nicht rückgängig machen.</string>
+    <string name="delete_entry_confirm_text">Anrufe mit %1$s werden gelöscht, hier und in der Systemanrufliste des Telefons. Einige Sekunden lang lässt sich das noch rückgängig machen.</string>
     <string name="action_write_email">E-Mail schreiben</string>
     <string name="action_copy_email">Adresse kopieren</string>
     <string name="msg_email_copied">Adresse kopiert</string>
@@ -691,4 +685,117 @@
     <!-- Подписи разделов меню «Ещё» (строгий стиль, 1.5.1) -->
     <string name="menu_section_lists">Bereiche</string>
     <string name="menu_section_app">App</string>
+    <!-- 1.5.7: карточки долгого нажатия, «Наверх», удаление с отменой, размер фото -->
+    <string name="a11y_cards_expand">Weitere Aktionen</string>
+    <string name="a11y_cards_collapse">Weniger Aktionen</string>
+    <string name="a11y_cards_open">Details öffnen</string>
+    <string name="cards_section_write">Schreiben</string>
+    <string name="cards_section_contact">Kontakt</string>
+    <string name="cards_section_number">Nummer</string>
+    <string name="cards_section_delete">Löschen</string>
+    <string name="cards_open">Details</string>
+    <string name="cards_add_to_existing">Zu Kontakt</string>
+    <string name="cards_note">Notiz</string>
+    <string name="cards_unfavourite">Kein Favorit</string>
+    <string name="cards_spam">Spam</string>
+    <string name="cards_not_spam">Kein Spam</string>
+    <string name="cards_email">E-Mail</string>
+    <string name="cards_scroll_top">Nach oben</string>
+    <string name="msg_deleted_from_log_many">Aus der Anrufliste gelöscht: %1$s</string>
+    <string name="action_create_contact">Kontakt erstellen</string>
+    <string name="settings_call_photo_size">Fotogröße beim Anruf</string>
+    <string name="settings_call_photo_size_text">Größe des runden oder quadratischen Porträts. Der Platz für den Namen bleibt immer frei</string>
+    <string name="call_photo_size_normal">Normal</string>
+    <string name="call_photo_size_large">Groß</string>
+    <!-- 1.5.7: открытый код, лицензия Apache 2.0 -->
+    <string name="settings_license">Lizenz (Apache 2.0)</string>
+    <string name="about_license_hint">Open Source: frei nutzen, ändern und weitergeben</string>
+    <string name="consent_terms_hint">Keine Gewährleistung, Notrufe, Ihre Daten</string>
+    <string name="settings_source_code">Quellcode</string>
+    <string name="settings_source_code_text">Offen unter der Apache-Lizenz 2.0 · GitHub</string>
+    <!-- 1.5.8: строка номера в карточке — долгое нажатие -->
+    <string name="a11y_number_actions">Aktionen für die Nummer</string>
+    <!-- 1.5.8: «Наверх» с числом новых вызовов -->
+    <plurals name="scroll_top_new">
+        <item quantity="one">%1$d neuer</item>
+        <item quantity="other">%1$d neue</item>
+    </plurals>
+    <plurals name="a11y_scroll_top_new">
+        <item quantity="one">Nach oben, %1$d neuer Anruf</item>
+        <item quantity="other">Nach oben, %1$d neue Anrufe</item>
+    </plurals>
+    <!-- 1.5.8: ответ на вызов сдвигом -->
+    <string name="settings_answer_mode">Anrufe annehmen</string>
+    <string name="settings_answer_mode_text">Schieben — damit ein Anruf beim Herausnehmen des Telefons nicht versehentlich angenommen oder abgelehnt wird</string>
+    <string name="answer_mode_tap">Tippen</string>
+    <string name="answer_mode_slide">Schieben</string>
+    <string name="incall_slide_hint">Nach rechts schieben zum Annehmen, nach links zum Ablehnen</string>
+    <!-- 1.5.8: настройки — «Дополнительно», отметка изменённых, «Вернуть как было» -->
+    <string name="settings_advanced">Erweitert</string>
+    <plurals name="settings_advanced_count">
+        <item quantity="one">%1$d weitere Einstellung</item>
+        <item quantity="other">%1$d weitere Einstellungen</item>
+    </plurals>
+    <string name="settings_reset_section">Standard wiederherstellen</string>
+    <string name="settings_reset_section_text">Geändert: %1$d — zurück zu den Standardwerten</string>
+    <string name="settings_reset_section_confirm">Standardwerte in „%1$s“ wiederherstellen? Geänderte Einstellungen: %2$d. Andere Bereiche, Notizen und Listen bleiben unverändert.</string>
+    <string name="settings_reset_section_action">Wiederherstellen</string>
+    <string name="a11y_setting_changed">geändert</string>
+    <string name="a11y_expanded">aufgeklappt</string>
+    <string name="a11y_collapsed">zugeklappt</string>
+    <!-- 1.5.8: подпись долгого нажатия для TalkBack -->
+    <string name="a11y_record_actions">Aktionen</string>
+    <!-- 1.5.8: ответ сдвигом в раскладке справа налево — ответ влево -->
+    <string name="incall_slide_hint_rtl">Nach links schieben zum Annehmen, nach rechts zum Ablehnen</string>
+    <!-- 1.6.0: журнал и контакты соседями — переключатель, поиск в панели, напоминания на сегодня -->
+    <string name="nav_search">Suche</string>
+    <string name="journal_search_hint">Name, Nummer oder Notiz</string>
+    <string name="search_close">Suche schließen</string>
+    <string name="a11y_switch_to">Wechseln zu: %1$s</string>
+    <string name="a11y_all_sections">Alle Bereiche</string>
+    <string name="today_strip_text">zurückrufen: %1$s · %2$s</string>
+    <plurals name="today_strip_more">
+        <item quantity="one">%1$d weitere</item>
+        <item quantity="other">%1$d weitere</item>
+    </plurals>
+    <!-- Вопросы и ответы (1.6.0): экран FAQ, пути к настройкам, вопросы и ответы -->
+    <string name="faq_title">Fragen und Antworten</string>
+    <string name="faq_summary">Standard-App, Suche, Spam, Notizen übertragen</string>
+    <string name="faq_lead">Kurze Antworten auf häufige Fragen. Die Taste unter einer Antwort öffnet gleich die passende Einstellung.</string>
+    <string name="faq_keywords">hilfe faq wie frage antwort</string>
+    <string name="faq_path">%1$s → %2$s → „%3$s“</string>
+    <string name="faq_path_advanced">%1$s → %2$s → %3$s → „%4$s“</string>
+    <string name="faq_path_section">%1$s → %2$s</string>
+    <string name="faq_make_default">Als Standard festlegen</string>
+    <string name="faq_write">E-Mail schreiben</string>
+    <string name="faq_section_start">Erste Schritte</string>
+    <string name="faq_section_lists">Anrufliste und Kontakte</string>
+    <string name="faq_section_calls">Anrufe</string>
+    <string name="faq_section_about">Über die App</string>
+    <string name="faq_q_default">Wie mache ich Ogneliss Dialer zur Standard-Telefon-App?</string>
+    <string name="faq_a_default">Beim ersten Start bietet die App an, Standard-Telefon-App zu werden. Wenn Sie abgelehnt haben, öffnen Sie %1$s und wählen Sie Ogneliss Dialer unter „Telefon“ — je nach Gerät heißt der Punkt etwas anders. Anrufliste und Kontakte bleiben, wie sie sind: Sie werden von Android gespeichert, nicht von der App, und auch beim Wechsel zurück geht nichts verloren.</string>
+    <string name="faq_q_internet">Warum hat die App keinen Internetzugang?</string>
+    <string name="faq_a_internet">Damit Ihre Daten das Telefon nicht verlassen können. Ohne Internetberechtigung kann die App nichts senden — weder die Anrufliste noch Kontakte oder Notizen; das sehen Sie in den Details der installierten App. Anbieter und Region einer unbekannten Nummer stammen aus einem Verzeichnis in der App, und ob sie angezeigt werden, entscheiden Sie: %1$s.</string>
+    <string name="faq_q_transfer">Wie übertrage ich Notizen und Listen auf ein neues Telefon?</string>
+    <string name="faq_a_transfer">Per Datei. Von selbst ziehen sie nicht um: Die App hält ihre Daten aus Cloud-Sicherungen und der Übertragung von Telefon zu Telefon heraus — so bleiben sie nur bei Ihnen. Öffnen Sie %1$s: Notizen, Markierungen, Sperr- und Freigabelisten sowie Kurzwahl werden in eine Datei Ihrer Wahl gespeichert. Auf dem neuen Telefon: %2$s — die Daten kommen zu den vorhandenen hinzu. Anrufliste und Kontakte übertragen Android und Ihr Konto.</string>
+    <string name="faq_q_switch">Wie wechsle ich von der Anrufliste zu den Kontakten?</string>
+    <string name="faq_a_switch">Mit der ersten Taste der unteren Leiste. Das große Symbol ist die gerade geöffnete Liste, der kleine Kreis daneben die, zu der ein Tippen wechselt. Langes Drücken öffnet alle Bereiche: Anrufliste, Kontakte, Notizen und Erinnerungen. Sie können auch über die Leiste wischen: nach links zu den Kontakten, nach rechts zurück zur Anrufliste.</string>
+    <string name="faq_q_search">Wie finde ich einen Kontakt nach Namen?</string>
+    <string name="faq_a_search">Mit der Taste „Suche“ auf der unteren Leiste. In der Anrufliste sucht sie nach Name, Nummer und Notiz, in den Kontakten nach Namen. Auch das Wähltastenfeld sucht — per Ziffern nach Nummer und per T9, kyrillisch und lateinisch zugleich.</string>
+    <string name="faq_q_undo">Ich habe einen Eintrag versehentlich gelöscht. Lässt er sich zurückholen?</string>
+    <string name="faq_a_undo">Ja, wenn Sie gleich handeln. Nach dem Löschen erscheint unten einige Sekunden lang „Aus der Anrufliste entfernt“ mit der Taste „Rückgängig“ — tippen Sie darauf, solange die Meldung zu sehen ist. Danach werden die Einträge auch aus der Systemanrufliste gelöscht und lassen sich nicht wiederherstellen. Das Leeren der ganzen Anrufliste über das Menü lässt sich nicht rückgängig machen — deshalb fragt die App vorher nach.</string>
+    <string name="faq_q_spam">Wie sperre ich Spam und unerwünschte Nummern?</string>
+    <string name="faq_a_spam">Eintrag lange drücken → „Sperren“: Die Nummer kommt auf die Sperrliste und kommt nicht mehr durch. Am selben Ort, unter „Mehr“, gibt es die Markierung „Spam“: Auch solche Nummern kommen nicht durch, und die Markierung ist in der Anrufliste und auf dem Anrufbildschirm zu sehen. Nummernmasken, unterdrückte und unbekannte Nummern sowie eine Freigabeliste für Ausnahmen finden Sie unter %1$s.</string>
+    <string name="faq_q_slide">Wie nehme ich Anrufe durch Schieben an — oder bekomme die Tasten zurück?</string>
+    <string name="faq_a_slide">%1$s. „Tippen“ zeigt zwei gewöhnliche Tasten. Bei „Schieben“ verschieben Sie die Taste: nach rechts annehmen, nach links ablehnen — so wird kein Anruf versehentlich angenommen oder abgelehnt, wenn Sie das Telefon aus der Tasche ziehen. Mit TalkBack werden Anrufe immer mit Tasten angenommen.</string>
+    <string name="faq_q_sim">Wie wähle ich die SIM-Karte für einen Anruf?</string>
+    <string name="faq_a_sim">Jede SIM-Karte hat ihre eigene Anruftaste. Die für eine Nummer gewählte Karte merkt sich die App und schlägt sie beim nächsten Mal wieder vor (%1$s). Damit Sie die Karten nicht verwechseln, benennen Sie sie: %2$s.</string>
+    <string name="faq_q_missed">Verpasste Anrufe erscheinen erst, wenn ich die App öffne. Was tun?</string>
+    <string name="faq_a_missed">Wahrscheinlich schickt das System die App in den Ruhezustand, um Akku zu sparen. Erlauben Sie ihr den Hintergrundbetrieb — %1$s —, dann erscheinen verpasste Anrufe sofort.</string>
+    <string name="faq_q_recording">Kann ich Anrufe aufzeichnen?</string>
+    <string name="faq_a_recording">Nein. Ab Android 10 gibt das System Dritt-Apps keinen Zugriff auf den Gesprächston, und eine Umgehung verstößt gegen die Google-Play-Richtlinien. Zeichnet Ihr Telefon Anrufe auf, ist das eine eingebaute Funktion des Herstellers — sie arbeitet unabhängig vom gewählten Dialer.</string>
+    <string name="faq_q_work">Darf ich die App beruflich nutzen? Wo ist der Quellcode?</string>
+    <string name="faq_a_work">Ja. Der Code der App ist unter der Apache-Lizenz 2.0 offen: Sie dürfen sie für jeden rechtmäßigen Zweck nutzen, auch beruflich und geschäftlich. Auch die Weitergabe der APK und eigener Versionen ist erlaubt — zusammen mit dem Lizenztext und der Datei NOTICE; Name und Symbol bleiben dem Original vorbehalten. Der Quellcode liegt auf GitHub.</string>
+    <string name="faq_q_contact">Wie melde ich einen Fehler oder schlage eine Idee vor?</string>
+    <string name="faq_a_contact">Schreiben Sie an oedante@gmail.com. Wenn etwas nicht richtig funktioniert, hängen Sie das technische Protokoll an — %1$s: Nummern und Namen darin sind maskiert.</string>
 </resources>

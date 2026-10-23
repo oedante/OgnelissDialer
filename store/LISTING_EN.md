@@ -84,6 +84,9 @@ WHAT THE APP DOESN'T HAVE
 ABOUT YOUR DATA
 The call log and contacts are read from Android's system providers and stay on your device. The app keeps no copy of its own, so if you switch back to the stock Phone app you lose nothing.
 
+OPEN SOURCE
+The source code is open under the Apache License 2.0, so everything said about your data can be checked against the code: github.com/oedante/OgnelissDialer. You may use the app for any purpose, including work and business.
+
 ## Category
 Tools → Communication
 
@@ -103,11 +106,13 @@ a store requirement and cannot be hidden.
 | Console field | Value |
 |---|---|
 | Privacy policy | `https://ogneliss.ru/dialer/privacy` |
+| Source code (in the description) | `https://github.com/oedante/OgnelissDialer` |
 | Website | `https://ogneliss.ru/dialer/` |
 | Email | `oedante@gmail.com` |
 
 ⚠️ The privacy policy URL cannot change after release: it is printed
-in the EULA inside installed builds.
+in the documents inside installed builds. For the same reason the
+Apache License 2.0 (since 1.5.7) lives at the old address `/dialer/eula`.
 
 ## Important on some phones
 

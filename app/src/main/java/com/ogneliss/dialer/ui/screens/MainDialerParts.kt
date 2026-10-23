@@ -22,6 +22,16 @@ import com.ogneliss.dialer.ui.DialerViewModel
 import com.ogneliss.dialer.ui.components.*
 import com.ogneliss.dialer.ui.components.CallLogRowState
 import com.ogneliss.dialer.util.PhoneFormatter
+import com.ogneliss.dialer.data.RemindersRepository
+import com.ogneliss.dialer.ui.theme.Dimens
+import com.ogneliss.dialer.ui.theme.OgnelissTheme
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 
 /*
  * Журнал — меню «Ещё», строка журнала, закреплённые без звонков, подпись плиток псевдозвонка.
@@ -45,7 +55,8 @@ internal fun OverflowMenu(
     expanded: Boolean,
     /** Собственный номер или пусто, если не указан. */
     ownNumber: String = "",
-    onOwnNumber: () -> Unit = {},
+    /** Свой контакт; null — пункта нет (меню контактов, 1.6.0). */
+    onOwnNumber: (() -> Unit)? = {},
     onDismiss: () -> Unit,
     /**
      * Фильтры журнала.
@@ -55,7 +66,8 @@ internal fun OverflowMenu(
      */
     settings: com.ogneliss.dialer.ui.SettingsState,
     onThemeToggle: () -> Unit,
-    onClearLog: () -> Unit,
+    /** Очистить журнал; null — пункта нет (меню контактов, 1.6.0). */
+    onClearLog: (() -> Unit)?,
     onSettings: () -> Unit,
     /** Псевдозвонок: выбор, когда «позвонить». */
     onFakeCall: () -> Unit,
@@ -63,8 +75,20 @@ internal fun OverflowMenu(
     onNotes: () -> Unit,
     /** Экран напоминаний. */
     onReminders: () -> Unit,
-    onStartSelection: () -> Unit,
-    selectionActive: Boolean = false
+    /** Выбрать несколько; null — пункта нет (меню контактов, 1.6.0). */
+    onStartSelection: (() -> Unit)?,
+    selectionActive: Boolean = false,
+    /**
+     * «Создать контакт» — в меню контактов (1.6.0): кнопка «Добавить»
+     * стояла в их верхней строке, а верхней строки больше нет.
+     * null — пункта нет (журнал).
+     */
+    onAddContact: (() -> Unit)? = null,
+    /**
+     * «Вопросы и ответы» (1.6.0) — после «Настроек»: с вопросом идут
+     * в меню, и ответ должен быть там же, а не на сайте.
+     */
+    onHelp: (() -> Unit)? = null
 ) {
     /*
      * ПОРЯДОК ПУНКТОВ МЕНЮ.
@@ -119,6 +143,7 @@ internal fun OverflowMenu(
         if (settings.theme == ThemeMode.DARK) R.string.menu_theme_light else R.string.menu_theme_dark
     )
     val settingsLabel = stringResource(R.string.nav_settings)
+    val helpLabel = stringResource(R.string.faq_title)
     val clearLabel = stringResource(R.string.log_clear_all)
 
     ModalBottomSheet(
@@ -134,18 +159,30 @@ internal fun OverflowMenu(
              * раздела заглавными, между группами — линия во всю ширину;
              * «Очистить журнал» — отдельной группой внизу.
              */
-            SheetGroup(title = stringResource(R.string.settings_section_calls), first = true) {
+            if (onAddContact != null) {
+                // Контакты (1.6.0): создание — первым, это их главное действие из меню
+                SheetGroup(title = stringResource(R.string.nav_contacts), first = true) {
+                    SheetRow(
+                        OgnelissIcons.PersonAdd,
+                        stringResource(R.string.action_create_contact),
+                        onClick = onAddContact
+                    )
+                }
+            }
+            SheetGroup(title = stringResource(R.string.settings_section_calls), first = onAddContact == null) {
                 SheetRow(OgnelissIcons.PhoneCallback, fakeCallLabel, onClick = onFakeCall)
-                SheetDivider()
-                SheetRow(
-                    OgnelissIcons.Person,
-                    ownLabel,
-                    // Номер второй строкой: видно, какой задан, без похода в настройки
-                    supporting = ownNumber.takeIf { it.isNotBlank() }?.let { PhoneFormatter.format(it) },
-                    // Приглушённый, пока номера нет: не требует внимания, но и не прячется
-                    iconTint = if (ownNumber.isBlank()) MaterialTheme.colorScheme.outline else null,
-                    onClick = onOwnNumber
-                )
+                if (onOwnNumber != null) {
+                    SheetDivider()
+                    SheetRow(
+                        OgnelissIcons.Person,
+                        ownLabel,
+                        // Номер второй строкой: видно, какой задан, без похода в настройки
+                        supporting = ownNumber.takeIf { it.isNotBlank() }?.let { PhoneFormatter.format(it) },
+                        // Приглушённый, пока номера нет: не требует внимания, но и не прячется
+                        iconTint = if (ownNumber.isBlank()) MaterialTheme.colorScheme.outline else null,
+                        onClick = onOwnNumber
+                    )
+                }
             }
             SheetGroup(title = stringResource(R.string.menu_section_lists)) {
                 SheetRow(
@@ -156,12 +193,14 @@ internal fun OverflowMenu(
                 )
                 SheetDivider()
                 SheetRow(OgnelissIcons.Alarm, remindersLabel, onClick = onReminders)
-                SheetDivider()
-                SheetRow(
-                    if (selectionActive) OgnelissIcons.Close else OgnelissIcons.Checklist,
-                    selectionLabel,
-                    onClick = onStartSelection
-                )
+                if (onStartSelection != null) {
+                    SheetDivider()
+                    SheetRow(
+                        if (selectionActive) OgnelissIcons.Close else OgnelissIcons.Checklist,
+                        selectionLabel,
+                        onClick = onStartSelection
+                    )
+                }
             }
             SheetGroup(title = stringResource(R.string.menu_section_app)) {
                 SheetRow(
@@ -171,19 +210,94 @@ internal fun OverflowMenu(
                 )
                 SheetDivider()
                 SheetRow(OgnelissIcons.Settings, settingsLabel, onClick = onSettings)
+                if (onHelp != null) {
+                    SheetDivider()
+                    SheetRow(OgnelissIcons.Help, helpLabel, onClick = onHelp)
+                }
             }
-            SheetGroup {
-                SheetRow(
-                    OgnelissIcons.DeleteSweep,
-                    clearLabel,
-                    color = MaterialTheme.colorScheme.error,
-                    onClick = onClearLog
-                )
+            if (onClearLog != null) {
+                SheetGroup {
+                    SheetRow(
+                        OgnelissIcons.DeleteSweep,
+                        clearLabel,
+                        color = MaterialTheme.colorScheme.error,
+                        onClick = onClearLog
+                    )
+                }
             }
         }
     }
 }
 
+
+
+/**
+ * НАПОМИНАНИЯ НА СЕГОДНЯ — ПОЛОСОЙ НАД ЖУРНАЛОМ (1.6.0, вариант «Б»).
+ *
+ * ══════════════════════════════════════════════════════════════════════════
+ * ЗАЧЕМ
+ * ══════════════════════════════════════════════════════════════════════════
+ * Кнопка «Напоминания» стояла на панели всегда, даже когда напоминаний
+ * нет ни одного. Её место занял «Поиск», а то, ради чего на неё
+ * нажимали, — «кому я обещал перезвонить сегодня», — теперь видно
+ * без нажатия: полосой над журналом, только когда такие есть.
+ *
+ * Ближайшее — с именем и временем, остальные — числом. Касание
+ * открывает экран напоминаний. Полоса — первый элемент списка
+ * и уезжает вместе с ним.
+ */
+@Composable
+internal fun TodayRemindersStrip(
+    reminders: List<RemindersRepository.Reminder>,
+    onOpen: () -> Unit
+) {
+    val first = reminders.firstOrNull() ?: return
+    val context = LocalContext.current
+    val time = remember(first.atMillis) {
+        android.text.format.DateFormat.getTimeFormat(context).format(java.util.Date(first.atMillis))
+    }
+    val who = first.displayName?.takeIf { it.isNotBlank() } ?: PhoneFormatter.format(first.e164)
+    val title = stringResource(R.string.reminders_today)
+    val text = stringResource(R.string.today_strip_text, who, time)
+    val more = (reminders.size - 1).takeIf { it > 0 }?.let { n ->
+        pluralStringResource(R.plurals.today_strip_more, n, n)
+    }
+    Surface(
+        onClick = onOpen,
+        shape = MaterialTheme.shapes.large,
+        color = OgnelissTheme.surfaces.navIndicator,
+        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = FlowUi.groupInset, vertical = Space.xs)
+    ) {
+        Row(
+            Modifier
+                .heightIn(min = Dimens.MIN_TOUCH_TARGET)
+                .padding(horizontal = Space.m, vertical = Space.s),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(OgnelissIcons.Alarm, contentDescription = null, modifier = Modifier.size(20.dp))
+            Spacer(Modifier.width(Space.s))
+            Text(
+                buildAnnotatedString {
+                    withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) { append(title) }
+                    append("  ")
+                    append(text)
+                    if (more != null) {
+                        append(" · ")
+                        append(more)
+                    }
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f)
+            )
+            Icon(OgnelissIcons.KeyboardArrowRight, contentDescription = null)
+        }
+    }
+}
 
 
 // Размеры пунктов меню — общие для приложения, разбор в FlowUi

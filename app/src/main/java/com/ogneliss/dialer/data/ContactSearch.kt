@@ -3,6 +3,7 @@ package com.ogneliss.dialer.data
 import com.ogneliss.dialer.settings.SortOrder
 import com.ogneliss.dialer.t9.T9Engine
 import com.ogneliss.dialer.util.DialDigits
+import com.ogneliss.dialer.util.TextFold
 
 /**
  * ПОИСК ПО КОНТАКТАМ И ЖУРНАЛУ.
@@ -44,7 +45,9 @@ object ContactSearch {
     }
 
     /**
-     * @param query введённые цифры; нецифровые символы игнорируются
+     * @param query введённые цифры — поиск по T9 и номеру; если в запросе
+     *   есть буквы — поиск по тексту имени и заметки (1.6.0, разбор
+     *   у searchText). Знаки набора без цифр («+», «*») не ищут ничего
      * @param order порядок выдачи контактов
      */
     /**
@@ -58,6 +61,8 @@ object ContactSearch {
         notes: Map<String, NumberNote> = emptyMap(),
         nowMillis: Long = System.currentTimeMillis()
     ): Result {
+        if (TextFold.isTextQuery(query)) return searchText(contacts, callLog, query.trim(), notes)
+
         val digits = query.filter { it.isDigit() }
         if (digits.isEmpty()) return Result.EMPTY
 
@@ -172,4 +177,61 @@ object ContactSearch {
             contact.numbers.firstOrNull()?.let { positions[it.e164] } ?: Int.MAX_VALUE
         }
     }
+
+    /**
+     * ПОИСК БУКВАМИ (1.6.0).
+     *
+     * ══════════════════════════════════════════════════════════════════════
+     * ЗАЧЕМ
+     * ══════════════════════════════════════════════════════════════════════
+     * С 1.6.0 у журнала есть кнопка «Поиск» с обычной клавиатурой
+     * (вариант «Б» обзора интерфейса). T9 на ней бессмыслен: человек
+     * печатает «сантехник» буквами и ждёт найти и контакт, и заметку
+     * к номеру, который в книгу не заносили.
+     *
+     * ── Что сравнивается ───────────────────────────────────────────────────
+     * Имя и заметка — подстрокой, без учёта регистра, «ё» = «е»
+     * (TextFold). Номер — нет: в запросе с буквами цифры номера не ищут,
+     * для номера есть клавиатура набора.
+     *
+     * ── Порядок ────────────────────────────────────────────────────────────
+     * Сначала имена, которые начинаются с запроса, затем — где с него
+     * начинается слово («петр» → «Иван Петров»), затем остальное. Внутри —
+     * избранные, потом те, кому звонят чаще; при равенстве — порядок
+     * книги (сортировка устойчивая).
+     */
+    private fun searchText(
+        contacts: List<Contact>,
+        callLog: List<CallLogGroup>,
+        query: String,
+        notes: Map<String, NumberNote>
+    ): Result {
+        if (query.isEmpty()) return Result.EMPTY
+
+        val matched = contacts.filter { contact ->
+            TextFold.contains(contact.displayName, query) ||
+                contact.numbers.any { TextFold.contains(notes[it.e164]?.note, query) }
+        }
+        val matchedLog = callLog.filter { group ->
+            TextFold.contains(group.displayName, query) ||
+                TextFold.contains(notes[group.e164]?.note, query)
+        }
+        return Result(rankText(matched, callLog, query), matchedLog)
+    }
+
+    /** Порядок выдачи при поиске буквами: разбор у searchText. */
+    private fun rankText(
+        matched: List<Contact>,
+        callLog: List<CallLogGroup>,
+        query: String
+    ): List<Contact> {
+        if (matched.size <= 1) return matched
+        val callsByE164 = callLog.associate { it.e164 to it.count }
+        return matched.sortedWith(
+            compareBy<Contact> { TextFold.rank(it.displayName, query) }
+                .thenByDescending { it.starred }
+                .thenByDescending { contact -> contact.numbers.sumOf { callsByE164[it.e164] ?: 0 } }
+        )
+    }
+
 }

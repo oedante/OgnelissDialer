@@ -10,8 +10,10 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import com.ogneliss.dialer.t9.T9Engine
+import com.ogneliss.dialer.util.TextFold
 
 /**
  * ПОДСВЕТКА СОВПАДЕНИЯ В РЕЗУЛЬТАТАХ ПОИСКА.
@@ -36,42 +38,74 @@ import com.ogneliss.dialer.t9.T9Engine
 @Composable
 fun HighlightedName(
     name: String,
-    /** Введённые цифры. Пусто — подсветки нет. */
+    /**
+     * Запрос: цифры — совпадение по T9, буквы — подстрокой (1.6.0, поиск
+     * в панели и в контактах). Пусто — подсветки нет.
+     */
     query: String,
     modifier: Modifier = Modifier,
-    style: TextStyle = LocalTextStyle.current
+    style: TextStyle = LocalTextStyle.current,
+    /*
+     * ИМЯ — В ОДНУ СТРОКУ (1.5.7).
+     *
+     * Ограничения не было, и длинное имя переносилось: «Служба /
+     * спасения», «Константин Сергеевич / Иванов» — строки списка выходили
+     * разной высоты; при крупном шрифте это видно на снимке автора.
+     * В журнале комментарий так и обещал: «длинное имя обрежется, значок
+     * останется виден», — а оно переносилось. Полное имя — в карточке.
+     */
+    maxLines: Int = 1
 ) {
-    val digits = remember(query) { query.filter { it.isDigit() } }
-
-    val text: AnnotatedString = remember(name, digits) {
-        if (digits.isEmpty()) return@remember AnnotatedString(name)
-
-        val start = T9Engine.matchIndex(digits, name)
-        if (start < 0) return@remember AnnotatedString(name)
-
-        // Длина совпадения равна числу введённых цифр: каждая цифра
-        // соответствует одной букве. Ограничиваем длиной имени,
-        // чтобы не выйти за границы при частичном совпадении
-        val end = (start + digits.length).coerceAtMost(name.length)
-
+    val text: AnnotatedString = remember(name, query) {
+        val range = highlightRange(name, query) ?: return@remember AnnotatedString(name)
         buildAnnotatedString {
-            append(name.substring(0, start))
+            append(name.substring(0, range.first))
             withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                append(name.substring(start, end))
+                append(name.substring(range.first, range.last + 1))
             }
-            append(name.substring(end))
+            append(name.substring(range.last + 1))
         }
     }
 
-    Text(text, modifier = modifier, style = style)
+    Text(
+        text,
+        modifier = modifier,
+        style = style,
+        maxLines = maxLines,
+        overflow = TextOverflow.Ellipsis
+    )
+}
+
+/**
+ * Какую часть имени подсветить; null — ничего.
+ *
+ * Цифры — совпадение по T9: длина равна числу цифр (каждая цифра —
+ * одна буква), не дальше конца имени — иначе выход за границы строки
+ * при частичном совпадении. Буквы (1.6.0) — подстрока без учёта
+ * регистра и с «ё» = «е», как ищет поиск (TextFold): подсвечено то же,
+ * по чему нашлось.
+ */
+internal fun highlightRange(name: String, query: String): IntRange? {
+    if (TextFold.isTextQuery(query)) {
+        val text = query.trim()
+        val start = TextFold.indexOf(name, text)
+        if (start < 0) return null
+        return start until (start + text.length).coerceAtMost(name.length)
+    }
+    val digits = query.filter { it.isDigit() }
+    if (digits.isEmpty()) return null
+    val start = T9Engine.matchIndex(digits, name)
+    if (start < 0) return null
+    val end = (start + digits.length).coerceAtMost(name.length)
+    return if (end > start) start until end else null
 }
 
 /**
  * Подсветка совпадения в номере телефона.
  *
  * Отличается от имени: в номере ищется подстрока цифр, а не соответствие
- * буквам. Пользователь может искать по середине номера — «6605» найдёт
- * 8 (967) 666-05-12, и подсветить нужно именно эту часть.
+ * буквам. Пользователь может искать по середине номера — «1122» найдёт
+ * 8 (967) 111-22-33, и подсветить нужно именно эту часть.
  */
 @Composable
 fun HighlightedNumber(

@@ -61,6 +61,7 @@ import com.ogneliss.dialer.ui.screens.RemindersScreen
 import com.ogneliss.dialer.call.FakeCall
 import com.ogneliss.dialer.ui.screens.MainDialerScreen
 import com.ogneliss.dialer.ui.screens.SettingsCategoryScreen
+import com.ogneliss.dialer.ui.screens.SettingReveal
 import com.ogneliss.dialer.ui.screens.SettingsHomeScreen
 import com.ogneliss.dialer.ui.screens.SubscriberScreen
 import com.ogneliss.dialer.ui.screens.BlockListScreen
@@ -77,11 +78,17 @@ import com.ogneliss.dialer.ui.screens.LegalScreen
 import com.ogneliss.dialer.ui.screens.ExternalLookupScreen
 import com.ogneliss.dialer.ui.screens.PostCallSheet
 import com.ogneliss.dialer.ui.components.Motion
+import com.ogneliss.dialer.ui.components.MainSection
 import com.ogneliss.dialer.ui.theme.Appearance
 import com.ogneliss.dialer.ui.theme.LocalAppearance
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.ogneliss.dialer.ui.settings.SettingsCategory
+import com.ogneliss.dialer.ui.settings.SettingsRegistry
+import com.ogneliss.dialer.ui.settings.SettingEntry
+import com.ogneliss.dialer.ui.settings.SettingKind
+import com.ogneliss.dialer.ui.help.FaqLink
+import com.ogneliss.dialer.ui.screens.FaqScreen
 
 /**
  * КОРНЕВОЙ ЭКРАН ПРИЛОЖЕНИЯ.
@@ -133,6 +140,28 @@ fun RootScreen(
     openBlockLists: Boolean = false
 ) {
     val nav = rememberNavController()
+
+    /*
+     * ПЕРЕХОД МЕЖДУ РАЗДЕЛАМИ (1.6.0, вариант «Б»).
+     *
+     * Журнал, контакты, заметки, напоминания — соседи, а не экраны друг
+     * в друге: в стеке под любым из них только журнал. «Назад» из контактов
+     * ведёт в журнал, а не в то, что открывали перед ними, и экраны не
+     * громоздятся при переключении туда-обратно. Так же ведёт боковая
+     * полоса планшета; на телефоне — переключатель на панели и список
+     * разделов по долгому нажатию на него.
+     */
+    val openSection: (MainSection) -> Unit = { section ->
+        if (section == MainSection.JOURNAL) {
+            nav.popBackStack(MainSection.JOURNAL.route, inclusive = false)
+        } else {
+            nav.navigate(section.route) {
+                popUpTo(MainSection.JOURNAL.route) { saveState = true }
+                launchSingleTop = true
+                restoreState = true
+            }
+        }
+    }
     val vm: DialerViewModel = hiltViewModel()
 
     // Экран после звонка показывается поверх ЛЮБОГО экрана приложения:
@@ -205,6 +234,63 @@ fun RootScreen(
      */
     var ownNumberOpen by remember { mutableStateOf(false) }
     val ownNumber by vm.ownNumber.collectAsStateWithLifecycle()
+
+    /*
+     * Настройка, найденная поиском, — для раздела, который откроется
+     * (1.5.8): если она под «Дополнительно», раздел раскроет группу.
+     * Разбор у SettingReveal. Одна на телефон и планшет: поиск и раздел —
+     * разные экраны навигации, а на планшете — соседние панели.
+     */
+    var settingsReveal by remember { mutableStateOf<SettingReveal?>(null) }
+
+    /*
+     * «ВОПРОСЫ И ОТВЕТЫ» (1.6.0): кнопка под ответом делает то же, что пункт
+     * в настройках, — тем же кодом (runSettingAction).
+     *
+     * Переключатель и выбор — раздел открывается и подсвечивает пункт, как
+     * после поиска по настройкам. Действие и ссылка в системные настройки
+     * выполняются сразу: «Работа в фоне» открывает системное окно, а не
+     * раздел, где пришлось бы нажимать ещё раз. Кроме действий, которым
+     * нужен сам экран раздела (ACTIONS_OF_SETTINGS_SCREEN), и опасных — им
+     * нужно его подтверждение: для них раздел открывается, как для
+     * переключателя.
+     */
+    val openFaq: (String?) -> Unit = { question ->
+        nav.navigate(if (question == null) "faq" else "faq?q=$question")
+    }
+    val revealSetting: (SettingEntry) -> Unit = { entry ->
+        settingsReveal = SettingReveal(entry.id)
+        nav.navigate(entry.category.route)
+    }
+    val openFaqLink: (FaqLink) -> Unit = { link ->
+        when (link) {
+            is FaqLink.Setting -> SettingsRegistry.byId(link.entryId)?.let { entry ->
+                when (val kind = entry.kind) {
+                    is SettingKind.SystemLink -> vm.handleSettingsAction("system:${kind.key}")
+                    is SettingKind.Action -> {
+                        if (entry.dangerous || kind.key in ACTIONS_OF_SETTINGS_SCREEN) {
+                            revealSetting(entry)
+                        } else {
+                            runSettingAction(kind.key, context, nav, vm, { ownNumberOpen = true }, saveToFile = null)
+                        }
+                    }
+                    else -> revealSetting(entry)
+                }
+            }
+            is FaqLink.Section -> nav.navigate(link.category.route)
+            // Оболочка не показала системное окно — тогда системные «Приложения по умолчанию»
+            FaqLink.DefaultDialer -> {
+                val shown = onRequestDefault()
+                if (!shown) vm.handleSettingsAction("system:default_apps")
+            }
+            // Лицензия — встроенным текстом: ответ не должен уводить на сайт
+            is FaqLink.Document -> nav.navigate("legal/${link.document.name}")
+            FaqLink.SourceCode -> openDocument(context, com.ogneliss.dialer.util.AppLinks.SOURCE_CODE) {
+                nav.navigate("about")
+            }
+            FaqLink.Mail -> vm.openEmail(com.ogneliss.dialer.util.AppLinks.SUPPORT_EMAIL)
+        }
+    }
 
     if (ownNumberOpen) {
         OwnNumberDialog(
@@ -334,6 +420,19 @@ fun RootScreen(
      * safeDrawing учитывает всё сразу: строку состояния, навигацию,
      * вырез камеры и жестовую зону. Отдельные statusBars/navigationBars
      * покрыли бы не все случаи — например, вырез в ландшафте.
+     *
+     * ── Верх — каждому экрану свой (1.5.8, обзор интерфейса, У3) ───────────
+     * Корень отступал и сверху, и под строкой состояния всегда была полоса
+     * фона — фото в карточке контакта начиналось под ней. Теперь корень
+     * отступает по бокам и снизу, а верхний отступ берёт сам экран: его
+     * Scaffold и TopAppBar учитывают строку состояния (contentWindowInsets,
+     * TopAppBarDefaults.windowInsets), и фон экрана уходит под строку
+     * состояния. Карточка контакта кладёт туда фото.
+     *
+     * Кто ещё стоит сверху, отступает сам: баннер «сделать основным»
+     * (и тогда экраны под ним отступа сверху не получают — он учтён),
+     * журнал с карточкой рядом на планшете (ListDetailHost) — как раньше.
+     * Окна согласия и мастера разрешений рисуются не здесь (MainActivity).
      */
     // Полоса под системной навигацией — цвета нижней панели (1.5.1):
     // разбор в ui/theme/NavBarStrip.kt
@@ -355,7 +454,9 @@ fun RootScreen(
     Column(
         Modifier
             .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.safeDrawing)
+            .windowInsetsPadding(
+                WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
+            )
     ) {
         if (!isDefaultDialer) {
             // Баннеру результат не нужен: он только приглашает,
@@ -406,7 +507,13 @@ fun RootScreen(
                     }
                 )
 
-                if (result == SnackbarResult.ActionPerformed) message.undo?.invoke()
+                // Погасло без «Отменить» — отложенное действие выполняется
+                // (удаление из журнала, 1.5.7: разбор в deleteGroupsWithUndo)
+                if (result == SnackbarResult.ActionPerformed) {
+                    message.undo?.invoke()
+                } else {
+                    message.onTimeout?.invoke()
+                }
             }
         }
 
@@ -434,23 +541,28 @@ fun RootScreen(
         val currentRoute = backStack?.destination?.route.orEmpty()
 
         CompositionLocalProvider(LocalNavigationRailShown provides showRail) {
-        Row(Modifier.weight(1f).fillMaxWidth()) {
+        Row(
+            Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                // Баннер сверху уже отступил под строку состояния —
+                // экранам под ним этот отступ не нужен (1.5.8)
+                .then(
+                    if (!isDefaultDialer) {
+                        Modifier.consumeWindowInsets(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
+                    } else {
+                        Modifier
+                    }
+                )
+        ) {
             if (showRail) {
                 AppNavigationRail(
                     currentRoute = currentRoute,
+                    // Один экран каждого вида в стеке: касание по «Контактам»
+                    // из заметок не громоздит экраны друг на друга, а переключает
+                    // (разбор у openSection)
                     onNavigate = { route ->
-                        if (route == "dialer") {
-                            nav.popBackStack("dialer", inclusive = false)
-                        } else {
-                            nav.navigate(route) {
-                                // Один экран каждого вида в стеке: касание
-                                // по «Контактам» из заметок не громоздит
-                                // экраны друг на друга, а переключает
-                                popUpTo("dialer") { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
+                        MainSection.entries.firstOrNull { it.route == route }?.let(openSection)
                     }
                 )
             }
@@ -467,7 +579,17 @@ fun RootScreen(
                 popEnterTransition = Motion.enterBackward,
                 popExitTransition = Motion.exitBackward
             ) {
-                composable("dialer") {
+                composable(
+                    "dialer",
+                    // Журнал и контакты — соседи (1.6.0): между ними —
+                    // растворение, без сдвига (разбор у Motion.enterSibling)
+                    exitTransition = {
+                        if (isContactsList(targetState)) Motion.exitSibling(this) else Motion.exitForward(this)
+                    },
+                    popEnterTransition = {
+                        if (isContactsList(initialState)) Motion.enterSibling(this) else Motion.enterBackward(this)
+                    }
+                ) {
                     /*
                      * ══════════════════════════════════════════════════════
                      * ЖУРНАЛ И КАРТОЧКА РЯДОМ НА ПЛАНШЕТЕ
@@ -493,8 +615,11 @@ fun RootScreen(
                             prefilledNumber = prefilledNumber,
                             prefillToken = prefillToken,
                             openDialpad = openDialpad,
-                            onOpenContacts = { nav.navigate("contacts") },
+                            // Контакты — соседний список (1.6.0): разбор у openSection
+                            onOpenContacts = { openSection(MainSection.CONTACTS) },
+                            onOpenSection = openSection,
                             onOpenSettings = { nav.navigate("settings") },
+                            onOpenHelp = { nav.navigate("faq") },
                             // Ключ группы кодирует ListDetailHost: он содержит
                             // символы, недопустимые в маршруте без экранирования
                             onOpenSubscriber = openCard,
@@ -509,7 +634,23 @@ fun RootScreen(
                     "contacts?pick={pick}",
                     arguments = listOf(
                         navArgument("pick") { defaultValue = ""; type = NavType.StringType }
-                    )
+                    ),
+                    // Из журнала и обратно — растворением, как соседи (1.6.0);
+                    // выбор контакта из настроек — прежним сдвигом
+                    enterTransition = {
+                        if (initialState.destination.route == MainSection.JOURNAL.route && isContactsList(targetState)) {
+                            Motion.enterSibling(this)
+                        } else {
+                            Motion.enterForward(this)
+                        }
+                    },
+                    popExitTransition = {
+                        if (targetState.destination.route == MainSection.JOURNAL.route && isContactsList(initialState)) {
+                            Motion.exitSibling(this)
+                        } else {
+                            Motion.exitBackward(this)
+                        }
+                    }
                 ) { entry ->
                     /*
                      * Режим выбора для закрепления.
@@ -525,7 +666,7 @@ fun RootScreen(
                     ListDetailHost(vm = vm, nav = nav, enabled = pickMode.isEmpty()) { openCard ->
                     ContactsScreen(
                         vm = vm,
-                        onOpenNotes = { nav.navigate("notes") },
+                        onOpenNotes = { openSection(MainSection.NOTES) },
                         // Псевдозвонок с экрана контактов запускается сразу,
                         // без выбора времени: окно с вариантами живёт
                         // в журнале, а здесь нужна та же кнопка «сейчас»
@@ -547,7 +688,19 @@ fun RootScreen(
                         onBack = { nav.popBackStack() },
                         // Карточка открывается по ключу группы журнала;
                         // для контакта без звонков ключ строится по его id
-                        onOpenContact = { id -> openCard("contact:$id") }
+                        onOpenContact = { id -> openCard("contact:$id") },
+                        // Из карточек долгого нажатия: блокировка по маске (1.5.7)
+                        onOpenBlockLists = { nav.navigate("blocklists") },
+                        // Та же панель, что у журнала (1.6.0): переключатель,
+                        // список разделов, клавиатура набора — в журнале
+                        onOpenSection = openSection,
+                        onOpenDialpad = {
+                            vm.requestDialpad()
+                            openSection(MainSection.JOURNAL)
+                        },
+                        onOpenSettings = { nav.navigate("settings") },
+                        onOpenReminders = { openSection(MainSection.REMINDERS) },
+                        onOpenHelp = { nav.navigate("faq") }
                     )
                     }
                 }
@@ -598,7 +751,11 @@ fun RootScreen(
                                 SettingsHomeScreen(
                                     onBack = { nav.popBackStack() },
                                     onOpenCategory = { selected = it },
-                                    onOpenEntry = { selected = it.category }
+                                    onOpenEntry = {
+                                        settingsReveal = SettingReveal(it.id)
+                                        selected = it.category
+                                    },
+                                    onOpenFaq = openFaq
                                 )
                             }
                             Box(Modifier.weight(1f).fillMaxHeight()) {
@@ -608,7 +765,9 @@ fun RootScreen(
                                     nav = nav,
                                     onBack = { nav.popBackStack() },
                                     onOwnNumber = { ownNumberOpen = true },
-                                    showBack = false
+                                    showBack = false,
+                                    reveal = settingsReveal,
+                                    onRevealConsumed = { settingsReveal = null }
                                 )
                             }
                         }
@@ -616,10 +775,30 @@ fun RootScreen(
                         SettingsHomeScreen(
                             onBack = { nav.popBackStack() },
                             onOpenCategory = { nav.navigate(it.route) },
-                            // Из поиска переходим сразу в категорию найденной настройки
-                            onOpenEntry = { nav.navigate(it.category.route) }
+                            // Из поиска переходим сразу в категорию найденной настройки;
+                            // лежит под «Дополнительно» — раздел её покажет (1.5.8)
+                            onOpenEntry = {
+                                settingsReveal = SettingReveal(it.id)
+                                nav.navigate(it.category.route)
+                            },
+                            onOpenFaq = openFaq
                         )
                     }
+                }
+
+                // «Вопросы и ответы» (1.6.0): из меню, настроек и поиска по ним
+                composable(
+                    "faq?q={q}",
+                    arguments = listOf(
+                        navArgument("q") { defaultValue = ""; type = NavType.StringType }
+                    )
+                ) { entry ->
+                    FaqScreen(
+                        onBack = { nav.popBackStack() },
+                        openQuestion = entry.arguments?.getString("q")?.takeIf { it.isNotEmpty() },
+                        isDefaultDialer = isDefaultDialer,
+                        onOpenLink = openFaqLink
+                    )
                 }
 
                 composable("permissions") {
@@ -761,7 +940,9 @@ fun RootScreen(
                             vm = vm,
                             nav = nav,
                             onBack = { nav.popBackStack() },
-                            onOwnNumber = { ownNumberOpen = true }
+                            onOwnNumber = { ownNumberOpen = true },
+                            reveal = settingsReveal,
+                            onRevealConsumed = { settingsReveal = null }
                         )
                     }
                 }
@@ -785,7 +966,10 @@ fun RootScreen(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
-        )
+        ) { data ->
+            // С кнопкой — кольцо с секундами до конца (1.5.8): разбор в CountdownSnackbar
+            com.ogneliss.dialer.ui.components.CountdownSnackbar(data)
+        }
     }
     } // LocalNavBarStrip
 }
@@ -796,7 +980,11 @@ fun RootScreen(
 private fun DefaultDialerBanner(onRequest: () -> Unit) {
     Surface(color = MaterialTheme.colorScheme.primaryContainer) {
         Row(
-            Modifier.fillMaxWidth().padding(Space.m),
+            Modifier
+                .fillMaxWidth()
+                // Подложка — до верха экрана, текст — под строкой состояния (1.5.8)
+                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
+                .padding(Space.m),
             verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
         ) {
             Text(
@@ -897,7 +1085,10 @@ private fun SettingsCategoryHost(
     nav: androidx.navigation.NavController,
     onBack: () -> Unit,
     onOwnNumber: () -> Unit,
-    showBack: Boolean = true
+    showBack: Boolean = true,
+    /** Найдено поиском — показать (1.5.8): разбор у SettingReveal. */
+    reveal: SettingReveal? = null,
+    onRevealConsumed: () -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -946,110 +1137,150 @@ private fun SettingsCategoryHost(
         onBack = onBack,
         snackbar = settingsSnackbar,
         showBack = showBack,
+        // Просьба — только разделу найденной настройки
+        reveal = reveal?.takeIf { r -> SettingsRegistry.byCategory(category).any { it.id == r.entryId } },
+        onRevealConsumed = onRevealConsumed,
         onAction = { key ->
-            when (key) {
-                "allow_list", "block_list" -> nav.navigate("blocklists")
-                "spam_overview" -> nav.navigate("spam")
-                "speed_dial" -> nav.navigate("speeddial")
-                "backup_export", "backup_import" -> nav.navigate("backup")
-
-                "calllog_export" -> {
-                    pendingText = { vm.buildCallLogCsv() }
-                    saveLauncher.launch(vm.callLogCsvFileName())
-                }
-
-                "log_save" -> {
-                    pendingText = { vm.buildLogText() }
-                    saveLauncher.launch("ogneliss.log")
-                }
-                "stats" -> nav.navigate("stats")
-                "swipe_tuning" -> nav.navigate("swipe_tuning")
-                "pinned" -> nav.navigate("pinned")
-                /*
-                 * Свой номер: диалог поверх настроек.
-                 *
-                 * Отдельный экран ради одного поля был бы
-                 * лишним переходом — человек пришёл
-                 * изменить номер, а не изучать раздел.
-                 */
-                "own_number" -> onOwnNumber()
-
-                "external_lookup" -> nav.navigate("external_lookup")
-                "permissions" -> nav.navigate("permissions")
-                /*
-                 * ДОКУМЕНТЫ ОТКРЫВАЮТСЯ НА САЙТЕ.
-                 *
-                 * ── Почему не встроенный экран ────────────
-                 * Встроенная копия устаревает: редакцию
-                 * правят, а у людей на телефонах остаётся
-                 * та, что была в их версии приложения.
-                 * Для политики конфиденциальности это
-                 * важно — она обязана быть актуальной.
-                 *
-                 * На сайте лежит та же редакция, что
-                 * в репозитории: страницы собираются
-                 * из тех же файлов.
-                 *
-                 * Встроенный экран остаётся запасным:
-                 * если браузера нет или ссылка
-                 * не открылась, документ показывается
-                 * из приложения. Без сети человек всё
-                 * равно должен их прочитать.
-                 */
-                "privacy" -> openDocument(
-                    context, "https://ogneliss.ru/dialer/privacy"
-                ) { nav.navigate("about") }
-
-                "terms" -> openDocument(
-                    context, "https://ogneliss.ru/dialer/terms"
-                ) { nav.navigate("about") }
-
-                "licenses" -> openDocument(
-                    context, "https://ogneliss.ru/dialer/licenses"
-                ) { nav.navigate("about") }
-
-                /*
-                 * «Версия» ведёт в магазин.
-                 *
-                 * Сам номер версии уже виден в подписи
-                 * пункта, а нажимают на него обычно
-                 * за обновлением или чтобы оставить отзыв.
-                 *
-                 * Если Google Play на устройстве нет
-                 * (а его нет на части прошивок), открывается
-                 * прежний экран «О приложении» —
-                 * openDocument сам вызовет запасной путь.
-                 */
-                /*
-                 * Выбор «звонящего» — тот же экран,
-                 * что и выбор номера для закрепления:
-                 * список контактов с поиском. Заводить
-                 * ради этого второй такой экран
-                 * не за чем.
-                 */
-                "fake_call_number" -> nav.navigate("contacts?pick=fake")
-
-                "rate_app" -> openDocument(
-                    context,
-                    "https://play.google.com/store/apps/details" +
-                        "?id=com.ogneliss.dialer"
-                ) {
-                    // Магазина на устройстве может не быть:
-                    // тогда сообщаем, а не молчим
-                    vm.notifyNoStore()
-                }
-
-                "version" -> openDocument(
-                    context,
-                    "https://play.google.com/store/apps/details" +
-                        "?id=com.ogneliss.dialer"
-                ) { nav.navigate("about") }
-
-                else -> vm.handleSettingsAction(key)
+            runSettingAction(key, context, nav, vm, onOwnNumber) { build, fileName ->
+                pendingText = build
+                saveLauncher.launch(fileName)
             }
         }
     )
 }
+
+
+/**
+ * ДЕЙСТВИЕ ПУНКТА НАСТРОЕК — ОДНО НА РАЗДЕЛЫ НАСТРОЕК И «ВОПРОСЫ И ОТВЕТЫ».
+ *
+ * До 1.6.0 этот разбор жил внутри SettingsCategoryHost. Кнопки под ответами
+ * (FaqScreen) делают то же, что пункты в настройках, — и разбор вынесен,
+ * чтобы два места не разошлись: поправили переход здесь — поправился
+ * и там.
+ *
+ * @param saveToFile выгрузка в файл: окно выбора файла есть только у раздела
+ *   настроек. null — у вызывающего его нет; такие пункты «Вопросы и ответы»
+ *   не выполняют, а открывают их раздел (ACTIONS_OF_SETTINGS_SCREEN).
+ */
+private fun runSettingAction(
+    key: String,
+    context: android.content.Context,
+    nav: androidx.navigation.NavController,
+    vm: DialerViewModel,
+    onOwnNumber: () -> Unit,
+    saveToFile: ((build: suspend () -> String?, fileName: String) -> Unit)?
+) {
+    when (key) {
+        "allow_list", "block_list" -> nav.navigate("blocklists")
+        "spam_overview" -> nav.navigate("spam")
+        "speed_dial" -> nav.navigate("speeddial")
+        "backup_export", "backup_import" -> nav.navigate("backup")
+
+        "calllog_export" -> saveToFile?.invoke({ vm.buildCallLogCsv() }, vm.callLogCsvFileName())
+
+        "log_save" -> saveToFile?.invoke({ vm.buildLogText() }, "ogneliss.log")
+        "stats" -> nav.navigate("stats")
+        "swipe_tuning" -> nav.navigate("swipe_tuning")
+        "pinned" -> nav.navigate("pinned")
+        /*
+         * Свой номер: диалог поверх настроек.
+         *
+         * Отдельный экран ради одного поля был бы
+         * лишним переходом — человек пришёл
+         * изменить номер, а не изучать раздел.
+         */
+        "own_number" -> onOwnNumber()
+
+        "external_lookup" -> nav.navigate("external_lookup")
+        "permissions" -> nav.navigate("permissions")
+        /*
+         * ДОКУМЕНТЫ ОТКРЫВАЮТСЯ НА САЙТЕ.
+         *
+         * ── Почему не встроенный экран ────────────
+         * Встроенная копия устаревает: редакцию
+         * правят, а у людей на телефонах остаётся
+         * та, что была в их версии приложения.
+         * Для политики конфиденциальности это
+         * важно — она обязана быть актуальной.
+         *
+         * На сайте лежит та же редакция, что
+         * в репозитории: страницы собираются
+         * из тех же файлов.
+         *
+         * Встроенный экран остаётся запасным:
+         * если браузера нет или ссылка
+         * не открылась, документ показывается
+         * из приложения. Без сети человек всё
+         * равно должен их прочитать.
+         */
+        "privacy" -> openDocument(
+            context, com.ogneliss.dialer.util.AppLinks.PRIVACY
+        ) { nav.navigate("about") }
+
+        "terms" -> openDocument(
+            context, com.ogneliss.dialer.util.AppLinks.TERMS
+        ) { nav.navigate("about") }
+
+        // Лицензия Apache 2.0 и исходный код (1.5.7)
+        "license" -> openDocument(
+            context, com.ogneliss.dialer.util.AppLinks.LICENSE
+        ) { nav.navigate("about") }
+
+        "source_code" -> openDocument(
+            context, com.ogneliss.dialer.util.AppLinks.SOURCE_CODE
+        ) { nav.navigate("about") }
+
+        "licenses" -> openDocument(
+            context, com.ogneliss.dialer.util.AppLinks.LICENSES
+        ) { nav.navigate("about") }
+
+        /*
+         * «Версия» ведёт в магазин.
+         *
+         * Сам номер версии уже виден в подписи
+         * пункта, а нажимают на него обычно
+         * за обновлением или чтобы оставить отзыв.
+         *
+         * Если Google Play на устройстве нет
+         * (а его нет на части прошивок), открывается
+         * прежний экран «О приложении» —
+         * openDocument сам вызовет запасной путь.
+         */
+        /*
+         * Выбор «звонящего» — тот же экран,
+         * что и выбор номера для закрепления:
+         * список контактов с поиском. Заводить
+         * ради этого второй такой экран
+         * не за чем.
+         */
+        "fake_call_number" -> nav.navigate("contacts?pick=fake")
+
+        "rate_app" -> openDocument(
+            context,
+            "https://play.google.com/store/apps/details" +
+                "?id=com.ogneliss.dialer"
+        ) {
+            // Магазина на устройстве может не быть:
+            // тогда сообщаем, а не молчим
+            vm.notifyNoStore()
+        }
+
+        "version" -> openDocument(
+            context,
+            "https://play.google.com/store/apps/details" +
+                "?id=com.ogneliss.dialer"
+        ) { nav.navigate("about") }
+
+        else -> vm.handleSettingsAction(key)
+    }
+}
+
+/**
+ * Действия, которым нужен сам экран раздела: подписи SIM — его окно,
+ * выгрузки — его выбор файла. Кнопка в «Вопросах и ответах» для них
+ * открывает раздел и подсвечивает пункт, а не выполняет действие.
+ */
+private val ACTIONS_OF_SETTINGS_SCREEN = setOf("sim_labels", "calllog_export", "log_save")
 
 
 /**
@@ -1122,7 +1353,9 @@ private fun ListDetailHost(
     if (!listDetail) {
         list(openCard)
     } else {
-        Row(Modifier.fillMaxSize()) {
+        // Две панели — под строкой состояния, как до 1.5.8: фото карточки
+        // справа не уходит под часы, которые стоят над журналом слева
+        Row(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))) {
             Box(Modifier.weight(1f).fillMaxHeight()) {
                 ProvidePaneLayout { list(openCard) }
             }
@@ -1150,3 +1383,12 @@ private fun ListDetailHost(
         }
     }
 }
+
+/**
+ * Контакты как соседний список, а не выбор контакта для настройки
+ * (закрепить, псевдозвонок): по этому признаку переход между журналом
+ * и контактами — растворением (1.6.0).
+ */
+private fun isContactsList(entry: androidx.navigation.NavBackStackEntry): Boolean =
+    entry.destination.route?.startsWith(MainSection.CONTACTS.route) == true &&
+        entry.arguments?.getString("pick").isNullOrEmpty()

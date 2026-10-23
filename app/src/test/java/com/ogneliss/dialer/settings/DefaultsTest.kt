@@ -67,6 +67,16 @@ class DefaultsTest {
     }
 
     @Test
+    fun `портрет на экране вызова крупный, ответ — касанием`() {
+        // 1.5.8: «Крупный» занимает пустую полосу под портретом (обзор, П4);
+        // ответ сдвигом — по выбору, привычку без спроса не меняем (У6)
+        assertEquals(CallPhotoSize.LARGE, defaults.callPhotoSize)
+        assertEquals(CallPhotoSize.LARGE, CallPhotoSize.from(null))
+        assertEquals(AnswerMode.TAP, defaults.answerMode)
+        assertEquals(AnswerMode.TAP, AnswerMode.from(null))
+    }
+
+    @Test
     fun `отклик клавиш включён`() {
         // Набирают вслепую, и подтверждение нажатия нужно
         assertTrue(defaults.haptic)

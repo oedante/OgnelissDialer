@@ -201,6 +201,23 @@ code {
   word-break: break-all;
 }
 
+/*
+ * Текст лицензии (1.5.7) — как в файле LICENSE: моноширинным
+ * и с переносами строк, но без горизонтальной прокрутки на телефоне.
+ */
+.license-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 1rem 1.2rem;
+  margin: 1rem 0;
+}
+
 .important {
   background: rgba(253, 191, 3, 0.08);
   border-left: 4px solid #FDBF03;

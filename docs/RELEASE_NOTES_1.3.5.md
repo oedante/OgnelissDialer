@@ -268,7 +268,7 @@ versionCode  33
 ```powershell
 ./gradlew assembleDebug
 ./gradlew generateBaselineProfile
-powershell -ExecutionPolicy Bypass -File scripts\phone_check.ps1 -CardNumber +79105214092
+powershell -ExecutionPolicy Bypass -File scripts\phone_check.ps1 -CardNumber +79104445566
 git add -A
 git commit -m "1.3.5: буквы в аватарах, мессенджеры для любого номера, «Ещё» вместо «Блока», цвет шапки меню из фото, список контактов как журнал, профиль со строками журнала"
 ```

@@ -89,6 +89,9 @@ WAS DIE APP NICHT HAT
 ZU IHREN DATEN
 Anrufliste und Kontakte werden aus den Systemanbietern von Android gelesen und bleiben auf dem Gerät. Die App legt keine eigene Kopie an — wenn Sie zur Standard-Telefon-App zurückkehren, geht nichts verloren.
 
+OFFENER QUELLCODE
+Der Quellcode ist unter der Apache-Lizenz 2.0 offen: Alles, was über Ihre Daten gesagt wird, lässt sich am Code prüfen — github.com/oedante/OgnelissDialer. Sie dürfen die App für jeden Zweck nutzen, auch beruflich und geschäftlich.
+
 ## Kategorie
 Tools → Kommunikation
 

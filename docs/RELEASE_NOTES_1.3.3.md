@@ -271,7 +271,7 @@ ui / foundation / animation / runtime на 1.7.6.
 ```powershell
 ./gradlew assembleDebug
 ./gradlew assembleDebug -PcomposeLegacy=true   # прежний вариант тоже собирается
-powershell -ExecutionPolicy Bypass -File scripts\phone_check.ps1 -CardNumber +79105214092 -ComposeAB
+powershell -ExecutionPolicy Bypass -File scripts\phone_check.ps1 -CardNumber +79104445566 -ComposeAB
 ./gradlew generateBaselineProfile              # профиль — уже с журнала, не с согласия
 ```
 

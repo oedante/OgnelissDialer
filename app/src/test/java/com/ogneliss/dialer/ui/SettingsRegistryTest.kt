@@ -143,14 +143,37 @@ class SettingsRegistryTest {
     }
 
     @Test
-    fun `в разделе не больше десяти настроек`() {
+    fun `в разделе не больше десяти настроек на виду`() {
+        /*
+         * С 1.5.8 редкие пункты — под «Дополнительно» (SettingEntry.advanced):
+         * считаются те, что видны сразу. Совсем без предела раздел тоже
+         * не остаётся — четырнадцать вместе с «Дополнительно».
+         */
         SettingsCategory.entries.forEach { category ->
-            val size = SettingsRegistry.byCategory(category).size
+            val all = SettingsRegistry.byCategory(category)
+            val shown = all.count { !it.advanced }
             assertTrue(
-                "В разделе ${category.name} ${size} настроек. " +
+                "В разделе ${category.name} на виду ${shown} настроек. " +
                     "Такой список читают прокруткой, а не взглядом — " +
-                    "стоит разделить по смыслу.",
-                size <= 10
+                    "стоит разделить по смыслу или убрать редкое в «Дополнительно».",
+                shown <= 10
+            )
+            assertTrue(
+                "В разделе ${category.name} ${all.size} настроек вместе с «Дополнительно».",
+                all.size <= 14
+            )
+        }
+    }
+
+    @Test
+    fun `в «Дополнительно» не меньше двух пунктов`() {
+        // Один спрятанный пункт хуже, чем пункт на виду: ради него
+        // приходится открывать группу
+        SettingsCategory.entries.forEach { category ->
+            val advanced = SettingsRegistry.byCategory(category).count { it.advanced }
+            assertTrue(
+                "В разделе ${category.name} в «Дополнительно» один пункт — пусть будет на виду.",
+                advanced == 0 || advanced >= 2
             )
         }
     }

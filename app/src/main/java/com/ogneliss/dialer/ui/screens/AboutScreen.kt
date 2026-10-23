@@ -20,6 +20,7 @@ import com.ogneliss.dialer.ui.components.OgnelissPanel
 import com.ogneliss.dialer.ui.components.OgnelissListRow
 import com.ogneliss.dialer.ui.components.ScreenScaffold
 import com.ogneliss.dialer.R
+import com.ogneliss.dialer.util.AppLinks
 import com.ogneliss.dialer.ui.components.OgnelissDialog
 
 /**
@@ -51,6 +52,7 @@ fun AboutScreen(
     onOpenLegal: (LegalDocument) -> Unit
 ) {
     var showRecordingInfo by remember { mutableStateOf(false) }
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     /*
      * ══════════════════════════════════════════════════════════════════════
@@ -115,9 +117,9 @@ fun AboutScreen(
                 OgnelissDivider(Modifier.padding(start = 56.dp))
                 AboutRow(
                     OgnelissIcons.Gavel,
-                    stringResource(R.string.settings_eula),
-                    stringResource(R.string.consent_eula_hint)
-                ) { onOpenLegal(LegalDocument.EULA) }
+                    stringResource(R.string.settings_license),
+                    stringResource(R.string.about_license_hint)
+                ) { onOpenLegal(LegalDocument.LICENSE) }
 
                 OgnelissDivider(Modifier.padding(start = 56.dp))
                 AboutRow(
@@ -125,9 +127,27 @@ fun AboutScreen(
                     stringResource(R.string.settings_terms)
                 ) { onOpenLegal(LegalDocument.TERMS) }
 
+                // Исходный код — в браузере (1.5.7); адрес виден в подписи,
+                // если браузера нет
                 OgnelissDivider(Modifier.padding(start = 56.dp))
                 AboutRow(
                     OgnelissIcons.Code,
+                    stringResource(R.string.settings_source_code),
+                    AppLinks.SOURCE_CODE.removePrefix("https://")
+                ) {
+                    runCatching {
+                        context.startActivity(
+                            android.content.Intent(
+                                android.content.Intent.ACTION_VIEW,
+                                android.net.Uri.parse(AppLinks.SOURCE_CODE)
+                            ).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                        )
+                    }
+                }
+
+                OgnelissDivider(Modifier.padding(start = 56.dp))
+                AboutRow(
+                    OgnelissIcons.List,
                     stringResource(R.string.settings_licenses),
                     stringResource(R.string.about_licenses_hint)
                 ) { onOpenLegal(LegalDocument.LICENSES) }
@@ -180,13 +200,12 @@ enum class LegalDocument(val assetName: String, val titleRes: Int) {
     PRIVACY("privacy_policy.txt", R.string.settings_privacy_policy),
 
     /**
-     * Лицензионное соглашение.
-     *
-     * Для закрытого кода оно и есть основная защита: без него нет
-     * запрета на декомпиляцию и распространение. Google Play не требует
-     * загружать его в консоль — достаточно показать в приложении.
+     * Лицензия Apache 2.0 (1.5.7). До 1.5.7 здесь было лицензионное
+     * соглашение закрытой программы: только личное некоммерческое
+     * использование, запрет изменять и распространять. Код открыт —
+     * соглашение снято.
      */
-    EULA("eula.txt", R.string.settings_eula),
+    LICENSE("license.txt", R.string.settings_license),
     TERMS("terms_of_use.txt", R.string.settings_terms),
     LICENSES("licenses.txt", R.string.settings_licenses)
 }

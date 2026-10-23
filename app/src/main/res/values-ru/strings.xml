@@ -68,7 +68,6 @@
     <string name="contact_ringtone">Мелодия для этого контакта</string>
     <string name="contact_silent">Отправлять вызовы на голосовую почту</string>
     <string name="contacts_all">Все</string>
-    <string name="contacts_favourite_toggle">Избранное</string>
     <string name="contacts_favourites">Избранные</string>
     <string name="contact_blocked">Заблокирован</string>
     <string name="contacts_search_hint">Имя</string>
@@ -281,8 +280,6 @@
     <string name="settings_section_spam">Защита от спама</string>
     <string name="settings_section_spam_summary">Чёрный и белый списки, метки</string>
     <string name="settings_show_photo">Показывать фото контактов</string>
-    <string name="settings_sheet_header_tint">Цветная шапка меню</string>
-    <string name="settings_sheet_header_tint_text">Шапка меню записи — в цвете темы</string>
     <string name="settings_messengers_any_number">Мессенджеры для любого номера</string>
     <string name="settings_messengers_any_number_text">«Написать» предлагает установленные WhatsApp, Telegram, Viber и Max, даже если номера нет в контактах. Telegram откроет чат, только если человек разрешил находить себя по номеру</string>
     <string name="settings_sim">SIM-карты и сети</string>
@@ -438,11 +435,9 @@
     <string name="consent_title">Перед началом ознакомьтесь с двумя короткими документами</string>
     <string name="consent_privacy_summary">У Ogneliss нет разрешения на доступ в интернет. Журнал вызовов, контакты и заметки не покидают это устройство — это можно проверить самостоятельно в свойствах установленного приложения.</string>
     <string name="consent_privacy_hint">С какими данными работает приложение и где они остаются</string>
-    <string name="consent_eula_hint">Условия использования, отсутствие гарантий, экстренные вызовы</string>
-    <string name="consent_checkbox">Я прочитал и принимаю Политику конфиденциальности и Лицензионное соглашение</string>
+    <string name="consent_checkbox">Я прочитал и принимаю Политику конфиденциальности и Условия использования</string>
     <string name="consent_accept">Принять и продолжить</string>
     <string name="consent_decline">Выйти</string>
-    <string name="settings_eula">Лицензионное соглашение</string>
     <string name="settings_swipe_tuning">Чувствительность свайпа</string>
     <string name="settings_swipe_tuning_text">Подобрать, насколько далеко и быстро нужно проводить</string>
     <string name="swipe_tuning_try">Попробуйте здесь</string>
@@ -645,7 +640,6 @@
     <string name="journal_style_cards">Карточки</string>
     <string name="journal_style_groups">Группы по дням</string>
     <string name="action_mark_spam">Отметить как спам</string>
-    <string name="action_unmark_spam">Снять отметку «спам»</string>
     <string name="detail_placeholder">Выберите запись в журнале — карточка откроется здесь</string>
     <string name="sim_kind_physical">SIM-карта</string>
     <string name="settings_button_labels">Подписи под кнопками</string>
@@ -686,7 +680,7 @@
     <string name="log_clear_confirm_text">Будут удалены все записи журнала вызовов — и здесь, и в системном журнале телефона. Отменить это нельзя. Заметки, закреплённые номера, напоминания и списки блокировки останутся.</string>
     <string name="log_clear_confirm_action">Очистить</string>
     <string name="delete_entry_confirm_title">Удалить из журнала?</string>
-    <string name="delete_entry_confirm_text">Вызовы с %1$s будут удалены — и здесь, и в системном журнале телефона. Отменить это нельзя.</string>
+    <string name="delete_entry_confirm_text">Вызовы с %1$s будут удалены — и здесь, и в системном журнале телефона. Несколько секунд после удаления его можно отменить.</string>
     <string name="action_write_email">Написать письмо</string>
     <string name="action_copy_email">Копировать адрес</string>
     <string name="msg_email_copied">Адрес скопирован</string>
@@ -694,4 +688,125 @@
     <!-- Подписи разделов меню «Ещё» (строгий стиль, 1.5.1) -->
     <string name="menu_section_lists">Разделы</string>
     <string name="menu_section_app">Приложение</string>
+    <!-- 1.5.7: карточки долгого нажатия, «Наверх», удаление с отменой, размер фото -->
+    <string name="a11y_cards_expand">Ещё действия</string>
+    <string name="a11y_cards_collapse">Свернуть действия</string>
+    <string name="a11y_cards_open">Открыть карточку</string>
+    <string name="cards_section_write">Написать</string>
+    <string name="cards_section_contact">Контакт</string>
+    <string name="cards_section_number">Номер</string>
+    <string name="cards_section_delete">Удаление</string>
+    <string name="cards_open">Карточка</string>
+    <string name="cards_add_to_existing">К контакту</string>
+    <string name="cards_note">Заметка</string>
+    <string name="cards_unfavourite">Из избранного</string>
+    <string name="cards_spam">Спам</string>
+    <string name="cards_not_spam">Не спам</string>
+    <string name="cards_email">Почта</string>
+    <string name="cards_scroll_top">Наверх</string>
+    <string name="msg_deleted_from_log_many">Удалено из журнала: %1$s</string>
+    <string name="action_create_contact">Создать контакт</string>
+    <string name="settings_call_photo_size">Размер фото на экране вызова</string>
+    <string name="settings_call_photo_size_text">Размер портрета в круге или квадрате. Место для имени он не займёт</string>
+    <string name="call_photo_size_normal">Обычный</string>
+    <string name="call_photo_size_large">Крупный</string>
+    <!-- 1.5.7: открытый код, лицензия Apache 2.0 -->
+    <string name="settings_license">Лицензия (Apache 2.0)</string>
+    <string name="about_license_hint">Открытый код: пользоваться, изменять и распространять — свободно</string>
+    <string name="consent_terms_hint">Отсутствие гарантий, экстренные вызовы, ваши данные</string>
+    <string name="settings_source_code">Исходный код</string>
+    <string name="settings_source_code_text">Открыт по лицензии Apache 2.0 · GitHub</string>
+    <!-- 1.5.8: строка номера в карточке — долгое нажатие -->
+    <string name="a11y_number_actions">Действия с номером</string>
+    <!-- 1.5.8: «Наверх» с числом новых вызовов -->
+    <plurals name="scroll_top_new">
+        <item quantity="one">%1$d новый</item>
+        <item quantity="few">%1$d новых</item>
+        <item quantity="many">%1$d новых</item>
+        <item quantity="other">%1$d новых</item>
+    </plurals>
+    <plurals name="a11y_scroll_top_new">
+        <item quantity="one">Наверх, %1$d новый вызов</item>
+        <item quantity="few">Наверх, %1$d новых вызова</item>
+        <item quantity="many">Наверх, %1$d новых вызовов</item>
+        <item quantity="other">Наверх, %1$d новых вызова</item>
+    </plurals>
+    <!-- 1.5.8: ответ на вызов сдвигом -->
+    <string name="settings_answer_mode">Ответ на вызов</string>
+    <string name="settings_answer_mode_text">Сдвигом — чтобы не ответить и не сбросить вызов случайно, доставая телефон из кармана</string>
+    <string name="answer_mode_tap">Касанием</string>
+    <string name="answer_mode_slide">Сдвигом</string>
+    <string name="incall_slide_hint">Сдвиньте вправо — ответить, влево — отклонить</string>
+    <!-- 1.5.8: настройки — «Дополнительно», отметка изменённых, «Вернуть как было» -->
+    <string name="settings_advanced">Дополнительно</string>
+    <plurals name="settings_advanced_count">
+        <item quantity="one">Ещё %1$d настройка</item>
+        <item quantity="few">Ещё %1$d настройки</item>
+        <item quantity="many">Ещё %1$d настроек</item>
+        <item quantity="other">Ещё %1$d настройки</item>
+    </plurals>
+    <string name="settings_reset_section">Вернуть как было</string>
+    <string name="settings_reset_section_text">Изменено: %1$d — вернуть значения по умолчанию</string>
+    <string name="settings_reset_section_confirm">Вернуть значения по умолчанию в разделе «%1$s»? Изменённых настроек: %2$d. Другие разделы, заметки и списки не изменятся.</string>
+    <string name="settings_reset_section_action">Вернуть</string>
+    <string name="a11y_setting_changed">изменено</string>
+    <string name="a11y_expanded">развёрнуто</string>
+    <string name="a11y_collapsed">свёрнуто</string>
+    <!-- 1.5.8: подпись долгого нажатия для TalkBack -->
+    <string name="a11y_record_actions">Действия</string>
+    <!-- 1.5.8: ответ сдвигом в раскладке справа налево — ответ влево -->
+    <string name="incall_slide_hint_rtl">Сдвиньте влево — ответить, вправо — отклонить</string>
+    <!-- 1.6.0: журнал и контакты соседями — переключатель, поиск в панели, напоминания на сегодня -->
+    <string name="nav_search">Поиск</string>
+    <string name="journal_search_hint">Имя, номер или заметка</string>
+    <string name="search_close">Закрыть поиск</string>
+    <string name="a11y_switch_to">Перейти: %1$s</string>
+    <string name="a11y_all_sections">Все разделы</string>
+    <string name="today_strip_text">перезвонить: %1$s · %2$s</string>
+    <plurals name="today_strip_more">
+        <item quantity="one">ещё %1$d</item>
+        <item quantity="few">ещё %1$d</item>
+        <item quantity="many">ещё %1$d</item>
+        <item quantity="other">ещё %1$d</item>
+    </plurals>
+    <!-- Вопросы и ответы (1.6.0): экран FAQ, пути к настройкам, вопросы и ответы -->
+    <string name="faq_title">Вопросы и ответы</string>
+    <string name="faq_summary">Основное приложение, поиск, спам, перенос заметок</string>
+    <string name="faq_lead">Короткие ответы на частые вопросы. Кнопка под ответом сразу открывает нужную настройку.</string>
+    <string name="faq_keywords">помощь справка faq как вопрос ответ</string>
+    <string name="faq_path">%1$s → %2$s → «%3$s»</string>
+    <string name="faq_path_advanced">%1$s → %2$s → %3$s → «%4$s»</string>
+    <string name="faq_path_section">%1$s → %2$s</string>
+    <string name="faq_make_default">Сделать основным</string>
+    <string name="faq_write">Написать письмо</string>
+    <string name="faq_section_start">Начало работы</string>
+    <string name="faq_section_lists">Журнал и контакты</string>
+    <string name="faq_section_calls">Вызовы</string>
+    <string name="faq_section_about">О приложении</string>
+    <string name="faq_q_default">Как сделать Ogneliss Dialer основным приложением для звонков?</string>
+    <string name="faq_a_default">При первом запуске приложение само предлагает стать телефоном по умолчанию. Если вы отказались, откройте %1$s и выберите Ogneliss Dialer в пункте «Телефон» — на разных телефонах он называется немного по-разному. Журнал вызовов и контакты останутся прежними: их хранит Android, а не приложение, и при возврате к прежнему приложению ничего не пропадёт.</string>
+    <string name="faq_q_internet">Почему у приложения нет доступа в интернет?</string>
+    <string name="faq_a_internet">Чтобы ваши данные не могли уйти с телефона. Без разрешения на интернет приложение не может ничего отправить — ни журнал, ни контакты, ни заметки; это видно в свойствах установленного приложения. Оператор и регион незнакомого номера определяются по справочнику внутри приложения, а показывать ли их, решаете вы: %1$s.</string>
+    <string name="faq_q_transfer">Как перенести заметки и списки на новый телефон?</string>
+    <string name="faq_a_transfer">Файлом. Сами они не переедут: приложение не отдаёт свои данные ни в облачные копии, ни при переносе на новый телефон — так они остаются только у вас. Откройте %1$s: заметки, метки, чёрный и белый списки и быстрый набор сохранятся в выбранный вами файл. На новом телефоне — %2$s: данные добавятся к тем, что уже есть. Журнал вызовов и контакты переносят Android и ваш аккаунт.</string>
+    <string name="faq_q_switch">Как перейти из журнала в контакты?</string>
+    <string name="faq_a_switch">Первой кнопкой на нижней панели. Крупный значок на ней — список, который открыт сейчас, маленький кружок рядом — тот, куда переключит касание. Долгое нажатие открывает все разделы: журнал, контакты, заметки и напоминания. Можно и провести пальцем по панели: влево — к контактам, вправо — обратно к журналу.</string>
+    <string name="faq_q_search">Как найти контакт по имени?</string>
+    <string name="faq_a_search">Кнопкой «Поиск» на нижней панели. В журнале она ищет по имени, номеру и заметке, в контактах — по имени; «е» и «ё» не различаются. Цифрами ищет и клавиатура набора — по номеру и по T9, кириллицей и латиницей сразу.</string>
+    <string name="faq_q_undo">Запись из журнала удалена по ошибке. Можно вернуть?</string>
+    <string name="faq_a_undo">Да, если сразу. После удаления внизу на несколько секунд появляется «Удалено из журнала» с кнопкой «Отменить» — нажмите её, пока сообщение на экране. Потом записи удаляются и из системного журнала телефона, и вернуть их уже нельзя. Очистку всего журнала из меню отменить нельзя — поэтому перед ней приложение переспрашивает.</string>
+    <string name="faq_q_spam">Как заблокировать спам и нежелательные номера?</string>
+    <string name="faq_a_spam">Долгое нажатие на запись → «Блок»: номер попадёт в чёрный список и больше не дозвонится. Там же, в «Ещё», — метка «Спам»: такие номера тоже не дозваниваются, а метка видна в журнале и на экране вызова. Маски номеров, скрытые и незнакомые номера, белый список исключений — в разделе %1$s.</string>
+    <string name="faq_q_slide">Как отвечать на вызов сдвигом — или вернуть кнопки?</string>
+    <string name="faq_a_slide">%1$s. «Касанием» — две обычные кнопки. «Сдвигом» — кнопку нужно сдвинуть: вправо — ответить, влево — отклонить; так вызов не принять и не сбросить случайно, доставая телефон из кармана. С TalkBack вызов всегда принимается кнопками.</string>
+    <string name="faq_q_sim">Как выбрать SIM-карту для звонка?</string>
+    <string name="faq_a_sim">У каждой SIM-карты своя кнопка вызова. Выбранную для номера карту приложение запоминает и в следующий раз предложит её же (%1$s). Чтобы не путать карты, подпишите их: %2$s.</string>
+    <string name="faq_q_missed">Пропущенные появляются, только когда открываешь приложение. Что делать?</string>
+    <string name="faq_a_missed">Скорее всего, система усыпляет приложение ради экономии батареи. Разрешите ему работать в фоне — %1$s, — и пропущенные вызовы будут появляться сразу.</string>
+    <string name="faq_q_recording">Можно ли записывать разговоры?</string>
+    <string name="faq_a_recording">Нет. На Android 10 и новее система не даёт сторонним приложениям доступа к звуку разговора, а обход этого запрета нарушает правила Google Play. Если ваш телефон записывает звонки, это встроенная функция производителя: она работает независимо от выбранного диалера.</string>
+    <string name="faq_q_work">Можно ли пользоваться приложением на работе? Где исходный код?</string>
+    <string name="faq_a_work">Можно. Код приложения открыт по лицензии Apache 2.0: им можно пользоваться для любых законных целей, в том числе в работе и бизнесе. Распространять APK и свои версии тоже можно — вместе с текстом лицензии и файлом NOTICE; название и значок остаются за оригиналом. Исходный код — на GitHub.</string>
+    <string name="faq_q_contact">Как сообщить об ошибке или предложить идею?</string>
+    <string name="faq_a_contact">Напишите на oedante@gmail.com. Если что-то работает не так, приложите технический журнал — %1$s: номера и имена в нём скрыты.</string>
 </resources>

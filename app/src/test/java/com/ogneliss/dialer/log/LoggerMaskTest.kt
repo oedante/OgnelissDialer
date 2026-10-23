@@ -18,11 +18,11 @@ class LoggerMaskTest {
 
     @Test
     fun `полный номер не сохраняется в маске`() {
-        val original = "+79676660512"
+        val original = "+79671112233"
         val masked = Logger.mask(original)
 
-        assertFalse("В маске не должно быть исходного номера", masked.contains("9676660"))
-        assertTrue("Должны остаться последние 4 цифры", masked.endsWith("0512"))
+        assertFalse("В маске не должно быть исходного номера", masked.contains("9671112"))
+        assertTrue("Должны остаться последние 4 цифры", masked.endsWith("2233"))
         assertTrue("Должен остаться код страны", masked.startsWith("+7"))
     }
 

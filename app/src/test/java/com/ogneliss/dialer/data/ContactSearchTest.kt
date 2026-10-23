@@ -83,11 +83,11 @@ class ContactSearchTest {
 
     @Test
     fun `контакт находится по середине номера`() {
-        // Человек помнит окончание: «который на 0512».
+        // Человек помнит окончание: «который на 2233».
         // Поиск только по началу отсёк бы этот сценарий
         val result = ContactSearch.search(
-            listOf(contact(1, "Кто-то", number = "+79676660512")),
-            emptyList(), "0512", SortOrder.RELEVANCE, nowMillis = now
+            listOf(contact(1, "Кто-то", number = "+79671112233")),
+            emptyList(), "2233", SortOrder.RELEVANCE, nowMillis = now
         )
         assertEquals(1, result.contacts.size)
     }
@@ -242,4 +242,81 @@ class ContactSearchTest {
 
         assertTrue("Чужая заметка не должна находить контакт", result.contacts.isEmpty())
     }
+
+    // ── Поиск буквами (1.6.0, кнопка «Поиск» на панели) ────────────────────
+
+    @Test
+    fun `буквы ищут по имени, без учёта регистра`() {
+        val olga = contact(1, "Ольга Сергеевна")
+        val boris = contact(2, "Борис")
+        val result = ContactSearch.search(
+            listOf(olga, boris), emptyList(), "ольга", SortOrder.RELEVANCE, nowMillis = now
+        )
+        assertEquals(listOf(olga), result.contacts)
+    }
+
+    @Test
+    fun `ё и е при поиске буквами — одно и то же`() {
+        // «Семён» находится по «семен», и наоборот: «ё» пишут не все
+        val semyon = contact(1, "Семён")
+        val fedor = contact(2, "Федор")
+        val bySemen = ContactSearch.search(
+            listOf(semyon, fedor), emptyList(), "семен", SortOrder.RELEVANCE, nowMillis = now
+        )
+        val byFyodor = ContactSearch.search(
+            listOf(semyon, fedor), emptyList(), "фёдор", SortOrder.RELEVANCE, nowMillis = now
+        )
+        assertEquals(listOf(semyon), bySemen.contacts)
+        assertEquals(listOf(fedor), byFyodor.contacts)
+    }
+
+    @Test
+    fun `буквы находят заметку — и в журнале, и у контакта`() {
+        // Номер не в книге, но с заметкой «сантехник»: находится запись
+        // журнала. Тот же номер у контакта — находится и контакт
+        val number = "+79001234500"
+        val notes = mapOf(
+            number to NumberNote(e164 = number, note = "Сантехник, после 18:00", tags = emptyList())
+        )
+        val ivan = contact(1, "Иван", number)
+        val result = ContactSearch.search(
+            listOf(ivan), listOf(group(number)), "сантех", SortOrder.RELEVANCE, notes, now
+        )
+        assertEquals(listOf(ivan), result.contacts)
+        assertEquals(1, result.callLog.size)
+    }
+
+    @Test
+    fun `буквами имя, которое с запроса начинается, — выше`() {
+        // «ан»: «Анна» начинается с запроса, у «Иван Анохин» с него
+        // начинается второе слово (хотя первое вхождение — внутри «Иван»),
+        // у «Светлана» — совпадение внутри слова
+        val svetlana = contact(1, "Светлана")
+        val ivan = contact(2, "Иван Анохин")
+        val anna = contact(3, "Анна")
+        val result = ContactSearch.search(
+            listOf(svetlana, ivan, anna), emptyList(), "ан", SortOrder.RELEVANCE, nowMillis = now
+        )
+        assertEquals(listOf(anna, ivan, svetlana), result.contacts)
+    }
+
+    @Test
+    fun `цифры по-прежнему ищут по T9, даже если поле поиска текстовое`() {
+        // В поле «Поиск» можно набрать и цифры: это тот же поиск, что
+        // на клавиатуре набора
+        val ivan = contact(1, "Иван", "+79001112233")
+        val result = ContactSearch.search(
+            listOf(ivan), emptyList(), "1112233", SortOrder.RELEVANCE, nowMillis = now
+        )
+        assertEquals(listOf(ivan), result.contacts)
+    }
+
+    @Test
+    fun `запрос из пробелов ничего не ищет`() {
+        val result = ContactSearch.search(
+            listOf(contact(1, "Андрей")), emptyList(), "   ", SortOrder.RELEVANCE, nowMillis = now
+        )
+        assertTrue(result.isEmpty)
+    }
+
 }

@@ -163,6 +163,51 @@ enum class CallPhotoStyle {
 }
 
 /**
+ * РАЗМЕР ПОРТРЕТА НА ЭКРАНЕ ВЫЗОВА (1.5.7).
+ *
+ * Отзыв valmikk (4PDA, 18.10, о 1.5.5): «А увеличить (раза в полтора)
+ * круг/квадрат фото получится?» В 1.5.6 портрет уже вырос — до 46 %
+ * ширины; «Крупный» даёт ещё треть сверху. Выше места над панелью
+ * портрет не вырастет ни при каком выборе: разбор в AdaptivePortraitColumn.
+ * Размеры — во FlowUi (callPortraitMaxFor).
+ *
+ * ── «Крупный» — по умолчанию (1.5.8, обзор интерфейса, П4) ─────────────────
+ * На снимке автора под портретом «Обычного» до панели кнопок оставалась
+ * пустая полоса — «Крупный» её занимает. Кто выбрал «Обычный» сам, у того
+ * он и останется: в хранилище лежит его выбор.
+ */
+enum class CallPhotoSize {
+    NORMAL,
+    LARGE;
+
+    companion object {
+        fun from(name: String?): CallPhotoSize =
+            entries.firstOrNull { it.name == name } ?: LARGE
+    }
+}
+
+/**
+ * ОТВЕТ НА ВЫЗОВ: КАСАНИЕМ ИЛИ СДВИГОМ (1.5.8, обзор интерфейса, У6).
+ *
+ * «Ответить» и «Отклонить» — большие кнопки, и это правильно для того,
+ * кто смотрит на экран. Но телефон, вынутый из кармана со звонком, может
+ * ответить или сбросить вызов случайным касанием ладони. Системные
+ * диалеры поэтому отвечают сдвигом.
+ *
+ * По умолчанию — касанием, как было: менять привычку без спроса нельзя.
+ * Сдвиг — по выбору; разбор жеста — в call/SlideToAnswer.kt.
+ */
+enum class AnswerMode {
+    TAP,
+    SLIDE;
+
+    companion object {
+        fun from(name: String?): AnswerMode =
+            entries.firstOrNull { it.name == name } ?: TAP
+    }
+}
+
+/**
  * ВИД ЖУРНАЛА: КАЖДАЯ ЗАПИСЬ КАРТОЧКОЙ ИЛИ ЗАПИСИ ГРУППОЙ.
  *
  * CARDS — каждая запись — отдельная скруглённая карточка с зазором.
@@ -304,8 +349,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val PINNED_NUMBERS = stringPreferencesKey("pinned_numbers")
         val DYNAMIC_COLOR = booleanPreferencesKey("dynamic_color")
         val SHOW_PHOTO = booleanPreferencesKey("show_photo")
-        /** Шапка меню записи в цвете темы (1.3.5, по умолчанию вкл.). */
-        val SHEET_HEADER_TINT = booleanPreferencesKey("sheet_header_tint")
         /** «Написать»: установленные мессенджеры для любого номера (1.3.5, выкл.). */
         val MESSENGERS_ANY_NUMBER = booleanPreferencesKey("messengers_any_number")
         val LARGE_BUTTONS = booleanPreferencesKey("large_buttons")
@@ -316,6 +359,10 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val CALL_ANIMATION = booleanPreferencesKey("call_animation")
         /** Фото звонящего: на весь экран, круг или квадрат (1.5.5). */
         val CALL_PHOTO_STYLE = stringPreferencesKey("call_photo_style")
+        /** Размер портрета на экране вызова (1.5.7). */
+        val CALL_PHOTO_SIZE = stringPreferencesKey("call_photo_size")
+        /** Ответ на вызов: касанием или сдвигом (1.5.8). */
+        val ANSWER_MODE = stringPreferencesKey("answer_mode")
         /** Масштаб интерфейса (1.5.6). */
         val UI_SCALE = stringPreferencesKey("ui_scale")
         // Поведение
@@ -515,7 +562,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      */
     val dynamicColor: Flow<Boolean> = data.map { it[Keys.DYNAMIC_COLOR] ?: false }
     val showPhoto: Flow<Boolean> = data.map { it[Keys.SHOW_PHOTO] ?: true }
-    val sheetHeaderTint: Flow<Boolean> = data.map { it[Keys.SHEET_HEADER_TINT] ?: true }
     val messengersAnyNumber: Flow<Boolean> = data.map { it[Keys.MESSENGERS_ANY_NUMBER] ?: false }
     val largeButtons: Flow<Boolean> = data.map { it[Keys.LARGE_BUTTONS] ?: false }
 
@@ -547,6 +593,12 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     /** Фото звонящего на экране вызова (1.5.5): разбор в CallPhotoStyle. */
     val callPhotoStyle: Flow<CallPhotoStyle> = data.map { CallPhotoStyle.from(it[Keys.CALL_PHOTO_STYLE]) }
+
+    /** Размер портрета на экране вызова (1.5.7): разбор в CallPhotoSize. */
+    val callPhotoSize: Flow<CallPhotoSize> = data.map { CallPhotoSize.from(it[Keys.CALL_PHOTO_SIZE]) }
+
+    /** Ответ на вызов (1.5.8): разбор в AnswerMode. */
+    val answerMode: Flow<AnswerMode> = data.map { AnswerMode.from(it[Keys.ANSWER_MODE]) }
 
     // ── Поведение ──────────────────────────────────────────────────────────
     val haptic: Flow<Boolean> = data.map { it[Keys.HAPTIC] ?: true }
@@ -785,7 +837,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setTheme(v: ThemeMode) = edit("theme", v.name) { it[Keys.THEME] = v.name }
     suspend fun setDynamicColor(v: Boolean) = edit("dynamic_color", v) { it[Keys.DYNAMIC_COLOR] = v }
     suspend fun setShowPhoto(v: Boolean) = edit("show_photo", v) { it[Keys.SHOW_PHOTO] = v }
-    suspend fun setSheetHeaderTint(v: Boolean) = edit("sheet_header_tint", v) { it[Keys.SHEET_HEADER_TINT] = v }
     suspend fun setMessengersAnyNumber(v: Boolean) = edit("messengers_any_number", v) { it[Keys.MESSENGERS_ANY_NUMBER] = v }
     suspend fun setLargeButtons(v: Boolean) = edit("large_buttons", v) { it[Keys.LARGE_BUTTONS] = v }
     suspend fun setButtonLabels(v: Boolean) = edit("button_labels", v) { it[Keys.BUTTON_LABELS] = v }
@@ -799,6 +850,10 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("ui_scale", v.name) { it[Keys.UI_SCALE] = v.name }
     suspend fun setCallPhotoStyle(v: CallPhotoStyle) =
         edit("call_photo_style", v.name) { it[Keys.CALL_PHOTO_STYLE] = v.name }
+    suspend fun setCallPhotoSize(v: CallPhotoSize) =
+        edit("call_photo_size", v.name) { it[Keys.CALL_PHOTO_SIZE] = v.name }
+    suspend fun setAnswerMode(v: AnswerMode) =
+        edit("answer_mode", v.name) { it[Keys.ANSWER_MODE] = v.name }
     suspend fun setHaptic(v: Boolean) = edit("haptic", v) { it[Keys.HAPTIC] = v }
     suspend fun setKeyTones(v: Boolean) = edit("key_tones", v) { it[Keys.KEY_TONES] = v }
     suspend fun setGroupingMode(v: GroupingMode) =

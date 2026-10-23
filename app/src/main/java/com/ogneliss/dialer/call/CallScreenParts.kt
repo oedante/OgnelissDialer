@@ -1,6 +1,11 @@
 package com.ogneliss.dialer.call
 
 import com.ogneliss.dialer.ui.theme.PanelColors
+import androidx.compose.foundation.border
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.navigationBars
@@ -100,6 +105,40 @@ internal fun OnPhotoColors(enabled: Boolean, content: @Composable () -> Unit) {
         CompositionLocalProvider(LocalContentColor provides Color.White, content = content)
     }
 }
+
+/**
+ * КНОПКИ ВЫЗОВА БЕЗ ПОДЛОЖКИ — НАД ЖИВЫМ ФОНОМ (1.6.0).
+ *
+ * ══════════════════════════════════════════════════════════════════════════
+ * ЗАЧЕМ
+ * ══════════════════════════════════════════════════════════════════════════
+ * Автор, 22.10: «Можем на экране звонка не делать подложку под кнопки,
+ * а чтобы там тоже была анимация?» Серая панель закрывала нижнюю треть
+ * экрана, и волны с пятнами живого фона обрывались о её край.
+ *
+ * Теперь при живом фоне панель прозрачна: волны идут и под кнопками.
+ * С фото на весь экран и без живого фона (выключен в настройках, высокий
+ * контраст) панель осталась: на фото без неё терялись бы подписи, а на
+ * ровном светлом фоне — белые кнопки.
+ *
+ * ── Чем кнопки держатся на фоне ────────────────────────────────────────────
+ * Белая кнопка на почти белом фоне — 1,05 : 1, её не видно. Поэтому над
+ * живым фоном у кнопок и карточек (клавиши тонового набора, второй вызов,
+ * конференция, дорожка ответа) — лёгкая тень и тонкий ободок цвета
+ * outlineVariant: край виден в светлой теме, а в тёмной кнопка и так
+ * светлее фона. Решает [LocalControlsOnAmbient]; на панели — как было.
+ */
+internal val LocalControlsOnAmbient = staticCompositionLocalOf { false }
+
+/** Край кнопки или карточки над живым фоном: разбор у [LocalControlsOnAmbient]. */
+internal fun Modifier.ambientEdge(enabled: Boolean, shape: Shape, ring: Color): Modifier =
+    if (!enabled) this
+    else this
+        .shadow(AMBIENT_EDGE_SHADOW, shape, clip = false)
+        .border(AMBIENT_EDGE_RING, ring, shape)
+
+private val AMBIENT_EDGE_SHADOW = 2.dp
+private val AMBIENT_EDGE_RING = 1.dp
 
 /**
  * Значки строки состояния — светлые, пока под ними фото (1.3.4): в светлой

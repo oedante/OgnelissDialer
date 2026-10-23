@@ -3,6 +3,8 @@ package com.ogneliss.dialer.ui
 import androidx.compose.runtime.Immutable
 
 import com.ogneliss.dialer.settings.CarrierInfoMode
+import com.ogneliss.dialer.settings.CallPhotoSize
+import com.ogneliss.dialer.settings.AnswerMode
 import com.ogneliss.dialer.settings.CallPhotoStyle
 import com.ogneliss.dialer.settings.UiScale
 import com.ogneliss.dialer.settings.JournalStyle
@@ -47,8 +49,10 @@ data class SettingsState(
     val uiScale: UiScale = UiScale.AUTO,
     /** Фото звонящего: на весь экран, круг или квадрат (1.5.5). */
     val callPhotoStyle: CallPhotoStyle = CallPhotoStyle.CIRCLE,
-    /** Шапка меню записи в цвете темы (1.3.5). */
-    val sheetHeaderTint: Boolean = true,
+    /** Размер портрета на экране вызова (1.5.7). */
+    val callPhotoSize: CallPhotoSize = CallPhotoSize.LARGE,
+    /** Ответ на вызов: касанием или сдвигом (1.5.8). */
+    val answerMode: AnswerMode = AnswerMode.TAP,
     /** «Написать»: установленные мессенджеры для любого номера (1.3.5). */
     val messengersAnyNumber: Boolean = false,
     val haptic: Boolean = true,
@@ -101,7 +105,6 @@ data class SettingsState(
         "proximity_screen_off" -> proximityScreenOff
         "call_hide_contact_number" -> callHideContactNumber
         "call_animation" -> callAnimation
-        "sheet_header_tint" -> sheetHeaderTint
         "messengers_any_number" -> messengersAnyNumber
         "panel_swipe_nav" -> panelSwipeNav
         "fake_call_button" -> fakeCallButton
@@ -133,7 +136,7 @@ data class SettingsState(
             // 1.3.3: переключатели обрабатывались (switchValue выше), но в список
             // не попали — SettingsRegistryTest падал ещё с 1.3.0
             "button_labels", "proximity_screen_off", "call_hide_contact_number",
-            "sheet_header_tint", "messengers_any_number",
+            "messengers_any_number",
             "call_animation"
         )
     }

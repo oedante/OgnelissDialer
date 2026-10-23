@@ -42,6 +42,10 @@ import com.ogneliss.dialer.R
 import com.ogneliss.dialer.data.CallLogGroup
 import com.ogneliss.dialer.data.CallType
 import com.ogneliss.dialer.data.Contact
+import com.ogneliss.dialer.ui.components.ScrollToTopPill
+import com.ogneliss.dialer.ui.components.blurBehindCards
+import com.ogneliss.dialer.ui.components.rememberTouchAnchor
+import com.ogneliss.dialer.ui.components.trackTouch
 import com.ogneliss.dialer.ui.components.ContactFilterSheet
 import com.ogneliss.dialer.ui.components.CallLogSkeleton
 import com.ogneliss.dialer.ui.components.SimChooserDialog
@@ -52,6 +56,11 @@ import com.ogneliss.dialer.ui.components.swipe.rememberSwipeRevealController
 import com.ogneliss.dialer.ui.DialerViewModel
 import com.ogneliss.dialer.data.ContactFilter
 import com.ogneliss.dialer.ui.components.ContactsBottomBar
+import com.ogneliss.dialer.ui.components.ListPanel
+import com.ogneliss.dialer.ui.components.MainSection
+import com.ogneliss.dialer.settings.ThemeMode
+import com.ogneliss.dialer.util.TextFold
+import androidx.compose.runtime.saveable.rememberSaveable
 import com.ogneliss.dialer.ui.components.EmptyReason
 import com.ogneliss.dialer.ui.components.EmptyState
 import com.ogneliss.dialer.ui.components.HighlightedName
@@ -104,9 +113,30 @@ fun ContactsScreen(
      */
     pickForPinning: Boolean = false,
     onPicked: (String) -> Unit = {},
-    onOpenContact: (Long) -> Unit = {}
+    onOpenContact: (Long) -> Unit = {},
+    /** Чёрный список — из карточек долгого нажатия (блокировка по маске). */
+    onOpenBlockLists: () -> Unit = {},
+    /**
+     * Переход между разделами (1.6.0, вариант «Б»): журнал — касанием
+     * переключателя на панели, остальные — из списка разделов и меню.
+     */
+    onOpenSection: (MainSection) -> Unit = {},
+    /** Клавиатура набора — в журнале (разбор у DialerViewModel.requestDialpad). */
+    onOpenDialpad: () -> Unit = {},
+    onOpenSettings: () -> Unit = {},
+    onOpenReminders: () -> Unit = {},
+    /** «Вопросы и ответы» из меню (1.6.0). */
+    onOpenHelp: () -> Unit = {}
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
+
+    /*
+     * ДОЛГОЕ НАЖАТИЕ — КАРТОЧКИ ДЕЙСТВИЙ (1.5.7), как в журнале.
+     * Было: долгое нажатие повторяло обычное — открывало карточку.
+     */
+    var selectedContact by remember { mutableStateOf<Contact?>(null) }
+    var selectedAnchorY by remember { mutableStateOf<Float?>(null) }
+    val touchAnchor = rememberTouchAnchor()
 
     /*
      * ЗАПРОС КОНТАКТОВ ПРИ ОТКРЫТИИ ЭКРАНА.
@@ -128,6 +158,22 @@ fun ContactsScreen(
     val leftExtra by vm.swipeLeftExtra.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     var search by remember { mutableStateOf("") }
+
+    /*
+     * ПОИСК — ПО КНОПКЕ НА ПАНЕЛИ (1.6.0, вариант «Б»).
+     *
+     * Поле «Имя» было на панели всегда и занимало её целиком. Теперь
+     * у контактов та же строка кнопок, что у журнала, а поле появляется
+     * по кнопке «Поиск» на её месте (PanelSearchRow). Закрытие — стрелкой
+     * или «Назад» — очищает запрос. В режиме выбора (закрепить,
+     * псевдозвонок) панель прежняя, с полем на виду.
+     */
+    var searching by rememberSaveable { mutableStateOf(false) }
+    val closeSearch: () -> Unit = {
+        searching = false
+        search = ""
+    }
+    var menuOpen by remember { mutableStateOf(false) }
 
     /*
      * Фильтр списка вместо отдельного экрана аудита.
@@ -182,6 +228,9 @@ fun ContactsScreen(
     BackHandler(enabled = canScrollUp) {
         scope.launch { listState.animateScrollToItem(0) }
     }
+    // Поиск закрывается раньше, чем список едет наверх (объявлен позже —
+    // спрашивается первым, 1.6.0)
+    BackHandler(enabled = searching, onBack = closeSearch)
 
     // Свайп выключен, пока список прокручивается: палец при листании
     // идёт по дуге, и горизонтальной составляющей хватает, чтобы
@@ -401,13 +450,33 @@ fun ContactsScreen(
                 remindedNumbers = reminderNumbers
             )
 
-            val filtered = if (search.isBlank()) source
-            else source.filter { it.displayName.contains(search, ignoreCase = true) }
+            // Без учёта регистра и с «ё» = «е», как в журнале (1.6.0, TextFold)
+            val query = search.trim()
+            val filtered = if (query.isEmpty()) source
+            else source.filter { TextFold.contains(it.displayName, query) }
 
-            filtered.groupBy { contact ->
-                contact.displayName.firstOrNull()
-                    ?.uppercaseChar()?.takeIf { it.isLetter() } ?: '#'
-            }.toSortedMap()
+            /*
+             * ПОРЯДОК БУКВ — КАК В КНИГЕ (1.5.7).
+             *
+             * Было toSortedMap() — по коду символа. Латиница в Юникоде
+             * раньше кириллицы, и на снимке автора раздел «V» стоял
+             * перед «А», а «Ё» ушла бы в самое начало, до «А».
+             *
+             * Сами контакты приходят из книги уже по правилам языка
+             * телефона (COLLATE LOCALIZED в ContactsRepository): по-русски —
+             * сначала кириллица, потом латиница, цифры и знаки — в начале.
+             * Буквы берут тот же порядок: по первому появлению в полном
+             * списке, а не в отфильтрованном — фильтр «Частые» сортирует
+             * по числу звонков, и порядок букв сбился бы.
+             */
+            val letterOrder = HashMap<Char, Int>()
+            state.contacts.forEach { contact ->
+                letterOrder.getOrPut(sectionLetter(contact.displayName)) { letterOrder.size }
+            }
+            filtered.groupBy { contact -> sectionLetter(contact.displayName) }
+                .toSortedMap(
+                    compareBy<Char> { letterOrder[it] ?: Int.MAX_VALUE }.thenBy { it }
+                )
         }
     }
 
@@ -449,6 +518,8 @@ fun ContactsScreen(
 
 
     Scaffold(
+        // Под карточками долгого нажатия экран размывается (1.5.7)
+        modifier = Modifier.blurBehindCards(selectedContact != null),
         // Отступы под системные панели: в edge-to-edge содержимое
         // иначе уезжает под строку состояния и кнопки навигации
         contentWindowInsets = WindowInsets.safeDrawing,
@@ -474,7 +545,8 @@ fun ContactsScreen(
              */
             // Кнопку можно выключить: она видна всем, кто смотрит
             // на экран, а нужна не каждому
-            if (settings.fakeCallButton) SmallFloatingActionButton(
+            // При поиске висела бы над клавиатурой — прячем (1.6.0)
+            if (settings.fakeCallButton && !searching) SmallFloatingActionButton(
                 onClick = onFakeCall,
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -485,8 +557,20 @@ fun ContactsScreen(
                 )
             }
         },
+        /*
+         * ВЕРХНЕЙ СТРОКИ БОЛЬШЕ НЕТ (1.6.0, вариант «Б»).
+         *
+         * Стрелка «назад», заголовок «Контакты» и «Добавить» говорили «вы
+         * зашли внутрь журнала», хотя это соседний список. Переход — тем же
+         * переключателем на панели, «Создать контакт» — в меню. Сверху,
+         * как у журнала, — сразу список.
+         *
+         * Строка осталась только в режиме выбора (закрепить, псевдозвонок):
+         * туда приходят из настроек за одним действием, и стрелка «назад»
+         * и заголовок с задачей там на месте.
+         */
         topBar = {
-            TopAppBar(
+            if (pickForPinning) TopAppBar(
                 // Заголовок остаётся заголовком: поле поиска переехало
                 // в нижнюю панель, где до него дотягивается большой палец
                 title = {
@@ -511,7 +595,7 @@ fun ContactsScreen(
                     IconButton(onClick = { vm.createContact("") }) {
                         Icon(
                             OgnelissIcons.PersonAdd,
-                            contentDescription = stringResource(R.string.action_add_contact)
+                            contentDescription = stringResource(R.string.action_create_contact)
                         )
                     }
                 }
@@ -527,18 +611,67 @@ fun ContactsScreen(
          * и точка входа в поиск должна быть там же.
          */
         bottomBar = {
-            ContactsBottomBar(
-                // Фильтры в шторке: фишки занимали две строки экрана
-                onFilters = { contactFiltersOpen = true },
-                // Возврат к вызовам свайпом вправо, если настройка включена
-                onSwipeToCalls = if (settings.panelSwipeNav) onBack else null,
-                // Дальше по карусели — заметки
-                onSwipeToNotes = if (settings.panelSwipeNav) onOpenNotes else null,
-                query = search,
-                onQueryChange = { search = it },
-                filter = contactFilter,
-                onFilterChange = { contactFilter = it }
-            )
+            if (pickForPinning) {
+                // Режим выбора — прежняя панель: поле «Имя» на виду
+                ContactsBottomBar(
+                    // Фильтры в шторке: фишки занимали две строки экрана
+                    onFilters = { contactFiltersOpen = true },
+                    onSwipeToCalls = null,
+                    onSwipeToNotes = null,
+                    query = search,
+                    onQueryChange = { search = it },
+                    filter = contactFilter,
+                    onFilterChange = { contactFilter = it }
+                )
+            } else {
+                // Та же панель, что у журнала (1.6.0): разбор в ListPanel
+                val toJournal: () -> Unit = { onOpenSection(MainSection.JOURNAL) }
+                ListPanel(
+                    section = MainSection.CONTACTS,
+                    onSwitchList = toJournal,
+                    onOpenSection = onOpenSection,
+                    filterActive = contactFilter != ContactFilter.ALL,
+                    onFilters = { contactFiltersOpen = true },
+                    onDialpad = onOpenDialpad,
+                    onSearch = { searching = true },
+                    searching = searching,
+                    searchQuery = search,
+                    searchHint = stringResource(R.string.contacts_search_hint),
+                    onSearchChange = { search = it },
+                    onCloseSearch = closeSearch,
+                    onMenu = { menuOpen = true },
+                    // Перелистывание по панели (настройка): вправо — журнал,
+                    // влево — заметки, как раньше
+                    onSwipeRight = if (settings.panelSwipeNav) toJournal else null,
+                    onSwipeLeft = if (settings.panelSwipeNav) onOpenNotes else null,
+                    menuContent = {
+                        OverflowMenu(
+                            expanded = menuOpen,
+                            onDismiss = { menuOpen = false },
+                            settings = settings,
+                            // Своего номера, очистки журнала и выбора нескольких
+                            // у контактов нет — пункты журнала
+                            onOwnNumber = null,
+                            onThemeToggle = {
+                                vm.setChoice(
+                                    "theme",
+                                    if (settings.theme == ThemeMode.DARK) ThemeMode.LIGHT.name
+                                    else ThemeMode.DARK.name
+                                )
+                                menuOpen = false
+                            },
+                            onClearLog = null,
+                            onSettings = { menuOpen = false; onOpenSettings() },
+                            onFakeCall = { menuOpen = false; onFakeCall() },
+                            onNotes = { menuOpen = false; onOpenNotes() },
+                            onReminders = { menuOpen = false; onOpenReminders() },
+                            onStartSelection = null,
+                            onAddContact = { menuOpen = false; vm.createContact("") },
+                            onHelp = { menuOpen = false; onOpenHelp() }
+                        )
+                    }
+                )
+            }
         }
     ) { pad ->
         Column(Modifier.padding(pad)) {
@@ -641,6 +774,7 @@ fun ContactsScreen(
                 )
             }
 
+            Box(Modifier.fillMaxSize().trackTouch(touchAnchor)) {
             LazyColumn(state = listState) {
 
                 /*
@@ -728,7 +862,16 @@ fun ContactsScreen(
                                     onOpenContact(contact.id)
                                 }
                             },
-                            onToggleStar = { scope.launch { vm.toggleStar(contact) } }
+                            // В режиме выбора долгое нажатие — тот же выбор
+                            onLongPress = {
+                                if (pickForPinning) {
+                                    contact.numbers.firstOrNull()?.let { onPicked(it.e164) }
+                                } else {
+                                    selectedAnchorY = touchAnchor.screenY
+                                    selectedContact = contact
+                                }
+                            },
+                            pickMode = pickForPinning
                         )
                     }
                 }
@@ -803,13 +946,46 @@ fun ContactsScreen(
                                     onOpenContact(contact.id)
                                 }
                             },
-                            onToggleStar = { scope.launch { vm.toggleStar(contact) } }
+                            // В режиме выбора долгое нажатие — тот же выбор
+                            onLongPress = {
+                                if (pickForPinning) {
+                                    contact.numbers.firstOrNull()?.let { onPicked(it.e164) }
+                                } else {
+                                    selectedAnchorY = touchAnchor.screenY
+                                    selectedContact = contact
+                                }
+                            },
+                            pickMode = pickForPinning
                         )
                     }
                 }
-                item { Spacer(Modifier.height(Space.xxl)) }
+                // Под кнопкой псевдозвонка — запас, чтобы последняя строка
+                // выходила из-под неё (1.5.7, снимок автора)
+                item {
+                    Spacer(Modifier.height(if (settings.fakeCallButton) FAB_CLEARANCE else Space.xxl))
+                }
+            }
+            // «Наверх» — при прокрутке вверх далеко от начала (1.5.7)
+            ScrollToTopPill(
+                listState,
+                Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = Space.s)
+            )
             }
         }
+    }
+
+    selectedContact?.let { contact ->
+        RecordActionCards(
+            group = remember(contact) { contactAsGroup(contact) },
+            vm = vm,
+            anchorY = selectedAnchorY,
+            origin = CardsOrigin.CONTACTS,
+            onOpenCard = { onOpenContact(contact.id) },
+            onOpenBlockLists = onOpenBlockLists,
+            onDismiss = { selectedContact = null }
+        )
     }
 }
 
@@ -836,6 +1012,17 @@ fun ContactsScreen(
  * (поле экрана + поле карточки, по левому краю аватаров), а не с краем
  * карточки: глаз идёт по одной вертикали от заголовка вниз.
  */
+/**
+ * Буква раздела списка: первая буква имени, заглавная.
+ *
+ * «Ё» — под «Е», как в системной книге контактов: отдельной буквы
+ * для неё там нет. Имя с цифры или знака — в раздел «#».
+ */
+internal fun sectionLetter(name: String): Char {
+    val first = name.firstOrNull()?.uppercaseChar()?.takeIf { it.isLetter() } ?: return '#'
+    return if (first == 'Ё') 'Е' else first
+}
+
 @Composable
 fun LetterHeader(letter: String) {
     // Полоса раздела во всю ширину (сплошной список, 1.5.3)
@@ -861,7 +1048,8 @@ fun LetterHeader(letter: String) {
  *
  * ── Чего здесь нет по сравнению с журналом ─────────────────────────────────
  * Времени звонка, значка типа вызова и счётчиков: у контакта их нет.
- * Вместо них справа звезда избранного — она нужна только тут.
+ * Звезда избранного стояла справа до 1.5.8 — теперь она в карточках
+ * долгого нажатия.
  * ══════════════════════════════════════════════════════════════════════════
  */
 @OptIn(ExperimentalFoundationApi::class)
@@ -892,7 +1080,9 @@ private fun ContactRow(
     endHint: RevealAction?,
     onCall: () -> Unit,
     onOpen: () -> Unit,
-    onToggleStar: () -> Unit,
+    onLongPress: () -> Unit,
+    /** Выбор контакта (закрепить, псевдозвонок): нажатия выбирают, а не открывают. */
+    pickMode: Boolean = false,
     /*
      * ОДИН ШАБЛОН СПИСКА С ЖУРНАЛОМ (1.3.5, 05.10.2026, аудит: «разные
      * шаблоны списков — контакты / журнал»). Было: каждый контакт —
@@ -962,7 +1152,16 @@ private fun ContactRow(
                 Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                    .combinedClickable(onClick = onOpen, onLongClick = onOpen)
+                    // Подписи для TalkBack (1.5.8): звезды в строке больше нет —
+                    // «В избранное» в карточках долгого нажатия, и о нём
+                    // нужно сказать словами
+                    .combinedClickable(
+                        // В режиме выбора оба нажатия выбирают — подпись общая
+                        onClickLabel = if (pickMode) null else stringResource(R.string.a11y_cards_open),
+                        onLongClickLabel = if (pickMode) null else stringResource(R.string.a11y_record_actions),
+                        onClick = onOpen,
+                        onLongClick = onLongPress
+                    )
                     // Тот же отступ, что в журнале: экраны должны
                     // выглядеть одинаково
                     .padding(horizontal = Space.l, vertical = 6.dp),
@@ -1078,23 +1277,15 @@ private fun ContactRow(
                 }
 
                 /*
-                 * Звезда вместо счётчиков журнала.
+                 * ЗВЕЗДЫ В СТРОКЕ БОЛЬШЕ НЕТ (1.5.8, обзор интерфейса, У2).
                  *
-                 * Заполненная у избранных, контурная у остальных: разница
-                 * видна и без цвета, что важно при высоком контрасте
-                 * и для людей с нарушением цветовосприятия.
+                 * Была справа у каждого контакта: второй значок рядом
+                 * с вызовом. Нажимают её редко, а место и внимание она
+                 * занимала в каждой строке — и при длинном имени отнимала
+                 * у него ширину. «В избранное» — в карточках долгого
+                 * нажатия (быстрое действие) и в карточке контакта;
+                 * раздел избранных сверху списка остался.
                  */
-                IconButton(onClick = onToggleStar) {
-                    Icon(
-                        if (contact.starred) OgnelissIcons.Star
-                        else OgnelissIcons.StarBorder,
-                        contentDescription = stringResource(
-                            R.string.contacts_favourite_toggle
-                        ),
-                        tint = if (contact.starred) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.outline
-                    )
-                }
             }
         }
     }

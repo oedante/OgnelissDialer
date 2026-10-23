@@ -140,7 +140,7 @@ object ContactQr {
      *   BEGIN:VCARD
      *   VERSION:3.0
      *   FN:Любимая
-     *   TEL;TYPE=CELL,PREF:+79676660512
+     *   TEL;TYPE=CELL,PREF:+79671112233
      *   END:VCARD
      *
      * Получатель видит служебную разметку и должен сам выискивать в ней

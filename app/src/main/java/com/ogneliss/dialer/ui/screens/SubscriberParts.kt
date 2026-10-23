@@ -10,6 +10,9 @@ import com.ogneliss.dialer.ui.theme.BlockRed
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import com.ogneliss.dialer.ui.theme.FlowUi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
+import com.ogneliss.dialer.ui.theme.CallGreen
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.RowScope
@@ -325,9 +328,10 @@ internal fun StatCell(value: Int, labelRes: Int, highlight: Boolean = false) {
  * КНОПКА ДЕЙСТВИЯ У НОМЕРА.
  *
  * ── Почему без подписи ─────────────────────────────────────────────────────
- * Три кнопки в строке с номером: подписи под ними не поместились бы,
- * а сами значки узнаваемы — трубка, конверт, копия. Это те же значки,
- * что и в остальном приложении.
+ * Значок в строке с номером: подпись под ним не поместилась бы, а сам
+ * значок узнаваем — конверт, тот же, что в остальном приложении.
+ * До 1.5.8 их было три (вызов, SMS, копировать); теперь вызов — касание
+ * самой строки, копировать — в карточках долгого нажатия (NumberRow).
  *
  * Для TalkBack подпись есть: contentDescription читается вслух,
  * и незрячий человек получает то же, что зрячий видит.
@@ -362,6 +366,71 @@ internal fun NumberAction(
             contentDescription = stringResource(labelRes),
             tint = tint
         )
+    }
+}
+
+/**
+ * СТРОКА НОМЕРА В КАРТОЧКЕ (1.5.8, обзор интерфейса, У1).
+ *
+ * ══════════════════════════════════════════════════════════════════════════
+ * ЧТО БЫЛО НЕ ТАК
+ * ══════════════════════════════════════════════════════════════════════════
+ * У каждого номера справа стояли три значка: вызов, SMS, копировать.
+ * При двух номерах — шесть значков, а «Позвонить» и «Написать» есть ещё
+ * и в нижней панели. Сама строка на касание не отвечала: по номеру
+ * естественно нажать, чтобы позвонить, — и ничего не происходило.
+ *
+ * ── Как теперь ─────────────────────────────────────────────────────────────
+ * • касание строки — вызов на этот номер, как в системных «Контактах»;
+ *   зелёная трубка слева показывает, что строка звонит, — так же стоят
+ *   значки у почты и дат в «Сведениях»;
+ * • справа — только SMS: написать на конкретный номер нужно часто;
+ * • долгое нажатие — карточки действий (NumberActionCards): копировать,
+ *   поделиться, отметить спам, заблокировать.
+ *
+ * Для TalkBack у строки две подписи действий: «Позвонить» и «Действия
+ * с номером» — долгое нажатие объявляется, а не угадывается.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+internal fun NumberRow(
+    number: String,
+    label: String?,
+    onCall: () -> Unit,
+    onSms: () -> Unit,
+    onLongPress: () -> Unit
+) {
+    val formatted = remember(number) { PhoneFormatter.format(number) }
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .heightIn(min = NUMBER_ROW_HEIGHT)
+            .combinedClickable(
+                onClickLabel = stringResource(R.string.action_call),
+                onLongClickLabel = stringResource(R.string.a11y_number_actions),
+                onLongClick = onLongPress,
+                onClick = onCall
+            )
+            .padding(vertical = Space.xxs),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            OgnelissIcons.Call,
+            contentDescription = null,
+            tint = CallGreen
+        )
+        Spacer(Modifier.width(Space.m))
+        Column(Modifier.weight(1f)) {
+            Text(formatted, style = MaterialTheme.typography.bodyLarge)
+            label?.let {
+                Text(
+                    it,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        NumberAction(OgnelissIcons.Message, R.string.action_sms, onClick = onSms)
     }
 }
 

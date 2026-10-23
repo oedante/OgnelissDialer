@@ -19,11 +19,11 @@ package com.ogneliss.dialer.util
  */
 object NumberDisplay {
 
-    /** Последние 4 цифры: "8 (967) 666-05-12" → "0512". */
+    /** Последние 4 цифры: "8 (967) 111-22-33" → "2233". */
     fun lastFour(number: String): String =
         number.filter { it.isDigit() }.takeLast(4)
 
-    /** Форматированные последние цифры для чипа: "…05-12". */
+    /** Форматированные последние цифры для чипа: "…22-33". */
     fun shortLabel(number: String): String {
         val digits = lastFour(number)
         if (digits.length < 4) return digits

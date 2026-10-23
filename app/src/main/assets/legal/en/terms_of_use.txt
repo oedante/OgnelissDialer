@@ -1,159 +1,86 @@
-End User Licence Agreement
+Terms of Use — Ogneliss Dialer
+Version 1.1 · 22 October 2026
+Rightsholder: Ermishin Oleg
 
-Application: Ogneliss Dialer
-Revision: 1.0
-Effective date: 10 August 2026
-
-By installing, launching or using Ogneliss Dialer (the "Application") you
-accept the terms of this Agreement. If you do not agree with any of the
-terms, do not install or use the Application.
-
-
-1. Subject of the Agreement
-
-1.1. What you are granted
-
-The Rightsholder grants you a free of charge, non-exclusive,
-non-transferable, revocable licence to use the Application on devices you
-own, for personal non-commercial purposes.
-
-1.2. What is not transferred to you
-
-The Application is licensed, not sold. This Agreement does not transfer
-ownership of the Application, its source code, graphics, name or other
-intellectual property.
-
-The source code of the Application is closed and constitutes a trade
-secret of the Rightsholder.
+What changed in version 1.1: the app became open source software (Apache
+License 2.0). The restrictions of the previous version — personal
+non-commercial use only, no modification or redistribution — no longer
+apply.
 
 
-2. Permitted actions
+1. What these terms cover
+Ogneliss Dialer ("the App") is distributed under the Apache License 2.0 — see
+"License". The license defines what you may do with the software: use,
+change and distribute it. These terms cover what is worth knowing when
+you use the App as your phone. They do not narrow the rights granted by
+the license.
 
-You may:
+2. Purposes
+You may use the App for any lawful purpose — personal, work or business,
+including within an organisation. Business calls, agreements and calls
+to clients are ordinary use, not a breach of these terms.
 
-- install and use the Application on any number of devices you lawfully
-  own;
-- create backups of data you produced in the Application (notes, tags,
-  block lists);
-- share a link to the Application page in an official app store.
+You are responsible for using the App lawfully, including laws on
+telephone communications, unsolicited calls and the privacy of
+correspondence and telephone conversations.
 
+3. Call recording
+The App does not record telephone conversations. On Android 10 and later
+the operating system prevents third-party applications from accessing call
+audio, and circumventing this restriction violates Google Play policy.
+If your device records calls, that capability is provided by the device
+manufacturer and is outside the scope of the App.
 
-3. Prohibited actions
+Recording a conversation without the other party's consent may be
+unlawful in your country.
 
-You may not:
+4. Call blocking — no guarantee
+Call filtering relies on Android system mechanisms, on rules you define and
+on local heuristics. The App does not guarantee that every unwanted call
+will be blocked, nor that a wanted call will never be blocked. Do not rely
+on the App where a missed call could cause harm — for example for
+emergency, medical or security notifications.
 
-3.1. Decompile, disassemble, deobfuscate the Application or otherwise
-attempt to obtain its source code, except where expressly permitted by
-applicable law and only to the extent permitted.
+5. Emergency calls
+Do not rely on the App as your only means of contacting emergency
+services. Emergency calls are handled by the operating system and your
+carrier; whether one can be made depends on your device, carrier, network
+coverage and applicable regulation. Blocking features never apply to
+emergency numbers, but correct telephony behaviour cannot be guaranteed
+on every device and firmware. If in doubt, use your phone's built-in
+dialer.
 
-3.2. Modify the Application, create derivative works, embed its parts in
-other software.
+6. Caller identification accuracy
+Region and operator information is derived from offline reference data.
+Number portability means the operator shown may be inaccurate. Spam risk
+scores are heuristic estimates based on your own call history, not
+statements of fact about any person or organisation.
 
-3.3. Distribute the Application through third-party app stores, file
-sharing services or other channels, including modified versions.
+7. Third-party services
+If you enable an external caller ID provider, your use of that provider is
+governed by that provider's own terms and privacy policy. We are not
+responsible for third-party applications.
 
-3.4. Use the Application or its parts for commercial purposes, including
-resale, rental, inclusion in paid products or services.
+8. Your data
+Notes, tags, block lists and settings are stored only on your device and
+may be lost on failure, reinstallation or removal of the App. The App has
+a manual export (Settings → Data and diagnostics) — please use it for backups.
 
-3.5. Remove or alter copyright notices, the Application name or other
-designations of the Rightsholder.
+9. No warranty
+The App is provided "as is", without warranty of any kind, express or
+implied, including merchantability, fitness for a particular purpose and
+non-infringement.
 
-3.6. Use the name and graphics of the Application to promote your own
-products or to create the impression of an association with the
-Rightsholder.
+10. Limitation of liability
+To the maximum extent permitted by law, the rightsholder is not liable for
+any indirect, incidental, special or consequential damages, or for lost
+profits, missed calls, lost data or business interruption arising from use
+of the App. Nothing in these terms limits liability that cannot be limited
+by law.
 
+11. Changes
+These terms may be updated with new versions of the App.
+Current version: https://ogneliss.ru/dialer/terms
 
-4. No warranty
-
-THE APPLICATION IS PROVIDED "AS IS", WITHOUT WARRANTIES OF ANY KIND,
-EXPRESS OR IMPLIED.
-
-The Rightsholder does not warrant that:
-
-- the Application will operate uninterrupted and error-free;
-- the Application is compatible with any device or operating system
-  version;
-- call filtering will detect every unwanted call or will never reject
-  a wanted one;
-- data created in the Application will not be lost on device failure,
-  reinstallation or update.
-
-Backing up your data is your responsibility. The Application provides
-manual export — please use it.
-
-
-5. Limitation of liability
-
-To the maximum extent permitted by applicable law, the Rightsholder is
-not liable for:
-
-- missed, blocked or failed calls, including emergency calls;
-- direct or indirect damages, lost profits, loss of data;
-- malfunctions of the device, operating system or other software.
-
-5.1. Emergency calls
-
-Do not rely on the Application for emergency calls. Emergency call
-handling is performed by the operating system and your carrier. If in
-any doubt, use the stock phone application of your device.
-
-Blocking features are not applied to emergency numbers; however, the
-Rightsholder cannot guarantee correct telephony behaviour on all devices
-and firmware versions.
-
-
-6. Term and termination
-
-6.1. This Agreement is effective from installation until removal of the
-Application.
-
-6.2. The Rightsholder may at any time discontinue support, cease
-distribution or withdraw the Application from an app store without
-explanation and without compensation.
-
-6.3. Your rights under this Agreement terminate automatically upon
-violation of any of its terms.
-
-6.4. You may terminate this Agreement at any time by removing the
-Application from your device. Data you created is deleted together
-with it.
-
-
-7. Privacy
-
-The Application does not collect or transmit personal data. It does not
-request the android.permission.INTERNET permission, which can be verified
-in the installed application details.
-
-Details are provided in the Privacy Policy included in the Application
-and available in the About section.
-
-
-8. Changes to this Agreement
-
-The Rightsholder may amend the terms of this Agreement. A new revision
-takes effect once included in an update of the Application.
-
-For material changes the Application will request consent again on first
-launch after the update. Continued use constitutes acceptance of the new
-revision.
-
-
-9. Governing law
-
-This Agreement is governed by the law of the Russian Federation to the
-extent not conflicting with mandatory rules of your country of residence
-and the policies of the app store through which the Application is
-distributed.
-
-If any provision of this Agreement is held invalid, the remaining
-provisions remain in force.
-
-
-10. Contact
-
-Questions regarding this Agreement: oedante@gmail.com
-
-
-Ogneliss Dialer, revision 1.0. Copyright 2026 Ermishin Oleg.
-All rights reserved.
+12. Contact
+oedante@gmail.com

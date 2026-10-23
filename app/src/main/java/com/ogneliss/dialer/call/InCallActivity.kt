@@ -76,6 +76,8 @@ import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
 import androidx.compose.ui.platform.LocalDensity
 import com.ogneliss.dialer.ui.adaptive.FoldPosture
 import com.ogneliss.dialer.settings.CarrierInfoMode
+import com.ogneliss.dialer.settings.CallPhotoSize
+import com.ogneliss.dialer.settings.AnswerMode
 import com.ogneliss.dialer.settings.CallPhotoStyle
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -226,6 +228,12 @@ class InCallActivity : ComponentActivity() {
             // на весь экран перед кругом
             val callPhotoStyle by prefs.callPhotoStyle
                 .collectAsStateWithLifecycle<CallPhotoStyle?>(initialValue = null)
+            // Размер портрета (1.5.7, отзыв valmikk): обычный или крупный
+            val callPhotoSize by prefs.callPhotoSize
+                .collectAsStateWithLifecycle(initialValue = CallPhotoSize.LARGE)
+            // Ответ на вызов: касанием или сдвигом (1.5.8): разбор в AnswerMode
+            val answerMode by prefs.answerMode
+                .collectAsStateWithLifecycle(initialValue = AnswerMode.TAP)
 
             OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic, uiScale = uiScale) {
                 // Раскладка окна: телефон, лёжа, раскладушка, планшет.
@@ -294,6 +302,8 @@ class InCallActivity : ComponentActivity() {
                     hideContactNumber = hideContactNumber,
                     ambientBackground = callAnimation && theme != ThemeMode.HIGH_CONTRAST,
                     photoStyle = callPhotoStyle,
+                    largePortrait = callPhotoSize == CallPhotoSize.LARGE,
+                    slideToAnswer = answerMode == AnswerMode.SLIDE,
                     // Пользователь переключил звук сам — датчики умолкают
                     // до конца разговора
                     onManualAudioChange = { smartSpeaker?.notifyManualToggle() }
@@ -350,8 +360,14 @@ private fun InCallScreen(
     ambientBackground: Boolean = false,
     /** Фото звонящего: круг, квадрат или на весь экран; null — ещё не прочитано. */
     photoStyle: CallPhotoStyle? = CallPhotoStyle.CIRCLE,
+    /** Настройка «Размер фото» — крупный (1.5.7). */
+    largePortrait: Boolean = false,
+    /** Настройка «Ответ на вызов» — сдвигом (1.5.8): разбор в SlideToAnswer. */
+    slideToAnswer: Boolean = false,
     onManualAudioChange: () -> Unit = {}
 ) {
+    // Сдвиг вместо кнопок ответа — если выбран и не включён TalkBack
+    val slideAnswer = useSlideToAnswer(slideToAnswer)
     // Мало места по высоте — раскладка в две колонки. Порог прежний
     // (480 dp), но теперь один на всё приложение: разбор в WindowLayout
     val landscape = LocalWindowLayout.current.isShort
@@ -747,7 +763,9 @@ private fun InCallScreen(
             focus = { if (showPortrait) portraitFocus else null }
         )
     }
-    NavBarUnderPanel()
+    // Полоса цвета панели под навигацией — только когда есть панель:
+    // над живым фоном её нет (1.6.0, разбор у LocalControlsOnAmbient)
+    if (!ambient) NavBarUnderPanel()
     Surface(
         Modifier.fillMaxSize().safeDrawingPadding(),
         color = if (photoBackground || ambient) Color.Transparent else MaterialTheme.colorScheme.surface
@@ -775,8 +793,11 @@ private fun InCallScreen(
                         // от 72 до 140 dp; было 88 dp на любом экране
                         CallerAvatar(
                             photoUri = photoUri,
-                            size = (windowLayout0.heightDp * 0.30f).dp
-                                .coerceIn(FlowUi.callPortraitMin, LANDSCAPE_PORTRAIT_MAX),
+                            size = (windowLayout0.heightDp * if (largePortrait) 0.36f else 0.30f).dp
+                                .coerceIn(
+                                    FlowUi.callPortraitMin,
+                                    if (largePortrait) LANDSCAPE_PORTRAIT_MAX_LARGE else LANDSCAPE_PORTRAIT_MAX
+                                ),
                             square = squarePortrait,
                             modifier = trackPortrait
                         )
@@ -798,6 +819,13 @@ private fun InCallScreen(
 
         /** Главные кнопки: ответить и отклонить, или завершить. */
         val mainButtons: @Composable () -> Unit = {
+                    if (state == Call.STATE_RINGING && slideAnswer) {
+                        // Ответ сдвигом (1.5.8): от случайного касания
+                        SlideToAnswer(
+                            onAnswer = { CallManager.answer() },
+                            onDecline = { CallManager.reject() }
+                        )
+                    } else
                     Row(
                         Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(Space.l, Alignment.CenterHorizontally)
@@ -968,7 +996,7 @@ private fun InCallScreen(
                         {
                             CallerAvatar(
                                 photoUri = photoUri,
-                                size = FlowUi.callPortraitMax,
+                                size = FlowUi.callPortraitMaxFor(largePortrait),
                                 square = squarePortrait,
                                 modifier = trackPortrait
                             )
@@ -976,7 +1004,9 @@ private fun InCallScreen(
                     } else {
                         null
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    maxSize = FlowUi.callPortraitMaxFor(largePortrait),
+                    widthFraction = FlowUi.callPortraitFractionFor(largePortrait)
                 ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 CallerIdentity(
@@ -1014,10 +1044,14 @@ private fun InCallScreen(
             Surface(
                 shape = OgnelissShapeTokens.bottomPanel,
                 // Цвет нижней панели — общий с журналом (PanelColors, 1.4.0):
-                // в светлой теме серая панель с белыми кнопками, как клавиатура
-                color = PanelColors.panel(),
+                // в светлой теме серая панель с белыми кнопками, как клавиатура.
+                // Над живым фоном — без подложки, волны идут и под кнопками
+                // (1.6.0, разбор у LocalControlsOnAmbient)
+                color = if (ambient) Color.Transparent else PanelColors.panel(),
+                contentColor = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.fillMaxWidth()
             ) {
+            CompositionLocalProvider(LocalControlsOnAmbient provides ambient) {
             Column(
                 // На всю ширину панели: иначе узкое содержимое ушло бы влево
                 Modifier.fillMaxWidth().padding(top = Space.l, start = FlowUi.contentPadding, end = FlowUi.contentPadding),
@@ -1239,6 +1273,15 @@ private fun InCallScreen(
                     Spacer(Modifier.height(Space.m))
                 }
 
+                if (state == Call.STATE_RINGING && slideAnswer) {
+                    // Ответ сдвигом (1.5.8): от случайного касания, когда
+                    // телефон достают из кармана. Разбор — в SlideToAnswer
+                    SlideToAnswer(
+                        onAnswer = { CallManager.answer() },
+                        onDecline = { CallManager.reject() },
+                        modifier = Modifier.padding(horizontal = Space.s)
+                    )
+                } else
                 Row(
                     Modifier.fillMaxWidth().padding(horizontal = Space.s),
                     // По центру: при одной кнопке («Завершить») ряд не должен
@@ -1311,6 +1354,7 @@ private fun InCallScreen(
                 }
                 Spacer(Modifier.height(Space.xl))
             }
+            } // LocalControlsOnAmbient
             } // панель управления
         }
     }
@@ -1496,11 +1540,23 @@ private fun ControlsRow(
      *
      * maxItemsInEachRow = 3 — чтобы на широком экране они не вытянулись
      * в одну строку и не стали мелкими мишенями.
+     *
+     * ── Ряды поровну (1.5.7) ───────────────────────────────────────────────
+     * По три в строке обычный разговор давал 3 + 1: «Удержать» одна во втором
+     * ряду (снимок автора, 22.10). Раскладку теперь выбирает controlsPerRow:
+     * четыре кнопки — одной строкой, семь-восемь — по четыре, пять и шесть —
+     * по три (3 + 2, 3 + 3).
      */
+    val buttonCount = 3 +
+        (if (canHold) 1 else 0) +
+        (if (canAddCall) 1 else 0) +
+        (if (btAvailable) 1 else 0) +
+        (if (hasSecondary) 1 + (if (canMerge) 1 else 0) else 0)
+    val perRow = controlsPerRow(buttonCount)
     FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally),
+        horizontalArrangement = Arrangement.spacedBy(controlsGap(perRow), Alignment.CenterHorizontally),
         verticalArrangement = Arrangement.spacedBy(Space.l),
-        maxItemsInEachRow = 3,
+        maxItemsInEachRow = perRow,
         modifier = Modifier.fillMaxWidth()
     ) {
             ToggleTile(muted, OgnelissIcons.MicOff, stringResource(R.string.incall_mute)) {
@@ -1547,6 +1603,26 @@ private fun ControlsRow(
     }
 }
 
+/**
+ * Сколько кнопок разговора ставить в строку (1.5.7).
+ *
+ * Четыре — одной строкой, а не 3 + 1 с одинокой кнопкой во втором ряду;
+ * семь-восемь — по четыре; остальное — по три, как раньше.
+ */
+internal fun controlsPerRow(count: Int): Int = if (count == 4 || count >= 7) 4 else 3
+
+/**
+ * Зазор между кнопками в строке.
+ *
+ * Плитка — 60 dp (FlowUi.quickActionSize + 16 dp). Четыре плитки с зазором
+ * 16 dp — 288 dp, а на телефоне шириной 360 dp под кнопки остаётся 312 dp:
+ * ряд помещается даже с подписью шире плитки («Lautsprecher», «Haut-parleur»).
+ * С зазором 20 dp, как у трёх, немецкий и французский ряды на таком телефоне
+ * уже не влезали. Не поместится и так (крупный шрифт) — FlowRow перенесёт
+ * кнопку сам, как раньше: хуже не станет.
+ */
+internal fun controlsGap(perRow: Int): Dp = if (perRow == 4) Space.l else 20.dp
+
 @Composable
 internal fun ToggleTile(
     active: Boolean,
@@ -1584,8 +1660,12 @@ internal fun ToggleTile(
                 checkedContentColor = MaterialTheme.colorScheme.onPrimary
             ),
             // Размер из правил: тот же, что у быстрых действий
-            // в карточке абонента — они и по смыслу одно и то же
-            modifier = Modifier.size(FlowUi.quickActionSize + 16.dp)
+            // в карточке абонента — они и по смыслу одно и то же.
+            // Над живым фоном — тень и ободок (1.6.0): белая кнопка
+            // на светлом фоне иначе не видна
+            modifier = Modifier
+                .ambientEdge(LocalControlsOnAmbient.current, CircleShape, MaterialTheme.colorScheme.outlineVariant)
+                .size(FlowUi.quickActionSize + 16.dp)
         ) {
             Icon(icon, label, Modifier.size(28.dp))
         }
@@ -1756,7 +1836,14 @@ internal fun DtmfPanel(
         // своя подложка с тоном поверх панели давала третий оттенок серого
         color = PanelColors.key(),
         shape = MaterialTheme.shapes.extraLarge,
-        modifier = Modifier.fillMaxWidth()
+        // Над живым фоном — тень и ободок (1.6.0)
+        modifier = Modifier
+            .fillMaxWidth()
+            .ambientEdge(
+                LocalControlsOnAmbient.current,
+                MaterialTheme.shapes.extraLarge,
+                MaterialTheme.colorScheme.outlineVariant
+            )
     ) {
         Column(Modifier.padding(vertical = Space.m)) {
 
@@ -1968,34 +2055,47 @@ internal fun CallerAvatar(
      * с закруглениями спорил с круглыми кнопками управления
      * и с кнопкой завершения: три разные формы на пустом экране.
      *
-     * В списках это правило остаётся: там аватар стоит в ряду
-     * прямоугольных карточек, и круг выбивался бы уже он.
-     *
-     * ── Тень ───────────────────────────────────────────────────────────────
-     * 6 dp: портрет отделяется от фона, из-за чего лицо читается быстрее
-     * при беглом взгляде. Больше — и тень начинает выглядеть грязным
-     * ореолом на тёмной теме.
-     */
-    /*
      * 1.5.5: круг — по умолчанию; квадрат — по выбору пользователя
-     * (отзыв в магазине), со скруглением шторок и диалогов (24 dp):
-     * в мягком стиле острый угол выбивался бы.
+     * (отзыв в магазине), со скруглением шторок и диалогов: в мягком стиле
+     * острый угол выбивался бы.
+     *
+     * ── Мягкий край вместо тени (1.5.7) ────────────────────────────────────
+     * Было: обрезка по форме и тень 4 dp — чёткий тёмный край посреди
+     * светлых волн («слишком резкие границы», автор, 22.10). Стало: край
+     * фото растворяется на 4 % поперечника, под ним — светлый ореол цвета
+     * страницы; тени нет. Разбор — SoftPortrait.kt.
      */
-    Surface(
-        shape = if (square) MaterialTheme.shapes.extraLarge else CircleShape,
-        color = MaterialTheme.colorScheme.surfaceContainerHighest,
-        shadowElevation = 4.dp,
-        modifier = modifier.size(size)
+    val shape = if (square) MaterialTheme.shapes.extraLarge else CircleShape
+    Box(
+        modifier
+            .size(size)
+            .softHalo(
+                shape,
+                MaterialTheme.colorScheme.surfaceBright.copy(alpha = PORTRAIT_HALO_ALPHA),
+                PORTRAIT_HALO
+            )
     ) {
         AsyncImage(
             model = uri,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             // Во весь портрет: размер может задать и раскладка (1.5.6)
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .softPortrait(
+                    shape,
+                    PORTRAIT_FEATHER,
+                    placeholder = MaterialTheme.colorScheme.surfaceContainerHighest
+                )
         )
     }
 }
+
+/** Растворение края портрета — доля поперечника (набросок F, 1.5.7). */
+private const val PORTRAIT_FEATHER = 0.04f
+/** Ореол вокруг портрета: ширина — доля поперечника, плотность у края. */
+private const val PORTRAIT_HALO = 0.06f
+private const val PORTRAIT_HALO_ALPHA = 0.85f
 
 /**
  * КНОПКА ОТВЕТА И ОТКЛОНЕНИЯ.
@@ -2152,7 +2252,14 @@ private fun WaitingCallBanner(
         // в светлой теме совпадал с панелью по яркости. «Второй вызов» —
         // синим заголовком: событие видно и без цветной заливки
         color = PanelColors.key(),
-        modifier = Modifier.fillMaxWidth()
+        // Над живым фоном — тень и ободок (1.6.0)
+        modifier = Modifier
+            .fillMaxWidth()
+            .ambientEdge(
+                LocalControlsOnAmbient.current,
+                MaterialTheme.shapes.extraLarge,
+                MaterialTheme.colorScheme.outlineVariant
+            )
     ) {
         Column(Modifier.padding(Space.l)) {
             Text(
@@ -2215,7 +2322,14 @@ private fun ConferencePanel(
         shape = MaterialTheme.shapes.extraLarge,
         // Лежит в нижней панели: цвет клавиши, а не панели — иначе сливался бы
         color = PanelColors.key(),
-        modifier = Modifier.fillMaxWidth()
+        // Над живым фоном — тень и ободок (1.6.0)
+        modifier = Modifier
+            .fillMaxWidth()
+            .ambientEdge(
+                LocalControlsOnAmbient.current,
+                MaterialTheme.shapes.extraLarge,
+                MaterialTheme.colorScheme.outlineVariant
+            )
     ) {
         Column(Modifier.padding(vertical = Space.s)) {
             Text(
@@ -2275,3 +2389,4 @@ private const val SQUARE_FOCUS = 1.25f
 
 /** Портрет лёжа — не крупнее 140 dp: по высоте места вдвое меньше (1.5.6). */
 private val LANDSCAPE_PORTRAIT_MAX = 140.dp
+private val LANDSCAPE_PORTRAIT_MAX_LARGE = 170.dp

@@ -16,6 +16,9 @@ python3 scripts/audit.py             # локализация, мёртвый к
 
 Все пять скриптов встроены в CI и валят сборку при нарушении.
 
+Код открыт (1.5.7): перед отправкой в GitHub — `python3 scripts/oss_audit.py`
+(ключи, пароли, чужие номера и адреса). Порядок публикации — `docs/OPEN_SOURCE.md`.
+
 ## 2. Сборка
 
 ```bash
@@ -127,8 +130,9 @@ aapt dump permissions app/build/outputs/apk/release/app-release.apk | grep INTER
 - [x] Политика конфиденциальности **опубликована и работает**:
       https://ogneliss.ru/dialer/privacy
 
-      Проверено 24.08.2026. Там же: `/dialer/eula`, `/dialer/terms`,
-      `/dialer/licenses`, страница приложения `/dialer/`.
+      Проверено 24.08.2026. Там же: `/dialer/eula` (с 1.5.7 — лицензия
+      Apache 2.0, адрес прежний), `/dialer/terms`, `/dialer/licenses`,
+      страница приложения `/dialer/`.
 
       Развёртывание: `web/DEPLOY.md`. Страницы собираются из тех же
       `legal/*.md`, что идут в приложение, — разойтись не могут.

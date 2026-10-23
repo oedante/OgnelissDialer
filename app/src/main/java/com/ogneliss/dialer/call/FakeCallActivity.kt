@@ -36,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.data.ContactsRepository
 import com.ogneliss.dialer.settings.Prefs
@@ -45,6 +44,8 @@ import com.ogneliss.dialer.ui.theme.DeclineRed
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.ui.theme.OgnelissDialerTheme
 import com.ogneliss.dialer.settings.ThemeMode
+import com.ogneliss.dialer.settings.CallPhotoSize
+import com.ogneliss.dialer.settings.AnswerMode
 import com.ogneliss.dialer.settings.CallPhotoStyle
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -122,6 +123,10 @@ class FakeCallActivity : ComponentActivity() {
             val callAnimation by prefs.callAnimation.collectAsStateWithLifecycle(true)
             // Фото звонящего — как у настоящего вызова (1.5.5); null — ещё не прочитано
             val callPhotoStyle by prefs.callPhotoStyle.collectAsStateWithLifecycle<CallPhotoStyle?>(null)
+            // Размер портрета — как у настоящего вызова (1.5.7)
+            val callPhotoSize by prefs.callPhotoSize.collectAsStateWithLifecycle(CallPhotoSize.LARGE)
+            // Ответ касанием или сдвигом — как у настоящего вызова (1.5.8)
+            val answerMode by prefs.answerMode.collectAsStateWithLifecycle(AnswerMode.TAP)
 
             /*
              * Кто «звонит».
@@ -170,6 +175,8 @@ class FakeCallActivity : ComponentActivity() {
                     photoUri = photo,
                     ambientBackground = callAnimation && theme != ThemeMode.HIGH_CONTRAST,
                     photoStyle = callPhotoStyle,
+                    largePortrait = callPhotoSize == CallPhotoSize.LARGE,
+                    slideToAnswer = answerMode == AnswerMode.SLIDE,
                     onAnswer = { stopRinging() },
                     onHangUp = { finish() }
                 )
@@ -232,9 +239,14 @@ private fun FakeCallScreen(
     ambientBackground: Boolean = false,
     /** Фото: круг, квадрат или на весь экран (1.5.5); null — ещё не прочитано. */
     photoStyle: CallPhotoStyle? = CallPhotoStyle.CIRCLE,
+    /** Настройка «Размер фото» — крупный (1.5.7). */
+    largePortrait: Boolean = false,
+    /** Настройка «Ответ на вызов» — сдвигом (1.5.8), как у настоящего. */
+    slideToAnswer: Boolean = false,
     onAnswer: () -> Unit,
     onHangUp: () -> Unit
 ) {
+    val slideAnswer = useSlideToAnswer(slideToAnswer)
     var answered by remember { mutableStateOf(false) }
     var seconds by remember { mutableIntStateOf(0) }
 
@@ -292,7 +304,8 @@ private fun FakeCallScreen(
             focus = { if (showPortrait) portraitFocus else null }
         )
     }
-    NavBarUnderPanel()
+    // Как у настоящего вызова: над живым фоном панели нет (1.6.0)
+    if (!ambient) NavBarUnderPanel()
     Surface(
         Modifier.fillMaxSize().safeDrawingPadding(),
         color = if (photoBackground || ambient) Color.Transparent else MaterialTheme.colorScheme.surface
@@ -323,7 +336,7 @@ private fun FakeCallScreen(
                         {
                             CallerAvatar(
                                 photoUri = photoUri,
-                                size = FlowUi.callPortraitMax,
+                                size = FlowUi.callPortraitMaxFor(largePortrait),
                                 square = squarePortrait,
                                 modifier = trackPortrait
                             )
@@ -332,6 +345,8 @@ private fun FakeCallScreen(
                         null
                     },
                     gap = if (short) Space.m else Space.l,
+                    maxSize = FlowUi.callPortraitMaxFor(largePortrait),
+                    widthFraction = FlowUi.callPortraitFractionFor(largePortrait),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -368,10 +383,13 @@ private fun FakeCallScreen(
 
             Surface(
                 shape = OgnelissShapeTokens.bottomPanel,
-                // Как у настоящего вызова: общий цвет нижней панели (1.4.0)
-                color = PanelColors.panel(),
+                // Как у настоящего вызова: общий цвет нижней панели (1.4.0),
+                // над живым фоном — без подложки (1.6.0, разбор у LocalControlsOnAmbient)
+                color = if (ambient) Color.Transparent else PanelColors.panel(),
+                contentColor = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.fillMaxWidth()
             ) {
+            CompositionLocalProvider(LocalControlsOnAmbient provides ambient) {
             Column(
                 Modifier.fillMaxWidth().padding(top = Space.l, start = FlowUi.contentPadding, end = FlowUi.contentPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -404,6 +422,14 @@ private fun FakeCallScreen(
                     }
                 }
 
+                if (!answered && slideAnswer) {
+                    // Сдвиг вместо кнопок — как у настоящего вызова (1.5.8)
+                    SlideToAnswer(
+                        onAnswer = { answered = true; onAnswer() },
+                        onDecline = onHangUp,
+                        modifier = Modifier.padding(horizontal = Space.s)
+                    )
+                } else
                 Row(
                     Modifier.fillMaxWidth().padding(horizontal = Space.s),
                     horizontalArrangement = Arrangement.spacedBy(Space.l, Alignment.CenterHorizontally)
@@ -452,6 +478,7 @@ private fun FakeCallScreen(
                 }
                 Spacer(Modifier.height(Space.xl))
             }
+            } // LocalControlsOnAmbient
             } // панель
         }
     }
@@ -460,7 +487,8 @@ private fun FakeCallScreen(
 
 /**
  * Кнопки разговора псевдозвонка — те же плитки и та же раскладка, что
- * ControlsRow настоящего вызова (три в ряд, перенос, зазоры 20 dp и 16 dp).
+ * ControlsRow настоящего вызова: четыре кнопки — одной строкой (1.5.7),
+ * зазоры из controlsGap.
  * Без «Добавить вызов», Bluetooth и «Объединить»: у настоящего они видны
  * только когда доступны, а чаще — нет.
  */
@@ -479,10 +507,11 @@ private fun FakeControlsRow(
         Modifier.fillMaxWidth().padding(vertical = Space.s, horizontal = Space.s),
         contentAlignment = Alignment.Center
     ) {
+        val perRow = controlsPerRow(4)
         FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally),
+            horizontalArrangement = Arrangement.spacedBy(controlsGap(perRow), Alignment.CenterHorizontally),
             verticalArrangement = Arrangement.spacedBy(Space.l),
-            maxItemsInEachRow = 3,
+            maxItemsInEachRow = perRow,
             modifier = Modifier.fillMaxWidth()
         ) {
             ToggleTile(muted, OgnelissIcons.MicOff, stringResource(R.string.incall_mute), onMute)

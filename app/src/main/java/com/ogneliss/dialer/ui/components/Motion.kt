@@ -87,4 +87,17 @@ object Motion {
         slideOutHorizontally(tween(EXIT_MS)) { fullWidth -> fullWidth / 4 } +
             fadeOut(tween(EXIT_MS))
     }
+
+    /**
+     * Переключение соседних списков — журнал ↔ контакты (1.6.0, обзор
+     * интерфейса, П1). Без сдвига: один растворяется, другой проявляется.
+     * Сдвиг говорил бы «зашли внутрь», а это соседи — как вкладки.
+     */
+    val enterSibling: AnimatedContentTransitionScope<*>.() -> EnterTransition = {
+        fadeIn(tween(ENTER_MS))
+    }
+
+    val exitSibling: AnimatedContentTransitionScope<*>.() -> ExitTransition = {
+        fadeOut(tween(EXIT_MS))
+    }
 }

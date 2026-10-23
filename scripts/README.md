@@ -12,6 +12,7 @@
 | `build_numbering.py` | Собирает `app/src/main/assets/numbering_plan.bin` из выгрузок Россвязи (`store/source/numbering/`). Запускать при обновлении выгрузок. |
 | `make_monochrome.py` | Пересобирает `drawable/ic_launcher_monochrome.xml` из того же исходника: трубка и пламя залиты, лиса — вырез. Нужны `scipy`, `scikit-image`. |
 | `build_feature_graphic.py` | Баннер Google Play 1024×500 из `store/play_icon_512.png`; фон — фон значка. Нужен `cairosvg`. |
+| `faq_site.py` | «Вопросы и ответы» для сайта (1.6.0): собирает `docs/www/faq.html` из строк приложения (`faq_*`) и порядка вопросов в `ui/help/Faq.kt`; пути к настройкам — из названий пунктов, как в приложении. `--check` — только сверить. Затем копия в `site/src_multilang/faq.html` репозитория Mail и сборка сайта. |
 
 ## Смена значка
 

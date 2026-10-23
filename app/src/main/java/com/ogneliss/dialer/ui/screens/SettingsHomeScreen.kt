@@ -28,6 +28,7 @@ import com.ogneliss.dialer.ui.components.SettingsGroup
 import com.ogneliss.dialer.ui.settings.SettingEntry
 import com.ogneliss.dialer.ui.settings.SettingsCategory
 import com.ogneliss.dialer.ui.settings.SettingsRegistry
+import com.ogneliss.dialer.ui.help.Faq
 
 /**
  * ГЛАВНЫЙ ЭКРАН НАСТРОЕК.
@@ -45,7 +46,12 @@ import com.ogneliss.dialer.ui.settings.SettingsRegistry
 fun SettingsHomeScreen(
     onBack: () -> Unit,
     onOpenCategory: (SettingsCategory) -> Unit,
-    onOpenEntry: (SettingEntry) -> Unit
+    onOpenEntry: (SettingEntry) -> Unit,
+    /**
+     * «Вопросы и ответы» (1.6.0): строкой внизу — весь экран (null),
+     * из поиска — сразу найденный вопрос.
+     */
+    onOpenFaq: (String?) -> Unit = {}
 ) {
     var query by remember { mutableStateOf("") }
     var searching by remember { mutableStateOf(false) }
@@ -75,6 +81,28 @@ fun SettingsHomeScreen(
         val q = query.trim().lowercase()
         if (q.length < 2) emptyList()
         else index.filter { (_, text) -> text.contains(q) }.keys.toList()
+    }
+
+    /*
+     * ПОИСК НАХОДИТ И ВОПРОСЫ (1.6.0).
+     *
+     * Человек ищет «заблокировать» или «новый телефон» — и получает не только
+     * пункты настроек, но и ответ, где сказано, что делать. Ищется по вопросу
+     * и ответу с подставленными путями — тем же текстом, что на экране
+     * «Вопросы и ответы». По словам «помощь», «вопросы» находится сам экран.
+     */
+    val faqIndex = Faq.items.map { faq ->
+        faq to "${stringResource(faq.question)} ${faqAnswerText(faq)}".lowercase()
+    }
+    val faqScreenText = "${stringResource(R.string.faq_title)} ${stringResource(R.string.faq_keywords)}".lowercase()
+    val faqResults = remember(query, faqIndex) {
+        val q = query.trim().lowercase()
+        if (q.length < 2) emptyList()
+        else faqIndex.filter { (_, text) -> text.contains(q) }.map { it.first }
+    }
+    val faqScreenFound = remember(query, faqScreenText) {
+        val q = query.trim().lowercase()
+        q.length >= 2 && faqScreenText.contains(q)
     }
 
     androidx.compose.runtime.CompositionLocalProvider(
@@ -135,7 +163,7 @@ fun SettingsHomeScreen(
             LazyColumn(Modifier.padding(pad).fillMaxSize()) {
 
                 if (searching && query.trim().length >= 2) {
-                    if (results.isEmpty()) {
+                    if (results.isEmpty() && faqResults.isEmpty() && !faqScreenFound) {
                         item {
                             Text(
                                 stringResource(R.string.settings_search_empty, query),
@@ -157,6 +185,31 @@ fun SettingsHomeScreen(
                                     supporting = stringResource(entry.category.titleRes),
                                     onClick = { onOpenEntry(entry) }
                                 )
+                            }
+                        }
+                        // Вопросы — под настройками, своей группой (1.6.0)
+                        if (faqResults.isNotEmpty() || faqScreenFound) {
+                            item(key = "faq_results") {
+                                SettingsGroup(title = stringResource(R.string.faq_title)) {
+                                    if (faqScreenFound) {
+                                        OgnelissListRow(
+                                            headline = stringResource(R.string.faq_title),
+                                            supporting = stringResource(R.string.faq_summary),
+                                            leading = { Icon(OgnelissIcons.Help, contentDescription = null) },
+                                            onClick = { onOpenFaq(null) }
+                                        )
+                                    }
+                                    faqResults.forEachIndexed { index, faq ->
+                                        if (index > 0 || faqScreenFound) {
+                                            OgnelissDivider(Modifier.padding(start = 56.dp))
+                                        }
+                                        OgnelissListRow(
+                                            headline = stringResource(faq.question),
+                                            leading = { Icon(OgnelissIcons.Help, contentDescription = null) },
+                                            onClick = { onOpenFaq(faq.id) }
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -190,6 +243,21 @@ fun SettingsHomeScreen(
                                     }
                                 }
                             }
+                        }
+                    }
+                    /*
+                     * «Вопросы и ответы» (1.6.0) — отдельной карточкой внизу:
+                     * это не раздел настроек, а справка по ним, и среди
+                     * разделов она читалась бы ещё одним разделом.
+                     */
+                    item(key = "faq") {
+                        SettingsGroup {
+                            SettingsCategoryCard(
+                                icon = OgnelissIcons.Help,
+                                title = stringResource(R.string.faq_title),
+                                summary = stringResource(R.string.faq_summary),
+                                onClick = { onOpenFaq(null) }
+                            )
                         }
                     }
                     item { Spacer(Modifier.height(Space.xxl)) }

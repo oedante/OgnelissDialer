@@ -4,12 +4,32 @@ import com.ogneliss.dialer.ui.theme.Space
 
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.ui.draw.drawBehind
+import kotlinx.coroutines.launch
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
+import com.ogneliss.dialer.ui.SettingsState
+import com.ogneliss.dialer.ui.theme.FlowUi
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.ogneliss.dialer.BuildConfig
@@ -31,7 +51,7 @@ import com.ogneliss.dialer.ui.settings.*
  * с конкретным объяснением последствий. Выключение подтверждения
  * не требует — возврат к безопасному состоянию не нуждается в защите.
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun SettingsCategoryScreen(
     category: SettingsCategory,
@@ -47,6 +67,10 @@ fun SettingsCategoryScreen(
     snackbar: SnackbarHostState = remember { SnackbarHostState() },
     /** Стрелка «назад»: разбор у ScreenScaffold.showBack. */
     showBack: Boolean = true,
+    /** Настройка, найденная поиском: показать её (1.5.8). */
+    reveal: SettingReveal? = null,
+    /** Просьба исполнена — снять её, чтобы не сработала при следующем входе. */
+    onRevealConsumed: () -> Unit = {},
     onAction: (String) -> Unit
 ) {
     val ctx = LocalContext.current
@@ -58,6 +82,191 @@ fun SettingsCategoryScreen(
     var editingSimLabels by remember { mutableStateOf(false) }
 
     val state by vm.settingsState.collectAsStateWithLifecycle()
+
+    /*
+     * «ДОПОЛНИТЕЛЬНО», ОТМЕТКИ И «ВЕРНУТЬ КАК БЫЛО» (1.5.8, обзор, У7).
+     *
+     * Редкие пункты (SettingEntry.advanced) — в свёрнутой группе внизу:
+     * раздел «Вызовы» был в одиннадцать строк, нужное искали прокруткой.
+     * Меньше двух редких — группы нет, пункт остаётся на виду.
+     *
+     * Изменённое отмечено точкой (ChangedDot): «изменено» — значит,
+     * отличается от SettingsState() — тех же значений, что Prefs отдаёт,
+     * пока ничего не выбрано (их совпадение держит DefaultsTest).
+     * Внизу раздела — «Вернуть как было»: изменённые пункты этого раздела
+     * получают исходные значения; другие разделы, заметки и списки
+     * не трогаются. Язык не отмечается и не сбрасывается: это не вкус
+     * оформления, а выбор человека, и сбросить его заодно с темой — обидно.
+     */
+    val advancedEntries = remember(category) { SettingsRegistry.advancedEntries(category) }
+    val mainEntries = remember(entries, advancedEntries) { entries.filter { it !in advancedEntries } }
+    /*
+     * Найдено поиском — или кнопкой в «Вопросах и ответах» (1.6.0):
+     * раздел прокручивается к пункту и на секунду подсвечивает его.
+     * Лежит под «Дополнительно» — группа открыта сразу: иначе поиск привёл
+     * бы в раздел, где найденного не видно (разбор у SettingReveal).
+     *
+     * До 1.6.0 прокрутка была только к группе «Дополнительно», а пункт
+     * на виду искали глазами среди десятка соседних.
+     */
+    val revealAdvanced = reveal != null && advancedEntries.any { it.id == reveal.entryId }
+    var advancedOpen by rememberSaveable(category) { mutableStateOf(revealAdvanced) }
+    val entryRequesters = remember(entries) { entries.associate { it.id to BringIntoViewRequester() } }
+    var highlightedId by remember { mutableStateOf<String?>(null) }
+    val highlight = remember { Animatable(0f) }
+    val highlightScope = rememberCoroutineScope()
+    LaunchedEffect(reveal) {
+        if (reveal == null) return@LaunchedEffect
+        val id = reveal.entryId
+        val inAdvanced = advancedEntries.any { it.id == id }
+        val wasOpen = advancedOpen
+        if (inAdvanced) advancedOpen = true
+        // Кадр — чтобы строки легли на место; если группа раскрывается
+        // на глазах — ещё и время на раскрытие
+        withFrameNanos { }
+        if (inAdvanced && !wasOpen) kotlinx.coroutines.delay(REVEAL_EXPAND_MS)
+        entryRequesters[id]?.bringIntoView()
+        // Подсветка — своей корутиной: снятая просьба перезапускает этот
+        // эффект, и гаснуть на полпути подсветке незачем
+        onRevealConsumed()
+        highlightScope.launch {
+            highlightedId = id
+            highlight.snapTo(1f)
+            kotlinx.coroutines.delay(REVEAL_HOLD_MS)
+            highlight.animateTo(0f, tween(REVEAL_FADE_MS))
+            highlightedId = null
+        }
+    }
+    val highlightColor = MaterialTheme.colorScheme.primary
+    var confirmReset by remember { mutableStateOf(false) }
+    val defaults = remember { SettingsState() }
+    // Дополнительные действия свайпа: исходно их нет — есть, значит, изменено
+    val rightExtra by vm.swipeRightExtra.collectAsStateWithLifecycle()
+    val leftExtra by vm.swipeLeftExtra.collectAsStateWithLifecycle()
+    val isChanged: (SettingEntry) -> Boolean = { entry ->
+        when (val k = entry.kind) {
+            is SettingKind.Switch -> state.switchValue(k.key) != defaults.switchValue(k.key)
+            is SettingKind.Choice -> k.key !in NOT_RESETTABLE && (
+                vm.choiceValueOf(k.key, state) != vm.choiceValueOf(k.key, defaults) ||
+                    (k.key == "swipe_right" && rightExtra.isNotEmpty()) ||
+                    (k.key == "swipe_left" && leftExtra.isNotEmpty())
+                )
+            else -> false
+        }
+    }
+    val changedEntries = entries.filter(isChanged)
+
+    /*
+     * Пункты раздела подгруппами — одна вёрстка для пунктов на виду
+     * и для «Дополнительно».
+     *
+     * ПОДГРУППЫ ВНУТРИ РАЗДЕЛА.
+     *
+     * Раньше весь раздел шёл одной группой. Когда пунктов стало
+     * семь-восемь о разных функциях, настройки одной функции
+     * терялись среди соседей. Теперь список режется на части
+     * по полю groupRes — подряд идущие пункты с одинаковой
+     * подгруппой идут вместе, под общим заголовком.
+     *
+     * Пункты без подгруппы идут без заголовка — как раньше.
+     */
+    val renderEntries: @Composable (List<SettingEntry>) -> Unit = { list ->
+        val chunks = buildList<Pair<Int?, List<SettingEntry>>> {
+            list.forEach { entry ->
+                val last = lastOrNull()
+                if (last != null && last.first == entry.groupRes) {
+                    this[lastIndex] = last.first to (last.second + entry)
+                } else {
+                    add(entry.groupRes to listOf(entry))
+                }
+            }
+        }
+
+        chunks.forEach { (groupRes, chunkEntries) ->
+            // Зазор между подгруппами — только отступ над заголовком
+            // в SettingsGroup (12 dp). Был ещё и этот, 16 dp: вместе 36 —
+            // группы разъезжались, и раздел занимал полтора экрана
+            SettingsGroup(title = groupRes?.let { stringResource(it) }) {
+            chunkEntries.forEachIndexed { entryIndex, entry ->
+                val title = stringResource(entry.titleRes)
+                val summary = entry.summaryRes?.let { res ->
+                    /*
+                     * У пункта «Версия» подпись с подстановкой.
+                     *
+                     * Номер версии живёт в BuildConfig, а реестр настроек —
+                     * это список без кода: подставить значение он не может,
+                     * поэтому единственное исключение сделано здесь.
+                     */
+                    if (entry.id == "version") {
+                        stringResource(
+                            res,
+                            "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
+                        )
+                    } else {
+                        stringResource(res)
+                    }
+                }
+
+                // Строка-цель поиска: к ней прокручивают и её подсвечивают
+                val lit = entry.id == highlightedId
+                Box(
+                    Modifier
+                        .bringIntoViewRequester(entryRequesters.getValue(entry.id))
+                        .drawBehind {
+                            if (lit) drawRect(highlightColor.copy(alpha = REVEAL_HIGHLIGHT_ALPHA * highlight.value))
+                        }
+                ) {
+                when (val kind = entry.kind) {
+                    is SettingKind.Switch -> {
+                        val checked = state.switchValue(kind.key)
+                        SettingsSwitchRow(
+                            title = title,
+                            summary = summary,
+                            checked = checked,
+                            dangerous = entry.dangerous,
+                            changed = isChanged(entry)
+                        ) { newValue ->
+                            // Подтверждение только при включении опасной настройки
+                            if (newValue && entry.dangerous) pendingDangerous = entry
+                            else vm.setSwitch(kind.key, newValue)
+                        }
+                    }
+
+                    is SettingKind.Choice -> SettingsChoiceRow(
+                        title = title,
+                        currentValue = vm.choiceLabel(ctx, kind.key),
+                        changed = isChanged(entry),
+                        onClick = { openChoice = kind.key }
+                    )
+
+                    is SettingKind.Action -> SettingsActionRow(
+                        title = title,
+                        summary = summary,
+                        dangerous = entry.dangerous,
+                        onClick = {
+                            when {
+                                entry.dangerous -> pendingDangerous = entry
+                                kind.key == "sim_labels" -> editingSimLabels = true
+                                else -> onAction(kind.key)
+                            }
+                        }
+                    )
+
+                    is SettingKind.SystemLink -> SettingsActionRow(
+                        title = title,
+                        summary = summary ?: stringResource(R.string.settings_system_settings),
+                        onClick = { onAction("system:${kind.key}") }
+                    )
+                }
+                } // Box — цель поиска
+                if (entryIndex < chunkEntries.lastIndex) {
+                    // От начала текста, как в списках (1.5.3)
+                    OgnelissDivider(Modifier.padding(start = Space.l))
+                }
+            }
+            }
+        }
+    }
 
     ScreenScaffold(
         // Как настройки Ogneliss Mail: серо-голубая страница, группы — карточками (1.5.6)
@@ -86,99 +295,33 @@ fun SettingsCategoryScreen(
         ) {
             Spacer(Modifier.height(Space.s))
 
-            /*
-             * ПОДГРУППЫ ВНУТРИ РАЗДЕЛА.
-             *
-             * Раньше весь раздел шёл одной группой. Когда пунктов стало
-             * семь-восемь о разных функциях, настройки одной функции
-             * терялись среди соседей. Теперь список режется на части
-             * по полю groupRes — подряд идущие пункты с одинаковой
-             * подгруппой идут вместе, под общим заголовком.
-             *
-             * Пункты без подгруппы идут без заголовка — как раньше.
-             */
-            val chunks = buildList<Pair<Int?, List<SettingEntry>>> {
-                entries.forEach { entry ->
-                    val last = lastOrNull()
-                    if (last != null && last.first == entry.groupRes) {
-                        this[lastIndex] = last.first to (last.second + entry)
-                    } else {
-                        add(entry.groupRes to listOf(entry))
+            renderEntries(mainEntries)
+
+            if (advancedEntries.isNotEmpty()) {
+                SettingsGroup(title = null) {
+                    AdvancedToggle(
+                        open = advancedOpen,
+                        count = advancedEntries.size,
+                        // Свёрнуто, а внутри что-то изменено — точка и здесь
+                        changedInside = !advancedOpen && advancedEntries.any(isChanged),
+                        onToggle = { advancedOpen = !advancedOpen }
+                    )
+                }
+                AnimatedVisibility(visible = advancedOpen) {
+                    Column {
+                        renderEntries(advancedEntries)
                     }
                 }
             }
 
-            chunks.forEachIndexed { chunkIndex, (groupRes, chunkEntries) ->
-            // Зазор между подгруппами — только отступ над заголовком
-            // в SettingsGroup (12 dp). Был ещё и этот, 16 dp: вместе 36 —
-            // группы разъезжались, и раздел занимал полтора экрана
-            SettingsGroup(title = groupRes?.let { stringResource(it) }) {
-            chunkEntries.forEachIndexed { entryIndex, entry ->
-                val title = stringResource(entry.titleRes)
-                val summary = entry.summaryRes?.let { res ->
-                    /*
-                     * У пункта «Версия» подпись с подстановкой.
-                     *
-                     * Номер версии живёт в BuildConfig, а реестр настроек —
-                     * это список без кода: подставить значение он не может,
-                     * поэтому единственное исключение сделано здесь.
-                     */
-                    if (entry.id == "version") {
-                        stringResource(
-                            res,
-                            "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
-                        )
-                    } else {
-                        stringResource(res)
-                    }
-                }
-
-                when (val kind = entry.kind) {
-                    is SettingKind.Switch -> {
-                        val checked = state.switchValue(kind.key)
-                        SettingsSwitchRow(
-                            title = title,
-                            summary = summary,
-                            checked = checked,
-                            dangerous = entry.dangerous
-                        ) { newValue ->
-                            // Подтверждение только при включении опасной настройки
-                            if (newValue && entry.dangerous) pendingDangerous = entry
-                            else vm.setSwitch(kind.key, newValue)
-                        }
-                    }
-
-                    is SettingKind.Choice -> SettingsChoiceRow(
-                        title = title,
-                        currentValue = vm.choiceLabel(ctx, kind.key),
-                        onClick = { openChoice = kind.key }
-                    )
-
-                    is SettingKind.Action -> SettingsActionRow(
-                        title = title,
-                        summary = summary,
-                        dangerous = entry.dangerous,
-                        onClick = {
-                            when {
-                                entry.dangerous -> pendingDangerous = entry
-                                kind.key == "sim_labels" -> editingSimLabels = true
-                                else -> onAction(kind.key)
-                            }
-                        }
-                    )
-
-                    is SettingKind.SystemLink -> SettingsActionRow(
-                        title = title,
-                        summary = summary ?: stringResource(R.string.settings_system_settings),
-                        onClick = { onAction("system:${kind.key}") }
+            if (changedEntries.isNotEmpty()) {
+                SettingsGroup(title = null) {
+                    SettingsActionRow(
+                        title = stringResource(R.string.settings_reset_section),
+                        summary = stringResource(R.string.settings_reset_section_text, changedEntries.size),
+                        onClick = { confirmReset = true }
                     )
                 }
-                if (entryIndex < chunkEntries.lastIndex) {
-                    // От начала текста, как в списках (1.5.3)
-                    OgnelissDivider(Modifier.padding(start = Space.l))
-                }
-            }
-            }
             }
             Spacer(Modifier.height(Space.xxl))
         }
@@ -197,6 +340,43 @@ fun SettingsCategoryScreen(
                 }
             },
             onDismiss = { pendingDangerous = null }
+        )
+    }
+
+    // ── «Вернуть как было» — только изменённые пункты этого раздела ────────
+    if (confirmReset) {
+        OgnelissDialog(
+            onDismissRequest = { confirmReset = false },
+            title = stringResource(R.string.settings_reset_section),
+            content = {
+                Text(
+                    stringResource(
+                        R.string.settings_reset_section_confirm,
+                        stringResource(category.titleRes),
+                        changedEntries.size
+                    )
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    changedEntries.forEach { entry ->
+                        when (val k = entry.kind) {
+                            is SettingKind.Switch -> vm.setSwitch(k.key, defaults.switchValue(k.key))
+                            // Вместе с дополнительными действиями свайпа
+                            is SettingKind.Choice -> vm.resetChoice(k.key)
+                            else -> Unit
+                        }
+                    }
+                    confirmReset = false
+                }) {
+                    Text(stringResource(R.string.settings_reset_section_action))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmReset = false }) {
+                    Text(stringResource(R.string.nav_cancel))
+                }
+            }
         )
     }
 
@@ -230,4 +410,79 @@ private fun dangerExplanationRes(entryId: String): Int = when (entryId) {
     "reset" -> R.string.confirm_reset
     "external_lookup" -> R.string.confirm_external_lookup
     else -> R.string.confirm_title
+}
+
+/** Варианты, которые «Вернуть как было» не трогает: разбор у advancedEntries. */
+private val NOT_RESETTABLE = setOf("language")
+
+/**
+ * ПОКАЗАТЬ НАЙДЕННОЕ ПОИСКОМ (1.5.8).
+ *
+ * Поиск по настройкам открывает раздел найденной. С «Дополнительно»
+ * этого стало мало: редкий пункт лежит в свёрнутой группе внизу, и поиск
+ * приводил туда, где найденного не видно. Просьба говорит разделу, что
+ * показать: он раскрывает группу и прокручивает к ней.
+ *
+ * Класс, а не строка: каждая просьба — новый объект (сравнение по
+ * ссылке), и та же настройка, найденная второй раз, — снова просьба,
+ * даже если группу успели свернуть.
+ */
+@Stable
+class SettingReveal(val entryId: String)
+
+/** Сколько ждать раскрытия «Дополнительно», прежде чем прокручивать к нему. */
+private const val REVEAL_EXPAND_MS = 320L
+
+/**
+ * Подсветка найденного пункта (1.6.0): держится чуть больше полсекунды
+ * и гаснет за девятьсот миллисекунд — хватает, чтобы глаз нашёл строку,
+ * и не мешает сразу ею пользоваться. Цвет — primary, 16 %: заметно
+ * на белой карточке и на тёмной, текст читается.
+ */
+private const val REVEAL_HOLD_MS = 600L
+private const val REVEAL_FADE_MS = 900
+private const val REVEAL_HIGHLIGHT_ALPHA = 0.16f
+
+/**
+ * Строка «Дополнительно»: раскрывает и сворачивает редкие пункты раздела
+ * (1.5.8, обзор интерфейса, У7). Состояние — для TalkBack словами
+ * «развёрнуто» / «свёрнуто».
+ */
+@Composable
+private fun AdvancedToggle(
+    open: Boolean,
+    count: Int,
+    changedInside: Boolean,
+    onToggle: () -> Unit
+) {
+    val stateText = stringResource(if (open) R.string.a11y_expanded else R.string.a11y_collapsed)
+    ListItem(
+        headlineContent = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.settings_advanced))
+                if (changedInside) ChangedDot()
+            }
+        },
+        supportingContent = {
+            Text(
+                pluralStringResource(R.plurals.settings_advanced_count, count, count),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        },
+        trailingContent = {
+            Icon(
+                if (open) OgnelissIcons.ExpandLess else OgnelissIcons.ExpandMore,
+                contentDescription = null
+            )
+        },
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+        modifier = Modifier
+            .heightIn(min = FlowUi.rowHeight)
+            .clickable(onClick = onToggle)
+            .semantics(mergeDescendants = true) {
+                role = Role.Button
+                stateDescription = stateText
+            }
+    )
 }

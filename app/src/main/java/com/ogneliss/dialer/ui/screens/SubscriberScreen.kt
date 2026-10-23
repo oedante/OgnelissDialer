@@ -8,6 +8,10 @@ import com.ogneliss.dialer.data.CallLogDateGroup
 import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.draw.drawWithContent
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.components.DeleteContactDialog
@@ -72,6 +76,9 @@ import com.ogneliss.dialer.data.SpamMarkType
 import com.ogneliss.dialer.ui.components.OgnelissPanel
 import com.ogneliss.dialer.ui.components.QuickAction
 import com.ogneliss.dialer.ui.components.rememberActionHaptics
+import com.ogneliss.dialer.ui.components.rememberTouchAnchor
+import com.ogneliss.dialer.ui.components.trackTouch
+import com.ogneliss.dialer.ui.components.blurBehindCards
 import com.ogneliss.dialer.R
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
@@ -646,6 +653,15 @@ fun SubscriberScreen(
      */
     val haptics = rememberActionHaptics()
 
+    /*
+     * Карточки действий с номером — по долгому нажатию на строку номера
+     * (1.5.8, обзор интерфейса, У1). Место нажатия — для стопки карточек,
+     * как в журнале и контактах.
+     */
+    val touchAnchor = rememberTouchAnchor()
+    var numberCards by remember { mutableStateOf<NumberCardsTarget?>(null) }
+    var numberCardsAnchor by remember { mutableStateOf<Float?>(null) }
+
     // Блокировка — из меню «Ещё» (1.3.5); логика прежней кнопки «Блок».
 // На уровне функции, а не в содержимом экрана: меню вызывается из верхней
 // панели (topBar) — соседнего блока, откуда локальные переменные
@@ -787,17 +803,37 @@ fun SubscriberScreen(
      * Строку состояния больше не трогаем: наше окно не заходит под неё
      * (отступы корня приложения), значит, над ней никогда нет фото —
      * светлые значки на светлом фоне просто исчезали.
+     *
+     * ── 1.5.8: фото — до верха экрана (обзор интерфейса, У3) ───────────────
+     * Корень больше не отступает сверху (разбор в RootScreen): обложка
+     * уходит и под строку заголовка, и под строку состояния, как в профиле
+     * Telegram. Значки строки состояния — светлые, пока под ними фото
+     * (LightStatusIconsOnPhoto — тот же приём, что на экране вызова),
+     * и прежние, когда строка заголовка стала непрозрачной. На планшете,
+     * где карточка — правая половина, часы стоят над журналом: там всё
+     * как раньше, фото под строку состояния не уходит (ListDetailHost).
      */
     val density = LocalDensity.current
     var coverHeightPx by remember { mutableIntStateOf(0) }
     var nameBottomInRoot by remember { mutableFloatStateOf(Float.MAX_VALUE) }
     var barBottomInRoot by remember { mutableFloatStateOf(0f) }
 
-    val coverProgress by remember(coverBehindBar) {
+    /*
+     * Фото под строкой состояния — только когда карточка на весь экран
+     * и начинается с самого верха. Над ней может стоять баннер «Сделать
+     * основным» — тогда под часами он, а не фото, и значки должны
+     * остаться тёмными: светлые на светлом баннере пропали бы.
+     * Место карточки меряется, а не угадывается (cardTopInRoot).
+     */
+    var cardTopInRoot by remember { mutableFloatStateOf(0f) }
+    val coverUnderStatusBar = coverBehindBar && showBack && cardTopInRoot < 1f
+    val statusBarPx = if (coverUnderStatusBar) WindowInsets.statusBars.getTop(density) else 0
+    val coverProgress by remember(coverBehindBar, statusBarPx) {
         derivedStateOf {
             if (!coverBehindBar) return@derivedStateOf 1f
             if (cardListState.firstVisibleItemIndex > 0) return@derivedStateOf 1f
-            val barPx = with(density) { 64.dp.toPx() }
+            // Строка заголовка — и строка состояния над ней, если фото под ней
+            val barPx = with(density) { 64.dp.toPx() } + statusBarPx
             val travel = (coverHeightPx - barPx).coerceAtLeast(1f)
             (cardListState.firstVisibleItemScrollOffset / travel).coerceIn(0f, 1f)
         }
@@ -810,6 +846,8 @@ fun SubscriberScreen(
     val showBarTitle = !cardTwoColumns && nameHidden
 
     val barContainer = MaterialTheme.colorScheme.background.copy(alpha = coverProgress)
+    // Светлые значки строки состояния, пока под ними фото (1.5.8)
+    com.ogneliss.dialer.call.LightStatusIconsOnPhoto(coverUnderStatusBar && coverProgress < 0.5f)
     val barIcons = androidx.compose.ui.graphics.lerp(
         Color.White, MaterialTheme.colorScheme.onSurface, coverProgress
     )
@@ -817,7 +855,20 @@ fun SubscriberScreen(
     androidx.compose.runtime.CompositionLocalProvider(
         com.ogneliss.dialer.ui.theme.LocalPageTone provides com.ogneliss.dialer.ui.theme.PageTone.TINTED
     ) {
+        numberCards?.let { target ->
+            NumberActionCards(
+                target = target,
+                vm = vm,
+                anchorY = numberCardsAnchor,
+                onOpenBlockLists = onOpenBlockLists,
+                onDismiss = { numberCards = null }
+            )
+        }
         Scaffold(
+            // Под карточками номера экран размывается (1.5.8)
+            modifier = Modifier
+                .blurBehindCards(numberCards != null)
+                .onGloballyPositioned { coords -> cardTopInRoot = coords.positionInRoot().y },
             // Как настройки Ogneliss Mail: серо-голубая страница, группы — карточками (1.5.6)
             containerColor = com.ogneliss.dialer.ui.theme.OgnelissTheme.pageColor(com.ogneliss.dialer.ui.theme.PageTone.TINTED),
             // В edge-to-edge содержимое иначе уезжает под системные панели
@@ -986,7 +1037,7 @@ fun SubscriberScreen(
              * ЧТО БЫЛО НЕ ТАК
              * ══════════════════════════════════════════════════════════════════
              * Карточка — одна колонка на всю ширину. В ландшафте это 900 dp:
-             * строка «8 (967) 666-05-12» с тремя кнопками растягивалась
+             * строка «8 (967) 111-22-33» с тремя кнопками растягивалась
              * от края до края, между номером и кнопками оставалось полэкрана
              * пустоты, а глазу приходилось возвращаться через всю ширину
              * к следующей строке.
@@ -1250,10 +1301,28 @@ fun SubscriberScreen(
                              * скруглены на 28 dp, как у панелей, — страница
                              * начинается с чистого края.
                              */
-                            Box(
+                            /*
+                             * НИЗ ОБЛОЖКИ РАСТВОРЯЕТСЯ В СТРАНИЦЕ (1.5.7).
+                             *
+                             * Автор, 22.10: «границы портретов на экране звонка
+                             * и в карточке слишком резкие и выбиваются из общего
+                             * оформления». Было (1.3.4–1.5.6): тёмный низ фото
+                             * и скруглённые на 24 dp нижние углы — чёткая
+                             * граница посреди мягкой страницы.
+                             *
+                             * Стало (набросок «растворение 64 dp, имя на 44 dp»):
+                             * без скругления, нижние 64 dp фото вместе
+                             * с затемнением плавно уходят в цвет страницы.
+                             * Затемнение — сильнее всего под именем, а не у края:
+                             * белое имя читается, а растворяется уже затемнённое.
+                             * Имя — поверх маски, его она не гасит.
+                             *
+                             * На плоской обложке (лёжа, 3 : 1) полоса растворения
+                             * короче — 28 % высоты, иначе ушла бы половина фото.
+                             */
+                            BoxWithConstraints(
                                 Modifier
                                     .fillMaxWidth()
-                                    .clip(OgnelissShapeTokens.coverBottom)
                                     /*
                                      * Лёжа в две колонки обложка — 3 : 1, а не 1,5 : 1.
                                      * Колонка шириной 360 dp давала обложку в 240 dp
@@ -1271,34 +1340,62 @@ fun SubscriberScreen(
                                     )
                                     .onGloballyPositioned { coverHeightPx = it.size.height }
                             ) {
-                                AsyncImage(
-                                    model = uri,
-                                    contentDescription = stringResource(
-                                        R.string.a11y_contact_photo, title
-                                    ),
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier.fillMaxSize()
-                                )
-                                Box(
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .fillMaxHeight(0.35f)
-                                        .background(
-                                            Brush.verticalGradient(
-                                                listOf(Color.Black.copy(alpha = 0.35f), Color.Transparent)
-                                            )
-                                        )
-                                )
+                                val fade = minOf(COVER_FADE, maxHeight * COVER_FADE_MAX_SHARE)
+                                // Доля высоты, где начинается растворение, — там же
+                                // затемнение набирает полную силу
+                                val fadeStart = if (maxHeight > 0.dp) {
+                                    ((maxHeight - fade) / maxHeight).coerceIn(0.5f, 1f)
+                                } else {
+                                    1f
+                                }
                                 Box(
                                     Modifier
                                         .fillMaxSize()
-                                        .background(
-                                            Brush.verticalGradient(
-                                                0.45f to Color.Transparent,
-                                                1f to Color.Black.copy(alpha = 0.65f)
+                                        .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+                                        .drawWithContent {
+                                            drawContent()
+                                            val fadePx = fade.toPx()
+                                            drawRect(
+                                                Brush.verticalGradient(
+                                                    0f to Color.Black,
+                                                    1f to Color.Transparent,
+                                                    startY = size.height - fadePx,
+                                                    endY = size.height
+                                                ),
+                                                blendMode = BlendMode.DstIn
                                             )
-                                        )
-                                )
+                                        }
+                                ) {
+                                    AsyncImage(
+                                        model = uri,
+                                        contentDescription = stringResource(
+                                            R.string.a11y_contact_photo, title
+                                        ),
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                    Box(
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .fillMaxHeight(0.35f)
+                                            .background(
+                                                Brush.verticalGradient(
+                                                    listOf(Color.Black.copy(alpha = 0.35f), Color.Transparent)
+                                                )
+                                            )
+                                    )
+                                    Box(
+                                        Modifier
+                                            .fillMaxSize()
+                                            .background(
+                                                Brush.verticalGradient(
+                                                    0.4f to Color.Transparent,
+                                                    fadeStart to Color.Black.copy(alpha = COVER_SHADE),
+                                                    1f to Color.Black.copy(alpha = COVER_SHADE)
+                                                )
+                                            )
+                                    )
+                                }
                                 /*
                                  * ИМЯ — НА ОБЛОЖКЕ, ВНИЗУ (1.2.5).
                                  *
@@ -1307,11 +1404,8 @@ fun SubscriberScreen(
                                  * пустым местом. Между лицом и именем выходил
                                  * большой зазор (с телефона, 30.09.2026).
                                  *
-                                 * Теперь имя лежит на этой растворённой части:
-                                 * там уже почти цвет фона, поэтому текст обычного
-                                 * цвета читается в обеих темах — не белый поверх
-                                 * фото, как было в первой версии, а как остальной
-                                 * текст карточки.
+                                 * 1.5.7: над полосой растворения — на 44 dp от края
+                                 * (на плоской обложке — на ту же долю полосы).
                                  */
                                 Text(
                                     title,
@@ -1328,12 +1422,10 @@ fun SubscriberScreen(
                                     overflow = TextOverflow.Ellipsis,
                                     modifier = Modifier
                                         .align(Alignment.BottomStart)
-                                        // 16 dp от нижнего края: с 4 dp имя лежало
-                                        // на самой границе обложки (с телефона, 1.3.0)
                                         .padding(
                                             start = FlowUi.screenPadding * 2,
                                             end = FlowUi.screenPadding * 2,
-                                            bottom = Space.l
+                                            bottom = fade * COVER_NAME_SHARE
                                         )
                                         .onGloballyPositioned { coords ->
                                             nameBottomInRoot = coords.positionInRoot().y + coords.size.height
@@ -1646,6 +1738,8 @@ fun SubscriberScreen(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
+                    // Место долгого нажатия на номер — для карточек (1.5.8)
+                    .trackTouch(touchAnchor)
                     .then(
                         if (landscape) {
                             Modifier.widthIn(max = CARD_CONTENT_MAX_WIDTH)
@@ -1721,6 +1815,14 @@ fun SubscriberScreen(
                  * Номер часто нужен не для звонка: продиктовать, вставить
                  * в заявку, отправить коллеге. Без кнопки его переписывают
                  * с экрана, и там ошибаются.
+                 *
+                 * ── 1.5.8: строка — кнопка вызова ──────────────────────────
+                 * Три значка у каждого номера и те же действия в нижней
+                 * панели — шесть значков на два номера. Теперь касание
+                 * строки звонит на этот номер (как в системных «Контактах»),
+                 * справа — только SMS, а копировать, поделиться, отметить
+                 * и заблокировать — долгим нажатием, карточками
+                 * (NumberActionCards). Разбор — у NumberRow.
                  */
                     /*
                      * ЛИНИИ МЕЖДУ СТРОКАМИ.
@@ -1741,68 +1843,45 @@ fun SubscriberScreen(
                     group.numbers.forEachIndexed { index, number ->
                         if (index > 0) OgnelissDivider()
 
-                        Row(
-                            Modifier
-                                .fillMaxWidth()
-                                .heightIn(min = NUMBER_ROW_HEIGHT)
-                                .padding(vertical = Space.xxs),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            /*
-                             * ТИП НОМЕРА ПОД САМИМ НОМЕРОМ.
-                             *
-                             * ══════════════════════════════════════════════════
-                             * ЗАЧЕМ
-                             * ══════════════════════════════════════════════════
-                             * У контакта с тремя номерами все три выглядели
-                             * одинаково, и выбирать приходилось по памяти:
-                             * какой из них рабочий, а какой домашний.
-                             * Подпись есть в книге — мы её просто не показывали.
-                             *
-                             * Берётся из книги как есть: провайдер сам даёт
-                             * её на языке системы для стандартных типов
-                             * («Мобильный», «Рабочий») и отдаёт своё название,
-                             * если человек завёл собственное.
-                             *
-                             * Второй строкой и мелко: при выборе номера
-                             * читают цифры, а тип — уточнение.
-                             */
-                            val label = cardContact?.numbers
-                                ?.firstOrNull { it.value == number || it.e164 == number }
-                                ?.label
-                                ?.takeIf { it.isNotBlank() }
+                        /*
+                         * ТИП НОМЕРА ПОД САМИМ НОМЕРОМ.
+                         *
+                         * ══════════════════════════════════════════════════
+                         * ЗАЧЕМ
+                         * ══════════════════════════════════════════════════
+                         * У контакта с тремя номерами все три выглядели
+                         * одинаково, и выбирать приходилось по памяти:
+                         * какой из них рабочий, а какой домашний.
+                         * Подпись есть в книге — мы её просто не показывали.
+                         *
+                         * Берётся из книги как есть: провайдер сам даёт
+                         * её на языке системы для стандартных типов
+                         * («Мобильный», «Рабочий») и отдаёт своё название,
+                         * если человек завёл собственное.
+                         *
+                         * Второй строкой и мелко: при выборе номера
+                         * читают цифры, а тип — уточнение.
+                         */
+                        val label = cardContact?.numbers
+                            ?.firstOrNull { it.value == number || it.e164 == number }
+                            ?.label
+                            ?.takeIf { it.isNotBlank() }
 
-                            Column(Modifier.weight(1f)) {
-                                Text(
-                                    PhoneFormatter.format(number),
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-
-                                label?.let {
-                                    Text(
-                                        it,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
+                        /*
+                         * СТРОКА НОМЕРА — САМА КНОПКА ВЫЗОВА (1.5.8, обзор, У1).
+                         * Было: три значка справа (вызов, SMS, копировать),
+                         * сама строка на касание не отвечала. Разбор — NumberRow.
+                         */
+                        NumberRow(
+                            number = number,
+                            label = label,
+                            onCall = { vm.call(number) },
+                            onSms = { vm.openSms(number) },
+                            onLongPress = {
+                                numberCardsAnchor = touchAnchor.screenY
+                                numberCards = NumberCardsTarget(number, label)
                             }
-
-                            NumberAction(OgnelissIcons.Call, R.string.action_call, tint = CallGreen) {
-                                vm.call(number)
-                            }
-                            NumberAction(
-                                OgnelissIcons.Message,
-                                R.string.action_sms
-                            ) {
-                                vm.openSms(number)
-                            }
-                            NumberAction(
-                                OgnelissIcons.ContentCopy,
-                                R.string.action_copy
-                            ) {
-                                vm.copyNumber(number)
-                            }
-                        }
+                        )
                     }
                     }
                 }
@@ -2418,3 +2497,12 @@ fun SubscriberScreen(
         )
     }
 }
+
+/** Обложка карточки (1.5.7): высота полосы, где фото растворяется в странице. */
+private val COVER_FADE = 64.dp
+/** На плоской обложке полоса не больше этой доли высоты. */
+private const val COVER_FADE_MAX_SHARE = 0.28f
+/** Низ имени — на этой доле полосы растворения от края: 44 из 64 dp. */
+private const val COVER_NAME_SHARE = 0.69f
+/** Затемнение под именем. */
+private const val COVER_SHADE = 0.6f

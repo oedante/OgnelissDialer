@@ -28,47 +28,47 @@ class PinnedControllerTest {
         subscriptionLabel = null, subscriptionId = null
     )
 
-    private val love = contact(1, "Любимая", "+79105214092", "+79676660512", photo = "content://photo/1")
+    private val love = contact(1, "Любимая", "+79104445566", "+79671112233", photo = "content://photo/1")
 
     @Test
     fun `перевод — номер из книги становится контактом`() {
-        val migrated = PinnedController.migrate(listOf("+79105214092", "+79001112233"), listOf(love))!!
+        val migrated = PinnedController.migrate(listOf("+79104445566", "+79001112233"), listOf(love))!!
         assertEquals(lk, PinnedContacts.parse(migrated[0]).lookupKey)
         assertEquals("+79001112233", migrated[1])
     }
 
     @Test
     fun `перевод — менять нечего — null, в настройки не пишем`() {
-        val already = listOf(PinnedContacts.contactKey(lk, "+79105214092"))
+        val already = listOf(PinnedContacts.contactKey(lk, "+79104445566"))
         assertNull(PinnedController.migrate(already, listOf(love)))
         assertNull(PinnedController.migrate(emptyList(), listOf(love)))
-        assertNull(PinnedController.migrate(listOf("+79105214092"), emptyList()))
+        assertNull(PinnedController.migrate(listOf("+79104445566"), emptyList()))
     }
 
     @Test
     fun `строка экрана — имя и фото из книги, номер последнего звонка с другого номера`() {
-        val pins = listOf(PinnedContacts.contactKey(lk, "+79105214092"))
-        val log = listOf(group("+79676660512", contactId = 1))
+        val pins = listOf(PinnedContacts.contactKey(lk, "+79104445566"))
+        val log = listOf(group("+79671112233", contactId = 1))
         val entry = PinnedController.entries(pins, listOf(love), log).single()
         assertEquals("Любимая", entry.displayName)
         assertEquals("content://photo/1", entry.photoUri)
-        assertEquals("+79676660512", entry.e164)
+        assertEquals("+79671112233", entry.e164)
         assertEquals(pins[0], entry.key)
     }
 
     @Test
     fun `строка экрана — журнал пуст — первый номер контакта`() {
-        val pins = listOf(PinnedContacts.contactKey(lk, "+79105214092"))
+        val pins = listOf(PinnedContacts.contactKey(lk, "+79104445566"))
         val entry = PinnedController.entries(pins, listOf(love), emptyList()).single()
-        assertEquals("+79105214092", entry.e164)
+        assertEquals("+79104445566", entry.e164)
         assertEquals("Любимая", entry.displayName)
     }
 
     @Test
     fun `строка экрана — контакт удалён — держится за запасной номер`() {
-        val pins = listOf(PinnedContacts.contactKey(lk, "+79105214092"))
+        val pins = listOf(PinnedContacts.contactKey(lk, "+79104445566"))
         val entry = PinnedController.entries(pins, emptyList(), emptyList()).single()
-        assertEquals("+79105214092", entry.e164)
+        assertEquals("+79104445566", entry.e164)
         assertNull(entry.displayName)
     }
 
@@ -76,14 +76,14 @@ class PinnedControllerTest {
 
     @Test
     fun `удаление — снимается закрепление по ключу контакта`() {
-        val pins = listOf(PinnedContacts.contactKey(lk, "+79105214092"), "+79001112233")
+        val pins = listOf(PinnedContacts.contactKey(lk, "+79104445566"), "+79001112233")
         assertEquals(listOf("+79001112233"), PinnedController.withoutContact(pins, love))
         org.junit.Assert.assertTrue(PinnedController.isContactPinned(pins, love))
     }
 
     @Test
     fun `удаление — снимаются и старые закрепления по любому номеру контакта`() {
-        val pins = listOf("+79676660512", "+79001112233", "+79105214092")
+        val pins = listOf("+79671112233", "+79001112233", "+79104445566")
         assertEquals(listOf("+79001112233"), PinnedController.withoutContact(pins, love))
     }
 

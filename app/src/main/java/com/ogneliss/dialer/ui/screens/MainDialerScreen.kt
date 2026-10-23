@@ -109,8 +109,13 @@ fun MainDialerScreen(
      * её закрыли.
      */
     openDialpad: Boolean = false,
+    /** Переключатель «журнал | контакты» на панели (1.6.0). */
     onOpenContacts: () -> Unit,
+    /** Список разделов — долгим нажатием на переключатель (1.6.0). */
+    onOpenSection: (MainSection) -> Unit = {},
     onOpenSettings: () -> Unit,
+    /** «Вопросы и ответы» из меню (1.6.0). */
+    onOpenHelp: () -> Unit = {},
     /** Экран заметок: из меню и свайпом с контактов. */
     /** Выбор того, кто «звонит»: тот же список контактов. */
     onOpenFakeCallPicker: () -> Unit,
@@ -142,6 +147,18 @@ fun MainDialerScreen(
 
     // ── Состояние экрана ───────────────────────────────────────────────────
     var dialpadExpanded by rememberSaveable { mutableStateOf(false) }
+
+    /*
+     * ПОИСК БУКВАМИ В ПАНЕЛИ (1.6.0, вариант «Б»): разбор в PanelSearchRow.
+     * Запрос — тот же, что у клавиатуры набора (state.query): цифры ищут
+     * по T9 и номеру, буквы — по тексту имени и заметки
+     * (ContactSearch.searchText). Закрытие очищает запрос.
+     */
+    var searching by rememberSaveable { mutableStateOf(false) }
+    val closeSearch: () -> Unit = {
+        searching = false
+        vm.onQueryChange("")
+    }
     LaunchedEffect(settings.dialpadOpenAtStart) {
         if (settings.dialpadOpenAtStart) dialpadExpanded = true
     }
@@ -176,10 +193,17 @@ fun MainDialerScreen(
     val openAtStart by rememberUpdatedState(settings.dialpadOpenAtStart)
     DisposableEffect(lifecycleOwner) {
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
-            if (event == androidx.lifecycle.Lifecycle.Event.ON_START &&
-                vm.state.value.query.isEmpty()
-            ) {
-                dialpadExpanded = openAtStart
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_START) {
+                /*
+                 * Клавиатуру просили из контактов (1.6.0): там та же панель,
+                 * и её кнопка клавиатуры ведёт сюда. Разбор у requestDialpad.
+                 */
+                if (vm.takeDialpadRequest()) {
+                    searching = false
+                    dialpadExpanded = true
+                } else if (vm.state.value.query.isEmpty()) {
+                    dialpadExpanded = openAtStart
+                }
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -244,6 +268,12 @@ fun MainDialerScreen(
     /** Выбрано время псевдозвонка: показывается окно выбора даты и времени. */
     var fakeCallAt by remember { mutableStateOf<Long?>(null) }
     var selectedGroup by remember { mutableStateOf<CallLogGroup?>(null) }
+    /*
+     * Где нажали запись — туда встаёт карточка записи (1.5.7, меню
+     * долгого нажатия карточками, как в Ogneliss Mail).
+     */
+    var selectedAnchorY by remember { mutableStateOf<Float?>(null) }
+    val touchAnchor = rememberTouchAnchor()
     var pickerFor by remember { mutableStateOf<CallLogGroup?>(null) }
     var pickerOptions by remember { mutableStateOf<List<NumberOption>>(emptyList()) }
     var assigningSpeedDial by remember { mutableStateOf<Int?>(null) }
@@ -324,6 +354,9 @@ fun MainDialerScreen(
     BackHandler(enabled = canScrollUp) {
         scrollScope.launch { listState.animateScrollToItem(0) }
     }
+    // Поиск закрывается «Назад» раньше, чем список едет наверх: объявлен
+    // позже — значит, спрашивается первым (1.6.0)
+    BackHandler(enabled = searching, onBack = closeSearch)
 
 
     /*
@@ -338,10 +371,56 @@ fun MainDialerScreen(
     }
 
 
-    val list = when {
+    val baseList = when {
         state.query.isNotEmpty() -> state.filteredLog
         activeFilter.isActive -> filteredByChips
         else -> state.callLog
+    }
+    /*
+     * Записи, удалённые с «Отменить» (1.5.7), пропадают сразу, а из журнала
+     * уходят, когда сообщение погаснет: разбор в deleteGroupsWithUndo.
+     */
+    val pendingDeletion by vm.pendingDeletion.collectAsStateWithLifecycle()
+    val list = remember(baseList, pendingDeletion) {
+        if (pendingDeletion.isEmpty()) baseList else baseList.filterNot { it.key in pendingDeletion }
+    }
+
+    /*
+     * Напоминания на сегодня — для полосы над журналом (1.6.0): все
+     * до полуночи, ближайшее первым. Сработавшие уже убраны (reminders.active).
+     */
+    val todayReminders = remember(reminders) {
+        val endOfToday = java.util.Calendar.getInstance().apply {
+            add(java.util.Calendar.DAY_OF_YEAR, 1)
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }.timeInMillis
+        reminders.filter { it.atMillis < endOfToday }.sortedBy { it.atMillis }
+    }
+
+    /*
+     * НОВЫЕ ВЫЗОВЫ, ПОКА ЛИСТАЛИ (1.5.8, обзор интерфейса, У4).
+     *
+     * Пока список в самом начале, всё, что в нём есть, считается увиденным:
+     * запоминается время самого свежего вызова. Ушли вниз — запоминание
+     * останавливается, и всё, что пришло позже, — «новое»: его число
+     * показывает кнопка «Наверх».
+     *
+     * По времени, а не по положению строк: повторный звонок того же
+     * человека поднимает его запись наверх, а не добавляет новую — по
+     * положению его бы не заметили. При поиске не считаем: там список
+     * не журнал, а выдача.
+     */
+    val listAtTop by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
+    var seenNewest by remember { mutableLongStateOf(0L) }
+    LaunchedEffect(listAtTop, list) {
+        if (listAtTop || seenNewest == 0L) seenNewest = list.maxOfOrNull { it.lastDate } ?: 0L
+    }
+    val newCalls = remember(list, seenNewest, listAtTop, state.query) {
+        if (listAtTop || state.query.isNotEmpty() || seenNewest == 0L) 0
+        else list.count { it.lastDate > seenNewest }
     }
 
 
@@ -437,13 +516,14 @@ fun MainDialerScreen(
      * другим сразу, и ветка «фильтра нет» отдаёт полный список,
      * не дожидаясь потока.
      */
-    val rows = remember(allRows, list, activeFilter, state.query) {
-        if (!activeFilter.isActive && state.query.isEmpty()) {
+    val rows = remember(allRows, list, activeFilter, state.query, pendingDeletion) {
+        val shown = if (!activeFilter.isActive && state.query.isEmpty()) {
             allRows
         } else {
             val visible = list.mapTo(HashSet()) { it.key }
             allRows.filter { it.key in visible }
         }
+        if (pendingDeletion.isEmpty()) shown else shown.filterNot { it.key in pendingDeletion }
     }
 
     /*
@@ -1166,6 +1246,8 @@ fun MainDialerScreen(
              * по нему. Открытие — нет: там очищать нечего.
              */
             onToggleExpanded = {
+                // Клавиатура набора и поле поиска не открыты вместе (1.6.0)
+                if (searching) closeSearch()
                 if (dialpadExpanded && state.query.isNotEmpty()) vm.onQueryChange("")
                 dialpadExpanded = !dialpadExpanded
             },
@@ -1191,16 +1273,28 @@ fun MainDialerScreen(
             // как будто его набрали руками — дальше работают
             // и подсказка с заметкой, и предупреждение перед вызовом
             onPaste = { vm.onQueryChange(it) },
-            onContacts = onOpenContacts,
+            // Переключатель «журнал | контакты» (1.6.0): разбор в ListSwitchButton
+            onSwitchList = onOpenContacts,
+            onOpenSection = onOpenSection,
             onFilters = { filtersOpen = true },
             onVoice = { voiceLauncher.launch(VoiceInput.createIntent(context, voicePrompt)) },
             onStartSelection = {
                 if (selection.isActive) selection.clear() else selection.startEmpty()
             },
             selectionActive = selection.isActive,
-            // Напоминания — с панели, а не только из меню:
-            // разбор в ActionRow
-            onReminders = onOpenReminders,
+            /*
+             * «Поиск» — на месте «Напоминаний» (1.6.0, вариант «Б»):
+             * сегодняшние напоминания — полосой над журналом, все — в меню.
+             */
+            onSearch = {
+                dialpadExpanded = false
+                vm.onQueryChange("")
+                searching = true
+            },
+            searching = searching,
+            searchHint = stringResource(R.string.journal_search_hint),
+            onSearchChange = { vm.onQueryChange(it) },
+            onCloseSearch = closeSearch,
             onMenu = { menuOpen = true },
             onSwipeToContacts = if (settings.panelSwipeNav) onOpenContacts else null,
             menuContent = {
@@ -1263,13 +1357,16 @@ fun MainDialerScreen(
                         if (selection.isActive) selection.clear()
                         else selection.startEmpty()
                     },
-                    selectionActive = selection.isActive
+                    selectionActive = selection.isActive,
+                    onHelp = { menuOpen = false; onOpenHelp() }
                 )
             }
         )
     }
 
     Scaffold(
+        // Под карточками долгого нажатия экран размывается (1.5.7)
+        modifier = Modifier.blurBehindCards(selectedGroup != null),
         /*
          * Своего поля сообщений у экрана больше нет: оно одно на всё
          * приложение и живёт в RootScreen. Разбор — там же.
@@ -1295,7 +1392,8 @@ fun MainDialerScreen(
             // Кнопку можно выключить: она видна всем, кто смотрит
             // на экран, а нужна не каждому
             // При клавиатуре сбоку кнопка легла бы поверх неё — прячем
-            if (settings.fakeCallButton && !sideDialpad) SmallFloatingActionButton(
+            // При поиске кнопка висела бы над клавиатурой — прячем (1.6.0)
+            if (settings.fakeCallButton && !sideDialpad && !searching) SmallFloatingActionButton(
                 onClick = { fakeCallOpen = true },
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -1353,6 +1451,16 @@ fun MainDialerScreen(
              * На телефоне в портрете sideDialpad всегда false: панель
              * видна с самого начала, анимации нет.
              */
+            // Лёжа кнопки — полосой справа, и поле поиска встаёт внизу
+            // отдельной панелью (1.6.0)
+            if (searching && landscapeRail) {
+                SearchPanel(
+                    value = state.query,
+                    onValueChange = { vm.onQueryChange(it) },
+                    hint = stringResource(R.string.journal_search_hint),
+                    onClose = closeSearch
+                )
+            }
             AnimatedVisibility(
                 // Лёжа панель справа — внизу её нет вовсе
                 visible = !sideDialpad && !landscapeRail,
@@ -1387,7 +1495,7 @@ fun MainDialerScreen(
         }
 
         Row(Modifier.fillMaxSize()) {
-            Box(Modifier.weight(1f).fillMaxHeight()) {
+            Box(Modifier.weight(1f).fillMaxHeight().trackTouch(touchAnchor)) {
                 /*
                  * Фишек фильтров сверху нет намеренно.
                  *
@@ -1408,8 +1516,30 @@ fun MainDialerScreen(
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.padding(padding).fillMaxSize(),
-                    contentPadding = PaddingValues(vertical = Space.xs)
+                    /*
+                     * Под кнопкой псевдозвонка — запас (1.5.7): круглая кнопка
+                     * висит над правым краем списка и закрывала кнопку вызова
+                     * последней строки, а прокрутить строку выше было некуда.
+                     */
+                    contentPadding = PaddingValues(
+                        top = Space.xs,
+                        bottom = if (settings.fakeCallButton && !sideDialpad) FAB_CLEARANCE else Space.xs
+                    )
                 ) {
+                    /*
+                     * Напоминания на сегодня — полосой над журналом (1.6.0,
+                     * вариант «Б»): кнопки «Напоминания» на панели больше нет,
+                     * а сегодняшние должны быть на виду. Только когда они есть
+                     * и журнал показан целиком — не при поиске, отборе и выборе.
+                     */
+                    if (todayReminders.isNotEmpty() && state.query.isEmpty() &&
+                        !activeFilter.isActive && !selection.isActive
+                    ) {
+                        item(key = "today_reminders", contentType = "today_reminders") {
+                            TodayRemindersStrip(todayReminders, onOpen = onOpenReminders)
+                        }
+                    }
+
                     if (state.query.isNotEmpty() && contactRows.isNotEmpty()) {
                         itemsIndexed(
                             contactRows,
@@ -1433,7 +1563,10 @@ fun MainDialerScreen(
                                 listScrolling = listScrolling,
                                 swipeKeyPrefix = "found_",
                                 onOpenSubscriber = onOpenSubscriber,
-                                onLongPress = { selectedGroup = it },
+                                onLongPress = {
+                                    selectedAnchorY = touchAnchor.screenY
+                                    selectedGroup = it
+                                },
                                 onNeedNumberPicker = { g, options ->
                                     pickerOptions = options
                                     pickerFor = g
@@ -1532,7 +1665,10 @@ fun MainDialerScreen(
                                 listScrolling = listScrolling,
                                 swipeKeyPrefix = "pin_",
                                 onOpenSubscriber = onOpenSubscriber,
-                                onLongPress = { selectedGroup = it },
+                                onLongPress = {
+                                    selectedAnchorY = touchAnchor.screenY
+                                    selectedGroup = it
+                                },
                                 onNeedNumberPicker = { g, options ->
                                     pickerOptions = options
                                     pickerFor = g
@@ -1591,7 +1727,10 @@ fun MainDialerScreen(
                                 scope = scope,
                                 listScrolling = listScrolling,
                                 onOpenSubscriber = onOpenSubscriber,
-                                onLongPress = { selectedGroup = it },
+                                onLongPress = {
+                                    selectedAnchorY = touchAnchor.screenY
+                                    selectedGroup = it
+                                },
                                 onNeedNumberPicker = { g, options ->
                                     pickerOptions = options
                                     pickerFor = g
@@ -1610,7 +1749,16 @@ fun MainDialerScreen(
                         }
                     }
                 }
-    
+
+                // «Наверх» — при прокрутке вверх далеко от начала (1.5.7);
+                // с числом вызовов, пришедших, пока листали (1.5.8)
+                ScrollToTopPill(
+                    listState,
+                    Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = padding.calculateTopPadding() + Space.s),
+                    newCount = newCalls
+                )
             }
 
             /*
@@ -1962,9 +2110,11 @@ fun MainDialerScreen(
 
 
     selectedGroup?.let { group ->
-        ContactActionSheet(
+        RecordActionCards(
             group = group,
             vm = vm,
+            anchorY = selectedAnchorY,
+            origin = CardsOrigin.LOG,
             onOpenCard = { onOpenSubscriber(group.key) },
             onOpenBlockLists = onOpenBlockLists,
             onDismiss = { selectedGroup = null }
@@ -2013,7 +2163,9 @@ fun MainDialerScreen(
             },
             confirmButton = {
                 TextButton(onClick = {
-                    vm.deleteGroups(list.filter { it.key in selection.selected })
+                    // С «Отменить», как в Telegram: подтверждение и отмена
+                    // вместе (1.5.7)
+                    vm.deleteGroupsWithUndo(list.filter { it.key in selection.selected })
                     selection.clear()
                     confirmBulkDelete = false
                 }) {
@@ -2096,3 +2248,6 @@ private suspend fun handleLongDigit(
         }
     }
 }
+
+/** Запас под круглой кнопкой псевдозвонка: 40 dp кнопки и 16 dp поля. */
+internal val FAB_CLEARANCE = 64.dp

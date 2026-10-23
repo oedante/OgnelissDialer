@@ -1,41 +1,17 @@
-Licence
+Open source licenses — Ogneliss Dialer
 
-Ogneliss Dialer
-Copyright 2026 Ermishin Oleg
-All rights reserved.
+The app itself
 
-Contact: oedante@gmail.com
+Ogneliss Dialer is open source software under the Apache License 2.0.
+Copyright 2026 Ermishin Oleg.
+The license text and a plain-language summary are in "License".
+Source code: https://github.com/oedante/OgnelissDialer
 
+The notice (NOTICE) that everyone who distributes the project's code or
+versions based on it keeps:
 
-Licence type
-
-Proprietary Freeware Licence.
-
-The Application is distributed free of charge but is not free or open
-source software. The source code is closed.
-
-Full terms are set out in the End User Licence Agreement, which you
-accept on first launch of the Application.
-
-
-In brief
-
-Permitted:
-- download and use the Application on your own devices free of charge;
-- share a link to the Application page in an official app store.
-
-Prohibited:
-- decompilation, disassembly, reverse engineering;
-- modification and derivative versions;
-- distribution through third-party sources;
-- any commercial use.
-
-
-No warranty
-
-The Application is provided "AS IS", without warranties of any kind. The
-Rightsholder is not liable for any damage related to use of the
-Application. See sections 4 and 5 of the EULA.
+  Uses the open source project Ogneliss Dialer by Oleg Ermishin.
+  https://github.com/oedante/OgnelissDialer
 
 
 Third-party components
@@ -64,15 +40,20 @@ Conditions of Apache 2.0 that we comply with:
 3. Preservation of licence notices - notices are preserved.
 
 Libraries remain the property of their rightsholders and are distributed
-under the terms of the licences indicated. This licence does not apply to
-them.
+under the terms of the licences indicated. The app's own license does not
+apply to them.
 
 
-Trademarks
+Data
 
-The name "Ogneliss Dialer", the logo and other graphic designations of
-the Application are designations of the Rightsholder. Their use to
-promote third-party products or to create the impression of an
-association with the Rightsholder is not permitted.
+The operator and region directory is built from the open exports of the
+Russian numbering plan registry (Rossvyaz).
+
+
+Name and icon
+
+The Apache License 2.0 does not grant rights to the name "Ogneliss" or to the
+app icon. The unmodified app may be shared under its name; modified
+versions should use a different name and their own icon. See "License".
 
 Android, Google Play and related marks are trademarks of Google LLC.

@@ -234,6 +234,11 @@
   "filled": false,
   "autoMirror": false
  },
+ "Help": {
+  "symbol": "help",
+  "filled": false,
+  "autoMirror": false
+ },
  "History": {
   "symbol": "history",
   "filled": false,

@@ -33,6 +33,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import com.ogneliss.dialer.data.CallLogFilter
 import com.ogneliss.dialer.data.ContactSearch
 import com.ogneliss.dialer.data.SimCallPlan
@@ -192,6 +193,28 @@ class DialerViewModel @Inject constructor(
 
     fun setSwipeExtra(isRight: Boolean, actions: List<SwipeAction>) = viewModelScope.launch {
         if (isRight) prefs.setSwipeRightExtra(actions) else prefs.setSwipeLeftExtra(actions)
+    }
+
+    /*
+     * КЛАВИАТУРА ИЗ КОНТАКТОВ (1.6.0, вариант «Б»).
+     *
+     * У контактов та же панель, что у журнала, и кнопка клавиатуры на ней
+     * ведёт в журнал: набор номера живёт там. Журнал открывается заново,
+     * и просьба «открыть клавиатуру» ждёт его здесь — экран забирает её
+     * один раз, при появлении (разбор в MainDialerScreen, ON_START).
+     */
+    @Volatile
+    private var dialpadRequested = false
+
+    fun requestDialpad() {
+        dialpadRequested = true
+    }
+
+    /** Была просьба открыть клавиатуру — true, и просьба снимается. */
+    fun takeDialpadRequest(): Boolean {
+        val requested = dialpadRequested
+        dialpadRequested = false
+        return requested
     }
 
     /**
@@ -452,10 +475,20 @@ class DialerViewModel @Inject constructor(
      * стоит дороже, а здесь нужен только ответ «да или нет».
      */
     private fun hasMatches(query: String): Boolean {
+        val state = _state.value
+
+        // Буквами (1.6.0) — то же сравнение, что в поиске: имя и заметка
+        if (com.ogneliss.dialer.util.TextFold.isTextQuery(query)) {
+            val text = query.trim()
+            return state.contacts.any { com.ogneliss.dialer.util.TextFold.contains(it.displayName, text) } ||
+                state.callLog.any { group ->
+                    com.ogneliss.dialer.util.TextFold.contains(group.displayName, text) ||
+                        com.ogneliss.dialer.util.TextFold.contains(state.notes[group.e164]?.note, text)
+                }
+        }
+
         val digits = query.filter { it.isDigit() }
         if (digits.isEmpty()) return true
-
-        val state = _state.value
 
         /*
          * Сравнение то же, что в поиске: «8961…» и «+7961…» — один
@@ -473,6 +506,16 @@ class DialerViewModel @Inject constructor(
 
     private companion object {
         const val TAG = "DialerVM"
+
+        /**
+         * Удаление с «Отменить» (1.5.7): запасной срок, если сообщение
+         * так и не показалось. Сообщение гаснет через 4 с, но может ждать
+         * в очереди за другим — срок с запасом.
+         */
+        const val UNDO_FALLBACK_MS = 12_000L
+
+        /** Сколько ждать перечитанного журнала после удаления. */
+        const val REFRESH_WAIT_MS = 3_000L
 
         /**
          * Пауза перед выполнением поиска.
@@ -1693,10 +1736,13 @@ class DialerViewModel @Inject constructor(
             /*
              * Удаление свайпом — после подтверждения (1.3.0). Свайп легко
              * сделать случайно, а запись удаляется из системного журнала,
-             * и восстановить её невозможно (поэтому и отмены после удаления
-             * нет — она бы не сработала). Окно — в RootScreen (deleteRequest).
+             * и восстановить её невозможно. Окно — в RootScreen (deleteRequest).
              * Удаление из меню записи — явный выбор красного пункта после
              * долгого нажатия, там вопроса нет.
+             *
+             * 1.5.7: и там, и там — «Отменить» после удаления: из системного
+             * журнала запись уходит, когда сообщение погаснет
+             * (deleteGroupsWithUndo).
              */
             SwipeAction.DELETE_FROM_LOG -> _deleteRequest.value = group
             /*
@@ -1881,6 +1927,26 @@ class DialerViewModel @Inject constructor(
     fun choiceValue(key: String): String =
         settingsCommands.currentChoice(key, settingsState.value)
 
+    /**
+     * Значение варианта в данном снимке настроек — в том числе в исходном,
+     * SettingsState(): по нему экран раздела видит, что изменено (1.5.8).
+     */
+    fun choiceValueOf(key: String, settings: SettingsState): String =
+        settingsCommands.currentChoice(key, settings)
+
+    /**
+     * Вернуть вариант к исходному («Вернуть как было», 1.5.8). У свайпа —
+     * и дополнительные действия: исходно их нет, а оставшись, они
+     * показывались бы и после сброса («SMS, WhatsApp»).
+     */
+    fun resetChoice(key: String) {
+        setChoice(key, settingsCommands.currentChoice(key, SettingsState()))
+        when (key) {
+            "swipe_right" -> setSwipeExtra(isRight = true, actions = emptyList())
+            "swipe_left" -> setSwipeExtra(isRight = false, actions = emptyList())
+        }
+    }
+
     fun choiceLabel(context: Context, key: String): String {
         // Свайп с несколькими действиями — все через запятую: «SMS, WhatsApp»
         val extra = when (key) {
@@ -2049,6 +2115,76 @@ class DialerViewModel @Inject constructor(
     }
 
     fun clearLog() = viewModelScope.launch { callLogRepo.clearAll(); refresh() }
+
+    /*
+     * ══════════════════════════════════════════════════════════════════════
+     * УДАЛЕНИЕ С «ОТМЕНИТЬ», КАК В TELEGRAM (1.5.7)
+     * ══════════════════════════════════════════════════════════════════════
+     * Из системного журнала запись удаляется навсегда, поэтому раньше
+     * отмены не было вовсе (разбор у handleSwipe). Теперь удаление
+     * откладывается: строки пропадают с экрана сразу, внизу — «Удалено
+     * из журнала · Отменить», а из системного журнала записи уходят,
+     * когда сообщение погаснет. «Отменить» — строки возвращаются,
+     * журнал не тронут.
+     *
+     * ── Если сообщение не показалось ───────────────────────────────────────
+     * Экран могли закрыть, а очередь сообщений — отстать. Запасной таймер
+     * удаляет и без сообщения, но позже: отмена всегда успевает раньше.
+     * Удаление выполняется один раз — кто бы ни сработал первым.
+     *
+     * ── Почему appScope ────────────────────────────────────────────────────
+     * Человек мог уйти из приложения сразу после удаления: viewModelScope
+     * отменился бы вместе с экраном, и записи вернулись бы в журнал.
+     */
+    private val _pendingDeletion = MutableStateFlow<Set<String>>(emptySet())
+    /** Ключи записей, удалённых с «Отменить», — экран их уже не показывает. */
+    val pendingDeletion: StateFlow<Set<String>> = _pendingDeletion
+
+    fun deleteGroupsWithUndo(groups: Collection<CallLogGroup>) {
+        val batch = groups.filter { it.key !in _pendingDeletion.value }
+        if (batch.isEmpty()) return
+        val keys = batch.mapTo(HashSet()) { it.key }
+        _pendingDeletion.update { it + keys }
+
+        val settled = java.util.concurrent.atomic.AtomicBoolean(false)
+        var fallback: Job? = null
+        val commit: () -> Unit = {
+            if (settled.compareAndSet(false, true)) {
+                fallback?.cancel()
+                appScope.launch {
+                    var deleted = 0
+                    batch.forEach { group ->
+                        if (runCatching { callLogRepo.deleteGroup(group) }.getOrDefault(false)) deleted++
+                    }
+                    Logger.i("CallLog", "Удаление с отменой: $deleted из ${batch.size}")
+                    withContext(Dispatchers.Main) { refresh() }
+                    // Ключи снимаются, когда журнал уже перечитан без этих
+                    // записей: иначе строки мелькнули бы на миг между снятием
+                    // и перечитыванием
+                    withTimeoutOrNull(REFRESH_WAIT_MS) {
+                        state.first { s -> s.callLog.none { it.key in keys } }
+                        rows.first { r -> r.none { it.key in keys } }
+                    }
+                    _pendingDeletion.update { it - keys }
+                }
+            }
+        }
+        fallback = appScope.launch {
+            delay(UNDO_FALLBACK_MS)
+            commit()
+        }
+        val single = batch.singleOrNull()
+        notify(
+            textRes = if (single != null) R.string.msg_deleted_from_log else R.string.msg_deleted_from_log_many,
+            arg = if (single != null) null else batch.size.toString(),
+            onTimeout = commit
+        ) {
+            if (settled.compareAndSet(false, true)) {
+                fallback?.cancel()
+                _pendingDeletion.update { it - keys }
+            }
+        }
+    }
 
     /**
      * Номер, для которого открыт редактор заметки.
@@ -2407,11 +2543,8 @@ class DialerViewModel @Inject constructor(
     fun confirmDeleteRequest() {
         val group = _deleteRequest.value ?: return
         _deleteRequest.value = null
-        viewModelScope.launch {
-            callLogRepo.deleteGroup(group)
-            refresh()
-            notify(R.string.msg_deleted_from_log)
-        }
+        // С «Отменить» (1.5.7): подтверждение и отмена вместе, как в Telegram
+        deleteGroupsWithUndo(listOf(group))
     }
 
     fun dismissDeleteRequest() { _deleteRequest.value = null }
@@ -2491,7 +2624,12 @@ class DialerViewModel @Inject constructor(
     data class UserMessage(
         val textRes: Int,
         val formatArg: String? = null,
-        val undo: (() -> Unit)? = null
+        val undo: (() -> Unit)? = null,
+        /**
+         * Сообщение погасло без «Отменить» (1.5.7): так отложенное
+         * удаление узнаёт, что пора удалять.
+         */
+        val onTimeout: (() -> Unit)? = null
     )
 
     /** Магазина на устройстве нет — сказать об этом, а не молчать. */
@@ -2500,9 +2638,10 @@ class DialerViewModel @Inject constructor(
     private fun notify(
         textRes: Int,
         arg: String? = null,
+        onTimeout: (() -> Unit)? = null,
         undo: (() -> Unit)? = null
     ) {
-        _messages.trySend(UserMessage(textRes, arg, undo))
+        _messages.trySend(UserMessage(textRes, arg, undo, onTimeout))
     }
 
     // ── Закреплённые абоненты ──────────────────────────────────────────────

@@ -27,8 +27,20 @@ import androidx.compose.ui.Modifier
 @OptIn(ExperimentalFoundationApi::class)
 fun Modifier.combinedClickableCompat(
     onClick: () -> Unit,
-    onLongClick: () -> Unit
-): Modifier = this.combinedClickable(onClick = onClick, onLongClick = onLongClick)
+    onLongClick: () -> Unit,
+    /**
+     * Подписи действий для TalkBack (1.5.8, проход доступности, У8):
+     * вместо общего «нажмите дважды и удерживайте» — что именно случится.
+     * null — общая подпись, как раньше.
+     */
+    onClickLabel: String? = null,
+    onLongClickLabel: String? = null
+): Modifier = this.combinedClickable(
+    onClickLabel = onClickLabel,
+    onLongClickLabel = onLongClickLabel,
+    onLongClick = onLongClick,
+    onClick = onClick
+)
 
 
 /**

@@ -28,7 +28,7 @@ class InitialsTest {
 
     @Test
     fun `без слов с буквой — нет букв, остаётся значок`() {
-        assertNull(Initials.of("8 (495) 488-61-66"))
+        assertNull(Initials.of("8 (495) 123-45-67"))
         assertNull(Initials.of("911"))
         assertNull(Initials.of("  "))
         assertNull(Initials.of(null))

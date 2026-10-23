@@ -78,7 +78,6 @@
     <string name="contact_ringtone">Sonnerie pour ce contact</string>
     <string name="contact_silent">Renvoyer les appels vers la messagerie</string>
     <string name="contacts_all">Tous</string>
-    <string name="contacts_favourite_toggle">Favori</string>
     <string name="contacts_favourites">Favoris</string>
     <string name="contact_blocked">Bloqué</string>
     <string name="contacts_search_hint">Nom</string>
@@ -291,8 +290,6 @@
     <string name="settings_section_spam">Protection contre le spam</string>
     <string name="settings_section_spam_summary">Liste de blocage, exceptions, étiquettes</string>
     <string name="settings_show_photo">Afficher les photos des contacts</string>
-    <string name="settings_sheet_header_tint">En-tête de menu en couleur</string>
-    <string name="settings_sheet_header_tint_text">L\'en-tête du menu prend la couleur du thème</string>
     <string name="settings_messengers_any_number">Messageries pour tout numéro</string>
     <string name="settings_messengers_any_number_text">«Écrire» propose WhatsApp, Telegram, Viber et Max installés, même si le numéro n\'est pas dans les contacts. Telegram n\'ouvre la discussion que si la personne autorise la recherche par numéro</string>
     <string name="settings_sim">Cartes SIM et réseaux</string>
@@ -441,11 +438,9 @@
     <string name="consent_title">Avant de commencer, veuillez lire deux courts documents</string>
     <string name="consent_privacy_summary">Ogneliss n’a pas l’autorisation d’accès à Internet. Votre journal d’appels, vos contacts et vos notes ne quittent jamais cet appareil — vous pouvez le vérifier vous-même dans les détails de l’application installée.</string>
     <string name="consent_privacy_hint">Quelles données l’application touche et où elles restent</string>
-    <string name="consent_eula_hint">Conditions d’utilisation, exclusion de garantie, appels d’urgence</string>
-    <string name="consent_checkbox">J’ai lu et j’accepte la politique de confidentialité et le contrat de licence</string>
+    <string name="consent_checkbox">J’ai lu et j’accepte la politique de confidentialité et les conditions d’utilisation</string>
     <string name="consent_accept">Accepter et continuer</string>
     <string name="consent_decline">Quitter</string>
-    <string name="settings_eula">Contrat de licence</string>
     <string name="settings_swipe_tuning">Sensibilité des balayages</string>
     <string name="settings_swipe_tuning_text">Réglez la distance et la vitesse nécessaires</string>
     <string name="swipe_tuning_try">Essayez ici</string>
@@ -640,7 +635,6 @@
     <string name="journal_style_cards">Cartes</string>
     <string name="journal_style_groups">Groupes par jour</string>
     <string name="action_mark_spam">Marquer comme spam</string>
-    <string name="action_unmark_spam">Retirer la marque spam</string>
     <string name="detail_placeholder">Sélectionnez un appel — la fiche du contact s’affichera ici</string>
     <string name="sim_kind_physical">Carte SIM</string>
     <string name="settings_button_labels">Libellés sous les boutons</string>
@@ -680,7 +674,7 @@
     <string name="log_clear_confirm_text">Toutes les entrées du journal d’appels seront supprimées, ici et dans le journal système du téléphone. Impossible d’annuler. Les notes, numéros épinglés, rappels et listes de blocage sont conservés.</string>
     <string name="log_clear_confirm_action">Effacer</string>
     <string name="delete_entry_confirm_title">Supprimer de l’historique ?</string>
-    <string name="delete_entry_confirm_text">Les appels avec %1$s seront supprimés, ici et dans le journal système du téléphone. Impossible d’annuler.</string>
+    <string name="delete_entry_confirm_text">Les appels avec %1$s seront supprimés, ici et dans le journal système du téléphone. Vous pourrez annuler pendant quelques secondes.</string>
     <string name="action_write_email">Écrire un e-mail</string>
     <string name="action_copy_email">Copier l\'adresse</string>
     <string name="msg_email_copied">Adresse copiée</string>
@@ -688,4 +682,117 @@
     <!-- Подписи разделов меню «Ещё» (строгий стиль, 1.5.1) -->
     <string name="menu_section_lists">Rubriques</string>
     <string name="menu_section_app">Application</string>
+    <!-- 1.5.7: карточки долгого нажатия, «Наверх», удаление с отменой, размер фото -->
+    <string name="a11y_cards_expand">Plus d’actions</string>
+    <string name="a11y_cards_collapse">Moins d’actions</string>
+    <string name="a11y_cards_open">Ouvrir la fiche</string>
+    <string name="cards_section_write">Écrire</string>
+    <string name="cards_section_contact">Contact</string>
+    <string name="cards_section_number">Numéro</string>
+    <string name="cards_section_delete">Suppression</string>
+    <string name="cards_open">Fiche</string>
+    <string name="cards_add_to_existing">À un contact</string>
+    <string name="cards_note">Note</string>
+    <string name="cards_unfavourite">Retirer favori</string>
+    <string name="cards_spam">Spam</string>
+    <string name="cards_not_spam">Pas spam</string>
+    <string name="cards_email">E-mail</string>
+    <string name="cards_scroll_top">Haut de page</string>
+    <string name="msg_deleted_from_log_many">Supprimés de l’historique : %1$s</string>
+    <string name="action_create_contact">Créer un contact</string>
+    <string name="settings_call_photo_size">Taille de la photo pendant l’appel</string>
+    <string name="settings_call_photo_size_text">Taille du portrait rond ou carré. Il ne prend jamais la place du nom</string>
+    <string name="call_photo_size_normal">Normale</string>
+    <string name="call_photo_size_large">Grande</string>
+    <!-- 1.5.7: открытый код, лицензия Apache 2.0 -->
+    <string name="settings_license">Licence (Apache 2.0)</string>
+    <string name="about_license_hint">Open source : libre d’utiliser, de modifier et de partager</string>
+    <string name="consent_terms_hint">Absence de garantie, appels d’urgence, vos données</string>
+    <string name="settings_source_code">Code source</string>
+    <string name="settings_source_code_text">Ouvert sous licence Apache 2.0 · GitHub</string>
+    <!-- 1.5.8: строка номера в карточке — долгое нажатие -->
+    <string name="a11y_number_actions">Actions sur le numéro</string>
+    <!-- 1.5.8: «Наверх» с числом новых вызовов -->
+    <plurals name="scroll_top_new">
+        <item quantity="one">%1$d nouveau</item>
+        <item quantity="other">%1$d nouveaux</item>
+    </plurals>
+    <plurals name="a11y_scroll_top_new">
+        <item quantity="one">Haut de page, %1$d nouvel appel</item>
+        <item quantity="other">Haut de page, %1$d nouveaux appels</item>
+    </plurals>
+    <!-- 1.5.8: ответ на вызов сдвигом -->
+    <string name="settings_answer_mode">Réponse aux appels</string>
+    <string name="settings_answer_mode_text">Glisser — pour ne pas répondre ni refuser par erreur en sortant le téléphone de la poche</string>
+    <string name="answer_mode_tap">Toucher</string>
+    <string name="answer_mode_slide">Glisser</string>
+    <string name="incall_slide_hint">Glissez à droite pour répondre, à gauche pour refuser</string>
+    <!-- 1.5.8: настройки — «Дополнительно», отметка изменённых, «Вернуть как было» -->
+    <string name="settings_advanced">Avancé</string>
+    <plurals name="settings_advanced_count">
+        <item quantity="one">%1$d autre réglage</item>
+        <item quantity="other">%1$d autres réglages</item>
+    </plurals>
+    <string name="settings_reset_section">Rétablir les valeurs par défaut</string>
+    <string name="settings_reset_section_text">Modifiés : %1$d — revenir aux valeurs par défaut</string>
+    <string name="settings_reset_section_confirm">Rétablir les valeurs par défaut de « %1$s » ? Réglages modifiés : %2$d. Les autres sections, les notes et les listes ne changent pas.</string>
+    <string name="settings_reset_section_action">Rétablir</string>
+    <string name="a11y_setting_changed">modifié</string>
+    <string name="a11y_expanded">développé</string>
+    <string name="a11y_collapsed">réduit</string>
+    <!-- 1.5.8: подпись долгого нажатия для TalkBack -->
+    <string name="a11y_record_actions">Actions</string>
+    <!-- 1.5.8: ответ сдвигом в раскладке справа налево — ответ влево -->
+    <string name="incall_slide_hint_rtl">Glissez à gauche pour répondre, à droite pour refuser</string>
+    <!-- 1.6.0: журнал и контакты соседями — переключатель, поиск в панели, напоминания на сегодня -->
+    <string name="nav_search">Recherche</string>
+    <string name="journal_search_hint">Nom, numéro ou note</string>
+    <string name="search_close">Fermer la recherche</string>
+    <string name="a11y_switch_to">Passer à : %1$s</string>
+    <string name="a11y_all_sections">Toutes les sections</string>
+    <string name="today_strip_text">rappeler %1$s · %2$s</string>
+    <plurals name="today_strip_more">
+        <item quantity="one">%1$d de plus</item>
+        <item quantity="other">%1$d de plus</item>
+    </plurals>
+    <!-- Вопросы и ответы (1.6.0): экран FAQ, пути к настройкам, вопросы и ответы -->
+    <string name="faq_title">Questions et réponses</string>
+    <string name="faq_summary">Application par défaut, recherche, spam, transfert des notes</string>
+    <string name="faq_lead">Des réponses courtes aux questions fréquentes. Le bouton sous une réponse ouvre directement le réglage concerné.</string>
+    <string name="faq_keywords">aide faq comment question réponse</string>
+    <string name="faq_path">%1$s → %2$s → « %3$s »</string>
+    <string name="faq_path_advanced">%1$s → %2$s → %3$s → « %4$s »</string>
+    <string name="faq_path_section">%1$s → %2$s</string>
+    <string name="faq_make_default">Définir par défaut</string>
+    <string name="faq_write">Écrire un e-mail</string>
+    <string name="faq_section_start">Premiers pas</string>
+    <string name="faq_section_lists">Journal et contacts</string>
+    <string name="faq_section_calls">Appels</string>
+    <string name="faq_section_about">À propos de l’application</string>
+    <string name="faq_q_default">Comment faire d’Ogneliss Dialer l’application Téléphone par défaut ?</string>
+    <string name="faq_a_default">Au premier lancement, l’application propose de devenir l’application Téléphone par défaut. Si vous avez refusé, ouvrez %1$s et choisissez Ogneliss Dialer sous « Téléphone » — l’intitulé varie un peu selon les appareils. Le journal d’appels et les contacts restent tels quels : c’est Android qui les conserve, pas l’application, et rien n’est perdu si vous revenez à l’ancienne.</string>
+    <string name="faq_q_internet">Pourquoi l’application n’a-t-elle pas accès à Internet ?</string>
+    <string name="faq_a_internet">Pour que vos données ne puissent pas quitter le téléphone. Sans l’autorisation d’accès à Internet, l’application ne peut rien envoyer — ni le journal, ni les contacts, ni les notes ; vous pouvez le vérifier dans les détails de l’application installée. L’opérateur et la région d’un numéro inconnu viennent d’un annuaire intégré à l’application, et c’est vous qui décidez de les afficher : %1$s.</string>
+    <string name="faq_q_transfer">Comment transférer les notes et les listes sur un nouveau téléphone ?</string>
+    <string name="faq_a_transfer">Par un fichier. Elles ne migrent pas d’elles-mêmes : l’application exclut ses données des sauvegardes dans le cloud et des transferts entre téléphones — elles restent ainsi chez vous seulement. Ouvrez %1$s : notes, étiquettes, listes de blocage et d’exceptions et numéros abrégés sont enregistrés dans le fichier de votre choix. Sur le nouveau téléphone : %2$s — les données s’ajoutent à celles déjà présentes. Le journal d’appels et les contacts sont transférés par Android et votre compte.</string>
+    <string name="faq_q_switch">Comment passer du journal aux contacts ?</string>
+    <string name="faq_a_switch">Avec le premier bouton de la barre du bas. La grande icône est la liste ouverte, le petit cercle à côté celle vers laquelle un appui bascule. Un appui long ouvre toutes les sections : journal, contacts, notes et rappels. Vous pouvez aussi balayer la barre : vers la gauche pour les contacts, vers la droite pour revenir au journal.</string>
+    <string name="faq_q_search">Comment trouver un contact par son nom ?</string>
+    <string name="faq_a_search">Avec le bouton « Recherche » de la barre du bas. Dans le journal, il cherche par nom, numéro et note ; dans les contacts, par nom. Le clavier cherche aussi avec des chiffres — par numéro et en T9, en cyrillique et en latin à la fois.</string>
+    <string name="faq_q_undo">J’ai supprimé une entrée du journal par erreur. Peut-on la récupérer ?</string>
+    <string name="faq_a_undo">Oui, si vous réagissez tout de suite. Après la suppression, « Supprimé de la liste des appels » s’affiche en bas pendant quelques secondes avec le bouton « Annuler » — appuyez dessus tant que le message est visible. Ensuite, les entrées sont aussi supprimées du journal système du téléphone et ne peuvent plus être restaurées. Effacer tout le journal depuis le menu est définitif : c’est pourquoi l’application demande d’abord confirmation.</string>
+    <string name="faq_q_spam">Comment bloquer le spam et les numéros indésirables ?</string>
+    <string name="faq_a_spam">Appui long sur une entrée → « Bloquer » : le numéro passe dans la liste de blocage et ne peut plus vous joindre. Au même endroit, sous « Plus », il y a l’étiquette « Spam » : ces numéros ne passent pas non plus, et l’étiquette apparaît dans le journal et sur l’écran d’appel. Masques de numéros, numéros masqués et inconnus, liste d’exceptions : tout est dans %1$s.</string>
+    <string name="faq_q_slide">Comment répondre en faisant glisser — ou retrouver les boutons ?</string>
+    <string name="faq_a_slide">%1$s. « Toucher » affiche deux boutons ordinaires. Avec « Glisser », on fait glisser le bouton : à droite pour répondre, à gauche pour refuser — impossible ainsi de répondre ou de refuser par mégarde en sortant le téléphone de la poche. Avec TalkBack, les appels se prennent toujours avec des boutons.</string>
+    <string name="faq_q_sim">Comment choisir la carte SIM pour un appel ?</string>
+    <string name="faq_a_sim">Chaque carte SIM a son propre bouton d’appel. L’application retient la carte choisie pour un numéro et la propose de nouveau la fois suivante (%1$s). Pour ne pas confondre les cartes, nommez-les : %2$s.</string>
+    <string name="faq_q_missed">Les appels manqués n’apparaissent qu’à l’ouverture de l’application. Que faire ?</string>
+    <string name="faq_a_missed">Le système met probablement l’application en veille pour économiser la batterie. Autorisez-la à fonctionner en arrière-plan — %1$s — et les appels manqués s’afficheront aussitôt.</string>
+    <string name="faq_q_recording">Peut-on enregistrer les appels ?</string>
+    <string name="faq_a_recording">Non. Depuis Android 10, le système ne donne pas aux applications tierces l’accès à l’audio des appels, et contourner cette règle enfreint les règles de Google Play. Si votre téléphone enregistre les appels, c’est une fonction intégrée par le constructeur — elle fonctionne quelle que soit l’application Téléphone choisie.</string>
+    <string name="faq_q_work">Peut-on utiliser l’application au travail ? Où est le code source ?</string>
+    <string name="faq_a_work">Oui. Le code de l’application est ouvert sous licence Apache 2.0 : vous pouvez l’utiliser à toute fin légale, y compris au travail et en entreprise. Vous pouvez aussi diffuser l’APK et vos propres versions — avec le texte de la licence et le fichier NOTICE ; le nom et l’icône restent réservés à l’original. Le code source est sur GitHub.</string>
+    <string name="faq_q_contact">Comment signaler un bug ou proposer une idée ?</string>
+    <string name="faq_a_contact">Écrivez à oedante@gmail.com. Si quelque chose ne fonctionne pas, joignez le journal technique — %1$s : les numéros et les noms y sont masqués.</string>
 </resources>

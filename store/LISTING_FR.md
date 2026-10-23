@@ -88,6 +88,9 @@ CE QUE L'APPLICATION N'A PAS
 VOS DONNÉES
 Le journal d'appels et les contacts sont lus depuis les fournisseurs système d'Android et restent sur l'appareil. L'application ne crée pas sa propre copie : si vous revenez à l'application Téléphone d'origine, vous ne perdez rien.
 
+CODE SOURCE OUVERT
+Le code source est ouvert sous licence Apache 2.0 : tout ce qui est dit sur vos données peut être vérifié dans le code — github.com/oedante/OgnelissDialer. Vous pouvez utiliser l'application à toute fin, y compris professionnelle.
+
 ## Catégorie
 Outils → Communication
 

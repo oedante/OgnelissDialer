@@ -94,6 +94,6 @@ class T9EngineTest {
 
     @Test
     fun `из номера остаются только цифры`() {
-        assertEquals("79676660512", T9Engine.normalizeNumber("+7 (967) 666-05-12"))
+        assertEquals("79671112233", T9Engine.normalizeNumber("+7 (967) 111-22-33"))
     }
 }

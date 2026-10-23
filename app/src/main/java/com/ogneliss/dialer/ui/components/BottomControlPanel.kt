@@ -81,7 +81,12 @@ fun BottomControlPanel(
     onAddContact: (String) -> Unit,
     /** Вставка номера из буфера обмена в поле набора. */
     onPaste: (String) -> Unit,
-    onContacts: () -> Unit,
+    /**
+     * Переключатель «журнал | контакты» (1.6.0, разбор в ListSwitchButton):
+     * касание — в контакты, долгое нажатие — список разделов.
+     */
+    onSwitchList: () -> Unit,
+    onOpenSection: (MainSection) -> Unit = {},
     onFilters: () -> Unit,
     onVoice: () -> Unit,
     /**
@@ -92,8 +97,20 @@ fun BottomControlPanel(
     onStartSelection: (() -> Unit)? = null,
     /** Режим выбора включён: кнопка тогда показывает выход. */
     selectionActive: Boolean = false,
-    /** Переход к напоминаниям — место на панели вместо выбора нескольких. */
-    onReminders: (() -> Unit)? = null,
+    /**
+     * Поиск буквами (1.6.0) — на месте прежней кнопки «Напоминания»:
+     * напоминания на сегодня теперь видны полосой над журналом, а все —
+     * в меню и в списке разделов. null — кнопки нет.
+     */
+    onSearch: (() -> Unit)? = null,
+    /**
+     * Идёт поиск: вместо строки кнопок — поле ввода (PanelSearchRow),
+     * в нём — [query]. Клавиатура набора при этом закрыта.
+     */
+    searching: Boolean = false,
+    searchHint: String = "",
+    onSearchChange: (String) -> Unit = {},
+    onCloseSearch: () -> Unit = {},
     onMenu: () -> Unit,
     /**
      * Перелистывание на контакты свайпом влево.
@@ -134,11 +151,12 @@ fun BottomControlPanel(
                 expanded = expanded,
                 filter = filter,
                 onToggleExpanded = onToggleExpanded,
-                onContacts = onContacts,
+                onSwitchList = onSwitchList,
+                onOpenSection = onOpenSection,
                 onFilters = onFilters,
                 onStartSelection = onStartSelection,
                 selectionActive = selectionActive,
-                onReminders = onReminders,
+                onSearch = onSearch,
                 onMenu = onMenu,
                 menuContent = menuContent
             )
@@ -244,8 +262,10 @@ fun BottomControlPanel(
                          * высоты пальцем невозможно.
                          */
                         .padding(vertical = Space.s)
+                        // Пока идёт поиск, полоска клавиатуру набора не открывает:
+                        // поле поиска и клавиши спорили бы за одно место (1.6.0)
                         .verticalSwipeGesture(
-                            onSwipeUp = if (!expanded) onToggleExpanded else null,
+                            onSwipeUp = if (!expanded && !searching) onToggleExpanded else null,
                             onSwipeDown = if (expanded) onToggleExpanded else null
                         )
                         /*
@@ -261,7 +281,7 @@ fun BottomControlPanel(
                          * ничего знать: на неё смотрят, потому что она
                          * единственное, что отделяет клавиатуру от списка.
                          */
-                        .clickable(onClick = onToggleExpanded)
+                        .clickable(enabled = !searching, onClick = onToggleExpanded)
                         .semantics {
                             contentDescription = handleHint
                         },
@@ -493,22 +513,32 @@ fun BottomControlPanel(
              * панели, а не на строке кнопок, поэтому переход к контактам
              * работает и с открытой клавиатурой — как и просили.
              */
-            AnimatedVisibility(
+            if (searching && !side) {
+                // Поиск (1.6.0): поле на месте строки кнопок, той же высоты
+                PanelSearchRow(
+                    value = query,
+                    onValueChange = onSearchChange,
+                    hint = searchHint,
+                    onClose = onCloseSearch
+                )
+            } else AnimatedVisibility(
                 visible = !expanded,
                 enter = expandVertically(),
                 exit = shrinkVertically()
             ) {
             ActionRow(
+                section = MainSection.JOURNAL,
                 expanded = expanded,
-                filter = filter,
-                voiceAvailable = voiceAvailable,
+                filterActive = filter.isActive,
+                filterBadge = filter.activeCount.toString(),
+                menuBadge = filter.activeCount.toString().takeIf { filter.isActive },
                 onToggleExpanded = onToggleExpanded,
-                onContacts = onContacts,
+                onSwitchList = onSwitchList,
+                onOpenSection = onOpenSection,
                 onFilters = onFilters,
-                onVoice = onVoice,
                 onStartSelection = onStartSelection,
                 selectionActive = selectionActive,
-                onReminders = onReminders,
+                onSearch = onSearch,
                 onMenu = onMenu,
                 menuContent = menuContent
             )
@@ -523,32 +553,44 @@ private val RoundedCornerShapeTop =
 
 
 /**
- * Строка действий.
+ * Строка действий — общая для журнала и контактов (1.6.0).
  *
  * Центральная кнопка — клавиатура: она крупнее остальных и выделена
  * цветом, потому что это точка входа в основное действие приложения.
  * Расположена по центру, куда большой палец попадает без прицеливания
  * при любом хвате.
+ *
+ * ── Журнал и контакты — одна строка (1.6.0, вариант «Б») ──────────────────
+ * Слева — переключатель «журнал | контакты» и фильтр, справа — поиск
+ * и меню. У контактов те же кнопки на тех же местах: фильтр и поиск
+ * действуют на открытый список, клавиатура в контактах открывает
+ * набор в журнале — там он и живёт.
  */
 @Composable
-private fun ActionRow(
+internal fun ActionRow(
+    /** Какой список открыт: от него — переключатель (ListSwitchButton). */
+    section: MainSection,
     expanded: Boolean,
-    filter: CallLogFilter,
-    voiceAvailable: Boolean,
+    /** Работает фильтр: подложка у кнопки и метка. */
+    filterActive: Boolean,
+    /** Текст метки фильтра: число условий; null — точка (фильтр контактов один). */
+    filterBadge: String?,
+    /** Метка на «Меню»: число условий фильтра журнала; null — без метки. */
+    menuBadge: String? = null,
     onToggleExpanded: () -> Unit,
-    onContacts: () -> Unit,
+    onSwitchList: () -> Unit,
+    onOpenSection: (MainSection) -> Unit,
     onFilters: () -> Unit,
-    onVoice: () -> Unit,
     /**
      * Включение режима множественного выбора.
      *
-     * null — кнопки нет: в контактах выбирать нечего, там своя панель.
+     * null — кнопки нет: в контактах выбирать нечего.
      */
     onStartSelection: (() -> Unit)? = null,
     /** Режим выбора включён: кнопка тогда показывает выход. */
     selectionActive: Boolean = false,
-    /** Переход к напоминаниям — место на панели вместо выбора нескольких. */
-    onReminders: (() -> Unit)? = null,
+    /** Поиск буквами (1.6.0); null — кнопки нет. */
+    onSearch: (() -> Unit)? = null,
     onMenu: () -> Unit,
     menuContent: @Composable () -> Unit
 ) {
@@ -592,12 +634,20 @@ private fun ActionRow(
         ) {
             /*
              * На широком окне (планшет, раскладушка лёжа) слева есть
-             * боковая полоса навигации с контактами и напоминаниями —
-             * здесь те же кнопки дублировали бы её. Место не пропадает:
-             * Spacer того же размера держит кнопку клавиатуры по центру.
+             * боковая полоса навигации с журналом, контактами, заметками
+             * и напоминаниями — переключатель дублировал бы её. Место
+             * не пропадает: Spacer того же размера держит кнопку
+             * клавиатуры по центру.
+             *
+             * 1.6.0: на месте кнопки «Контакты» — переключатель «журнал |
+             * контакты» (разбор в ListSwitchButton).
              */
             if (!railShown) {
-                LabeledIconButton(OgnelissIcons.Person, R.string.nav_contacts, onContacts)
+                ListSwitchButton(
+                    current = section,
+                    onSwitch = onSwitchList,
+                    onOpenSection = onOpenSection
+                )
             } else {
                 Spacer(Modifier.size(width = PILL_WIDTH, height = PILL_HEIGHT))
             }
@@ -619,14 +669,16 @@ private fun ActionRow(
                 LabeledIconButton(
                     OgnelissIcons.FilterList, R.string.filter_title, onFilters,
                     // Работающий фильтр — голубая подложка, как активный раздел Mail
-                    selected = filter.isActive
+                    selected = filterActive
                 )
 
-                // Без метки работающий фильтр невидим: журнал наполовину
+                // Без метки работающий фильтр невидим: список наполовину
                 // пуст, и это выглядит как потеря данных
-                if (filter.isActive) {
-                    Badge(Modifier.align(Alignment.TopEnd)) {
-                        Text(filter.activeCount.toString())
+                if (filterActive) {
+                    if (filterBadge != null) {
+                        Badge(Modifier.align(Alignment.TopEnd)) { Text(filterBadge) }
+                    } else {
+                        Badge(Modifier.align(Alignment.TopEnd))
                     }
                 }
             }
@@ -729,6 +781,11 @@ private fun ActionRow(
              * человек, включивший его случайно, ищет выход там, где нажал.
              * Крестик в шапке тоже работает, но он дальше от пальца.
              */
+            /*
+             * 1.6.0: «Поиск» вместо «Напоминаний» (вариант «Б» обзора).
+             * Напоминания на сегодня видны полосой над журналом, все —
+             * в меню и в списке разделов (долгое нажатие на переключатель).
+             */
             if (selectionActive && onStartSelection != null) {
                 LabeledIconButton(
                     icon = OgnelissIcons.Close,
@@ -739,8 +796,8 @@ private fun ActionRow(
                     tint = MaterialTheme.colorScheme.primary,
                     selected = true
                 )
-            } else if (onReminders != null && !railShown) {
-                LabeledIconButton(OgnelissIcons.Alarm, R.string.nav_reminders, onReminders)
+            } else if (onSearch != null) {
+                LabeledIconButton(OgnelissIcons.Search, R.string.nav_search, onSearch)
             } else {
                 // Размером с кнопку-таблетку: пустое место не короче соседей
                 Spacer(Modifier.size(width = PILL_WIDTH, height = PILL_HEIGHT))
@@ -760,12 +817,12 @@ private fun ActionRow(
                  */
                 Box {
                     // Подпись короткая: «Открыть меню» под значком
-                    // не поместилось бы, а рядом с ним стоят «Контакты»
-                    // и «Напоминания» такой же длины
+                    // не поместилось бы, а рядом с ним стоят «Фильтры»
+                    // и «Поиск» такой же длины
                     LabeledIconButton(OgnelissIcons.MoreVert, R.string.bar_menu, onMenu)
-                    if (filter.isActive) {
+                    if (menuBadge != null) {
                         Badge(Modifier.align(Alignment.TopEnd)) {
-                            Text(filter.activeCount.toString())
+                            Text(menuBadge)
                         }
                     }
                 }
@@ -786,8 +843,9 @@ private fun ActionRow(
  * ложатся под правый большой палец, а журнал получает всю высоту.
  *
  * Кнопки те же и в том же порядке, что на нижней панели, сверху вниз:
- * контакты, фильтры, клавиатура, напоминания, «Ещё». Без подписей —
- * лёжа их и на нижней панели не было.
+ * переключатель «журнал | контакты», фильтры, клавиатура, поиск, «Ещё»
+ * (1.6.0; было: контакты и напоминания). Без подписей — лёжа их и на
+ * нижней панели не было.
  *
  * Перелистывание экранов — свайпом снизу вверх по полосе
  * (panelVerticalSwipeNavigation). У кнопки клавиатуры вертикального
@@ -798,11 +856,12 @@ private fun ActionRail(
     expanded: Boolean,
     filter: CallLogFilter,
     onToggleExpanded: () -> Unit,
-    onContacts: () -> Unit,
+    onSwitchList: () -> Unit,
+    onOpenSection: (MainSection) -> Unit,
     onFilters: () -> Unit,
     onStartSelection: (() -> Unit)?,
     selectionActive: Boolean,
-    onReminders: (() -> Unit)?,
+    onSearch: (() -> Unit)?,
     onMenu: () -> Unit,
     menuContent: @Composable () -> Unit
 ) {
@@ -830,7 +889,15 @@ private fun ActionRail(
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LabeledIconButton(OgnelissIcons.Person, R.string.nav_contacts, onContacts, showLabel = labels, fitLabel = true)
+        // 1.6.0: переключатель «журнал | контакты»; в узкой полосе
+        // маленький кружок соседнего списка — на углу «таблетки»
+        ListSwitchButton(
+            current = MainSection.JOURNAL,
+            onSwitch = onSwitchList,
+            onOpenSection = onOpenSection,
+            compact = true,
+            showLabel = labels
+        )
         Box {
             LabeledIconButton(OgnelissIcons.FilterList, R.string.filter_title, onFilters, showLabel = labels, fitLabel = true, selected = filter.isActive)
             if (filter.isActive) {
@@ -869,8 +936,8 @@ private fun ActionRail(
                 fitLabel = true,
                 selected = true
             )
-        } else if (onReminders != null) {
-            LabeledIconButton(OgnelissIcons.Alarm, R.string.nav_reminders, onReminders, showLabel = labels, fitLabel = true)
+        } else if (onSearch != null) {
+            LabeledIconButton(OgnelissIcons.Search, R.string.nav_search, onSearch, showLabel = labels, fitLabel = true)
         }
         Box {
             LabeledIconButton(OgnelissIcons.MoreVert, R.string.bar_menu, onMenu, showLabel = labels, fitLabel = true)

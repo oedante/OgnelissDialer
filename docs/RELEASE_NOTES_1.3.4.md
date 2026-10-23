@@ -467,5 +467,5 @@ Perfetto первого кадра (база шага 4 против 1.3.4). Г�
 
 ```powershell
 ./gradlew assembleDebug
-powershell -ExecutionPolicy Bypass -File scripts\phone_check.ps1 -CardNumber +79105214092
+powershell -ExecutionPolicy Bypass -File scripts\phone_check.ps1 -CardNumber +79104445566
 ```

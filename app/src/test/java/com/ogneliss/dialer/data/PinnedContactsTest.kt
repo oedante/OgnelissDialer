@@ -196,9 +196,9 @@ class PinnedContactsTest {
 
     @Test
     fun `ключ контакта со служебными символами разбирается обратно`() {
-        val pin = PinnedContacts.parse(PinnedContacts.contactKey(lk, "+79105214092"))
+        val pin = PinnedContacts.parse(PinnedContacts.contactKey(lk, "+79104445566"))
         assertEquals(lk, pin.lookupKey)
-        assertEquals("+79105214092", pin.e164)
+        assertEquals("+79104445566", pin.e164)
     }
 
     @Test
@@ -210,22 +210,22 @@ class PinnedContactsTest {
 
     @Test
     fun `звонок с другого номера того же контакта относится к закреплённому`() {
-        val pins = listOf(PinnedContacts.contactKey(lk, "+79105214092")).map(PinnedContacts::parse)
-        assertEquals(0, PinnedContacts.indexOf(pins, "+79676660512", lk))
+        val pins = listOf(PinnedContacts.contactKey(lk, "+79104445566")).map(PinnedContacts::parse)
+        assertEquals(0, PinnedContacts.indexOf(pins, "+79671112233", lk))
     }
 
     @Test
     fun `контакт не найден — закреплённый держится за запасной номер`() {
-        val pins = listOf(PinnedContacts.contactKey(lk, "+79105214092")).map(PinnedContacts::parse)
-        assertEquals(0, PinnedContacts.indexOf(pins, "+79105214092", null))
+        val pins = listOf(PinnedContacts.contactKey(lk, "+79104445566")).map(PinnedContacts::parse)
+        assertEquals(0, PinnedContacts.indexOf(pins, "+79104445566", null))
         assertEquals(-1, PinnedContacts.indexOf(pins, "+70000000000", "other"))
     }
 
     @Test
     fun `миграция сливает номера одного контакта и сохраняет порядок`() {
-        val old = listOf("+79105214092", "+79676660512", "+79001112233")
+        val old = listOf("+79104445566", "+79671112233", "+79001112233")
         val migrated = PinnedContacts.migrate(old) {
-            if (it == "+79105214092" || it == "+79676660512") lk else null
+            if (it == "+79104445566" || it == "+79671112233") lk else null
         }
         assertEquals(2, migrated.size)
         assertEquals(lk, PinnedContacts.parse(migrated[0]).lookupKey)
@@ -234,23 +234,23 @@ class PinnedContactsTest {
 
     @Test
     fun `повторная миграция возвращает тот же список`() {
-        val migrated = listOf(PinnedContacts.contactKey(lk, "+79105214092"), "+79001112233")
+        val migrated = listOf(PinnedContacts.contactKey(lk, "+79104445566"), "+79001112233")
         // Номер не из книги остаётся номером: поиск возвращает ключ только
         // для номера контакта (1.3.3: прежняя версия теста отдавала ключ
         // для любого номера и проверяла не то)
-        assertTrue(PinnedContacts.migrate(migrated) { if (it == "+79105214092") lk else null } === migrated)
+        assertTrue(PinnedContacts.migrate(migrated) { if (it == "+79104445566") lk else null } === migrated)
     }
 
     @Test
     fun `открепление по любому номеру контакта`() {
-        val current = listOf(PinnedContacts.contactKey(lk, "+79105214092"), "+79001112233")
-        assertEquals(listOf("+79001112233"), PinnedContacts.unpinSubscriber(current, "+79676660512", lk))
+        val current = listOf(PinnedContacts.contactKey(lk, "+79104445566"), "+79001112233")
+        assertEquals(listOf("+79001112233"), PinnedContacts.unpinSubscriber(current, "+79671112233", lk))
     }
 
     @Test
     fun `номер из книги закрепляется как контакт и не дублируется`() {
-        val pinned = PinnedContacts.pinSubscriber(emptyList(), "+79105214092", lk)!!
+        val pinned = PinnedContacts.pinSubscriber(emptyList(), "+79104445566", lk)!!
         assertEquals(lk, PinnedContacts.parse(pinned.single()).lookupKey)
-        assertEquals(pinned, PinnedContacts.pinSubscriber(pinned, "+79676660512", lk))
+        assertEquals(pinned, PinnedContacts.pinSubscriber(pinned, "+79671112233", lk))
     }
 }

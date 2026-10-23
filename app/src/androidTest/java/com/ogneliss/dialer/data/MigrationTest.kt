@@ -87,7 +87,7 @@ class MigrationTest {
         helper.createDatabase(TEST_DB, 1).apply {
             execSQL(
                 "INSERT INTO number_notes (e164, note, tags, customLabel, updatedAt) " +
-                    "VALUES ('+79676660512', 'Не терять эту заметку', 'work', NULL, 100)"
+                    "VALUES ('+79671112233', 'Не терять эту заметку', 'work', NULL, 100)"
             )
             execSQL(
                 "INSERT INTO number_rules (pattern, kind, comment, createdAt) " +
@@ -102,7 +102,7 @@ class MigrationTest {
         )
 
         // 3. Заметка пользователя должна выжить
-        db.query("SELECT note, tags FROM number_notes WHERE e164 = '+79676660512'").use {
+        db.query("SELECT note, tags FROM number_notes WHERE e164 = '+79671112233'").use {
             assertTrue("Заметка пользователя потеряна при миграции", it.moveToFirst())
             assertEquals("Не терять эту заметку", it.getString(0))
             assertEquals("work", it.getString(1))

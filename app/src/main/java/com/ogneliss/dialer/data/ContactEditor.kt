@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.data
 
+import android.content.ActivityNotFoundException
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
@@ -47,24 +48,56 @@ class ContactEditor @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ContactEditorLauncher {
 
-    private companion object { const val TAG = "ContactEditor" }
+    private companion object {
+        const val TAG = "ContactEditor"
+
+        /** Понимают стандартные «Контакты» и Samsung: после сохранения — назад к нам. */
+        const val EXTRA_FINISH_ON_SAVE = "finishActivityOnSaveCompleted"
+    }
 
     /**
-     * Создание нового контакта с заполненным номером.
+     * Создание нового контакта с заполненным номером — сразу форма.
      *
-     * ACTION_INSERT_OR_EDIT позволяет системному приложению самому решить:
-     * если номер уже есть у кого-то, оно предложит дополнить существующий
-     * контакт, а не плодить дубль. Это ровно та логика, которую пришлось бы
-     * писать самим и которую легко сделать неправильно.
+     * ══════════════════════════════════════════════════════════════════════
+     * ПОЧЕМУ НЕ ACTION_INSERT_OR_EDIT (1.5.7)
+     * ══════════════════════════════════════════════════════════════════════
+     * До 1.5.7 здесь был INSERT_OR_EDIT: «системное приложение само решит,
+     * создать контакт или дополнить существующий». На Samsung оно решает
+     * одинаково — открывает список контактов с поиском, «куда добавить
+     * номер» (снимок автора, 22.10). Человек нажал «Создать контакт»,
+     * а попал в поиск, и форма — ещё одним нажатием, если он догадается.
+     *
+     * Теперь — ACTION_INSERT: форма нового контакта сразу. Дополнить
+     * существующий — отдельное действие («К контакту», addNumberToExisting):
+     * там выбор контакта и нужен.
+     *
+     * ── Запасные пути ──────────────────────────────────────────────────────
+     * Тип данных у INSERT прошивки понимают по-разному: сначала
+     * RawContacts.CONTENT_TYPE (так в документации Android), затем адрес
+     * Contacts.CONTENT_URI, и в последнюю очередь — прежний INSERT_OR_EDIT,
+     * чтобы на редкой прошивке кнопка не перестала работать совсем.
+     *
+     * finishActivityOnSaveCompleted — после «Сохранить» возврат к нам,
+     * а не в список контактов системного приложения.
      */
-    override fun createWithNumber(number: String, name: String?) = launch(
-        Intent(Intent.ACTION_INSERT_OR_EDIT).apply {
-            type = ContactsContract.Contacts.CONTENT_ITEM_TYPE
-            putExtra(ContactsContract.Intents.Insert.PHONE, number)
-            name?.let { putExtra(ContactsContract.Intents.Insert.NAME, it) }
-        },
-        "создание контакта"
-    )
+    override fun createWithNumber(number: String, name: String?) {
+        val fill: Intent.() -> Unit = {
+            number.takeIf { it.isNotBlank() }
+                ?.let { putExtra(ContactsContract.Intents.Insert.PHONE, it) }
+            name?.takeIf { it.isNotBlank() }
+                ?.let { putExtra(ContactsContract.Intents.Insert.NAME, it) }
+            putExtra(EXTRA_FINISH_ON_SAVE, true)
+        }
+        launchFirst(
+            "создание контакта",
+            Intent(ContactsContract.Intents.Insert.ACTION)
+                .setType(ContactsContract.RawContacts.CONTENT_TYPE).apply(fill),
+            Intent(ContactsContract.Intents.Insert.ACTION, ContactsContract.Contacts.CONTENT_URI)
+                .apply(fill),
+            Intent(Intent.ACTION_INSERT_OR_EDIT)
+                .setType(ContactsContract.Contacts.CONTENT_ITEM_TYPE).apply(fill)
+        )
+    }
 
     /** Добавление номера к существующему контакту — выбор делает пользователь. */
     override fun addNumberToExisting(number: String) = launch(
@@ -83,7 +116,7 @@ class ContactEditor @Inject constructor(
                 ContactsContract.Contacts.CONTENT_ITEM_TYPE
             )
             // Возврат в наше приложение после сохранения
-            putExtra("finishActivityOnSaveCompleted", true)
+            putExtra(EXTRA_FINISH_ON_SAVE, true)
         },
         "редактирование контакта"
     )
@@ -103,6 +136,27 @@ class ContactEditor @Inject constructor(
         }.onFailure {
             Logger.w(TAG, "Не удалось открыть системное приложение: $what", it)
         }
+    }
+
+    /**
+     * Первое намерение, которое удалось запустить.
+     *
+     * Пробуется запуском, а не заранее через resolveActivity: с Android 11
+     * чужие приложения видны нам только по списку <queries>, и проверка
+     * могла бы сказать «некому», когда приложение есть.
+     */
+    private fun launchFirst(what: String, vararg intents: Intent) {
+        for (intent in intents) {
+            try {
+                context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                return
+            } catch (e: ActivityNotFoundException) {
+                Logger.i(TAG, "$what: ${intent.action} ${intent.type ?: intent.data} — некому, пробую дальше")
+            } catch (e: SecurityException) {
+                Logger.w(TAG, "$what: ${intent.action} — нет доступа", e)
+            }
+        }
+        Logger.w(TAG, "Не удалось открыть системное приложение: $what")
     }
 
     /** Есть ли на устройстве приложение, способное редактировать контакты. */

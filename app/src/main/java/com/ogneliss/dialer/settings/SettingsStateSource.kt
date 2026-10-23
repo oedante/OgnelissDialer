@@ -62,7 +62,8 @@ class SettingsStateSource @Inject constructor(
         .combine(prefs.callAnimation) { a, v -> a.copy(callAnimation = v) }
         .combine(prefs.callPhotoStyle) { a, v -> a.copy(callPhotoStyle = v) }
         .combine(prefs.uiScale) { a, v -> a.copy(uiScale = v) }
-        .combine(prefs.sheetHeaderTint) { a, v -> a.copy(sheetHeaderTint = v) }
+        .combine(prefs.callPhotoSize) { a, v -> a.copy(callPhotoSize = v) }
+        .combine(prefs.answerMode) { a, v -> a.copy(answerMode = v) }
         .combine(prefs.messengersAnyNumber) { a, v -> a.copy(messengersAnyNumber = v) }
 
     /** Жесты и отклик. */
@@ -159,7 +160,8 @@ class SettingsStateSource @Inject constructor(
             callAnimation = a.callAnimation,
             callPhotoStyle = a.callPhotoStyle,
             uiScale = a.uiScale,
-            sheetHeaderTint = a.sheetHeaderTint,
+            callPhotoSize = a.callPhotoSize,
+            answerMode = a.answerMode,
             messengersAnyNumber = a.messengersAnyNumber,
             notesRetention = n.retention,
             notesRetentionScope = n.scope,
@@ -208,7 +210,8 @@ class SettingsStateSource @Inject constructor(
         val callAnimation: Boolean = true,
         val callPhotoStyle: CallPhotoStyle = CallPhotoStyle.CIRCLE,
         val uiScale: UiScale = UiScale.AUTO,
-        val sheetHeaderTint: Boolean = true,
+        val callPhotoSize: CallPhotoSize = CallPhotoSize.LARGE,
+        val answerMode: AnswerMode = AnswerMode.TAP,
         val messengersAnyNumber: Boolean = false
     )
 

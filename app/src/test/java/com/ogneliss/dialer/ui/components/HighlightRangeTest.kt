@@ -73,33 +73,61 @@ class HighlightRangeTest {
 
     @Test
     fun `подсветка в номере учитывает разделители`() {
-        // Ищем "6605" в "8 (967) 666-05-12": в голых цифрах это позиция 6,
+        // Ищем "1122" в "8 (967) 111-22-33": в голых цифрах это позиция 6,
         // но в отформатированной строке — совсем другая
-        val formatted = "8 (967) 666-05-12"
-        val range = numberRange(formatted, "6605")
+        val formatted = "8 (967) 111-22-33"
+        val range = numberRange(formatted, "1122")
         assertTrue(range != null)
 
         val highlighted = formatted.substring(range!!.first, range.last + 1)
         // Подсвеченный кусок должен содержать искомые цифры
-        assertEquals("6605", highlighted.filter { it.isDigit() })
+        assertEquals("1122", highlighted.filter { it.isDigit() })
     }
 
     @Test
     fun `поиск по началу номера подсвечивает начало`() {
-        val range = numberRange("8 (967) 666-05-12", "8967")
+        val range = numberRange("8 (967) 111-22-33", "8967")
         assertEquals(0, range?.first)
     }
 
     @Test
     fun `отсутствие цифр в номере не ломает подсветку`() {
-        assertEquals(null, numberRange("8 (967) 666-05-12", "0000"))
+        assertEquals(null, numberRange("8 (967) 111-22-33", "0000"))
     }
 
     @Test
     fun `совпадение в конце номера не выходит за границы`() {
-        val formatted = "8 (967) 666-05-12"
-        val range = numberRange(formatted, "12")
+        val formatted = "8 (967) 111-22-33"
+        val range = numberRange(formatted, "33")
         assertTrue(range != null)
         assertTrue("Конец вышел за строку", range!!.last < formatted.length)
     }
+
+    // ── Подсветка при поиске буквами (1.6.0) — highlightRange ──────────────
+
+    @Test
+    fun `буквы подсвечивают найденный кусок имени`() {
+        val range = highlightRange("Иван Петров", "петр")
+        assertEquals(5..8, range)
+    }
+
+    @Test
+    fun `подсветка букв не зависит от регистра и ё`() {
+        // Нашлось по «семен» — подсвечено «Семён», а не ничего
+        assertEquals(0..4, highlightRange("Семён Ильич", "семен"))
+    }
+
+    @Test
+    fun `цифры подсвечиваются по T9, как раньше`() {
+        // Тот же расчёт, что у nameRange выше
+        assertEquals(nameRange("Андрей", "253"), highlightRange("Андрей", "253"))
+    }
+
+    @Test
+    fun `нет совпадения или пустой запрос — нет подсветки`() {
+        assertEquals(null, highlightRange("Андрей", "борис"))
+        assertEquals(null, highlightRange("Андрей", ""))
+        assertEquals(null, highlightRange("Андрей", "  "))
+    }
+
 }

@@ -85,7 +85,6 @@ class SettingsCommands @Inject constructor(
             "dynamic_color" -> prefs.setDynamicColor(value)
             "large_buttons" -> prefs.setLargeButtons(value)
             "show_photo" -> prefs.setShowPhoto(value)
-            "sheet_header_tint" -> prefs.setSheetHeaderTint(value)
             "messengers_any_number" -> prefs.setMessengersAnyNumber(value)
             "button_labels" -> prefs.setButtonLabels(value)
             "proximity_screen_off" -> prefs.setProximityScreenOff(value)
@@ -159,6 +158,8 @@ class SettingsCommands @Inject constructor(
             "swipe_sim" -> prefs.setSwipeSimMode(SwipeSimMode.from(value))
             "carrier_info" -> prefs.setCarrierInfo(CarrierInfoMode.from(value))
             "call_photo_style" -> prefs.setCallPhotoStyle(CallPhotoStyle.from(value))
+            "call_photo_size" -> prefs.setCallPhotoSize(CallPhotoSize.from(value))
+            "answer_mode" -> prefs.setAnswerMode(AnswerMode.from(value))
             "ui_scale" -> prefs.setUiScale(UiScale.from(value))
             "journal_style" -> prefs.setJournalStyle(JournalStyle.from(value))
             "sort_order" -> prefs.setSortOrder(
@@ -184,6 +185,8 @@ class SettingsCommands @Inject constructor(
         "swipe_sim" -> state.swipeSimMode.name
         "carrier_info" -> state.carrierInfo.name
         "call_photo_style" -> state.callPhotoStyle.name
+        "call_photo_size" -> state.callPhotoSize.name
+        "answer_mode" -> state.answerMode.name
         "ui_scale" -> state.uiScale.name
         "journal_style" -> state.journalStyle.name
         "notes_retention" -> state.notesRetention.name
@@ -243,6 +246,8 @@ class SettingsCommands @Inject constructor(
         )
 
         "call_photo_style" -> context.getString(callPhotoStyleLabelRes(state.callPhotoStyle))
+        "call_photo_size" -> context.getString(callPhotoSizeLabelRes(state.callPhotoSize))
+        "answer_mode" -> context.getString(answerModeLabelRes(state.answerMode))
 
         // «Авто» — с тем, что выбрано для этого экрана: видно, что оно делает
         "ui_scale" -> if (state.uiScale == UiScale.AUTO) {
@@ -305,6 +310,8 @@ class SettingsCommands @Inject constructor(
             "swipe_sim" -> R.string.settings_swipe_sim
             "carrier_info" -> R.string.settings_carrier_info
             "call_photo_style" -> R.string.settings_call_photo
+            "call_photo_size" -> R.string.settings_call_photo_size
+            "answer_mode" -> R.string.settings_answer_mode
             "ui_scale" -> R.string.settings_ui_scale
             "journal_style" -> R.string.settings_journal_style
             "notes_retention" -> R.string.settings_notes_retention
@@ -331,6 +338,18 @@ class SettingsCommands @Inject constructor(
             CallPhotoStyle.FULL_SCREEN -> R.string.call_photo_full_screen
             CallPhotoStyle.CIRCLE -> R.string.call_photo_circle
             CallPhotoStyle.SQUARE -> R.string.call_photo_square
+        }
+
+        /** Подпись размера портрета на экране вызова (1.5.7). */
+        fun callPhotoSizeLabelRes(size: CallPhotoSize): Int = when (size) {
+            CallPhotoSize.NORMAL -> R.string.call_photo_size_normal
+            CallPhotoSize.LARGE -> R.string.call_photo_size_large
+        }
+
+        /** Подпись способа ответа на вызов (1.5.8). */
+        fun answerModeLabelRes(mode: AnswerMode): Int = when (mode) {
+            AnswerMode.TAP -> R.string.answer_mode_tap
+            AnswerMode.SLIDE -> R.string.answer_mode_slide
         }
         /**
          * Единственное место сопоставления действия свайпа с подписью.
@@ -361,7 +380,7 @@ class SettingsCommands @Inject constructor(
          * молча неработающий переключатель.
          */
         val SWITCH_KEYS = setOf(
-            "dynamic_color", "large_buttons", "show_photo", "button_labels", "proximity_screen_off", "call_hide_contact_number", "call_animation", "sheet_header_tint", "messengers_any_number", "panel_swipe_nav",
+            "dynamic_color", "large_buttons", "show_photo", "button_labels", "proximity_screen_off", "call_hide_contact_number", "call_animation", "messengers_any_number", "panel_swipe_nav",
             "fake_call_button",
             "haptic", "key_tones",
             "merge_calls", "remember_sim", "smart_speaker",
@@ -374,7 +393,7 @@ class SettingsCommands @Inject constructor(
         val CHOICE_KEYS = setOf(
             "language", "theme", "swipe_right", "swipe_left", "grouping", "sort_order",
             "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info",
-            "call_photo_style", "ui_scale"
+            "call_photo_style", "call_photo_size", "answer_mode", "ui_scale"
             // "journal_style" — снят из реестра в 1.5.3 (вид журнала один)
         )
     }

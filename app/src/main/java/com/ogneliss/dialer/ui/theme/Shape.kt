@@ -79,9 +79,6 @@ object OgnelissShapeTokens {
     /** Радиус карточки отдельно — для рамки сегментов группы (GroupedRow). */
     val cardRadius = 22.dp
 
-    /** Фото в шапке карточки: нижние углы как у панелей. */
-    val coverBottom = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-
     /**
      * Кнопки вызова: «Позвонить», SIM, «Ответить», «Отклонить», «Завершить» —
      * полное скругление (1.5.3 — снова, как до 1.5.1).

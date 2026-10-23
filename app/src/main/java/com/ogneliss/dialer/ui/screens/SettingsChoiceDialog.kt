@@ -92,6 +92,12 @@ fun SettingsChoiceDialog(
         "call_photo_style" -> com.ogneliss.dialer.settings.CallPhotoStyle.entries.map {
             it.name to stringResource(SettingsCommands.callPhotoStyleLabelRes(it))
         }
+        "call_photo_size" -> com.ogneliss.dialer.settings.CallPhotoSize.entries.map {
+            it.name to stringResource(SettingsCommands.callPhotoSizeLabelRes(it))
+        }
+        "answer_mode" -> com.ogneliss.dialer.settings.AnswerMode.entries.map {
+            it.name to stringResource(SettingsCommands.answerModeLabelRes(it))
+        }
         "carrier_info" -> listOf(
             "UNKNOWN_ONLY" to stringResource(R.string.carrier_info_unknown),
             "ALL" to stringResource(R.string.carrier_info_all),
