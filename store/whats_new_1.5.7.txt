@@ -1,0 +1,162 @@
+<ru-RU>
+• Долгое нажатие на вызов или контакт открывает карточки действий: все номера контакта, быстрые кнопки и «Ещё».
+• Удалённые из журнала записи можно вернуть кнопкой «Отменить».
+• Мягкие края портретов; фото на экране вызова можно сделать крупнее: Настройки → Вызовы.
+• На Samsung «Создать контакт» сразу открывает форму. Код приложения открыт (Apache 2.0).
+</ru-RU>
+<ar>
+• اضغط مطولًا على مكالمة أو جهة اتصال لفتح بطاقات الإجراءات: جميع أرقام جهة الاتصال وأزرار سريعة و«المزيد».
+• يمكن استعادة الإدخالات المحذوفة من سجل المكالمات بزر «تراجع».
+• حواف أنعم للصور، ويمكن تكبير الصورة في شاشة المكالمة: الإعدادات ← المكالمات.
+• على هواتف Samsung يفتح «إنشاء جهة اتصال» النموذج مباشرة. أصبح التطبيق مفتوح المصدر (Apache 2.0).
+</ar>
+<cs-CZ>
+• Dlouhým stisknutím hovoru nebo kontaktu otevřete karty akcí: všechna čísla kontaktu, rychlá tlačítka a „Další“.
+• Záznamy smazané z historie hovorů lze obnovit tlačítkem „Vrátit zpět“.
+• Jemnější okraje portrétů; fotku na obrazovce hovoru lze zvětšit: Nastavení → Hovory.
+• Na telefonech Samsung otevře „Vytvořit kontakt“ rovnou formulář. Aplikace má nyní otevřený kód (Apache 2.0).
+</cs-CZ>
+<da-DK>
+• Tryk længe på et opkald eller en kontakt for at åbne handlingskort: alle kontaktens numre, hurtigknapper og "Mere".
+• Poster, der er slettet fra opkaldsloggen, kan gendannes med "Fortryd".
+• Blødere kanter på portrætter; billedet på opkaldsskærmen kan gøres større: Indstillinger → Opkald.
+• På Samsung åbner "Opret kontakt" formularen med det samme. Appen er nu open source (Apache 2.0).
+</da-DK>
+<de-DE>
+• Langes Tippen auf einen Anruf oder Kontakt öffnet Aktionskarten: alle Nummern des Kontakts, Schnelltasten und „Mehr“.
+• Aus der Anrufliste gelöschte Einträge lassen sich mit „Rückgängig“ wiederherstellen.
+• Weichere Ränder der Porträts; das Foto auf dem Anrufbildschirm lässt sich vergrößern: Einstellungen → Anrufe.
+• Auf Samsung öffnet „Kontakt erstellen“ sofort das Formular. Die App ist jetzt Open Source (Apache 2.0).
+</de-DE>
+<en-US>
+• Long-press a call or a contact to open action cards: all of the contact's numbers, quick buttons and "More".
+• Entries deleted from the call log can be restored with "Undo".
+• Softer portrait edges; the photo on the call screen can be made larger: Settings → Calls.
+• On Samsung, "Create contact" opens the form right away. The app is now open source (Apache 2.0).
+</en-US>
+<es-ES>
+• Mantén pulsada una llamada o un contacto para abrir las tarjetas de acciones: todos los números del contacto, botones rápidos y «Más».
+• Las entradas eliminadas del registro de llamadas se pueden recuperar con «Deshacer».
+• Bordes más suaves en los retratos; la foto de la pantalla de llamada puede ser más grande: Ajustes → Llamadas.
+• En Samsung, «Crear contacto» abre el formulario directamente. La aplicación ahora es de código abierto (Apache 2.0).
+</es-ES>
+<fi-FI>
+• Pitkä painallus puhelun tai yhteystiedon kohdalla avaa toimintokortit: kaikki yhteystiedon numerot, pikapainikkeet ja ”Lisää”.
+• Puhelulokista poistetut merkinnät voi palauttaa painikkeella ”Kumoa”.
+• Pehmeämmät reunat muotokuvissa; puhelunäkymän kuvan voi suurentaa: Asetukset → Puhelut.
+• Samsungilla ”Luo yhteystieto” avaa lomakkeen heti. Sovellus on nyt avointa lähdekoodia (Apache 2.0).
+</fi-FI>
+<fr-FR>
+• Un appui long sur un appel ou un contact ouvre des cartes d’actions : tous les numéros du contact, des boutons rapides et « Plus ».
+• Les entrées supprimées du journal d’appels peuvent être restaurées avec « Annuler ».
+• Bords des portraits plus doux ; la photo de l’écran d’appel peut être agrandie : Paramètres → Appels.
+• Sur Samsung, « Créer un contact » ouvre directement le formulaire. L’application est désormais open source (Apache 2.0).
+</fr-FR>
+<hi-IN>
+• किसी कॉल या संपर्क को देर तक दबाएँ — कार्रवाई कार्ड खुलेंगे: संपर्क के सभी नंबर, त्वरित बटन और "और"।
+• कॉल लॉग से हटाई गई प्रविष्टियाँ "पहले जैसा करें" से वापस लाई जा सकती हैं।
+• पोर्ट्रेट के किनारे अब नरम हैं; कॉल स्क्रीन पर फ़ोटो बड़ी की जा सकती है: सेटिंग्स → कॉल।
+• Samsung पर "संपर्क बनाएँ" सीधे फ़ॉर्म खोलता है। ऐप अब ओपन सोर्स है (Apache 2.0)।
+</hi-IN>
+<hu-HU>
+• Egy hívást vagy névjegyet hosszan megnyomva műveletkártyák nyílnak: a névjegy összes száma, gyorsgombok és „Több”.
+• A hívásnaplóból törölt bejegyzések a „Visszavonás” gombbal visszaállíthatók.
+• Lágyabb portrészélek; a hívásképernyő fotója nagyobbra állítható: Beállítások → Hívások.
+• Samsungon a „Névjegy létrehozása” azonnal megnyitja az űrlapot. Az alkalmazás mostantól nyílt forráskódú (Apache 2.0).
+</hu-HU>
+<id>
+• Tekan lama panggilan atau kontak untuk membuka kartu tindakan: semua nomor kontak, tombol cepat, dan "Lainnya".
+• Entri yang dihapus dari log panggilan bisa dikembalikan dengan "Urungkan".
+• Tepi potret lebih lembut; foto di layar panggilan bisa diperbesar: Setelan → Panggilan.
+• Di Samsung, "Buat kontak" langsung membuka formulir. Aplikasi kini bersumber terbuka (Apache 2.0).
+</id>
+<it-IT>
+• Tieni premuto su una chiamata o un contatto per aprire le schede delle azioni: tutti i numeri del contatto, pulsanti rapidi e «Altro».
+• Le voci eliminate dal registro chiamate si possono ripristinare con «Annulla».
+• Bordi dei ritratti più morbidi; la foto nella schermata di chiamata può essere più grande: Impostazioni → Chiamate.
+• Su Samsung «Crea contatto» apre subito il modulo. L’app ora è open source (Apache 2.0).
+</it-IT>
+<iw-IL>
+• לחיצה ארוכה על שיחה או איש קשר פותחת כרטיסי פעולות: כל המספרים של איש הקשר, כפתורים מהירים ו"עוד".
+• אפשר לשחזר רשומות שנמחקו מיומן השיחות בלחיצה על "ביטול".
+• קצוות רכים יותר לתמונות; אפשר להגדיל את התמונה במסך השיחה: הגדרות ← שיחות.
+• במכשירי Samsung הפעולה "יצירת איש קשר" פותחת מיד את הטופס. קוד האפליקציה פתוח כעת (Apache 2.0).
+</iw-IL>
+<ja-JP>
+• 通話や連絡先を長押しすると操作カードが開きます：連絡先のすべての番号、クイックボタン、「その他」。
+• 通話履歴から削除した項目は「元に戻す」で復元できます。
+• 写真の縁がやわらかくなりました。通話画面の写真を大きくできます：設定 → 通話。
+• Samsungでは「連絡先を作成」ですぐに入力画面が開きます。アプリはオープンソースになりました（Apache 2.0）。
+</ja-JP>
+<ko-KR>
+• 통화나 연락처를 길게 누르면 작업 카드가 열립니다: 연락처의 모든 번호, 빠른 버튼, '더보기'.
+• 통화 기록에서 삭제한 항목은 '실행취소'로 되돌릴 수 있습니다.
+• 사진 가장자리가 부드러워졌고, 통화 화면의 사진을 더 크게 할 수 있습니다: 설정 → 통화.
+• 삼성 휴대전화에서 '연락처 만들기'를 누르면 바로 입력 양식이 열립니다. 앱이 오픈 소스가 되었습니다(Apache 2.0).
+</ko-KR>
+<nl-NL>
+• Houd een gesprek of contact ingedrukt om actiekaarten te openen: alle nummers van het contact, snelknoppen en 'Meer'.
+• Items die uit de oproepgeschiedenis zijn verwijderd, haal je terug met 'Ongedaan maken'.
+• Zachtere randen van portretten; de foto op het belscherm kan groter: Instellingen → Gesprekken.
+• Op Samsung opent 'Contact maken' meteen het formulier. De app is nu open source (Apache 2.0).
+</nl-NL>
+<no-NO>
+• Trykk lenge på en samtale eller kontakt for å åpne handlingskort: alle kontaktens numre, hurtigknapper og «Mer».
+• Oppføringer som er slettet fra samtaleloggen, kan hentes tilbake med «Angre».
+• Mykere kanter på portretter; bildet på samtaleskjermen kan gjøres større: Innstillinger → Samtaler.
+• På Samsung åpner «Opprett kontakt» skjemaet med en gang. Appen er nå åpen kildekode (Apache 2.0).
+</no-NO>
+<pl-PL>
+• Przytrzymaj połączenie lub kontakt, aby otworzyć karty działań: wszystkie numery kontaktu, szybkie przyciski i „Więcej”.
+• Wpisy usunięte z rejestru połączeń można przywrócić przyciskiem „Cofnij”.
+• Łagodniejsze krawędzie portretów; zdjęcie na ekranie połączenia można powiększyć: Ustawienia → Połączenia.
+• Na Samsungu „Utwórz kontakt” od razu otwiera formularz. Aplikacja ma teraz otwarty kod (Apache 2.0).
+</pl-PL>
+<pt-BR>
+• Toque e segure uma chamada ou um contato para abrir os cartões de ações: todos os números do contato, botões rápidos e "Mais".
+• Itens excluídos do registro de chamadas podem ser recuperados com "Desfazer".
+• Bordas mais suaves nos retratos; a foto na tela de chamada pode ficar maior: Configurações → Chamadas.
+• No Samsung, "Criar contato" abre o formulário na hora. O app agora tem código aberto (Apache 2.0).
+</pt-BR>
+<ro>
+• Apăsați lung pe un apel sau pe un contact pentru a deschide cardurile de acțiuni: toate numerele contactului, butoane rapide și „Mai mult”.
+• Intrările șterse din jurnalul de apeluri pot fi recuperate cu „Anulați”.
+• Margini mai fine ale portretelor; fotografia de pe ecranul de apel poate fi mărită: Setări → Apeluri.
+• Pe Samsung, „Creați contact” deschide imediat formularul. Aplicația are acum cod sursă deschis (Apache 2.0).
+</ro>
+<sk>
+• Dlhým stlačením hovoru alebo kontaktu otvoríte karty akcií: všetky čísla kontaktu, rýchle tlačidlá a „Ďalšie“.
+• Záznamy odstránené z histórie hovorov sa dajú obnoviť tlačidlom „Vrátiť späť“.
+• Jemnejšie okraje portrétov; fotku na obrazovke hovoru možno zväčšiť: Nastavenia → Hovory.
+• Na telefónoch Samsung otvorí „Vytvoriť kontakt“ hneď formulár. Aplikácia má teraz otvorený kód (Apache 2.0).
+</sk>
+<sv-SE>
+• Tryck länge på ett samtal eller en kontakt för att öppna åtgärdskort: alla kontaktens nummer, snabbknappar och ”Mer”.
+• Poster som tagits bort från samtalsloggen kan återställas med ”Ångra”.
+• Mjukare kanter på porträtt; fotot på samtalsskärmen kan göras större: Inställningar → Samtal.
+• På Samsung öppnar ”Skapa kontakt” formuläret direkt. Appen har nu öppen källkod (Apache 2.0).
+</sv-SE>
+<th>
+• กดค้างที่การโทรหรือรายชื่อเพื่อเปิดการ์ดคำสั่ง: ทุกหมายเลขของรายชื่อ ปุ่มด่วน และ "เพิ่มเติม"
+• รายการที่ลบออกจากประวัติการโทรกู้คืนได้ด้วย "เลิกทำ"
+• ขอบรูปนุ่มนวลขึ้น และขยายรูปบนหน้าจอการโทรได้: การตั้งค่า → การโทร
+• บน Samsung ปุ่ม "สร้างรายชื่อ" จะเปิดแบบฟอร์มทันที แอปเป็นโอเพนซอร์สแล้ว (Apache 2.0)
+</th>
+<tr-TR>
+• Bir aramaya veya kişiye uzun basınca işlem kartları açılır: kişinin tüm numaraları, hızlı düğmeler ve "Daha fazla".
+• Arama kaydından silinen girişler "Geri al" ile geri getirilebilir.
+• Portrelerin kenarları daha yumuşak; arama ekranındaki fotoğraf büyütülebilir: Ayarlar → Aramalar.
+• Samsung'da "Kişi oluştur" formu hemen açar. Uygulama artık açık kaynak (Apache 2.0).
+</tr-TR>
+<vi>
+• Nhấn giữ một cuộc gọi hoặc liên hệ để mở các thẻ thao tác: mọi số của liên hệ, nút nhanh và "Thêm".
+• Có thể khôi phục mục đã xóa khỏi nhật ký cuộc gọi bằng "Hoàn tác".
+• Viền ảnh chân dung mềm hơn; ảnh trên màn hình cuộc gọi có thể lớn hơn: Cài đặt → Cuộc gọi.
+• Trên Samsung, "Tạo liên hệ" mở ngay biểu mẫu. Ứng dụng nay là mã nguồn mở (Apache 2.0).
+</vi>
+<zh-CN>
+• 长按通话记录或联系人即可打开操作卡片：联系人的全部号码、快捷按钮和“更多”。
+• 从通话记录中删除的条目可以用“撤销”恢复。
+• 头像边缘更柔和；通话界面的照片可以调大：设置 → 通话。
+• 在三星手机上，“新建联系人”会直接打开表单。应用现已开源（Apache 2.0）。
+</zh-CN>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Собрано scripts/faq_site.py из строк приложения — править strings.xml и Faq.kt. -->
+<title>Вопросы и ответы / Questions and answers — Ogneliss Dialer</title>
+<link rel="stylesheet" href="/dialer/style.css">
+<link rel="icon" href="/dialer/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="/dialer/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/dialer/apple-touch-icon.png">
+<link rel="stylesheet" href="/dialer/lang.css">
+</head>
+<body>
+<main>
+
+<header class="page-bar">
+  <a href="/dialer" class="back" data-back><span aria-hidden="true">←</span> <span class="back-label">Назад к документам</span></a>
+  <div class="lang-switcher"></div>
+</header>
+
+<!-- Русская версия -->
+<div id="lang-ru">
+<h1>Вопросы и ответы</h1>
+<p><strong>Ogneliss Dialer</strong> · версия 1.6.0 · 23 октября 2026 г.</p>
+
+<p class="lead">Короткие ответы на частые вопросы. Те же ответы есть в самом приложении: «Ещё» на нижней панели → «Вопросы и ответы», — и там кнопка под ответом сразу открывает нужную настройку.</p>
+
+<h2>Начало работы</h2>
+
+<h3 id="default-ru">Как сделать Ogneliss Dialer основным приложением для звонков?</h3>
+<p>При первом запуске приложение само предлагает стать телефоном по умолчанию. Если вы отказались, откройте Настройки → Настройки Android → «Приложения по умолчанию» и выберите Ogneliss Dialer в пункте «Телефон» — на разных телефонах он называется немного по-разному. Журнал вызовов и контакты останутся прежними: их хранит Android, а не приложение, и при возврате к прежнему приложению ничего не пропадёт.</p>
+
+<h3 id="internet-ru">Почему у приложения нет доступа в интернет?</h3>
+<p>Чтобы ваши данные не могли уйти с телефона. Без разрешения на интернет приложение не может ничего отправить — ни журнал, ни контакты, ни заметки; это видно в свойствах установленного приложения. Оператор и регион незнакомого номера определяются по справочнику внутри приложения, а показывать ли их, решаете вы: Настройки → Журнал вызовов → «Оператор и регион».</p>
+
+<h3 id="transfer-ru">Как перенести заметки и списки на новый телефон?</h3>
+<p>Файлом. Сами они не переедут: приложение не отдаёт свои данные ни в облачные копии, ни при переносе на новый телефон — так они остаются только у вас. Откройте Настройки → Данные и диагностика → «Экспорт заметок и списков»: заметки, метки, чёрный и белый списки и быстрый набор сохранятся в выбранный вами файл. На новом телефоне — Настройки → Данные и диагностика → «Импорт из файла»: данные добавятся к тем, что уже есть. Журнал вызовов и контакты переносят Android и ваш аккаунт.</p>
+
+<h2>Журнал и контакты</h2>
+
+<h3 id="switch-ru">Как перейти из журнала в контакты?</h3>
+<p>Первой кнопкой на нижней панели. Крупный значок на ней — список, который открыт сейчас, маленький кружок рядом — тот, куда переключит касание. Долгое нажатие открывает все разделы: журнал, контакты, заметки и напоминания. Можно и провести пальцем по панели: влево — к контактам, вправо — обратно к журналу.</p>
+
+<h3 id="search-ru">Как найти контакт по имени?</h3>
+<p>Кнопкой «Поиск» на нижней панели. В журнале она ищет по имени, номеру и заметке, в контактах — по имени; «е» и «ё» не различаются. Цифрами ищет и клавиатура набора — по номеру и по T9, кириллицей и латиницей сразу.</p>
+
+<h3 id="undo-ru">Запись из журнала удалена по ошибке. Можно вернуть?</h3>
+<p>Да, если сразу. После удаления внизу на несколько секунд появляется «Удалено из журнала» с кнопкой «Отменить» — нажмите её, пока сообщение на экране. Потом записи удаляются и из системного журнала телефона, и вернуть их уже нельзя. Очистку всего журнала из меню отменить нельзя — поэтому перед ней приложение переспрашивает.</p>
+
+<h3 id="spam-ru">Как заблокировать спам и нежелательные номера?</h3>
+<p>Долгое нажатие на запись → «Блок»: номер попадёт в чёрный список и больше не дозвонится. Там же, в «Ещё», — метка «Спам»: такие номера тоже не дозваниваются, а метка видна в журнале и на экране вызова. Маски номеров, скрытые и незнакомые номера, белый список исключений — в разделе Настройки → Защита от спама.</p>
+
+<h2>Вызовы</h2>
+
+<h3 id="slide-ru">Как отвечать на вызов сдвигом — или вернуть кнопки?</h3>
+<p>Настройки → Вызовы → «Ответ на вызов». «Касанием» — две обычные кнопки. «Сдвигом» — кнопку нужно сдвинуть: вправо — ответить, влево — отклонить; так вызов не принять и не сбросить случайно, доставая телефон из кармана. С TalkBack вызов всегда принимается кнопками.</p>
+
+<h3 id="sim-ru">Как выбрать SIM-карту для звонка?</h3>
+<p>У каждой SIM-карты своя кнопка вызова. Выбранную для номера карту приложение запоминает и в следующий раз предложит её же (Настройки → SIM-карты → «Запоминать SIM для номера»). Чтобы не путать карты, подпишите их: Настройки → SIM-карты → «Названия SIM-карт».</p>
+
+<h3 id="missed-ru">Пропущенные появляются, только когда открываешь приложение. Что делать?</h3>
+<p>Скорее всего, система усыпляет приложение ради экономии батареи. Разрешите ему работать в фоне — Настройки → Настройки Android → «Работа в фоне», — и пропущенные вызовы будут появляться сразу.</p>
+
+<h3 id="recording-ru">Можно ли записывать разговоры?</h3>
+<p>Нет. На Android 10 и новее система не даёт сторонним приложениям доступа к звуку разговора, а обход этого запрета нарушает правила Google Play. Если ваш телефон записывает звонки, это встроенная функция производителя: она работает независимо от выбранного диалера.</p>
+
+<h2>О приложении</h2>
+
+<h3 id="work-ru">Можно ли пользоваться приложением на работе? Где исходный код?</h3>
+<p>Можно. Код приложения открыт по лицензии Apache 2.0: им можно пользоваться для любых законных целей, в том числе в работе и бизнесе. Распространять APK и свои версии тоже можно — вместе с текстом лицензии и файлом NOTICE; название и значок остаются за оригиналом. Исходный код — на GitHub.</p>
+<p class="faq-links"><a href="/dialer/eula">Лицензия (Apache 2.0)</a> <a href="https://github.com/oedante/OgnelissDialer">Исходный код</a></p>
+
+<h3 id="contact-ru">Как сообщить об ошибке или предложить идею?</h3>
+<p>Напишите на oedante@gmail.com. Если что-то работает не так, приложите технический журнал — Настройки → Данные и диагностика → Дополнительно → «Отправить лог»: номера и имена в нём скрыты.</p>
+<p class="faq-links"><a href="mailto:oedante@gmail.com">Написать письмо</a></p>
+</div><!-- /lang-ru -->
+
+
+<!-- Английская версия -->
+<div id="lang-en" style="display:none;">
+<h1>Questions and answers</h1>
+<p><strong>Ogneliss Dialer</strong> · version 1.6.0 · 23 October 2026</p>
+
+<p class="lead">Short answers to common questions. The same answers are in the app itself: “More” on the bottom bar → “Questions and answers” — and there the button under an answer opens the setting right away.</p>
+
+<h2>Getting started</h2>
+
+<h3 id="default-en">How do I make Ogneliss Dialer my default phone app?</h3>
+<p>On first launch the app offers to become the default phone app. If you declined, open Settings → Android settings → “Default apps” and choose Ogneliss Dialer under “Phone” — the name varies slightly between phones. Your call log and contacts stay as they are: Android keeps them, not the app, so nothing is lost if you switch back.</p>
+
+<h3 id="internet-en">Why doesn’t the app have internet access?</h3>
+<p>So that your data cannot leave the phone. Without the internet permission the app cannot send anything — not the call log, not contacts, not notes; you can see this in the installed app details. The operator and region of an unknown number come from a directory inside the app, and whether to show them is up to you: Settings → Call log → “Operator and region”.</p>
+
+<h3 id="transfer-en">How do I move notes and lists to a new phone?</h3>
+<p>With a file. They won’t move by themselves: the app keeps its data out of cloud backups and phone-to-phone transfers, so it stays with you only. Open Settings → Data and diagnostics → “Export notes and lists” — your notes, tags, block and allow lists and speed dial are saved to a file you choose. On the new phone use Settings → Data and diagnostics → “Import from file”: the data is added to what is already there. The call log and contacts are moved by Android and your account.</p>
+
+<h2>Call log and contacts</h2>
+
+<h3 id="switch-en">How do I switch from the call log to contacts?</h3>
+<p>With the first button on the bottom bar. The large icon is the list that is open now; the small circle next to it is where a tap takes you. A long press opens all sections: call log, contacts, notes and reminders. You can also swipe along the bar: left for contacts, right to go back to the call log.</p>
+
+<h3 id="search-en">How do I find a contact by name?</h3>
+<p>With the “Search” button on the bottom bar. In the call log it searches names, numbers and notes; in contacts, names. The dial pad searches with digits too — by number and by T9, in Cyrillic and Latin at once.</p>
+
+<h3 id="undo-en">I deleted a call log entry by mistake. Can I get it back?</h3>
+<p>Yes, if you act right away. After deleting, “Removed from the call list” with an “Undo” button appears at the bottom for a few seconds — tap it while the message is shown. After that the entries are removed from the phone’s system call log too and cannot be restored. Clearing the whole call log from the menu cannot be undone, which is why the app asks first.</p>
+
+<h3 id="spam-en">How do I block spam and unwanted numbers?</h3>
+<p>Long-press an entry → “Block”: the number goes to the block list and can no longer get through. In the same place, under “More”, there is the “Spam” tag: such numbers can’t get through either, and the tag is shown in the call log and on the call screen. Number masks, hidden and unknown numbers and an allow list of exceptions are in Settings → Spam protection.</p>
+
+<h2>Calls</h2>
+
+<h3 id="slide-en">How do I answer calls by sliding — or get the buttons back?</h3>
+<p>Settings → Calls → “Answering calls”. “Tap” gives two ordinary buttons. With “Slide” you move the button: right to answer, left to decline — so a call is not answered or rejected by accident while you take the phone out of your pocket. With TalkBack, calls are always answered with buttons.</p>
+
+<h3 id="sim-en">How do I choose the SIM card for a call?</h3>
+<p>Each SIM card has its own call button. The app remembers the card chosen for a number and offers it again next time (Settings → SIM cards → “Remember SIM per number”). To tell the cards apart, name them: Settings → SIM cards → “SIM card names”.</p>
+
+<h3 id="missed-en">Missed calls only appear when I open the app. What can I do?</h3>
+<p>Most likely the system puts the app to sleep to save battery. Allow it to work in the background — Settings → Android settings → “Background work” — and missed calls will appear right away.</p>
+
+<h3 id="recording-en">Can I record calls?</h3>
+<p>No. On Android 10 and later the system gives third-party apps no access to call audio, and working around this breaks Google Play rules. If your phone records calls, that is a feature built in by the manufacturer — it works regardless of the dialer you use.</p>
+
+<h2>About the app</h2>
+
+<h3 id="work-en">Can I use the app at work? Where is the source code?</h3>
+<p>Yes. The app’s code is open under the Apache License 2.0: you may use it for any lawful purpose, including work and business. You may also share the APK and your own versions — together with the license text and the NOTICE file; the name and icon stay with the original. The source code is on GitHub.</p>
+<p class="faq-links"><a href="/dialer/eula">License (Apache 2.0)</a> <a href="https://github.com/oedante/OgnelissDialer">Source code</a></p>
+
+<h3 id="contact-en">How do I report a bug or suggest an idea?</h3>
+<p>Write to oedante@gmail.com. If something doesn’t work right, attach the technical log — Settings → Data and diagnostics → Advanced → “Share log”: numbers and names in it are masked.</p>
+<p class="faq-links"><a href="mailto:oedante@gmail.com">Write an email</a></p>
+</div><!-- /lang-en -->
+
+
+<!-- Немецкая версия -->
+<div id="lang-de" style="display:none;">
+<h1>Fragen und Antworten</h1>
+<p><strong>Ogneliss Dialer</strong> · Version 1.6.0 · 23. Oktober 2026</p>
+
+<p class="lead">Kurze Antworten auf häufige Fragen. Dieselben Antworten finden Sie in der App: „Mehr“ auf der unteren Leiste → „Fragen und Antworten“ — dort öffnet die Taste unter einer Antwort gleich die passende Einstellung.</p>
+
+<h2>Erste Schritte</h2>
+
+<h3 id="default-de">Wie mache ich Ogneliss Dialer zur Standard-Telefon-App?</h3>
+<p>Beim ersten Start bietet die App an, Standard-Telefon-App zu werden. Wenn Sie abgelehnt haben, öffnen Sie Einstellungen → Android-Einstellungen → „Standard-Apps“ und wählen Sie Ogneliss Dialer unter „Telefon“ — je nach Gerät heißt der Punkt etwas anders. Anrufliste und Kontakte bleiben, wie sie sind: Sie werden von Android gespeichert, nicht von der App, und auch beim Wechsel zurück geht nichts verloren.</p>
+
+<h3 id="internet-de">Warum hat die App keinen Internetzugang?</h3>
+<p>Damit Ihre Daten das Telefon nicht verlassen können. Ohne Internetberechtigung kann die App nichts senden — weder die Anrufliste noch Kontakte oder Notizen; das sehen Sie in den Details der installierten App. Anbieter und Region einer unbekannten Nummer stammen aus einem Verzeichnis in der App, und ob sie angezeigt werden, entscheiden Sie: Einstellungen → Anrufprotokoll → „Anbieter und Region“.</p>
+
+<h3 id="transfer-de">Wie übertrage ich Notizen und Listen auf ein neues Telefon?</h3>
+<p>Per Datei. Von selbst ziehen sie nicht um: Die App hält ihre Daten aus Cloud-Sicherungen und der Übertragung von Telefon zu Telefon heraus — so bleiben sie nur bei Ihnen. Öffnen Sie Einstellungen → Daten und Diagnose → „Notizen und Listen exportieren“: Notizen, Markierungen, Sperr- und Freigabelisten sowie Kurzwahl werden in eine Datei Ihrer Wahl gespeichert. Auf dem neuen Telefon: Einstellungen → Daten und Diagnose → „Aus Datei importieren“ — die Daten kommen zu den vorhandenen hinzu. Anrufliste und Kontakte übertragen Android und Ihr Konto.</p>
+
+<h2>Anrufliste und Kontakte</h2>
+
+<h3 id="switch-de">Wie wechsle ich von der Anrufliste zu den Kontakten?</h3>
+<p>Mit der ersten Taste der unteren Leiste. Das große Symbol ist die gerade geöffnete Liste, der kleine Kreis daneben die, zu der ein Tippen wechselt. Langes Drücken öffnet alle Bereiche: Anrufliste, Kontakte, Notizen und Erinnerungen. Sie können auch über die Leiste wischen: nach links zu den Kontakten, nach rechts zurück zur Anrufliste.</p>
+
+<h3 id="search-de">Wie finde ich einen Kontakt nach Namen?</h3>
+<p>Mit der Taste „Suche“ auf der unteren Leiste. In der Anrufliste sucht sie nach Name, Nummer und Notiz, in den Kontakten nach Namen. Auch das Wähltastenfeld sucht — per Ziffern nach Nummer und per T9, kyrillisch und lateinisch zugleich.</p>
+
+<h3 id="undo-de">Ich habe einen Eintrag versehentlich gelöscht. Lässt er sich zurückholen?</h3>
+<p>Ja, wenn Sie gleich handeln. Nach dem Löschen erscheint unten einige Sekunden lang „Aus der Anrufliste entfernt“ mit der Taste „Rückgängig“ — tippen Sie darauf, solange die Meldung zu sehen ist. Danach werden die Einträge auch aus der Systemanrufliste gelöscht und lassen sich nicht wiederherstellen. Das Leeren der ganzen Anrufliste über das Menü lässt sich nicht rückgängig machen — deshalb fragt die App vorher nach.</p>
+
+<h3 id="spam-de">Wie sperre ich Spam und unerwünschte Nummern?</h3>
+<p>Eintrag lange drücken → „Sperren“: Die Nummer kommt auf die Sperrliste und kommt nicht mehr durch. Am selben Ort, unter „Mehr“, gibt es die Markierung „Spam“: Auch solche Nummern kommen nicht durch, und die Markierung ist in der Anrufliste und auf dem Anrufbildschirm zu sehen. Nummernmasken, unterdrückte und unbekannte Nummern sowie eine Freigabeliste für Ausnahmen finden Sie unter Einstellungen → Spamschutz.</p>
+
+<h2>Anrufe</h2>
+
+<h3 id="slide-de">Wie nehme ich Anrufe durch Schieben an — oder bekomme die Tasten zurück?</h3>
+<p>Einstellungen → Anrufe → „Anrufe annehmen“. „Tippen“ zeigt zwei gewöhnliche Tasten. Bei „Schieben“ verschieben Sie die Taste: nach rechts annehmen, nach links ablehnen — so wird kein Anruf versehentlich angenommen oder abgelehnt, wenn Sie das Telefon aus der Tasche ziehen. Mit TalkBack werden Anrufe immer mit Tasten angenommen.</p>
+
+<h3 id="sim-de">Wie wähle ich die SIM-Karte für einen Anruf?</h3>
+<p>Jede SIM-Karte hat ihre eigene Anruftaste. Die für eine Nummer gewählte Karte merkt sich die App und schlägt sie beim nächsten Mal wieder vor (Einstellungen → SIM-Karten → „SIM je Nummer merken“). Damit Sie die Karten nicht verwechseln, benennen Sie sie: Einstellungen → SIM-Karten → „Namen der SIM-Karten“.</p>
+
+<h3 id="missed-de">Verpasste Anrufe erscheinen erst, wenn ich die App öffne. Was tun?</h3>
+<p>Wahrscheinlich schickt das System die App in den Ruhezustand, um Akku zu sparen. Erlauben Sie ihr den Hintergrundbetrieb — Einstellungen → Android-Einstellungen → „Hintergrundbetrieb“ —, dann erscheinen verpasste Anrufe sofort.</p>
+
+<h3 id="recording-de">Kann ich Anrufe aufzeichnen?</h3>
+<p>Nein. Ab Android 10 gibt das System Dritt-Apps keinen Zugriff auf den Gesprächston, und eine Umgehung verstößt gegen die Google-Play-Richtlinien. Zeichnet Ihr Telefon Anrufe auf, ist das eine eingebaute Funktion des Herstellers — sie arbeitet unabhängig vom gewählten Dialer.</p>
+
+<h2>Über die App</h2>
+
+<h3 id="work-de">Darf ich die App beruflich nutzen? Wo ist der Quellcode?</h3>
+<p>Ja. Der Code der App ist unter der Apache-Lizenz 2.0 offen: Sie dürfen sie für jeden rechtmäßigen Zweck nutzen, auch beruflich und geschäftlich. Auch die Weitergabe der APK und eigener Versionen ist erlaubt — zusammen mit dem Lizenztext und der Datei NOTICE; Name und Symbol bleiben dem Original vorbehalten. Der Quellcode liegt auf GitHub.</p>
+<p class="faq-links"><a href="/dialer/eula">Lizenz (Apache 2.0)</a> <a href="https://github.com/oedante/OgnelissDialer">Quellcode</a></p>
+
+<h3 id="contact-de">Wie melde ich einen Fehler oder schlage eine Idee vor?</h3>
+<p>Schreiben Sie an oedante@gmail.com. Wenn etwas nicht richtig funktioniert, hängen Sie das technische Protokoll an — Einstellungen → Daten und Diagnose → Erweitert → „Protokoll senden“: Nummern und Namen darin sind maskiert.</p>
+<p class="faq-links"><a href="mailto:oedante@gmail.com">E-Mail schreiben</a></p>
+</div><!-- /lang-de -->
+
+
+<!-- Французская версия -->
+<div id="lang-fr" style="display:none;">
+<h1>Questions et réponses</h1>
+<p><strong>Ogneliss Dialer</strong> · version 1.6.0 · 23 octobre 2026</p>
+
+<p class="lead">Des réponses courtes aux questions fréquentes. Les mêmes réponses figurent dans l’application : « Plus » dans la barre du bas → « Questions et réponses » — et le bouton sous une réponse y ouvre directement le réglage concerné.</p>
+
+<h2>Premiers pas</h2>
+
+<h3 id="default-fr">Comment faire d’Ogneliss Dialer l’application Téléphone par défaut ?</h3>
+<p>Au premier lancement, l’application propose de devenir l’application Téléphone par défaut. Si vous avez refusé, ouvrez Réglages → Réglages Android → « Applications par défaut » et choisissez Ogneliss Dialer sous « Téléphone » — l’intitulé varie un peu selon les appareils. Le journal d’appels et les contacts restent tels quels : c’est Android qui les conserve, pas l’application, et rien n’est perdu si vous revenez à l’ancienne.</p>
+
+<h3 id="internet-fr">Pourquoi l’application n’a-t-elle pas accès à Internet ?</h3>
+<p>Pour que vos données ne puissent pas quitter le téléphone. Sans l’autorisation d’accès à Internet, l’application ne peut rien envoyer — ni le journal, ni les contacts, ni les notes ; vous pouvez le vérifier dans les détails de l’application installée. L’opérateur et la région d’un numéro inconnu viennent d’un annuaire intégré à l’application, et c’est vous qui décidez de les afficher : Réglages → Journal d’appels → « Opérateur et région ».</p>
+
+<h3 id="transfer-fr">Comment transférer les notes et les listes sur un nouveau téléphone ?</h3>
+<p>Par un fichier. Elles ne migrent pas d’elles-mêmes : l’application exclut ses données des sauvegardes dans le cloud et des transferts entre téléphones — elles restent ainsi chez vous seulement. Ouvrez Réglages → Données et diagnostic → « Exporter les notes et les listes » : notes, étiquettes, listes de blocage et d’exceptions et numéros abrégés sont enregistrés dans le fichier de votre choix. Sur le nouveau téléphone : Réglages → Données et diagnostic → « Importer depuis un fichier » — les données s’ajoutent à celles déjà présentes. Le journal d’appels et les contacts sont transférés par Android et votre compte.</p>
+
+<h2>Journal et contacts</h2>
+
+<h3 id="switch-fr">Comment passer du journal aux contacts ?</h3>
+<p>Avec le premier bouton de la barre du bas. La grande icône est la liste ouverte, le petit cercle à côté celle vers laquelle un appui bascule. Un appui long ouvre toutes les sections : journal, contacts, notes et rappels. Vous pouvez aussi balayer la barre : vers la gauche pour les contacts, vers la droite pour revenir au journal.</p>
+
+<h3 id="search-fr">Comment trouver un contact par son nom ?</h3>
+<p>Avec le bouton « Recherche » de la barre du bas. Dans le journal, il cherche par nom, numéro et note ; dans les contacts, par nom. Le clavier cherche aussi avec des chiffres — par numéro et en T9, en cyrillique et en latin à la fois.</p>
+
+<h3 id="undo-fr">J’ai supprimé une entrée du journal par erreur. Peut-on la récupérer ?</h3>
+<p>Oui, si vous réagissez tout de suite. Après la suppression, « Supprimé de la liste des appels » s’affiche en bas pendant quelques secondes avec le bouton « Annuler » — appuyez dessus tant que le message est visible. Ensuite, les entrées sont aussi supprimées du journal système du téléphone et ne peuvent plus être restaurées. Effacer tout le journal depuis le menu est définitif : c’est pourquoi l’application demande d’abord confirmation.</p>
+
+<h3 id="spam-fr">Comment bloquer le spam et les numéros indésirables ?</h3>
+<p>Appui long sur une entrée → « Bloquer » : le numéro passe dans la liste de blocage et ne peut plus vous joindre. Au même endroit, sous « Plus », il y a l’étiquette « Spam » : ces numéros ne passent pas non plus, et l’étiquette apparaît dans le journal et sur l’écran d’appel. Masques de numéros, numéros masqués et inconnus, liste d’exceptions : tout est dans Réglages → Protection contre le spam.</p>
+
+<h2>Appels</h2>
+
+<h3 id="slide-fr">Comment répondre en faisant glisser — ou retrouver les boutons ?</h3>
+<p>Réglages → Appels → « Réponse aux appels ». « Toucher » affiche deux boutons ordinaires. Avec « Glisser », on fait glisser le bouton : à droite pour répondre, à gauche pour refuser — impossible ainsi de répondre ou de refuser par mégarde en sortant le téléphone de la poche. Avec TalkBack, les appels se prennent toujours avec des boutons.</p>
+
+<h3 id="sim-fr">Comment choisir la carte SIM pour un appel ?</h3>
+<p>Chaque carte SIM a son propre bouton d’appel. L’application retient la carte choisie pour un numéro et la propose de nouveau la fois suivante (Réglages → Cartes SIM → « Mémoriser la SIM par numéro »). Pour ne pas confondre les cartes, nommez-les : Réglages → Cartes SIM → « Noms des cartes SIM ».</p>
+
+<h3 id="missed-fr">Les appels manqués n’apparaissent qu’à l’ouverture de l’application. Que faire ?</h3>
+<p>Le système met probablement l’application en veille pour économiser la batterie. Autorisez-la à fonctionner en arrière-plan — Réglages → Réglages Android → « Fonctionnement en arrière-plan » — et les appels manqués s’afficheront aussitôt.</p>
+
+<h3 id="recording-fr">Peut-on enregistrer les appels ?</h3>
+<p>Non. Depuis Android 10, le système ne donne pas aux applications tierces l’accès à l’audio des appels, et contourner cette règle enfreint les règles de Google Play. Si votre téléphone enregistre les appels, c’est une fonction intégrée par le constructeur — elle fonctionne quelle que soit l’application Téléphone choisie.</p>
+
+<h2>À propos de l’application</h2>
+
+<h3 id="work-fr">Peut-on utiliser l’application au travail ? Où est le code source ?</h3>
+<p>Oui. Le code de l’application est ouvert sous licence Apache 2.0 : vous pouvez l’utiliser à toute fin légale, y compris au travail et en entreprise. Vous pouvez aussi diffuser l’APK et vos propres versions — avec le texte de la licence et le fichier NOTICE ; le nom et l’icône restent réservés à l’original. Le code source est sur GitHub.</p>
+<p class="faq-links"><a href="/dialer/eula">Licence (Apache 2.0)</a> <a href="https://github.com/oedante/OgnelissDialer">Code source</a></p>
+
+<h3 id="contact-fr">Comment signaler un bug ou proposer une idée ?</h3>
+<p>Écrivez à oedante@gmail.com. Si quelque chose ne fonctionne pas, joignez le journal technique — Réglages → Données et diagnostic → Avancé → « Partager le journal » : les numéros et les noms y sont masqués.</p>
+<p class="faq-links"><a href="mailto:oedante@gmail.com">Écrire un e-mail</a></p>
+</div><!-- /lang-fr -->
+
+
+<script src="/dialer/lang.js" defer></script>
+
+</main>
+</body>
+</html>

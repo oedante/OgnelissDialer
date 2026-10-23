@@ -1,0 +1,162 @@
+<ru-RU>
+• Журнал и контакты — соседи: первая кнопка нижней панели переключает между ними, долгое нажатие открывает все разделы.
+• Поиск буквами — по имени, номеру и заметке: кнопка «Поиск» на панели.
+• «Вопросы и ответы» прямо в приложении (Ещё → «Вопросы и ответы»): кнопка под ответом открывает нужную настройку.
+• Напоминания на сегодня — полосой над журналом. На экране вызова живой фон — до низа, без подложки под кнопками.
+</ru-RU>
+<ar>
+• السجل وجهات الاتصال متجاوران الآن: الزر الأول في الشريط السفلي يبدّل بينهما، والضغط المطوّل يفتح كل الأقسام.
+• البحث بالحروف — بالاسم والرقم والملاحظة: زر «بحث» في الشريط.
+• «أسئلة وأجوبة» داخل التطبيق (المزيد ← «أسئلة وأجوبة»): الزر أسفل الإجابة يفتح الإعداد المقصود.
+• تذكيرات اليوم في شريط فوق سجل المكالمات. وفي شاشة المكالمة تمتد الخلفية الحية حتى الأسفل دون لوحة تحت الأزرار.
+</ar>
+<cs-CZ>
+• Seznam hovorů a kontakty jsou sousedé: první tlačítko dolní lišty mezi nimi přepíná, podržením otevřete všechny sekce.
+• Hledání písmeny — podle jména, čísla a poznámky: tlačítko „Hledat“ na liště.
+• „Otázky a odpovědi“ přímo v aplikaci (Více → „Otázky a odpovědi“): tlačítko pod odpovědí otevře příslušné nastavení.
+• Dnešní připomínky jako pruh nad seznamem hovorů. Na obrazovce hovoru sahá živé pozadí až dolů, bez panelu pod tlačítky.
+</cs-CZ>
+<da-DK>
+• Opkaldsliste og kontakter er naboer: den første knap på bundlinjen skifter mellem dem, et langt tryk åbner alle sektioner.
+• Søg med bogstaver — på navn, nummer og note: knappen "Søg" på linjen.
+• "Spørgsmål og svar" direkte i appen (Mere → "Spørgsmål og svar"): knappen under et svar åbner den rette indstilling.
+• Dagens påmindelser som en stribe over opkaldslisten. På opkaldsskærmen går den levende baggrund helt ned, uden panel under knapperne.
+</da-DK>
+<de-DE>
+• Anrufliste und Kontakte sind Nachbarn: Die erste Taste der unteren Leiste wechselt zwischen ihnen, langes Drücken öffnet alle Bereiche.
+• Suche mit Buchstaben — nach Name, Nummer und Notiz: Taste „Suche“ auf der Leiste.
+• „Fragen und Antworten“ direkt in der App (Mehr → „Fragen und Antworten“): Die Taste unter einer Antwort öffnet die passende Einstellung.
+• Erinnerungen für heute als Leiste über der Anrufliste. Der lebendige Anrufhintergrund reicht bis unten, ohne Fläche unter den Tasten.
+</de-DE>
+<en-US>
+• Call log and contacts are now neighbours: the first button on the bottom bar switches between them; a long press opens all sections.
+• Search by letters — by name, number and note: the "Search" button on the bar.
+• "Questions and answers" right in the app (More → "Questions and answers"): the button under an answer opens the setting it is about.
+• Today's reminders in a strip above the call log. On the call screen the live background reaches the bottom, with no panel under the buttons.
+</en-US>
+<es-ES>
+• El registro y los contactos son vecinos: el primer botón de la barra inferior cambia entre ellos; una pulsación larga abre todas las secciones.
+• Búsqueda por letras — por nombre, número y nota: botón «Buscar» de la barra.
+• «Preguntas y respuestas» en la propia app (Más → «Preguntas y respuestas»): el botón bajo cada respuesta abre el ajuste indicado.
+• Recordatorios de hoy en una franja sobre el registro. En la llamada, el fondo animado llega hasta abajo, sin panel bajo los botones.
+</es-ES>
+<fi-FI>
+• Puheluloki ja yhteystiedot ovat naapureita: alapalkin ensimmäinen painike vaihtaa niiden välillä, pitkä painallus avaa kaikki osiot.
+• Haku kirjaimilla — nimen, numeron ja muistiinpanon mukaan: palkin ”Haku”-painike.
+• ”Kysymykset ja vastaukset” suoraan sovelluksessa (Lisää → ”Kysymykset ja vastaukset”): vastauksen alla oleva painike avaa oikean asetuksen.
+• Päivän muistutukset nauhana puhelulokin yllä. Puhelunäkymän elävä tausta ulottuu alas asti ilman paneelia painikkeiden alla.
+</fi-FI>
+<fr-FR>
+• Journal et contacts sont voisins : le premier bouton de la barre du bas passe de l’un à l’autre ; un appui long ouvre toutes les sections.
+• Recherche par lettres — par nom, numéro et note : bouton « Recherche ».
+• « Questions et réponses » dans l’application (Plus → « Questions et réponses ») : le bouton sous une réponse ouvre le réglage concerné.
+• Rappels du jour en bandeau au-dessus du journal. À l’écran d’appel, le fond animé descend jusqu’en bas, sans panneau sous les boutons.
+</fr-FR>
+<hi-IN>
+• कॉल लॉग और संपर्क अब पड़ोसी हैं: नीचे की पट्टी का पहला बटन दोनों के बीच बदलता है, लंबा दबाने पर सभी सेक्शन खुलते हैं।
+• अक्षरों से खोज — नाम, नंबर और नोट से: पट्टी पर "खोज" बटन।
+• "सवाल और जवाब" ऐप में ही (और → "सवाल और जवाब"): जवाब के नीचे का बटन संबंधित सेटिंग खोलता है।
+• आज के रिमाइंडर कॉल लॉग के ऊपर पट्टी में। कॉल स्क्रीन पर जीवंत पृष्ठभूमि नीचे तक जाती है, बटनों के नीचे कोई पैनल नहीं।
+</hi-IN>
+<hu-HU>
+• A hívásnapló és a névjegyek szomszédok: az alsó sáv első gombja vált köztük, hosszú nyomásra minden rész megnyílik.
+• Keresés betűkkel — név, szám és jegyzet alapján: a sáv „Keresés” gombja.
+• „Kérdések és válaszok” magában az alkalmazásban (Továbbiak → „Kérdések és válaszok”): a válasz alatti gomb megnyitja a megfelelő beállítást.
+• A mai emlékeztetők sávként a hívásnapló fölött. A hívásképernyő élő háttere egészen alulig ér, a gombok alatt nincs panel.
+</hu-HU>
+<id>
+• Log panggilan dan kontak kini bersebelahan: tombol pertama di bilah bawah beralih di antara keduanya, tekan lama membuka semua bagian.
+• Cari dengan huruf — menurut nama, nomor, dan catatan: tombol "Cari" di bilah.
+• "Tanya jawab" langsung di aplikasi (Lainnya → "Tanya jawab"): tombol di bawah jawaban membuka setelan yang dimaksud.
+• Pengingat hari ini tampil sebagai strip di atas log panggilan. Di layar panggilan, latar hidup sampai ke bawah, tanpa panel di bawah tombol.
+</id>
+<it-IT>
+• Registro e contatti sono vicini: il primo pulsante della barra in basso passa dall’uno all’altro, una pressione lunga apre tutte le sezioni.
+• Ricerca per lettere — per nome, numero e nota: pulsante «Cerca».
+• «Domande e risposte» direttamente nell’app (Altro → «Domande e risposte»): il pulsante sotto una risposta apre l’impostazione giusta.
+• Promemoria di oggi in una striscia sopra il registro. Nella chiamata lo sfondo animato arriva fino in fondo, senza pannello sotto i pulsanti.
+</it-IT>
+<iw-IL>
+• יומן השיחות ואנשי הקשר הם עכשיו שכנים: הכפתור הראשון בסרגל התחתון עובר ביניהם, ולחיצה ארוכה פותחת את כל הקטעים.
+• חיפוש באותיות — לפי שם, מספר והערה: כפתור "חיפוש" בסרגל.
+• "שאלות ותשובות" בתוך האפליקציה (עוד ← "שאלות ותשובות"): הכפתור מתחת לתשובה פותח את ההגדרה המתאימה.
+• התזכורות של היום כפס מעל יומן השיחות. במסך השיחה הרקע החי מגיע עד למטה, בלי לוח מתחת לכפתורים.
+</iw-IL>
+<ja-JP>
+• 通話履歴と連絡先が隣同士に：下部バーの最初のボタンで切り替え、長押しですべてのセクションを表示。
+• 文字で検索 — 名前・番号・メモから：バーの「検索」ボタン。
+• 「よくある質問」をアプリ内に（その他 → 「よくある質問」）：回答の下のボタンで該当する設定を開けます。
+• 今日のリマインダーを通話履歴の上に帯で表示。通話画面のライブ背景が下まで広がり、ボタンの下のパネルはなくなりました。
+</ja-JP>
+<ko-KR>
+• 통화 기록과 연락처가 나란히: 하단 바의 첫 번째 버튼으로 전환하고, 길게 누르면 모든 섹션이 열립니다.
+• 글자로 검색 — 이름, 번호, 메모로: 바의 '검색' 버튼.
+• 앱 안의 '질문과 답변' (더보기 → '질문과 답변'): 답변 아래 버튼이 해당 설정을 엽니다.
+• 오늘의 알림을 통화 기록 위에 띠로 표시합니다. 통화 화면의 라이브 배경이 아래까지 이어지고 버튼 아래 패널이 없어졌습니다.
+</ko-KR>
+<nl-NL>
+• Belgeschiedenis en contacten zijn buren: de eerste knop van de onderbalk wisselt ertussen, lang drukken opent alle onderdelen.
+• Zoeken met letters — op naam, nummer en notitie: de knop 'Zoeken' op de balk.
+• 'Vragen en antwoorden' in de app zelf (Meer → 'Vragen en antwoorden'): de knop onder een antwoord opent de juiste instelling.
+• Herinneringen voor vandaag als strook boven de belgeschiedenis. Op het belscherm loopt de levende achtergrond door tot onderaan, zonder paneel.
+</nl-NL>
+<no-NO>
+• Anropslogg og kontakter er naboer: den første knappen i bunnlinjen bytter mellom dem, et langt trykk åpner alle seksjonene.
+• Søk med bokstaver — på navn, nummer og notat: knappen «Søk» i linjen.
+• «Spørsmål og svar» rett i appen (Mer → «Spørsmål og svar»): knappen under et svar åpner riktig innstilling.
+• Dagens påminnelser som en stripe over anropsloggen. På anropsskjermen går den levende bakgrunnen helt ned, uten panel under knappene.
+</no-NO>
+<pl-PL>
+• Rejestr połączeń i kontakty są sąsiadami: pierwszy przycisk dolnego paska przełącza między nimi, przytrzymanie otwiera wszystkie sekcje.
+• Wyszukiwanie literami — po nazwie, numerze i notatce: przycisk „Szukaj” na pasku.
+• „Pytania i odpowiedzi” w samej aplikacji (Więcej → „Pytania i odpowiedzi”): przycisk pod odpowiedzią otwiera właściwe ustawienie.
+• Dzisiejsze przypomnienia jako pasek nad rejestrem. Na ekranie połączenia żywe tło sięga do dołu, bez panelu pod przyciskami.
+</pl-PL>
+<pt-BR>
+• Histórico e contatos agora são vizinhos: o primeiro botão da barra inferior alterna entre eles; um toque longo abre todas as seções.
+• Busca por letras — por nome, número e nota: botão "Pesquisar" na barra.
+• "Perguntas e respostas" dentro do app (Mais → "Perguntas e respostas"): o botão sob a resposta abre a configuração certa.
+• Lembretes de hoje numa faixa acima do histórico. Na tela de chamada, o fundo animado vai até embaixo, sem painel sob os botões.
+</pt-BR>
+<ro>
+• Jurnalul și contactele sunt vecine: primul buton din bara de jos comută între ele, o apăsare lungă deschide toate secțiunile.
+• Căutare cu litere — după nume, număr și notă: butonul „Caută” din bară.
+• „Întrebări și răspunsuri” chiar în aplicație (Mai mult → „Întrebări și răspunsuri”): butonul de sub răspuns deschide setarea potrivită.
+• Mementourile de azi, ca bandă deasupra jurnalului. Pe ecranul de apel, fundalul animat ajunge până jos, fără panou sub butoane.
+</ro>
+<sk>
+• Zoznam hovorov a kontakty sú susedia: prvé tlačidlo dolného panela medzi nimi prepína, podržaním otvoríte všetky sekcie.
+• Hľadanie písmenami — podľa mena, čísla a poznámky: tlačidlo „Hľadať“ na paneli.
+• „Otázky a odpovede“ priamo v aplikácii (Viac → „Otázky a odpovede“): tlačidlo pod odpoveďou otvorí príslušné nastavenie.
+• Dnešné pripomienky ako pás nad zoznamom hovorov. Na obrazovke hovoru siaha živé pozadie až dole, bez panela pod tlačidlami.
+</sk>
+<sv-SE>
+• Samtalslogg och kontakter är grannar: den första knappen i bottenfältet växlar mellan dem, ett långt tryck öppnar alla delar.
+• Sök med bokstäver — på namn, nummer och anteckning: knappen ”Sök” i fältet.
+• ”Frågor och svar” direkt i appen (Mer → ”Frågor och svar”): knappen under ett svar öppnar rätt inställning.
+• Dagens påminnelser som en remsa ovanför samtalsloggen. På samtalsskärmen når den levande bakgrunden ända ner, utan panel under knapparna.
+</sv-SE>
+<th>
+• ประวัติการโทรและรายชื่ออยู่เคียงกัน: ปุ่มแรกบนแถบล่างใช้สลับไปมา กดค้างเพื่อเปิดทุกส่วน
+• ค้นหาด้วยตัวอักษร — ตามชื่อ หมายเลข และโน้ต: ปุ่ม "ค้นหา" บนแถบ
+• "คำถามและคำตอบ" ในแอปเอง (เพิ่มเติม → "คำถามและคำตอบ"): ปุ่มใต้คำตอบจะเปิดการตั้งค่าที่เกี่ยวข้อง
+• การเตือนของวันนี้แสดงเป็นแถบเหนือประวัติการโทร หน้าจอการโทรมีพื้นหลังเคลื่อนไหวยาวถึงด้านล่าง ไม่มีแผงใต้ปุ่ม
+</th>
+<tr-TR>
+• Arama kaydı ve kişiler artık komşu: alt çubuğun ilk düğmesi aralarında geçiş yapar, uzun basmak tüm bölümleri açar.
+• Harflerle arama — ada, numaraya ve nota göre: çubuktaki "Ara" düğmesi.
+• "Sorular ve yanıtlar" doğrudan uygulamada (Diğer → "Sorular ve yanıtlar"): yanıtın altındaki düğme ilgili ayarı açar.
+• Bugünün hatırlatıcıları arama kaydının üstünde bir şerit olarak. Arama ekranında canlı arka plan en alta uzanır, düğmelerin altında panel yok.
+</tr-TR>
+<vi>
+• Nhật ký cuộc gọi và danh bạ giờ nằm cạnh nhau: nút đầu tiên trên thanh dưới để chuyển qua lại, nhấn giữ để mở mọi mục.
+• Tìm bằng chữ — theo tên, số và ghi chú: nút "Tìm kiếm" trên thanh.
+• "Hỏi đáp" ngay trong ứng dụng (Thêm → "Hỏi đáp"): nút dưới câu trả lời mở đúng cài đặt cần thiết.
+• Lời nhắc hôm nay hiện thành dải phía trên nhật ký. Trên màn hình cuộc gọi, nền động kéo xuống tận đáy, không còn bảng dưới các nút.
+</vi>
+<zh-CN>
+• 通话记录与联系人并列：底栏第一个按钮在两者间切换，长按打开所有分区。
+• 按文字搜索——按姓名、号码和备注：底栏的“搜索”按钮。
+• 应用内的“常见问题”（更多 → “常见问题”）：答案下方的按钮直接打开相关设置。
+• 今天的提醒显示为通话记录上方的横条。通话界面的动态背景延伸到底部，按钮下不再有面板。
+</zh-CN>

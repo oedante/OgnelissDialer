@@ -1,0 +1,162 @@
+<ru-RU>
+• Номер в карточке контакта звонит касанием; долгое нажатие — копировать, поделиться, спам, блок.
+• Ответ на вызов сдвигом — чтобы не ответить случайно: Настройки → Вызовы → «Ответ на вызов».
+• «Отменить» показывает, сколько секунд осталось, а «Наверх» — сколько пришло новых вызовов.
+• Настройки: редкие — в «Дополнительно», изменённые отмечены точкой, есть «Вернуть как было». Фото в карточке — до верха экрана.
+</ru-RU>
+<ar>
+• المس رقمًا في بطاقة جهة الاتصال للاتصال به، واضغط مطولًا لنسخه أو مشاركته أو تمييزه كمزعج أو حظره.
+• الرد على المكالمات بالسحب حتى لا ترد عن طريق الخطأ: الإعدادات ← المكالمات ← «الرد على المكالمات».
+• يعرض «تراجع» الثواني المتبقية، ويعرض «إلى الأعلى» عدد المكالمات الجديدة.
+• الإعدادات: الخيارات النادرة ضمن «متقدم»، والمعدَّلة عليها نقطة، و«استعادة الافتراضي» يعيد ضبط القسم. تمتد صورة جهة الاتصال حتى أعلى الشاشة.
+</ar>
+<cs-CZ>
+• Klepnutím na číslo na kartě kontaktu zavoláte; podržením ho zkopírujete, sdílíte, označíte jako spam nebo zablokujete.
+• Přijímání hovorů posunutím, abyste hovor nepřijali omylem: Nastavení → Hovory → „Přijímání hovorů“.
+• „Vrátit zpět“ ukazuje zbývající sekundy a „Nahoru“ počet nových hovorů.
+• Nastavení: méně používané volby jsou v části „Pokročilé“, změněné mají tečku a „Obnovit výchozí“ vrátí sekci zpět. Fotka kontaktu sahá až k hornímu okraji obrazovky.
+</cs-CZ>
+<da-DK>
+• Tryk på et nummer på kontaktens kort for at ringe op; tryk længe for at kopiere, dele, markere som spam eller blokere.
+• Besvar opkald ved at stryge, så du ikke svarer ved et uheld: Indstillinger → Opkald → "Besvarelse af opkald".
+• "Fortryd" viser de resterende sekunder, og "Til toppen" viser antallet af nye opkald.
+• Indstillinger: sjældne valg ligger under "Avanceret", ændrede har en prik, og "Gendan standard" nulstiller en sektion. Kontaktens billede går helt op til toppen af skærmen.
+</da-DK>
+<de-DE>
+• Tippen auf eine Nummer in der Kontaktkarte ruft sie an; langes Tippen: kopieren, teilen, als Spam markieren, sperren.
+• Anrufe per Schieben annehmen, damit nichts aus Versehen angenommen wird: Einstellungen → Anrufe → „Anrufe annehmen“.
+• „Rückgängig“ zeigt die verbleibenden Sekunden, „Nach oben“ die Zahl neuer Anrufe.
+• Einstellungen: Seltenes unter „Erweitert“, Geändertes mit Punkt, „Standard wiederherstellen“ je Bereich. Das Kontaktfoto reicht bis zum oberen Bildschirmrand.
+</de-DE>
+<en-US>
+• Tap a number on a contact's card to call it; long-press to copy, share, mark as spam or block.
+• Answer calls with a slide so you don't pick up by accident: Settings → Calls → "Answering calls".
+• "Undo" shows how many seconds are left, and "Back to top" shows how many new calls came in.
+• Settings: rarely used options are under "Advanced", changed ones have a dot, and "Restore defaults" resets a section. The contact photo now reaches the top of the screen.
+</en-US>
+<es-ES>
+• Toca un número en la ficha de un contacto para llamar; mantenlo pulsado para copiar, compartir, marcar como spam o bloquear.
+• Responde deslizando para no contestar por accidente: Ajustes → Llamadas → «Responder llamadas».
+• «Deshacer» muestra los segundos que quedan y «Arriba», cuántas llamadas nuevas han llegado.
+• Ajustes: lo poco usado está en «Avanzado», lo cambiado lleva un punto y «Restablecer» restaura una sección. La foto del contacto llega hasta arriba de la pantalla.
+</es-ES>
+<fi-FI>
+• Napauta numeroa yhteystiedon kortilla soittaaksesi; pitkä painallus: kopioi, jaa, merkitse roskapuheluksi tai estä.
+• Vastaa puheluun pyyhkäisemällä, jotta et vastaa vahingossa: Asetukset → Puhelut → ”Puheluihin vastaaminen”.
+• ”Kumoa” näyttää jäljellä olevat sekunnit ja ”Ylös” uusien puhelujen määrän.
+• Asetukset: harvoin käytetyt kohdat ovat kohdassa ”Lisäasetukset”, muutetuissa on piste ja ”Palauta oletukset” palauttaa osion. Yhteystiedon kuva ulottuu näytön yläreunaan.
+</fi-FI>
+<fr-FR>
+• Touchez un numéro dans la fiche d’un contact pour l’appeler ; appui long : copier, partager, spam, bloquer.
+• Répondre en glissant, pour ne pas décrocher par accident : Réglages → Appels → « Réponse aux appels ».
+• « Annuler » affiche les secondes restantes, « Haut de page » le nombre de nouveaux appels.
+• Réglages : options rares sous « Avancé », modifications marquées d’un point, « Rétablir les valeurs par défaut » par section. La photo du contact monte jusqu’en haut de l’écran.
+</fr-FR>
+<hi-IN>
+• संपर्क कार्ड में किसी नंबर पर टैप करें — कॉल लग जाएगी; देर तक दबाकर कॉपी, शेयर, स्पैम चिह्नित या ब्लॉक करें।
+• गलती से कॉल न उठे, इसके लिए स्लाइड करके जवाब दें: सेटिंग्स → कॉल → "कॉल का जवाब देना"।
+• "पहले जैसा करें" में बचे हुए सेकंड और "ऊपर जाएँ" में नई कॉल की संख्या दिखती है।
+• सेटिंग्स: कम इस्तेमाल वाले विकल्प "उन्नत" में, बदले गए विकल्पों पर बिंदु, और "डिफ़ॉल्ट पर लौटाएँ" से सेक्शन रीसेट। संपर्क की फ़ोटो अब स्क्रीन के ऊपर तक जाती है।
+</hi-IN>
+<hu-HU>
+• A névjegykártyán egy számra koppintva hívhatja; hosszan nyomva másolhatja, megoszthatja, spamnek jelölheti vagy letilthatja.
+• Hívásfogadás csúsztatással, hogy véletlenül ne vegye fel: Beállítások → Hívások → „Hívások fogadása”.
+• A „Visszavonás” a hátralévő másodperceket, a „Fel” az új hívások számát mutatja.
+• Beállítások: a ritka opciók a „Speciális” alatt, a módosítottakon pont, az „Alapértékek visszaállítása” egy részt állít vissza. A névjegy fotója a képernyő tetejéig ér.
+</hu-HU>
+<id>
+• Ketuk nomor di kartu kontak untuk menelepon; tekan lama untuk menyalin, membagikan, menandai sebagai spam, atau memblokir.
+• Jawab panggilan dengan menggeser agar tidak terjawab tanpa sengaja: Setelan → Panggilan → "Menjawab panggilan".
+• "Urungkan" menampilkan sisa detik, dan "Ke atas" menampilkan jumlah panggilan baru.
+• Setelan: opsi yang jarang dipakai ada di "Lanjutan", yang diubah ditandai titik, dan "Pulihkan default" mengatur ulang satu bagian. Foto kontak kini sampai ke atas layar.
+</id>
+<it-IT>
+• Tocca un numero nella scheda del contatto per chiamarlo; tieni premuto per copiare, condividere, segnalare come spam o bloccare.
+• Rispondi con uno scorrimento per non rispondere per sbaglio: Impostazioni → Chiamate → «Risposta alle chiamate».
+• «Annulla» mostra i secondi rimasti e «In alto» quante nuove chiamate sono arrivate.
+• Impostazioni: opzioni rare in «Avanzate», quelle modificate con un punto, «Ripristina» per ogni sezione. La foto del contatto arriva fino in cima allo schermo.
+</it-IT>
+<iw-IL>
+• הקשה על מספר בכרטיס איש הקשר מחייגת אליו; לחיצה ארוכה — העתקה, שיתוף, סימון כספאם או חסימה.
+• מענה לשיחות בהחלקה, כדי לא לענות בטעות: הגדרות ← שיחות ← "מענה לשיחות".
+• "ביטול" מציג כמה שניות נותרו, ו"למעלה" — כמה שיחות חדשות הגיעו.
+• הגדרות: אפשרויות נדירות תחת "מתקדם", שינויים מסומנים בנקודה, ו"שחזור ברירת מחדל" מאפס חלק. תמונת איש הקשר מגיעה עד ראש המסך.
+</iw-IL>
+<ja-JP>
+• 連絡先カードの番号をタップすると発信、長押しでコピー・共有・迷惑電話としてマーク・ブロックができます。
+• 誤って応答しないよう、スライドで応答できます：設定 → 通話 → 「着信への応答」。
+• 「元に戻す」に残り秒数、「トップへ」に新しい着信の件数が表示されます。
+• 設定：あまり使わない項目は「詳細設定」に、変更した項目には点の印、「デフォルトに戻す」でセクションごとにリセット。連絡先の写真が画面の上端まで広がります。
+</ja-JP>
+<ko-KR>
+• 연락처 카드의 번호를 탭하면 전화가 걸리고, 길게 누르면 복사·공유·스팸 표시·차단을 할 수 있습니다.
+• 실수로 받지 않도록 밀어서 전화를 받을 수 있습니다: 설정 → 통화 → '전화 받기'.
+• '실행취소'에는 남은 초가, '맨 위로'에는 새 통화 수가 표시됩니다.
+• 설정: 자주 쓰지 않는 항목은 '고급'에, 변경한 항목에는 점이 표시되며 '기본값 복원'으로 섹션별로 되돌릴 수 있습니다. 연락처 사진이 화면 맨 위까지 표시됩니다.
+</ko-KR>
+<nl-NL>
+• Tik op een nummer in de contactkaart om te bellen; houd ingedrukt om te kopiëren, delen, als spam markeren of blokkeren.
+• Opnemen door te vegen, zodat je niet per ongeluk opneemt: Instellingen → Gesprekken → 'Gesprekken aannemen'.
+• 'Ongedaan maken' toont de resterende seconden, 'Naar boven' het aantal nieuwe gesprekken.
+• Instellingen: zeldzame opties onder 'Geavanceerd', wijzigingen met een stip, 'Standaard herstellen' per onderdeel. De contactfoto loopt door tot bovenaan het scherm.
+</nl-NL>
+<no-NO>
+• Trykk på et nummer på kontaktkortet for å ringe; trykk lenge for å kopiere, dele, merke som spam eller blokkere.
+• Svar på anrop ved å sveipe, så du ikke svarer ved et uhell: Innstillinger → Samtaler → «Svare på anrop».
+• «Angre» viser hvor mange sekunder som er igjen, og «Til toppen» antall nye anrop.
+• Innstillinger: sjeldne valg ligger under «Avansert», endrede er merket med en prikk, og «Gjenopprett standard» tilbakestiller en del. Kontaktbildet går helt til toppen av skjermen.
+</no-NO>
+<pl-PL>
+• Dotknij numeru na karcie kontaktu, aby zadzwonić; przytrzymaj, aby skopiować, udostępnić, oznaczyć jako spam lub zablokować.
+• Odbieranie przesunięciem, aby nie odebrać przypadkiem: Ustawienia → Połączenia → „Odbieranie połączeń”.
+• „Cofnij” pokazuje, ile sekund zostało, a „Na górę” — ile przyszło nowych połączeń.
+• Ustawienia: rzadko używane opcje są w „Zaawansowane”, zmienione mają kropkę, a „Przywróć domyślne” resetuje sekcję. Zdjęcie kontaktu sięga do górnej krawędzi ekranu.
+</pl-PL>
+<pt-BR>
+• Toque em um número no cartão do contato para ligar; toque e segure para copiar, compartilhar, marcar como spam ou bloquear.
+• Atenda deslizando para não atender por engano: Configurações → Chamadas → "Atender chamadas".
+• "Desfazer" mostra quantos segundos faltam, e "Voltar ao topo", quantas chamadas novas chegaram.
+• Configurações: opções pouco usadas ficam em "Avançado", as alteradas têm um ponto e "Restaurar padrão" redefine uma seção. A foto do contato vai até o topo da tela.
+</pt-BR>
+<ro>
+• Atingeți un număr pe fișa contactului pentru a-l apela; apăsați lung pentru a copia, a distribui, a marca drept spam sau a bloca.
+• Răspundeți glisând, ca să nu preluați un apel din greșeală: Setări → Apeluri → „Răspuns la apeluri”.
+• „Anulați” arată câte secunde au rămas, iar „Sus” — câte apeluri noi au sosit.
+• Setări: opțiunile rare sunt la „Avansat”, cele modificate au un punct, iar „Restabiliți valorile implicite” resetează o secțiune. Fotografia contactului ajunge până sus pe ecran.
+</ro>
+<sk>
+• Ťuknutím na číslo na karte kontaktu zavoláte; podržaním ho skopírujete, zdieľate, označíte ako spam alebo zablokujete.
+• Prijímanie hovorov posunutím, aby ste hovor neprijali omylom: Nastavenia → Hovory → „Prijímanie hovorov“.
+• „Vrátiť späť“ ukazuje zostávajúce sekundy a „Nahor“ počet nových hovorov.
+• Nastavenia: menej používané voľby sú v časti „Rozšírené“, zmenené majú bodku a „Obnoviť predvolené“ vráti sekciu späť. Fotka kontaktu siaha až k hornému okraju obrazovky.
+</sk>
+<sv-SE>
+• Tryck på ett nummer på kontaktkortet för att ringa; tryck länge för att kopiera, dela, markera som spam eller blockera.
+• Svara genom att svepa, så att du inte svarar av misstag: Inställningar → Samtal → ”Svara på samtal”.
+• ”Ångra” visar hur många sekunder som återstår och ”Till toppen” antalet nya samtal.
+• Inställningar: sällan använda val finns under ”Avancerat”, ändrade har en prick och ”Återställ standard” återställer ett avsnitt. Kontaktens foto når ända upp till skärmens överkant.
+</sv-SE>
+<th>
+• แตะหมายเลขในการ์ดรายชื่อเพื่อโทร กดค้างเพื่อคัดลอก แชร์ ทำเครื่องหมายว่าเป็นสแปม หรือบล็อก
+• รับสายด้วยการเลื่อน เพื่อไม่ให้รับสายโดยไม่ตั้งใจ: การตั้งค่า → การโทร → "การรับสาย"
+• "เลิกทำ" แสดงจำนวนวินาทีที่เหลือ และ "ขึ้นด้านบน" แสดงจำนวนสายใหม่
+• การตั้งค่า: ตัวเลือกที่ใช้ไม่บ่อยอยู่ใน "ขั้นสูง" รายการที่เปลี่ยนมีจุดกำกับ และ "คืนค่าเริ่มต้น" รีเซ็ตทีละหมวด รูปรายชื่อแสดงถึงขอบบนของหน้าจอ
+</th>
+<tr-TR>
+• Kişi kartındaki bir numaraya dokunarak arayın; uzun basarak kopyalayın, paylaşın, spam olarak işaretleyin veya engelleyin.
+• Yanlışlıkla yanıtlamamak için aramaları kaydırarak yanıtlayın: Ayarlar → Aramalar → "Aramaları yanıtlama".
+• "Geri al" kalan saniyeyi, "En üste" ise yeni arama sayısını gösterir.
+• Ayarlar: az kullanılan seçenekler "Gelişmiş" altında, değiştirilenler noktayla işaretli; "Varsayılanları geri yükle" bir bölümü sıfırlar. Kişi fotoğrafı ekranın en üstüne kadar uzanır.
+</tr-TR>
+<vi>
+• Chạm vào một số trên thẻ liên hệ để gọi; nhấn giữ để sao chép, chia sẻ, đánh dấu spam hoặc chặn.
+• Trả lời cuộc gọi bằng cách trượt để không vô tình nghe máy: Cài đặt → Cuộc gọi → "Trả lời cuộc gọi".
+• "Hoàn tác" hiển thị số giây còn lại, còn "Lên đầu" hiển thị số cuộc gọi mới.
+• Cài đặt: tùy chọn ít dùng nằm trong "Nâng cao", mục đã thay đổi có dấu chấm và "Khôi phục mặc định" đặt lại từng phần. Ảnh liên hệ kéo dài đến tận đỉnh màn hình.
+</vi>
+<zh-CN>
+• 在联系人卡片上点按号码即可拨打；长按可复制、分享、标记为骚扰电话或屏蔽。
+• 可滑动接听，避免误接：设置 → 通话 → “接听方式”。
+• “撤销”会显示剩余秒数，“回到顶部”会显示新来电的数量。
+• 设置：不常用的选项收在“高级”中，已更改的项带有圆点，“恢复默认”可按分区重置。联系人照片延伸至屏幕顶部。
+</zh-CN>
