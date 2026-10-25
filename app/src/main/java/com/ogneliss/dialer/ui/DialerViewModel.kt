@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui
 
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import com.ogneliss.dialer.data.ContactNames
 import com.ogneliss.dialer.data.PinnedController
 import com.ogneliss.dialer.data.PinnedEntry
@@ -2057,6 +2059,10 @@ class DialerViewModel @Inject constructor(
     /** Открыть SMS-приложение по умолчанию. Своих SMS приложение не отправляет. */
     fun openSms(number: String) = ExternalApps.sms(app, number)
 
+    /** SMS с выбранной SIM — подсказкой приложению сообщений (1.7.0, ExternalApps.smsFromSim). */
+    fun openSmsFromSim(number: String, sim: com.ogneliss.dialer.data.SimSlot) =
+        ExternalApps.smsFromSim(app, number, sim.subscriptionId, sim.slotIndex)
+
     /**
      * История вызовов по номеру для карточки абонента.
      *
@@ -2429,7 +2435,17 @@ class DialerViewModel @Inject constructor(
                     // только если это имя того же контакта — ContactNames
                     contactNames = ContactNames.journalNames(
                         current.contacts, settingsState.value.contactNameFormat
-                    )
+                    ),
+                    // Имя — из книги, а не из журнала (1.7.0): разбор у CallLogRowMapper.nameOf.
+                    // Тот же порядок, что у фото: первый по алфавиту
+                    bookNames = buildMap {
+                        current.contacts
+                            .sortedBy { it.displayName.lowercase() }
+                            .forEach { contact ->
+                                if (contact.displayName.isBlank()) return@forEach
+                                contact.numbers.forEach { number -> putIfAbsent(number.e164, contact.displayName) }
+                            }
+                    }
                 )
             }
             _rows.value = prepared
@@ -3096,12 +3112,43 @@ class DialerViewModel @Inject constructor(
     suspend fun photoForNumber(number: String): String? =
         suspendRunCatching { contactsRepo.photoUriForNumber(number) }.getOrNull()
 
-    fun createContact(number: String, name: String? = null) =
-        contactActions.create(number, name)
+    /*
+     * СВОЙ РЕДАКТОР КОНТАКТОВ (1.7.0).
+     *
+     * «Создать», «Изменить», «Добавить к контакту» больше не уходят
+     * в системное приложение: на OPPO, OnePlus, realme оно закрыто, пока
+     * основной — не системный «Телефон» (письмо с OPPO Reno 14), и автор:
+     * «очень много запросов на редактор контакта». Здесь — только запрос
+     * на переход; маршрут открывает RootScreen, сам редактор —
+     * ui/contactedit. Системное приложение — пунктом в меню редактора.
+     */
+    sealed interface ContactEditRequest {
+        data class Create(val number: String, val name: String?) : ContactEditRequest
+        data class Edit(val contactId: Long) : ContactEditRequest
+        /** Выбрать контакт и открыть его с этим номером в новой строке. */
+        data class Attach(val number: String) : ContactEditRequest
+    }
 
-    fun addNumberToExistingContact(number: String) = contactActions.addToExisting(number)
+    private val _contactEditRequests = MutableSharedFlow<ContactEditRequest>(extraBufferCapacity = 2)
+    val contactEditRequests: SharedFlow<ContactEditRequest> = _contactEditRequests
 
-    fun editContact(contactId: Long) = contactActions.edit(contactId)
+    fun createContact(number: String, name: String? = null) {
+        _contactEditRequests.tryEmit(ContactEditRequest.Create(number, name))
+    }
+
+    fun addNumberToExistingContact(number: String) {
+        _contactEditRequests.tryEmit(ContactEditRequest.Attach(number))
+    }
+
+    fun editContact(contactId: Long) {
+        _contactEditRequests.tryEmit(ContactEditRequest.Edit(contactId))
+    }
+
+    /** Редактор сохранил контакт: перечитать книгу и сказать об этом. */
+    fun contactSaved() {
+        reloadContacts()
+        notify(R.string.contact_edit_saved)
+    }
 
     fun pinContactShortcut(name: String, number: String, e164: String): Boolean =
         contactActions.pinShortcut(name, number, e164)

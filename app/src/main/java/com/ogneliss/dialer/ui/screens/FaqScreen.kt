@@ -41,7 +41,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import com.ogneliss.dialer.R
-import com.ogneliss.dialer.ui.components.OgnelissDivider
+import com.ogneliss.dialer.ui.components.RowDivider
 import com.ogneliss.dialer.ui.components.ScreenScaffold
 import com.ogneliss.dialer.ui.components.SettingsGroup
 import com.ogneliss.dialer.ui.help.Faq
@@ -144,7 +144,7 @@ fun FaqScreen(
                         )
                         if (index < section.items.lastIndex) {
                             // От начала текста, как в настройках
-                            OgnelissDivider(Modifier.padding(start = Space.l))
+                            RowDivider(Modifier.padding(start = Space.l))
                         }
                     }
                 }

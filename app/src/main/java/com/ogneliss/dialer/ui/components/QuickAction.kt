@@ -52,6 +52,13 @@ fun RowScope.QuickAction(
      * его от соседей по ряду.
      */
     container: androidx.compose.ui.graphics.Color? = null,
+    /**
+     * Долгое нажатие (1.7.0): у «Позвонить» и «Написать» в карточке —
+     * выбор SIM. null — только касание, как было. [onLongClickLabel] —
+     * что скажет TalkBack о долгом нажатии.
+     */
+    onLongClick: (() -> Unit)? = null,
+    onLongClickLabel: String? = null,
     onClick: () -> Unit
 ) {
     val label = stringResource(labelRes)
@@ -83,7 +90,17 @@ fun RowScope.QuickAction(
         modifier = Modifier
             .weight(1f)
             .clip(MaterialTheme.shapes.medium)
-            .clickable(onClick = onClick)
+            .then(
+                if (onLongClick != null) {
+                    Modifier.combinedClickableCompat(
+                        onClick = onClick,
+                        onLongClick = onLongClick,
+                        onLongClickLabel = onLongClickLabel
+                    )
+                } else {
+                    Modifier.clickable(onClick = onClick)
+                }
+            )
             .padding(vertical = Space.s, horizontal = Space.xxs)
     ) {
         Surface(

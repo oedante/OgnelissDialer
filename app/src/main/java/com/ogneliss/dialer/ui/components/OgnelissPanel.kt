@@ -88,9 +88,11 @@ fun OgnelissPanel(
      * с полями, как и была.
      *
      * Обычная — по виду страницы (PageTone, Surfaces.kt):
-     * • TINTED (настройки, карточка контакта): полоса раздела, под ней
-     *   белая карточка с рамкой — как группы настроек Mail;
-     * • LIST (списки): полоса раздела и содержимое на белом, во всю ширину.
+     * • TINTED (настройки, карточка контакта): подпись раздела, под ней
+     *   белая карточка — как группы настроек Mail;
+     * • LIST (списки): подпись раздела и содержимое на белом, во всю ширину.
+     * С 1.7.0 подпись — без полосы, карточка — без рамки (SectionBand,
+     * OgnelissCard); в высококонтрастной теме — полоса и рамка, как было.
      */
     if (color != null) {
         Surface(
@@ -145,8 +147,10 @@ fun OgnelissPanel(
 /**
  * КАРТОЧКА ГРУППЫ — КАК В OGNELISS MAIL (1.5.6).
  *
- * Белая (в тёмной — на ступень светлее страницы), скругление 22 dp, рамка
- * в один dp светлее линий между строками, поля 14 dp от краёв. Внутри
+ * Белая (в тёмной — на ступень светлее страницы), скругление 22 dp, поля
+ * 14 dp от краёв. Рамка — с 1.7.0 только в AMOLED (карточка #111214 на
+ * чёрном без неё не видна) и в высококонтрастной теме; в остальных
+ * карточку отделяет цвет («воздушный» вид, Surfaces.kt — cardBorder). Внутри
  * ListItem и прочие поверхности цвета surface получают цвет карточки:
  * в тёмной теме страница и карточка разные, а ListItem красится в surface.
  */
@@ -180,15 +184,23 @@ fun OgnelissCard(
 internal val CARD_BORDER = 1.dp
 
 /**
- * ПОЛОСА РАЗДЕЛА — КАК В OGNELISS MAIL (1.5.6).
+ * ЗАГОЛОВОК РАЗДЕЛА: «Сегодня», «Номера», «Вызовы».
  *
- * Скруглённая полоса (12 dp) с полями 14 dp от краёв, подпись заглавными
- * с разрядкой: «СЕГОДНЯ», «НОМЕРА», «ВЫЗОВЫ». Цвет — по странице:
- * на белом списке #F2F5FA, на серо-голубых настройках #E3E8EE.
+ * 1.7.0 — «ВОЗДУШНЫЙ» ВИД (автор: «сейчас он тяжёлый и монументальный»,
+ * выбран вариант А макета docs/ui_1.7.0.png). Подпись без полосы:
+ * строчными, синим (primary), 14 sp — как подзаголовки списков Android.
+ * Полоса с заливкой на каждом разделе была самым тяжёлым на экране журнала:
+ * шесть-семь серых плашек на экран, тяжелее самих записей.
+ *
+ * Начало подписи — по содержимому под ней: в списке — с 16 dp, как
+ * аватары; на странице настроек — с 30 dp, как текст в карточке.
+ *
+ * Высококонтрастная тема (OgnelissSurfaces.outlined) — как было с 1.5.6:
+ * скруглённая полоса с подписью заглавными, там граница важнее вида.
  *
  * История: 1.5.3–1.5.4 — серая полоса во всю ширину с линиями; 1.5.5 —
- * без линий и обычным регистром («мягче»); 1.5.6 — как в Mail: мягкость
- * дают скругление и поля, а не отказ от заглавных.
+ * без линий и обычным регистром; 1.5.6 — как в Ogneliss Mail, скруглённая
+ * полоса с полями 14 dp; 1.7.0 — подпись без полосы.
  *
  * [action] — кнопка справа (например, «+» у чёрного списка).
  * [icon] — значок перед подписью (бирюзовый у заметки).
@@ -201,6 +213,30 @@ fun SectionBand(
     action: (@Composable () -> Unit)? = null
 ) {
     val tinted = LocalPageTone.current == PageTone.TINTED
+    if (!OgnelissTheme.surfaces.outlined) {
+        Row(
+            modifier
+                .fillMaxWidth()
+                // Над подписью — воздух (он и отделяет раздел), под ней —
+                // чуть-чуть: подпись принадлежит тому, что ниже
+                .padding(
+                    start = if (tinted) FlowUi.groupInset + Space.l else Space.l,
+                    end = if (action != null) FlowUi.groupInset else Space.l,
+                    top = if (tinted) Space.l else Space.m,
+                    bottom = if (tinted) Space.xs else Space.xxs
+                )
+                .heightIn(min = CAPTION_MIN_HEIGHT),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            icon?.let { drawIcon ->
+                drawIcon()
+                Spacer(Modifier.width(Space.s))
+            }
+            SectionCaption(text, Modifier.weight(1f))
+            action?.invoke()
+        }
+        return
+    }
     Row(
         modifier
             .fillMaxWidth()
@@ -226,6 +262,9 @@ fun SectionBand(
         action?.invoke()
     }
 }
+
+/** Высота строки подписи раздела без полосы (1.7.0): одна строка 14 sp с запасом. */
+private val CAPTION_MIN_HEIGHT = 32.dp
 
 /** Высота полосы раздела без кнопки — 36 dp (Mail: 32 в списке, 37 в настройках). */
 private val BAND_MIN_HEIGHT = 36.dp
@@ -253,11 +292,30 @@ fun OgnelissDivider(modifier: Modifier = Modifier) {
 }
 
 /**
- * ПОДПИСЬ РАЗДЕЛА — КАК В OGNELISS MAIL (1.5.6).
+ * ЛИНИЯ МЕЖДУ СТРОКАМИ ГРУППЫ — «ВОЗДУШНЫЙ» ВИД (1.7.0).
  *
- * Заглавными, мелко, полужирным, с разрядкой: «СЕГОДНЯ», «НОМЕРА»,
- * «ВЫЗОВЫ», — как подписи разделов Mail. Одна функция на все заголовки
- * групп: журнал, контакты, панели карточки, настройки, шторки.
+ * Строки журнала, контактов, настроек и шторок разделяет отступ, а не
+ * линия: линия под каждой строкой и делала список «решёткой». Рисуется
+ * только в высококонтрастной теме (OgnelissSurfaces.outlined).
+ *
+ * OgnelissDivider остаётся для границ между частями, а не строками:
+ * панель без заголовка под панелью, клавиатура под полосой вызова,
+ * разделы карточки действий.
+ */
+@Composable
+fun RowDivider(modifier: Modifier = Modifier) {
+    if (OgnelissTheme.surfaces.outlined) OgnelissDivider(modifier)
+}
+
+/**
+ * ПОДПИСЬ РАЗДЕЛА.
+ *
+ * 1.7.0 — строчными, синим (primary), titleSmall (14 sp, Medium): легче
+ * заглавных с разрядкой и читается как подзаголовок, а не как плашка.
+ * Высококонтрастная тема — как с 1.5.6: заглавными, мелко, полужирным,
+ * с разрядкой («СЕГОДНЯ», «НОМЕРА»), цветом onSurfaceVariant.
+ * Одна функция на все заголовки групп: журнал, контакты, панели карточки,
+ * настройки, шторки.
  *
  * Для чтения с экрана — исходный текст, а не заглавные: часть
  * синтезаторов речи читает слово заглавными по буквам. heading() —
@@ -265,17 +323,22 @@ fun OgnelissDivider(modifier: Modifier = Modifier) {
  */
 @Composable
 fun SectionCaption(text: String, modifier: Modifier = Modifier) {
+    val outlined = OgnelissTheme.surfaces.outlined
     Text(
-        text.uppercase(),
+        if (outlined) text.uppercase() else text,
         modifier = modifier.semantics {
             heading()
             contentDescription = text
         },
-        style = MaterialTheme.typography.labelMedium.copy(
-            fontWeight = FontWeight.SemiBold,
-            letterSpacing = 0.9.sp
-        ),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = if (outlined) {
+            MaterialTheme.typography.labelMedium.copy(
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 0.9.sp
+            )
+        } else {
+            MaterialTheme.typography.titleSmall
+        },
+        color = if (outlined) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.primary,
         maxLines = 1
     )
 }

@@ -5,7 +5,7 @@ import com.ogneliss.dialer.data.ContactNames
 import com.ogneliss.dialer.ui.components.SectionBand
 import com.ogneliss.dialer.ui.components.RowAvatar
 import androidx.compose.foundation.lazy.itemsIndexed
-import com.ogneliss.dialer.ui.components.OgnelissDivider
+import com.ogneliss.dialer.ui.components.RowDivider
 import com.ogneliss.dialer.ui.components.GroupPosition
 import com.ogneliss.dialer.ui.theme.Space
 
@@ -115,6 +115,14 @@ fun ContactsScreen(
      */
     pickForPinning: Boolean = false,
     onPicked: (String) -> Unit = {},
+    /**
+     * Выбор самого контакта, а не его номера (1.7.0): «Добавить номер
+     * к контакту» — выбранный открывается в редакторе с новым номером.
+     * null — выбор номера, как для закрепления.
+     */
+    onPickedContact: ((Long) -> Unit)? = null,
+    /** Заголовок режима выбора. */
+    pickTitleRes: Int = R.string.pinned_pick_title,
     onOpenContact: (Long) -> Unit = {},
     /** Чёрный список — из карточек долгого нажатия (блокировка по маске). */
     onOpenBlockLists: () -> Unit = {},
@@ -131,6 +139,15 @@ fun ContactsScreen(
     onOpenHelp: () -> Unit = {}
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
+
+    // Режим выбора: контакт целиком (1.7.0) или его первый номер
+    val pickContact: (Contact) -> Unit = { contact ->
+        if (onPickedContact != null) {
+            onPickedContact(contact.id)
+        } else {
+            contact.numbers.firstOrNull()?.let { onPicked(it.e164) }
+        }
+    }
 
     /*
      * ДОЛГОЕ НАЖАТИЕ — КАРТОЧКИ ДЕЙСТВИЙ (1.5.7), как в журнале.
@@ -605,7 +622,7 @@ fun ContactsScreen(
                 title = {
                     Text(
                         stringResource(
-                            if (pickForPinning) R.string.pinned_pick_title
+                            if (pickForPinning) pickTitleRes
                             else R.string.nav_contacts
                         )
                     )
@@ -886,7 +903,7 @@ fun ContactsScreen(
                                 // а не открывает карточку: человек пришёл
                                 // сюда за одним действием
                                 if (pickForPinning) {
-                                    contact.numbers.firstOrNull()?.let { onPicked(it.e164) }
+                                    pickContact(contact)
                                 } else {
                                     onOpenContact(contact.id)
                                 }
@@ -894,7 +911,7 @@ fun ContactsScreen(
                             // В режиме выбора долгое нажатие — тот же выбор
                             onLongPress = {
                                 if (pickForPinning) {
-                                    contact.numbers.firstOrNull()?.let { onPicked(it.e164) }
+                                    pickContact(contact)
                                 } else {
                                     selectedAnchorY = touchAnchor.screenY
                                     selectedContact = contact
@@ -970,7 +987,7 @@ fun ContactsScreen(
                                 // а не открывает карточку: человек пришёл
                                 // сюда за одним действием
                                 if (pickForPinning) {
-                                    contact.numbers.firstOrNull()?.let { onPicked(it.e164) }
+                                    pickContact(contact)
                                 } else {
                                     onOpenContact(contact.id)
                                 }
@@ -978,7 +995,7 @@ fun ContactsScreen(
                             // В режиме выбора долгое нажатие — тот же выбор
                             onLongPress = {
                                 if (pickForPinning) {
-                                    contact.numbers.firstOrNull()?.let { onPicked(it.e164) }
+                                    pickContact(contact)
                                 } else {
                                     selectedAnchorY = touchAnchor.screenY
                                     selectedContact = contact
@@ -1156,7 +1173,7 @@ private fun ContactRow(
         if (groupPosition == GroupPosition.MIDDLE || groupPosition == GroupPosition.LAST) {
             // От начала текста, а не от края — как в журнале
             Box(Modifier.background(MaterialTheme.colorScheme.surfaceContainerLow)) {
-                OgnelissDivider(Modifier.padding(start = Space.l + appearance.avatarSize + Space.m))
+                RowDivider(Modifier.padding(start = Space.l + appearance.avatarSize + Space.m))
             }
         }
         SwipeRevealRow(
@@ -1192,8 +1209,11 @@ private fun ContactRow(
                         onLongClick = onLongPress
                     )
                     // Тот же отступ, что в журнале: экраны должны
-                    // выглядеть одинаково
-                    .padding(horizontal = Space.l, vertical = 6.dp),
+                    // выглядеть одинаково (1.7.0: 10 dp без линий, 6 — с ними)
+                    .padding(
+                        horizontal = Space.l,
+                        vertical = if (com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.outlined) 6.dp else 10.dp
+                    ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Аватар — общий RowAvatar (1.3.5): буквы у контактов без фото,
@@ -1206,10 +1226,8 @@ private fun ContactRow(
                     HighlightedName(
                         name = contact.displayName,
                         query = query,
-                        // Имя полужирным, как отправитель в списке писем Ogneliss Mail (1.5.6)
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
-                        )
+                        // Обычной толщины, как в журнале (1.7.0; полужирное — с 1.5.6)
+                        style = MaterialTheme.typography.titleMedium
                     )
 
                     /*

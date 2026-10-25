@@ -86,7 +86,7 @@ fun NumberPickerSheet(
                 numbers.forEachIndexed { index, option ->
                     NumberRow(option, sims, onCall, onSms, onMessenger)
                     if (index < numbers.lastIndex) {
-                        OgnelissDivider(Modifier.padding(start = Space.l))
+                        RowDivider(Modifier.padding(start = Space.l))
                     }
                 }
             }

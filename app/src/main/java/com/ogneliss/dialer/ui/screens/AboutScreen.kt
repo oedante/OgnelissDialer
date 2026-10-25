@@ -1,6 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
-import com.ogneliss.dialer.ui.components.OgnelissDivider
+import com.ogneliss.dialer.ui.components.RowDivider
 import com.ogneliss.dialer.ui.components.SettingsGroup
 import com.ogneliss.dialer.ui.theme.Space
 
@@ -114,14 +114,14 @@ fun AboutScreen(
                     stringResource(R.string.settings_privacy_policy)
                 ) { onOpenLegal(LegalDocument.PRIVACY) }
 
-                OgnelissDivider(Modifier.padding(start = 56.dp))
+                RowDivider(Modifier.padding(start = 56.dp))
                 AboutRow(
                     OgnelissIcons.Gavel,
                     stringResource(R.string.settings_license),
                     stringResource(R.string.about_license_hint)
                 ) { onOpenLegal(LegalDocument.LICENSE) }
 
-                OgnelissDivider(Modifier.padding(start = 56.dp))
+                RowDivider(Modifier.padding(start = 56.dp))
                 AboutRow(
                     OgnelissIcons.Article,
                     stringResource(R.string.settings_terms)
@@ -129,7 +129,7 @@ fun AboutScreen(
 
                 // Исходный код — в браузере (1.5.7); адрес виден в подписи,
                 // если браузера нет
-                OgnelissDivider(Modifier.padding(start = 56.dp))
+                RowDivider(Modifier.padding(start = 56.dp))
                 AboutRow(
                     OgnelissIcons.Code,
                     stringResource(R.string.settings_source_code),
@@ -145,14 +145,14 @@ fun AboutScreen(
                     }
                 }
 
-                OgnelissDivider(Modifier.padding(start = 56.dp))
+                RowDivider(Modifier.padding(start = 56.dp))
                 AboutRow(
                     OgnelissIcons.List,
                     stringResource(R.string.settings_licenses),
                     stringResource(R.string.about_licenses_hint)
                 ) { onOpenLegal(LegalDocument.LICENSES) }
 
-                OgnelissDivider(Modifier.padding(start = 56.dp))
+                RowDivider(Modifier.padding(start = 56.dp))
                 AboutRow(
                     OgnelissIcons.MicOff,
                     stringResource(R.string.settings_recording_title),

@@ -39,6 +39,13 @@ import androidx.compose.ui.graphics.compositeOver
  *   серо-голубая страница, разделы — полосы #E3E8EE, под ними белые
  *   карточки с рамкой.
  *
+ * 1.7.0 — «ВОЗДУШНЫЙ» ВИД (автор: «сейчас он тяжёлый и монументальный»,
+ * вариант А макета docs/ui_1.7.0.png). Структура та же — LIST и TINTED,
+ * — но границы тише: подпись раздела без полосы (синим, строчными),
+ * карточка без рамки (кроме AMOLED), строки без линий, аватары без кольца
+ * и светлее, нижние панели плоские и без тени. Прежние полосы, рамки,
+ * линии и кольца остались в высококонтрастной теме: флаг [OgnelissSurfaces.outlined].
+ *
  * Экран объявляет свой вид один раз (параметр tone у ScreenScaffold или
  * LocalPageTone вокруг своего Scaffold), а полосы, карточки и строки групп (SectionBand,
  * SettingsGroup, OgnelissPanel, GroupedRow) подстраиваются сами — правок
@@ -67,7 +74,14 @@ data class OgnelissSurfaces(
     /** Линия между строками: непрозрачный готовый цвет. */
     val divider: Color,
     /** Подложка активной кнопки панели и центральной кнопки (как в Mail). */
-    val navIndicator: Color
+    val navIndicator: Color,
+    /**
+     * Границы рисуются явно: полосы разделов с заливкой, линии между
+     * строками, кольцо у аватара (1.7.0). Включено только в высококонтрастной
+     * теме — там граница важнее вида. В остальных темах вид «воздушный»:
+     * подпись раздела без полосы, строки разделяет отступ, а не линия.
+     */
+    val outlined: Boolean = false
 )
 
 internal val LightSurfaces = OgnelissSurfaces(
@@ -75,7 +89,9 @@ internal val LightSurfaces = OgnelissSurfaces(
     listBand = LightPage,
     tintBand = LightBand,
     card = LightRaised,
-    cardBorder = LightCardBorder,
+    // 1.7.0, «воздушный» вид: без рамки — белую карточку на #F2F5FA
+    // отделяет цвет (1,09 : 1, palette_check)
+    cardBorder = Color.Transparent,
     avatarRing = LightAvatarRing,
     avatarGlyph = LightAvatarGlyph,
     divider = LightOutlineVariant,
@@ -87,7 +103,8 @@ internal val DarkSurfaces = OgnelissSurfaces(
     listBand = DarkCard,
     tintBand = DarkContainer,
     card = DarkCard,
-    cardBorder = DarkCardBorder,
+    // 1.7.0: без рамки, как в светлой — #1C1E22 на #121316 различим и так
+    cardBorder = Color.Transparent,
     avatarRing = DarkAvatarRing,
     avatarGlyph = DarkAvatarGlyph,
     divider = DarkDivider,
@@ -118,7 +135,8 @@ internal val HighContrastLightSurfaces = OgnelissSurfaces(
     avatarRing = Color(0xFF5A5A5A),
     avatarGlyph = Color(0xFF5A5A5A),
     divider = Color(0xFF5A5A5A),
-    navIndicator = Color(0xFFCFE0FF)
+    navIndicator = Color(0xFFCFE0FF),
+    outlined = true
 )
 
 internal val HighContrastDarkSurfaces = OgnelissSurfaces(
@@ -130,7 +148,8 @@ internal val HighContrastDarkSurfaces = OgnelissSurfaces(
     avatarRing = Color(0xFFAAAAAA),
     avatarGlyph = Color(0xFFAAAAAA),
     divider = Color(0xFFAAAAAA),
-    navIndicator = Color(0xFF00348C)
+    navIndicator = Color(0xFF00348C),
+    outlined = true
 )
 
 /**
@@ -142,7 +161,8 @@ internal fun dynamicSurfaces(scheme: ColorScheme, dark: Boolean) = OgnelissSurfa
     listBand = scheme.surfaceContainer,
     tintBand = scheme.surfaceContainerHighest,
     card = if (dark) scheme.surfaceContainerHigh else scheme.surfaceContainerLowest,
-    cardBorder = scheme.outlineVariant.copy(alpha = 0.6f).compositeOver(scheme.surfaceContainerLowest),
+    // 1.7.0: без рамки, как в светлой и тёмной
+    cardBorder = Color.Transparent,
     avatarRing = scheme.outlineVariant.copy(alpha = 0.6f).compositeOver(scheme.surface),
     avatarGlyph = scheme.outline.copy(alpha = 0.6f).compositeOver(scheme.surfaceContainerHighest),
     divider = scheme.outlineVariant.copy(alpha = 0.7f).compositeOver(scheme.surface),

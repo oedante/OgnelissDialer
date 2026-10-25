@@ -103,7 +103,7 @@ fun listSheetContainerColor(): Color = OgnelissTheme.pageColor(PageTone.LIST)
  * не делились (сплошной список), вызов ничего не рисовал.
  */
 @Composable
-fun SheetDivider() = OgnelissDivider(Modifier.padding(start = SHEET_TEXT_START))
+fun SheetDivider() = RowDivider(Modifier.padding(start = SHEET_TEXT_START))
 
 private val SHEET_TEXT_START = 56.dp
 

@@ -12,7 +12,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ogneliss.dialer.R
@@ -165,8 +164,8 @@ internal fun NumberActionCards(
     ) {
         Text(
             formatted,
+            // Обычной толщины, как имя в журнале (1.7.0)
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )

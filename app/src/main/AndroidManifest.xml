@@ -77,6 +77,12 @@
         <package android:name="org.telegram.messenger" />
         <package android:name="com.viber.voip" />
         <package android:name="ru.oneme.app" />
+        <!-- 1.7.0: заперт ли редактор контактов в системном «Телефоне»
+             (OPPO, OnePlus, realme) и есть ли «Google Контакты» — ContactEditor -->
+        <intent><action android:name="android.intent.action.EDIT" />
+            <data android:mimeType="vnd.android.cursor.item/contact" /></intent>
+        <intent><action android:name="android.intent.action.DIAL" /></intent>
+        <package android:name="com.google.android.contacts" />
     </queries>
 
     <application

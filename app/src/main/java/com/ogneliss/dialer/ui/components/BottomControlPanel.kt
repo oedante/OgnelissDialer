@@ -182,7 +182,10 @@ fun BottomControlPanel(
          * по нажатию, и горизонтальное движение по ней не означает
          * больше ничего.
          */
-        modifier = modifier.panelSwipeNavigation(
+        // Край — линия сверху (1.7.0); у панели сбоку края нет
+        modifier = modifier
+            .then(if (side) Modifier else Modifier.panelTopLine(com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.divider))
+            .panelSwipeNavigation(
             enabled = onSwipeToContacts != null,
             onSwipeLeft = onSwipeToContacts
         ),
@@ -201,9 +204,9 @@ fun BottomControlPanel(
          * Найдено по пикселям снимка: клавиши #FFFFFF, кнопка #EAF1FB.
          */
         tonalElevation = 0.dp,
-        // 1.5.6: тень сверху, как у нижней навигации Ogneliss Mail —
-        // список уходит под панель, а не обрывается у её края
-        shadowElevation = if (side) 0.dp else PANEL_SHADOW
+        // Тень сверху (1.5.6, как у навигации Ogneliss Mail) с 1.7.0 — 0:
+        // «воздушный» вид, границу держит линия panelTopLine
+        shadowElevation = PANEL_SHADOW
     ) {
         // Внизу — полоса под навигацией её цвета (NavBarStrip.kt); сбоку — нет
         if (!side) PanelReachesNavBar()
@@ -957,12 +960,13 @@ private val RAIL_WIDTH = 80.dp
 private val RAIL_MIN_HEIGHT_WITH_LABELS = 340.dp
 
 /**
- * Центральная кнопка клавиатуры (1.5.6) — как в Ogneliss Mail: 64 × 56,
- * тень 3 dp. Высота — минимальная у FloatingActionButton (56 dp).
+ * Центральная кнопка клавиатуры (1.5.6) — как в Ogneliss Mail: 64 × 56.
+ * Высота — минимальная у FloatingActionButton (56 dp). Тень — 0 с 1.7.0
+ * («воздушный» вид): кнопку выделяет цвет, а не подъём; было 3 dp.
  */
 private val FAB_WIDTH = 64.dp
 private val FAB_HEIGHT = 56.dp
-private val FAB_ELEVATION = 3.dp
+private val FAB_ELEVATION = 0.dp
 
-/** Тень нижней панели сверху (1.5.6), как у навигации Mail. */
-private val PANEL_SHADOW = 6.dp
+/** Тень нижней панели: 6 dp с 1.5.6, 0 с 1.7.0 — край рисует panelTopLine. */
+private val PANEL_SHADOW = 0.dp

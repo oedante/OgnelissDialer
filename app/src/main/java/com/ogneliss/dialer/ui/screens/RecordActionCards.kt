@@ -502,8 +502,8 @@ private fun ColumnScope.RecordPreview(
         Column(Modifier.weight(1f)) {
             Text(
                 title,
+                // Обычной толщины, как имя в журнале (1.7.0)
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

@@ -1035,7 +1035,9 @@ private fun InCallScreen(
                     },
                     modifier = Modifier.fillMaxWidth(),
                     maxSize = FlowUi.callPortraitMaxFor(largePortrait),
-                    widthFraction = FlowUi.callPortraitFractionFor(largePortrait)
+                    widthFraction = FlowUi.callPortraitFractionFor(largePortrait),
+                    // Ближе к середине экрана (1.7.0, разбор у CALL_IDENTITY_BIAS)
+                    verticalBias = CALL_IDENTITY_BIAS
                 ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 CallerIdentity(

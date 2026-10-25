@@ -26,6 +26,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.ogneliss.dialer.ui.theme.OgnelissTheme
+import androidx.compose.ui.graphics.compositeOver
 import coil.compose.AsyncImage
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.R
@@ -160,7 +162,7 @@ fun CallLogCard(
             // От начала текста, а не от края: под аватаром линия
             // разрезала бы колонку лиц, по которой глаз бежит вниз
             Box(Modifier.background(MaterialTheme.colorScheme.surfaceContainerLow)) {
-                OgnelissDivider(Modifier.padding(start = Space.l + LocalAppearance.current.avatarSize + Space.m))
+                RowDivider(Modifier.padding(start = Space.l + LocalAppearance.current.avatarSize + Space.m))
             }
         }
         SwipeRevealRow(
@@ -192,10 +194,13 @@ fun CallLogCard(
                         onClickLabel = if (selectionActive) null else stringResource(R.string.a11y_cards_open),
                         onLongClickLabel = if (selectionActive) null else stringResource(R.string.a11y_record_actions)
                     )
-                    // 6 dp вместо 10: строка из трёх коротких строчек
-                    // не требует такого запаса, а на экран помещается
-                    // на две записи больше
-                    .padding(horizontal = Space.l, vertical = 6.dp),
+                    // Поле строки: 6 dp, пока строки делила линия; с 1.7.0
+                    // («воздушный» вид) линии нет, и делит отступ — 10 dp.
+                    // Высококонтрастная тема — с линией и прежними 6 dp
+                    .padding(
+                        horizontal = Space.l,
+                        vertical = if (OgnelissTheme.surfaces.outlined) 6.dp else 10.dp
+                    ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // В режиме выбора кружок вместо аватара: он показывает
@@ -254,10 +259,9 @@ fun CallLogCard(
                     HighlightedName(
                         name = row.title,
                         query = searchQuery,
-                        // Имя полужирным, как отправитель в списке писем Ogneliss Mail (1.5.6)
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
-                        ),
+                        // Имя — обычной толщины titleMedium (Medium), 1.7.0: полужирное
+                        // (1.5.6, как в списке писем Mail) делало журнал тяжёлым
+                        style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.weight(1f, fill = false)
                     )
 
@@ -540,25 +544,41 @@ private fun Avatar(
     val appearance = LocalAppearance.current
     val size = sizeOverride ?: appearance.avatarSize
     val initials = remember(name) { com.ogneliss.dialer.util.Initials.of(name) }
+    val scheme = MaterialTheme.colorScheme
+    val outlined = com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.outlined
+    // Светлее на 40 %: смесь с цветом под строкой (surface — цвет строки или карточки)
+    val soft = { c: androidx.compose.ui.graphics.Color ->
+        c.copy(alpha = AVATAR_FILL_ALPHA).compositeOver(scheme.surface)
+    }
 
     Box(contentAlignment = Alignment.Center) {
         Surface(
             shape = CircleShape,
             // Пропущенные подсвечиваются на аватаре: это самый крупный
             // элемент карточки, и метка на нём заметна периферийным зрением
+            /*
+             * 1.7.0, «воздушный» вид: заливка на 40 % светлее — смесь
+             * контейнера с цветом строки (в светлой #EAEFF8 вместо #DCE4F3,
+             * у незнакомых #F1F3F6 вместо #E8EBF0). Круги во весь рост
+             * строки были самым крупным цветным пятном журнала.
+             * Высококонтрастная тема — прежние насыщенные заливки.
+             */
             color = when {
-                initials != null -> MaterialTheme.colorScheme.primaryContainer
-                else -> MaterialTheme.colorScheme.surfaceContainerHighest
+                initials != null -> if (outlined) scheme.primaryContainer else soft(scheme.primaryContainer)
+                else -> if (outlined) scheme.surfaceContainerHighest else soft(scheme.surfaceContainerHighest)
             },
             /*
-             * КОЛЬЦО, КАК У АВАТАРОВ OGNELISS MAIL (1.5.6): тонкая
-             * серо-голубая обводка (#C4CBD5 в светлой). Рисуется поверх
-             * фото: светлый край снимка не сливается с белым списком.
+             * КОЛЬЦО (1.5.6, как у аватаров Ogneliss Mail) — с 1.7.0 только
+             * в высококонтрастной теме: тонкая обводка вокруг каждого круга
+             * добавляла журналу «решётки», а светлый край фото на белом
+             * списке читается и без неё.
              */
-            border = androidx.compose.foundation.BorderStroke(
-                AVATAR_RING_WIDTH,
-                com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.avatarRing
-            ),
+            border = if (outlined) {
+                androidx.compose.foundation.BorderStroke(
+                    AVATAR_RING_WIDTH,
+                    com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.avatarRing
+                )
+            } else null,
             modifier = Modifier.size(size)
         ) {
             /*
@@ -585,7 +605,8 @@ private fun Avatar(
                             fontSize = with(androidx.compose.ui.platform.LocalDensity.current) { (size * 0.36f).toSp() }
                         ),
                         fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        // На светлой заливке — буквы цветом акцента (5,6 : 1 в светлой)
+                        color = if (outlined) scheme.onPrimaryContainer else scheme.primary,
                         maxLines = 1
                     )
                 } else {
@@ -701,3 +722,6 @@ enum class GroupPosition {
 /** Толщина кольца аватара (1.5.6): у Mail ≈ 2 dp при аватаре 57 dp, у нас 48 dp. */
 /** Кольцо аватара: 1 dp (до 1.6.1 — 1,5 dp, автор: «уменьшить и сделать светлее»). */
 private val AVATAR_RING_WIDTH = 1.dp
+
+/** Доля цвета контейнера в заливке аватара (1.7.0): 60 % — на 40 % светлее. */
+private const val AVATAR_FILL_ALPHA = 0.6f

@@ -485,6 +485,26 @@ fun RootScreen(
          * нельзя: канал отдаёт каждое сообщение одному получателю,
          * и половина терялась бы случайным образом.
          */
+        /*
+         * Свой редактор контактов (1.7.0): запросы «создать», «изменить»,
+         * «добавить к контакту» из любого экрана — переходом сюда.
+         */
+        LaunchedEffect(Unit) {
+            vm.contactEditRequests.collect { request ->
+                when (request) {
+                    is DialerViewModel.ContactEditRequest.Create -> nav.navigate(
+                        contactEditRoute(number = request.number, name = request.name)
+                    )
+                    is DialerViewModel.ContactEditRequest.Edit -> nav.navigate(
+                        contactEditRoute(id = request.contactId)
+                    )
+                    is DialerViewModel.ContactEditRequest.Attach -> nav.navigate(
+                        "contacts?pick=attach&number=" + android.net.Uri.encode(request.number)
+                    )
+                }
+            }
+        }
+
         LaunchedEffect(Unit) {
             vm.messages.collect { message ->
                 val text = message.formatArg
@@ -631,9 +651,11 @@ fun RootScreen(
                     }
                 }
                 composable(
-                    "contacts?pick={pick}",
+                    "contacts?pick={pick}&number={number}",
                     arguments = listOf(
-                        navArgument("pick") { defaultValue = ""; type = NavType.StringType }
+                        navArgument("pick") { defaultValue = ""; type = NavType.StringType },
+                        // Номер для «Добавить номер к контакту» (1.7.0)
+                        navArgument("number") { defaultValue = ""; type = NavType.StringType }
                     ),
                     // Из журнала и обратно — растворением, как соседи (1.6.0);
                     // выбор контакта из настроек — прежним сдвигом
@@ -677,7 +699,19 @@ fun RootScreen(
                          * Экран об этом не знает — он просто возвращает
                          * номер, а что с ним делать, решает маршрут.
                          */
-                        pickForPinning = pickMode == "pin" || pickMode == "fake",
+                        pickForPinning = pickMode == "pin" || pickMode == "fake" || pickMode == "attach",
+                        // «Добавить номер к контакту» (1.7.0): выбран контакт —
+                        // редактор с номером новой строкой, выбор из стека уходит
+                        onPickedContact = if (pickMode == "attach") {
+                            { id ->
+                                val number = entry.arguments?.getString("number").orEmpty()
+                                nav.navigate(contactEditRoute(id = id, number = number)) {
+                                    popUpTo("contacts?pick={pick}&number={number}") { inclusive = true }
+                                }
+                            }
+                        } else null,
+                        pickTitleRes = if (pickMode == "attach") R.string.contacts_pick_attach_title
+                        else R.string.pinned_pick_title,
                         onPicked = { e164 ->
                             when (pickMode) {
                                 "fake" -> vm.setFakeCallNumber(e164)
@@ -836,6 +870,27 @@ fun RootScreen(
                         // второй список ради одной задачи означало бы
                         // поддерживать два поиска и две группировки
                         onAddFromContacts = { nav.navigate("contacts?pick=pin") }
+                    )
+                }
+
+                /*
+                 * Свой редактор контакта (1.7.0). id > 0 — правка,
+                 * иначе новый контакт с номером и именем.
+                 */
+                composable(
+                    "contact_edit?id={id}&number={number}&name={name}",
+                    arguments = listOf(
+                        navArgument(com.ogneliss.dialer.ui.contactedit.ARG_ID) { defaultValue = -1L; type = NavType.LongType },
+                        navArgument(com.ogneliss.dialer.ui.contactedit.ARG_NUMBER) { defaultValue = ""; type = NavType.StringType },
+                        navArgument(com.ogneliss.dialer.ui.contactedit.ARG_NAME) { defaultValue = ""; type = NavType.StringType }
+                    )
+                ) {
+                    com.ogneliss.dialer.ui.contactedit.ContactEditScreen(
+                        onClose = { nav.popBackStack() },
+                        onSaved = {
+                            vm.contactSaved()
+                            nav.popBackStack()
+                        }
                     )
                 }
 
@@ -1392,3 +1447,8 @@ private fun ListDetailHost(
 private fun isContactsList(entry: androidx.navigation.NavBackStackEntry): Boolean =
     entry.destination.route?.startsWith(MainSection.CONTACTS.route) == true &&
         entry.arguments?.getString("pick").isNullOrEmpty()
+
+/** Маршрут своего редактора контакта (1.7.0): правка по id или новый с номером и именем. */
+private fun contactEditRoute(id: Long = -1L, number: String = "", name: String? = null): String =
+    "contact_edit?id=$id&number=" + android.net.Uri.encode(number) +
+        "&name=" + android.net.Uri.encode(name.orEmpty())

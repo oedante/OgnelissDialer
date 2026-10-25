@@ -79,7 +79,7 @@ fun GroupedRow(
 
     Column(outer) {
         if (position == GroupPosition.MIDDLE || position == GroupPosition.LAST) {
-            OgnelissDivider(Modifier.padding(start = dividerStart))
+            RowDivider(Modifier.padding(start = dividerStart))
         }
         MaterialTheme(
             colorScheme = scheme.copy(surface = rowColor, surfaceContainerLow = rowColor),

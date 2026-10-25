@@ -24,7 +24,9 @@ import com.ogneliss.dialer.concurrency.suspendRunCatching
 
 import com.ogneliss.dialer.util.ContactQr
 import androidx.compose.material3.FilledTonalButton
-import com.ogneliss.dialer.ui.components.OgnelissDivider
+import com.ogneliss.dialer.ui.components.RowDivider
+import com.ogneliss.dialer.ui.components.panelTopLine
+import com.ogneliss.dialer.ui.theme.OgnelissTheme
 import com.ogneliss.dialer.ui.components.GroupedRow
 import com.ogneliss.dialer.ui.components.GroupPosition
 import androidx.compose.material3.TopAppBar
@@ -573,6 +575,25 @@ fun SubscriberScreen(
         state.contacts.firstOrNull { it.id == knownContactId }
     }
 
+    /*
+     * «Поделиться» текстом — общее для ряда кнопок и меню: у номера
+     * не из книги на его месте в ряду «В контакты» (1.7.0), а сам
+     * пункт уходит в «Ещё».
+     */
+    val shareCard: () -> Unit = {
+        val name = group.displayName?.takeIf { it.isNotBlank() }
+            ?: PhoneFormatter.format(group.number)
+        ExportShare.shareText(
+            context = context,
+            // Читаемый текст, а не vCard: получатель видит имя и номера,
+            // а не служебную разметку. vCard остаётся в QR-коде,
+            // где его читает камера
+            text = ContactQr.plainText(name, group.numbers, cardContact?.emails.orEmpty()),
+            subject = name,
+            chooserTitle = shareTitle
+        )
+    }
+
 
     /*
      * ДИАЛОГ НАПОМИНАНИЯ ПОКАЗЫВАЕТСЯ ЗДЕСЬ ЖЕ.
@@ -668,6 +689,34 @@ fun SubscriberScreen(
 // панели (topBar) — соседнего блока, откуда локальные переменные
 // содержимого не видны (ошибка сборки 05.10.2026)
     var moreOpen by remember { mutableStateOf(false) }
+
+    /*
+     * ВЫБОР SIM ДОЛГИМ НАЖАТИЕМ (1.7.0, автор: «в карточке по долгому
+     * нажатию кнопки вызова или смс выбирать, с какой именно сим-карты
+     * звонить»). Касание — как раньше: запомненная для номера карта или
+     * общая по умолчанию. Долгое — окно выбора; выбранная для звонка
+     * запоминается за номером (настройка «Запоминать SIM»). Для SMS
+     * карта — подсказка приложению сообщений: разбор у ExternalApps.smsFromSim.
+     * Одна карта — долгого нажатия нет.
+     */
+    var simChoice by remember { mutableStateOf<Pair<String, Boolean>?>(null) }
+    val multiSim = state.sims.size > 1
+    simChoice?.let { (number, forSms) ->
+        com.ogneliss.dialer.ui.components.SimChooserDialog(
+            displayName = PhoneFormatter.format(number),
+            sims = state.sims,
+            titleRes = if (forSms) R.string.sim_chooser_title_sms else R.string.sim_chooser_title,
+            onChoose = { slot ->
+                simChoice = null
+                if (forSms) {
+                    state.sims.firstOrNull { it.slotIndex == slot }?.let { vm.openSmsFromSim(number, it) }
+                } else {
+                    vm.call(number, slot)
+                }
+            },
+            onDismiss = { simChoice = null }
+        )
+    }
     // В меню места много — полные подписи, а не «Блок» / «Разблок.»
     val blockLabelRes = when {
         isBlocked -> R.string.action_unblock
@@ -742,16 +791,33 @@ fun SubscriberScreen(
      *   3. номер — когда больше нечего сказать.
      */
     /*
-     * Имя в выбранной форме (1.6.2): «Фамилия Имя» — если в шапке имя
-     * того же контакта из книги. Разбор — data/ContactNames.kt.
+     * ИМЯ — ИЗ КНИГИ, А НЕ ИЗ ЖУРНАЛА (1.7.0).
+     *
+     * Автор, 24.10: «некоторые контакты хоть и имеют портрет, но
+     * отображают только номер… после звонка опять обновилось правильно».
+     * Фото карточка брала из книги (knownContactId), а имя — из записи
+     * журнала: его система пишет в момент звонка и не обновляет, если
+     * контакт сохранили позже. Теперь, если номер есть в книге, имя — оттуда,
+     * того же контакта, что и фото (первого по алфавиту), в форме из
+     * «Как показывать имя» (1.6.2, data/ContactNames.kt). Номера в книге
+     * нет — имя из журнала, как было.
      */
     val nameFormat = settingsNow.contactNameFormat
     val shownName = remember(state.contacts, knownContactId, group.displayName, nameFormat) {
-        val book = state.contacts.firstOrNull { it.id == knownContactId }
-        if (book != null && book.displayName == group.displayName) {
-            ContactNames.shown(book, nameFormat)
-        } else {
-            group.displayName
+        state.contacts.firstOrNull { it.id == knownContactId }
+            ?.let { book -> ContactNames.shown(book, nameFormat) }
+            ?: group.displayName
+    }
+    // Оператор и регион под заголовком — по настройке, как в журнале (1.7.0)
+    val numberInfoLabels = com.ogneliss.dialer.ui.components.rememberNumberInfoLabels()
+    val infoLine = remember(state.numberInfo, group.e164, knownContactId, settingsNow.carrierInfo) {
+        when (settingsNow.carrierInfo) {
+            com.ogneliss.dialer.settings.CarrierInfoMode.HIDDEN -> null
+            com.ogneliss.dialer.settings.CarrierInfoMode.ALL ->
+                numberInfoLabels.infoSummary(state.numberInfo[group.e164])
+            com.ogneliss.dialer.settings.CarrierInfoMode.UNKNOWN_ONLY ->
+                if (knownContactId != null) null
+                else numberInfoLabels.infoSummary(state.numberInfo[group.e164])
         }
     }
     val title = shownName?.takeIf { it.isNotBlank() }
@@ -1030,6 +1096,12 @@ fun SubscriberScreen(
                                 vm.pinContactShortcut(title, group.number, group.e164)
                             },
                             onEdit = { id -> vm.editContact(id) },
+                            // Номер не из книги (1.7.0): «К контакту» и «Поделиться» —
+                            // в меню; «В контакты» — кнопкой в ряду
+                            onAddToExisting = if (knownContactId == null) {
+                                { vm.addNumberToExistingContact(group.number) }
+                            } else null,
+                            onShare = if (knownContactId == null) shareCard else null,
                             onDelete = { confirmDelete = true },
                             onMarkSpam = if (showMarkSection) null else {
                                 { markRequested = true }
@@ -1152,7 +1224,9 @@ fun SubscriberScreen(
                     // она лежит на фоне карточки, а не
                     // на заливке
                     container = CallGreen,
-                    tint = Color.White
+                    tint = Color.White,
+                    onLongClick = if (multiSim) { { simChoice = group.number to false } } else null,
+                    onLongClickLabel = stringResource(R.string.a11y_choose_sim)
                 ) {
                     vm.call(group.number)
                 }
@@ -1167,7 +1241,9 @@ fun SubscriberScreen(
                 QuickAction(
                     OgnelissIcons.Message,
                     R.string.action_write,
-                    container = actionKey
+                    container = actionKey,
+                    onLongClick = if (multiSim) { { simChoice = group.number to true } } else null,
+                    onLongClickLabel = stringResource(R.string.a11y_choose_sim_sms)
                 ) {
                     // Выбор — если есть что-то кроме SMS: мессенджер из книги или,
                     // с настройкой «для любого номера», установленный (1.3.5)
@@ -1191,24 +1267,20 @@ fun SubscriberScreen(
                  * сохранит контакт одним нажатием, а не будет
                  * переписывать цифры из текста.
                  */
-                QuickAction(OgnelissIcons.Share, R.string.action_share, container = actionKey) {
-                    val name = group.displayName
-                        ?: PhoneFormatter.format(group.number)
-
-                    ExportShare.shareText(
-                        context = context,
-                        // Читаемый текст, а не vCard: получатель
-                        // видит имя и номера, а не служебную
-                        // разметку. vCard остаётся в QR-коде,
-                        // где его читает камера
-                        text = ContactQr.plainText(
-                            name,
-                            group.numbers,
-                            cardContact?.emails.orEmpty()
-                        ),
-                        subject = name,
-                        chooserTitle = shareTitle
-                    )
+                /*
+                 * Номер не из книги — «В контакты» на месте «Поделиться»
+                 * (1.7.0, автор: «нет опции добавить в контакты»). Создать
+                 * контакт незнакомому номеру нужно чаще, чем переслать его;
+                 * «Поделиться» — в «Ещё». У контакта — как было.
+                 */
+                if (knownContactId == null) {
+                    QuickAction(OgnelissIcons.PersonAdd, R.string.action_add_contact, container = actionKey) {
+                        vm.createContact(group.number, null)
+                    }
+                } else {
+                    QuickAction(OgnelissIcons.Share, R.string.action_share, container = actionKey) {
+                        shareCard()
+                    }
                 }
                 /*
                  * Короткая подпись «Напомнить».
@@ -1386,6 +1458,8 @@ fun SubscriberScreen(
                                             R.string.a11y_contact_photo, title
                                         ),
                                         contentScale = ContentScale.Crop,
+                                        // Ближе к верху снимка (1.7.0): разбор у COVER_FOCUS
+                                        alignment = COVER_FOCUS,
                                         modifier = Modifier.fillMaxSize()
                                     )
                                     Box(
@@ -1430,7 +1504,9 @@ fun SubscriberScreen(
                                             blurRadius = 8f
                                         )
                                     ),
-                                    fontWeight = FontWeight.SemiBold,
+                                    // Medium, не SemiBold (1.7.0, «воздушный» вид): на фото
+                                    // тень и так держит имя, полужирное читалось плакатом
+                                    fontWeight = FontWeight.Medium,
                                     color = Color.White,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis,
@@ -1626,36 +1702,58 @@ fun SubscriberScreen(
                         // обложке, внизу (разбор у обложки). В заголовке экрана
                         // оно появляется, только когда шапка уехала вверх
                         if (photoUri.isNullOrBlank()) {
-                            Text(
-                                title,
-                                /*
-                                 * titleLarge, а не headlineSmall.
-                                 *
-                                 * Заголовки экранов в приложении —
-                                 * titleLarge. Имя в карточке было крупнее
-                                 * их, и карточка читалась как отдельное
-                                 * приложение.
-                                 */
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Medium,
-                                /*
-                                 * По левому краю, а не по центру.
-                                 *
-                                 * Под обложкой во всю ширину имя по центру
-                                 * висело отдельно от всего остального: номера,
-                                 * заметка, сведения — все начинаются слева.
-                                 * Слева имя встаёт в одну линию с ними и читается
-                                 * как заголовок карточки, а не подпись к фото.
-                                 */
-                                textAlign = TextAlign.Start,
-                                // Где имя на экране: когда его нижний край уходит
-                                // под строку заголовка, имя появляется в ней
-                                modifier = Modifier.fillMaxWidth().onGloballyPositioned { coords ->
-                                    nameBottomInRoot = coords.positionInRoot().y + coords.size.height
+                            /*
+                             * БЕЗ ФОТО — КРУГ С БУКВАМИ РЯДОМ С ИМЕНЕМ (1.7.0).
+                             *
+                             * Автор, 24.10, снимок карточки без фото: «выглядит
+                             * очень пустой и с лишними разрывами». Было: одно
+                             * имя строкой и 16 dp пустоты под ним до «Номеров».
+                             * Стало: круг 64 dp — буквы у контакта, силуэт
+                             * у незнакомого номера, как в журнале, — имя рядом,
+                             * под ним оператор и регион; отступ до разделов —
+                             * обычный 8 dp, остальное даёт полоса раздела.
+                             */
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                com.ogneliss.dialer.ui.components.RowAvatar(
+                                    photoUri = null,
+                                    size = 64.dp,
+                                    name = title.takeIf { knownContactId != null }
+                                )
+                                Spacer(Modifier.width(Space.l))
+                                Column(Modifier.weight(1f)) {
+                                    Text(
+                                        title,
+                                        /*
+                                         * titleLarge, а не headlineSmall: заголовки
+                                         * экранов в приложении — titleLarge, имя
+                                         * крупнее читалось бы отдельным приложением.
+                                         */
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.Medium,
+                                        textAlign = TextAlign.Start,
+                                        // Где имя на экране: когда его нижний край уходит
+                                        // под строку заголовка, имя появляется в ней
+                                        modifier = Modifier.fillMaxWidth().onGloballyPositioned { coords ->
+                                            nameBottomInRoot = coords.positionInRoot().y + coords.size.height
+                                        }
+                                    )
+                                    /*
+                                     * ОПЕРАТОР И РЕГИОН (1.7.0, автор: «карточка звонка
+                                     * не из книги пустая»). Та же строка, что под номером
+                                     * в журнале, по той же настройке «Оператор и регион».
+                                     */
+                                    infoLine?.let { line ->
+                                        Text(
+                                            line,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.fillMaxWidth().padding(top = Space.xxs)
+                                        )
+                                    }
                                 }
-                            )
+                            }
 
-                            Spacer(Modifier.height(FlowUi.contentPadding))
+                            Spacer(Modifier.height(Space.s))
                         }
 
                         /*
@@ -1855,7 +1953,7 @@ fun SubscriberScreen(
                      * граница рядом выглядит как ошибка вёрстки.
                      */
                     group.numbers.forEachIndexed { index, number ->
-                        if (index > 0) OgnelissDivider()
+                        if (index > 0) RowDivider()
 
                         /*
                          * ТИП НОМЕРА ПОД САМИМ НОМЕРОМ.
@@ -1894,7 +1992,8 @@ fun SubscriberScreen(
                             onLongPress = {
                                 numberCardsAnchor = touchAnchor.screenY
                                 numberCards = NumberCardsTarget(number, label)
-                            }
+                            },
+                            onSmsLongPress = if (multiSim) { { simChoice = number to true } } else null
                         )
                     }
                     }
@@ -2133,7 +2232,7 @@ fun SubscriberScreen(
                         item {
                             OgnelissPanel(title = stringResource(R.string.subscriber_details)) {
                                 contact.emails.forEachIndexed { index, email ->
-                                    if (index > 0) OgnelissDivider()
+                                    if (index > 0) RowDivider()
                                     /*
                                      * Было (до 1.3.2): только нажатие на всю строку
                                      * открывало почту; скопировать адрес было нельзя.
@@ -2166,7 +2265,7 @@ fun SubscriberScreen(
                                     // Линия и перед первой датой, если выше
                                     // была почта: это разные виды сведений
                                     if (index > 0 || contact.emails.isNotEmpty()) {
-                                        OgnelissDivider()
+                                        RowDivider()
                                     }
                                     DetailRow(
                                         icon = OgnelissIcons.Cake,
@@ -2467,9 +2566,11 @@ fun SubscriberScreen(
             if (!twoColumns) {
                 Surface(
                     shape = OgnelissShapeTokens.bottomPanel,
-                    // Общий цвет нижней панели (PanelColors, 1.4.0)
+                    // Общий цвет нижней панели (PanelColors, 1.4.0); край — линия (1.7.0)
                     color = PanelColors.panel(),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .panelTopLine(OgnelissTheme.surfaces.divider)
                 ) {
                     // Полоса под навигацией — цвета панели (NavBarStrip.kt, 1.5.1)
                     PanelReachesNavBar()
@@ -2520,3 +2621,16 @@ private const val COVER_FADE_MAX_SHARE = 0.28f
 private const val COVER_NAME_SHARE = 0.69f
 /** Затемнение под именем. */
 private const val COVER_SHADE = 0.6f
+
+/**
+ * ЧТО ОСТАЁТСЯ ОТ ФОТО НА ОБЛОЖКЕ (1.7.0).
+ *
+ * Автор, 24.10, снимки карточек: «у некоторых портреты получаются
+ * обрезанными» — на обложке подбородок и плечи, а голова срезана.
+ * Фото в книге почти всегда квадратное, обложка — полтора к одному:
+ * при обрезке по центру уходила шестая часть сверху и снизу, а верх
+ * снимка ещё и уходит под строку заголовка. Лицо на портрете — в верхней
+ * трети, поэтому окно смещено к верху: сверху срезается около 5 %
+ * высоты снимка, остальное — снизу.
+ */
+private val COVER_FOCUS = androidx.compose.ui.BiasAlignment(0f, -0.7f)

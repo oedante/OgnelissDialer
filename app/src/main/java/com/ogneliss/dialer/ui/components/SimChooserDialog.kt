@@ -62,11 +62,13 @@ fun SimChooserDialog(
     displayName: String,
     sims: List<SimSlot>,
     onChoose: (slotIndex: Int) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    /** «С какой SIM звонить?» или «С какой SIM написать?» (1.7.0). */
+    titleRes: Int = R.string.sim_chooser_title
 ) {
     OgnelissDialog(
         onDismissRequest = onDismiss,
-        title = stringResource(R.string.sim_chooser_title),
+        title = stringResource(titleRes),
         content = {
             // Кому звоним — иначе при быстром свайпе легко потерять,
             // по какой записи он был сделан

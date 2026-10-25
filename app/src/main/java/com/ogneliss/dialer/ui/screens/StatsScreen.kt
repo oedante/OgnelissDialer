@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.ogneliss.dialer.ui.components.OgnelissListRow
-import com.ogneliss.dialer.ui.components.OgnelissDivider
+import com.ogneliss.dialer.ui.components.RowDivider
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.components.ScreenScaffold
@@ -89,7 +89,7 @@ fun StatsScreen(
                 // Средняя длительность считается только по состоявшимся
                 // разговорам: пропущенные занизили бы её вдвое
                 if (stats.averageDurationSec > 0) {
-                    OgnelissDivider(Modifier.padding(start = Space.l))
+                    RowDivider(Modifier.padding(start = Space.l))
                     OgnelissListRow(
                         headline = stringResource(
                             R.string.stats_average,
@@ -103,7 +103,7 @@ fun StatsScreen(
                 // Доля пропущенных от входящих — показатель, по которому
                 // видно, успеваете ли вы отвечать
                 if (stats.missedRatePercent > 0) {
-                    OgnelissDivider(Modifier.padding(start = Space.l))
+                    RowDivider(Modifier.padding(start = Space.l))
                     OgnelissListRow(
                         headline = stringResource(
                             R.string.stats_missed_rate, stats.missedRatePercent

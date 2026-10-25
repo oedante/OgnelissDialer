@@ -902,6 +902,9 @@ fun MainDialerScreen(
             h = 31 * h + settings.carrierInfo.ordinal
             // «Как показывать имя» (1.6.2): строки пересобираются с новым именем
             h = 31 * h + settings.contactNameFormat.ordinal
+            // Имена из книги (1.7.0): переименовали контакт — число контактов
+            // то же, а строки должны пересобраться
+            h = 31 * h + state.contacts.sumOf { it.displayName.hashCode() }
 
             /*
              * ПРАВИЛА БЛОКИРОВКИ — ТОЖЕ ЧАСТЬ КЛЮЧА.

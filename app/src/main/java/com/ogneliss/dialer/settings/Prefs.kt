@@ -407,6 +407,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val CONTACT_NAME_FORMAT = stringPreferencesKey("contact_name_format")
         /** Порядок контактов: по имени или по фамилии (1.6.2). */
         val CONTACT_SORT = stringPreferencesKey("contact_sort")
+        /** Аккаунт последнего созданного контакта (1.7.0): «тип\u0000имя». */
+        val CONTACT_ACCOUNT = stringPreferencesKey("contact_account")
         /** Масштаб интерфейса (1.5.6). */
         val UI_SCALE = stringPreferencesKey("ui_scale")
         // Поведение
@@ -650,6 +652,12 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     /** Порядок списка контактов (1.6.2): разбор в ContactSort. */
     val contactSort: Flow<ContactSort> = data.map { ContactSort.from(it[Keys.CONTACT_SORT]) }
+
+    /**
+     * Аккаунт, в который человек сохранил последний новый контакт (1.7.0):
+     * в редакторе он стоит первым. Пусто — ещё не выбирали.
+     */
+    val contactAccount: Flow<String> = data.map { it[Keys.CONTACT_ACCOUNT].orEmpty() }
 
     // ── Поведение ──────────────────────────────────────────────────────────
     val haptic: Flow<Boolean> = data.map { it[Keys.HAPTIC] ?: true }
@@ -909,6 +917,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("contact_name_format", v.name) { it[Keys.CONTACT_NAME_FORMAT] = v.name }
     suspend fun setContactSort(v: ContactSort) =
         edit("contact_sort", v.name) { it[Keys.CONTACT_SORT] = v.name }
+    suspend fun setContactAccount(key: String) =
+        edit("contact_account", key.substringBefore('\u0000')) { it[Keys.CONTACT_ACCOUNT] = key }
     suspend fun setHaptic(v: Boolean) = edit("haptic", v) { it[Keys.HAPTIC] = v }
     suspend fun setKeyTones(v: Boolean) = edit("key_tones", v) { it[Keys.KEY_TONES] = v }
     suspend fun setGroupingMode(v: GroupingMode) =

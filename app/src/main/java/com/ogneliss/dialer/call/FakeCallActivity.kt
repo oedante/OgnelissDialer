@@ -363,6 +363,8 @@ private fun FakeCallScreen(
                     gap = if (short) Space.m else Space.l,
                     maxSize = FlowUi.callPortraitMaxFor(largePortrait),
                     widthFraction = FlowUi.callPortraitFractionFor(largePortrait),
+                    // Как у настоящего вызова — ближе к середине (1.7.0)
+                    verticalBias = CALL_IDENTITY_BIAS,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {

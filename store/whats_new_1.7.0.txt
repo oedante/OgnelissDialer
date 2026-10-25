@@ -1,0 +1,162 @@
+<ru-RU>
+• Свой редактор контактов: имя, номера, почта, работа, день рождения, примечание и фото — прямо в приложении.
+• «Фамилия Имя» и сортировка по фамилии: Настройки → Оформление.
+• Долгое нажатие «Позвонить» или «Написать» в карточке — выбор SIM.
+• Лёгкий вид: разделы без плашек, строки без линий, панели без теней. Экран вызова: портрет ближе к середине, без панели под кнопками. Имена в журнале обновляются сразу.
+</ru-RU>
+<ar>
+• محرر جهات اتصال مدمج: الاسم والأرقام والبريد والعمل وعيد الميلاد والملاحظة والصورة — داخل التطبيق.
+• «اسم العائلة أولًا» والفرز حسب اسم العائلة: الإعدادات ← المظهر.
+• الضغط المطوّل على «اتصال» أو «كتابة» في البطاقة لاختيار شريحة SIM.
+• مظهر أخف: أقسام بلا أشرطة، وصفوف بلا خطوط، ولوحات بلا ظلال. شاشة المكالمة: الصورة أقرب إلى المنتصف، ولا لوحة تحت الأزرار. الأسماء في السجل تتحدّث فورًا.
+</ar>
+<cs-CZ>
+• Vlastní editor kontaktů: jméno, čísla, e-mail, práce, narozeniny, poznámka a fotka — přímo v aplikaci.
+• „Příjmení Jméno“ a řazení podle příjmení: Nastavení → Vzhled.
+• Podržením „Volat“ nebo „Napsat“ na kartě vyberete SIM.
+• Lehčí vzhled: oddíly bez pruhů, řádky bez čar, panely bez stínů. Obrazovka hovoru: portrét blíž ke středu, bez panelu pod tlačítky. Jména v seznamu hovorů se aktualizují hned.
+</cs-CZ>
+<da-DK>
+• Egen kontakteditor: navn, numre, e-mail, arbejde, fødselsdag, note og foto — direkte i appen.
+• "Efternavn Fornavn" og sortering efter efternavn: Indstillinger → Udseende.
+• Langt tryk på "Ring" eller "Skriv" på kortet vælger SIM.
+• Lettere udseende: afsnit uden bjælker, rækker uden linjer, paneler uden skygge. Opkaldsskærm: portræt tættere på midten, intet panel under knapperne. Navne i opkaldslisten opdateres straks.
+</da-DK>
+<de-DE>
+• Eigener Kontakteditor: Name, Nummern, E-Mail, Arbeit, Geburtstag, Notiz und Foto — direkt in der App.
+• „Nachname Vorname“ und Sortierung nach Nachnamen: Einstellungen → Darstellung.
+• Langes Drücken auf „Anrufen“ oder „Schreiben“ in der Karte: SIM wählen.
+• Leichteres Design: Abschnitte ohne Balken, Zeilen ohne Linien, Leisten ohne Schatten. Anrufbildschirm: Porträt näher zur Mitte, keine Fläche unter den Tasten. Namen in der Anrufliste aktualisieren sich sofort.
+</de-DE>
+<en-US>
+• Built-in contact editor: name, numbers, email, work, birthday, note and photo — right in the app.
+• "Last name first" and sorting by last name: Settings → Appearance.
+• Long-press "Call" or "Write" on a contact card to choose the SIM.
+• Lighter look: no section bars, row lines or panel shadows. Call screen: portrait closer to the middle, no panel under the buttons. Call log names update at once.
+</en-US>
+<es-ES>
+• Editor de contactos propio: nombre, números, correo, trabajo, cumpleaños, nota y foto, en la propia app.
+• «Apellido Nombre» y orden por apellido: Ajustes → Apariencia.
+• Mantén pulsado «Llamar» o «Escribir» en la ficha para elegir la SIM.
+• Aspecto más ligero: secciones sin franjas, filas sin líneas, paneles sin sombra. Pantalla de llamada: retrato más centrado, sin panel bajo los botones. Los nombres del registro se actualizan al instante.
+</es-ES>
+<fi-FI>
+• Oma yhteystietoeditori: nimi, numerot, sähköposti, työ, syntymäpäivä, muistiinpano ja kuva suoraan sovelluksessa.
+• ”Sukunimi Etunimi” ja lajittelu sukunimen mukaan: Asetukset → Ulkoasu.
+• Pitkä painallus ”Soita” tai ”Kirjoita” kortissa valitsee SIM-kortin.
+• Kevyempi ulkoasu: osiot ilman palkkeja, rivit ilman viivoja, paneelit ilman varjoja. Puhelunäkymä: kuva lähempänä keskeä, ei paneelia painikkeiden alla. Nimet puhelulokissa päivittyvät heti.
+</fi-FI>
+<fr-FR>
+• Éditeur de contacts intégré : nom, numéros, e-mail, travail, anniversaire, note et photo, dans l’appli.
+• « Nom Prénom » et tri par nom : Paramètres → Apparence.
+• Appui long sur « Appeler » ou « Écrire » dans la fiche pour choisir la SIM.
+• Look plus léger : sections sans bandeaux, lignes sans traits, panneaux sans ombre. Écran d’appel : portrait plus centré, sans panneau sous les boutons. Les noms du journal se mettent à jour aussitôt.
+</fr-FR>
+<hi-IN>
+• अपना संपर्क संपादक: नाम, नंबर, ईमेल, काम, जन्मदिन, नोट और फ़ोटो — ऐप में ही।
+• "उपनाम पहले" और उपनाम से क्रम: सेटिंग्स → रूप।
+• कार्ड में "कॉल करें" या "लिखें" को देर तक दबाकर SIM चुनें।
+• हल्का रूप: अनुभाग बिना पट्टियों के, पंक्तियाँ बिना रेखाओं के, पैनल बिना छाया के। कॉल स्क्रीन: पोर्ट्रेट बीच के क़रीब, बटनों के नीचे पैनल नहीं। कॉल लॉग में नाम तुरंत अपडेट होते हैं।
+</hi-IN>
+<hu-HU>
+• Saját névjegyszerkesztő: név, számok, e-mail, munka, születésnap, megjegyzés és fotó — az alkalmazásban.
+• „Vezetéknév Keresztnév” és rendezés vezetéknév szerint: Beállítások → Megjelenés.
+• A kártyán a „Hívás” vagy „Írás” hosszú nyomásával SIM választható.
+• Könnyedebb megjelenés: szakaszok sávok nélkül, sorok vonalak nélkül, panelek árnyék nélkül. Hívásképernyő: a portré közelebb a közepéhez, a gombok alatt nincs panel. A hívásnapló nevei azonnal frissülnek.
+</hu-HU>
+<id>
+• Editor kontak bawaan: nama, nomor, email, pekerjaan, ulang tahun, catatan, dan foto — langsung di aplikasi.
+• "Nama Belakang Depan" dan urut menurut nama belakang: Setelan → Tampilan.
+• Tekan lama "Panggil" atau "Tulis" di kartu untuk memilih SIM.
+• Tampilan lebih ringan: bagian tanpa pita, baris tanpa garis, panel tanpa bayangan. Layar panggilan: potret lebih ke tengah, tanpa panel di bawah tombol. Nama di log langsung diperbarui.
+</id>
+<it-IT>
+• Editor dei contatti integrato: nome, numeri, email, lavoro, compleanno, nota e foto, direttamente nell’app.
+• «Cognome Nome» e ordine per cognome: Impostazioni → Aspetto.
+• Pressione lunga su «Chiama» o «Scrivi» nella scheda per scegliere la SIM.
+• Aspetto più leggero: sezioni senza fasce, righe senza linee, pannelli senza ombra. Schermata di chiamata: ritratto più al centro, nessun pannello sotto i pulsanti. I nomi nel registro si aggiornano subito.
+</it-IT>
+<iw-IL>
+• עורך אנשי קשר מובנה: שם, מספרים, אימייל, עבודה, יום הולדת, הערה ותמונה — בתוך האפליקציה.
+• "שם משפחה קודם" ומיון לפי שם משפחה: הגדרות ← מראה.
+• לחיצה ארוכה על "התקשר" או "כתוב" בכרטיס לבחירת SIM.
+• מראה קליל יותר: מקטעים בלי פסים, שורות בלי קווים, לוחות בלי צל. מסך השיחה: התמונה קרובה יותר למרכז, ללא לוח מתחת לכפתורים. השמות ביומן מתעדכנים מיד.
+</iw-IL>
+<ja-JP>
+• 連絡先エディタを内蔵：名前・番号・メール・勤務先・誕生日・メモ・写真をアプリ内で編集。
+• 「姓 名」表示と姓での並べ替え（設定 → 表示）。
+• カードの「通話」「メッセージ」を長押しでSIMを選択。
+• 軽やかなデザインに：見出しの帯・行の区切り線・パネルの影をなくしました。通話画面：写真を中央寄りに、ボタンの下のパネルなし。通話履歴の名前はすぐに更新されます。
+</ja-JP>
+<ko-KR>
+• 연락처 편집기 내장: 이름, 번호, 이메일, 직장, 생일, 메모, 사진을 앱에서 바로 편집.
+• '성 이름' 표시와 성으로 정렬(설정 → 모양).
+• 카드의 '전화' 또는 '쓰기'를 길게 눌러 SIM 선택.
+• 더 가벼운 디자인: 섹션 띠, 행 구분선, 패널 그림자를 없앴습니다. 통화 화면: 사진이 가운데에 더 가깝고 버튼 아래 패널 없음. 통화 기록의 이름이 바로 갱신됩니다.
+</ko-KR>
+<nl-NL>
+• Eigen contacteditor: naam, nummers, e-mail, werk, verjaardag, notitie en foto — gewoon in de app.
+• 'Achternaam Voornaam' en sorteren op achternaam: Instellingen → Uiterlijk.
+• Lang drukken op 'Bellen' of 'Schrijven' op de kaart kiest de simkaart.
+• Lichtere look: secties zonder balken, rijen zonder lijnen, panelen zonder schaduw. Belscherm: portret dichter bij het midden, geen paneel onder de knoppen. Namen in de belgeschiedenis worden meteen bijgewerkt.
+</nl-NL>
+<no-NO>
+• Egen kontaktredigering: navn, numre, e-post, jobb, bursdag, notat og bilde — rett i appen.
+• «Etternavn Fornavn» og sortering etter etternavn: Innstillinger → Utseende.
+• Langt trykk på «Ring» eller «Skriv» på kortet velger SIM.
+• Lettere utseende: seksjoner uten felt, rader uten linjer, paneler uten skygge. Anropsskjerm: portrett nærmere midten, ikke noe panel under knappene. Navn i anropsloggen oppdateres straks.
+</no-NO>
+<pl-PL>
+• Własny edytor kontaktów: imię, numery, e-mail, praca, urodziny, notatka i zdjęcie — w aplikacji.
+• „Nazwisko Imię” i sortowanie po nazwisku: Ustawienia → Wygląd.
+• Przytrzymanie „Zadzwoń” lub „Napisz” na karcie — wybór karty SIM.
+• Lżejszy wygląd: sekcje bez pasków, wiersze bez linii, panele bez cieni. Ekran połączenia: portret bliżej środka, bez panelu pod przyciskami. Nazwy w rejestrze odświeżają się od razu.
+</pl-PL>
+<pt-BR>
+• Editor de contatos próprio: nome, números, e-mail, trabalho, aniversário, nota e foto — no próprio app.
+• "Sobrenome Nome" e ordem por sobrenome: Configurações → Aparência.
+• Toque longo em "Ligar" ou "Escrever" no cartão para escolher o chip.
+• Visual mais leve: seções sem faixas, linhas sem divisórias, painéis sem sombra. Tela de chamada: retrato mais ao centro, sem painel sob os botões. Nomes no histórico atualizam na hora.
+</pt-BR>
+<ro>
+• Editor de contacte propriu: nume, numere, e-mail, serviciu, zi de naștere, notă și fotografie — în aplicație.
+• „Nume Prenume” și sortare după nume: Setări → Aspect.
+• Apăsare lungă pe „Apelează” sau „Scrie” în fișă pentru a alege SIM-ul.
+• Aspect mai aerisit: secțiuni fără benzi, rânduri fără linii, panouri fără umbre. Ecranul de apel: portretul mai aproape de centru, fără panou sub butoane. Numele din jurnal se actualizează imediat.
+</ro>
+<sk>
+• Vlastný editor kontaktov: meno, čísla, e-mail, práca, narodeniny, poznámka a fotka — priamo v aplikácii.
+• „Priezvisko Meno“ a radenie podľa priezviska: Nastavenia → Vzhľad.
+• Podržaním „Volať“ alebo „Napísať“ na karte vyberiete SIM.
+• Ľahší vzhľad: sekcie bez pruhov, riadky bez čiar, panely bez tieňov. Obrazovka hovoru: portrét bližšie k stredu, bez panela pod tlačidlami. Mená v zozname hovorov sa obnovia hneď.
+</sk>
+<sv-SE>
+• Egen kontaktredigerare: namn, nummer, e-post, arbete, födelsedag, anteckning och foto — direkt i appen.
+• ”Efternamn Förnamn” och sortering på efternamn: Inställningar → Utseende.
+• Långt tryck på ”Ring” eller ”Skriv” på kortet väljer SIM.
+• Lättare utseende: avsnitt utan fält, rader utan linjer, paneler utan skugga. Samtalsskärm: porträttet närmare mitten, ingen panel under knapparna. Namn i samtalsloggen uppdateras direkt.
+</sv-SE>
+<th>
+• ตัวแก้ไขรายชื่อในแอป: ชื่อ หมายเลข อีเมล ที่ทำงาน วันเกิด หมายเหตุ และรูปภาพ
+• แสดง "นามสกุล ชื่อ" และเรียงตามนามสกุล: การตั้งค่า → รูปลักษณ์
+• กด "โทร" หรือ "เขียน" ค้างไว้ในการ์ดเพื่อเลือกซิม
+• หน้าตาโปร่งขึ้น: หัวข้อไม่มีแถบ แถวไม่มีเส้นคั่น แผงไม่มีเงา หน้าจอการโทร: รูปอยู่ใกล้กลางจอมากขึ้น ไม่มีแผงใต้ปุ่ม ชื่อในประวัติการโทรอัปเดตทันที
+</th>
+<tr-TR>
+• Yerleşik kişi düzenleyici: ad, numaralar, e-posta, iş, doğum günü, not ve fotoğraf — doğrudan uygulamada.
+• "Soyadı Adı" ve soyadına göre sıralama: Ayarlar → Görünüm.
+• Kartta "Ara" veya "Yaz"a uzun basarak SIM seçin.
+• Daha hafif görünüm: şeritsiz bölümler, çizgisiz satırlar, gölgesiz paneller. Arama ekranı: portre ortaya daha yakın, düğmelerin altında panel yok. Arama kaydındaki adlar hemen güncellenir.
+</tr-TR>
+<vi>
+• Trình sửa danh bạ tích hợp: tên, số, email, công việc, sinh nhật, ghi chú và ảnh — ngay trong ứng dụng.
+• Tên dạng "Họ Tên" và sắp xếp theo họ: Cài đặt → Giao diện.
+• Nhấn giữ "Gọi" hoặc "Viết" trên thẻ để chọn SIM.
+• Giao diện nhẹ nhàng hơn: mục không có dải nền, hàng không kẻ, bảng không đổ bóng. Màn hình cuộc gọi: ảnh gần giữa hơn, không còn bảng dưới các nút. Tên trong nhật ký cập nhật ngay.
+</vi>
+<zh-CN>
+• 内置联系人编辑器：姓名、号码、邮箱、工作、生日、备注和照片，直接在应用内修改。
+• “姓 名”显示与按姓氏排序（设置 → 外观）。
+• 在名片上长按“拨打”或“写信”即可选择 SIM 卡。
+• 更轻盈的外观：分区去掉色带，行去掉分隔线，面板去掉阴影。通话界面：头像更靠近屏幕中部，按钮下不再有面板。通话记录中的姓名即时更新。
+</zh-CN>

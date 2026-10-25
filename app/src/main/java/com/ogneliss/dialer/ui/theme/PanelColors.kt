@@ -74,7 +74,16 @@ object PanelColors {
          * белое на нём 1,17 : 1, всё ещё заметно больше прежних 1,04,
          * при которых клавиши сливались с панелью.
          */
-        if (isLight()) MaterialTheme.colorScheme.surfaceContainerHighest
+        /*
+         * 1.7.0, «воздушный» вид: ещё на ступень светлее — surfaceContainer
+         * (#F2F5FA, цвет страницы настроек). #E8EBF0 под белым журналом
+         * был тяжёлой серой полосой. Белые клавиши и поля на #F2F5FA —
+         * 1,09 : 1 (palette_check, «зоны» ≥ 1,08): край различим, а
+         * панель от списка отделяет линия сверху (PanelEdge.kt).
+         * Высококонтрастная светлая — прежняя ступень: там клавиши должны
+         * отделяться заметно.
+         */
+        if (isLight() && OgnelissTheme.surfaces.outlined) MaterialTheme.colorScheme.surfaceContainerHighest
         else MaterialTheme.colorScheme.surfaceContainer
 
     /** Фон клавиши набора. */

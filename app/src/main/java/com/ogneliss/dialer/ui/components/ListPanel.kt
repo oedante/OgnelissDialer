@@ -58,12 +58,12 @@ internal fun ListPanel(
     menuContent: @Composable () -> Unit
 ) {
     Surface(
-        // Цвет, скругление и тень — как у панели журнала (BottomControlPanel)
+        // Цвет, форма и край — как у панели журнала (BottomControlPanel);
+        // 1.7.0: без тени, край — линия (panelTopLine)
         color = PanelColors.panel(),
         tonalElevation = 0.dp,
-        shadowElevation = 6.dp,
         shape = OgnelissShapeTokens.bottomPanel,
-        modifier = Modifier.panelSwipeNavigation(
+        modifier = Modifier.panelTopLine(com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.divider).panelSwipeNavigation(
             enabled = !searching && (onSwipeRight != null || onSwipeLeft != null),
             onSwipeLeft = onSwipeLeft,
             onSwipeRight = onSwipeRight

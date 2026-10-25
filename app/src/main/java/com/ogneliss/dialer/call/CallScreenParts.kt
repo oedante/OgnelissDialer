@@ -197,6 +197,18 @@ internal fun BoxScope.NavBarUnderPanel() {
 }
 
 /**
+ * ПОРТРЕТ И ИМЯ — БЛИЖЕ К СЕРЕДИНЕ ЭКРАНА (1.7.0).
+ *
+ * Автор, 24.10, снимок разговора: «портрет при вызове опустим вниз ближе
+ * к центру экрана, а то совсем пусто в середине получается». Блок стоял
+ * под строкой состояния, а между ним и кнопками — полэкрана пустоты.
+ * Теперь лишнее место делится 40 на 60: блок чуть выше середины — там,
+ * где глаз ищет лицо. Мало места (раскрыта клавиатура тонов, маленький
+ * экран) — смещения нет, и всё как раньше.
+ */
+internal const val CALL_IDENTITY_BIAS = 0.4f
+
+/**
  * ПОРТРЕТ И ПОДПИСИ ПОД НИМ — РАЗМЕР ПОРТРЕТА ПО МЕСТУ (1.5.6).
  *
  * Сначала меряются подписи (имя, номер, состояние), потом портрету
@@ -216,6 +228,11 @@ internal fun AdaptivePortraitColumn(
     minSize: Dp = FlowUi.callPortraitMin,
     maxSize: Dp = FlowUi.callPortraitMax,
     widthFraction: Float = FlowUi.CALL_PORTRAIT_WIDTH_FRACTION,
+    /**
+     * Где стоит блок по высоте, когда места больше, чем нужно (1.7.0):
+     * 0 — вверху (как было), 0,5 — посередине. Разбор — CALL_IDENTITY_BIAS.
+     */
+    verticalBias: Float = 0f,
     text: @Composable () -> Unit
 ) {
     val portraitContent: @Composable () -> Unit = portrait ?: {}
@@ -250,12 +267,14 @@ internal fun AdaptivePortraitColumn(
 
         val contentHeight = (if (size > 0) size + gapPx else 0) + textHeight
         val height = if (constraints.hasBoundedHeight) {
-            contentHeight.coerceIn(constraints.minHeight, constraints.maxHeight)
+            // Со смещением блок занимает всё место и сам встаёт по высоте
+            if (verticalBias > 0f) constraints.maxHeight
+            else contentHeight.coerceIn(constraints.minHeight, constraints.maxHeight)
         } else {
             contentHeight.coerceAtLeast(constraints.minHeight)
         }
         layout(width, height) {
-            var y = 0
+            var y = ((height - contentHeight) * verticalBias).toInt().coerceAtLeast(0)
             portraitPlaceables.forEach { it.placeRelative((width - it.width) / 2, y) }
             if (size > 0) y += size + gapPx
             textPlaceables.forEach {

@@ -16,7 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.ogneliss.dialer.ui.components.OgnelissDivider
+import com.ogneliss.dialer.ui.components.RowDivider
 import com.ogneliss.dialer.ui.components.OgnelissPanel
 import com.ogneliss.dialer.ui.components.OgnelissListRow
 import com.ogneliss.dialer.ui.theme.FlowUi
@@ -116,7 +116,7 @@ fun BackupScreen(
                     leading = { Icon(OgnelissIcons.FileDownload, null) },
                     onClick = { exportLauncher.launch(vm.suggestedBackupFileName()) }
                 )
-                OgnelissDivider(Modifier.padding(start = 56.dp))
+                RowDivider(Modifier.padding(start = 56.dp))
 
                 OgnelissListRow(
                     headline = stringResource(R.string.settings_backup_import),

@@ -20,7 +20,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.ui.components.OgnelissListRow
-import com.ogneliss.dialer.ui.components.OgnelissDivider
+import com.ogneliss.dialer.ui.components.RowDivider
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.components.ReadableWidth
 import com.ogneliss.dialer.ui.components.SettingsCategoryCard
@@ -201,7 +201,7 @@ fun SettingsHomeScreen(
                                     }
                                     faqResults.forEachIndexed { index, faq ->
                                         if (index > 0 || faqScreenFound) {
-                                            OgnelissDivider(Modifier.padding(start = 56.dp))
+                                            RowDivider(Modifier.padding(start = 56.dp))
                                         }
                                         OgnelissListRow(
                                             headline = stringResource(faq.question),
@@ -239,7 +239,7 @@ fun SettingsHomeScreen(
                                     // Разделитель между строками, но не после последней:
                                     // черта у нижней границы карточки выглядит обрывом
                                     if (index < categories.lastIndex) {
-                                        OgnelissDivider(Modifier.padding(start = 56.dp))
+                                        RowDivider(Modifier.padding(start = 56.dp))
                                     }
                                 }
                             }

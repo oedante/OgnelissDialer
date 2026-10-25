@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.data
 
+import com.ogneliss.dialer.util.DefaultDialer
+import android.os.Build
 import android.content.ActivityNotFoundException
 import android.content.ContentUris
 import android.content.Context
@@ -13,7 +15,20 @@ import javax.inject.Singleton
 /**
  * ПЕРЕДАЧА РЕДАКТИРОВАНИЯ КОНТАКТОВ СИСТЕМНОМУ ПРИЛОЖЕНИЮ.
  *
- * ── Почему полное редактирование НЕ реализовано внутри приложения ──────────
+ * ── С 1.7.0 — запасной путь ────────────────────────────────────────────────
+ * Контакт создаётся и меняется своим редактором (ui/contactedit,
+ * data/ContactEditRepository): автор, 23.10 — «очень много запросов на
+ * редактор контакта, системные не всегда правильно воспринимают переход
+ * в них», а на OPPO, OnePlus, realme системные «Контакты» закрыты, пока
+ * основной — не системный «Телефон». Сюда приходят только «Открыть
+ * в системных «Контактах»» из меню редактора — для адресов, групп
+ * и прочего, чего свой редактор не знает.
+ *
+ * Разбор ниже — почему своего редактора долго не было. Он же определил,
+ * как свой устроен: меняет только записи, которые можно менять, и только
+ * знакомые ему поля (ContactEditModel.kt).
+ *
+ * ── Почему полное редактирование долго НЕ делалось внутри приложения ───────
  *
  * Дело не в разрешениях: WRITE_CONTACTS у нас есть и отдельной декларации
  * для Google Play не требует. Дело в модели данных ContactsContract.
@@ -53,7 +68,65 @@ class ContactEditor @Inject constructor(
 
         /** Понимают стандартные «Контакты» и Samsung: после сохранения — назад к нам. */
         const val EXTRA_FINISH_ON_SAVE = "finishActivityOnSaveCompleted"
+
+        /** «Google Контакты» — отдельный редактор, с «Телефоном» не связан. */
+        const val GOOGLE_CONTACTS = "com.google.android.contacts"
+
+        /**
+         * Прошивки, где «Контакты» — часть системного «Телефона» и без роли
+         * телефона по умолчанию не открываются (ColorOS и её ветви).
+         */
+        val LOCKING_BRANDS = listOf("oppo", "oneplus", "realme")
+
+        /** Любой id: проверяется, кто берётся за форму, а не сам контакт. */
+        const val EDIT_PROBE_ID = 1L
     }
+
+    /*
+     * ══════════════════════════════════════════════════════════════════════
+     * РЕДАКТОР, ЗАПЕРТЫЙ В СИСТЕМНОМ «ТЕЛЕФОНЕ» (1.7.0)
+     * ══════════════════════════════════════════════════════════════════════
+     * Письмо пользователя с OPPO Reno 14: Ogneliss Dialer — основной,
+     * «Изменить» открывает системные «Контакты», а те вместо формы
+     * показывают «Использование системного телефона — Установить
+     * в качестве приложения для вызовов по умолчанию». На ColorOS
+     * (OPPO, OnePlus, realme) контакты — часть системного «Телефона»,
+     * и пока основной другой, они закрыты.
+     *
+     * С 1.7.0 контакт меняется своим редактором (ui/screens/ContactEditScreen),
+     * а сюда приходят только «Открыть в системных «Контактах»» и
+     * «Добавить к контакту» из системы. Если системные заперты и есть
+     * «Google Контакты» — форма открывается в них: те же контакты книги,
+     * к роли телефона не привязаны. Нет — открываются системные, как есть.
+     *
+     * Признак — не одна марка: редактор контактов на телефоне должен
+     * быть ещё и «Телефоном» (умеет ACTION_DIAL), а основной — мы.
+     * На OnePlus с «Google Телефоном» и «Google Контактами» ничего
+     * не меняется. Видеть чужие приложения позволяют <queries>
+     * в манифесте (EDIT контакта, DIAL, пакет «Google Контакты»).
+     */
+    private fun systemPhoneHoldsEditor(): Boolean = runCatching {
+        val brand = "${Build.MANUFACTURER} ${Build.BRAND}".lowercase()
+        if (LOCKING_BRANDS.none { it in brand }) return@runCatching false
+        if (!DefaultDialer.isDefault(context)) return@runCatching false
+        val pm = context.packageManager
+        val phones = pm.queryIntentActivities(Intent(Intent.ACTION_DIAL), 0)
+            .mapTo(HashSet()) { it.activityInfo.packageName }
+        pm.queryIntentActivities(editIntent(EDIT_PROBE_ID), 0)
+            .map { it.activityInfo.packageName }
+            .any { it != context.packageName && it in phones }
+    }.getOrDefault(false)
+
+    /** «Google Контакты», если установлены. */
+    private fun standaloneEditor(): String? = GOOGLE_CONTACTS.takeIf { pkg ->
+        runCatching { context.packageManager.getPackageInfo(pkg, 0); true }.getOrDefault(false)
+    }
+
+    /** Куда направить форму: отдельный редактор, если системный заперт. */
+    private fun preferredPackage(): String? =
+        if (systemPhoneHoldsEditor()) standaloneEditor() else null
+
+
 
     /**
      * Создание нового контакта с заполненным номером — сразу форма.
@@ -109,17 +182,16 @@ class ContactEditor @Inject constructor(
     )
 
     /** Полное редактирование контакта в системном приложении. */
-    override fun edit(contactId: Long) = launch(
-        Intent(Intent.ACTION_EDIT).apply {
-            setDataAndType(
-                ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId),
-                ContactsContract.Contacts.CONTENT_ITEM_TYPE
-            )
-            // Возврат в наше приложение после сохранения
-            putExtra(EXTRA_FINISH_ON_SAVE, true)
-        },
-        "редактирование контакта"
-    )
+    override fun edit(contactId: Long) = launch(editIntent(contactId), "редактирование контакта")
+
+    private fun editIntent(contactId: Long) = Intent(Intent.ACTION_EDIT).apply {
+        setDataAndType(
+            ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId),
+            ContactsContract.Contacts.CONTENT_ITEM_TYPE
+        )
+        // Возврат в наше приложение после сохранения
+        putExtra(EXTRA_FINISH_ON_SAVE, true)
+    }
 
     /** Просмотр карточки контакта в системном приложении. */
     fun view(contactId: Long) = launch(
@@ -130,13 +202,7 @@ class ContactEditor @Inject constructor(
         "просмотр контакта"
     )
 
-    private fun launch(intent: Intent, what: String) {
-        runCatching {
-            context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-        }.onFailure {
-            Logger.w(TAG, "Не удалось открыть системное приложение: $what", it)
-        }
-    }
+    private fun launch(intent: Intent, what: String) = launchFirst(what, intent)
 
     /**
      * Первое намерение, которое удалось запустить.
@@ -146,7 +212,14 @@ class ContactEditor @Inject constructor(
      * могла бы сказать «некому», когда приложение есть.
      */
     private fun launchFirst(what: String, vararg intents: Intent) {
-        for (intent in intents) {
+        // Редактор заперт в «Телефоне» — сначала те же формы в «Google Контактах»
+        val preferred = preferredPackage()
+        val attempts = if (preferred != null) {
+            intents.map { Intent(it).setPackage(preferred) } + intents
+        } else {
+            intents.toList()
+        }
+        for (intent in attempts) {
             try {
                 context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                 return
@@ -154,6 +227,8 @@ class ContactEditor @Inject constructor(
                 Logger.i(TAG, "$what: ${intent.action} ${intent.type ?: intent.data} — некому, пробую дальше")
             } catch (e: SecurityException) {
                 Logger.w(TAG, "$what: ${intent.action} — нет доступа", e)
+            } catch (e: RuntimeException) {
+                Logger.w(TAG, "$what: ${intent.action} — не открылось", e)
             }
         }
         Logger.w(TAG, "Не удалось открыть системное приложение: $what")

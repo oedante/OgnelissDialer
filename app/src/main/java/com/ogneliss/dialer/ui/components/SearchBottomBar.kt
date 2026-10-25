@@ -106,7 +106,8 @@ fun SearchBottomBar(
          *
          * Делаем в точности как в контактах.
          */
-        modifier = Modifier.panelSwipeNavigation(
+        // Край панели — линия (1.7.0, PanelEdge.kt)
+        modifier = Modifier.panelTopLine(com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.divider).panelSwipeNavigation(
             enabled = onSwipeNext != null || onSwipePrevious != null,
             onSwipeLeft = onSwipeNext,
             onSwipeRight = onSwipePrevious

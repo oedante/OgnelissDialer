@@ -141,9 +141,9 @@ fun SearchPanel(
     Surface(
         color = PanelColors.panel(),
         tonalElevation = 0.dp,
-        shadowElevation = 6.dp,
+        // 1.7.0: без тени, край — линия, как у панели журнала (PanelEdge.kt)
         shape = OgnelissShapeTokens.bottomPanel,
-        modifier = modifier
+        modifier = modifier.panelTopLine(com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.divider)
     ) {
         PanelReachesNavBar()
         Column(

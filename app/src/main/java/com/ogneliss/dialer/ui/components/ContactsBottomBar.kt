@@ -82,12 +82,12 @@ fun ContactsBottomBar(
         color = PanelColors.panel(),
         // Без тонального подъёма — разбор в BottomControlPanel
         tonalElevation = 0.dp,
-        // 1.5.6: тень сверху, как у панели журнала и навигации Ogneliss Mail
-        shadowElevation = 6.dp,
+        // Тень сверху (1.5.6, как у навигации Ogneliss Mail) с 1.7.0 заменена
+        // тонкой линией — «воздушный» вид, разбор в PanelEdge.kt
         shape = OgnelissShapeTokens.bottomPanel,
         // Свайп вправо возвращает к вызовам: то же направление,
         // что у системного жеста «назад», и запоминать нечего
-        modifier = Modifier.panelSwipeNavigation(
+        modifier = Modifier.panelTopLine(com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.divider).panelSwipeNavigation(
             enabled = onSwipeToCalls != null || onSwipeToNotes != null,
             onSwipeLeft = onSwipeToNotes,
             onSwipeRight = onSwipeToCalls

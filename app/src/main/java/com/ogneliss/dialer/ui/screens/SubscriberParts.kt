@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.heading
 import com.ogneliss.dialer.ui.components.SectionBand
@@ -397,7 +399,9 @@ internal fun NumberRow(
     label: String?,
     onCall: () -> Unit,
     onSms: () -> Unit,
-    onLongPress: () -> Unit
+    onLongPress: () -> Unit,
+    /** Долгое нажатие на SMS — выбор SIM (1.7.0); null — одна карта. */
+    onSmsLongPress: (() -> Unit)? = null
 ) {
     val formatted = remember(number) { PhoneFormatter.format(number) }
     Row(
@@ -429,7 +433,29 @@ internal fun NumberRow(
                 )
             }
         }
-        NumberAction(OgnelissIcons.Message, R.string.action_sms, onClick = onSms)
+        if (onSmsLongPress == null) {
+            NumberAction(OgnelissIcons.Message, R.string.action_sms, onClick = onSms)
+        } else {
+            // Значок с долгим нажатием: у IconButton его нет
+            Box(
+                Modifier
+                    .size(Dimens.MIN_TOUCH_TARGET)
+                    .clip(CircleShape)
+                    .combinedClickable(
+                        onClickLabel = stringResource(R.string.action_sms),
+                        onLongClickLabel = stringResource(R.string.a11y_choose_sim),
+                        onLongClick = onSmsLongPress,
+                        onClick = onSms
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    OgnelissIcons.Message,
+                    contentDescription = stringResource(R.string.action_sms),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
     }
 }
 
@@ -461,6 +487,10 @@ internal fun SubscriberMoreMenu(
     onSilent: (Long, Boolean) -> Unit,
     onShortcut: () -> Unit,
     onEdit: (Long) -> Unit,
+    /** Номер не из книги (1.7.0): «Добавить номер к контакту»; null — пункта нет. */
+    onAddToExisting: (() -> Unit)? = null,
+    /** «Поделиться» текстом — в меню, когда в ряду на его месте «В контакты» (1.7.0). */
+    onShare: (() -> Unit)? = null,
     /** Удаление контакта — с подтверждением в карточке (1.3.4). */
     onDelete: () -> Unit,
     /** Показать блок отметки у контакта; null — блок и так виден (1.3.4). */
@@ -498,8 +528,23 @@ internal fun SubscriberMoreMenu(
             contentWindowInsets = { WindowInsets.navigationBars }
         ) {
             Column(Modifier.padding(bottom = Space.l)) {
+                // Номер не из книги — дополнить им контакт (1.7.0); создать
+                // новый — кнопкой «В контакты» в ряду карточки
+                onAddToExisting?.let { add ->
+                    SheetGroup {
+                        SheetRow(
+                            OgnelissIcons.Contacts,
+                            stringResource(R.string.subscriber_add_to_existing),
+                            onClick = { onDismiss(); add() }
+                        )
+                    }
+                }
                 // Про номер: сводка, поделиться, выгрузить
                 SheetGroup {
+                    onShare?.let { share ->
+                        SheetRow(OgnelissIcons.Share, stringResource(R.string.action_share), onClick = { onDismiss(); share() })
+                        SheetDivider()
+                    }
                     SheetRow(OgnelissIcons.BarChart, summaryLabel, onClick = { onDismiss(); onStats() })
                     SheetDivider()
                     SheetRow(OgnelissIcons.QrCode2, qrLabel, onClick = { onDismiss(); onQr() })

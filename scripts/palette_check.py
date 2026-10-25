@@ -40,6 +40,18 @@ def ratio(a, b):
     return (hi + 0.05) / (lo + 0.05)
 
 
+def blend(fg, bg, alpha):
+    """Цвет fg с прозрачностью alpha поверх bg — как compositeOver в Compose."""
+    f = [int(tokens[fg][i:i + 2], 16) for i in (0, 2, 4)]
+    b = [int(tokens[bg][i:i + 2], 16) for i in (0, 2, 4)]
+    return ''.join(f'{round(x * alpha + y * (1 - alpha)):02X}' for x, y in zip(f, b))
+
+
+# 1.7.0, «воздушный» вид: заливка аватара с буквами — контейнер на 60 %
+# поверх цвета строки (CallLogCard, AVATAR_FILL_ALPHA); буквы — primary
+tokens['AvatarSoftLight'] = blend('Blue90', 'LightCanvas', 0.6)
+tokens['AvatarSoftDark'] = blend('Blue30', 'DarkPage', 0.6)
+
 TEXT, ZONE = 4.5, 1.08
 PAIRS = [
     # светлая
@@ -63,6 +75,9 @@ PAIRS = [
     ('Error80', 'DarkCard', TEXT),
     ('DarkCard', 'DarkPage', ZONE), ('DarkContainer', 'DarkPage', ZONE),
     ('DarkHighest', 'DarkContainer', ZONE),
+    # 1.7.0: подпись раздела синим на странице, буквы аватара на светлой заливке,
+    # белые клавиши и поля на светлой панели (#F2F5FA)
+    ('Blue80', 'DarkPage', TEXT), ('Blue40', 'AvatarSoftLight', TEXT), ('Blue80', 'AvatarSoftDark', TEXT),
 ]
 
 bad = 0

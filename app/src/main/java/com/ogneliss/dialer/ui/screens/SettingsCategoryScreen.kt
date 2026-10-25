@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.RowDivider
 import com.ogneliss.dialer.ui.theme.Space
 
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -261,7 +262,7 @@ fun SettingsCategoryScreen(
                 } // Box — цель поиска
                 if (entryIndex < chunkEntries.lastIndex) {
                     // От начала текста, как в списках (1.5.3)
-                    OgnelissDivider(Modifier.padding(start = Space.l))
+                    RowDivider(Modifier.padding(start = Space.l))
                 }
             }
             }

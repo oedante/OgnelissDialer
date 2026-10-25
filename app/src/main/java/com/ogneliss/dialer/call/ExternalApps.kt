@@ -30,6 +30,29 @@ object ExternalApps {
         }
     )
 
+    /**
+     * SMS С ВЫБРАННОЙ SIM (1.7.0) — ПОДСКАЗКОЙ, А НЕ ПРИКАЗОМ.
+     *
+     * Отправляет сообщение приложение SMS, а не мы: роли SMS у нас нет
+     * и не будет (без доступа к сети и переписке). Общего способа сказать
+     * ему «с этой карты» Android не даёт. Кладём в намерение подсказки,
+     * которые понимают разные приложения сообщений: номер подписки
+     * (subscription, android.telephony.extra.SUBSCRIPTION_INDEX) и слот.
+     * Кто их не понимает — откроет переписку как обычно, и карту
+     * человек выберет в самом приложении: там такая кнопка есть всегда.
+     */
+    fun smsFromSim(context: Context, number: String, subscriptionId: Int, slotIndex: Int) = launch(
+        context,
+        Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:$number")).apply {
+            putExtra("subscription", subscriptionId)
+            putExtra("subscription_id", subscriptionId)
+            putExtra("android.telephony.extra.SUBSCRIPTION_INDEX", subscriptionId)
+            putExtra("slot", slotIndex)
+            putExtra("simSlot", slotIndex)
+            putExtra("com.android.phone.extra.slot", slotIndex)
+        }
+    )
+
     fun whatsapp(context: Context, number: String) =
         launch(context, Intent(Intent.ACTION_VIEW,
             Uri.parse("https://wa.me/${number.filter { it.isDigit() }}")))
