@@ -98,6 +98,12 @@ fun SettingsChoiceDialog(
         "answer_mode" -> com.ogneliss.dialer.settings.AnswerMode.entries.map {
             it.name to stringResource(SettingsCommands.answerModeLabelRes(it))
         }
+        "contact_name_format" -> com.ogneliss.dialer.settings.ContactNameFormat.entries.map {
+            it.name to stringResource(SettingsCommands.contactNameFormatLabelRes(it))
+        }
+        "contact_sort" -> com.ogneliss.dialer.settings.ContactSort.entries.map {
+            it.name to stringResource(SettingsCommands.contactSortLabelRes(it))
+        }
         "carrier_info" -> listOf(
             "UNKNOWN_ONLY" to stringResource(R.string.carrier_info_unknown),
             "ALL" to stringResource(R.string.carrier_info_all),

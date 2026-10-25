@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.settings.ContactSort
+import com.ogneliss.dialer.data.ContactNames
 import com.ogneliss.dialer.ui.components.SectionBand
 import com.ogneliss.dialer.ui.components.RowAvatar
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -261,7 +263,18 @@ fun ContactsScreen(
     val swipeController = rememberSwipeRevealController()
 
     // Избранных единицы, фильтрация по флагу дешёвая — фон здесь избыточен
-    val favourites = remember(state.contacts) { state.contacts.filter { it.starred } }
+    /*
+     * ИМЕНА И ПОРЯДОК (1.6.2): «Как показывать имя» и «Сортировка
+     * контактов» — разбор в data/ContactNames.kt. Список показывает копии
+     * с именем в выбранной форме; открывается карточка по id, как раньше.
+     */
+    val nameFormat = settings.contactNameFormat
+    val contactSort = settings.contactSort
+    val favourites = remember(state.contacts, nameFormat, contactSort) {
+        state.contacts.filter { it.starred }
+            .let { starred -> if (contactSort == ContactSort.FAMILY) ContactNames.sortedByFamily(starred) else starred }
+            .map { ContactNames.present(it, nameFormat) }
+    }
 
     /**
      * Действия свайпа для контакта.
@@ -438,11 +451,27 @@ fun ContactsScreen(
      */
     val grouped by produceState(
         initialValue = sortedMapOf<Char, List<Contact>>(),
-        state.contacts, contactFilter, callStats, search, state.notes, reminderNumbers
+        state.contacts, contactFilter, callStats, search, state.notes, reminderNumbers,
+        nameFormat, contactSort
     ) {
         value = withContext(Dispatchers.Default) {
+            /*
+             * По фамилии (1.6.2) — пересортировка по правилам языка; буква
+             * раздела — по тому же имени, по которому отсортировано: при
+             * «Имя Фамилия» и сортировке по фамилии «Андрей Петров» — под «П».
+             */
+            val ordered = if (contactSort == ContactSort.FAMILY) {
+                ContactNames.sortedByFamily(state.contacts)
+            } else {
+                state.contacts
+            }
+            val letters = ordered.associate { contact ->
+                contact.id to sectionLetter(ContactNames.sortName(contact, contactSort))
+            }
+            val shown = ordered.map { ContactNames.present(it, nameFormat) }
+
             val source = ContactFilter.apply(
-                contacts = state.contacts,
+                contacts = shown,
                 filter = contactFilter,
                 lastCallByE164 = callStats.first,
                 callCountByE164 = callStats.second,
@@ -470,10 +499,10 @@ fun ContactsScreen(
              * по числу звонков, и порядок букв сбился бы.
              */
             val letterOrder = HashMap<Char, Int>()
-            state.contacts.forEach { contact ->
-                letterOrder.getOrPut(sectionLetter(contact.displayName)) { letterOrder.size }
+            shown.forEach { contact ->
+                letterOrder.getOrPut(letters[contact.id] ?: '#') { letterOrder.size }
             }
-            filtered.groupBy { contact -> sectionLetter(contact.displayName) }
+            filtered.groupBy { contact -> letters[contact.id] ?: sectionLetter(contact.displayName) }
                 .toSortedMap(
                     compareBy<Char> { letterOrder[it] ?: Int.MAX_VALUE }.thenBy { it }
                 )

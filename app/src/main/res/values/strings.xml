@@ -827,4 +827,18 @@ Open Settings → Security → Special app access and allow this app to modify s
     <string name="faq_a_work">Yes. The app’s code is open under the Apache License 2.0: you may use it for any lawful purpose, including work and business. You may also share the APK and your own versions — together with the license text and the NOTICE file; the name and icon stay with the original. The source code is on GitHub.</string>
     <string name="faq_q_contact">How do I report a bug or suggest an idea?</string>
     <string name="faq_a_contact">Write to oedante@gmail.com. If something doesn’t work right, attach the technical log — %1$s: numbers and names in it are masked.</string>
+    <!-- 1.6.2: имена контактов — формат и сортировка -->
+    <string name="settings_group_contact_names">Contact names</string>
+    <string name="settings_contact_name_format">Name format</string>
+    <string name="settings_contact_name_format_text">In contacts, the call log, the contact card and on the call screen</string>
+    <string name="contact_name_given_first">First name first</string>
+    <string name="contact_name_family_first">Last name first</string>
+    <string name="settings_contact_sort">Sort contacts by</string>
+    <string name="settings_contact_sort_text">Section letters follow the same order</string>
+    <string name="contact_sort_given">First name</string>
+    <string name="contact_sort_family">Last name</string>
+    <string name="keywords_contact_names">surname last name family name first name order alphabet sort format</string>
+    <!-- 1.6.2: вопрос об изменении контакта и порядке имени -->
+    <string name="faq_q_names">How do I edit a contact or show the last name first?</string>
+    <string name="faq_a_names">To edit a contact, long-press an entry or a contact → “Edit”: the system Contacts form opens, and saving brings you back here. There is no form of our own on purpose: a contact is often stored in several accounts at once, and an outside edit easily damages the data. Name order — %1$s, sorting by last name — %2$s. Names saved in parts are reordered; for a name typed as one line, the phone book treats the last word as the last name.</string>
 </resources>

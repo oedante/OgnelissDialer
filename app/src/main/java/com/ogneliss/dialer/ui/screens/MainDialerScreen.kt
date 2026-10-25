@@ -900,6 +900,8 @@ fun MainDialerScreen(
              * менялся бы только после следующего звонка.
              */
             h = 31 * h + settings.carrierInfo.ordinal
+            // «Как показывать имя» (1.6.2): строки пересобираются с новым именем
+            h = 31 * h + settings.contactNameFormat.ordinal
 
             /*
              * ПРАВИЛА БЛОКИРОВКИ — ТОЖЕ ЧАСТЬ КЛЮЧА.

@@ -64,6 +64,8 @@ class SettingsStateSource @Inject constructor(
         .combine(prefs.uiScale) { a, v -> a.copy(uiScale = v) }
         .combine(prefs.callPhotoSize) { a, v -> a.copy(callPhotoSize = v) }
         .combine(prefs.answerMode) { a, v -> a.copy(answerMode = v) }
+        .combine(prefs.contactNameFormat) { a, v -> a.copy(contactNameFormat = v) }
+        .combine(prefs.contactSort) { a, v -> a.copy(contactSort = v) }
         .combine(prefs.messengersAnyNumber) { a, v -> a.copy(messengersAnyNumber = v) }
 
     /** Жесты и отклик. */
@@ -162,6 +164,8 @@ class SettingsStateSource @Inject constructor(
             uiScale = a.uiScale,
             callPhotoSize = a.callPhotoSize,
             answerMode = a.answerMode,
+            contactNameFormat = a.contactNameFormat,
+            contactSort = a.contactSort,
             messengersAnyNumber = a.messengersAnyNumber,
             notesRetention = n.retention,
             notesRetentionScope = n.scope,
@@ -212,7 +216,9 @@ class SettingsStateSource @Inject constructor(
         val uiScale: UiScale = UiScale.AUTO,
         val callPhotoSize: CallPhotoSize = CallPhotoSize.LARGE,
         val answerMode: AnswerMode = AnswerMode.TAP,
-        val messengersAnyNumber: Boolean = false
+        val messengersAnyNumber: Boolean = false,
+        val contactNameFormat: ContactNameFormat = ContactNameFormat.GIVEN_FIRST,
+        val contactSort: ContactSort = ContactSort.GIVEN
     )
 
     private data class Notes(

@@ -208,6 +208,46 @@ enum class AnswerMode {
 }
 
 /**
+ * КАК ПОКАЗЫВАТЬ ИМЯ КОНТАКТА (1.6.2).
+ *
+ * Отзыв в Google Play: «сильно не хватает … сортировки по фамилии»;
+ * автор, 23.10: «отображение имени контакта можно сделать настраиваемым
+ * и предлагать пользователю выбор, как показывать».
+ *
+ * GIVEN_FIRST — «Имя Фамилия», как записано в книге (DISPLAY_NAME_PRIMARY);
+ * FAMILY_FIRST — «Фамилия Имя» (DISPLAY_NAME_ALTERNATIVE: провайдер
+ * собирает его из частей имени сам, запятую после фамилии убираем).
+ * У записи без частей имени — организации, почты, одного слова —
+ * обе формы совпадают. Разбор — data/ContactNames.kt.
+ */
+enum class ContactNameFormat {
+    GIVEN_FIRST,
+    FAMILY_FIRST;
+
+    companion object {
+        fun from(name: String?): ContactNameFormat =
+            entries.firstOrNull { it.name == name } ?: GIVEN_FIRST
+    }
+}
+
+/**
+ * ПОРЯДОК СПИСКА КОНТАКТОВ (1.6.2): по имени или по фамилии.
+ *
+ * Отдельно от формата имени, как в системных «Контактах»: можно
+ * показывать «Андрей Петров», а искать его под «П». Буква раздела —
+ * по тому, по чему отсортировано.
+ */
+enum class ContactSort {
+    GIVEN,
+    FAMILY;
+
+    companion object {
+        fun from(name: String?): ContactSort =
+            entries.firstOrNull { it.name == name } ?: GIVEN
+    }
+}
+
+/**
  * ВИД ЖУРНАЛА: КАЖДАЯ ЗАПИСЬ КАРТОЧКОЙ ИЛИ ЗАПИСИ ГРУППОЙ.
  *
  * CARDS — каждая запись — отдельная скруглённая карточка с зазором.
@@ -363,6 +403,10 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val CALL_PHOTO_SIZE = stringPreferencesKey("call_photo_size")
         /** Ответ на вызов: касанием или сдвигом (1.5.8). */
         val ANSWER_MODE = stringPreferencesKey("answer_mode")
+        /** Имя контакта: «Имя Фамилия» или «Фамилия Имя» (1.6.2). */
+        val CONTACT_NAME_FORMAT = stringPreferencesKey("contact_name_format")
+        /** Порядок контактов: по имени или по фамилии (1.6.2). */
+        val CONTACT_SORT = stringPreferencesKey("contact_sort")
         /** Масштаб интерфейса (1.5.6). */
         val UI_SCALE = stringPreferencesKey("ui_scale")
         // Поведение
@@ -599,6 +643,13 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     /** Ответ на вызов (1.5.8): разбор в AnswerMode. */
     val answerMode: Flow<AnswerMode> = data.map { AnswerMode.from(it[Keys.ANSWER_MODE]) }
+
+    /** Как показывать имя контакта (1.6.2): разбор в ContactNameFormat. */
+    val contactNameFormat: Flow<ContactNameFormat> =
+        data.map { ContactNameFormat.from(it[Keys.CONTACT_NAME_FORMAT]) }
+
+    /** Порядок списка контактов (1.6.2): разбор в ContactSort. */
+    val contactSort: Flow<ContactSort> = data.map { ContactSort.from(it[Keys.CONTACT_SORT]) }
 
     // ── Поведение ──────────────────────────────────────────────────────────
     val haptic: Flow<Boolean> = data.map { it[Keys.HAPTIC] ?: true }
@@ -854,6 +905,10 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("call_photo_size", v.name) { it[Keys.CALL_PHOTO_SIZE] = v.name }
     suspend fun setAnswerMode(v: AnswerMode) =
         edit("answer_mode", v.name) { it[Keys.ANSWER_MODE] = v.name }
+    suspend fun setContactNameFormat(v: ContactNameFormat) =
+        edit("contact_name_format", v.name) { it[Keys.CONTACT_NAME_FORMAT] = v.name }
+    suspend fun setContactSort(v: ContactSort) =
+        edit("contact_sort", v.name) { it[Keys.CONTACT_SORT] = v.name }
     suspend fun setHaptic(v: Boolean) = edit("haptic", v) { it[Keys.HAPTIC] = v }
     suspend fun setKeyTones(v: Boolean) = edit("key_tones", v) { it[Keys.KEY_TONES] = v }
     suspend fun setGroupingMode(v: GroupingMode) =

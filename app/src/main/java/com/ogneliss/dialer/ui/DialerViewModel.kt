@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui
 
+import com.ogneliss.dialer.data.ContactNames
 import com.ogneliss.dialer.data.PinnedController
 import com.ogneliss.dialer.data.PinnedEntry
 import com.ogneliss.dialer.concurrency.suspendRunCatching
@@ -1592,8 +1593,12 @@ class DialerViewModel @Inject constructor(
         // которого больше нет
         if (_state.value.query != query) return
 
+        // Имена найденных — в выбранной форме (1.6.2, ContactNames)
+        val nameFormat = settingsState.value.contactNameFormat
+        val shownContacts = result.contacts.map { ContactNames.present(it, nameFormat) }
+
         _state.update {
-            it.copy(filteredContacts = result.contacts, filteredLog = result.callLog)
+            it.copy(filteredContacts = shownContacts, filteredLog = result.callLog)
         }
     }
 
@@ -2419,7 +2424,12 @@ class DialerViewModel @Inject constructor(
                     // у незнакомых или не показывать
                     carrierInfo = settingsState.value.carrierInfo,
                     // Значок напоминания в строке
-                    remindedNumbers = activeReminders.value.mapTo(HashSet()) { it.e164 }
+                    remindedNumbers = activeReminders.value.mapTo(HashSet()) { it.e164 },
+                    // «Фамилия Имя» (1.6.2): имя из журнала переставляется,
+                    // только если это имя того же контакта — ContactNames
+                    contactNames = ContactNames.journalNames(
+                        current.contacts, settingsState.value.contactNameFormat
+                    )
                 )
             }
             _rows.value = prepared

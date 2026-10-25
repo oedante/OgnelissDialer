@@ -79,6 +79,8 @@ class ContactsRepository @Inject constructor(
         // и на части прошивок возвращается неверно
         val meta = LinkedHashMap<Long, Pair<String, String?>>()
         val lookup = HashMap<Long, String>()
+        // «Фамилия Имя» (1.6.2): форму собирает провайдер из частей имени
+        val altNames = HashMap<Long, String>()
 
         val proj = arrayOf(
             ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
@@ -87,7 +89,8 @@ class ContactsRepository @Inject constructor(
             ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI,
             ContactsContract.CommonDataKinds.Phone.NUMBER,
             ContactsContract.CommonDataKinds.Phone.TYPE,
-            ContactsContract.CommonDataKinds.Phone.LABEL
+            ContactsContract.CommonDataKinds.Phone.LABEL,
+            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME_ALTERNATIVE
         )
         context.contentResolver.query(
             ContactsContract.CommonDataKinds.Phone.CONTENT_URI, proj, null, null,
@@ -97,6 +100,7 @@ class ContactsRepository @Inject constructor(
                 val id = c.getLong(0)
                 lookup[id] = c.getString(1).orEmpty()
                 meta.getOrPut(id) { c.getString(2).orEmpty() to c.getString(3) }
+                if (id !in altNames) altNames[id] = c.getString(7).orEmpty()
                 val number = c.getString(4).orEmpty()
                 val label = ContactsContract.CommonDataKinds.Phone
                     .getTypeLabel(context.resources, c.getInt(5), c.getString(6)).toString()
@@ -121,7 +125,9 @@ class ContactsRepository @Inject constructor(
                 starred = id in starredIds,
                 numbers = byId[id]?.distinctBy { it.e164 } ?: emptyList(),
                 emails = emails[id].orEmpty(),
-                events = events[id].orEmpty()
+                events = events[id].orEmpty(),
+                // Пусто, если совпадает с основной формой: меньше в кэше
+                nameAlt = altNames[id].orEmpty().takeIf { it != m.first }.orEmpty()
             )
         }
     }
@@ -293,6 +299,52 @@ class ContactsRepository @Inject constructor(
             )?.use { c -> if (c.moveToFirst()) c.getString(0) else null }
         }.getOrElse {
             Logger.w("Contacts", "Точечный поиск контакта не удался", it)
+            null
+        }
+    }
+
+    /**
+     * ИМЯ «ФАМИЛИЯ ИМЯ» ПО НОМЕРУ — ДЛЯ ЭКРАНА ВЫЗОВА (1.6.2).
+     *
+     * Система отдаёт экрану вызова имя только в основной форме. При
+     * настройке «Фамилия Имя» ищем контакт по номеру тем же PhoneLookup,
+     * что и [lookupByNumber], и берём вторую форму из таблицы контактов.
+     *
+     * [shown] — имя, которое дала система: подменяем, только если это
+     * имя того же контакта. Номер может быть записан у двоих, и чужое
+     * имя на входящем хуже, чем непереставленные слова.
+     *
+     * @return «Фамилия Имя» или null — оставить как есть
+     */
+    suspend fun familyFirstName(number: String, shown: String): String? = withContext(io) {
+        if (number.isBlank() || shown.isBlank()) return@withContext null
+        if (!PermissionGuard.canReadContacts(context)) return@withContext null
+        runCatching {
+            val uri = Uri.withAppendedPath(
+                ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number)
+            )
+            val ids = mutableListOf<Long>()
+            context.contentResolver.query(
+                uri, arrayOf(ContactsContract.PhoneLookup._ID), null, null, null
+            )?.use { c -> while (c.moveToNext()) ids += c.getLong(0) }
+
+            ids.firstNotNullOfOrNull { id ->
+                context.contentResolver.query(
+                    ContactsContract.Contacts.CONTENT_URI,
+                    arrayOf(
+                        ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
+                        ContactsContract.Contacts.DISPLAY_NAME_ALTERNATIVE
+                    ),
+                    "${ContactsContract.Contacts._ID} = ?",
+                    arrayOf(id.toString()),
+                    null
+                )?.use { c ->
+                    if (!c.moveToFirst() || c.getString(0) != shown) null
+                    else ContactNames.familyFirst(shown, c.getString(1).orEmpty())
+                }
+            }?.takeIf { it != shown }
+        }.getOrElse {
+            Logger.w("Contacts", "Не удалось прочитать имя «Фамилия Имя»", it)
             null
         }
     }

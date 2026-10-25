@@ -107,8 +107,8 @@ android {
          * Перед публикацией в открытый доступ сменить на 1.0.0
          * и поднять versionCode.
          */
-        versionCode = 45
-        versionName = "1.6.1"
+        versionCode = 46
+        versionName = "1.6.2"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -362,7 +362,8 @@ android {
 
     // Схемы Room нужны инструментальным тестам миграций.
     // Файлы из app/schemas ОБЯЗАТЕЛЬНО коммитить в репозиторий.
-    sourceSets.getByName("androidTest").assets.srcDir("$projectDir/schemas")
+    // AGP 9.4: srcDir() устарел — каталог добавляется в набор directories
+    sourceSets.getByName("androidTest").assets.directories += "$projectDir/schemas"
     packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
 }
 

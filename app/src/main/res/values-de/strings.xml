@@ -798,4 +798,18 @@
     <string name="faq_a_work">Ja. Der Code der App ist unter der Apache-Lizenz 2.0 offen: Sie dürfen sie für jeden rechtmäßigen Zweck nutzen, auch beruflich und geschäftlich. Auch die Weitergabe der APK und eigener Versionen ist erlaubt — zusammen mit dem Lizenztext und der Datei NOTICE; Name und Symbol bleiben dem Original vorbehalten. Der Quellcode liegt auf GitHub.</string>
     <string name="faq_q_contact">Wie melde ich einen Fehler oder schlage eine Idee vor?</string>
     <string name="faq_a_contact">Schreiben Sie an oedante@gmail.com. Wenn etwas nicht richtig funktioniert, hängen Sie das technische Protokoll an — %1$s: Nummern und Namen darin sind maskiert.</string>
+    <!-- 1.6.2: имена контактов — формат и сортировка -->
+    <string name="settings_group_contact_names">Kontaktnamen</string>
+    <string name="settings_contact_name_format">Namensformat</string>
+    <string name="settings_contact_name_format_text">In Kontakten, im Anrufprotokoll, in der Kontaktkarte und auf dem Anrufbildschirm</string>
+    <string name="contact_name_given_first">Vorname Nachname</string>
+    <string name="contact_name_family_first">Nachname Vorname</string>
+    <string name="settings_contact_sort">Kontakte sortieren nach</string>
+    <string name="settings_contact_sort_text">Die Abschnittsbuchstaben folgen derselben Reihenfolge</string>
+    <string name="contact_sort_given">Vorname</string>
+    <string name="contact_sort_family">Nachname</string>
+    <string name="keywords_contact_names">Nachname Vorname Familienname Reihenfolge sortieren Alphabet Format</string>
+    <!-- 1.6.2: вопрос об изменении контакта и порядке имени -->
+    <string name="faq_q_names">Wie bearbeite ich einen Kontakt oder zeige den Nachnamen zuerst?</string>
+    <string name="faq_a_names">Kontakt bearbeiten: Eintrag oder Kontakt lange drücken → „Bearbeiten“ — das Formular der System-App „Kontakte“ öffnet sich, nach dem Speichern kehren Sie hierher zurück. Ein eigenes Formular gibt es bewusst nicht: Ein Kontakt liegt oft in mehreren Konten zugleich, und eine fremde Änderung beschädigt die Daten leicht. Reihenfolge des Namens — %1$s, Sortierung nach Nachnamen — %2$s. Umgestellt werden Namen, die in Teilen gespeichert sind; bei einem in einer Zeile eingegebenen Namen gilt das letzte Wort als Nachname.</string>
 </resources>

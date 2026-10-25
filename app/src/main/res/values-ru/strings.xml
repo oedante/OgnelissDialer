@@ -809,4 +809,18 @@
     <string name="faq_a_work">Можно. Код приложения открыт по лицензии Apache 2.0: им можно пользоваться для любых законных целей, в том числе в работе и бизнесе. Распространять APK и свои версии тоже можно — вместе с текстом лицензии и файлом NOTICE; название и значок остаются за оригиналом. Исходный код — на GitHub.</string>
     <string name="faq_q_contact">Как сообщить об ошибке или предложить идею?</string>
     <string name="faq_a_contact">Напишите на oedante@gmail.com. Если что-то работает не так, приложите технический журнал — %1$s: номера и имена в нём скрыты.</string>
+    <!-- 1.6.2: имена контактов — формат и сортировка -->
+    <string name="settings_group_contact_names">Имена контактов</string>
+    <string name="settings_contact_name_format">Как показывать имя</string>
+    <string name="settings_contact_name_format_text">В контактах, журнале, карточке и на экране вызова</string>
+    <string name="contact_name_given_first">Имя Фамилия</string>
+    <string name="contact_name_family_first">Фамилия Имя</string>
+    <string name="settings_contact_sort">Сортировка контактов</string>
+    <string name="settings_contact_sort_text">Буквы разделов — в том же порядке</string>
+    <string name="contact_sort_given">По имени</string>
+    <string name="contact_sort_family">По фамилии</string>
+    <string name="keywords_contact_names">фамилия имя порядок сортировка алфавит формат</string>
+    <!-- 1.6.2: вопрос об изменении контакта и порядке имени -->
+    <string name="faq_q_names">Как изменить контакт и показывать фамилию первой?</string>
+    <string name="faq_a_names">Изменить контакт: долгое нажатие на запись или контакт → «Изменить» — откроется форма системных «Контактов», после сохранения вы вернётесь сюда. Своей формы в приложении нет намеренно: контакт часто хранится в нескольких аккаунтах сразу, и чужая правка легко портит данные. Порядок имени — %1$s, сортировка по фамилии — %2$s. Переставляются имена, записанные по частям; если имя введено одной строкой, фамилией книга считает последнее слово.</string>
 </resources>

@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.call
 
+import com.ogneliss.dialer.settings.ContactNameFormat
+import com.ogneliss.dialer.data.ContactNames
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.ui.graphics.graphicsLayer
@@ -140,8 +142,17 @@ class FakeCallActivity : ComponentActivity() {
 
             LaunchedEffect(Unit) {
                 val chosen = prefs.fakeCallNumber.first()
+                // Имя — в той же форме, что у настоящего вызова (1.6.2)
+                val nameFormat = prefs.contactNameFormat.first()
                 caller = if (chosen.isNotBlank()) {
                     val name = suspendRunCatching { contactsRepo.lookupByNumber(chosen) }.getOrNull()
+                        ?.let { found ->
+                            if (nameFormat == ContactNameFormat.FAMILY_FIRST) {
+                                suspendRunCatching { contactsRepo.familyFirstName(chosen, found) }.getOrNull() ?: found
+                            } else {
+                                found
+                            }
+                        }
                     (name ?: PhoneFormatter.format(chosen)) to chosen
                 } else {
                     val random = suspendRunCatching {
@@ -149,7 +160,7 @@ class FakeCallActivity : ComponentActivity() {
                     }.getOrNull()
 
                     if (random != null) {
-                        random.displayName to random.numbers.first().value
+                        ContactNames.shown(random, nameFormat) to random.numbers.first().value
                     } else {
                         // Контактов нет вовсе — показываем номер
                         // без имени: это тоже выглядит как обычный звонок
@@ -174,6 +185,7 @@ class FakeCallActivity : ComponentActivity() {
                     number = callerNumber,
                     photoUri = photo,
                     ambientBackground = callAnimation && theme != ThemeMode.HIGH_CONTRAST,
+                    bareControls = theme != ThemeMode.HIGH_CONTRAST,
                     photoStyle = callPhotoStyle,
                     largePortrait = callPhotoSize == CallPhotoSize.LARGE,
                     slideToAnswer = answerMode == AnswerMode.SLIDE,
@@ -237,6 +249,8 @@ private fun FakeCallScreen(
     photoUri: String?,
     /** Живой фон (CallAmbientBackground.kt); без фото на весь экран. */
     ambientBackground: Boolean = false,
+    /** Кнопки без панели и на ровном фоне (1.6.2), как у настоящего вызова. */
+    bareControls: Boolean = false,
     /** Фото: круг, квадрат или на весь экран (1.5.5); null — ещё не прочитано. */
     photoStyle: CallPhotoStyle? = CallPhotoStyle.CIRCLE,
     /** Настройка «Размер фото» — крупный (1.5.7). */
@@ -292,6 +306,7 @@ private fun FakeCallScreen(
     LightStatusIconsOnPhoto(photoBackground)
     // Живой фон — по тем же состояниям, что у настоящего вызова
     val ambient = ambientBackground && !photoBackground
+    val bare = ambient || (bareControls && !photoBackground)
     Box(Modifier.fillMaxSize()) {
     if (photoBackground) CallPhotoBackground(photoUri.orEmpty())
     if (ambient) {
@@ -304,8 +319,9 @@ private fun FakeCallScreen(
             focus = { if (showPortrait) portraitFocus else null }
         )
     }
-    // Как у настоящего вызова: над живым фоном панели нет (1.6.0)
-    if (!ambient) NavBarUnderPanel()
+    // Как у настоящего вызова: панели нет над живым и ровным фоном (1.6.2)
+    if (bare && !ambient) PlainCallBackground()
+    if (!bare) NavBarUnderPanel()
     Surface(
         Modifier.fillMaxSize().safeDrawingPadding(),
         color = if (photoBackground || ambient) Color.Transparent else MaterialTheme.colorScheme.surface
@@ -385,11 +401,11 @@ private fun FakeCallScreen(
                 shape = OgnelissShapeTokens.bottomPanel,
                 // Как у настоящего вызова: общий цвет нижней панели (1.4.0),
                 // над живым фоном — без подложки (1.6.0, разбор у LocalControlsOnAmbient)
-                color = if (ambient) Color.Transparent else PanelColors.panel(),
+                color = if (bare) Color.Transparent else PanelColors.panel(),
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.fillMaxWidth()
             ) {
-            CompositionLocalProvider(LocalControlsOnAmbient provides ambient) {
+            CompositionLocalProvider(LocalControlsOnAmbient provides bare) {
             Column(
                 Modifier.fillMaxWidth().padding(top = Space.l, start = FlowUi.contentPadding, end = FlowUi.contentPadding),
                 horizontalAlignment = Alignment.CenterHorizontally

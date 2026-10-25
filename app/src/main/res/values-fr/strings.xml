@@ -795,4 +795,18 @@
     <string name="faq_a_work">Oui. Le code de l’application est ouvert sous licence Apache 2.0 : vous pouvez l’utiliser à toute fin légale, y compris au travail et en entreprise. Vous pouvez aussi diffuser l’APK et vos propres versions — avec le texte de la licence et le fichier NOTICE ; le nom et l’icône restent réservés à l’original. Le code source est sur GitHub.</string>
     <string name="faq_q_contact">Comment signaler un bug ou proposer une idée ?</string>
     <string name="faq_a_contact">Écrivez à oedante@gmail.com. Si quelque chose ne fonctionne pas, joignez le journal technique — %1$s : les numéros et les noms y sont masqués.</string>
+    <!-- 1.6.2: имена контактов — формат и сортировка -->
+    <string name="settings_group_contact_names">Noms des contacts</string>
+    <string name="settings_contact_name_format">Format du nom</string>
+    <string name="settings_contact_name_format_text">Dans les contacts, le journal, la fiche et l’écran d’appel</string>
+    <string name="contact_name_given_first">Prénom Nom</string>
+    <string name="contact_name_family_first">Nom Prénom</string>
+    <string name="settings_contact_sort">Trier les contacts par</string>
+    <string name="settings_contact_sort_text">Les lettres des sections suivent le même ordre</string>
+    <string name="contact_sort_given">Prénom</string>
+    <string name="contact_sort_family">Nom</string>
+    <string name="keywords_contact_names">nom prénom nom de famille ordre tri alphabet format</string>
+    <!-- 1.6.2: вопрос об изменении контакта и порядке имени -->
+    <string name="faq_q_names">Comment modifier un contact ou afficher le nom de famille en premier ?</string>
+    <string name="faq_a_names">Pour modifier un contact : appui long sur une entrée ou un contact → « Modifier » — le formulaire de l’app Contacts du système s’ouvre, et l’enregistrement vous ramène ici. Il n’y a pas de formulaire maison, c’est voulu : un contact est souvent stocké dans plusieurs comptes à la fois, et une modification extérieure abîme facilement les données. Ordre du nom — %1$s, tri par nom — %2$s. Les noms enregistrés en parties sont réordonnés ; pour un nom saisi sur une seule ligne, le carnet prend le dernier mot pour le nom de famille.</string>
 </resources>

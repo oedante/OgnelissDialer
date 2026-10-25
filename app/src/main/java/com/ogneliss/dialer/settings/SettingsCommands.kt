@@ -160,6 +160,8 @@ class SettingsCommands @Inject constructor(
             "call_photo_style" -> prefs.setCallPhotoStyle(CallPhotoStyle.from(value))
             "call_photo_size" -> prefs.setCallPhotoSize(CallPhotoSize.from(value))
             "answer_mode" -> prefs.setAnswerMode(AnswerMode.from(value))
+            "contact_name_format" -> prefs.setContactNameFormat(ContactNameFormat.from(value))
+            "contact_sort" -> prefs.setContactSort(ContactSort.from(value))
             "ui_scale" -> prefs.setUiScale(UiScale.from(value))
             "journal_style" -> prefs.setJournalStyle(JournalStyle.from(value))
             "sort_order" -> prefs.setSortOrder(
@@ -187,6 +189,8 @@ class SettingsCommands @Inject constructor(
         "call_photo_style" -> state.callPhotoStyle.name
         "call_photo_size" -> state.callPhotoSize.name
         "answer_mode" -> state.answerMode.name
+        "contact_name_format" -> state.contactNameFormat.name
+        "contact_sort" -> state.contactSort.name
         "ui_scale" -> state.uiScale.name
         "journal_style" -> state.journalStyle.name
         "notes_retention" -> state.notesRetention.name
@@ -248,6 +252,8 @@ class SettingsCommands @Inject constructor(
         "call_photo_style" -> context.getString(callPhotoStyleLabelRes(state.callPhotoStyle))
         "call_photo_size" -> context.getString(callPhotoSizeLabelRes(state.callPhotoSize))
         "answer_mode" -> context.getString(answerModeLabelRes(state.answerMode))
+        "contact_name_format" -> context.getString(contactNameFormatLabelRes(state.contactNameFormat))
+        "contact_sort" -> context.getString(contactSortLabelRes(state.contactSort))
 
         // «Авто» — с тем, что выбрано для этого экрана: видно, что оно делает
         "ui_scale" -> if (state.uiScale == UiScale.AUTO) {
@@ -312,6 +318,8 @@ class SettingsCommands @Inject constructor(
             "call_photo_style" -> R.string.settings_call_photo
             "call_photo_size" -> R.string.settings_call_photo_size
             "answer_mode" -> R.string.settings_answer_mode
+            "contact_name_format" -> R.string.settings_contact_name_format
+            "contact_sort" -> R.string.settings_contact_sort
             "ui_scale" -> R.string.settings_ui_scale
             "journal_style" -> R.string.settings_journal_style
             "notes_retention" -> R.string.settings_notes_retention
@@ -350,6 +358,18 @@ class SettingsCommands @Inject constructor(
         fun answerModeLabelRes(mode: AnswerMode): Int = when (mode) {
             AnswerMode.TAP -> R.string.answer_mode_tap
             AnswerMode.SLIDE -> R.string.answer_mode_slide
+        }
+
+        /** Подпись формата имени контакта (1.6.2). */
+        fun contactNameFormatLabelRes(format: ContactNameFormat): Int = when (format) {
+            ContactNameFormat.GIVEN_FIRST -> R.string.contact_name_given_first
+            ContactNameFormat.FAMILY_FIRST -> R.string.contact_name_family_first
+        }
+
+        /** Подпись порядка списка контактов (1.6.2). */
+        fun contactSortLabelRes(sort: ContactSort): Int = when (sort) {
+            ContactSort.GIVEN -> R.string.contact_sort_given
+            ContactSort.FAMILY -> R.string.contact_sort_family
         }
         /**
          * Единственное место сопоставления действия свайпа с подписью.
@@ -393,7 +413,8 @@ class SettingsCommands @Inject constructor(
         val CHOICE_KEYS = setOf(
             "language", "theme", "swipe_right", "swipe_left", "grouping", "sort_order",
             "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info",
-            "call_photo_style", "call_photo_size", "answer_mode", "ui_scale"
+            "call_photo_style", "call_photo_size", "answer_mode", "ui_scale",
+            "contact_name_format", "contact_sort"
             // "journal_style" — снят из реестра в 1.5.3 (вид журнала один)
         )
     }

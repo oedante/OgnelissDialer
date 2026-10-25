@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.call
 
+import com.ogneliss.dialer.settings.ContactNameFormat
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -234,6 +235,9 @@ class InCallActivity : ComponentActivity() {
             // Ответ на вызов: касанием или сдвигом (1.5.8): разбор в AnswerMode
             val answerMode by prefs.answerMode
                 .collectAsStateWithLifecycle(initialValue = AnswerMode.TAP)
+            // Имя «Фамилия Имя» (1.6.2): разбор в data/ContactNames.kt
+            val nameFormat by prefs.contactNameFormat
+                .collectAsStateWithLifecycle(initialValue = ContactNameFormat.GIVEN_FIRST)
 
             OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic, uiScale = uiScale) {
                 // Раскладка окна: телефон, лёжа, раскладушка, планшет.
@@ -301,9 +305,11 @@ class InCallActivity : ComponentActivity() {
                     spamMarksRepo = spamMarksRepo,
                     hideContactNumber = hideContactNumber,
                     ambientBackground = callAnimation && theme != ThemeMode.HIGH_CONTRAST,
+                    bareControls = theme != ThemeMode.HIGH_CONTRAST,
                     photoStyle = callPhotoStyle,
                     largePortrait = callPhotoSize == CallPhotoSize.LARGE,
                     slideToAnswer = answerMode == AnswerMode.SLIDE,
+                    familyFirst = nameFormat == ContactNameFormat.FAMILY_FIRST,
                     // Пользователь переключил звук сам — датчики умолкают
                     // до конца разговора
                     onManualAudioChange = { smartSpeaker?.notifyManualToggle() }
@@ -358,12 +364,16 @@ private fun InCallScreen(
     hideContactNumber: Boolean = false,
     /** Живой фон за экраном (CallAmbientBackground.kt); без фото на весь экран. */
     ambientBackground: Boolean = false,
+    /** Кнопки без панели и на ровном фоне (1.6.2): всё, кроме высокого контраста. */
+    bareControls: Boolean = false,
     /** Фото звонящего: круг, квадрат или на весь экран; null — ещё не прочитано. */
     photoStyle: CallPhotoStyle? = CallPhotoStyle.CIRCLE,
     /** Настройка «Размер фото» — крупный (1.5.7). */
     largePortrait: Boolean = false,
     /** Настройка «Ответ на вызов» — сдвигом (1.5.8): разбор в SlideToAnswer. */
     slideToAnswer: Boolean = false,
+    /** Настройка «Как показывать имя» — «Фамилия Имя» (1.6.2). */
+    familyFirst: Boolean = false,
     onManualAudioChange: () -> Unit = {}
 ) {
     // Сдвиг вместо кнопок ответа — если выбран и не включён TalkBack
@@ -447,8 +457,22 @@ private fun InCallScreen(
     LaunchedEffect(liveNumber) {
         if (liveNumber.isNotBlank()) number = liveNumber
     }
-    LaunchedEffect(liveName) {
-        if (!liveName.isNullOrBlank()) name = liveName
+    LaunchedEffect(liveName, familyFirst) {
+        if (!liveName.isNullOrBlank()) {
+            name = liveName
+            /*
+             * «Фамилия Имя» (1.6.2): система даёт имя только в основной
+             * форме. Переставляем, если это имя того же контакта, —
+             * разбор у ContactsRepository.familyFirstName. Сначала
+             * показываем как есть: запрос короткий, но входящий ждать
+             * его не должен.
+             */
+            if (familyFirst) {
+                suspendRunCatching {
+                    contactsRepo.familyFirstName(liveNumber.ifBlank { number }, liveName)
+                }.getOrNull()?.let { name = it }
+            }
+        }
     }
 
     /*
@@ -754,6 +778,9 @@ private fun InCallScreen(
     LightStatusIconsOnPhoto(photoBackground)
     // Живой фон — когда нет фото на весь экран: фото само и есть фон
     val ambient = ambientBackground && !photoBackground
+    // Без панели под кнопками — везде, кроме фото на весь экран и высокого
+    // контраста (1.6.2, разбор у LocalControlsOnAmbient)
+    val bare = ambient || (bareControls && !photoBackground)
     Box(Modifier.fillMaxSize()) {
     if (photoBackground) CallPhotoBackground(photoUri.orEmpty())
     // Во весь экран, под строкой состояния тоже — как обои
@@ -763,9 +790,11 @@ private fun InCallScreen(
             focus = { if (showPortrait) portraitFocus else null }
         )
     }
-    // Полоса цвета панели под навигацией — только когда есть панель:
-    // над живым фоном её нет (1.6.0, разбор у LocalControlsOnAmbient)
-    if (!ambient) NavBarUnderPanel()
+    // Ровный фон без панели — до краёв экрана (1.6.2)
+    if (bare && !ambient) PlainCallBackground()
+    // Полоса цвета панели под навигацией — только когда есть панель
+    // (разбор у LocalControlsOnAmbient)
+    if (!bare) NavBarUnderPanel()
     Surface(
         Modifier.fillMaxSize().safeDrawingPadding(),
         color = if (photoBackground || ambient) Color.Transparent else MaterialTheme.colorScheme.surface
@@ -1046,12 +1075,12 @@ private fun InCallScreen(
                 // Цвет нижней панели — общий с журналом (PanelColors, 1.4.0):
                 // в светлой теме серая панель с белыми кнопками, как клавиатура.
                 // Над живым фоном — без подложки, волны идут и под кнопками
-                // (1.6.0, разбор у LocalControlsOnAmbient)
-                color = if (ambient) Color.Transparent else PanelColors.panel(),
+                // (1.6.0); с 1.6.2 и на ровном фоне — разбор у LocalControlsOnAmbient
+                color = if (bare) Color.Transparent else PanelColors.panel(),
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.fillMaxWidth()
             ) {
-            CompositionLocalProvider(LocalControlsOnAmbient provides ambient) {
+            CompositionLocalProvider(LocalControlsOnAmbient provides bare) {
             Column(
                 // На всю ширину панели: иначе узкое содержимое ушло бы влево
                 Modifier.fillMaxWidth().padding(top = Space.l, start = FlowUi.contentPadding, end = FlowUi.contentPadding),

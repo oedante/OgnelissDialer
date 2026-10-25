@@ -249,6 +249,26 @@ object SettingsRegistry {
             R.string.settings_button_labels, R.string.settings_button_labels_text,
             SettingKind.Switch("button_labels")
         ),
+        /*
+         * Имена контактов (1.6.2): отзыв в Google Play — «сортировку
+         * по фамилии»; автор — «предлагать пользователю выбор, как
+         * показывать». Два пункта, как в системных «Контактах»: формат
+         * и порядок независимы. Разбор — data/ContactNames.kt.
+         */
+        SettingEntry(
+            "contact_name_format", SettingsCategory.APPEARANCE,
+            R.string.settings_contact_name_format, R.string.settings_contact_name_format_text,
+            SettingKind.Choice("contact_name_format"),
+            groupRes = R.string.settings_group_contact_names,
+            keywordsRes = R.string.keywords_contact_names
+        ),
+        SettingEntry(
+            "contact_sort", SettingsCategory.APPEARANCE,
+            R.string.settings_contact_sort, R.string.settings_contact_sort_text,
+            SettingKind.Choice("contact_sort"),
+            groupRes = R.string.settings_group_contact_names,
+            keywordsRes = R.string.keywords_contact_names
+        ),
         SettingEntry(
             "show_photo", SettingsCategory.APPEARANCE,
             R.string.settings_show_photo, null,

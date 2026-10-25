@@ -46,7 +46,7 @@ import javax.inject.Singleton
         ReminderEntity::class,
         SpamMarkEntity::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -69,8 +69,26 @@ abstract class AppDatabase : RoomDatabase() {
         val MIGRATIONS: Array<Migration>
             get() = arrayOf(
                 MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
-                MIGRATION_5_6
+                MIGRATION_5_6, MIGRATION_6_7
             )
+
+        /**
+         * ВЕРСИЯ 6 → 7: ИМЯ «ФАМИЛИЯ ИМЯ» В КЭШЕ КНИГИ (1.6.2).
+         *
+         * Настройка «Как показывать имя» берёт форму «Фамилия Имя»
+         * из книги (DISPLAY_NAME_ALTERNATIVE). Кэш даёт журнал при
+         * запуске, до чтения книги, — без этого столбца имена первые
+         * секунды шли бы «Имя Фамилия» и потом переставлялись.
+         *
+         * Один новый столбец с пустым значением: пусто значит «как
+         * displayName», и старые строки остаются верными до первого
+         * чтения книги, которое их перезапишет. Других таблиц не трогает.
+         */
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE contact_cache ADD COLUMN nameAlt TEXT NOT NULL DEFAULT ''")
+            }
+        }
 
         /**
          * ВЕРСИЯ 5 → 6: ОТМЕТКИ О СПАМЕ ОТДЕЛЕНЫ ОТ ЗАМЕТОК.

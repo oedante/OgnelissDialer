@@ -105,6 +105,12 @@ object Faq {
             listOf(
                 FaqItem("switch", R.string.faq_q_switch, R.string.faq_a_switch),
                 FaqItem("search", R.string.faq_q_search, R.string.faq_a_search),
+                // 1.6.2, отзыв в Google Play: «редактировать контакты и делать
+                // их сортировку по фамилии»
+                FaqItem(
+                    "names", R.string.faq_q_names, R.string.faq_a_names,
+                    listOf(FaqLink.Setting("contact_name_format"), FaqLink.Setting("contact_sort"))
+                ),
                 FaqItem("undo", R.string.faq_q_undo, R.string.faq_a_undo),
                 FaqItem(
                     "spam", R.string.faq_q_spam, R.string.faq_a_spam,

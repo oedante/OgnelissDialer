@@ -136,7 +136,13 @@ data class Contact(
      * возраст: у половины записей год не указан вовсе, а достраивать
      * его значило бы показывать выдуманное.
      */
-    val events: List<ContactEvent> = emptyList()
+    val events: List<ContactEvent> = emptyList(),
+    /**
+     * Имя в форме «Фамилия Имя» из книги (DISPLAY_NAME_ALTERNATIVE, 1.6.2)
+     * — для настроек «Как показывать имя» и «Сортировка контактов».
+     * Пусто — такое же, как displayName. Показывать — через ContactNames.
+     */
+    val nameAlt: String = ""
 )
 
 /** Дата из карточки контакта: подпись типа и сама дата в читаемом виде. */

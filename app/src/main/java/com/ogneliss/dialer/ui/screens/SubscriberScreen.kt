@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.data.ContactNames
 import com.ogneliss.dialer.ui.theme.PanelReachesNavBar
 import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.settings.SwipeAction
@@ -740,7 +741,20 @@ fun SubscriberScreen(
      *      Для номера не из книги это единственное осмысленное имя;
      *   3. номер — когда больше нечего сказать.
      */
-    val title = group.displayName?.takeIf { it.isNotBlank() }
+    /*
+     * Имя в выбранной форме (1.6.2): «Фамилия Имя» — если в шапке имя
+     * того же контакта из книги. Разбор — data/ContactNames.kt.
+     */
+    val nameFormat = settingsNow.contactNameFormat
+    val shownName = remember(state.contacts, knownContactId, group.displayName, nameFormat) {
+        val book = state.contacts.firstOrNull { it.id == knownContactId }
+        if (book != null && book.displayName == group.displayName) {
+            ContactNames.shown(book, nameFormat)
+        } else {
+            group.displayName
+        }
+    }
+    val title = shownName?.takeIf { it.isNotBlank() }
         ?: note?.note?.takeIf { it.isNotBlank() }
         ?: PhoneFormatter.format(group.number)
 

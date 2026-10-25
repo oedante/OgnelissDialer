@@ -200,6 +200,32 @@ class MigrationTest {
     }
 
     /**
+     * 6 → 7: в кэше книги появляется имя «Фамилия Имя» (1.6.2).
+     *
+     * Строка кэша переживает миграцию целиком, новый столбец — пустой
+     * («как displayName»), пока книга не будет прочитана заново.
+     */
+    @Test
+    fun кэшКнигиПолучаетИмяФамилияИмя() {
+        helper.createDatabase(TEST_DB, 6).use { db ->
+            db.execSQL(
+                "INSERT INTO contact_cache (id, displayName, photoUri, starred, numbers, e164) " +
+                    "VALUES (1, 'Анна Смирнова', NULL, 1, '+79001112233', '+79001112233')"
+            )
+        }
+
+        val db = helper.runMigrationsAndValidate(TEST_DB, 7, true, AppDatabase.MIGRATION_6_7)
+
+        db.query("SELECT displayName, starred, e164, nameAlt FROM contact_cache WHERE id = 1").use { c ->
+            assertTrue("Строка кэша потерялась", c.moveToFirst())
+            assertEquals("Анна Смирнова", c.getString(0))
+            assertEquals(1, c.getInt(1))
+            assertEquals("+79001112233", c.getString(2))
+            assertEquals("", c.getString(3))
+        }
+    }
+
+    /**
      * Проверка, что все объявленные миграции применяются подряд
      * от первой версии до текущей. Ловит пропущенную миграцию:
      * например, версия поднята с 2 до 3, а Migration(2,3) забыли написать.

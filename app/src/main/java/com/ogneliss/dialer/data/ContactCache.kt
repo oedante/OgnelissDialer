@@ -110,6 +110,9 @@ class ContactCache @Inject constructor(
                 id = row.id,
                 lookupKey = "",
                 displayName = row.displayName,
+                // «Фамилия Имя» (1.6.2): из кэша — чтобы формат имени
+                // работал с первого кадра
+                nameAlt = row.nameAlt,
                 photoUri = row.photoUri,
                 starred = row.starred,
                 numbers = numbers.mapIndexed { i, value ->
@@ -158,7 +161,8 @@ class ContactCache @Inject constructor(
                         photoUri = contact.photoUri,
                         starred = contact.starred,
                         numbers = contact.numbers.joinToString("\n") { it.value },
-                        e164 = contact.numbers.joinToString("\n") { it.e164 }
+                        e164 = contact.numbers.joinToString("\n") { it.e164 },
+                        nameAlt = contact.nameAlt
                     )
                 }
             )

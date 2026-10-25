@@ -1,0 +1,162 @@
+<ru-RU>
+• Журнал и контакты — соседи: первая кнопка нижней панели переключает между ними, долгое нажатие открывает все разделы.
+• Поиск по имени, номеру и заметке — кнопка «Поиск» на панели.
+• «Вопросы и ответы» прямо в приложении (Ещё → «Вопросы и ответы»): кнопка под ответом открывает нужную настройку.
+• Имена «Фамилия Имя» и сортировка по фамилии: Настройки → Оформление. Экран вызова без панели под кнопками и без живого фона; спокойнее значки, свайпы и меню.
+</ru-RU>
+<ar>
+• السجل وجهات الاتصال متجاوران الآن: الزر الأول في الشريط السفلي يبدّل بينهما، والضغط المطوّل يفتح كل الأقسام.
+• البحث بالاسم والرقم والملاحظة: زر «بحث» في الشريط.
+• «أسئلة وأجوبة» داخل التطبيق (المزيد ← «أسئلة وأجوبة»): الزر أسفل الإجابة يفتح الإعداد المقصود.
+• الأسماء بصيغة «اسم العائلة أولًا» والفرز حسب اسم العائلة: الإعدادات ← المظهر. شاشة المكالمة بلا لوحة تحت الأزرار حتى دون الخلفية الحية؛ أيقونات وسحب وقوائم أهدأ.
+</ar>
+<cs-CZ>
+• Seznam hovorů a kontakty jsou sousedé: první tlačítko dolní lišty mezi nimi přepíná, podržením otevřete všechny sekce.
+• Hledání podle jména, čísla a poznámky: tlačítko „Hledat“ na liště.
+• „Otázky a odpovědi“ přímo v aplikaci (Více → „Otázky a odpovědi“): tlačítko pod odpovědí otevře příslušné nastavení.
+• Jména „Příjmení Jméno“ a řazení podle příjmení: Nastavení → Vzhled. Obrazovka hovoru bez panelu pod tlačítky i bez živého pozadí; klidnější ikony, přejetí a nabídky.
+</cs-CZ>
+<da-DK>
+• Opkaldsliste og kontakter er naboer: den første knap på bundlinjen skifter mellem dem, et langt tryk åbner alle sektioner.
+• Søg på navn, nummer og note: knappen "Søg" på linjen.
+• "Spørgsmål og svar" direkte i appen (Mere → "Spørgsmål og svar"): knappen under et svar åbner den rette indstilling.
+• Navne som "Efternavn Fornavn" og sortering efter efternavn: Indstillinger → Udseende. Opkaldsskærm uden panel under knapperne, også uden levende baggrund; roligere ikoner og menuer.
+</da-DK>
+<de-DE>
+• Anrufliste und Kontakte sind Nachbarn: Die erste Taste unten wechselt zwischen ihnen, langes Drücken öffnet alle Bereiche.
+• Suche nach Name, Nummer und Notiz: Taste „Suche“ auf der Leiste.
+• „Fragen und Antworten“ in der App (Mehr → „Fragen und Antworten“): Die Taste unter einer Antwort öffnet die passende Einstellung.
+• Namen „Nachname Vorname“ und Sortierung nach Nachnamen: Einstellungen → Darstellung. Anrufbildschirm ohne Fläche unter den Tasten; ruhigere Symbole und Menüs.
+</de-DE>
+<en-US>
+• Call log and contacts are now neighbours: the first button on the bottom bar switches between them; a long press opens all sections.
+• Search by name, number and note: the "Search" button on the bar.
+• "Questions and answers" in the app (More → "Questions and answers"): the button under an answer opens the setting.
+• "Last name first" and sorting by last name: Settings → Appearance. No panel under call buttons, even without the live background. Calmer icons, swipes and menus.
+</en-US>
+<es-ES>
+• Registro y contactos son vecinos: el primer botón de la barra inferior cambia entre ellos; una pulsación larga abre todas las secciones.
+• Búsqueda por nombre, número y nota: botón «Buscar» de la barra.
+• «Preguntas y respuestas» en la app (Más → «Preguntas y respuestas»): el botón bajo la respuesta abre el ajuste.
+• Nombres «Apellido Nombre» y orden por apellido: Ajustes → Apariencia. Llamada sin panel bajo los botones, también sin fondo animado; iconos y menús más serenos.
+</es-ES>
+<fi-FI>
+• Puheluloki ja yhteystiedot ovat naapureita: alapalkin ensimmäinen painike vaihtaa niiden välillä, pitkä painallus avaa kaikki osiot.
+• Haku nimen, numeron ja muistiinpanon mukaan: palkin ”Haku”-painike.
+• ”Kysymykset ja vastaukset” sovelluksessa (Lisää → ”Kysymykset ja vastaukset”): vastauksen alla oleva painike avaa asetuksen.
+• Nimet ”Sukunimi Etunimi” ja lajittelu sukunimen mukaan: Asetukset → Ulkoasu. Puhelunäkymässä ei paneelia painikkeiden alla; rauhallisemmat kuvakkeet ja valikot.
+</fi-FI>
+<fr-FR>
+• Journal et contacts sont voisins : le premier bouton en bas passe de l’un à l’autre ; un appui long ouvre toutes les sections.
+• Recherche par nom, numéro et note : bouton « Recherche ».
+• « Questions et réponses » dans l’application (Plus → « Questions et réponses ») : le bouton sous la réponse ouvre le réglage.
+• Noms « Nom Prénom » et tri par nom : Paramètres → Apparence. Écran d’appel sans panneau sous les boutons, même sans fond animé ; icônes et menus plus calmes.
+</fr-FR>
+<hi-IN>
+• कॉल लॉग और संपर्क अब पड़ोसी हैं: नीचे की पट्टी का पहला बटन दोनों के बीच बदलता है, लंबा दबाने पर सभी सेक्शन खुलते हैं।
+• नाम, नंबर और नोट से खोज: पट्टी पर "खोज" बटन।
+• "सवाल और जवाब" ऐप में ही (और → "सवाल और जवाब"): जवाब के नीचे का बटन संबंधित सेटिंग खोलता है।
+• नाम "उपनाम पहले" और उपनाम से क्रम: सेटिंग्स → रूप। कॉल स्क्रीन पर बटनों के नीचे पैनल नहीं, जीवंत पृष्ठभूमि के बिना भी; शांत आइकन, स्वाइप और मेनू।
+</hi-IN>
+<hu-HU>
+• A hívásnapló és a névjegyek szomszédok: az alsó sáv első gombja vált köztük, hosszú nyomásra minden rész megnyílik.
+• Keresés név, szám és jegyzet alapján: a sáv „Keresés” gombja.
+• „Kérdések és válaszok” magában az alkalmazásban (Továbbiak → „Kérdések és válaszok”): a válasz alatti gomb megnyitja a megfelelő beállítást.
+• „Vezetéknév Keresztnév” és rendezés vezetéknév szerint: Beállítások → Megjelenés. Hívásképernyő panel nélkül a gombok alatt; nyugodtabb ikonok és menük.
+</hu-HU>
+<id>
+• Log panggilan dan kontak kini bersebelahan: tombol pertama di bilah bawah beralih di antara keduanya, tekan lama membuka semua bagian.
+• Cari menurut nama, nomor, dan catatan: tombol "Cari" di bilah.
+• "Tanya jawab" langsung di aplikasi (Lainnya → "Tanya jawab"): tombol di bawah jawaban membuka setelan yang dimaksud.
+• Nama "Belakang Depan" dan urut menurut nama belakang: Setelan → Tampilan. Layar panggilan tanpa panel di bawah tombol, juga tanpa latar hidup; ikon dan menu lebih tenang.
+</id>
+<it-IT>
+• Registro e contatti sono vicini: il primo pulsante della barra in basso passa dall’uno all’altro, una pressione lunga apre tutte le sezioni.
+• Ricerca per nome, numero e nota: pulsante «Cerca».
+• «Domande e risposte» nell’app (Altro → «Domande e risposte»): il pulsante sotto la risposta apre l’impostazione.
+• Nomi «Cognome Nome» e ordine per cognome: Impostazioni → Aspetto. Chiamata senza pannello sotto i pulsanti, anche senza sfondo animato; icone e menu più calmi.
+</it-IT>
+<iw-IL>
+• יומן השיחות ואנשי הקשר הם עכשיו שכנים: הכפתור הראשון בסרגל התחתון עובר ביניהם, ולחיצה ארוכה פותחת את כל הקטעים.
+• חיפוש לפי שם, מספר והערה: כפתור "חיפוש" בסרגל.
+• "שאלות ותשובות" בתוך האפליקציה (עוד ← "שאלות ותשובות"): הכפתור מתחת לתשובה פותח את ההגדרה המתאימה.
+• שמות "שם משפחה קודם" ומיון לפי שם משפחה: הגדרות ← מראה. מסך השיחה בלי לוח מתחת לכפתורים, גם בלי רקע חי; סמלים, החלקות ותפריטים רגועים יותר.
+</iw-IL>
+<ja-JP>
+• 通話履歴と連絡先が隣同士に：下部バーの最初のボタンで切り替え、長押しですべてのセクションを表示。
+• 名前・番号・メモで検索：バーの「検索」ボタン。
+• 「よくある質問」をアプリ内に（その他 → 「よくある質問」）：回答の下のボタンで該当する設定を開けます。
+• 連絡先名を「姓 名」で表示、姓で並べ替え（設定 → 表示）。通話画面はライブ背景なしでもボタンの下にパネルなし。アイコン・スワイプ・メニューを落ち着いたデザインに。
+</ja-JP>
+<ko-KR>
+• 통화 기록과 연락처가 나란히: 하단 바의 첫 번째 버튼으로 전환하고, 길게 누르면 모든 섹션이 열립니다.
+• 이름, 번호, 메모로 검색: 바의 '검색' 버튼.
+• 앱 안의 '질문과 답변' (더보기 → '질문과 답변'): 답변 아래 버튼이 해당 설정을 엽니다.
+• 연락처 이름 '성 이름' 표시와 성으로 정렬(설정 → 모양). 통화 화면은 라이브 배경이 없어도 버튼 아래 패널 없음. 아이콘, 스와이프, 메뉴를 더 차분하게.
+</ko-KR>
+<nl-NL>
+• Belgeschiedenis en contacten zijn buren: de eerste knop onderaan wisselt ertussen, lang drukken opent alle onderdelen.
+• Zoeken op naam, nummer en notitie: de knop 'Zoeken' op de balk.
+• 'Vragen en antwoorden' in de app (Meer → 'Vragen en antwoorden'): de knop onder een antwoord opent de instelling.
+• Namen als 'Achternaam Voornaam' en sorteren op achternaam: Instellingen → Uiterlijk. Belscherm zonder paneel onder de knoppen, ook zonder levende achtergrond; rustiger menu's.
+</nl-NL>
+<no-NO>
+• Anropslogg og kontakter er naboer: den første knappen i bunnlinjen bytter mellom dem, et langt trykk åpner alle seksjonene.
+• Søk på navn, nummer og notat: knappen «Søk» i linjen.
+• «Spørsmål og svar» rett i appen (Mer → «Spørsmål og svar»): knappen under et svar åpner riktig innstilling.
+• Navn som «Etternavn Fornavn» og sortering etter etternavn: Innstillinger → Utseende. Anropsskjerm uten panel under knappene, også uten levende bakgrunn; roligere ikoner og menyer.
+</no-NO>
+<pl-PL>
+• Rejestr połączeń i kontakty są sąsiadami: pierwszy przycisk dolnego paska przełącza między nimi, przytrzymanie otwiera wszystkie sekcje.
+• Wyszukiwanie po nazwie, numerze i notatce: przycisk „Szukaj” na pasku.
+• „Pytania i odpowiedzi” w aplikacji (Więcej → „Pytania i odpowiedzi”): przycisk pod odpowiedzią otwiera ustawienie.
+• Nazwy „Nazwisko Imię” i sortowanie po nazwisku: Ustawienia → Wygląd. Ekran połączenia bez panelu pod przyciskami; spokojniejsze ikony i menu.
+</pl-PL>
+<pt-BR>
+• Histórico e contatos são vizinhos: o primeiro botão da barra inferior alterna entre eles; um toque longo abre todas as seções.
+• Busca por nome, número e nota: botão "Pesquisar" na barra.
+• "Perguntas e respostas" dentro do app (Mais → "Perguntas e respostas"): o botão sob a resposta abre a configuração certa.
+• Nomes "Sobrenome Nome" e ordem por sobrenome: Configurações → Aparência. Tela de chamada sem painel sob os botões, também sem fundo animado; ícones e menus mais calmos.
+</pt-BR>
+<ro>
+• Jurnalul și contactele sunt vecine: primul buton din bara de jos comută între ele, o apăsare lungă deschide toate secțiunile.
+• Căutare după nume, număr și notă: butonul „Caută” din bară.
+• „Întrebări și răspunsuri” în aplicație (Mai mult → „Întrebări și răspunsuri”): butonul de sub răspuns deschide setarea.
+• Nume „Nume Prenume” și sortare după nume: Setări → Aspect. Ecranul de apel fără panou sub butoane, și fără fundal animat; pictograme, glisări și meniuri mai calme.
+</ro>
+<sk>
+• Zoznam hovorov a kontakty sú susedia: prvé tlačidlo dolného panela medzi nimi prepína, podržaním otvoríte všetky sekcie.
+• Hľadanie podľa mena, čísla a poznámky: tlačidlo „Hľadať“ na paneli.
+• „Otázky a odpovede“ priamo v aplikácii (Viac → „Otázky a odpovede“): tlačidlo pod odpoveďou otvorí príslušné nastavenie.
+• Mená „Priezvisko Meno“ a radenie podľa priezviska: Nastavenia → Vzhľad. Obrazovka hovoru bez panela pod tlačidlami aj bez živého pozadia; pokojnejšie ikony a ponuky.
+</sk>
+<sv-SE>
+• Samtalslogg och kontakter är grannar: den första knappen i bottenfältet växlar mellan dem, ett långt tryck öppnar alla delar.
+• Sök på namn, nummer och anteckning: knappen ”Sök” i fältet.
+• ”Frågor och svar” direkt i appen (Mer → ”Frågor och svar”): knappen under ett svar öppnar rätt inställning.
+• Namn som ”Efternamn Förnamn” och sortering på efternamn: Inställningar → Utseende. Samtalsskärm utan panel under knapparna, även utan levande bakgrund; lugnare ikoner och menyer.
+</sv-SE>
+<th>
+• ประวัติการโทรและรายชื่ออยู่เคียงกัน: ปุ่มแรกบนแถบล่างใช้สลับไปมา กดค้างเพื่อเปิดทุกส่วน
+• ค้นหาตามชื่อ หมายเลข และโน้ต: ปุ่ม "ค้นหา" บนแถบ
+• "คำถามและคำตอบ" ในแอปเอง (เพิ่มเติม → "คำถามและคำตอบ"): ปุ่มใต้คำตอบจะเปิดการตั้งค่าที่เกี่ยวข้อง
+• ชื่อแบบ "นามสกุล ชื่อ" และเรียงตามนามสกุล: การตั้งค่า → รูปลักษณ์ หน้าจอการโทรไม่มีแผงใต้ปุ่ม แม้ไม่มีพื้นหลังเคลื่อนไหว ไอคอน การปัด และเมนูดูสงบขึ้น
+</th>
+<tr-TR>
+• Arama kaydı ve kişiler artık komşu: alt çubuğun ilk düğmesi aralarında geçiş yapar, uzun basmak tüm bölümleri açar.
+• Ada, numaraya ve nota göre arama: çubuktaki "Ara" düğmesi.
+• "Sorular ve yanıtlar" uygulamada (Diğer → "Sorular ve yanıtlar"): yanıtın altındaki düğme ilgili ayarı açar.
+• "Soyadı Adı" biçiminde adlar ve soyadına göre sıralama: Ayarlar → Görünüm. Arama ekranında düğmelerin altında panel yok, canlı arka plan kapalıyken de; daha sakin simgeler ve menüler.
+</tr-TR>
+<vi>
+• Nhật ký cuộc gọi và danh bạ giờ nằm cạnh nhau: nút đầu tiên trên thanh dưới để chuyển qua lại, nhấn giữ để mở mọi mục.
+• Tìm theo tên, số và ghi chú: nút "Tìm kiếm" trên thanh.
+• "Hỏi đáp" ngay trong ứng dụng (Thêm → "Hỏi đáp"): nút dưới câu trả lời mở đúng cài đặt cần thiết.
+• Tên dạng "Họ Tên" và sắp xếp theo họ: Cài đặt → Giao diện. Màn hình cuộc gọi không còn bảng dưới các nút, kể cả khi tắt nền động; biểu tượng, vuốt và menu dịu hơn.
+</vi>
+<zh-CN>
+• 通话记录与联系人并列：底栏第一个按钮在两者间切换，长按打开所有分区。
+• 按姓名、号码和备注搜索：底栏的“搜索”按钮。
+• 应用内的“常见问题”（更多 → “常见问题”）：答案下方的按钮直接打开相关设置。
+• 联系人姓名可显示为“姓 名”，并按姓氏排序（设置 → 外观）。通话界面即使没有动态背景，按钮下也不再有面板；图标、滑动和菜单更柔和。
+</zh-CN>

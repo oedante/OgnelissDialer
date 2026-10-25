@@ -74,13 +74,15 @@ object CallLogRowMapper {
         /** Где показывать оператора и регион — из настроек. */
         carrierInfo: CarrierInfoMode = CarrierInfoMode.UNKNOWN_ONLY,
         /** Номера с назначенным напоминанием: у них в строке значок. */
-        remindedNumbers: Set<String> = emptySet()
+        remindedNumbers: Set<String> = emptySet(),
+        /** «Фамилия Имя» (1.6.2): ContactNames.journalNames; пусто — имя как в журнале. */
+        contactNames: Map<Pair<String, String>, String> = emptyMap()
     ): List<CallLogRowState> {
         if (previous.isEmpty()) {
             return map(
                 groups, numberInfo, knownNumbers, simSlots,
                 contactPhotos, blockedLabels, notes, dateFormat, labels, carrierInfo,
-                remindedNumbers
+                remindedNumbers, contactNames
             )
         }
 
@@ -102,13 +104,13 @@ object CallLogRowMapper {
             val signature =
                 signatureOf(
                     group, numberInfo, notes, contactPhotos, simSlots,
-                    blockedLabels, carrierInfo, remindedNumbers
+                    blockedLabels, carrierInfo, remindedNumbers, contactNames
                 ) * 31 + (if (group.e164 in knownNumbers) 1 else 0)
 
             if (cached != null && cached.signature == signature) cached else mapOne(
                 group, numberInfo, knownNumbers, simSlots,
                 contactPhotos, blockedLabels, notes, dateFormat, labels, carrierInfo,
-                remindedNumbers
+                remindedNumbers, contactNames
             )
         }
     }
@@ -134,11 +136,14 @@ object CallLogRowMapper {
         /** Где показывать оператора и регион — из настроек. */
         carrierInfo: CarrierInfoMode = CarrierInfoMode.UNKNOWN_ONLY,
         /** Номера с назначенным напоминанием: у них в строке значок. */
-        remindedNumbers: Set<String> = emptySet()
+        remindedNumbers: Set<String> = emptySet(),
+        /** «Фамилия Имя» (1.6.2): ContactNames.journalNames; пусто — имя как в журнале. */
+        contactNames: Map<Pair<String, String>, String> = emptyMap()
     ): List<CallLogRowState> = groups.map { group ->
         mapOne(
             group, numberInfo, knownNumbers, simSlots, contactPhotos,
-            blockedLabels, notes, dateFormat, labels, carrierInfo, remindedNumbers
+            blockedLabels, notes, dateFormat, labels, carrierInfo, remindedNumbers,
+            contactNames
         )
     }
 
@@ -177,7 +182,8 @@ object CallLogRowMapper {
          */
         blockedLabels: Map<String, String>,
         carrierInfo: CarrierInfoMode,
-        remindedNumbers: Set<String>
+        remindedNumbers: Set<String>,
+        contactNames: Map<Pair<String, String>, String> = emptyMap()
     ): Int {
         val note = notes[group.e164]
         val info = numberInfo[group.e164]
@@ -204,6 +210,12 @@ object CallLogRowMapper {
          * строка бралась бы из прошлого списка без значка.
          */
         result = 31 * result + (if (group.e164 in remindedNumbers) 1 else 0)
+        /*
+         * Имя для показа — тоже (1.6.2): переключили «Как показывать имя» —
+         * данные вызова те же, а строка должна пересобраться.
+         */
+        result = 31 * result +
+            (ContactNames.inJournal(group.displayName, group.e164, contactNames)?.hashCode() ?: 0)
         return result
     }
 
@@ -228,7 +240,9 @@ object CallLogRowMapper {
         /** Где показывать оператора и регион — из настроек. */
         carrierInfo: CarrierInfoMode = CarrierInfoMode.UNKNOWN_ONLY,
         /** Номера с назначенным напоминанием: у них в строке значок. */
-        remindedNumbers: Set<String> = emptySet()
+        remindedNumbers: Set<String> = emptySet(),
+        /** «Фамилия Имя» (1.6.2): ContactNames.journalNames; пусто — имя как в журнале. */
+        contactNames: Map<Pair<String, String>, String> = emptyMap()
     ): CallLogRowState = run {
         val formatted = PhoneFormatter.format(group.number)
 
@@ -242,7 +256,8 @@ object CallLogRowMapper {
          */
         val note = notes[group.e164]
         val display = NoteDisplay.resolve(
-            displayName = group.displayName,
+            // «Фамилия Имя» (1.6.2) — только для имени того же контакта
+            displayName = ContactNames.inJournal(group.displayName, group.e164, contactNames),
             note = note?.note,
             formattedNumber = formatted
         )
@@ -381,7 +396,7 @@ object CallLogRowMapper {
             signature =
                 signatureOf(
                     group, numberInfo, notes, contactPhotos, simSlots,
-                    blockedLabels, carrierInfo, remindedNumbers
+                    blockedLabels, carrierInfo, remindedNumbers, contactNames
                 ),
             group = group
         )

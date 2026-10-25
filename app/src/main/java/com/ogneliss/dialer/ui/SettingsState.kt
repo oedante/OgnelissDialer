@@ -5,6 +5,8 @@ import androidx.compose.runtime.Immutable
 import com.ogneliss.dialer.settings.CarrierInfoMode
 import com.ogneliss.dialer.settings.CallPhotoSize
 import com.ogneliss.dialer.settings.AnswerMode
+import com.ogneliss.dialer.settings.ContactNameFormat
+import com.ogneliss.dialer.settings.ContactSort
 import com.ogneliss.dialer.settings.CallPhotoStyle
 import com.ogneliss.dialer.settings.UiScale
 import com.ogneliss.dialer.settings.JournalStyle
@@ -53,6 +55,10 @@ data class SettingsState(
     val callPhotoSize: CallPhotoSize = CallPhotoSize.LARGE,
     /** Ответ на вызов: касанием или сдвигом (1.5.8). */
     val answerMode: AnswerMode = AnswerMode.TAP,
+    /** Имя контакта: «Имя Фамилия» или «Фамилия Имя» (1.6.2). */
+    val contactNameFormat: ContactNameFormat = ContactNameFormat.GIVEN_FIRST,
+    /** Порядок списка контактов: по имени или по фамилии (1.6.2). */
+    val contactSort: ContactSort = ContactSort.GIVEN,
     /** «Написать»: установленные мессенджеры для любого номера (1.3.5). */
     val messengersAnyNumber: Boolean = false,
     val haptic: Boolean = true,
