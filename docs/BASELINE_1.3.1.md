@@ -73,7 +73,7 @@ adb devices
 # 3. Замеры: запуск, прокрутка, клавиатура, карточка (около 15–25 минут)
 #    Номер — любой из ваших контактов. Кавычки обязательны:
 #    без них PowerShell разрежет аргумент по точке
-./gradlew :benchmark:connectedBenchmarkReleaseAndroidTest "-Pandroid.testInstrumentationRunnerArguments.cardNumber=+79105214092"
+./gradlew :benchmark:connectedBenchmarkReleaseAndroidTest "-Pandroid.testInstrumentationRunnerArguments.cardNumber=+79001112233"
 
 # 4. Размер выпуска
 ./gradlew :app:bundleRelease
