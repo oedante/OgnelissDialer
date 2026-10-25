@@ -1,0 +1,162 @@
+<ru-RU>
+• Журнал и контакты — соседи: первая кнопка нижней панели переключает между ними, долгое нажатие открывает все разделы.
+• Поиск по имени, номеру и заметке — кнопка «Поиск» на панели.
+• «Вопросы и ответы» прямо в приложении (Ещё → «Вопросы и ответы»): кнопка под ответом открывает нужную настройку.
+• Напоминания на сегодня — над журналом, живой фон вызова — до низа экрана. Спокойнее вид: светлые значки номеров без фото, мягкие свайпы, обновлённые «Ещё» и «Фильтры».
+</ru-RU>
+<ar>
+• السجل وجهات الاتصال متجاوران الآن: الزر الأول في الشريط السفلي يبدّل بينهما، والضغط المطوّل يفتح كل الأقسام.
+• البحث بالاسم والرقم والملاحظة: زر «بحث» في الشريط.
+• «أسئلة وأجوبة» داخل التطبيق (المزيد ← «أسئلة وأجوبة»): الزر أسفل الإجابة يفتح الإعداد المقصود.
+• تذكيرات اليوم فوق السجل، والخلفية الحية للمكالمة حتى أسفل الشاشة. مظهر أهدأ: أيقونات أفتح للأرقام بلا صورة، وسحب أنعم، و«المزيد» و«الفلاتر» بتصميم جديد.
+</ar>
+<cs-CZ>
+• Seznam hovorů a kontakty jsou sousedé: první tlačítko dolní lišty mezi nimi přepíná, podržením otevřete všechny sekce.
+• Hledání podle jména, čísla a poznámky: tlačítko „Hledat“ na liště.
+• „Otázky a odpovědi“ přímo v aplikaci (Více → „Otázky a odpovědi“): tlačítko pod odpovědí otevře příslušné nastavení.
+• Dnešní připomínky nad seznamem hovorů, živé pozadí hovoru až dolů. Klidnější vzhled: světlejší ikony čísel bez fotky, jemnější přejetí, nové „Více“ a „Filtry“.
+</cs-CZ>
+<da-DK>
+• Opkaldsliste og kontakter er naboer: den første knap på bundlinjen skifter mellem dem, et langt tryk åbner alle sektioner.
+• Søg på navn, nummer og note: knappen "Søg" på linjen.
+• "Spørgsmål og svar" direkte i appen (Mere → "Spørgsmål og svar"): knappen under et svar åbner den rette indstilling.
+• Dagens påmindelser over opkaldslisten, og opkaldets levende baggrund går helt ned. Roligere udseende: lysere ikoner for numre uden foto, blødere swipes, nye "Mere" og "Filtre".
+</da-DK>
+<de-DE>
+• Anrufliste und Kontakte sind Nachbarn: Die erste Taste unten wechselt zwischen ihnen, langes Drücken öffnet alle Bereiche.
+• Suche nach Name, Nummer und Notiz: Taste „Suche“ auf der Leiste.
+• „Fragen und Antworten“ in der App (Mehr → „Fragen und Antworten“): Die Taste unter einer Antwort öffnet die passende Einstellung.
+• Erinnerungen für heute über der Anrufliste, Anrufhintergrund bis ganz unten. Ruhiger: hellere Symbole ohne Foto, sanftere Wischgesten, neu gestaltete Menüs.
+</de-DE>
+<en-US>
+• Call log and contacts are now neighbours: the first button on the bottom bar switches between them; a long press opens all sections.
+• Search by name, number and note: the "Search" button on the bar.
+• "Questions and answers" in the app (More → "Questions and answers"): the button under an answer opens the setting.
+• Today's reminders above the call log; the live call background reaches the bottom. Calmer look: lighter icons without a photo, softer swipes, redesigned menus.
+</en-US>
+<es-ES>
+• Registro y contactos son vecinos: el primer botón de la barra inferior cambia entre ellos; una pulsación larga abre todas las secciones.
+• Búsqueda por nombre, número y nota: botón «Buscar» de la barra.
+• «Preguntas y respuestas» en la app (Más → «Preguntas y respuestas»): el botón bajo la respuesta abre el ajuste.
+• Recordatorios de hoy sobre el registro; el fondo de la llamada llega hasta abajo. Aspecto más sereno: iconos más claros sin foto, deslizamientos suaves, menús rediseñados.
+</es-ES>
+<fi-FI>
+• Puheluloki ja yhteystiedot ovat naapureita: alapalkin ensimmäinen painike vaihtaa niiden välillä, pitkä painallus avaa kaikki osiot.
+• Haku nimen, numeron ja muistiinpanon mukaan: palkin ”Haku”-painike.
+• ”Kysymykset ja vastaukset” sovelluksessa (Lisää → ”Kysymykset ja vastaukset”): vastauksen alla oleva painike avaa asetuksen.
+• Päivän muistutukset puhelulokin yllä, puhelun tausta alas asti. Rauhallisempi ilme: vaaleammat kuvakkeet, pehmeämmät pyyhkäisyt, uudistetut valikot.
+</fi-FI>
+<fr-FR>
+• Journal et contacts sont voisins : le premier bouton en bas passe de l’un à l’autre ; un appui long ouvre toutes les sections.
+• Recherche par nom, numéro et note : bouton « Recherche ».
+• « Questions et réponses » dans l’application (Plus → « Questions et réponses ») : le bouton sous la réponse ouvre le réglage.
+• Rappels du jour au-dessus du journal ; le fond de l’appel descend jusqu’en bas. Allure plus calme : icônes plus claires sans photo, balayages plus doux, menus repensés.
+</fr-FR>
+<hi-IN>
+• कॉल लॉग और संपर्क अब पड़ोसी हैं: नीचे की पट्टी का पहला बटन दोनों के बीच बदलता है, लंबा दबाने पर सभी सेक्शन खुलते हैं।
+• नाम, नंबर और नोट से खोज: पट्टी पर "खोज" बटन।
+• "सवाल और जवाब" ऐप में ही (और → "सवाल और जवाब"): जवाब के नीचे का बटन संबंधित सेटिंग खोलता है।
+• आज के रिमाइंडर कॉल लॉग के ऊपर, कॉल की जीवंत पृष्ठभूमि नीचे तक। शांत रूप: बिना फ़ोटो वाले नंबरों के हल्के आइकन, नरम स्वाइप, नए रूप में "और" और "फ़िल्टर"।
+</hi-IN>
+<hu-HU>
+• A hívásnapló és a névjegyek szomszédok: az alsó sáv első gombja vált köztük, hosszú nyomásra minden rész megnyílik.
+• Keresés név, szám és jegyzet alapján: a sáv „Keresés” gombja.
+• „Kérdések és válaszok” magában az alkalmazásban (Továbbiak → „Kérdések és válaszok”): a válasz alatti gomb megnyitja a megfelelő beállítást.
+• A mai emlékeztetők a hívásnapló fölött, a hívás háttere alulig ér. Nyugodtabb megjelenés: világosabb ikonok fotó nélkül, finomabb húzások, megújult menük.
+</hu-HU>
+<id>
+• Log panggilan dan kontak kini bersebelahan: tombol pertama di bilah bawah beralih di antara keduanya, tekan lama membuka semua bagian.
+• Cari menurut nama, nomor, dan catatan: tombol "Cari" di bilah.
+• "Tanya jawab" langsung di aplikasi (Lainnya → "Tanya jawab"): tombol di bawah jawaban membuka setelan yang dimaksud.
+• Pengingat hari ini di atas log panggilan; latar panggilan sampai ke bawah. Tampilan lebih tenang: ikon lebih terang tanpa foto, geser lebih lembut, menu yang diperbarui.
+</id>
+<it-IT>
+• Registro e contatti sono vicini: il primo pulsante della barra in basso passa dall’uno all’altro, una pressione lunga apre tutte le sezioni.
+• Ricerca per nome, numero e nota: pulsante «Cerca».
+• «Domande e risposte» nell’app (Altro → «Domande e risposte»): il pulsante sotto la risposta apre l’impostazione.
+• Promemoria di oggi sopra il registro; lo sfondo della chiamata arriva fino in fondo. Aspetto più calmo: icone più chiare senza foto, scorrimenti più morbidi, menu rinnovati.
+</it-IT>
+<iw-IL>
+• יומן השיחות ואנשי הקשר הם עכשיו שכנים: הכפתור הראשון בסרגל התחתון עובר ביניהם, ולחיצה ארוכה פותחת את כל הקטעים.
+• חיפוש לפי שם, מספר והערה: כפתור "חיפוש" בסרגל.
+• "שאלות ותשובות" בתוך האפליקציה (עוד ← "שאלות ותשובות"): הכפתור מתחת לתשובה פותח את ההגדרה המתאימה.
+• התזכורות של היום מעל יומן השיחות, והרקע החי של השיחה עד למטה. מראה רגוע יותר: סמלים בהירים יותר למספרים בלי תמונה, החלקות רכות יותר, "עוד" ו"מסננים" בעיצוב חדש.
+</iw-IL>
+<ja-JP>
+• 通話履歴と連絡先が隣同士に：下部バーの最初のボタンで切り替え、長押しですべてのセクションを表示。
+• 名前・番号・メモで検索：バーの「検索」ボタン。
+• 「よくある質問」をアプリ内に（その他 → 「よくある質問」）：回答の下のボタンで該当する設定を開けます。
+• 今日のリマインダーを通話履歴の上に、通話画面のライブ背景は下まで。落ち着いた見た目に：写真のない番号のアイコンを明るく、スワイプを柔らかく、「その他」と「フィルタ」を新しいデザインに。
+</ja-JP>
+<ko-KR>
+• 통화 기록과 연락처가 나란히: 하단 바의 첫 번째 버튼으로 전환하고, 길게 누르면 모든 섹션이 열립니다.
+• 이름, 번호, 메모로 검색: 바의 '검색' 버튼.
+• 앱 안의 '질문과 답변' (더보기 → '질문과 답변'): 답변 아래 버튼이 해당 설정을 엽니다.
+• 오늘의 알림은 통화 기록 위에, 통화 화면의 라이브 배경은 아래까지. 더 차분한 모습: 사진 없는 번호의 아이콘은 더 밝게, 스와이프는 더 부드럽게, '더보기'와 '필터'는 새로운 디자인으로.
+</ko-KR>
+<nl-NL>
+• Belgeschiedenis en contacten zijn buren: de eerste knop onderaan wisselt ertussen, lang drukken opent alle onderdelen.
+• Zoeken op naam, nummer en notitie: de knop 'Zoeken' op de balk.
+• 'Vragen en antwoorden' in de app (Meer → 'Vragen en antwoorden'): de knop onder een antwoord opent de instelling.
+• Herinneringen voor vandaag boven de belgeschiedenis; de belachtergrond reikt tot onderaan. Rustiger: lichtere pictogrammen zonder foto, zachtere veegbewegingen, vernieuwde menu's.
+</nl-NL>
+<no-NO>
+• Anropslogg og kontakter er naboer: den første knappen i bunnlinjen bytter mellom dem, et langt trykk åpner alle seksjonene.
+• Søk på navn, nummer og notat: knappen «Søk» i linjen.
+• «Spørsmål og svar» rett i appen (Mer → «Spørsmål og svar»): knappen under et svar åpner riktig innstilling.
+• Dagens påminnelser over anropsloggen, og anropets levende bakgrunn går helt ned. Roligere utseende: lysere ikoner for numre uten bilde, mykere sveip, nye «Mer» og «Filtre».
+</no-NO>
+<pl-PL>
+• Rejestr połączeń i kontakty są sąsiadami: pierwszy przycisk dolnego paska przełącza między nimi, przytrzymanie otwiera wszystkie sekcje.
+• Wyszukiwanie po nazwie, numerze i notatce: przycisk „Szukaj” na pasku.
+• „Pytania i odpowiedzi” w aplikacji (Więcej → „Pytania i odpowiedzi”): przycisk pod odpowiedzią otwiera ustawienie.
+• Dzisiejsze przypomnienia nad rejestrem, tło połączenia aż do dołu. Spokojniejszy wygląd: jaśniejsze ikony bez zdjęcia, łagodniejsze przesunięcia, odświeżone menu.
+</pl-PL>
+<pt-BR>
+• Histórico e contatos são vizinhos: o primeiro botão da barra inferior alterna entre eles; um toque longo abre todas as seções.
+• Busca por nome, número e nota: botão "Pesquisar" na barra.
+• "Perguntas e respostas" dentro do app (Mais → "Perguntas e respostas"): o botão sob a resposta abre a configuração certa.
+• Lembretes de hoje acima do histórico; o fundo da chamada vai até embaixo. Visual mais calmo: ícones mais claros sem foto, deslizes mais suaves, menus renovados.
+</pt-BR>
+<ro>
+• Jurnalul și contactele sunt vecine: primul buton din bara de jos comută între ele, o apăsare lungă deschide toate secțiunile.
+• Căutare după nume, număr și notă: butonul „Caută” din bară.
+• „Întrebări și răspunsuri” în aplicație (Mai mult → „Întrebări și răspunsuri”): butonul de sub răspuns deschide setarea.
+• Mementourile de azi deasupra jurnalului; fundalul apelului ajunge până jos. Aspect mai calm: pictograme mai deschise fără fotografie, glisări mai blânde, meniuri reînnoite.
+</ro>
+<sk>
+• Zoznam hovorov a kontakty sú susedia: prvé tlačidlo dolného panela medzi nimi prepína, podržaním otvoríte všetky sekcie.
+• Hľadanie podľa mena, čísla a poznámky: tlačidlo „Hľadať“ na paneli.
+• „Otázky a odpovede“ priamo v aplikácii (Viac → „Otázky a odpovede“): tlačidlo pod odpoveďou otvorí príslušné nastavenie.
+• Dnešné pripomienky nad zoznamom hovorov, živé pozadie hovoru až dole. Pokojnejší vzhľad: svetlejšie ikony čísel bez fotky, jemnejšie potiahnutia, nové „Viac“ a „Filtre“.
+</sk>
+<sv-SE>
+• Samtalslogg och kontakter är grannar: den första knappen i bottenfältet växlar mellan dem, ett långt tryck öppnar alla delar.
+• Sök på namn, nummer och anteckning: knappen ”Sök” i fältet.
+• ”Frågor och svar” direkt i appen (Mer → ”Frågor och svar”): knappen under ett svar öppnar rätt inställning.
+• Dagens påminnelser ovanför samtalsloggen, och samtalets levande bakgrund når ända ner. Lugnare utseende: ljusare ikoner för nummer utan foto, mjukare svep, nya ”Mer” och ”Filter”.
+</sv-SE>
+<th>
+• ประวัติการโทรและรายชื่ออยู่เคียงกัน: ปุ่มแรกบนแถบล่างใช้สลับไปมา กดค้างเพื่อเปิดทุกส่วน
+• ค้นหาตามชื่อ หมายเลข และโน้ต: ปุ่ม "ค้นหา" บนแถบ
+• "คำถามและคำตอบ" ในแอปเอง (เพิ่มเติม → "คำถามและคำตอบ"): ปุ่มใต้คำตอบจะเปิดการตั้งค่าที่เกี่ยวข้อง
+• การเตือนของวันนี้อยู่เหนือประวัติการโทร พื้นหลังเคลื่อนไหวของการโทรยาวถึงด้านล่าง หน้าตาสงบขึ้น: ไอคอนสว่างขึ้นสำหรับหมายเลขที่ไม่มีรูป การปัดนุ่มนวลขึ้น "เพิ่มเติม" และ "ตัวกรอง" ดีไซน์ใหม่
+</th>
+<tr-TR>
+• Arama kaydı ve kişiler artık komşu: alt çubuğun ilk düğmesi aralarında geçiş yapar, uzun basmak tüm bölümleri açar.
+• Ada, numaraya ve nota göre arama: çubuktaki "Ara" düğmesi.
+• "Sorular ve yanıtlar" uygulamada (Diğer → "Sorular ve yanıtlar"): yanıtın altındaki düğme ilgili ayarı açar.
+• Bugünün hatırlatıcıları arama kaydının üstünde, aramanın arka planı en alta kadar. Daha sakin görünüm: fotoğrafsız numaralar için daha açık simgeler, daha yumuşak kaydırmalar, yenilenen menüler.
+</tr-TR>
+<vi>
+• Nhật ký cuộc gọi và danh bạ giờ nằm cạnh nhau: nút đầu tiên trên thanh dưới để chuyển qua lại, nhấn giữ để mở mọi mục.
+• Tìm theo tên, số và ghi chú: nút "Tìm kiếm" trên thanh.
+• "Hỏi đáp" ngay trong ứng dụng (Thêm → "Hỏi đáp"): nút dưới câu trả lời mở đúng cài đặt cần thiết.
+• Lời nhắc hôm nay ở phía trên nhật ký; nền động của cuộc gọi kéo xuống tận đáy. Giao diện dịu hơn: biểu tượng sáng hơn cho số không có ảnh, vuốt mềm hơn, "Thêm" và "Bộ lọc" thiết kế mới.
+</vi>
+<zh-CN>
+• 通话记录与联系人并列：底栏第一个按钮在两者间切换，长按打开所有分区。
+• 按姓名、号码和备注搜索：底栏的“搜索”按钮。
+• 应用内的“常见问题”（更多 → “常见问题”）：答案下方的按钮直接打开相关设置。
+• 今天的提醒显示在通话记录上方，通话界面的动态背景延伸到底部。外观更柔和：无照片号码的图标更浅，滑动更柔和，“更多”和“筛选”焕然一新。
+</zh-CN>

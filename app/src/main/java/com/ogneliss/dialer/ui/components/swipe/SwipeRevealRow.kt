@@ -23,7 +23,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
@@ -734,11 +739,14 @@ private fun ActionCell(
     width: androidx.compose.ui.unit.Dp,
     onClick: () -> Unit
 ) {
+    val tones = revealTones(action.color)
     Box(
         Modifier
             .width(width)
             .fillMaxHeight()
-            .background(action.color)
+            // 1.6.1: светлый тон цвета действия с мягким градиентом —
+            // разбор у revealTones
+            .background(Brush.verticalGradient(listOf(tones.soft, tones.strong)))
             // Кнопка панели тоже должна быть не меньше минимальной зоны нажатия
             .heightIn(min = Dimens.MIN_TOUCH_TARGET)
             .clickable(onClick = onClick),
@@ -749,18 +757,18 @@ private fun ActionCell(
             verticalArrangement = Arrangement.Center
         ) {
             action.icon?.let {
-                Icon(it, contentDescription = null, tint = Color.White)
+                Icon(it, contentDescription = null, tint = tones.content)
                 Spacer(Modifier.height(Space.xxs))
             }
             if (action.simBadge != null) {
                 Surface(
-                    color = Color.White.copy(alpha = 0.25f),
+                    color = tones.content.copy(alpha = 0.14f),
                     shape = MaterialTheme.shapes.extraSmall
                 ) {
                     Text(
                         action.simBadge.toString(),
                         Modifier.padding(horizontal = Space.xs),
-                        color = Color.White,
+                        color = tones.content,
                         // labelSmall: метка SIM на кнопке свайпа —
                         // самая мелкая подпись в приложении, и шкала
                         // для неё уже есть
@@ -779,7 +787,7 @@ private fun ActionCell(
             if (action.label.isNotEmpty()) {
                 Text(
                     action.label,
-                    color = Color.White,
+                    color = tones.content,
                     style = MaterialTheme.typography.labelSmall,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
@@ -813,6 +821,10 @@ private fun ActionCell(
  * «Дизайн-система»). Стало: фон — сплошной цвет действия (тот же CallGreen
  * и MessageBlue, что везде), а «засчитается ли» сообщает значок: проявляется
  * и подрастает с 75% до полного размера по мере сдвига.
+ *
+ * 1.6.1: фон — светлый тон цвета действия с градиентом от края экрана,
+ * значок — цветом действия (revealTones). Оттенок по-прежнему один на
+ * действие — «трёх зелёных» не появилось.
  */
 @Composable
 private fun DirectActionHint(
@@ -821,15 +833,20 @@ private fun DirectActionHint(
     alignment: Alignment,
     modifier: Modifier = Modifier
 ) {
+    val tones = revealTones(action.color)
+    // Насыщеннее у края экрана, откуда выезжает значок, бледнее — к строке
+    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    val fromLeft = (alignment == Alignment.CenterStart) != rtl
+    val stops = if (fromLeft) listOf(tones.strong, tones.soft) else listOf(tones.soft, tones.strong)
     Box(
-        modifier.background(action.color),
+        modifier.background(Brush.horizontalGradient(stops)),
         contentAlignment = alignment
     ) {
         action.icon?.let { icon ->
             Icon(
                 icon,
                 contentDescription = null,
-                tint = Color.White.copy(alpha = 0.45f + 0.55f * progress),
+                tint = tones.content.copy(alpha = 0.45f + 0.55f * progress),
                 modifier = Modifier
                     .padding(horizontal = Space.xl)
                     .size(24.dp)
@@ -840,6 +857,36 @@ private fun DirectActionHint(
                     }
             )
         }
+    }
+}
+
+/**
+ * ТОНА ДЕЙСТВИЯ СВАЙПА (1.6.1).
+ *
+ * Автор, 23.10: «свайпы сделал бы с градиентом и светлее». Было (1.3.4–1.6.0):
+ * сплошной насыщенный цвет действия — CallGreen, MessageBlue — и белый
+ * значок; из-под строки выезжало самое яркое пятно экрана.
+ *
+ * Стало — тот же цвет, смешанный со страницей: [strong] — светлый тон
+ * (у края экрана, внизу ячейки), [soft] — почти страница (у строки, вверху
+ * ячейки). Значок и подпись — тот же цвет, темнее (в тёмной теме — светлее):
+ * контраст к светлому тону 5 : 1 (зелёный в светлой — 4,96), к почти
+ * странице — 7 : 1 и выше; порог для текста — 4,5. Белый здесь не читался бы.
+ * Оттенок остаётся «звонковым» и «сообщенческим» — путать действия нельзя.
+ */
+@Immutable
+private class RevealTones(val strong: Color, val soft: Color, val content: Color)
+
+@Composable
+private fun revealTones(color: Color): RevealTones {
+    val page = MaterialTheme.colorScheme.surface
+    val dark = page.luminance() < 0.5f
+    return remember(color, page) {
+        RevealTones(
+            strong = lerp(color, page, if (dark) 0.55f else 0.62f),
+            soft = lerp(color, page, if (dark) 0.8f else 0.88f),
+            content = if (dark) lerp(color, Color.White, 0.5f) else lerp(color, Color.Black, 0.3f)
+        )
     }
 }
 

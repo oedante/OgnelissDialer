@@ -593,7 +593,15 @@ private fun Avatar(
                         OgnelissIcons.Person,
                         contentDescription = null,
                         modifier = Modifier.size(size * 0.55f),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        /*
+                         * Силуэт незнакомого номера — светлый (1.6.1, автор:
+                         * «цвет иконок, где нет картинки или букв, намного
+                         * светлее, а то акцент сильный»). Был onSurfaceVariant —
+                         * тёмно-серый значок оказывался самым тёмным пятном
+                         * строки, темнее имени. Значок поясняет, а не требует
+                         * внимания: номер и так написан рядом.
+                         */
+                        tint = com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.avatarGlyph
                     )
                 }
 
@@ -691,4 +699,5 @@ enum class GroupPosition {
 }
 
 /** Толщина кольца аватара (1.5.6): у Mail ≈ 2 dp при аватаре 57 dp, у нас 48 dp. */
-private val AVATAR_RING_WIDTH = 1.5.dp
+/** Кольцо аватара: 1 dp (до 1.6.1 — 1,5 dp, автор: «уменьшить и сделать светлее»). */
+private val AVATAR_RING_WIDTH = 1.dp

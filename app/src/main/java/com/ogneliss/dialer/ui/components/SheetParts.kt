@@ -15,6 +15,11 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.unit.dp
+import com.ogneliss.dialer.ui.theme.LocalPageTone
+import com.ogneliss.dialer.ui.theme.OgnelissTheme
+import com.ogneliss.dialer.ui.theme.PageTone
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -23,50 +28,84 @@ import com.ogneliss.dialer.ui.theme.Dimens
 import com.ogneliss.dialer.ui.theme.FlowUi
 
 /**
- * ГРУППА ДЕЙСТВИЙ В ШТОРКЕ — СПЛОШНОЙ СПИСОК (1.5.3, макет B).
+ * ГРУППА ДЕЙСТВИЙ В ШТОРКЕ — КАК ГРУППА НАСТРОЕК (1.6.1).
  *
- * Шторка белая, действия — строками во всю ширину без разделителей между
- * ними; группы отделены тонкой линией во всю ширину, над группой может быть
- * подпись раздела заглавными ([title]). Так меню читается как оглавление:
- * линия — граница смысла, а не каждой строки.
+ * Автор, 23.10 (снимки меню «Ещё» и «Фильтры»): «панель „Ещё“ и „Фильтры“
+ * изменил в соответствии с UI всего приложения». Было (1.5.3–1.6.0):
+ * белая шторка, подписи групп заглавными и тонкие линии между группами —
+ * единственное место приложения, где группы не были карточками. Настройки,
+ * карточка контакта, «Вопросы и ответы» устроены иначе: серо-голубая
+ * страница, скруглённая полоса с подписью, под ней белая карточка
+ * со строками.
  *
- * [first] — первая группа шторки: линия над ней не нужна, если сверху
- * ничего нет (меню «Ещё»). В меню записи над первой группой шапка —
- * там линия отделяет её от шапки, [first] = false.
+ * Стало так же: шторка — цвета страницы настроек ([sheetContainerColor]),
+ * группа — SettingsGroup с видом TINTED: полоса [title] и карточка;
+ * без подписи — только карточка. Строки внутри разделены линией от начала
+ * текста ([SheetDivider]).
+ *
+ * Это шторки действий («Ещё», меню карточки). Фильтры устроены как журнал —
+ * [ListSheetGroup] (автор, 23.10: «фильтры сделаем как в журнале»).
+ *
+ * [first] оставлен ради совместимости вызовов: отступ над первой группой
+ * теперь даёт сама полоса.
  *
  * История: 1.2.1–1.5.0 — скруглённые панели; 1.5.1–1.5.2 — белые группы
- * с рамкой на серой шторке (макет A).
+ * с рамкой на серой шторке (макет A); 1.5.3–1.6.0 — сплошной список.
  */
 @Composable
 fun SheetGroup(
     title: String? = null,
-    first: Boolean = false,
+    @Suppress("UNUSED_PARAMETER") first: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Column(Modifier.fillMaxWidth()) {
-        if (!first) {
-            // 1.5.5: линия с полями по бокам, а не во всю ширину — мягче
-            OgnelissDivider(Modifier.padding(horizontal = Space.xl, vertical = Space.xs))
-        }
-        title?.let {
-            SectionCaption(
-                it,
-                Modifier.padding(start = Space.xl, end = Space.l, top = Space.s, bottom = Space.xxs)
-            )
-        }
-        Column(content = content)
+    CompositionLocalProvider(LocalPageTone provides PageTone.TINTED) {
+        SettingsGroup(title = title, content = content)
     }
 }
 
+/** Фон шторки с группами — страница настроек (1.6.1): на ней видны белые карточки. */
+@Composable
+fun sheetContainerColor(): Color = OgnelissTheme.pageColor(PageTone.TINTED)
+
 /**
- * Разделитель между строками группы шторки.
+ * ГРУППА ШТОРКИ ФИЛЬТРОВ — КАК РАЗДЕЛ ЖУРНАЛА (1.6.1).
  *
- * С 1.5.3 (сплошной список) строки внутри группы линиями не делятся —
- * границы только между группами (SheetGroup). Функция оставлена, чтобы
- * не править все шторки: вызов ничего не рисует.
+ * Автор, 23.10, по снимку «Фильтров» журнала: «Давай фильтры сделаем как
+ * в журнале». Фильтры отбирают список — журнал, контакты, напоминания, —
+ * поэтому и выглядят как список: белая страница ([listSheetContainerColor]),
+ * группа — та же скруглённая полоса с подписью, что «СЕГОДНЯ» и «ВЧЕРА»
+ * над записями («ТИП ВЫЗОВА», «ПЕРИОД»), содержимое — под ней прямо
+ * на странице, без карточки; строки — во всю ширину, линии между ними
+ * от начала текста ([SheetDivider]).
+ *
+ * Шторки действий («Ещё», меню карточки) — [SheetGroup], как настройки.
  */
 @Composable
-fun SheetDivider() = Unit
+fun ListSheetGroup(
+    title: String? = null,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    CompositionLocalProvider(LocalPageTone provides PageTone.LIST) {
+        Column(Modifier.fillMaxWidth()) {
+            title?.let { SectionBand(it) }
+            content()
+        }
+    }
+}
+
+/** Фон шторки фильтров — страница журнала (1.6.1). */
+@Composable
+fun listSheetContainerColor(): Color = OgnelissTheme.pageColor(PageTone.LIST)
+
+/**
+ * Разделитель между строками группы шторки — от начала текста, после
+ * значка (16 + 24 + 16 dp), как в настройках. С 1.5.3 по 1.6.0 строки
+ * не делились (сплошной список), вызов ничего не рисовал.
+ */
+@Composable
+fun SheetDivider() = OgnelissDivider(Modifier.padding(start = SHEET_TEXT_START))
+
+private val SHEET_TEXT_START = 56.dp
 
 /**
  * Строка действия в шторке.

@@ -62,6 +62,8 @@ data class OgnelissSurfaces(
     val cardBorder: Color,
     /** Кольцо вокруг аватара в списках. */
     val avatarRing: Color,
+    /** Силуэт в аватаре незнакомого номера (1.6.1) — приглушённый. */
+    val avatarGlyph: Color,
     /** Линия между строками: непрозрачный готовый цвет. */
     val divider: Color,
     /** Подложка активной кнопки панели и центральной кнопки (как в Mail). */
@@ -75,6 +77,7 @@ internal val LightSurfaces = OgnelissSurfaces(
     card = LightRaised,
     cardBorder = LightCardBorder,
     avatarRing = LightAvatarRing,
+    avatarGlyph = LightAvatarGlyph,
     divider = LightOutlineVariant,
     navIndicator = Blue90
 )
@@ -86,6 +89,7 @@ internal val DarkSurfaces = OgnelissSurfaces(
     card = DarkCard,
     cardBorder = DarkCardBorder,
     avatarRing = DarkAvatarRing,
+    avatarGlyph = DarkAvatarGlyph,
     divider = DarkDivider,
     navIndicator = Blue30
 )
@@ -96,7 +100,8 @@ internal val AmoledSurfaces = OgnelissSurfaces(
     tintBand = Color(0xFF1A1C20),
     card = Color(0xFF111214),
     cardBorder = Color(0xFF23262B),
-    avatarRing = Color(0xFF3A3E45),
+    avatarRing = Color(0xFF2E3237),
+    avatarGlyph = Color(0xFF5E646D),
     divider = Color(0xFF222428),
     navIndicator = Blue30
 )
@@ -111,6 +116,7 @@ internal val HighContrastLightSurfaces = OgnelissSurfaces(
     card = Color.White,
     cardBorder = Color(0xFF5A5A5A),
     avatarRing = Color(0xFF5A5A5A),
+    avatarGlyph = Color(0xFF5A5A5A),
     divider = Color(0xFF5A5A5A),
     navIndicator = Color(0xFFCFE0FF)
 )
@@ -122,6 +128,7 @@ internal val HighContrastDarkSurfaces = OgnelissSurfaces(
     card = Color(0xFF121212),
     cardBorder = Color(0xFFAAAAAA),
     avatarRing = Color(0xFFAAAAAA),
+    avatarGlyph = Color(0xFFAAAAAA),
     divider = Color(0xFFAAAAAA),
     navIndicator = Color(0xFF00348C)
 )
@@ -136,7 +143,8 @@ internal fun dynamicSurfaces(scheme: ColorScheme, dark: Boolean) = OgnelissSurfa
     tintBand = scheme.surfaceContainerHighest,
     card = if (dark) scheme.surfaceContainerHigh else scheme.surfaceContainerLowest,
     cardBorder = scheme.outlineVariant.copy(alpha = 0.6f).compositeOver(scheme.surfaceContainerLowest),
-    avatarRing = scheme.outlineVariant,
+    avatarRing = scheme.outlineVariant.copy(alpha = 0.6f).compositeOver(scheme.surface),
+    avatarGlyph = scheme.outline.copy(alpha = 0.6f).compositeOver(scheme.surfaceContainerHighest),
     divider = scheme.outlineVariant.copy(alpha = 0.7f).compositeOver(scheme.surface),
     navIndicator = scheme.primaryContainer
 )

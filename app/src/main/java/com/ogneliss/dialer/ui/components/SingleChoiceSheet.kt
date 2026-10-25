@@ -58,7 +58,7 @@ fun <T> SingleChoiceSheet(
      */
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState, containerColor = MaterialTheme.colorScheme.background) {
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState, containerColor = listSheetContainerColor()) {
         Column(Modifier.padding(bottom = FlowUi.sheetBottomPadding)) {
             Text(
                 stringResource(titleRes),
@@ -70,10 +70,11 @@ fun <T> SingleChoiceSheet(
             )
 
             /*
-             * Варианты — в скруглённой панели, как группы шторок «Ещё»
-             * и меню записи (1.2.2): одна форма для всех шторок приложения.
+             * Варианты — строками во всю ширину на белом, как записи
+             * журнала (1.6.1, автор: «фильтры сделаем как в журнале»):
+             * та же форма, что у фильтров журнала (ListSheetGroup).
              */
-            SheetGroup {
+            ListSheetGroup {
                 options.forEachIndexed { index, (value, labelRes) ->
                     SheetChoiceRow(
                         selected = current == value,

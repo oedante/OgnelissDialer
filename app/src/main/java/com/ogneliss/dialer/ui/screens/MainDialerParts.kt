@@ -147,17 +147,17 @@ internal fun OverflowMenu(
     val clearLabel = stringResource(R.string.log_clear_all)
 
     ModalBottomSheet(
-        // Шторка — цвета страницы, группы на ней белые (строгий стиль, 1.5.1)
-        containerColor = MaterialTheme.colorScheme.background,
+        // Страница настроек, группы — белыми карточками (1.6.1, SheetGroup)
+        containerColor = com.ogneliss.dialer.ui.components.sheetContainerColor(),
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         contentWindowInsets = { WindowInsets.navigationBars }
     ) {
         Column(Modifier.padding(bottom = Space.l)) {
             /*
-             * Сплошной список (1.5.3, макет «B»): над группой подпись
-             * раздела заглавными, между группами — линия во всю ширину;
-             * «Очистить журнал» — отдельной группой внизу.
+             * Как настройки (1.6.1): над группой — полоса с подписью,
+             * строки — в белой карточке, линии между ними от начала текста;
+             * «Очистить журнал» — отдельной карточкой внизу.
              */
             if (onAddContact != null) {
                 // Контакты (1.6.0): создание — первым, это их главное действие из меню

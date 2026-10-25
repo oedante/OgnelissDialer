@@ -1,6 +1,5 @@
 package com.ogneliss.dialer.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.heading
 import com.ogneliss.dialer.ui.components.SectionBand
@@ -492,8 +491,8 @@ internal fun SubscriberMoreMenu(
         val shortcutLabel = stringResource(R.string.contact_pin_shortcut)
         val editLabel = stringResource(R.string.action_edit_contact)
         ModalBottomSheet(
-            // Шторка — цвета страницы, группы на ней белые (строгий стиль, 1.5.1)
-            containerColor = MaterialTheme.colorScheme.background,
+            // Страница настроек, группы — белыми карточками (1.6.1, SheetGroup)
+            containerColor = com.ogneliss.dialer.ui.components.sheetContainerColor(),
             onDismissRequest = onDismiss,
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             contentWindowInsets = { WindowInsets.navigationBars }
@@ -656,8 +655,8 @@ internal fun WriteSheet(
     onMessengerByNumber: (SwipeAction) -> Unit = {}
 ) {
     ModalBottomSheet(
-        // Шторка — цвета страницы, группы на ней белые (строгий стиль, 1.5.1)
-        containerColor = MaterialTheme.colorScheme.background,
+        // Страница настроек, группы — белыми карточками (1.6.1, SheetGroup)
+        containerColor = com.ogneliss.dialer.ui.components.sheetContainerColor(),
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         contentWindowInsets = { WindowInsets.navigationBars }

@@ -1699,7 +1699,7 @@ private fun QuickReplySheet(
     onSend: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    ModalBottomSheet(onDismissRequest = onDismiss, containerColor = MaterialTheme.colorScheme.background) {
+    ModalBottomSheet(onDismissRequest = onDismiss, containerColor = com.ogneliss.dialer.ui.components.sheetContainerColor()) {
         Column(Modifier.padding(bottom = Space.xxl)) {
             Text(
                 stringResource(R.string.quick_reply_title),

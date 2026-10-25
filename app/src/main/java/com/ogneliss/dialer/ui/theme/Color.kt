@@ -106,9 +106,13 @@ internal val DarkOutlineVariant = Color(0xFF3D4148)
 // ── 1.5.6: поверхности в стиле Ogneliss Mail (разбор — Surfaces.kt) ──────────
 internal val LightBand = Color(0xFFE3E8EE)          // полоса раздела на странице настроек
 internal val LightCardBorder = Color(0xFFEAEDF2)    // рамка карточки группы
-internal val LightAvatarRing = Color(0xFFC4CBD5)    // кольцо аватара
+// Кольцо аватара: 1.6.1 — светлее (было #C4CBD5 и #4A4F57, автор: «уменьшить и сделать светлее»)
+internal val LightAvatarRing = Color(0xFFDDE2E9)
 internal val DarkCardBorder = Color(0xFF2A2D33)
-internal val DarkAvatarRing = Color(0xFF4A4F57)
+internal val DarkAvatarRing = Color(0xFF3A3E45)
+// Силуэт незнакомого номера (1.6.1): светлый, не темнее имени в строке
+internal val LightAvatarGlyph = Color(0xFFA9B1BC)
+internal val DarkAvatarGlyph = Color(0xFF6B727C)
 internal val DarkDivider = Color(0xFF2C2F35)
 internal val DarkSecondary = Color(0xFFC1C6D0)
 

@@ -2180,7 +2180,8 @@ class DialerViewModel @Inject constructor(
             onTimeout = commit
         ) {
             if (settled.compareAndSet(false, true)) {
-                fallback?.cancel()
+                // Таймер к этому времени уже заведён (присвоен выше) — без «?.»
+                fallback.cancel()
                 _pendingDeletion.update { it - keys }
             }
         }

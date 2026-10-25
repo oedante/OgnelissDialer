@@ -228,7 +228,11 @@ private fun PinnedRow(
                         AsyncImage(model = entry.photoUri, contentDescription = null)
                     } else {
                         Box(contentAlignment = Alignment.Center) {
-                            Icon(OgnelissIcons.Person, null, Modifier.size(20.dp))
+                            // Светлый силуэт, как в журнале (1.6.1)
+                            Icon(
+                                OgnelissIcons.Person, null, Modifier.size(20.dp),
+                                tint = com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.avatarGlyph
+                            )
                         }
                     }
                 }

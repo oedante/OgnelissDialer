@@ -64,8 +64,8 @@ fun NumberPickerSheet(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     ModalBottomSheet(
-        // Шторка — цвета страницы, группы на ней белые (строгий стиль, 1.5.1)
-        containerColor = MaterialTheme.colorScheme.background,
+        // Страница настроек, группы — белыми карточками (1.6.1, SheetGroup)
+        containerColor = com.ogneliss.dialer.ui.components.sheetContainerColor(),
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         contentWindowInsets = { WindowInsets.navigationBars }

@@ -16,7 +16,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.data.CallLogFilter
@@ -61,8 +60,8 @@ fun FilterSheet(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     ModalBottomSheet(
-        // Шторка — цвета страницы, группы на ней белые (строгий стиль, 1.5.1)
-        containerColor = MaterialTheme.colorScheme.background,
+        // Белая, как журнал: фильтры отбирают его записи (1.6.1)
+        containerColor = listSheetContainerColor(),
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         contentWindowInsets = { WindowInsets.navigationBars }
@@ -70,10 +69,12 @@ fun FilterSheet(
         Column(
             Modifier
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = FlowUi.sheetPadding)
                 .padding(bottom = FlowUi.sheetBottomPadding)
         ) {
-            Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+            Row(
+                Modifier.padding(horizontal = FlowUi.sheetPadding),
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+            ) {
                 Text(
                     stringResource(R.string.filter_title),
                     Modifier.weight(1f),
@@ -86,154 +87,150 @@ fun FilterSheet(
                 }
             }
 
-            Spacer(Modifier.height(Space.l))
-
-            GroupLabel(stringResource(R.string.filter_group_type))
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
-                TypeChip(filter, CallType.MISSED, R.string.call_missed, onFilterChange)
-                TypeChip(filter, CallType.INCOMING, R.string.call_incoming, onFilterChange)
-                TypeChip(filter, CallType.OUTGOING, R.string.call_outgoing, onFilterChange)
+            /*
+             * Группы — как разделы журнала (1.6.1, автор: «фильтры сделаем
+             * как в журнале»): скруглённая полоса с подписью, как «СЕГОДНЯ»
+             * над записями, фишки — под ней на белой странице.
+             */
+            FilterGroup(stringResource(R.string.filter_group_type)) {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
+                    TypeChip(filter, CallType.MISSED, R.string.call_missed, onFilterChange)
+                    TypeChip(filter, CallType.INCOMING, R.string.call_incoming, onFilterChange)
+                    TypeChip(filter, CallType.OUTGOING, R.string.call_outgoing, onFilterChange)
+                }
             }
 
-            // 12 dp вместо 20: шторку открывают часто, и на экран
-            // должны помещаться все разделы без прокрутки
-            Spacer(Modifier.height(Space.m))
-
-            GroupLabel(stringResource(R.string.filter_group_period))
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
-                CallLogFilter.Period.entries.forEach { period ->
-                    FilterChip(
-                        selected = filter.period == period,
-                        onClick = { onFilterChange(filter.copy(period = period)) },
-                        label = { Text(stringResource(periodLabel(period))) },
-                        // Галочка у выбранного: период — выбор одного
-                        // из нескольких, и видно, какой действует
-                        leadingIcon = if (filter.period == period) {
-                            {
-                                Icon(
-                                    OgnelissIcons.Check,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(FlowUi.iconSizeInline)
-                                )
-                            }
-                        } else null
-                    )
+            FilterGroup(stringResource(R.string.filter_group_period)) {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
+                    CallLogFilter.Period.entries.forEach { period ->
+                        FilterChip(
+                            selected = filter.period == period,
+                            onClick = { onFilterChange(filter.copy(period = period)) },
+                            label = { Text(stringResource(periodLabel(period))) },
+                            // Галочка у выбранного: период — выбор одного
+                            // из нескольких, и видно, какой действует
+                            leadingIcon = if (filter.period == period) {
+                                {
+                                    Icon(
+                                        OgnelissIcons.Check,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(FlowUi.iconSizeInline)
+                                    )
+                                }
+                            } else null
+                        )
+                    }
                 }
             }
 
             // SIM показываем только при двух картах: мёртвый фильтр
             // занимает место и сбивает с толку
             if (simCount > 1) {
-                // 12 dp вместо 20: шторку открывают часто, и на экран
-            // должны помещаться все разделы без прокрутки
-            Spacer(Modifier.height(Space.m))
-                GroupLabel(stringResource(R.string.filter_group_sim))
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
-                    repeat(simCount) { slot ->
-                        FilterChip(
-                            selected = filter.simSlot == slot,
-                            onClick = {
-                                onFilterChange(
-                                    filter.copy(
-                                        simSlot = if (filter.simSlot == slot) null else slot
+                FilterGroup(stringResource(R.string.filter_group_sim)) {
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
+                        repeat(simCount) { slot ->
+                            FilterChip(
+                                selected = filter.simSlot == slot,
+                                onClick = {
+                                    onFilterChange(
+                                        filter.copy(
+                                            simSlot = if (filter.simSlot == slot) null else slot
+                                        )
                                     )
-                                )
-                            },
-                            label = { Text("SIM ${slot + 1}") }
-                        )
+                                },
+                                label = { Text("SIM ${slot + 1}") }
+                            )
+                        }
                     }
                 }
             }
 
-            // 12 dp вместо 20: шторку открывают часто, и на экран
-            // должны помещаться все разделы без прокрутки
-            Spacer(Modifier.height(Space.m))
-
-            GroupLabel(stringResource(R.string.filter_group_other))
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
-                FilterChip(
-                    selected = filter.unknownOnly,
-                    onClick = { onFilterChange(filter.copy(unknownOnly = !filter.unknownOnly)) },
-                    label = { Text(stringResource(R.string.filter_unknown)) },
-                    leadingIcon = {
-                        Icon(
-                            OgnelissIcons.PersonOff,
-                            contentDescription = null,
-                            modifier = Modifier.size(FlowUi.iconSizeInline)
-                        )
-                    }
-                )
-                /*
-                 * «Ожидают ответа» — первой фишкой в ряду.
-                 *
-                 * Это единственный отбор, который отвечает на вопрос
-                 * «что я должен сделать», а не «что было». Им пользуются
-                 * чаще остальных, и ставить его после «спама» значило бы
-                 * прятать нужное за редким.
-                 */
-                FilterChip(
-                    selected = filter.awaitingCallbackOnly,
-                    onClick = {
-                        onFilterChange(
-                            filter.copy(
-                                awaitingCallbackOnly = !filter.awaitingCallbackOnly
+            FilterGroup(stringResource(R.string.filter_group_other)) {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
+                    FilterChip(
+                        selected = filter.unknownOnly,
+                        onClick = { onFilterChange(filter.copy(unknownOnly = !filter.unknownOnly)) },
+                        label = { Text(stringResource(R.string.filter_unknown)) },
+                        leadingIcon = {
+                            Icon(
+                                OgnelissIcons.PersonOff,
+                                contentDescription = null,
+                                modifier = Modifier.size(FlowUi.iconSizeInline)
                             )
-                        )
-                    },
-                    label = { Text(stringResource(R.string.filter_awaiting)) },
-                    leadingIcon = {
-                        Icon(
-                            OgnelissIcons.CallMissed,
-                            contentDescription = null,
-                            modifier = Modifier.size(FlowUi.iconSizeInline),
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                    }
-                )
-                FilterChip(
-                    selected = filter.withNoteOnly,
-                    onClick = {
-                        onFilterChange(filter.copy(withNoteOnly = !filter.withNoteOnly))
-                    },
-                    label = { Text(stringResource(R.string.filter_with_note)) },
-                    leadingIcon = {
-                        Icon(
-                            OgnelissIcons.StickyNote2,
-                            contentDescription = null,
-                            modifier = Modifier.size(FlowUi.iconSizeInline),
-                            tint = NoteTeal
-                        )
-                    }
-                )
-                FilterChip(
-                    selected = filter.withReminderOnly,
-                    onClick = {
-                        onFilterChange(
-                            filter.copy(withReminderOnly = !filter.withReminderOnly)
-                        )
-                    },
-                    label = { Text(stringResource(R.string.filter_with_reminder)) },
-                    leadingIcon = {
-                        Icon(
-                            OgnelissIcons.Alarm,
-                            contentDescription = null,
-                            modifier = Modifier.size(FlowUi.iconSizeInline)
-                        )
-                    }
-                )
-                FilterChip(
-                    selected = filter.spamOnly,
-                    onClick = { onFilterChange(filter.copy(spamOnly = !filter.spamOnly)) },
-                    label = { Text(stringResource(R.string.filter_spam)) },
-                    leadingIcon = {
-                        Icon(
-                            OgnelissIcons.Block,
-                            contentDescription = null,
-                            modifier = Modifier.size(FlowUi.iconSizeInline),
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                    }
-                )
+                        }
+                    )
+                    /*
+                     * «Ожидают ответа» — первой фишкой в ряду.
+                     *
+                     * Это единственный отбор, который отвечает на вопрос
+                     * «что я должен сделать», а не «что было». Им пользуются
+                     * чаще остальных, и ставить его после «спама» значило бы
+                     * прятать нужное за редким.
+                     */
+                    FilterChip(
+                        selected = filter.awaitingCallbackOnly,
+                        onClick = {
+                            onFilterChange(
+                                filter.copy(
+                                    awaitingCallbackOnly = !filter.awaitingCallbackOnly
+                                )
+                            )
+                        },
+                        label = { Text(stringResource(R.string.filter_awaiting)) },
+                        leadingIcon = {
+                            Icon(
+                                OgnelissIcons.CallMissed,
+                                contentDescription = null,
+                                modifier = Modifier.size(FlowUi.iconSizeInline),
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    )
+                    FilterChip(
+                        selected = filter.withNoteOnly,
+                        onClick = {
+                            onFilterChange(filter.copy(withNoteOnly = !filter.withNoteOnly))
+                        },
+                        label = { Text(stringResource(R.string.filter_with_note)) },
+                        leadingIcon = {
+                            Icon(
+                                OgnelissIcons.StickyNote2,
+                                contentDescription = null,
+                                modifier = Modifier.size(FlowUi.iconSizeInline),
+                                tint = NoteTeal
+                            )
+                        }
+                    )
+                    FilterChip(
+                        selected = filter.withReminderOnly,
+                        onClick = {
+                            onFilterChange(
+                                filter.copy(withReminderOnly = !filter.withReminderOnly)
+                            )
+                        },
+                        label = { Text(stringResource(R.string.filter_with_reminder)) },
+                        leadingIcon = {
+                            Icon(
+                                OgnelissIcons.Alarm,
+                                contentDescription = null,
+                                modifier = Modifier.size(FlowUi.iconSizeInline)
+                            )
+                        }
+                    )
+                    FilterChip(
+                        selected = filter.spamOnly,
+                        onClick = { onFilterChange(filter.copy(spamOnly = !filter.spamOnly)) },
+                        label = { Text(stringResource(R.string.filter_spam)) },
+                        leadingIcon = {
+                            Icon(
+                                OgnelissIcons.Block,
+                                contentDescription = null,
+                                modifier = Modifier.size(FlowUi.iconSizeInline),
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    )
+                }
             }
 
             /*
@@ -249,10 +246,6 @@ fun FilterSheet(
              * условия, а не искать поломку.
              */
             if (filter.isActive) {
-                // 12 dp вместо 20: шторку открывают часто, и на экран
-            // должны помещаться все разделы без прокрутки
-            Spacer(Modifier.height(Space.m))
-
                 Text(
                     if (matchCount == 0) {
                         stringResource(R.string.filter_no_matches)
@@ -262,6 +255,7 @@ fun FilterSheet(
                         )
                     },
                     style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(horizontal = FlowUi.sheetPadding, vertical = Space.m),
                     color = if (matchCount == 0) {
                         MaterialTheme.colorScheme.error
                     } else {
@@ -295,11 +289,21 @@ fun FilterButton(filter: CallLogFilter, onClick: () -> Unit) {
     }
 }
 
+/**
+ * Группа фильтров — раздел журнала (1.6.1): полоса с подписью и фишки
+ * под ней. Фишки начинаются там же, где аватары в журнале (16 dp);
+ * сверху и снизу у фишки и так 8 dp невидимой области нажатия
+ * (48 dp при видимых 32), поэтому полей по вертикали почти нет.
+ */
 @Composable
-private fun GroupLabel(text: String) {
-    // Подпись раздела — как во всём приложении (строгий стиль, 1.5.1)
-    SectionCaption(text)
-    Spacer(Modifier.height(Space.s))
+private fun FilterGroup(title: String, content: @Composable () -> Unit) {
+    ListSheetGroup(title = title) {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .padding(start = Space.l, end = Space.l, bottom = Space.xs)
+        ) { content() }
+    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
