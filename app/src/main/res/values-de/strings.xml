@@ -654,7 +654,7 @@
     <string name="call_photo_circle">Kreis</string>
     <string name="call_photo_square">Quadrat</string>
     <string name="settings_ui_scale">Skalierung der Oberfläche</string>
-    <string name="settings_ui_scale_text">Größe von Schaltflächen, Abständen und Text. „Auto“ passt sich der Bildschirmbreite an: auf schmalen Telefonen etwas kompakter, auf breiten unverändert</string>
+    <string name="settings_ui_scale_text">Größe von Schaltflächen, Abständen und Text. Standard: 90 %. „Auto“ passt sich der Bildschirmbreite an: auf schmalen Telefonen etwas kompakter, auf breiten unverändert</string>
     <string name="ui_scale_auto">Auto (nach Bildschirm)</string>
     <string name="ui_scale_auto_now">Auto – jetzt %1$d %%</string>
     <string name="ui_scale_90" formatted="false">Kleiner – 90 %</string>
@@ -731,11 +731,6 @@
     <string name="answer_mode_slide">Schieben</string>
     <string name="incall_slide_hint">Nach rechts schieben zum Annehmen, nach links zum Ablehnen</string>
     <!-- 1.5.8: настройки — «Дополнительно», отметка изменённых, «Вернуть как было» -->
-    <string name="settings_advanced">Erweitert</string>
-    <plurals name="settings_advanced_count">
-        <item quantity="one">%1$d weitere Einstellung</item>
-        <item quantity="other">%1$d weitere Einstellungen</item>
-    </plurals>
     <string name="settings_reset_section">Standard wiederherstellen</string>
     <string name="settings_reset_section_text">Geändert: %1$d — zurück zu den Standardwerten</string>
     <string name="settings_reset_section_confirm">Standardwerte in „%1$s“ wiederherstellen? Geänderte Einstellungen: %2$d. Andere Bereiche, Notizen und Listen bleiben unverändert.</string>
@@ -764,7 +759,6 @@
     <string name="faq_lead">Kurze Antworten auf häufige Fragen. Die Taste unter einer Antwort öffnet gleich die passende Einstellung.</string>
     <string name="faq_keywords">hilfe faq wie frage antwort</string>
     <string name="faq_path">%1$s → %2$s → „%3$s“</string>
-    <string name="faq_path_advanced">%1$s → %2$s → %3$s → „%4$s“</string>
     <string name="faq_path_section">%1$s → %2$s</string>
     <string name="faq_make_default">Als Standard festlegen</string>
     <string name="faq_write">E-Mail schreiben</string>
@@ -789,7 +783,7 @@
     <string name="faq_q_slide">Wie nehme ich Anrufe durch Schieben an — oder bekomme die Tasten zurück?</string>
     <string name="faq_a_slide">%1$s. „Tippen“ zeigt zwei gewöhnliche Tasten. Bei „Schieben“ verschieben Sie die Taste: nach rechts annehmen, nach links ablehnen — so wird kein Anruf versehentlich angenommen oder abgelehnt, wenn Sie das Telefon aus der Tasche ziehen. Mit TalkBack werden Anrufe immer mit Tasten angenommen.</string>
     <string name="faq_q_sim">Wie wähle ich die SIM-Karte für einen Anruf?</string>
-    <string name="faq_a_sim">Jede SIM-Karte hat ihre eigene Anruftaste. Die für eine Nummer gewählte Karte merkt sich die App und schlägt sie beim nächsten Mal wieder vor (%1$s). Damit Sie die Karten nicht verwechseln, benennen Sie sie: %2$s.</string>
+    <string name="faq_a_sim">Halten Sie eine Anruf- oder SMS-Taste gedrückt — in der Anrufliste, den Kontakten, einer Kontaktkarte — und wählen Sie die Karte für diese Aktion. Die für eine Nummer gewählte Karte merkt sich die App und schlägt sie beim nächsten Mal wieder vor (%1$s). Damit Sie die Karten nicht verwechseln, benennen Sie sie: %2$s.</string>
     <string name="faq_q_missed">Verpasste Anrufe erscheinen erst, wenn ich die App öffne. Was tun?</string>
     <string name="faq_a_missed">Wahrscheinlich schickt das System die App in den Ruhezustand, um Akku zu sparen. Erlauben Sie ihr den Hintergrundbetrieb — %1$s —, dann erscheinen verpasste Anrufe sofort.</string>
     <string name="faq_q_recording">Kann ich Anrufe aufzeichnen?</string>
@@ -878,4 +872,67 @@
     <string name="sim_chooser_title_sms">Mit welcher SIM schreiben?</string>
     <string name="a11y_choose_sim">SIM wählen</string>
     <string name="a11y_choose_sim_sms">SMS von anderer SIM</string>
+    <!-- 1.8.0: выбор SIM карточками -->
+    <string name="sim_choice_same_operator">gleicher Anbieter</string>
+    <string name="sim_choice_remember_note">Die Wahl wird für diese Nummer gespeichert (Einstellungen → SIM).</string>
+    <string name="sim_choice_sms_note">Die SIM wird der Nachrichten-App als Hinweis übergeben — manche Apps fragen erneut.</string>
+    <string name="sim_choice_operator_note">Anbieter laut Nummernplan: Die Nummer kann zu einem anderen Anbieter gewechselt sein.</string>
+    <!-- 1.8.0: выбор номера карточками -->
+    <string name="number_picker_hint">Welche Nummer?</string>
+    <!-- Автодозвон (1.8.0): настройка и экран вызова -->
+    <string name="settings_auto_redial">Automatische Wahlwiederholung</string>
+    <string name="settings_auto_redial_text">Ist besetzt oder hebt niemand ab, wird die Nummer erneut gewählt. „Anbieten“ fragt auf dem Anrufbildschirm, „Sofort“ beginnt ohne Nachfrage. Notruf- und kurze Servicenummern werden nie wiederholt.</string>
+    <string name="auto_redial_off">Aus</string>
+    <string name="auto_redial_offer">Anbieten</string>
+    <string name="auto_redial_auto">Sofort</string>
+    <string name="settings_auto_redial_pace">Wahlwiederholungen</string>
+    <string name="settings_auto_redial_pace_text">Wie oft und in welchem Abstand erneut gewählt wird. Auf dem Anrufbildschirm jederzeit abbrechbar.</string>
+    <string name="redial_pace_3_10">3 Versuche, alle 10 s</string>
+    <string name="redial_pace_5_10">5 Versuche, alle 10 s</string>
+    <string name="redial_pace_5_30">5 Versuche, alle 30 s</string>
+    <string name="redial_pace_10_60">10 Versuche, einmal pro Minute</string>
+    <string name="keywords_auto_redial">wahlwiederholung wiederholen besetzt erneut anrufen</string>
+    <string name="redial_reason_busy">Besetzt</string>
+    <string name="redial_reason_no_answer">Keine Antwort</string>
+    <string name="redial_reason_failed">Anruf fehlgeschlagen</string>
+    <string name="redial_offer_hint">Wahlwiederholung: bis zu %1$d-mal, alle %2$d s</string>
+    <string name="redial_waiting">Neuer Versuch in %d s</string>
+    <string name="redial_attempt">Wahlwiederholung · Versuch %1$d von %2$d</string>
+    <string name="redial_calling">Erneute Wahl…</string>
+    <string name="redial_gave_up">Nicht durchgekommen</string>
+    <string name="redial_gave_up_detail">Versuche: %d</string>
+    <string name="redial_action_start">Weiter versuchen</string>
+    <string name="redial_action_now">Jetzt anrufen</string>
+    <string name="redial_action_stop">Stoppen</string>
+    <string name="redial_action_again">Erneut versuchen</string>
+    <string name="redial_spoken">%1$s. Wahlwiederholung, Versuch %2$d von %3$d</string>
+    <!-- Памятка о мошенниках и тихие часы (1.8.0) -->
+    <string name="settings_scam_memo">Betrugshinweis</string>
+    <string name="settings_scam_memo_text">Dauert ein Gespräch mit einer unbekannten Nummer länger als zwei Minuten, erinnert der Anrufbildschirm einmal daran: SMS-Codes, Kartendaten und Passwörter gibt man niemandem. Das Telefon vibriert kurz, damit der Hinweis auffällt.</string>
+    <string name="keywords_scam_memo">betrug sicherheit bank code warnung</string>
+    <string name="scam_memo_title">Langes Gespräch mit unbekannter Nummer</string>
+    <string name="scam_memo_text">Geben Sie keine SMS-Codes, Kartendaten oder Passwörter preis. Banken, Polizei und „Sicherheitsdienste“ fragen nie danach. Im Zweifel auflegen und die Bank über die Nummer auf der Karte anrufen.</string>
+    <string name="scam_memo_ok">Verstanden</string>
+    <string name="settings_quiet_hours">Ruhezeit für unbekannte Nummern</string>
+    <string name="settings_quiet_hours_text">In dieser Zeit kommen Anrufe von Nummern, die nicht in den Kontakten sind, lautlos an und wecken den Bildschirm nicht — sie bleiben in der Anrufliste. Ruft dieselbe Nummer innerhalb von 15 Minuten erneut an, klingelt das Telefon: So kommen dringende Anrufe durch. Nummern auf der Freigabeliste klingeln immer.</string>
+    <string name="keywords_quiet_hours">nacht schlaf lautlos nicht stören ruhe unbekannt</string>
+    <string name="quiet_hours_off">Aus</string>
+    <string name="quiet_hours_22_08">22:00–08:00 Uhr</string>
+    <string name="quiet_hours_23_07">23:00–07:00 Uhr</string>
+    <string name="quiet_hours_always">Rund um die Uhr</string>
+    <string name="block_reason_quiet_hours">Ruhezeit</string>
+    <string name="quiet_call_notification">Eingehender Anruf · Ruhezeit</string>
+    <!-- Имя от оператора — маркировка звонков (1.8.0) -->
+    <string name="cnap_source">laut Netzbetreiber</string>
+    <string name="cnap_source_line">Laut Netzbetreiber</string>
+    <string name="cnap_source_named">%s — laut Netzbetreiber</string>
+    <!-- Вопросы и ответы 1.8.0: автодозвон, тихие часы, имя от оператора, памятка -->
+    <string name="faq_q_redial">Wie komme ich durch, wenn besetzt ist?</string>
+    <string name="faq_a_redial">Nach „Besetzt“ oder „Keine Antwort“ bietet der Anrufbildschirm „Weiter versuchen“ an: Die App wählt die Nummer nach einer Pause erneut — so oft wie eingestellt (%2$s). Um ohne Nachfrage zu wählen, stellen Sie „Sofort“ ein: %1$s. Notruf- und kurze Servicenummern werden nie wiederholt, und „Auflegen“ stoppt immer.</string>
+    <string name="faq_q_quiet">Kann ich nächtliche Anrufe unbekannter Nummern stummschalten?</string>
+    <string name="faq_a_quiet">Ja: %1$s. In dieser Zeit kommt ein solcher Anruf lautlos an und weckt den Bildschirm nicht; morgens steht er in der Anrufliste mit „Stumm — Ruhezeit“. Ruft dieselbe Nummer innerhalb von 15 Minuten erneut an, klingelt das Telefon. Kontakte und Nummern auf der Freigabeliste klingeln immer.</string>
+    <string name="faq_q_operator_name">Warum zeigt eine Nummer einen Firmennamen „laut Netzbetreiber“?</string>
+    <string name="faq_a_operator_name">Viele Organisationen rufen mit Kennung an: Der Netzbetreiber übermittelt den Firmennamen zusammen mit der Nummer (in Russland seit dem 1. September 2025 Pflicht). Die App zeigt ihn auf dem Anrufbildschirm und merkt ihn sich für Anrufliste und Kontaktkarte — bei Nummern, die nicht in Ihren Kontakten sind. Der Name stammt vom Netz, nicht von der App: Kontakte und Ihre Notizen haben immer Vorrang.</string>
+    <string name="faq_q_scam">Was ist der Betrugshinweis während eines Anrufs?</string>
+    <string name="faq_a_scam">Dauert ein Gespräch mit einer unbekannten Nummer länger als zwei Minuten, erinnert der Anrufbildschirm einmal daran: SMS-Codes, Kartendaten und Passwörter gibt man niemandem. Die App hört nicht mit und weiß nicht, wer am Apparat ist — die Regel gilt für jeden Anruf. Abschalten: %1$s.</string>
 </resources>

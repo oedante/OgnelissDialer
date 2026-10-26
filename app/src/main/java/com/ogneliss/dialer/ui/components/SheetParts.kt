@@ -128,7 +128,10 @@ fun SheetRow(
      * от края, что у панелей групп, — иначе её значок и подпись
      * прижимаются к краю шторки левее всех остальных строк.
      */
-    standalone: Boolean = false
+    standalone: Boolean = false,
+    /** Долгое нажатие (1.8.0): у SMS в «Написать» — выбор SIM; null — только касание. */
+    onLongClick: (() -> Unit)? = null,
+    onLongClickLabel: String? = null
 ) {
     val textColor = color ?: MaterialTheme.colorScheme.onSurface
     ListItem(
@@ -150,7 +153,17 @@ fun SheetRow(
                 } else Modifier
             )
             .heightIn(min = Dimens.MIN_TOUCH_TARGET)
-            .clickable(onClick = onClick)
+            .then(
+                if (onLongClick != null) {
+                    Modifier.combinedClickableCompat(
+                        onClick = onClick,
+                        onLongClick = onLongClick,
+                        onLongClickLabel = onLongClickLabel
+                    )
+                } else {
+                    Modifier.clickable(onClick = onClick)
+                }
+            )
     )
 }
 

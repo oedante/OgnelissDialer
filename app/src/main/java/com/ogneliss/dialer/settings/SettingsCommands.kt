@@ -3,6 +3,9 @@ package com.ogneliss.dialer.settings
 import dagger.hilt.android.qualifiers.ApplicationContext
 import android.content.Context
 import com.ogneliss.dialer.R
+import com.ogneliss.dialer.call.AutoRedialMode
+import com.ogneliss.dialer.call.QuietHours
+import com.ogneliss.dialer.call.RedialPace
 import com.ogneliss.dialer.log.Logger
 import com.ogneliss.dialer.data.NotesRetention
 import com.ogneliss.dialer.ui.SettingsState
@@ -104,6 +107,7 @@ class SettingsCommands @Inject constructor(
             "block_hidden" -> prefs.setBlockHidden(value)
             "block_unknown" -> prefs.setBlockNotInContacts(value)
             "block_tagged" -> prefs.setBlockTaggedSpam(value)
+            "scam_memo" -> prefs.setScamMemo(value)
             "file_logging" -> {
                 prefs.setFileLogging(value)
                 Logger.setFileLogging(value)
@@ -164,6 +168,9 @@ class SettingsCommands @Inject constructor(
             "contact_sort" -> prefs.setContactSort(ContactSort.from(value))
             "ui_scale" -> prefs.setUiScale(UiScale.from(value))
             "journal_style" -> prefs.setJournalStyle(JournalStyle.from(value))
+            "auto_redial" -> prefs.setAutoRedialMode(AutoRedialMode.from(value))
+            "auto_redial_pace" -> prefs.setAutoRedialPace(RedialPace.from(value))
+            "quiet_hours" -> prefs.setQuietHours(QuietHours.from(value))
             "sort_order" -> prefs.setSortOrder(
                 runCatching { SortOrder.valueOf(value) }.getOrDefault(SortOrder.RELEVANCE)
             )
@@ -195,6 +202,9 @@ class SettingsCommands @Inject constructor(
         "journal_style" -> state.journalStyle.name
         "notes_retention" -> state.notesRetention.name
         "notes_retention_scope" -> state.notesRetentionScope.name
+        "auto_redial" -> state.autoRedialMode.name
+        "auto_redial_pace" -> state.autoRedialPace.name
+        "quiet_hours" -> state.quietHours.name
         else -> ""
     }
 
@@ -254,6 +264,9 @@ class SettingsCommands @Inject constructor(
         "answer_mode" -> context.getString(answerModeLabelRes(state.answerMode))
         "contact_name_format" -> context.getString(contactNameFormatLabelRes(state.contactNameFormat))
         "contact_sort" -> context.getString(contactSortLabelRes(state.contactSort))
+        "auto_redial" -> context.getString(autoRedialLabelRes(state.autoRedialMode))
+        "auto_redial_pace" -> context.getString(redialPaceLabelRes(state.autoRedialPace))
+        "quiet_hours" -> context.getString(quietHoursLabelRes(state.quietHours))
 
         // «Авто» — с тем, что выбрано для этого экрана: видно, что оно делает
         "ui_scale" -> if (state.uiScale == UiScale.AUTO) {
@@ -324,6 +337,9 @@ class SettingsCommands @Inject constructor(
             "journal_style" -> R.string.settings_journal_style
             "notes_retention" -> R.string.settings_notes_retention
             "notes_retention_scope" -> R.string.settings_notes_scope
+            "auto_redial" -> R.string.settings_auto_redial
+            "auto_redial_pace" -> R.string.settings_auto_redial_pace
+            "quiet_hours" -> R.string.settings_quiet_hours
             else -> R.string.nav_settings
         }
     )
@@ -366,6 +382,29 @@ class SettingsCommands @Inject constructor(
             ContactNameFormat.FAMILY_FIRST -> R.string.contact_name_family_first
         }
 
+        /** Подпись режима автодозвона (1.8.0). */
+        fun autoRedialLabelRes(mode: AutoRedialMode): Int = when (mode) {
+            AutoRedialMode.OFF -> R.string.auto_redial_off
+            AutoRedialMode.OFFER -> R.string.auto_redial_offer
+            AutoRedialMode.AUTO -> R.string.auto_redial_auto
+        }
+
+        /** Подпись числа и частоты попыток автодозвона (1.8.0). */
+        fun redialPaceLabelRes(pace: RedialPace): Int = when (pace) {
+            RedialPace.P3_10 -> R.string.redial_pace_3_10
+            RedialPace.P5_10 -> R.string.redial_pace_5_10
+            RedialPace.P5_30 -> R.string.redial_pace_5_30
+            RedialPace.P10_60 -> R.string.redial_pace_10_60
+        }
+
+        /** Подпись тихих часов для незнакомых (1.8.0). */
+        fun quietHoursLabelRes(hours: QuietHours): Int = when (hours) {
+            QuietHours.OFF -> R.string.quiet_hours_off
+            QuietHours.NIGHT_22_08 -> R.string.quiet_hours_22_08
+            QuietHours.NIGHT_23_07 -> R.string.quiet_hours_23_07
+            QuietHours.ALWAYS -> R.string.quiet_hours_always
+        }
+
         /** Подпись порядка списка контактов (1.6.2). */
         fun contactSortLabelRes(sort: ContactSort): Int = when (sort) {
             ContactSort.GIVEN -> R.string.contact_sort_given
@@ -406,7 +445,9 @@ class SettingsCommands @Inject constructor(
             "merge_calls", "remember_sim", "smart_speaker",
             "callback_suggestion", "post_call", "post_call_unknown",
             "block_hidden", "block_unknown", "block_tagged", "file_logging",
-            "dialpad_open_at_start"
+            "dialpad_open_at_start",
+            // 1.8.0
+            "scam_memo"
         )
 
         /** Ключи, которые обрабатывает setChoice. */
@@ -414,7 +455,9 @@ class SettingsCommands @Inject constructor(
             "language", "theme", "swipe_right", "swipe_left", "grouping", "sort_order",
             "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info",
             "call_photo_style", "call_photo_size", "answer_mode", "ui_scale",
-            "contact_name_format", "contact_sort"
+            "contact_name_format", "contact_sort",
+            // 1.8.0
+            "auto_redial", "auto_redial_pace", "quiet_hours"
             // "journal_style" — снят из реестра в 1.5.3 (вид журнала один)
         )
     }

@@ -69,15 +69,4 @@ class FaqTest {
         assertNull(Faq.byId("нет такого"))
         assertNull(Faq.byId(null))
     }
-
-    @Test
-    fun `группа Дополнительно — только из двух и более пунктов`() {
-        SettingsCategory.entries.forEach { category ->
-            val advanced = SettingsRegistry.advancedEntries(category)
-            assertTrue(category.name, advanced.isEmpty() || advanced.size >= 2)
-            SettingsRegistry.byCategory(category).forEach { entry ->
-                assertEquals(entry.id, entry in advanced, SettingsRegistry.isInAdvancedGroup(entry))
-            }
-        }
-    }
 }

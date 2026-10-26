@@ -1,5 +1,12 @@
 package com.ogneliss.dialer.ui
 
+import com.ogneliss.dialer.ui.components.CardsBlurState
+import com.ogneliss.dialer.ui.components.LocalCardsBlur
+import com.ogneliss.dialer.ui.components.LocalTouchAnchor
+import com.ogneliss.dialer.ui.components.trackTouch
+import com.ogneliss.dialer.ui.components.rememberTouchAnchor
+import com.ogneliss.dialer.ui.components.blurBehindCards
+import com.ogneliss.dialer.ui.components.SimChoiceOverlay
 import androidx.compose.material3.MaterialTheme
 import com.ogneliss.dialer.ui.theme.LocalNavBarStrip
 import com.ogneliss.dialer.ui.theme.NavBarStripState
@@ -442,8 +449,38 @@ fun RootScreen(
         animationSpec = tween(Motion.NORMAL_MS),
         label = "navBarStrip"
     )
-    CompositionLocalProvider(LocalNavBarStrip provides navBarStrip) {
-    Box(Modifier.fillMaxSize()) {
+    /*
+     * ВЫБОР SIM — ОДИН ХОЗЯИН НА ВСЁ ПРИЛОЖЕНИЕ (1.8.0).
+     *
+     * Долгое нажатие на любую кнопку звонка или SMS (журнал, контакты,
+     * карточка, карточки действий, заметки, напоминания) зовёт
+     * vm.chooseSim; карточки выбора показываются здесь, у места нажатия.
+     * Место — последнее касание в окне приложения: долгое нажатие — это
+     * касание, которое не отпустили (TouchAnchor). Экран под карточками
+     * размывается, как под действиями по долгому нажатию.
+     */
+    val simRequest by vm.simRequest.collectAsStateWithLifecycle()
+    val rootAnchor = rememberTouchAnchor()
+    // Любое окно карточек (действия, SIM, номер, напоминание, заметка) размывает весь экран
+    val cardsBlur = remember { CardsBlurState() }
+    CompositionLocalProvider(
+        LocalNavBarStrip provides navBarStrip,
+        LocalTouchAnchor provides rootAnchor,
+        LocalCardsBlur provides cardsBlur
+    ) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .trackTouch(rootAnchor)
+            .blurBehindCards(cardsBlur.open > 0)
+    ) {
+    simRequest?.let { request ->
+        SimChoiceOverlay(
+            request = request,
+            anchorY = rootAnchor.screenY,
+            onDismiss = { vm.dismissSimRequest() }
+        )
+    }
     Box(
         Modifier
             .align(Alignment.BottomCenter)

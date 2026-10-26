@@ -55,6 +55,8 @@ class SpamInputCollector @Inject constructor(
     private val systemBlock: SystemBlockRepository,
     private val numberInfo: NumberInfoRepository,
     private val prefs: Prefs,
+    /** Тихие часы (1.8.0): звонил ли номер без звука за последние 15 минут. */
+    private val blockedCalls: BlockedCallLog,
     @IoDispatcher private val io: CoroutineDispatcher
 ) {
 
@@ -69,6 +71,7 @@ class SpamInputCollector @Inject constructor(
         const val SYSTEM_BLOCK = "системный блок-лист"
         const val TAGS = "метки"
         const val NUMBER_INFO = "определитель"
+        const val QUIET_REPEAT_INFO = "повторный звонок"
     }
 
     private companion object {
@@ -115,6 +118,14 @@ class SpamInputCollector @Inject constructor(
                 number != null && systemBlock.isBlocked(number)
             }
         }
+        // Повтор нужен только тихим часам; запрос по ключу — дешёвый
+        val repeatDeferred = async {
+            safe(Source.QUIET_REPEAT_INFO, false) {
+                e164.isNotBlank() && blockedCalls.silencedQuietlySince(
+                    e164, System.currentTimeMillis() - QuietHours.REPEAT_WINDOW_MS
+                )
+            }
+        }
         val tagsDeferred = async {
             // Отметка переводится в прежний вид — список ключей: SpamPolicy
             // проверяет «tags содержит spam или fraud», и менять правило
@@ -150,8 +161,16 @@ class SpamInputCollector @Inject constructor(
             inSystemBlockList = systemBlockDeferred.await(),
             tags = tagsDeferred.await(),
             category = NumberCategory.UNKNOWN,
-            settings = settings
+            settings = settings,
+            minuteOfDay = minuteOfDayNow(),
+            repeatCall = repeatDeferred.await()
         )
+    }
+
+    /** Минута суток по часам телефона — в его часовом поясе. */
+    private fun minuteOfDayNow(): Int {
+        val now = java.util.Calendar.getInstance()
+        return now.get(java.util.Calendar.HOUR_OF_DAY) * 60 + now.get(java.util.Calendar.MINUTE)
     }
 
     /** Настройки читаются одним заходом, тоже параллельно. */
@@ -161,11 +180,13 @@ class SpamInputCollector @Inject constructor(
             safe("blockNotInContacts", false) { prefs.blockNotInContacts.first() }
         }
         val tagged = async { safe("blockTaggedSpam", true) { prefs.blockTaggedSpam.first() } }
+        val quiet = async { safe("quietHours", QuietHours.OFF) { prefs.quietHours.first() } }
 
         SpamPolicy.Settings(
             blockHidden = hidden.await(),
             blockNotInContacts = unknown.await(),
-            blockTaggedSpam = tagged.await()
+            blockTaggedSpam = tagged.await(),
+            quietHours = quiet.await()
         )
     }
 

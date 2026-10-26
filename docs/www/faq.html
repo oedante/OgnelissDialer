@@ -22,7 +22,7 @@
 <!-- Русская версия -->
 <div id="lang-ru">
 <h1>Вопросы и ответы</h1>
-<p><strong>Ogneliss Dialer</strong> · версия 1.6.2 · 24 октября 2026 г.</p>
+<p><strong>Ogneliss Dialer</strong> · версия 1.8.0 · 26 октября 2026 г.</p>
 
 <p class="lead">Короткие ответы на частые вопросы. Те же ответы есть в самом приложении: «Ещё» на нижней панели → «Вопросы и ответы», — и там кнопка под ответом сразу открывает нужную настройку.</p>
 
@@ -60,7 +60,19 @@
 <p>Настройки → Вызовы → «Ответ на вызов». «Касанием» — две обычные кнопки. «Сдвигом» — кнопку нужно сдвинуть: вправо — ответить, влево — отклонить; так вызов не принять и не сбросить случайно, доставая телефон из кармана. С TalkBack вызов всегда принимается кнопками.</p>
 
 <h3 id="sim-ru">Как выбрать SIM-карту для звонка?</h3>
-<p>У каждой SIM-карты своя кнопка вызова. Выбранную для номера карту приложение запоминает и в следующий раз предложит её же (Настройки → SIM-карты → «Запоминать SIM для номера»). Чтобы не путать карты, подпишите их: Настройки → SIM-карты → «Названия SIM-карт».</p>
+<p>Долгое нажатие на любую кнопку звонка или SMS — в журнале, контактах, карточке — открывает выбор карты для этого действия. Выбранную для номера карту приложение запоминает и в следующий раз предложит её же (Настройки → SIM-карты → «Запоминать SIM для номера»). Чтобы не путать карты, подпишите их: Настройки → SIM-карты → «Названия SIM-карт».</p>
+
+<h3 id="redial-ru">Как дозвониться, если занято?</h3>
+<p>После «Занято» или «Не отвечает» экран вызова предложит «Дозваниваться»: приложение само наберёт номер снова через паузу — столько раз, сколько задано (Настройки → Вызовы → «Попытки автодозвона»). Чтобы набирало без вопроса, выберите «Сразу» в Настройки → Вызовы → «Автодозвон». Экстренные и короткие служебные номера не повторяются, а «Завершить» всегда останавливает автодозвон.</p>
+
+<h3 id="quiet-ru">Можно не слышать ночные звонки с незнакомых номеров?</h3>
+<p>Да: Настройки → Защита от спама → «Тихие часы для незнакомых». В выбранные часы такой звонок идёт без звука и не будит экран, а утром виден в журнале с пометкой «Без звука — тихие часы». Если тот же номер перезвонит за 15 минут, телефон зазвонит. Контакты и номера из белого списка звонят всегда.</p>
+
+<h3 id="operator_name-ru">Почему у номера название организации «по данным оператора»?</h3>
+<p>Многие организации звонят подписанными: оператор передаёт название вместе с номером (в России это обязательно с 1 сентября 2025 года — «маркировка звонков»). Приложение показывает его на экране вызова и запоминает для журнала и карточки — у номеров, которых нет в контактах. Название передаёт сеть, а не приложение: имя из книги и ваша заметка всегда важнее.</p>
+
+<h3 id="scam-ru">Что за памятка о мошенниках во время разговора?</h3>
+<p>Если разговор с незнакомым номером длится дольше двух минут, экран вызова один раз напомнит: коды из SMS, данные карты и пароли не называют никому. Приложение не слушает разговор и не знает, кто на линии, — правило верно для любого звонка. Отключается здесь: Настройки → Вызовы → «Памятка о мошенниках».</p>
 
 <h3 id="missed-ru">Пропущенные появляются, только когда открываешь приложение. Что делать?</h3>
 <p>Скорее всего, система усыпляет приложение ради экономии батареи. Разрешите ему работать в фоне — Настройки → Настройки Android → «Работа в фоне», — и пропущенные вызовы будут появляться сразу.</p>
@@ -75,7 +87,7 @@
 <p class="faq-links"><a href="/dialer/eula">Лицензия (Apache 2.0)</a> <a href="https://github.com/oedante/OgnelissDialer">Исходный код</a></p>
 
 <h3 id="contact-ru">Как сообщить об ошибке или предложить идею?</h3>
-<p>Напишите на oedante@gmail.com. Если что-то работает не так, приложите технический журнал — Настройки → Данные и диагностика → Дополнительно → «Отправить лог»: номера и имена в нём скрыты.</p>
+<p>Напишите на oedante@gmail.com. Если что-то работает не так, приложите технический журнал — Настройки → Данные и диагностика → «Отправить лог»: номера и имена в нём скрыты.</p>
 <p class="faq-links"><a href="mailto:oedante@gmail.com">Написать письмо</a></p>
 </div><!-- /lang-ru -->
 
@@ -83,7 +95,7 @@
 <!-- Английская версия -->
 <div id="lang-en" style="display:none;">
 <h1>Questions and answers</h1>
-<p><strong>Ogneliss Dialer</strong> · version 1.6.2 · 24 October 2026</p>
+<p><strong>Ogneliss Dialer</strong> · version 1.8.0 · 26 October 2026</p>
 
 <p class="lead">Short answers to common questions. The same answers are in the app itself: “More” on the bottom bar → “Questions and answers” — and there the button under an answer opens the setting right away.</p>
 
@@ -121,7 +133,19 @@
 <p>Settings → Calls → “Answering calls”. “Tap” gives two ordinary buttons. With “Slide” you move the button: right to answer, left to decline — so a call is not answered or rejected by accident while you take the phone out of your pocket. With TalkBack, calls are always answered with buttons.</p>
 
 <h3 id="sim-en">How do I choose the SIM card for a call?</h3>
-<p>Each SIM card has its own call button. The app remembers the card chosen for a number and offers it again next time (Settings → SIM cards → “Remember SIM per number”). To tell the cards apart, name them: Settings → SIM cards → “SIM card names”.</p>
+<p>Long-press any call or SMS button — in the call log, contacts, a contact card — and choose the card for that action. The app remembers the card chosen for a number and offers it again next time (Settings → SIM cards → “Remember SIM per number”). To tell the cards apart, name them: Settings → SIM cards → “SIM card names”.</p>
+
+<h3 id="redial-en">How do I get through when the line is busy?</h3>
+<p>After “Busy” or “No answer”, the call screen offers “Keep trying”: the app dials the number again after a pause, as many times as set (Settings → Calls → “Redial attempts”). To redial without asking, choose “Right away” in Settings → Calls → “Auto redial”. Emergency and short service numbers are never redialed, and “End call” always stops it.</p>
+
+<h3 id="quiet-en">Can I avoid hearing night calls from unknown numbers?</h3>
+<p>Yes: Settings → Spam protection → “Quiet hours for unknown numbers”. During those hours such a call comes in silently and doesn’t wake the screen; in the morning it’s in the call log marked “Silenced — quiet hours”. If the same number calls again within 15 minutes, the phone rings. Contacts and numbers on the allow list always ring.</p>
+
+<h3 id="operator_name-en">Why does a number show a company name “from your carrier”?</h3>
+<p>Many organizations call with a label: the carrier sends the company name along with the number (in Russia this is required since 1 September 2025). The app shows it on the call screen and keeps it for the call log and the contact card — for numbers not in your contacts. The name comes from the network, not from the app: your contacts and notes always take priority.</p>
+
+<h3 id="scam-en">What is the fraud reminder during a call?</h3>
+<p>If a call with an unknown number lasts over two minutes, the call screen reminds you once: never share SMS codes, card details or passwords. The app doesn’t listen to the call and doesn’t know who’s on the line — the rule holds for any call. Turn it off here: Settings → Calls → “Fraud reminder”.</p>
 
 <h3 id="missed-en">Missed calls only appear when I open the app. What can I do?</h3>
 <p>Most likely the system puts the app to sleep to save battery. Allow it to work in the background — Settings → Android settings → “Background work” — and missed calls will appear right away.</p>
@@ -136,7 +160,7 @@
 <p class="faq-links"><a href="/dialer/eula">License (Apache 2.0)</a> <a href="https://github.com/oedante/OgnelissDialer">Source code</a></p>
 
 <h3 id="contact-en">How do I report a bug or suggest an idea?</h3>
-<p>Write to oedante@gmail.com. If something doesn’t work right, attach the technical log — Settings → Data and diagnostics → Advanced → “Share log”: numbers and names in it are masked.</p>
+<p>Write to oedante@gmail.com. If something doesn’t work right, attach the technical log — Settings → Data and diagnostics → “Share log”: numbers and names in it are masked.</p>
 <p class="faq-links"><a href="mailto:oedante@gmail.com">Write an email</a></p>
 </div><!-- /lang-en -->
 
@@ -144,7 +168,7 @@
 <!-- Немецкая версия -->
 <div id="lang-de" style="display:none;">
 <h1>Fragen und Antworten</h1>
-<p><strong>Ogneliss Dialer</strong> · Version 1.6.2 · 24. Oktober 2026</p>
+<p><strong>Ogneliss Dialer</strong> · Version 1.8.0 · 26. Oktober 2026</p>
 
 <p class="lead">Kurze Antworten auf häufige Fragen. Dieselben Antworten finden Sie in der App: „Mehr“ auf der unteren Leiste → „Fragen und Antworten“ — dort öffnet die Taste unter einer Antwort gleich die passende Einstellung.</p>
 
@@ -182,7 +206,19 @@
 <p>Einstellungen → Anrufe → „Anrufe annehmen“. „Tippen“ zeigt zwei gewöhnliche Tasten. Bei „Schieben“ verschieben Sie die Taste: nach rechts annehmen, nach links ablehnen — so wird kein Anruf versehentlich angenommen oder abgelehnt, wenn Sie das Telefon aus der Tasche ziehen. Mit TalkBack werden Anrufe immer mit Tasten angenommen.</p>
 
 <h3 id="sim-de">Wie wähle ich die SIM-Karte für einen Anruf?</h3>
-<p>Jede SIM-Karte hat ihre eigene Anruftaste. Die für eine Nummer gewählte Karte merkt sich die App und schlägt sie beim nächsten Mal wieder vor (Einstellungen → SIM-Karten → „SIM je Nummer merken“). Damit Sie die Karten nicht verwechseln, benennen Sie sie: Einstellungen → SIM-Karten → „Namen der SIM-Karten“.</p>
+<p>Halten Sie eine Anruf- oder SMS-Taste gedrückt — in der Anrufliste, den Kontakten, einer Kontaktkarte — und wählen Sie die Karte für diese Aktion. Die für eine Nummer gewählte Karte merkt sich die App und schlägt sie beim nächsten Mal wieder vor (Einstellungen → SIM-Karten → „SIM je Nummer merken“). Damit Sie die Karten nicht verwechseln, benennen Sie sie: Einstellungen → SIM-Karten → „Namen der SIM-Karten“.</p>
+
+<h3 id="redial-de">Wie komme ich durch, wenn besetzt ist?</h3>
+<p>Nach „Besetzt“ oder „Keine Antwort“ bietet der Anrufbildschirm „Weiter versuchen“ an: Die App wählt die Nummer nach einer Pause erneut — so oft wie eingestellt (Einstellungen → Anrufe → „Wahlwiederholungen“). Um ohne Nachfrage zu wählen, stellen Sie „Sofort“ ein: Einstellungen → Anrufe → „Automatische Wahlwiederholung“. Notruf- und kurze Servicenummern werden nie wiederholt, und „Auflegen“ stoppt immer.</p>
+
+<h3 id="quiet-de">Kann ich nächtliche Anrufe unbekannter Nummern stummschalten?</h3>
+<p>Ja: Einstellungen → Spamschutz → „Ruhezeit für unbekannte Nummern“. In dieser Zeit kommt ein solcher Anruf lautlos an und weckt den Bildschirm nicht; morgens steht er in der Anrufliste mit „Stumm — Ruhezeit“. Ruft dieselbe Nummer innerhalb von 15 Minuten erneut an, klingelt das Telefon. Kontakte und Nummern auf der Freigabeliste klingeln immer.</p>
+
+<h3 id="operator_name-de">Warum zeigt eine Nummer einen Firmennamen „laut Netzbetreiber“?</h3>
+<p>Viele Organisationen rufen mit Kennung an: Der Netzbetreiber übermittelt den Firmennamen zusammen mit der Nummer (in Russland seit dem 1. September 2025 Pflicht). Die App zeigt ihn auf dem Anrufbildschirm und merkt ihn sich für Anrufliste und Kontaktkarte — bei Nummern, die nicht in Ihren Kontakten sind. Der Name stammt vom Netz, nicht von der App: Kontakte und Ihre Notizen haben immer Vorrang.</p>
+
+<h3 id="scam-de">Was ist der Betrugshinweis während eines Anrufs?</h3>
+<p>Dauert ein Gespräch mit einer unbekannten Nummer länger als zwei Minuten, erinnert der Anrufbildschirm einmal daran: SMS-Codes, Kartendaten und Passwörter gibt man niemandem. Die App hört nicht mit und weiß nicht, wer am Apparat ist — die Regel gilt für jeden Anruf. Abschalten: Einstellungen → Anrufe → „Betrugshinweis“.</p>
 
 <h3 id="missed-de">Verpasste Anrufe erscheinen erst, wenn ich die App öffne. Was tun?</h3>
 <p>Wahrscheinlich schickt das System die App in den Ruhezustand, um Akku zu sparen. Erlauben Sie ihr den Hintergrundbetrieb — Einstellungen → Android-Einstellungen → „Hintergrundbetrieb“ —, dann erscheinen verpasste Anrufe sofort.</p>
@@ -197,7 +233,7 @@
 <p class="faq-links"><a href="/dialer/eula">Lizenz (Apache 2.0)</a> <a href="https://github.com/oedante/OgnelissDialer">Quellcode</a></p>
 
 <h3 id="contact-de">Wie melde ich einen Fehler oder schlage eine Idee vor?</h3>
-<p>Schreiben Sie an oedante@gmail.com. Wenn etwas nicht richtig funktioniert, hängen Sie das technische Protokoll an — Einstellungen → Daten und Diagnose → Erweitert → „Protokoll senden“: Nummern und Namen darin sind maskiert.</p>
+<p>Schreiben Sie an oedante@gmail.com. Wenn etwas nicht richtig funktioniert, hängen Sie das technische Protokoll an — Einstellungen → Daten und Diagnose → „Protokoll senden“: Nummern und Namen darin sind maskiert.</p>
 <p class="faq-links"><a href="mailto:oedante@gmail.com">E-Mail schreiben</a></p>
 </div><!-- /lang-de -->
 
@@ -205,7 +241,7 @@
 <!-- Французская версия -->
 <div id="lang-fr" style="display:none;">
 <h1>Questions et réponses</h1>
-<p><strong>Ogneliss Dialer</strong> · version 1.6.2 · 24 octobre 2026</p>
+<p><strong>Ogneliss Dialer</strong> · version 1.8.0 · 26 octobre 2026</p>
 
 <p class="lead">Des réponses courtes aux questions fréquentes. Les mêmes réponses figurent dans l’application : « Plus » dans la barre du bas → « Questions et réponses » — et le bouton sous une réponse y ouvre directement le réglage concerné.</p>
 
@@ -243,7 +279,19 @@
 <p>Réglages → Appels → « Réponse aux appels ». « Toucher » affiche deux boutons ordinaires. Avec « Glisser », on fait glisser le bouton : à droite pour répondre, à gauche pour refuser — impossible ainsi de répondre ou de refuser par mégarde en sortant le téléphone de la poche. Avec TalkBack, les appels se prennent toujours avec des boutons.</p>
 
 <h3 id="sim-fr">Comment choisir la carte SIM pour un appel ?</h3>
-<p>Chaque carte SIM a son propre bouton d’appel. L’application retient la carte choisie pour un numéro et la propose de nouveau la fois suivante (Réglages → Cartes SIM → « Mémoriser la SIM par numéro »). Pour ne pas confondre les cartes, nommez-les : Réglages → Cartes SIM → « Noms des cartes SIM ».</p>
+<p>Appuyez longuement sur n’importe quel bouton d’appel ou de SMS — dans le journal, les contacts, une fiche — et choisissez la carte pour cette action. L’application retient la carte choisie pour un numéro et la propose de nouveau la fois suivante (Réglages → Cartes SIM → « Mémoriser la SIM par numéro »). Pour ne pas confondre les cartes, nommez-les : Réglages → Cartes SIM → « Noms des cartes SIM ».</p>
+
+<h3 id="redial-fr">Comment joindre quelqu’un si c’est occupé ?</h3>
+<p>Après « Occupé » ou « Pas de réponse », l’écran d’appel propose « Réessayer » : l’application rappelle le numéro après une pause, autant de fois que réglé (Réglages → Appels → « Tentatives de rappel »). Pour rappeler sans demander, choisissez « Tout de suite » : Réglages → Appels → « Rappel automatique ». Les numéros d’urgence et les numéros courts ne sont jamais rappelés, et « Raccrocher » arrête toujours.</p>
+
+<h3 id="quiet-fr">Puis-je ne pas entendre les appels nocturnes d’inconnus ?</h3>
+<p>Oui : Réglages → Protection contre le spam → « Heures calmes pour les inconnus ». Pendant ces heures, un tel appel arrive sans sonnerie et n’allume pas l’écran ; le matin, il figure au journal avec « Silencieux — heures calmes ». Si le même numéro rappelle dans les 15 minutes, le téléphone sonne. Les contacts et les numéros de la liste d’exceptions sonnent toujours.</p>
+
+<h3 id="operator_name-fr">Pourquoi un numéro affiche-t-il un nom « selon l’opérateur » ?</h3>
+<p>Beaucoup d’organisations appellent avec un nom : l’opérateur transmet le nom de l’entreprise avec le numéro (en Russie, c’est obligatoire depuis le 1er septembre 2025). L’application l’affiche sur l’écran d’appel et le garde pour le journal et la fiche — pour les numéros absents de vos contacts. Le nom vient du réseau, pas de l’application : vos contacts et vos notes priment toujours.</p>
+
+<h3 id="scam-fr">Qu’est-ce que le rappel anti-arnaque pendant un appel ?</h3>
+<p>Si un appel avec un numéro inconnu dure plus de deux minutes, l’écran d’appel rappelle une fois : ne communiquez jamais de codes SMS, de données de carte ni de mots de passe. L’application n’écoute pas l’appel et ne sait pas qui est au bout du fil — la règle vaut pour tout appel. Pour le désactiver : Réglages → Appels → « Rappel anti-arnaque ».</p>
 
 <h3 id="missed-fr">Les appels manqués n’apparaissent qu’à l’ouverture de l’application. Que faire ?</h3>
 <p>Le système met probablement l’application en veille pour économiser la batterie. Autorisez-la à fonctionner en arrière-plan — Réglages → Réglages Android → « Fonctionnement en arrière-plan » — et les appels manqués s’afficheront aussitôt.</p>
@@ -258,7 +306,7 @@
 <p class="faq-links"><a href="/dialer/eula">Licence (Apache 2.0)</a> <a href="https://github.com/oedante/OgnelissDialer">Code source</a></p>
 
 <h3 id="contact-fr">Comment signaler un bug ou proposer une idée ?</h3>
-<p>Écrivez à oedante@gmail.com. Si quelque chose ne fonctionne pas, joignez le journal technique — Réglages → Données et diagnostic → Avancé → « Partager le journal » : les numéros et les noms y sont masqués.</p>
+<p>Écrivez à oedante@gmail.com. Si quelque chose ne fonctionne pas, joignez le journal technique — Réglages → Données et diagnostic → « Partager le journal » : les numéros et les noms y sont masqués.</p>
 <p class="faq-links"><a href="mailto:oedante@gmail.com">Écrire un e-mail</a></p>
 </div><!-- /lang-fr -->
 

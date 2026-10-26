@@ -5,13 +5,11 @@ import com.ogneliss.dialer.ui.theme.Space
 
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.ui.draw.drawBehind
 import kotlinx.coroutines.launch
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.layout.*
@@ -19,18 +17,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import com.ogneliss.dialer.ui.SettingsState
-import com.ogneliss.dialer.ui.theme.FlowUi
-import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.ogneliss.dialer.BuildConfig
@@ -85,11 +73,7 @@ fun SettingsCategoryScreen(
     val state by vm.settingsState.collectAsStateWithLifecycle()
 
     /*
-     * «ДОПОЛНИТЕЛЬНО», ОТМЕТКИ И «ВЕРНУТЬ КАК БЫЛО» (1.5.8, обзор, У7).
-     *
-     * Редкие пункты (SettingEntry.advanced) — в свёрнутой группе внизу:
-     * раздел «Вызовы» был в одиннадцать строк, нужное искали прокруткой.
-     * Меньше двух редких — группы нет, пункт остаётся на виду.
+     * ОТМЕТКИ И «ВЕРНУТЬ КАК БЫЛО» (1.5.8, обзор, У7).
      *
      * Изменённое отмечено точкой (ChangedDot): «изменено» — значит,
      * отличается от SettingsState() — тех же значений, что Prefs отдаёт,
@@ -98,20 +82,15 @@ fun SettingsCategoryScreen(
      * получают исходные значения; другие разделы, заметки и списки
      * не трогаются. Язык не отмечается и не сбрасывается: это не вкус
      * оформления, а выбор человека, и сбросить его заодно с темой — обидно.
-     */
-    val advancedEntries = remember(category) { SettingsRegistry.advancedEntries(category) }
-    val mainEntries = remember(entries, advancedEntries) { entries.filter { it !in advancedEntries } }
-    /*
+     *
+     * Все пункты — на виду (1.8.0, автор: «в настройках не надо прятать
+     * пункты, их у нас не так много»). Свёрнутая группа «Дополнительно»
+     * (1.5.8–1.7.0) убрана: в самом длинном разделе одиннадцать строк,
+     * а спрятанный пункт приходилось искать поиском.
+     *
      * Найдено поиском — или кнопкой в «Вопросах и ответах» (1.6.0):
      * раздел прокручивается к пункту и на секунду подсвечивает его.
-     * Лежит под «Дополнительно» — группа открыта сразу: иначе поиск привёл
-     * бы в раздел, где найденного не видно (разбор у SettingReveal).
-     *
-     * До 1.6.0 прокрутка была только к группе «Дополнительно», а пункт
-     * на виду искали глазами среди десятка соседних.
      */
-    val revealAdvanced = reveal != null && advancedEntries.any { it.id == reveal.entryId }
-    var advancedOpen by rememberSaveable(category) { mutableStateOf(revealAdvanced) }
     val entryRequesters = remember(entries) { entries.associate { it.id to BringIntoViewRequester() } }
     var highlightedId by remember { mutableStateOf<String?>(null) }
     val highlight = remember { Animatable(0f) }
@@ -119,13 +98,8 @@ fun SettingsCategoryScreen(
     LaunchedEffect(reveal) {
         if (reveal == null) return@LaunchedEffect
         val id = reveal.entryId
-        val inAdvanced = advancedEntries.any { it.id == id }
-        val wasOpen = advancedOpen
-        if (inAdvanced) advancedOpen = true
-        // Кадр — чтобы строки легли на место; если группа раскрывается
-        // на глазах — ещё и время на раскрытие
+        // Кадр — чтобы строки легли на место
         withFrameNanos { }
-        if (inAdvanced && !wasOpen) kotlinx.coroutines.delay(REVEAL_EXPAND_MS)
         entryRequesters[id]?.bringIntoView()
         // Подсветка — своей корутиной: снятая просьба перезапускает этот
         // эффект, и гаснуть на полпути подсветке незачем
@@ -296,24 +270,7 @@ fun SettingsCategoryScreen(
         ) {
             Spacer(Modifier.height(Space.s))
 
-            renderEntries(mainEntries)
-
-            if (advancedEntries.isNotEmpty()) {
-                SettingsGroup(title = null) {
-                    AdvancedToggle(
-                        open = advancedOpen,
-                        count = advancedEntries.size,
-                        // Свёрнуто, а внутри что-то изменено — точка и здесь
-                        changedInside = !advancedOpen && advancedEntries.any(isChanged),
-                        onToggle = { advancedOpen = !advancedOpen }
-                    )
-                }
-                AnimatedVisibility(visible = advancedOpen) {
-                    Column {
-                        renderEntries(advancedEntries)
-                    }
-                }
-            }
+            renderEntries(entries)
 
             if (changedEntries.isNotEmpty()) {
                 SettingsGroup(title = null) {
@@ -413,7 +370,7 @@ private fun dangerExplanationRes(entryId: String): Int = when (entryId) {
     else -> R.string.confirm_title
 }
 
-/** Варианты, которые «Вернуть как было» не трогает: разбор у advancedEntries. */
+/** Варианты, которые «Вернуть как было» не трогает: разбор у отметок «изменено» в начале экрана. */
 private val NOT_RESETTABLE = setOf("language")
 
 /**
@@ -431,8 +388,6 @@ private val NOT_RESETTABLE = setOf("language")
 @Stable
 class SettingReveal(val entryId: String)
 
-/** Сколько ждать раскрытия «Дополнительно», прежде чем прокручивать к нему. */
-private const val REVEAL_EXPAND_MS = 320L
 
 /**
  * Подсветка найденного пункта (1.6.0): держится чуть больше полсекунды
@@ -444,46 +399,3 @@ private const val REVEAL_HOLD_MS = 600L
 private const val REVEAL_FADE_MS = 900
 private const val REVEAL_HIGHLIGHT_ALPHA = 0.16f
 
-/**
- * Строка «Дополнительно»: раскрывает и сворачивает редкие пункты раздела
- * (1.5.8, обзор интерфейса, У7). Состояние — для TalkBack словами
- * «развёрнуто» / «свёрнуто».
- */
-@Composable
-private fun AdvancedToggle(
-    open: Boolean,
-    count: Int,
-    changedInside: Boolean,
-    onToggle: () -> Unit
-) {
-    val stateText = stringResource(if (open) R.string.a11y_expanded else R.string.a11y_collapsed)
-    ListItem(
-        headlineContent = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.settings_advanced))
-                if (changedInside) ChangedDot()
-            }
-        },
-        supportingContent = {
-            Text(
-                pluralStringResource(R.plurals.settings_advanced_count, count, count),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        },
-        trailingContent = {
-            Icon(
-                if (open) OgnelissIcons.ExpandLess else OgnelissIcons.ExpandMore,
-                contentDescription = null
-            )
-        },
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-        modifier = Modifier
-            .heightIn(min = FlowUi.rowHeight)
-            .clickable(onClick = onToggle)
-            .semantics(mergeDescendants = true) {
-                role = Role.Button
-                stateDescription = stateText
-            }
-    )
-}

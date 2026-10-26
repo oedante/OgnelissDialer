@@ -655,7 +655,7 @@
     <string name="call_photo_circle">Круг</string>
     <string name="call_photo_square">Квадрат</string>
     <string name="settings_ui_scale">Масштаб интерфейса</string>
-    <string name="settings_ui_scale_text">Размер кнопок, отступов и текста. «Авто» подстраивает под ширину экрана: на узких телефонах — чуть плотнее, на широких — без изменений</string>
+    <string name="settings_ui_scale_text">Размер кнопок, отступов и текста. По умолчанию — 90 %. «Авто» подстраивает под ширину экрана: на узких телефонах — чуть плотнее, на широких — без изменений</string>
     <string name="ui_scale_auto">Авто (по экрану)</string>
     <string name="ui_scale_auto_now">Авто — сейчас %1$d %%</string>
     <string name="ui_scale_90" formatted="false">Мельче — 90 %</string>
@@ -738,13 +738,6 @@
     <string name="answer_mode_slide">Сдвигом</string>
     <string name="incall_slide_hint">Сдвиньте вправо — ответить, влево — отклонить</string>
     <!-- 1.5.8: настройки — «Дополнительно», отметка изменённых, «Вернуть как было» -->
-    <string name="settings_advanced">Дополнительно</string>
-    <plurals name="settings_advanced_count">
-        <item quantity="one">Ещё %1$d настройка</item>
-        <item quantity="few">Ещё %1$d настройки</item>
-        <item quantity="many">Ещё %1$d настроек</item>
-        <item quantity="other">Ещё %1$d настройки</item>
-    </plurals>
     <string name="settings_reset_section">Вернуть как было</string>
     <string name="settings_reset_section_text">Изменено: %1$d — вернуть значения по умолчанию</string>
     <string name="settings_reset_section_confirm">Вернуть значения по умолчанию в разделе «%1$s»? Изменённых настроек: %2$d. Другие разделы, заметки и списки не изменятся.</string>
@@ -775,7 +768,6 @@
     <string name="faq_lead">Короткие ответы на частые вопросы. Кнопка под ответом сразу открывает нужную настройку.</string>
     <string name="faq_keywords">помощь справка faq как вопрос ответ</string>
     <string name="faq_path">%1$s → %2$s → «%3$s»</string>
-    <string name="faq_path_advanced">%1$s → %2$s → %3$s → «%4$s»</string>
     <string name="faq_path_section">%1$s → %2$s</string>
     <string name="faq_make_default">Сделать основным</string>
     <string name="faq_write">Написать письмо</string>
@@ -800,7 +792,7 @@
     <string name="faq_q_slide">Как отвечать на вызов сдвигом — или вернуть кнопки?</string>
     <string name="faq_a_slide">%1$s. «Касанием» — две обычные кнопки. «Сдвигом» — кнопку нужно сдвинуть: вправо — ответить, влево — отклонить; так вызов не принять и не сбросить случайно, доставая телефон из кармана. С TalkBack вызов всегда принимается кнопками.</string>
     <string name="faq_q_sim">Как выбрать SIM-карту для звонка?</string>
-    <string name="faq_a_sim">У каждой SIM-карты своя кнопка вызова. Выбранную для номера карту приложение запоминает и в следующий раз предложит её же (%1$s). Чтобы не путать карты, подпишите их: %2$s.</string>
+    <string name="faq_a_sim">Долгое нажатие на любую кнопку звонка или SMS — в журнале, контактах, карточке — открывает выбор карты для этого действия. Выбранную для номера карту приложение запоминает и в следующий раз предложит её же (%1$s). Чтобы не путать карты, подпишите их: %2$s.</string>
     <string name="faq_q_missed">Пропущенные появляются, только когда открываешь приложение. Что делать?</string>
     <string name="faq_a_missed">Скорее всего, система усыпляет приложение ради экономии батареи. Разрешите ему работать в фоне — %1$s, — и пропущенные вызовы будут появляться сразу.</string>
     <string name="faq_q_recording">Можно ли записывать разговоры?</string>
@@ -889,4 +881,67 @@
     <string name="sim_chooser_title_sms">С какой SIM написать?</string>
     <string name="a11y_choose_sim">Выбрать SIM</string>
     <string name="a11y_choose_sim_sms">SMS с другой SIM</string>
+    <!-- 1.8.0: выбор SIM карточками -->
+    <string name="sim_choice_same_operator">тот же оператор</string>
+    <string name="sim_choice_remember_note">Выбор запомнится для этого номера (Настройки → SIM).</string>
+    <string name="sim_choice_sms_note">Карта передаётся приложению сообщений подсказкой — некоторые спросят ещё раз.</string>
+    <string name="sim_choice_operator_note">Оператор — по плану нумерации: номер мог перейти к другому оператору.</string>
+    <!-- 1.8.0: выбор номера карточками -->
+    <string name="number_picker_hint">Какой номер?</string>
+    <!-- Автодозвон (1.8.0): настройка и экран вызова -->
+    <string name="settings_auto_redial">Автодозвон</string>
+    <string name="settings_auto_redial_text">Если занято или не берут трубку, номер набирается снова. «Предлагать» — экран вызова спросит, «Сразу» — начнёт без вопроса. Экстренные и короткие служебные номера не повторяются.</string>
+    <string name="auto_redial_off">Выключен</string>
+    <string name="auto_redial_offer">Предлагать</string>
+    <string name="auto_redial_auto">Сразу</string>
+    <string name="settings_auto_redial_pace">Попытки автодозвона</string>
+    <string name="settings_auto_redial_pace_text">Сколько раз и как часто набирать снова. Остановить можно в любой момент на экране вызова.</string>
+    <string name="redial_pace_3_10">3 попытки, каждые 10 с</string>
+    <string name="redial_pace_5_10">5 попыток, каждые 10 с</string>
+    <string name="redial_pace_5_30">5 попыток, каждые 30 с</string>
+    <string name="redial_pace_10_60">10 попыток, раз в минуту</string>
+    <string name="keywords_auto_redial">дозвон повтор занято перезвонить снова набрать</string>
+    <string name="redial_reason_busy">Занято</string>
+    <string name="redial_reason_no_answer">Не отвечает</string>
+    <string name="redial_reason_failed">Вызов не прошёл</string>
+    <string name="redial_offer_hint">Автодозвон: до %1$d раз, каждые %2$d с</string>
+    <string name="redial_waiting">Повтор через %d с</string>
+    <string name="redial_attempt">Автодозвон · попытка %1$d из %2$d</string>
+    <string name="redial_calling">Набираем снова…</string>
+    <string name="redial_gave_up">Не удалось дозвониться</string>
+    <string name="redial_gave_up_detail">Сделано попыток: %d</string>
+    <string name="redial_action_start">Дозваниваться</string>
+    <string name="redial_action_now">Позвонить сейчас</string>
+    <string name="redial_action_stop">Остановить</string>
+    <string name="redial_action_again">Ещё раз</string>
+    <string name="redial_spoken">%1$s. Автодозвон, попытка %2$d из %3$d</string>
+    <!-- Памятка о мошенниках и тихие часы (1.8.0) -->
+    <string name="settings_scam_memo">Памятка о мошенниках</string>
+    <string name="settings_scam_memo_text">Если разговор с незнакомым номером длится больше двух минут, экран вызова один раз напомнит: коды из SMS, данные карты и пароли не называют никому. Телефон коротко вздрогнет, чтобы памятку заметили.</string>
+    <string name="keywords_scam_memo">мошенники обман безопасность банк код предупреждение</string>
+    <string name="scam_memo_title">Долгий разговор с незнакомым номером</string>
+    <string name="scam_memo_text">Не называйте коды из SMS, данные карты и пароли. Банк, полиция и «служба безопасности» их не спрашивают. Сомневаетесь — положите трубку и перезвоните в банк по номеру с карты.</string>
+    <string name="scam_memo_ok">Понятно</string>
+    <string name="settings_quiet_hours">Тихие часы для незнакомых</string>
+    <string name="settings_quiet_hours_text">В эти часы звонки с номеров не из контактов идут без звука и не будят экран — они остаются в журнале. Если тот же номер перезвонит в течение 15 минут, телефон зазвонит: так проходят срочные звонки. Номера из белого списка звонят всегда.</string>
+    <string name="keywords_quiet_hours">ночь сон без звука не беспокоить тишина незнакомые</string>
+    <string name="quiet_hours_off">Выключены</string>
+    <string name="quiet_hours_22_08">С 22:00 до 08:00</string>
+    <string name="quiet_hours_23_07">С 23:00 до 07:00</string>
+    <string name="quiet_hours_always">Круглосуточно</string>
+    <string name="block_reason_quiet_hours">тихие часы</string>
+    <string name="quiet_call_notification">Входящий · тихие часы</string>
+    <!-- Имя от оператора — маркировка звонков (1.8.0) -->
+    <string name="cnap_source">по данным оператора</string>
+    <string name="cnap_source_line">По данным оператора</string>
+    <string name="cnap_source_named">%s — по данным оператора</string>
+    <!-- Вопросы и ответы 1.8.0: автодозвон, тихие часы, имя от оператора, памятка -->
+    <string name="faq_q_redial">Как дозвониться, если занято?</string>
+    <string name="faq_a_redial">После «Занято» или «Не отвечает» экран вызова предложит «Дозваниваться»: приложение само наберёт номер снова через паузу — столько раз, сколько задано (%2$s). Чтобы набирало без вопроса, выберите «Сразу» в %1$s. Экстренные и короткие служебные номера не повторяются, а «Завершить» всегда останавливает автодозвон.</string>
+    <string name="faq_q_quiet">Можно не слышать ночные звонки с незнакомых номеров?</string>
+    <string name="faq_a_quiet">Да: %1$s. В выбранные часы такой звонок идёт без звука и не будит экран, а утром виден в журнале с пометкой «Без звука — тихие часы». Если тот же номер перезвонит за 15 минут, телефон зазвонит. Контакты и номера из белого списка звонят всегда.</string>
+    <string name="faq_q_operator_name">Почему у номера название организации «по данным оператора»?</string>
+    <string name="faq_a_operator_name">Многие организации звонят подписанными: оператор передаёт название вместе с номером (в России это обязательно с 1 сентября 2025 года — «маркировка звонков»). Приложение показывает его на экране вызова и запоминает для журнала и карточки — у номеров, которых нет в контактах. Название передаёт сеть, а не приложение: имя из книги и ваша заметка всегда важнее.</string>
+    <string name="faq_q_scam">Что за памятка о мошенниках во время разговора?</string>
+    <string name="faq_a_scam">Если разговор с незнакомым номером длится дольше двух минут, экран вызова один раз напомнит: коды из SMS, данные карты и пароли не называют никому. Приложение не слушает разговор и не знает, кто на линии, — правило верно для любого звонка. Отключается здесь: %1$s.</string>
 </resources>

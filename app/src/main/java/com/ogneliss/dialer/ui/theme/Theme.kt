@@ -313,7 +313,7 @@ fun OgnelissDialerTheme(
     themeMode: ThemeMode = ThemeMode.SYSTEM,
     dynamicColor: Boolean = false,
     /** Масштаб интерфейса (1.5.6): разбор в UiScale.kt. */
-    uiScale: UiScale = UiScale.AUTO,
+    uiScale: UiScale = UiScale.DEFAULT,
     content: @Composable () -> Unit
 ) {
     val systemDark = isSystemInDarkTheme()

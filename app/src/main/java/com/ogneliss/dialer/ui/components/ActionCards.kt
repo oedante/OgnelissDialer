@@ -33,6 +33,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -44,6 +45,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -108,7 +110,8 @@ import kotlin.math.roundToInt
  * ── Почему отдельное окно ─────────────────────────────────────────────────
  * Затемнение должно лечь и на строку состояния, и на нижнюю панель —
  * поверх всего экрана; изнутри экрана журнала до них не дотянуться.
- * Размытие списка под окном рисует сам экран (Modifier.blurBehindCards):
+ * Размытие под окном рисует корневой экран (Modifier.blurBehindCards
+ * по LocalCardsBlur, с 1.8.0; до того — каждый экран свой список):
  * размыть чужое окно надёжно нельзя — размытие между окнами есть
  * не на всех телефонах.
  *
@@ -132,7 +135,14 @@ data class CardAction(
      * Не закрывать карточки после нажатия: действие спросит подтверждение
      * (удаление контакта, блокировка по маске) или закроет их само.
      */
-    val keepOpen: Boolean = false
+    val keepOpen: Boolean = false,
+    /**
+     * Долгое нажатие (1.8.0): у «Позвонить» и «SMS» — выбор SIM. Карточки
+     * после него закрываются: выбор карты открывается своими карточками.
+     */
+    val onLongClick: (() -> Unit)? = null,
+    /** Что скажет TalkBack о долгом нажатии: «Выбрать SIM». */
+    val longClickLabel: String? = null
 )
 
 @Immutable
@@ -154,6 +164,76 @@ fun ActionCardsOverlay(
     previewDescription: String? = null,
     preview: @Composable ColumnScope.() -> Unit
 ) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    CardsOverlay(anchorY = anchorY, onDismiss = onDismiss) { close ->
+        ActionCard(
+            onClick = onPreviewClick?.let { open -> { open(); close() } },
+            description = previewDescription
+        ) {
+            Column(Modifier.padding(PREVIEW_PADDING), content = preview)
+        }
+
+        ActionCard {
+            QuickRow(
+                quick = quick,
+                hasMore = sections.isNotEmpty(),
+                expanded = expanded,
+                onToggle = { expanded = !expanded },
+                onAction = { action -> perform(action, close) },
+                onLongAction = { action -> performLong(action, close) }
+            )
+        }
+
+        AnimatedVisibility(
+            visible = expanded,
+            enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
+            exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()
+        ) {
+            ActionCard {
+                Column(Modifier.padding(vertical = Space.s)) {
+                    sections.forEachIndexed { index, section ->
+                        if (index > 0) {
+                            OgnelissDivider(
+                                Modifier.padding(horizontal = Space.l, vertical = Space.xs)
+                            )
+                        }
+                        SectionCaption(
+                            section.title,
+                            Modifier.padding(
+                                start = Space.l + Space.xs,
+                                top = Space.s,
+                                bottom = Space.xxs
+                            )
+                        )
+                        ActionGrid(
+                            section.actions,
+                            onAction = { action -> perform(action, close) },
+                            onLongAction = { action -> performLong(action, close) }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * ОКНО КАРТОЧЕК — ОБЩАЯ ОБОЛОЧКА (1.8.0).
+ *
+ * Вынесено из ActionCardsOverlay, когда тем же видом понадобилось
+ * показать выбор SIM (автор: «панели выбора SIM лучше сделать не
+ * выезжающими снизу, а как при долгом нажатии на карточку в журнале
+ * или контакт. Пользователям такое нравится»). Здесь — окно поверх
+ * всего экрана, своё затемнение, стопка у места нажатия, появление
+ * и угасание; что в карточках — решает [content]. Ему передаётся
+ * close(): закрыть с затуханием.
+ */
+@Composable
+internal fun CardsOverlay(
+    anchorY: Float?,
+    onDismiss: () -> Unit,
+    content: @Composable ColumnScope.(close: () -> Unit) -> Unit
+) {
     // Закрытие с затуханием: стопка гаснет, потом окно уходит
     val appear = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
@@ -165,6 +245,28 @@ fun ActionCardsOverlay(
                 appear.animateTo(0f, tween(Motion.QUICK_MS))
                 onDismiss()
             }
+        }
+    }
+
+    // Экран под карточками размывается — пока стопка не начала гаснуть
+    val blur = LocalCardsBlur.current
+    var holdingBlur by remember { mutableStateOf(false) }
+    DisposableEffect(blur) {
+        if (blur != null && !holdingBlur) {
+            blur.open++
+            holdingBlur = true
+        }
+        onDispose {
+            if (blur != null && holdingBlur) {
+                blur.open--
+                holdingBlur = false
+            }
+        }
+    }
+    LaunchedEffect(closing) {
+        if (closing && blur != null && holdingBlur) {
+            blur.open--
+            holdingBlur = false
         }
     }
 
@@ -180,7 +282,6 @@ fun ActionCardsOverlay(
         val view = LocalView.current
         SideEffect { (view.parent as? DialogWindowProvider)?.window?.setDimAmount(0f) }
 
-        var expanded by rememberSaveable { mutableStateOf(false) }
         var stackHeight by remember { mutableIntStateOf(0) }
         var rootScreenTop by remember { mutableStateOf<Float?>(null) }
 
@@ -244,49 +345,7 @@ fun ActionCardsOverlay(
                     .padding(horizontal = CARD_INSET),
                 verticalArrangement = Arrangement.spacedBy(CARD_GAP)
             ) {
-                ActionCard(
-                    onClick = onPreviewClick?.let { open -> { open(); close() } },
-                    description = previewDescription
-                ) {
-                    Column(Modifier.padding(PREVIEW_PADDING), content = preview)
-                }
-
-                ActionCard {
-                    QuickRow(
-                        quick = quick,
-                        hasMore = sections.isNotEmpty(),
-                        expanded = expanded,
-                        onToggle = { expanded = !expanded },
-                        onAction = { action -> perform(action, close) }
-                    )
-                }
-
-                AnimatedVisibility(
-                    visible = expanded,
-                    enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
-                    exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()
-                ) {
-                    ActionCard {
-                        Column(Modifier.padding(vertical = Space.s)) {
-                            sections.forEachIndexed { index, section ->
-                                if (index > 0) {
-                                    OgnelissDivider(
-                                        Modifier.padding(horizontal = Space.l, vertical = Space.xs)
-                                    )
-                                }
-                                SectionCaption(
-                                    section.title,
-                                    Modifier.padding(
-                                        start = Space.l + Space.xs,
-                                        top = Space.s,
-                                        bottom = Space.xxs
-                                    )
-                                )
-                                ActionGrid(section.actions) { action -> perform(action, close) }
-                            }
-                        }
-                    }
-                }
+                content(close)
             }
         }
     }
@@ -297,6 +356,28 @@ private fun perform(action: CardAction, close: () -> Unit) {
     action.onClick()
     if (!action.keepOpen) close()
 }
+
+/** Долгое нажатие: выбор SIM открывается своими карточками — эти закрываются. */
+private fun performLong(action: CardAction, close: () -> Unit) {
+    action.onLongClick?.invoke() ?: return
+    close()
+}
+
+/**
+ * СКОЛЬКО ОКОН КАРТОЧЕК ОТКРЫТО — ДЛЯ РАЗМЫТИЯ В КОРНЕ (1.8.0).
+ *
+ * Карточками теперь открываются не только действия по долгому нажатию,
+ * но и выбор SIM, выбор номера, напоминание и заметка — из любого экрана.
+ * Раньше каждый экран размывал свой список сам; теперь окно карточек
+ * отмечается здесь, а размывает весь экран один хозяин — RootScreen.kt.
+ */
+@Stable
+class CardsBlurState {
+    var open by mutableIntStateOf(0)
+}
+
+/** null — вне корневого экрана (экран вызова, превью): размытия нет, только затемнение. */
+val LocalCardsBlur = staticCompositionLocalOf<CardsBlurState?> { null }
 
 /**
  * Размытие экрана под карточками (Android 12+; на старых — только
@@ -335,6 +416,14 @@ class TouchAnchor {
 @Composable
 fun rememberTouchAnchor(): TouchAnchor = remember { TouchAnchor() }
 
+/**
+ * Последнее касание в окне приложения (1.8.0) — его следит RootScreen.
+ * Нужно карточкам, которые открываются не из списка с собственным
+ * якорем: выбор номера, выбор SIM — они встают у места нажатия.
+ * null — вне корневого экрана (превью, тесты): стопка на пятой части высоты.
+ */
+val LocalTouchAnchor = staticCompositionLocalOf<TouchAnchor?> { null }
+
 /** Следит за касаниями, ничего не перехватывая: список работает как прежде. */
 fun Modifier.trackTouch(anchor: TouchAnchor): Modifier = this
     .onGloballyPositioned { anchor.originY = it.positionOnScreen().y }
@@ -351,7 +440,7 @@ fun Modifier.trackTouch(anchor: TouchAnchor): Modifier = this
 
 /** Белая карточка стопки; касание по ней не закрывает окно. */
 @Composable
-private fun ActionCard(
+internal fun ActionCard(
     onClick: (() -> Unit)? = null,
     description: String? = null,
     content: @Composable ColumnScope.() -> Unit
@@ -382,7 +471,8 @@ private fun QuickRow(
     hasMore: Boolean,
     expanded: Boolean,
     onToggle: () -> Unit,
-    onAction: (CardAction) -> Unit
+    onAction: (CardAction) -> Unit,
+    onLongAction: (CardAction) -> Unit
 ) {
     Row(
         Modifier
@@ -390,7 +480,11 @@ private fun QuickRow(
             .padding(horizontal = Space.xs, vertical = Space.m)
     ) {
         quick.take(QUICK_MAX).forEach { action ->
-            ActionCircle(action, Modifier.weight(1f)) { onAction(action) }
+            ActionCircle(
+                action,
+                Modifier.weight(1f),
+                onLongClick = action.onLongClick?.let { { onLongAction(action) } }
+            ) { onAction(action) }
         }
         if (hasMore) {
             val more = CardAction(
@@ -413,9 +507,36 @@ private fun QuickRow(
     }
 }
 
+/**
+ * Ряд круглых действий для других окон-карточек (1.8.0): окно после
+ * звонка — «В контакты», «Напомнить», «Блок». Тот же вид, что быстрые
+ * действия по долгому нажатию; карточки закрываются после действия,
+ * если оно не просит остаться ([CardAction.keepOpen]).
+ */
+@Composable
+internal fun CardActionsRow(actions: List<CardAction>, close: () -> Unit) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Space.xs, vertical = Space.m)
+    ) {
+        actions.take(GRID_COLUMNS).forEach { action ->
+            ActionCircle(
+                action,
+                Modifier.weight(1f),
+                onLongClick = action.onLongClick?.let { { performLong(action, close) } }
+            ) { perform(action, close) }
+        }
+    }
+}
+
 /** Действия раздела — по пять в ряд, как в Mail. */
 @Composable
-private fun ActionGrid(actions: List<CardAction>, onAction: (CardAction) -> Unit) {
+private fun ActionGrid(
+    actions: List<CardAction>,
+    onAction: (CardAction) -> Unit,
+    onLongAction: (CardAction) -> Unit
+) {
     Column(Modifier.padding(horizontal = Space.xs)) {
         actions.chunked(GRID_COLUMNS).forEach { rowActions ->
             Row(
@@ -424,7 +545,11 @@ private fun ActionGrid(actions: List<CardAction>, onAction: (CardAction) -> Unit
                     .padding(vertical = Space.xs)
             ) {
                 rowActions.forEach { action ->
-                    ActionCircle(action, Modifier.weight(1f)) { onAction(action) }
+                    ActionCircle(
+                        action,
+                        Modifier.weight(1f),
+                        onLongClick = action.onLongClick?.let { { onLongAction(action) } }
+                    ) { onAction(action) }
                 }
                 repeat(GRID_COLUMNS - rowActions.size) { Spacer(Modifier.weight(1f)) }
             }
@@ -443,6 +568,8 @@ private fun ActionCircle(
     selected: Boolean = false,
     iconRotation: Float = 0f,
     description: String? = null,
+    /** Долгое нажатие — выбор SIM у «Позвонить» и «SMS» (1.8.0); null — нет. */
+    onLongClick: (() -> Unit)? = null,
     onClick: () -> Unit
 ) {
     val scheme = MaterialTheme.colorScheme
@@ -455,7 +582,17 @@ private fun ActionCircle(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .clip(MaterialTheme.shapes.medium)
-            .clickable(onClick = onClick)
+            .then(
+                if (onLongClick != null) {
+                    Modifier.combinedClickableCompat(
+                        onClick = onClick,
+                        onLongClick = onLongClick,
+                        onLongClickLabel = action.longClickLabel
+                    )
+                } else {
+                    Modifier.clickable(onClick = onClick)
+                }
+            )
             .semantics(mergeDescendants = true) {
                 contentDescription = description ?: action.label
                 role = Role.Button

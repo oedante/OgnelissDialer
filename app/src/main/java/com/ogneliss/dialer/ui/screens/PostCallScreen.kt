@@ -5,23 +5,27 @@ import com.ogneliss.dialer.ui.theme.Space
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.material3.AssistChipDefaults
 import com.ogneliss.dialer.ui.theme.BlockRed
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.data.SpamMarkType
-import com.ogneliss.dialer.ui.components.OgnelissDialog
+import com.ogneliss.dialer.ui.components.ActionCard
+import com.ogneliss.dialer.ui.components.CardAction
+import com.ogneliss.dialer.ui.components.CardActionsRow
+import com.ogneliss.dialer.ui.components.CardButtons
+import com.ogneliss.dialer.ui.components.CardHeader
+import com.ogneliss.dialer.ui.components.CardsOverlay
+import com.ogneliss.dialer.ui.components.LocalTouchAnchor
+import com.ogneliss.dialer.ui.components.SectionCaption
+import com.ogneliss.dialer.ui.theme.NoteTeal
 import com.ogneliss.dialer.util.PhoneFormatter
 
 /**
@@ -61,109 +65,67 @@ fun PostCallSheet(
     var note by remember { mutableStateOf("") }
 
     /*
-     * Общий контейнер приложения вместо AlertDialog.
-     *
-     * Заголовок у OgnelissDialog — строка, поэтому длительность
-     * разговора, стоявшая второй строкой заголовка, переехала
-     * в начало содержимого. Смысл тот же: сначала «с кем говорили»,
-     * потом «сколько», потом поле заметки.
+     * 1.8.0 — КАРТОЧКАМИ, как все окна заметок и напоминаний (автор:
+     * «привести окна напоминаний и заметок к одному UI с остальным
+     * приложением»). Было: окно посередине с полем, фишками и строкой
+     * фишек-действий. Стало — стопка карточек:
+     *   1. С кем и сколько: имя или номер, длительность («3 минуты»,
+     *      «Вызов не состоялся»).
+     *   2. Заметка, отметка «спам» / «мошенники», кнопки.
+     *   3. Действия кругами, как у долгого нажатия: «В контакты»,
+     *      «Через 30 мин», «Завтра», «Блок».
      */
-    OgnelissDialog(
-        onDismissRequest = onDismiss,
-        title = displayName ?: PhoneFormatter.format(number),
-        confirmButton = {
-            TextButton(onClick = { onSaveNote(note, emptyList()); onDismiss() }) {
-                Text(stringResource(R.string.nav_save))
-            }
-        },
-        dismissButton = {
-            Row {
-                /*
-                 * Очистка — как в окне заметки из карточки.
-                 *
-                 * Здесь она нужна реже: окно открывается пустым после
-                 * разговора. Но человек мог начать писать и передумать,
-                 * а стирать посимвольно долго.
-                 *
-                 * Появляется только когда есть что убирать: пустая
-                 * кнопка сбивала бы с толку.
-                 */
-                // Очищает только текст: отметка ставится и снимается
-                // сама, по нажатию фишки, и стирать её отсюда нельзя
-                if (note.isNotBlank()) {
-                    TextButton(onClick = {
-                        note = ""
-                    }) {
-                        Text(stringResource(R.string.action_clear))
-                    }
-                }
+    val duration = if (durationSec > 0) {
+        // Склонение выбирает Android по правилам локали
+        val m = (durationSec / 60).toInt()
+        val sec = (durationSec % 60).toInt()
+        if (m > 0) pluralStringResource(R.plurals.duration_minutes, m, m)
+        else pluralStringResource(R.plurals.duration_seconds, sec, sec)
+    } else stringResource(R.string.postcall_no_answer)
 
-                TextButton(onClick = onDismiss) {
-                    Text(stringResource(R.string.nav_close))
-                }
-            }
-        },
-        content = {
-            // Длительность разговора: была второй строкой заголовка
-            Text(
-                if (durationSec > 0) {
-                    // Склонение выбирает Android по правилам локали
-                    val m = (durationSec / 60).toInt()
-                    val s = (durationSec % 60).toInt()
-                    if (m > 0) pluralStringResource(R.plurals.duration_minutes, m, m)
-                    else pluralStringResource(R.plurals.duration_seconds, s, s)
-                } else stringResource(R.string.postcall_no_answer),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.outline
+    val actions = buildList {
+        if (!isKnownContact) {
+            add(CardAction(OgnelissIcons.PersonAdd, stringResource(R.string.action_add_contact), onClick = onAddContact))
+        }
+        add(CardAction(OgnelissIcons.Alarm, stringResource(R.string.postcall_remind_30), onClick = { onRemind(30) }))
+        add(CardAction(OgnelissIcons.Schedule, stringResource(R.string.postcall_remind_tomorrow), onClick = { onRemind(60 * 24) }))
+        // Блокировка красная и здесь: цвет действия одинаков везде, где оно встречается
+        add(CardAction(OgnelissIcons.Block, stringResource(R.string.action_block), onClick = onBlock, tint = BlockRed, danger = true))
+    }
+
+    CardsOverlay(anchorY = LocalTouchAnchor.current?.screenY, onDismiss = onDismiss) { close ->
+        ActionCard {
+            CardHeader(
+                icon = OgnelissIcons.StickyNote2,
+                accent = NoteTeal,
+                title = displayName ?: PhoneFormatter.format(number),
+                subtitle = duration
             )
-
-            /*
-             * Прокрутка по вертикали.
-             *
-             * При включённой крупной системной шрифтовой настройке
-             * содержимое перестаёт помещаться, и без прокрутки нижние
-             * кнопки становятся недоступны. Диалог не растягивается
-             * бесконечно — система ограничивает его высоту.
-             */
-            /*
-             * heightIn добавлен вместе с переходом на OgnelissDialog.
-             *
-             * AlertDialog ограничивал высоту сам, наш контейнер —
-             * нет: он ровно такой, как содержимое. Без потолка при
-             * крупном системном шрифте кнопки «Сохранить» и «Закрыть»
-             * ушли бы за нижний край.
-             */
-            Column(
-                Modifier
-                    .heightIn(max = 360.dp)
-                    .verticalScroll(rememberScrollState())
-            ) {
+        }
+        ActionCard {
+            Column(Modifier.padding(start = Space.l, end = Space.l, top = Space.l)) {
                 OutlinedTextField(
                     value = note,
                     onValueChange = { note = it },
-                    label = { Text(stringResource(R.string.postcall_note_hint)) },
+                    placeholder = { Text(stringResource(R.string.postcall_note_hint)) },
+                    shape = MaterialTheme.shapes.large,
                     modifier = Modifier.fillMaxWidth(),
-                    // Три строки вместо двух: заметка после разговора —
-                    // это обычно фраза, а не два слова, и в двух строках
-                    // текст сразу начинал прокручиваться внутри поля
+                    // Три строки: заметка после разговора — обычно фраза,
+                    // а не два слова
                     minLines = 3
                 )
                 Spacer(Modifier.height(Space.m))
-
-                Text(
-                    stringResource(R.string.spam_mark_section),
-                    style = MaterialTheme.typography.labelMedium
-                )
-
+                SectionCaption(stringResource(R.string.spam_mark_section))
+                Spacer(Modifier.height(Space.xs))
                 /*
                  * ОТМЕТКА — ОДИН ВЫБОР, НЕ НАБОР.
                  *
                  * Номер либо спам, либо мошенники, либо ничего: разбор
-                 * в SpamMarkEntity. Повторное нажатие на выбранную фишку
-                 * снимает отметку — так же, как было с метками.
-                 *
-                 * FlowRow, а не Row: на немецком («Betrug») и при крупном
-                 * шрифте фишки не помещались в строку.
+                 * в SpamMarkEntity. Ставится сразу по нажатию, а не по
+                 * «Сохранить»: человек только что положил трубку после
+                 * спам-звонка — отметка должна сработать немедленно.
+                 * Повторное нажатие снимает. FlowRow: на немецком и при
+                 * крупном шрифте фишки не помещались в строку.
                  */
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(Space.s),
@@ -192,57 +154,27 @@ fun PostCallSheet(
                         )
                     }
                 }
-
-                Spacer(Modifier.height(Space.xs))
-
-                /*
-                 * То же объяснение, что в карточке.
-                 *
-                 * Здесь оно нужнее: человек только что положил трубку,
-                 * раздражён спам-звонком и жмёт отметку не глядя. Он должен
-                 * знать, что при включённой блокировке телефон перестанет
-                 * принимать вызовы с этого номера.
-                 */
+                // То же объяснение, что в карточке: при включённой блокировке
+                // телефон перестанет принимать вызовы с этого номера
                 Text(
                     stringResource(R.string.note_tags_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-
-                Spacer(Modifier.height(Space.l))
-
-                // Действия тоже переносятся: подписи бывают длинными,
-                // и «Заблокировать номер» рядом с «В контакты» за край
-                // уходило целиком
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(Space.s),
-                    verticalArrangement = Arrangement.spacedBy(Space.xs)
-                ) {
-                    if (!isKnownContact) {
-                        AssistChip(onClick = onAddContact, label = { Text(stringResource(R.string.action_add_contact)) })
-                        Spacer(Modifier.width(Space.s))
-                    }
-                    AssistChip(onClick = { onRemind(30) }, label = { Text(stringResource(R.string.postcall_remind_30)) })
-                    Spacer(Modifier.width(Space.s))
-                    AssistChip(onClick = { onRemind(60 * 24) }, label = { Text(stringResource(R.string.postcall_remind_tomorrow)) })
-                    Spacer(Modifier.width(Space.s))
-                    // Блокировка красная и здесь: цвет действия
-                    // одинаков во всех местах, где оно встречается
-                    AssistChip(
-                        onClick = onBlock,
-                        label = { Text(stringResource(R.string.action_block)) },
-                        leadingIcon = {
-                            Icon(
-                                OgnelissIcons.Block,
-                                contentDescription = null,
-                                modifier = Modifier.size(FlowUi.iconSizeInline),
-                                tint = BlockRed
-                            )
-                        },
-                        colors = AssistChipDefaults.assistChipColors(labelColor = BlockRed)
-                    )
-                }
             }
+            // Очищает только текст: отметка ставится и снимается сама, по фишке
+            CardButtons(
+                confirmLabel = stringResource(R.string.nav_save),
+                onConfirm = { onSaveNote(note, emptyList()); close() },
+                dismissLabel = stringResource(R.string.nav_close),
+                onDismiss = close,
+                extra = if (note.isNotBlank()) {
+                    { TextButton(onClick = { note = "" }) { Text(stringResource(R.string.action_clear)) } }
+                } else null
+            )
         }
-    )
+        ActionCard {
+            CardActionsRow(actions, close)
+        }
+    }
 }

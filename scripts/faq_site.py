@@ -14,7 +14,7 @@ docs/www/faq.html — в том же виде, что privacy.html и terms.html
 
 Пути к настройкам («Настройки → Вызовы → «Ответ на вызов»») собираются
 так же, как в приложении (FaqScreen.settingPath): из названий раздела
-и пункта, с «Дополнительно», если пункт спрятан в эту группу. Кнопки
+и пункта (с 1.8.0 пункты не прячутся под «Дополнительно»). Кнопки
 приложения на сайте — ссылками: письмо, лицензия, исходный код;
 кнопки, ведущие в настройки, на сайте не нужны — путь есть в тексте.
 
@@ -128,11 +128,8 @@ def path_text(s, link_kind, args, cats, entries):
         cat = re.search(r'SettingsCategory\.([A-Z_]+)', args).group(1)
         return android_format(s['faq_path_section'], s['nav_settings'], s[cats[cat]])
     sid = re.match(r'\s*"(\w+)"', args).group(1)
-    cat, title_res, advanced = entries[sid]
-    in_group = advanced and sum(1 for c, _, adv in entries.values() if c == cat and adv) >= 2
-    if in_group:
-        return android_format(s['faq_path_advanced'], s['nav_settings'], s[cats[cat]],
-                              s['settings_advanced'], s[title_res])
+    cat, title_res, _ = entries[sid]
+    # С 1.8.0 пунктов под «Дополнительно» нет — путь всегда из трёх частей
     return android_format(s['faq_path'], s['nav_settings'], s[cats[cat]], s[title_res])
 
 

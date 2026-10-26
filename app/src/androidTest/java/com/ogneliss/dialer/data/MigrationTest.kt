@@ -226,6 +226,37 @@ class MigrationTest {
     }
 
     /**
+     * 7 → 8: таблица имён от оператора (1.8.0, «маркировка звонков»).
+     *
+     * Заметки человека переживают миграцию как были; новая таблица
+     * создаётся пустой и принимает запись.
+     */
+    @Test
+    fun именаОтОператораПолучаютТаблицу() {
+        helper.createDatabase(TEST_DB, 7).use { db ->
+            db.execSQL(
+                "INSERT INTO number_notes (e164, note, tags, customLabel, updatedAt) " +
+                    "VALUES ('+79000000001', 'Курьер', '', NULL, 0)"
+            )
+        }
+
+        val db = helper.runMigrationsAndValidate(TEST_DB, 8, true, AppDatabase.MIGRATION_7_8)
+
+        db.query("SELECT note FROM number_notes WHERE e164 = '+79000000001'").use { c ->
+            assertTrue("Заметка потерялась", c.moveToFirst())
+            assertEquals("Курьер", c.getString(0))
+        }
+        db.execSQL(
+            "INSERT INTO network_names (e164, name, seenAt) VALUES ('+79000000002', 'Банк Пример', 1)"
+        )
+        db.query("SELECT name, seenAt FROM network_names WHERE e164 = '+79000000002'").use { c ->
+            assertTrue("Имя от оператора не записалось", c.moveToFirst())
+            assertEquals("Банк Пример", c.getString(0))
+            assertEquals(1L, c.getLong(1))
+        }
+    }
+
+    /**
      * Проверка, что все объявленные миграции применяются подряд
      * от первой версии до текущей. Ловит пропущенную миграцию:
      * например, версия поднята с 2 до 3, а Migration(2,3) забыли написать.

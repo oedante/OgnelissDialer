@@ -9,6 +9,9 @@ import com.ogneliss.dialer.log.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import com.ogneliss.dialer.util.PhoneFormatter
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,6 +40,9 @@ class OgnelissInCallService : InCallService() {
     private companion object {
         const val TAG = "InCallService"
         const val WHAT_INCOMING = "показ уведомления о входящем"
+
+        /** Паузы между попытками заглушить звонок: сразу, через 0,3 и через 0,9 с. */
+        val SILENCE_RETRY_MS = longArrayOf(0L, 300L, 600L)
     }
 
     /**
@@ -48,6 +54,54 @@ class OgnelissInCallService : InCallService() {
 
     /** Заметки: попадают в уведомление после отклонённого вызова. */
     @Inject lateinit var notesRepo: com.ogneliss.dialer.data.NotesRepository
+
+    /** Настройки автодозвона (1.8.0): копия держится в AutoRedial.config. */
+    @Inject lateinit var prefs: com.ogneliss.dialer.settings.Prefs
+
+    /** Имена от оператора (1.8.0): журнал покажет их после звонка. */
+    @Inject lateinit var networkNames: com.ogneliss.dialer.data.NetworkNames
+
+    /** Область приложения: запись имени переживёт остановку службы. */
+    @Inject @com.ogneliss.dialer.di.ApplicationScope
+    lateinit var appScope: CoroutineScope
+
+    /** Живёт, пока система держит службу, — то есть пока есть вызовы. */
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
+    /*
+     * ИСХОДЯЩИЕ — ЗАПОМИНАЕМ ПРИ ПОЯВЛЕНИИ (1.8.0).
+     *
+     * До Android 10 направление вызова в Details не отдаётся, и
+     * CallDetailsCompat угадывает его по состоянию: «набирается» —
+     * значит исходящий. В onCallRemoved состояние уже «завершён», угадать
+     * нечем — и на Android 8–9 любой несостоявшийся исходящий считался
+     * сброшенным входящим: после «занято» выходило «Перезвонить?».
+     * Теперь направление берётся в onCallAdded, пока вызов ещё набирается.
+     */
+    private val outgoingCalls = mutableSetOf<Call>()
+
+    /** Настройка «Предлагать напоминание после сброса» — копия, как у автодозвона. */
+    @Volatile private var callbackSuggestionOn = true
+
+    override fun onCreate() {
+        super.onCreate()
+        /*
+         * Настройки автодозвона читаются заранее: onCallRemoved — обычный
+         * вызов в главном потоке, ждать в нём DataStore нельзя. Пока вызов
+         * идёт, поток успевает отдать значение задолго до его конца.
+         */
+        serviceScope.launch {
+            combine(prefs.autoRedialMode, prefs.autoRedialPace) { mode, pace ->
+                AutoRedial.Config(mode, pace)
+            }.collect { AutoRedial.config = it }
+        }
+        serviceScope.launch { prefs.callbackSuggestion.collect { callbackSuggestionOn = it } }
+    }
+
+    override fun onDestroy() {
+        serviceScope.cancel()
+        super.onDestroy()
+    }
 
     /*
      * @Suppress("DEPRECATION") — про call.state.
@@ -71,7 +125,15 @@ class OgnelissInCallService : InCallService() {
         } else {
             call.state == Call.STATE_DIALING || call.state == Call.STATE_CONNECTING
         }
-        if (outgoing) MissedCallsNotifier.clear(this)
+        if (outgoing) {
+            MissedCallsNotifier.clear(this)
+            outgoingCalls += call
+        }
+        // Автодозвон: своя попытка идёт, чужой вызов — сеанс окончен
+        AutoRedial.onCallAdded(CallDetailsCompat.number(call.details), outgoing)
+        // Имя от оператора приходит с входящим — пишем сразу: системный журнал
+        // запишет вызов раньше, чем служба узнает о его конце
+        if (!outgoing) rememberNetworkName(call.details)
 
         /*
          * ОТСЛЕЖИВАНИЕ СОСТОЯНИЯ ВЫЗОВА.
@@ -94,6 +156,8 @@ class OgnelissInCallService : InCallService() {
         call.registerCallback(object : Call.Callback() {
             override fun onStateChanged(c: Call, state: Int) {
                 if (state == Call.STATE_ACTIVE) {
+                    // Автодозвон (1.8.0): попытка соединилась — сеанс окончен
+                    AutoRedial.onCallConnected(CallDetailsCompat.number(c.details))
                     /*
                      * Уведомление входящего снимается при ответе.
                      *
@@ -143,6 +207,29 @@ class OgnelissInCallService : InCallService() {
             call.details,
             getString(com.ogneliss.dialer.R.string.call_unknown_number)
         )
+        /*
+         * ТИХИЙ ВХОДЯЩИЙ (1.8.0, тихие часы для незнакомых).
+         *
+         * Проверка вызовов решила «без звука» и оставила метку (QuietCallGate).
+         * Тогда экран вызова НЕ открываем: он зажёг бы экран посреди ночи —
+         * ровно то, от чего тихие часы защищают. Уведомление — тихое,
+         * с кнопками ответа; звонок системы глушим сами: без роли
+         * определителя проверка сделать этого не может.
+         *
+         * Ответ из уведомления откроет экран разговора обычным путём —
+         * обработчиком выше, по переходу в «разговор».
+         */
+        @Suppress("DEPRECATION")
+        val quiet = !outgoing && call.state == Call.STATE_RINGING &&
+            QuietCallGate.take(PhoneFormatter.toE164(CallDetailsCompat.number(call.details).orEmpty()))
+        if (quiet) {
+            Logger.i(TAG, "Тихий входящий: экран не открываем, звонок глушим")
+            CallNotifications.ensureChannels(this)
+            CallForegroundService.start(this, name, incoming = true, quiet = true)
+            silenceRinger()
+            return
+        }
+
         // Foreground-сервис держит процесс живым на всё время вызова
         /*
          * Сервис запускается обычным уведомлением.
@@ -274,20 +361,77 @@ class OgnelissInCallService : InCallService() {
         )
     }
 
+    /*
+     * ЗАГЛУШИТЬ ЗВОНОК СИСТЕМЫ — НЕСКОЛЬКО РАЗ ПОДРЯД.
+     *
+     * Мелодию играет Telecom (разбор в шапке класса), а silenceRinger
+     * гасит только уже начавшуюся: вызов приходит сюда раньше, чем
+     * мелодия зазвучит. Поэтому три попытки за первую секунду — пока
+     * вызов ещё звонит. Диалеру по умолчанию этот вызов разрешён;
+     * если роль определителя уже заглушила звонок, повтор безвреден.
+     *
+     * @SuppressLint("MissingPermission"): метод помечен MODIFY_PHONE_STATE —
+     * системным разрешением, которого у приложений нет. Telecom пускает
+     * без него диалер по умолчанию (isPrivilegedDialerCalling), а сюда
+     * система приходит только к нему. Отказ — SecurityException — ловим.
+     */
+    @android.annotation.SuppressLint("MissingPermission")
+    @Suppress("DEPRECATION")
+    private fun silenceRinger() {
+        val tm = getSystemService(android.telecom.TelecomManager::class.java) ?: return
+        serviceScope.launch {
+            for (wait in SILENCE_RETRY_MS) {
+                delay(wait)
+                if (CallManager.calls.value.none { it.state == Call.STATE_RINGING }) break
+                runCatching { tm.silenceRinger() }
+                    .onFailure { Logger.w(TAG, "Не удалось заглушить звонок", it) }
+            }
+        }
+    }
+
+    /*
+     * ИМЯ ОТ ОПЕРАТОРА — В БАЗУ (1.8.0, «маркировка звонков»).
+     *
+     * Система держит имя, переданное сетью, только пока идёт вызов, и в журнал
+     * его не пишет. Запоминаем сами, чтобы журнал и карточка показали его
+     * и через неделю. Разбор — data/NetworkNames.kt.
+     */
+    private fun rememberNetworkName(details: Call.Details?) {
+        val name = CallDetailsCompat.networkName(details) ?: return
+        val e164 = PhoneFormatter.toE164(CallDetailsCompat.number(details).orEmpty())
+        if (e164.isBlank()) return
+        appScope.launch(Dispatchers.IO) { networkNames.remember(e164, name) }
+    }
+
     override fun onCallRemoved(call: Call) {
         super.onCallRemoved(call)
         // Кто и почему завершил, куда шёл звук — разбор в CallDiagnostics
         CallDiagnostics.logEnded(call, CallManager.audioState.value)
         val details = call.details
+        rememberNetworkName(details)
 
         // Сброшенный входящий: предлагаем создать напоминание.
         // Именно «сбросил на бегу и забыл» — сценарий, ради которого
         // функция и нужна
         // Направление вызова доступно в Details только с API 29;
         // ниже определяется по состоянию вызова
+        val wasOutgoing = outgoingCalls.remove(call) || CallDetailsCompat.isOutgoing(details, call)
+        /*
+         * СБРОШЕН — ЭТО «ОТКЛОНИТЬ», А НЕ «НЕ УСПЕЛ» (1.8.0).
+         *
+         * Было: любой входящий без разговора — и пропущенный тоже — давал
+         * «Перезвонить?», а настройка «Предлагать напоминание после сброса»
+         * нигде не читалась: выключить уведомление было нельзя. У пропущенного
+         * своё уведомление (MissedCallsNotifier), и ночью, в тихие часы,
+         * второе со звуком будило бы. Теперь — только отклонённый человеком
+         * (REJECTED; на части прошивок — LOCAL) и только при включённой настройке.
+         */
+        val cause = details?.disconnectCause?.code ?: RedialPolicy.CAUSE_UNKNOWN
         val wasRejected = details != null &&
-            !CallDetailsCompat.isOutgoing(details, call) &&
-            details.connectTimeMillis <= 0
+            !wasOutgoing &&
+            details.connectTimeMillis <= 0 &&
+            (cause == RedialPolicy.CAUSE_REJECTED || cause == RedialPolicy.CAUSE_LOCAL) &&
+            callbackSuggestionOn
 
         // Итоги разговора — для экрана заметки
         if (details != null) {
@@ -299,7 +443,7 @@ class OgnelissInCallService : InCallService() {
                 number = details.handle?.schemeSpecificPart,
                 displayName = CallDetailsCompat.contactDisplayName(details),
                 durationSec = duration,
-                type = if (CallDetailsCompat.isOutgoing(details, call))
+                type = if (wasOutgoing)
                     com.ogneliss.dialer.data.CallType.OUTGOING
                 else com.ogneliss.dialer.data.CallType.INCOMING
             )
@@ -334,6 +478,22 @@ class OgnelissInCallService : InCallService() {
         // вызова, и система вправе убить процесс сразу после
         com.ogneliss.dialer.background.CallEndWorker.enqueue(
             this, call.details?.handle?.schemeSpecificPart
+        )
+
+        /*
+         * Автодозвон (1.8.0) — до удаления из списка: экран вызова
+         * закрывается, когда список пуст и сеанса нет, и сеанс должен
+         * появиться раньше, чем опустеет список. Разбор — в AutoRedial.
+         */
+        AutoRedial.onCallEnded(
+            context = this,
+            number = CallDetailsCompat.number(details),
+            displayName = CallDetailsCompat.contactDisplayName(details),
+            account = details?.accountHandle,
+            outgoing = wasOutgoing,
+            connected = (details?.connectTimeMillis ?: 0L) > 0L,
+            cause = cause,
+            otherCalls = CallManager.calls.value.any { it != call }
         )
         CallManager.remove(call)
 

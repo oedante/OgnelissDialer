@@ -27,7 +27,7 @@ import com.ogneliss.dialer.log.Logger
  * 5. Метки пользователя «спам» / «мошенники».
  * 6. Номер есть в контактах — пропускаем.
  * 7. Блокировка всех не из контактов.
- * 8. Автоблокировка по оценке риска.
+ * 8. Тихие часы (1.8.0): незнакомый — без звука, повторный за 15 минут — звонит.
  *
  * ── Принцип осторожности ───────────────────────────────────────────────────
  * Пропущенный нужный звонок вредит сильнее, чем принятый спамный.
@@ -59,7 +59,14 @@ object SpamPolicy {
         val tags: List<String> = emptyList(),
         /** Оценка риска 0..100 из офлайн-анализа. */
         val category: NumberCategory = NumberCategory.UNKNOWN,
-        val settings: Settings = Settings()
+        val settings: Settings = Settings(),
+        /** Минута суток по часам телефона — для тихих часов; −1 — не задана. */
+        val minuteOfDay: Int = -1,
+        /**
+         * Этот номер уже звонил без звука в тихие часы за последние
+         * 15 минут — значит, перезванивает: пропускаем со звуком.
+         */
+        val repeatCall: Boolean = false
     )
 
     /** Снимок настроек фильтрации. */
@@ -67,6 +74,8 @@ object SpamPolicy {
         val blockHidden: Boolean = false,
         val blockNotInContacts: Boolean = false,
         val blockTaggedSpam: Boolean = true,
+        /** Тихие часы для незнакомых (1.8.0): разбор в QuietHours. */
+        val quietHours: QuietHours = QuietHours.OFF
     )
 
     /**
@@ -118,6 +127,12 @@ object SpamPolicy {
         USER_TAG,
         IN_CONTACTS,
         NOT_IN_CONTACTS,
+
+        /** Тихие часы: незнакомый номер — без звука (1.8.0). */
+        QUIET_HOURS,
+
+        /** Тихие часы, но номер перезвонил за 15 минут — звонит. */
+        QUIET_REPEAT,
         NO_RULE_MATCHED
     }
 
@@ -129,10 +144,14 @@ object SpamPolicy {
         //    не из контактов» отрезало бы школу, врача и курьера.
         if (input.inAllowList) return allow(masked, Reason.ALLOW_LIST)
 
-        // 2. Скрытый номер
+        // 2. Скрытый номер. В тихие часы — без звука: повтор у скрытого
+        //    не распознать, номера нет
         if (input.number.isNullOrBlank()) {
-            return if (s.blockHidden) deny(HIDDEN_LABEL, Reason.HIDDEN_BLOCKED)
-            else allow(HIDDEN_LABEL, Reason.HIDDEN_ALLOWED)
+            return when {
+                s.blockHidden -> deny(HIDDEN_LABEL, Reason.HIDDEN_BLOCKED)
+                isQuietNow(input) -> silence(HIDDEN_LABEL, Reason.QUIET_HOURS)
+                else -> allow(HIDDEN_LABEL, Reason.HIDDEN_ALLOWED)
+            }
         }
 
         // 3. Системный список Android
@@ -151,6 +170,13 @@ object SpamPolicy {
 
         // 7. Блокировка всех незнакомых
         if (s.blockNotInContacts) return deny(masked, Reason.NOT_IN_CONTACTS)
+
+        // 8. Тихие часы (1.8.0): не блокировка, а беззвучный пропуск —
+        //    вызов останется в журнале. Перезвонил за 15 минут — срочно
+        if (isQuietNow(input)) {
+            return if (input.repeatCall) allow(masked, Reason.QUIET_REPEAT)
+            else silence(masked, Reason.QUIET_HOURS)
+        }
 
         /*
          * ОЦЕНКИ РИСКА БОЛЬШЕ НЕТ.
@@ -178,6 +204,9 @@ object SpamPolicy {
 
         return allow(masked, Reason.NO_RULE_MATCHED)
     }
+
+    private fun isQuietNow(input: SpamInput): Boolean =
+        input.minuteOfDay >= 0 && input.settings.quietHours.contains(input.minuteOfDay)
 
     private fun allow(masked: String, reason: Reason): Decision {
         Logger.i(TAG, "ПРОПУЩЕН $masked: $reason")

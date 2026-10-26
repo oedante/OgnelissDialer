@@ -53,9 +53,12 @@ object BlockedReasonText {
         SpamPolicy.Reason.USER_TAG -> R.string.block_reason_user_tag
         SpamPolicy.Reason.HIDDEN_BLOCKED -> R.string.block_reason_hidden
         SpamPolicy.Reason.NOT_IN_CONTACTS -> R.string.block_reason_not_in_contacts
+        // «Без звука — тихие часы» (1.8.0): видно, почему телефон молчал
+        SpamPolicy.Reason.QUIET_HOURS -> R.string.block_reason_quiet_hours
 
         SpamPolicy.Reason.ALLOW_LIST,
         SpamPolicy.Reason.HIDDEN_ALLOWED,
+        SpamPolicy.Reason.QUIET_REPEAT,
         SpamPolicy.Reason.IN_CONTACTS,
         SpamPolicy.Reason.NO_RULE_MATCHED -> null
     }

@@ -257,12 +257,8 @@ private fun settingPath(entry: SettingEntry): String {
     val settings = stringResource(R.string.nav_settings)
     val section = stringResource(entry.category.titleRes)
     val title = stringResource(entry.titleRes)
-    // Спрятан под «Дополнительно» — путь называет и группу
-    return if (SettingsRegistry.isInAdvancedGroup(entry)) {
-        stringResource(R.string.faq_path_advanced, settings, section, stringResource(R.string.settings_advanced), title)
-    } else {
-        stringResource(R.string.faq_path, settings, section, title)
-    }
+    // С 1.8.0 пункты не прячутся под «Дополнительно» — путь всегда из трёх частей
+    return stringResource(R.string.faq_path, settings, section, title)
 }
 
 @Composable

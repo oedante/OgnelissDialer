@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.ActionIconButton
 import com.ogneliss.dialer.settings.ContactSort
 import com.ogneliss.dialer.data.ContactNames
 import com.ogneliss.dialer.ui.components.SectionBand
@@ -13,7 +14,6 @@ import com.ogneliss.dialer.ui.theme.OgnelissIcons
 
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
-import com.ogneliss.dialer.ui.theme.Dimens
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.background
@@ -45,12 +45,10 @@ import com.ogneliss.dialer.data.CallLogGroup
 import com.ogneliss.dialer.data.CallType
 import com.ogneliss.dialer.data.Contact
 import com.ogneliss.dialer.ui.components.ScrollToTopPill
-import com.ogneliss.dialer.ui.components.blurBehindCards
 import com.ogneliss.dialer.ui.components.rememberTouchAnchor
 import com.ogneliss.dialer.ui.components.trackTouch
 import com.ogneliss.dialer.ui.components.ContactFilterSheet
 import com.ogneliss.dialer.ui.components.CallLogSkeleton
-import com.ogneliss.dialer.ui.components.SimChooserDialog
 import com.ogneliss.dialer.ui.components.swipe.RevealAction
 import com.ogneliss.dialer.ui.components.swipe.SwipeRevealController
 import com.ogneliss.dialer.ui.components.swipe.SwipeRevealRow
@@ -396,14 +394,8 @@ fun ContactsScreen(
     LaunchedEffect(closeSwipesToken) {
         if (closeSwipesToken > 0) swipeController.closeAll()
     }
-    simRequest?.let { request ->
-        SimChooserDialog(
-            displayName = request.displayName,
-            sims = request.sims,
-            onChoose = request.onChosen,
-            onDismiss = { vm.dismissSimRequest() }
-        )
-    }
+    // Карточки выбора SIM показывает корневой экран — SimChoiceOverlay, 1.8.0;
+    // здесь — только возврат сдвинутой строки, когда выбор закрыт
 
     val startHint = remember(settings.swipeRight) {
         vm.directActionAppearance(settings.swipeRight)
@@ -565,7 +557,8 @@ fun ContactsScreen(
 
     Scaffold(
         // Под карточками долгого нажатия экран размывается (1.5.7)
-        modifier = Modifier.blurBehindCards(selectedContact != null),
+        // Размытие под карточками — в корне (RootScreen.kt, LocalCardsBlur, 1.8.0)
+        modifier = Modifier,
         // Отступы под системные панели: в edge-to-edge содержимое
         // иначе уезжает под строку состояния и кнопки навигации
         contentWindowInsets = WindowInsets.safeDrawing,
@@ -883,6 +876,24 @@ fun ContactsScreen(
                                 ) { swipeController.close() }
                             },
                             /*
+                             * Долгое нажатие на трубку — выбор SIM (1.8.0).
+                             * Номеров несколько — тот же выбор номера, что
+                             * у касания: в нём у каждого номера свои
+                             * кнопки карт.
+                             */
+                            onCallLongPress = if (state.sims.size > 1) {
+                                {
+                                    val numbers = contact.numbers
+                                    if (numbers.size > 1) {
+                                        vm.performSwipe(SwipeAction.CALL, contactAsGroup(contact)) { swipeController.close() }
+                                    } else {
+                                        numbers.firstOrNull()?.let {
+                                            vm.chooseSim(it.value, DialerViewModel.SimAction.CALL, contact.displayName)
+                                        }
+                                    }
+                                }
+                            } else null,
+                            /*
                              * Через performSwipe: он сам решает, нужен ли
                              * выбор SIM, и закрывает панель перед диалогом.
                              */
@@ -966,6 +977,24 @@ fun ContactsScreen(
                                     SwipeAction.CALL, contactAsGroup(contact)
                                 ) { swipeController.close() }
                             },
+                            /*
+                             * Долгое нажатие на трубку — выбор SIM (1.8.0).
+                             * Номеров несколько — тот же выбор номера, что
+                             * у касания: в нём у каждого номера свои
+                             * кнопки карт.
+                             */
+                            onCallLongPress = if (state.sims.size > 1) {
+                                {
+                                    val numbers = contact.numbers
+                                    if (numbers.size > 1) {
+                                        vm.performSwipe(SwipeAction.CALL, contactAsGroup(contact)) { swipeController.close() }
+                                    } else {
+                                        numbers.firstOrNull()?.let {
+                                            vm.chooseSim(it.value, DialerViewModel.SimAction.CALL, contact.displayName)
+                                        }
+                                    }
+                                }
+                            } else null,
                             /*
                              * Через performSwipe: он сам решает, нужен ли
                              * выбор SIM, и закрывает панель перед диалогом.
@@ -1127,6 +1156,8 @@ private fun ContactRow(
     onCall: () -> Unit,
     onOpen: () -> Unit,
     onLongPress: () -> Unit,
+    /** Долгое нажатие на трубку — выбор SIM (1.8.0); null — одна карта. */
+    onCallLongPress: (() -> Unit)? = null,
     /** Выбор контакта (закрепить, псевдозвонок): нажатия выбирают, а не открывают. */
     pickMode: Boolean = false,
     /*
@@ -1310,18 +1341,14 @@ private fun ContactRow(
                  * трубка того же цвета, что в журнале и на кнопке
                  * «Позвонить» в карточке.
                  */
-                IconButton(
+                ActionIconButton(
+                    icon = OgnelissIcons.Call,
+                    contentDescription = stringResource(R.string.a11y_call_number, contact.displayName),
+                    tint = CallGreen,
                     onClick = onCall,
-                    modifier = Modifier.size(Dimens.MIN_TOUCH_TARGET)
-                ) {
-                    Icon(
-                        OgnelissIcons.Call,
-                        contentDescription = stringResource(
-                            R.string.a11y_call_number, contact.displayName
-                        ),
-                        tint = CallGreen
-                    )
-                }
+                    onLongClick = onCallLongPress,
+                    onLongClickLabel = stringResource(R.string.a11y_choose_sim)
+                )
 
                 /*
                  * ЗВЕЗДЫ В СТРОКЕ БОЛЬШЕ НЕТ (1.5.8, обзор интерфейса, У2).

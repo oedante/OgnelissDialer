@@ -683,7 +683,7 @@ Open Settings → Security → Special app access and allow this app to modify s
     <string name="call_photo_circle">Circle</string>
     <string name="call_photo_square">Square</string>
     <string name="settings_ui_scale">Interface scale</string>
-    <string name="settings_ui_scale_text">Size of buttons, spacing and text. “Auto” adapts to the screen width: a little denser on narrow phones, unchanged on wide ones</string>
+    <string name="settings_ui_scale_text">Size of buttons, spacing and text. Default is 90%. “Auto” adapts to the screen width: a little denser on narrow phones, unchanged on wide ones</string>
     <string name="ui_scale_auto">Auto (by screen)</string>
     <string name="ui_scale_auto_now">Auto — now %1$d %%</string>
     <string name="ui_scale_90" formatted="false">Smaller — 90 %</string>
@@ -760,11 +760,6 @@ Open Settings → Security → Special app access and allow this app to modify s
     <string name="answer_mode_slide">Slide</string>
     <string name="incall_slide_hint">Slide right to answer, left to decline</string>
     <!-- 1.5.8: настройки — «Дополнительно», отметка изменённых, «Вернуть как было» -->
-    <string name="settings_advanced">Advanced</string>
-    <plurals name="settings_advanced_count">
-        <item quantity="one">%1$d more setting</item>
-        <item quantity="other">%1$d more settings</item>
-    </plurals>
     <string name="settings_reset_section">Restore defaults</string>
     <string name="settings_reset_section_text">Changed: %1$d — back to the default values</string>
     <string name="settings_reset_section_confirm">Restore the default values in “%1$s”? Changed settings: %2$d. Other sections, notes and lists stay as they are.</string>
@@ -793,7 +788,6 @@ Open Settings → Security → Special app access and allow this app to modify s
     <string name="faq_lead">Short answers to common questions. The button under an answer opens the setting it is about.</string>
     <string name="faq_keywords">help faq how question answer</string>
     <string name="faq_path">%1$s → %2$s → “%3$s”</string>
-    <string name="faq_path_advanced">%1$s → %2$s → %3$s → “%4$s”</string>
     <string name="faq_path_section">%1$s → %2$s</string>
     <string name="faq_make_default">Make default</string>
     <string name="faq_write">Write an email</string>
@@ -818,7 +812,7 @@ Open Settings → Security → Special app access and allow this app to modify s
     <string name="faq_q_slide">How do I answer calls by sliding — or get the buttons back?</string>
     <string name="faq_a_slide">%1$s. “Tap” gives two ordinary buttons. With “Slide” you move the button: right to answer, left to decline — so a call is not answered or rejected by accident while you take the phone out of your pocket. With TalkBack, calls are always answered with buttons.</string>
     <string name="faq_q_sim">How do I choose the SIM card for a call?</string>
-    <string name="faq_a_sim">Each SIM card has its own call button. The app remembers the card chosen for a number and offers it again next time (%1$s). To tell the cards apart, name them: %2$s.</string>
+    <string name="faq_a_sim">Long-press any call or SMS button — in the call log, contacts, a contact card — and choose the card for that action. The app remembers the card chosen for a number and offers it again next time (%1$s). To tell the cards apart, name them: %2$s.</string>
     <string name="faq_q_missed">Missed calls only appear when I open the app. What can I do?</string>
     <string name="faq_a_missed">Most likely the system puts the app to sleep to save battery. Allow it to work in the background — %1$s — and missed calls will appear right away.</string>
     <string name="faq_q_recording">Can I record calls?</string>
@@ -907,4 +901,67 @@ Open Settings → Security → Special app access and allow this app to modify s
     <string name="sim_chooser_title_sms">Which SIM to text from?</string>
     <string name="a11y_choose_sim">Choose SIM</string>
     <string name="a11y_choose_sim_sms">Text from another SIM</string>
+    <!-- 1.8.0: выбор SIM карточками -->
+    <string name="sim_choice_same_operator">same carrier</string>
+    <string name="sim_choice_remember_note">Your choice will be remembered for this number (Settings → SIM).</string>
+    <string name="sim_choice_sms_note">The SIM is passed to your messaging app as a hint — some apps will ask again.</string>
+    <string name="sim_choice_operator_note">Carrier is from the numbering plan: the number may have moved to another carrier.</string>
+    <!-- 1.8.0: выбор номера карточками -->
+    <string name="number_picker_hint">Which number?</string>
+    <!-- Автодозвон (1.8.0): настройка и экран вызова -->
+    <string name="settings_auto_redial">Auto redial</string>
+    <string name="settings_auto_redial_text">If the line is busy or nobody answers, the number is dialed again. “Offer” asks on the call screen, “Right away” starts without asking. Emergency and short service numbers are never redialed.</string>
+    <string name="auto_redial_off">Off</string>
+    <string name="auto_redial_offer">Offer</string>
+    <string name="auto_redial_auto">Right away</string>
+    <string name="settings_auto_redial_pace">Redial attempts</string>
+    <string name="settings_auto_redial_pace_text">How many times and how often to dial again. You can stop at any moment on the call screen.</string>
+    <string name="redial_pace_3_10">3 attempts, every 10 s</string>
+    <string name="redial_pace_5_10">5 attempts, every 10 s</string>
+    <string name="redial_pace_5_30">5 attempts, every 30 s</string>
+    <string name="redial_pace_10_60">10 attempts, once a minute</string>
+    <string name="keywords_auto_redial">redial repeat busy call again keep trying</string>
+    <string name="redial_reason_busy">Busy</string>
+    <string name="redial_reason_no_answer">No answer</string>
+    <string name="redial_reason_failed">Call failed</string>
+    <string name="redial_offer_hint">Auto redial: up to %1$d times, every %2$d s</string>
+    <string name="redial_waiting">Redialing in %d s</string>
+    <string name="redial_attempt">Auto redial · attempt %1$d of %2$d</string>
+    <string name="redial_calling">Dialing again…</string>
+    <string name="redial_gave_up">Couldn’t get through</string>
+    <string name="redial_gave_up_detail">Attempts made: %d</string>
+    <string name="redial_action_start">Keep trying</string>
+    <string name="redial_action_now">Call now</string>
+    <string name="redial_action_stop">Stop</string>
+    <string name="redial_action_again">Try again</string>
+    <string name="redial_spoken">%1$s. Auto redial, attempt %2$d of %3$d</string>
+    <!-- Памятка о мошенниках и тихие часы (1.8.0) -->
+    <string name="settings_scam_memo">Fraud reminder</string>
+    <string name="settings_scam_memo_text">If a call with an unknown number lasts over two minutes, the call screen reminds you once: never share SMS codes, card details or passwords. The phone vibrates briefly so you notice.</string>
+    <string name="keywords_scam_memo">scam fraud safety bank code warning</string>
+    <string name="scam_memo_title">Long call with an unknown number</string>
+    <string name="scam_memo_text">Don’t share SMS codes, card details or passwords. Banks, the police and “security services” never ask for them. In doubt, hang up and call your bank using the number on your card.</string>
+    <string name="scam_memo_ok">Got it</string>
+    <string name="settings_quiet_hours">Quiet hours for unknown numbers</string>
+    <string name="settings_quiet_hours_text">During these hours, calls from numbers not in your contacts come in silently and don’t wake the screen — they stay in the call log. If the same number calls again within 15 minutes, the phone rings: that’s how urgent calls get through. Numbers on the allow list always ring.</string>
+    <string name="keywords_quiet_hours">night sleep silent do not disturb quiet unknown</string>
+    <string name="quiet_hours_off">Off</string>
+    <string name="quiet_hours_22_08">10 PM – 8 AM</string>
+    <string name="quiet_hours_23_07">11 PM – 7 AM</string>
+    <string name="quiet_hours_always">All day</string>
+    <string name="block_reason_quiet_hours">quiet hours</string>
+    <string name="quiet_call_notification">Incoming call · quiet hours</string>
+    <!-- Имя от оператора — маркировка звонков (1.8.0) -->
+    <string name="cnap_source">from your carrier</string>
+    <string name="cnap_source_line">From your carrier</string>
+    <string name="cnap_source_named">%s — from your carrier</string>
+    <!-- Вопросы и ответы 1.8.0: автодозвон, тихие часы, имя от оператора, памятка -->
+    <string name="faq_q_redial">How do I get through when the line is busy?</string>
+    <string name="faq_a_redial">After “Busy” or “No answer”, the call screen offers “Keep trying”: the app dials the number again after a pause, as many times as set (%2$s). To redial without asking, choose “Right away” in %1$s. Emergency and short service numbers are never redialed, and “End call” always stops it.</string>
+    <string name="faq_q_quiet">Can I avoid hearing night calls from unknown numbers?</string>
+    <string name="faq_a_quiet">Yes: %1$s. During those hours such a call comes in silently and doesn’t wake the screen; in the morning it’s in the call log marked “Silenced — quiet hours”. If the same number calls again within 15 minutes, the phone rings. Contacts and numbers on the allow list always ring.</string>
+    <string name="faq_q_operator_name">Why does a number show a company name “from your carrier”?</string>
+    <string name="faq_a_operator_name">Many organizations call with a label: the carrier sends the company name along with the number (in Russia this is required since 1 September 2025). The app shows it on the call screen and keeps it for the call log and the contact card — for numbers not in your contacts. The name comes from the network, not from the app: your contacts and notes always take priority.</string>
+    <string name="faq_q_scam">What is the fraud reminder during a call?</string>
+    <string name="faq_a_scam">If a call with an unknown number lasts over two minutes, the call screen reminds you once: never share SMS codes, card details or passwords. The app doesn’t listen to the call and doesn’t know who’s on the line — the rule holds for any call. Turn it off here: %1$s.</string>
 </resources>

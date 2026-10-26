@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.theme.FlowUi
@@ -59,9 +60,17 @@ fun RowScope.QuickAction(
      */
     onLongClick: (() -> Unit)? = null,
     onLongClickLabel: String? = null,
+    /**
+     * Главное действие ряда (1.8.0) — «Позвонить» в карточке: круг 64 dp
+     * вместо 48, значок крупнее, подпись темнее. Ряду с таким действием
+     * нужно выравнивание по низу: подписи стоят на одной линии, а крупный
+     * круг приподнимается над соседями.
+     */
+    prominent: Boolean = false,
     onClick: () -> Unit
 ) {
     val label = stringResource(labelRes)
+    val circle = if (prominent) PROMINENT_CIRCLE else FlowUi.actionCircleSize
 
     /*
      * ══════════════════════════════════════════════════════════════════════
@@ -106,7 +115,7 @@ fun RowScope.QuickAction(
         Surface(
             shape = CircleShape,
             color = container ?: MaterialTheme.colorScheme.surfaceContainerHighest,
-            modifier = Modifier.size(FlowUi.actionCircleSize)
+            modifier = Modifier.size(circle)
         ) {
             Box(contentAlignment = Alignment.Center) {
                 val labelsShown = LocalAppearance.current.buttonLabels
@@ -117,7 +126,8 @@ fun RowScope.QuickAction(
                     contentDescription = if (labelsShown) null else label,
                     // Нейтральный, а не синий (1.4.0): цвет остаётся у действий
                     // со смыслом — зелёный звонок, красная блокировка
-                    tint = tint ?: MaterialTheme.colorScheme.onSurface
+                    tint = tint ?: MaterialTheme.colorScheme.onSurface,
+                    modifier = if (prominent) Modifier.size(PROMINENT_ICON) else Modifier
                 )
             }
         }
@@ -130,11 +140,19 @@ fun RowScope.QuickAction(
             // а не рвётся посреди («Поделитьс / я» лёжа)
             FitText(
                 label,
-                style = MaterialTheme.typography.labelSmall,
+                style = if (prominent) {
+                    MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold)
+                } else {
+                    MaterialTheme.typography.labelSmall
+                },
                 textAlign = TextAlign.Center,
                 maxLines = 2,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = if (prominent) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
 }
+
+/** Круг главного действия ряда: заметно крупнее соседних 48 dp. */
+private val PROMINENT_CIRCLE = 64.dp
+private val PROMINENT_ICON = 30.dp

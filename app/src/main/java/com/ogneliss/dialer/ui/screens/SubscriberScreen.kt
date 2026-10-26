@@ -81,7 +81,6 @@ import com.ogneliss.dialer.ui.components.QuickAction
 import com.ogneliss.dialer.ui.components.rememberActionHaptics
 import com.ogneliss.dialer.ui.components.rememberTouchAnchor
 import com.ogneliss.dialer.ui.components.trackTouch
-import com.ogneliss.dialer.ui.components.blurBehindCards
 import com.ogneliss.dialer.R
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
@@ -556,6 +555,10 @@ fun SubscriberScreen(
             },
             links = messengerLinks,
             onSms = { number -> writeSheetOpen = false; vm.openSms(number) },
+            onSmsChooseSim = if (state.sims.size > 1) {
+                // Имя — из книги по номеру (chooseSim): заголовок карточки объявлен ниже
+                { number -> writeSheetOpen = false; vm.chooseSim(number, DialerViewModel.SimAction.SMS) }
+            } else null,
             onMessenger = { link ->
                 writeSheetOpen = false
                 ContactMessengers.open(appContext, link)
@@ -691,32 +694,12 @@ fun SubscriberScreen(
     var moreOpen by remember { mutableStateOf(false) }
 
     /*
-     * ВЫБОР SIM ДОЛГИМ НАЖАТИЕМ (1.7.0, автор: «в карточке по долгому
-     * нажатию кнопки вызова или смс выбирать, с какой именно сим-карты
-     * звонить»). Касание — как раньше: запомненная для номера карта или
-     * общая по умолчанию. Долгое — окно выбора; выбранная для звонка
-     * запоминается за номером (настройка «Запоминать SIM»). Для SMS
-     * карта — подсказка приложению сообщений: разбор у ExternalApps.smsFromSim.
-     * Одна карта — долгого нажатия нет.
+     * ВЫБОР SIM ДОЛГИМ НАЖАТИЕМ (1.7.0; с 1.8.0 — общими карточками
+     * SimChoiceOverlay из RootScreen, vm.chooseSim). Касание — как раньше:
+     * запомненная для номера карта или общая по умолчанию. Одна карта —
+     * долгого нажатия нет.
      */
-    var simChoice by remember { mutableStateOf<Pair<String, Boolean>?>(null) }
     val multiSim = state.sims.size > 1
-    simChoice?.let { (number, forSms) ->
-        com.ogneliss.dialer.ui.components.SimChooserDialog(
-            displayName = PhoneFormatter.format(number),
-            sims = state.sims,
-            titleRes = if (forSms) R.string.sim_chooser_title_sms else R.string.sim_chooser_title,
-            onChoose = { slot ->
-                simChoice = null
-                if (forSms) {
-                    state.sims.firstOrNull { it.slotIndex == slot }?.let { vm.openSmsFromSim(number, it) }
-                } else {
-                    vm.call(number, slot)
-                }
-            },
-            onDismiss = { simChoice = null }
-        )
-    }
     // В меню места много — полные подписи, а не «Блок» / «Разблок.»
     val blockLabelRes = when {
         isBlocked -> R.string.action_unblock
@@ -820,9 +803,27 @@ fun SubscriberScreen(
                 else numberInfoLabels.infoSummary(state.numberInfo[group.e164])
         }
     }
+    /*
+     * ИМЯ ОТ ОПЕРАТОРА (1.8.0, «маркировка звонков»): разбор в data/NetworkNames.kt.
+     * Только у номера не из книги — книга и заметка человека важнее сети,
+     * и порядок тот же, что в журнале: имя, заметка, имя от оператора, номер.
+     */
+    val operatorName by produceState<String?>(null, group.e164, knownContactId, shownName) {
+        value = if (knownContactId == null && shownName.isNullOrBlank()) {
+            vm.networkNameOf(group.e164)
+        } else null
+    }
+    val noteTitle = note?.note?.takeIf { it.isNotBlank() }
     val title = shownName?.takeIf { it.isNotBlank() }
-        ?: note?.note?.takeIf { it.isNotBlank() }
+        ?: noteTitle
+        ?: operatorName
         ?: PhoneFormatter.format(group.number)
+    // Чья подпись в заголовке — видно строкой ниже, как в журнале
+    val networkLineText = operatorName?.let { name ->
+        if (noteTitle != null) stringResource(R.string.cnap_source_named, name)
+        else listOfNotNull(stringResource(R.string.cnap_source_line), infoLine).joinToString(" · ")
+    }
+    val headerInfoLine = networkLineText ?: infoLine
 
 
     /*
@@ -945,9 +946,8 @@ fun SubscriberScreen(
             )
         }
         Scaffold(
-            // Под карточками номера экран размывается (1.5.8)
+            // Размытие под карточками номера — в корне (RootScreen.kt, LocalCardsBlur, 1.8.0)
             modifier = Modifier
-                .blurBehindCards(numberCards != null)
                 .onGloballyPositioned { coords -> cardTopInRoot = coords.positionInRoot().y },
             // Как настройки Ogneliss Mail: серо-голубая страница, группы — карточками (1.5.6)
             containerColor = com.ogneliss.dialer.ui.theme.OgnelissTheme.pageColor(com.ogneliss.dialer.ui.theme.PageTone.TINTED),
@@ -1190,48 +1190,6 @@ fun SubscriberScreen(
                 // белые на серой панели, как клавиатура и кнопки разговора
                 val actionKey = PanelColors.key()
                 /*
-                 * «ПОЗВОНИТЬ» — ПЛИТКА В ОБЩЕМ РЯДУ.
-                 *
-                 * ══════════════════════════════════════════════
-                 * ПОЧЕМУ БОЛЬШЕ НЕ ОТДЕЛЬНАЯ КНОПКА
-                 * ══════════════════════════════════════════════
-                 * Широкая кнопка занимала отдельную строку
-                 * высотой 56 dp плюс отступы — около 80 dp
-                 * первого экрана. Под ней всё равно шёл ряд
-                 * из четырёх плиток, то есть две полосы
-                 * действий подряд.
-                 *
-                 * В один ряд помещается всё, и номера
-                 * поднимаются выше на целую строку.
-                 *
-                 * ── Что сохранено ──────────────────────────────
-                 * Зелёный цвет: это код телефонии, тот же,
-                 * что у свайпа вызова и кнопки ответа.
-                 * И место первой слева — там, куда палец
-                 * идёт по привычке.
-                 *
-                 * ⚠️ Плитка нажимается целиком, как и раньше
-                 * кнопка, и высота её не меньше обязательных
-                 * 48 dp. Промахнуться не легче, чем прежде:
-                 * ширина стала меньше, но по вертикали ничего
-                 * не изменилось.
-                 */
-                QuickAction(
-                    OgnelissIcons.Call,
-                    R.string.action_call,
-                    // Круг зелёный, значок в нём белый.
-                    // Подпись под кругом — обычного цвета:
-                    // она лежит на фоне карточки, а не
-                    // на заливке
-                    container = CallGreen,
-                    tint = Color.White,
-                    onLongClick = if (multiSim) { { simChoice = group.number to false } } else null,
-                    onLongClickLabel = stringResource(R.string.a11y_choose_sim)
-                ) {
-                    vm.call(group.number)
-                }
-
-                /*
                  * «НАПИСАТЬ» ВМЕСТО «SMS» (1.2.5).
                  * Нет мессенджеров у контакта — сразу SMS, как было:
                  * для таких контактов ничего не изменилось. Есть —
@@ -1242,7 +1200,7 @@ fun SubscriberScreen(
                     OgnelissIcons.Message,
                     R.string.action_write,
                     container = actionKey,
-                    onLongClick = if (multiSim) { { simChoice = group.number to true } } else null,
+                    onLongClick = if (multiSim) { { vm.chooseSim(group.number, DialerViewModel.SimAction.SMS, title) } } else null,
                     onLongClickLabel = stringResource(R.string.a11y_choose_sim_sms)
                 ) {
                     // Выбор — если есть что-то кроме SMS: мессенджер из книги или,
@@ -1250,6 +1208,52 @@ fun SubscriberScreen(
                     if (messengerLinks.isEmpty() && byNumberMessengers.isEmpty()) vm.openSms(group.number)
                     else writeSheetOpen = true
                 }
+                /*
+                 * Короткая подпись «Напомнить».
+                 *
+                 * «Напомнить перезвонить» не помещалось
+                 * в плитку и разъезжалось на две строки,
+                 * из-за чего эта плитка была выше трёх
+                 * соседних. Смысл не теряется: плитки стоят
+                 * в карточке конкретного человека,
+                 * и «напомнить» может значить только одно.
+                 *
+                 * Полная фраза осталась там, где места
+                 * хватает: в меню длинного нажатия,
+                 * в настройках свайпов и в названии канала
+                 * уведомлений.
+                 */
+                QuickAction(OgnelissIcons.Alarm, R.string.action_remind_short, container = actionKey) {
+                    vm.requestReminder(group)
+                }
+                /*
+                 * «ПОЗВОНИТЬ» — ПО ЦЕНТРУ И КРУПНЕЕ (1.8.0).
+                 *
+                 * Было (1.2.5–1.7.0): первой слева, того же размера, что
+                 * соседи. Автор выбрал «вызов по центру в карточке»:
+                 * наблюдения Hoober — центр экрана нажимают быстрее
+                 * и точнее, а нижний левый угол правой руке — дальний.
+                 * Теперь главное действие там же, где клавиатура на
+                 * панели журнала: по центру снизу, кругом 64 dp —
+                 * большой палец попадает любой рукой.
+                 *
+                 * ── Что сохранено ──────────────────────────────────────
+                 * Зелёный круг и белая трубка — код телефонии, как
+                 * у свайпа вызова и кнопки ответа. Плитка нажимается
+                 * целиком, долгое нажатие — выбор SIM.
+                 */
+                QuickAction(
+                    OgnelissIcons.Call,
+                    R.string.action_call,
+                    container = CallGreen,
+                    tint = Color.White,
+                    onLongClick = if (multiSim) { { vm.chooseSim(group.number, DialerViewModel.SimAction.CALL, title) } } else null,
+                    onLongClickLabel = stringResource(R.string.a11y_choose_sim),
+                    prominent = true
+                ) {
+                    vm.call(group.number)
+                }
+
                 /*
                  * ПОДЕЛИТЬСЯ КОНТАКТОМ.
                  *
@@ -1281,24 +1285,6 @@ fun SubscriberScreen(
                     QuickAction(OgnelissIcons.Share, R.string.action_share, container = actionKey) {
                         shareCard()
                     }
-                }
-                /*
-                 * Короткая подпись «Напомнить».
-                 *
-                 * «Напомнить перезвонить» не помещалось
-                 * в плитку и разъезжалось на две строки,
-                 * из-за чего эта плитка была выше трёх
-                 * соседних. Смысл не теряется: плитки стоят
-                 * в карточке конкретного человека,
-                 * и «напомнить» может значить только одно.
-                 *
-                 * Полная фраза осталась там, где места
-                 * хватает: в меню длинного нажатия,
-                 * в настройках свайпов и в названии канала
-                 * уведомлений.
-                 */
-                QuickAction(OgnelissIcons.Alarm, R.string.action_remind_short, container = actionKey) {
-                    vm.requestReminder(group)
                 }
                 /*
                  * БЛОКИРОВКА — ПЕРЕКЛЮЧАТЕЛЬ, А НЕ КНОПКА.
@@ -1742,7 +1728,7 @@ fun SubscriberScreen(
                                      * не из книги пустая»). Та же строка, что под номером
                                      * в журнале, по той же настройке «Оператор и регион».
                                      */
-                                    infoLine?.let { line ->
+                                    headerInfoLine?.let { line ->
                                         Text(
                                             line,
                                             style = MaterialTheme.typography.bodyMedium,
@@ -1805,7 +1791,9 @@ fun SubscriberScreen(
                         if (twoColumns) {
                             Row(
                                 Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(Space.s)
+                                horizontalArrangement = Arrangement.spacedBy(Space.s),
+                                // По низу: подписи на одной линии, крупный «Позвонить» выше соседей
+                                verticalAlignment = Alignment.Bottom
                             ) { quickActions() }
                         }
                     }
@@ -1993,7 +1981,7 @@ fun SubscriberScreen(
                                 numberCardsAnchor = touchAnchor.screenY
                                 numberCards = NumberCardsTarget(number, label)
                             },
-                            onSmsLongPress = if (multiSim) { { simChoice = number to true } } else null
+                            onSmsLongPress = if (multiSim) { { vm.chooseSim(number, DialerViewModel.SimAction.SMS, title) } } else null
                         )
                     }
                     }
@@ -2578,7 +2566,9 @@ fun SubscriberScreen(
                         Modifier
                             .fillMaxWidth()
                             .padding(horizontal = FlowUi.contentPadding, vertical = Space.m),
-                        horizontalArrangement = Arrangement.spacedBy(Space.s)
+                        horizontalArrangement = Arrangement.spacedBy(Space.s),
+                        // По низу: подписи на одной линии, крупный «Позвонить» выше соседей
+                        verticalAlignment = Alignment.Bottom
                     ) { quickActions() }
                 }
             }
@@ -2602,6 +2592,7 @@ fun SubscriberScreen(
 
     if (editingNote) {
         NoteEditorDialog(
+            displayName = title,
             initialNote = note?.note.orEmpty(),
             initialTags = note?.tags?.toSet() ?: emptySet(),
             onSave = { text, tags ->

@@ -129,6 +129,20 @@ object Faq {
                     "sim", R.string.faq_q_sim, R.string.faq_a_sim,
                     listOf(FaqLink.Setting("remember_sim"), FaqLink.Setting("sim_labels"))
                 ),
+                // 1.8.0: автодозвон, тихие часы, имя от оператора, памятка
+                FaqItem(
+                    "redial", R.string.faq_q_redial, R.string.faq_a_redial,
+                    listOf(FaqLink.Setting("auto_redial"), FaqLink.Setting("auto_redial_pace"))
+                ),
+                FaqItem(
+                    "quiet", R.string.faq_q_quiet, R.string.faq_a_quiet,
+                    listOf(FaqLink.Setting("quiet_hours"))
+                ),
+                FaqItem("operator_name", R.string.faq_q_operator_name, R.string.faq_a_operator_name),
+                FaqItem(
+                    "scam", R.string.faq_q_scam, R.string.faq_a_scam,
+                    listOf(FaqLink.Setting("scam_memo"))
+                ),
                 FaqItem(
                     "missed", R.string.faq_q_missed, R.string.faq_a_missed,
                     listOf(FaqLink.Setting("battery"))

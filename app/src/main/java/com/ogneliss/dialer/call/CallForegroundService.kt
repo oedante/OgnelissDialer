@@ -24,10 +24,17 @@ class CallForegroundService : Service() {
          *        урежет его до строчки, и на заблокированном экране
          *        ответить будет нечем.
          */
-        fun start(context: Context, callerName: String, incoming: Boolean = false) {
+        fun start(
+            context: Context,
+            callerName: String,
+            incoming: Boolean = false,
+            /** Тихий входящий (1.8.0, тихие часы): без всплытия и полноэкранного показа. */
+            quiet: Boolean = false
+        ) {
             val i = Intent(context, CallForegroundService::class.java)
                 .putExtra("name", callerName)
                 .putExtra(EXTRA_INCOMING, incoming)
+                .putExtra(EXTRA_QUIET, quiet)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(i)
             } else context.startService(i)
@@ -35,6 +42,9 @@ class CallForegroundService : Service() {
 
         /** Признак входящего: от него зависит вид уведомления. */
         const val EXTRA_INCOMING = "incoming"
+
+        /** Тихий входящий: уведомление без звука и без показа поверх экрана. */
+        const val EXTRA_QUIET = "quiet"
 
         fun stop(context: Context) {
             context.stopService(Intent(context, CallForegroundService::class.java))
@@ -74,8 +84,11 @@ class CallForegroundService : Service() {
          * состоянию: при входящем — с кнопками, при разговоре — обычное.
          */
         val incoming = intent?.getBooleanExtra(EXTRA_INCOMING, false) == true
+        val quiet = intent?.getBooleanExtra(EXTRA_QUIET, false) == true
 
-        val notification = if (incoming) {
+        val notification = if (incoming && quiet) {
+            CallNotifications.quietIncoming(this, name)
+        } else if (incoming) {
             CallNotifications.incoming(this, name)
         } else {
             CallNotifications.ongoing(this, name, System.currentTimeMillis())

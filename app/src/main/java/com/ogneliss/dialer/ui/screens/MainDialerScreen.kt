@@ -1371,7 +1371,8 @@ fun MainDialerScreen(
 
     Scaffold(
         // Под карточками долгого нажатия экран размывается (1.5.7)
-        modifier = Modifier.blurBehindCards(selectedGroup != null),
+        // Размытие под карточками — в корне (RootScreen.kt, LocalCardsBlur, 1.8.0)
+        modifier = Modifier,
         /*
          * Своего поля сообщений у экрана больше нет: оно одно на всё
          * приложение и живёт в RootScreen. Разбор — там же.
@@ -1696,6 +1697,9 @@ fun MainDialerScreen(
                             PinnedOnlyCard(
                                 row = row,
                                 onCall = { vm.call(row.e164) },
+                                onCallLongPress = if (state.sims.size > 1) {
+                                    { vm.chooseSim(row.e164, DialerViewModel.SimAction.CALL, row.title) }
+                                } else null,
                                 // «contact:» для контакта из книги, «number:» —
                                 // для номера не из книги (1.3.2); голый номер
                                 // карточка не распознавала и закрывалась
@@ -1834,6 +1838,7 @@ fun MainDialerScreen(
     noteEditorFor?.let { group ->
         val existing = state.notes[group.e164]
         NoteEditorDialog(
+            displayName = group.displayName ?: PhoneFormatter.format(group.number),
             initialNote = existing?.note.orEmpty(),
             initialTags = existing?.tags?.toSet().orEmpty(),
             onSave = { text, tags ->
@@ -1875,14 +1880,8 @@ fun MainDialerScreen(
     LaunchedEffect(closeSwipesToken) {
         if (closeSwipesToken > 0) swipeController.closeAll()
     }
-    simRequest?.let { request ->
-        SimChooserDialog(
-            displayName = request.displayName,
-            sims = request.sims,
-            onChoose = request.onChosen,
-            onDismiss = { vm.dismissSimRequest() }
-        )
-    }
+    // Карточки выбора SIM показывает корневой экран — SimChoiceOverlay, 1.8.0;
+    // здесь — только возврат сдвинутой строки, когда выбор закрыт
 
 
     /*
@@ -2060,7 +2059,10 @@ fun MainDialerScreen(
 
     fakeCallAt?.let { at ->
         ReminderTimeDialog(
-            displayName = stringResource(R.string.fake_call_title),
+            // Окно то же, что у напоминания; шапка — псевдозвонок (1.8.0)
+            displayName = "",
+            title = stringResource(R.string.fake_call_title),
+            icon = OgnelissIcons.PhoneCallback,
             initialMillis = at,
             onSave = { chosen ->
                 FakeCall.schedule(context, chosen)
@@ -2109,6 +2111,10 @@ fun MainDialerScreen(
             onCall = { number, slot -> vm.call(number, slot); pickerFor = null },
             onSms = { vm.openSms(it); pickerFor = null },
             onMessenger = { vm.handleSwipe(SwipeAction.WHATSAPP, group); pickerFor = null },
+            onChooseSmsSim = { number ->
+                vm.chooseSim(number, DialerViewModel.SimAction.SMS, group.displayName)
+                pickerFor = null
+            },
             onDismiss = { pickerFor = null }
         )
     }

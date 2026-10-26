@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.ActionIconButton
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -243,6 +243,7 @@ fun RecordActionCards(
     if (noteOpen) {
         val existing = state.notes[group.e164]
         NoteEditorDialog(
+            displayName = group.displayName ?: PhoneFormatter.format(group.number),
             initialNote = existing?.note.orEmpty(),
             initialTags = existing?.tags?.toSet().orEmpty(),
             onSave = { text, tags ->
@@ -256,14 +257,21 @@ fun RecordActionCards(
 
     // ── Действия ───────────────────────────────────────────────────────────
     val scheme = MaterialTheme.colorScheme
+    // Долгое нажатие на «Позвонить» и «SMS» — выбор SIM (1.8.0); одна карта — нет
+    val multiSim = state.sims.size > 1
+    val who = group.displayName ?: PhoneFormatter.format(group.number)
     val call = CardAction(
         OgnelissIcons.Call, stringResource(R.string.action_call),
         onClick = { vm.call(group.number) },
-        tint = Color.White, container = CallGreen
+        tint = Color.White, container = CallGreen,
+        onLongClick = if (multiSim) { { vm.chooseSim(group.number, DialerViewModel.SimAction.CALL, who) } } else null,
+        longClickLabel = stringResource(R.string.a11y_choose_sim)
     )
     val sms = CardAction(
         OgnelissIcons.Message, stringResource(R.string.action_sms),
-        onClick = { vm.openSms(group.number) }
+        onClick = { vm.openSms(group.number) },
+        onLongClick = if (multiSim) { { vm.chooseSim(group.number, DialerViewModel.SimAction.SMS, who) } } else null,
+        longClickLabel = stringResource(R.string.a11y_choose_sim_sms)
     )
     val remind = CardAction(
         OgnelissIcons.Alarm, stringResource(R.string.action_remind_short),
@@ -464,7 +472,13 @@ fun RecordActionCards(
             infoLine = infoLabels.infoSummary(state.numberInfo[group.e164]),
             showCallInfo = origin == CardsOrigin.LOG && group.lastDate > 0,
             onCall = { number -> vm.call(number); onDismiss() },
-            onSms = { number -> vm.openSms(number); onDismiss() }
+            onSms = { number -> vm.openSms(number); onDismiss() },
+            onChooseSim = if (state.sims.size > 1) {
+                { number, action ->
+                    vm.chooseSim(number, action, group.displayName)
+                    onDismiss()
+                }
+            } else null
         )
     }
 }
@@ -484,7 +498,9 @@ private fun ColumnScope.RecordPreview(
     infoLine: String?,
     showCallInfo: Boolean,
     onCall: (String) -> Unit,
-    onSms: (String) -> Unit
+    onSms: (String) -> Unit,
+    /** Долгое нажатие на трубку или конверт номера — выбор SIM (1.8.0); null — одна карта. */
+    onChooseSim: ((String, DialerViewModel.SimAction) -> Unit)? = null
 ) {
     val scheme = MaterialTheme.colorScheme
     val locale = ConfigurationCompat.getLocales(LocalConfiguration.current)[0]
@@ -569,7 +585,7 @@ private fun ColumnScope.RecordPreview(
     if (numbers.size >= 2) {
         Spacer(Modifier.height(Space.s))
         OgnelissDivider()
-        numbers.forEach { number -> NumberLine(number, number.e164 == group.e164, onCall, onSms) }
+        numbers.forEach { number -> NumberLine(number, number.e164 == group.e164, onCall, onSms, onChooseSim) }
     }
 }
 
@@ -579,7 +595,8 @@ private fun NumberLine(
     number: PhoneNumber,
     current: Boolean,
     onCall: (String) -> Unit,
-    onSms: (String) -> Unit
+    onSms: (String) -> Unit,
+    onChooseSim: ((String, DialerViewModel.SimAction) -> Unit)? = null
 ) {
     val scheme = MaterialTheme.colorScheme
     val formatted = remember(number.value) { PhoneFormatter.format(number.value) }
@@ -604,20 +621,22 @@ private fun NumberLine(
                 )
             }
         }
-        IconButton(onClick = { onCall(number.value) }) {
-            Icon(
-                OgnelissIcons.Call,
-                contentDescription = stringResource(R.string.a11y_call_number, formatted),
-                tint = CallGreen
-            )
-        }
-        IconButton(onClick = { onSms(number.value) }) {
-            Icon(
-                OgnelissIcons.Message,
-                contentDescription = stringResource(R.string.action_sms) + " " + formatted,
-                tint = scheme.onSurfaceVariant
-            )
-        }
+        ActionIconButton(
+            icon = OgnelissIcons.Call,
+            contentDescription = stringResource(R.string.a11y_call_number, formatted),
+            tint = CallGreen,
+            onClick = { onCall(number.value) },
+            onLongClick = onChooseSim?.let { choose -> { choose(number.value, DialerViewModel.SimAction.CALL) } },
+            onLongClickLabel = stringResource(R.string.a11y_choose_sim)
+        )
+        ActionIconButton(
+            icon = OgnelissIcons.Message,
+            contentDescription = stringResource(R.string.action_sms) + " " + formatted,
+            tint = scheme.onSurfaceVariant,
+            onClick = { onSms(number.value) },
+            onLongClick = onChooseSim?.let { choose -> { choose(number.value, DialerViewModel.SimAction.SMS) } },
+            onLongClickLabel = stringResource(R.string.a11y_choose_sim_sms)
+        )
     }
 }
 

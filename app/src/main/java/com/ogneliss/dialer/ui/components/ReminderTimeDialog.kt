@@ -1,34 +1,23 @@
 package com.ogneliss.dialer.ui.components
 
-import com.ogneliss.dialer.ui.theme.Space
-
-import com.ogneliss.dialer.ui.theme.OgnelissIcons
-
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.text.format.DateFormat
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.ogneliss.dialer.R
-import com.ogneliss.dialer.ui.theme.Dimens
-import com.ogneliss.dialer.ui.theme.FlowUi
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+import com.ogneliss.dialer.ui.theme.Space
 import java.text.DateFormat as JavaDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -52,6 +41,10 @@ import java.util.Date
  * и то и другое можно поправить до сохранения. Лишнее нажатие
  * окупается тем, что промах виден до, а не после.
  *
+ * ── Вид — карточки (1.8.0) ──────────────────────────────────────────────────
+ * Было: окно посередине с серыми плитками даты и времени. Стало — стопка
+ * карточек, как у всех окон выбора (CardsOverlay, CardSheetParts.kt).
+ *
  * ── Почему системные окна выбора, а не свои ────────────────────────────────
  * Календарь и часы Material 3 занимают почти весь экран и требуют
  * согласия на экспериментальный API. Системные окна человек уже видел
@@ -64,7 +57,13 @@ fun ReminderTimeDialog(
     /** Предзаполнение: время из выбранного варианта или существующего напоминания. */
     initialMillis: Long,
     onSave: (Long) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    /**
+     * Заголовок шапки (1.8.0): по умолчанию «Напомнить перезвонить»;
+     * псевдозвонок передаёт своё название — окно то же, дело другое.
+     */
+    title: String? = null,
+    icon: androidx.compose.ui.graphics.vector.ImageVector = OgnelissIcons.Alarm
 ) {
     val context = LocalContext.current
 
@@ -73,117 +72,99 @@ fun ReminderTimeDialog(
     val dateFormat = remember { JavaDateFormat.getDateInstance(JavaDateFormat.FULL) }
     val timeFormat = remember { JavaDateFormat.getTimeInstance(JavaDateFormat.SHORT) }
 
-    OgnelissDialog(
-        onDismissRequest = onDismiss,
-        title = stringResource(R.string.reminder_dialog_title),
-        content = {
-            Text(
-                displayName,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+    /*
+     * 1.8.0 — КАРТОЧКАМИ, как выбор варианта перед ним и действия по долгому
+     * нажатию (автор: «привести окна напоминаний и заметок к одному UI»).
+     * Шапка — что и с кем; дата и время — строками, нажатие открывает
+     * системный календарь или часы; «Сохранить» — заливкой справа внизу,
+     * у большого пальца.
+     */
+    CardsOverlay(anchorY = LocalTouchAnchor.current?.screenY, onDismiss = onDismiss) { close ->
+        ActionCard {
+            CardHeader(
+                icon = icon,
+                accent = MaterialTheme.colorScheme.primary,
+                title = title ?: stringResource(R.string.reminder_dialog_title),
+                subtitle = displayName
             )
+        }
+        ActionCard {
+            Column(Modifier.padding(top = Space.s)) {
+                CardChoiceRow(
+                    label = dateFormat.format(Date(target)),
+                    trailing = null,
+                    icon = OgnelissIcons.CalendarMonth,
+                    onClick = {
+                        val c = Calendar.getInstance().apply { timeInMillis = target }
+                        DatePickerDialog(
+                            context,
+                            { _, year, month, day ->
+                                target = Calendar.getInstance().apply {
+                                    timeInMillis = target
+                                    set(Calendar.YEAR, year)
+                                    set(Calendar.MONTH, month)
+                                    set(Calendar.DAY_OF_MONTH, day)
+                                }.timeInMillis
+                            },
+                            c.get(Calendar.YEAR),
+                            c.get(Calendar.MONTH),
+                            c.get(Calendar.DAY_OF_MONTH)
+                        ).apply {
+                            // Прошедшую дату выбрать нельзя: напоминание в прошлом
+                            // не сработает никогда, а понять это по молчанию телефона
+                            // невозможно
+                            datePicker.minDate = System.currentTimeMillis()
+                        }.show()
+                    }
+                )
+                CardChoiceRow(
+                    label = timeFormat.format(Date(target)),
+                    trailing = null,
+                    icon = OgnelissIcons.Schedule,
+                    onClick = {
+                        val c = Calendar.getInstance().apply { timeInMillis = target }
+                        TimePickerDialog(
+                            context,
+                            { _, hour, minute ->
+                                target = Calendar.getInstance().apply {
+                                    timeInMillis = target
+                                    set(Calendar.HOUR_OF_DAY, hour)
+                                    set(Calendar.MINUTE, minute)
+                                    set(Calendar.SECOND, 0)
+                                    set(Calendar.MILLISECOND, 0)
+                                }.timeInMillis
+                            },
+                            c.get(Calendar.HOUR_OF_DAY),
+                            c.get(Calendar.MINUTE),
+                            DateFormat.is24HourFormat(context)
+                        ).show()
+                    }
+                )
 
-            PickerRow(
-                icon = OgnelissIcons.CalendarMonth,
-                value = dateFormat.format(Date(target))
-            ) {
-                val c = Calendar.getInstance().apply { timeInMillis = target }
-                DatePickerDialog(
-                    context,
-                    { _, year, month, day ->
-                        target = Calendar.getInstance().apply {
-                            timeInMillis = target
-                            set(Calendar.YEAR, year)
-                            set(Calendar.MONTH, month)
-                            set(Calendar.DAY_OF_MONTH, day)
-                        }.timeInMillis
-                    },
-                    c.get(Calendar.YEAR),
-                    c.get(Calendar.MONTH),
-                    c.get(Calendar.DAY_OF_MONTH)
-                ).apply {
-                    // Прошедшую дату выбрать нельзя: напоминание в прошлом
-                    // не сработает никогда, а понять это по молчанию телефона
-                    // невозможно
-                    datePicker.minDate = System.currentTimeMillis()
-                }.show()
-            }
-
-            PickerRow(
-                icon = OgnelissIcons.Schedule,
-                value = timeFormat.format(Date(target))
-            ) {
-                val c = Calendar.getInstance().apply { timeInMillis = target }
-                TimePickerDialog(
-                    context,
-                    { _, hour, minute ->
-                        target = Calendar.getInstance().apply {
-                            timeInMillis = target
-                            set(Calendar.HOUR_OF_DAY, hour)
-                            set(Calendar.MINUTE, minute)
-                            set(Calendar.SECOND, 0)
-                            set(Calendar.MILLISECOND, 0)
-                        }.timeInMillis
-                    },
-                    c.get(Calendar.HOUR_OF_DAY),
-                    c.get(Calendar.MINUTE),
-                    DateFormat.is24HourFormat(context)
-                ).show()
-            }
-
-            /*
-             * Предупреждение о прошедшем времени.
-             *
-             * Дату в прошлое выбрать нельзя, а время — можно: сегодняшнее
-             * утро при выборе «сегодня». Молча отказать нельзя, молча
-             * поставить тоже: напоминание не сработает.
-             */
-            if (target <= System.currentTimeMillis()) {
-                Text(
-                    stringResource(R.string.reminder_in_past),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error
+                /*
+                 * Предупреждение о прошедшем времени.
+                 *
+                 * Дату в прошлое выбрать нельзя, а время — можно: сегодняшнее
+                 * утро при выборе «сегодня». Молча отказать нельзя, молча
+                 * поставить тоже: напоминание не сработает.
+                 */
+                val inPast = target <= System.currentTimeMillis()
+                if (inPast) {
+                    Text(
+                        stringResource(R.string.reminder_in_past),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(horizontal = Space.l, vertical = Space.xs)
+                    )
+                }
+                CardButtons(
+                    confirmLabel = stringResource(R.string.action_save),
+                    onConfirm = { onSave(target); close() },
+                    confirmEnabled = !inPast,
+                    dismissLabel = stringResource(R.string.nav_cancel),
+                    onDismiss = close
                 )
             }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = { onSave(target) },
-                enabled = target > System.currentTimeMillis()
-            ) {
-                Text(stringResource(R.string.action_save))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.nav_cancel))
-            }
-        }
-    )
-}
-
-/** Строка «значок — значение», нажимается целиком. */
-@Composable
-private fun PickerRow(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    value: String,
-    onClick: () -> Unit
-) {
-    Surface(
-        onClick = onClick,
-        shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceContainerHighest,
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = Dimens.MIN_TOUCH_TARGET)
-    ) {
-        Row(
-            modifier = Modifier.padding(FlowUi.cardPadding),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Space.m)
-        ) {
-            Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-            Text(value, style = MaterialTheme.typography.bodyLarge)
         }
     }
 }

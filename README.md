@@ -30,11 +30,15 @@
   Записи мессенджеров и SIM не меняются.
 - **Заметки и напоминания** к любому номеру, даже не из контактов.
 - **Защита от спама:** чёрный и белый списки, маски вида `8800*`,
-  метки «спам» и «мошенники», предупреждение о платных номерах.
-  Экстренные номера не блокируются никогда.
+  метки «спам» и «мошенники», предупреждение о платных номерах,
+  **тихие часы для незнакомых** (ночью — без звука, повторный звонок
+  за 15 минут — со звуком). Экстренные номера не блокируются никогда.
 - **Экран вызова:** живой фон, портрет звонящего, быстрый ответ SMS,
-  Bluetooth, две SIM-карты (выбор SIM — долгим нажатием на «Позвонить»
-  и «Написать» в карточке).
+  Bluetooth, **автодозвон** при «Занято», **название организации
+  от оператора** («маркировка звонков»), памятка о мошенниках в долгом
+  разговоре с незнакомым номером.
+- **Две SIM-карты:** выбор карты — долгим нажатием на любую кнопку
+  звонка или SMS, с меткой «тот же оператор».
 - **Псевдозвонок:** телефон «звонит», чтобы можно было отойти
   от неудобного разговора.
 - **Вопросы и ответы** — прямо в приложении: кнопка под ответом
@@ -130,9 +134,12 @@ Features: T9 search (Cyrillic and Latin) and search by name and note,
 call log and contacts side by side under one bottom bar, call history with
 grouping, filters and swipe actions, offline operator and region lookup,
 notes and call-back reminders for any number, spam protection with
-block/allow lists and masks, a calm in-call screen, two SIM cards, a fake
-call, in-app questions and answers that open the right setting,
-light/dark/black themes. No ads, no subscriptions, no analytics.
+block/allow lists and masks, quiet hours for unknown numbers, auto redial,
+company names sent by the carrier, a fraud reminder in long calls with
+unknown numbers, a calm in-call screen, two SIM cards (long-press any call
+or SMS button to pick one), a fake call, in-app questions and answers that
+open the right setting, light/dark/black themes. No ads, no subscriptions,
+no analytics.
 
 Build with a recent Android Studio and JDK 17: `./gradlew assembleDebug`.
 

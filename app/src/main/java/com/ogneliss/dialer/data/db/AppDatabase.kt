@@ -44,9 +44,10 @@ import javax.inject.Singleton
         BlockedCallEntity::class,
         ContactCacheEntity::class,
         ReminderEntity::class,
-        SpamMarkEntity::class
+        SpamMarkEntity::class,
+        NetworkNameEntity::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -60,6 +61,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun simPreferences(): SimPreferenceDao
     abstract fun reminders(): ReminderDao
     abstract fun spamMarks(): SpamMarkDao
+    abstract fun networkNames(): NetworkNameDao
 
     companion object {
         /**
@@ -69,8 +71,29 @@ abstract class AppDatabase : RoomDatabase() {
         val MIGRATIONS: Array<Migration>
             get() = arrayOf(
                 MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
-                MIGRATION_5_6, MIGRATION_6_7
+                MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8
             )
+
+        /**
+         * ВЕРСИЯ 7 → 8: ИМЕНА ОТ ОПЕРАТОРА (1.8.0).
+         *
+         * Новая таблица network_names — названия, которые оператор передаёт
+         * вместе с номером («маркировка звонков»). Разбор — у NetworkNameEntity.
+         * Других таблиц не трогает: данные человека остаются как были.
+         */
+        val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS network_names (
+                        e164 TEXT NOT NULL PRIMARY KEY,
+                        name TEXT NOT NULL,
+                        seenAt INTEGER NOT NULL
+                    )
+                    """.trimIndent()
+                )
+            }
+        }
 
         /**
          * ВЕРСИЯ 6 → 7: ИМЯ «ФАМИЛИЯ ИМЯ» В КЭШЕ КНИГИ (1.6.2).
@@ -355,4 +378,5 @@ object DatabaseModule {
     @Provides fun provideSpamMarkDao(db: AppDatabase) = db.spamMarks()
     @Provides fun provideContactCacheDao(db: AppDatabase) = db.contactCache()
     @Provides fun provideSimPreferenceDao(db: AppDatabase) = db.simPreferences()
+    @Provides fun provideNetworkNameDao(db: AppDatabase) = db.networkNames()
 }

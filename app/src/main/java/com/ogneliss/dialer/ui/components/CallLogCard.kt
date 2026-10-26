@@ -6,7 +6,6 @@ import com.ogneliss.dialer.ui.theme.Space
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 
 import com.ogneliss.dialer.ui.theme.NoteTeal
-import com.ogneliss.dialer.ui.theme.Dimens
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -77,6 +76,8 @@ fun CallLogCard(
      * где строка целиком означает «открыть карточку».
      */
     onCall: ((CallLogRowState) -> Unit)? = null,
+    /** Долгое нажатие на трубку — выбор SIM (1.8.0); null — одна карта. */
+    onCallLongPress: ((CallLogRowState) -> Unit)? = null,
     searchQuery: String,
     selected: Boolean,
     /**
@@ -495,18 +496,15 @@ fun CallLogCard(
                 if (!selectionActive && onCall != null) {
                     Spacer(Modifier.width(Space.xs))
 
-                    IconButton(
+                    // Долгое нажатие — выбор SIM (1.8.0), как у всех кнопок звонка
+                    ActionIconButton(
+                        icon = OgnelissIcons.Call,
+                        contentDescription = stringResource(R.string.a11y_call_number, row.title),
+                        tint = CallGreen,
                         onClick = { onCall(row) },
-                        modifier = Modifier.size(Dimens.MIN_TOUCH_TARGET)
-                    ) {
-                        Icon(
-                            OgnelissIcons.Call,
-                            contentDescription = stringResource(
-                                R.string.a11y_call_number, row.title
-                            ),
-                            tint = CallGreen
-                        )
-                    }
+                        onLongClick = onCallLongPress?.let { long -> { long(row) } },
+                        onLongClickLabel = stringResource(R.string.a11y_choose_sim)
+                    )
                 }
             }
         }

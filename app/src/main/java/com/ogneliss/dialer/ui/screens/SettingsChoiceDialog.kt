@@ -104,6 +104,17 @@ fun SettingsChoiceDialog(
         "contact_sort" -> com.ogneliss.dialer.settings.ContactSort.entries.map {
             it.name to stringResource(SettingsCommands.contactSortLabelRes(it))
         }
+        // Автодозвон и тихие часы (1.8.0): подписи — из SettingsCommands,
+        // общие со строкой настройки
+        "auto_redial" -> com.ogneliss.dialer.call.AutoRedialMode.entries.map {
+            it.name to stringResource(SettingsCommands.autoRedialLabelRes(it))
+        }
+        "auto_redial_pace" -> com.ogneliss.dialer.call.RedialPace.entries.map {
+            it.name to stringResource(SettingsCommands.redialPaceLabelRes(it))
+        }
+        "quiet_hours" -> com.ogneliss.dialer.call.QuietHours.entries.map {
+            it.name to stringResource(SettingsCommands.quietHoursLabelRes(it))
+        }
         "carrier_info" -> listOf(
             "UNKNOWN_ONLY" to stringResource(R.string.carrier_info_unknown),
             "ALL" to stringResource(R.string.carrier_info_all),

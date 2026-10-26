@@ -40,10 +40,14 @@ fun rememberNumberInfoLabels(): CallLogRowMapper.Labels {
     // чтобы подпись в строке и заголовок над ней не расходились
     val today = stringResource(R.string.date_group_today)
     val yesterday = stringResource(R.string.date_group_yesterday)
+    // Имя от оператора (1.8.0): чья подпись в заголовке
+    val networkLine = stringResource(R.string.cnap_source_line)
+    val networkNamedFormat = stringResource(R.string.cnap_source_named)
 
     return remember(
         premium, tollFree, shortCode, international,
-        incoming, outgoing, missed, rejected, blocked, today, yesterday
+        incoming, outgoing, missed, rejected, blocked, today, yesterday,
+        networkLine, networkNamedFormat
     ) {
         object : CallLogRowMapper.Labels {
 
@@ -104,6 +108,12 @@ fun rememberNumberInfoLabels(): CallLogRowMapper.Labels {
             override fun today(time: String) = "$today, $time"
 
             override fun yesterday(time: String) = "$yesterday, $time"
+
+            override fun networkSource(carrier: String?): String =
+                listOfNotNull(networkLine, carrier).joinToString(" · ")
+
+            override fun networkNamed(name: String): String =
+                String.format(java.util.Locale.getDefault(), networkNamedFormat, name)
 
             override fun accessibility(title: String, type: CallType, date: String): String {
                 val typeText = when (type) {

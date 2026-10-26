@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.ActionIconButton
 import androidx.compose.foundation.lazy.itemsIndexed
 import com.ogneliss.dialer.ui.components.GroupPosition
 import com.ogneliss.dialer.ui.components.GroupedRow
@@ -160,6 +161,7 @@ fun NotesScreen(
     editing?.let { e164 ->
         val note = state.notes[e164]
         NoteEditorDialog(
+            displayName = PhoneFormatter.format(e164),
             initialNote = note?.note.orEmpty(),
             initialTags = note?.tags.orEmpty().toSet(),
             onSave = { text, tags ->
@@ -249,7 +251,10 @@ fun NotesScreen(
                             row = row,
                             onOpen = { onOpenCard(row.e164) },
                             onCall = { vm.call(row.e164) },
-                            onEdit = { editing = row.e164 }
+                            onEdit = { editing = row.e164 },
+                            onCallLongPress = if (state.sims.size > 1) {
+                                { vm.chooseSim(row.e164, DialerViewModel.SimAction.CALL, row.title) }
+                            } else null
                         )
                     }
                 }
@@ -271,7 +276,9 @@ private fun NoteListRow(
     row: NoteRow,
     onOpen: () -> Unit,
     onCall: () -> Unit,
-    onEdit: () -> Unit
+    onEdit: () -> Unit,
+    /** Долгое нажатие на трубку — выбор SIM (1.8.0); null — одна карта. */
+    onCallLongPress: (() -> Unit)? = null
 ) {
     Surface(
         onClick = onOpen,
@@ -327,13 +334,14 @@ private fun NoteListRow(
             }
 
             Row(horizontalArrangement = Arrangement.spacedBy(0.dp)) {
-                IconButton(onClick = onCall, modifier = Modifier.heightIn(min = Dimens.MIN_TOUCH_TARGET)) {
-                    Icon(
-                        OgnelissIcons.Call,
-                        contentDescription = stringResource(R.string.action_call),
-                        tint = com.ogneliss.dialer.ui.theme.CallGreen
-                    )
-                }
+                ActionIconButton(
+                    icon = OgnelissIcons.Call,
+                    contentDescription = stringResource(R.string.action_call),
+                    tint = com.ogneliss.dialer.ui.theme.CallGreen,
+                    onClick = onCall,
+                    onLongClick = onCallLongPress,
+                    onLongClickLabel = stringResource(R.string.a11y_choose_sim)
+                )
                 /*
                  * Правка прямо из списка.
                  *

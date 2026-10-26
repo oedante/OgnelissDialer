@@ -115,6 +115,16 @@ class OgnelissCallScreeningService : CallScreeningService() {
                  * из шторки нельзя — вместе с ней разблокируется весь
                  * диапазон.
                  */
+                /*
+                 * Тихий вызов (1.8.0, тихие часы) — метка для службы вызовов.
+                 * Заглушить звонок сами мы можем только с ролью определителя;
+                 * без неё это сделает служба вызовов, и она же не станет
+                 * будить экран. Разбор — QuietCallGate.
+                 */
+                if (decision.action == SpamPolicy.Action.SILENCE) {
+                    QuietCallGate.mark(input.e164)
+                }
+
                 if (decision.action == SpamPolicy.Action.BLOCK) {
                     BlockedCallNotice.show(
                         context = applicationContext,

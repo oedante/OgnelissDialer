@@ -3,6 +3,9 @@ package com.ogneliss.dialer.settings
 import android.content.Context
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
+import com.ogneliss.dialer.call.AutoRedialMode
+import com.ogneliss.dialer.call.QuietHours
+import com.ogneliss.dialer.call.RedialPace
 import com.ogneliss.dialer.data.GroupingSettings
 import com.ogneliss.dialer.data.NotesRetention
 import com.ogneliss.dialer.data.PinnedContacts
@@ -138,6 +141,11 @@ enum class CarrierInfoMode {
 /**
  * МАСШТАБ ИНТЕРФЕЙСА (1.5.6): «Авто» — по ширине экрана, остальное —
  * постоянный множитель. Разбор — ui/theme/UiScale.kt.
+ *
+ * ПО УМОЛЧАНИЮ — 90 % (1.8.0, автор: «при 90 % смотрится отлично и нужно
+ * это брать по умолчанию»). Было — «Авто». Кто масштаб не выбирал, получит
+ * 90 % сам; кто выбрал «Авто» или другой — останется со своим: выбор
+ * хранится в настройках, а умолчание действует только без него.
  */
 enum class UiScale(val fixed: Float?) {
     AUTO(null),
@@ -147,7 +155,10 @@ enum class UiScale(val fixed: Float?) {
     S125(1.25f);
 
     companion object {
-        fun from(name: String?): UiScale = entries.firstOrNull { it.name == name } ?: AUTO
+        /** Масштаб, пока человек его не выбрал. */
+        val DEFAULT = S90
+
+        fun from(name: String?): UiScale = entries.firstOrNull { it.name == name } ?: DEFAULT
     }
 }
 
@@ -425,6 +436,12 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val SMART_SPEAKER = booleanPreferencesKey("smart_speaker")
         val DIALPAD_OPEN_AT_START = booleanPreferencesKey("dialpad_open_at_start")
         val CALLBACK_SUGGESTION = booleanPreferencesKey("callback_suggestion")
+        /** Автодозвон (1.8.0): выключен, предлагать, сразу — разбор в RedialPolicy. */
+        val AUTO_REDIAL = stringPreferencesKey("auto_redial")
+        /** Сколько раз и как часто (1.8.0): готовые сочетания RedialPace. */
+        val AUTO_REDIAL_PACE = stringPreferencesKey("auto_redial_pace")
+        /** Памятка о мошенниках в долгом разговоре с незнакомым (1.8.0). */
+        val SCAM_MEMO = booleanPreferencesKey("scam_memo")
         val NOTES_RETENTION = stringPreferencesKey("notes_retention")
         val NOTES_RETENTION_SCOPE = stringPreferencesKey("notes_retention_scope")
         // Экран после звонка
@@ -434,6 +451,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val BLOCK_HIDDEN = booleanPreferencesKey("block_hidden")
         val BLOCK_NOT_IN_CONTACTS = booleanPreferencesKey("block_not_in_contacts")
         val BLOCK_TAGGED_SPAM = booleanPreferencesKey("block_tagged_spam")
+        /** Тихие часы для незнакомых (1.8.0): разбор в call/QuietHours.kt. */
+        val QUIET_HOURS = stringPreferencesKey("quiet_hours")
         val EXTERNAL_LOOKUP_IDS = stringSetPreferencesKey("external_lookup_ids")
         // Диагностика
         val FILE_LOGGING = booleanPreferencesKey("file_logging")
@@ -634,7 +653,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      */
     val callAnimation: Flow<Boolean> = data.map { it[Keys.CALL_ANIMATION] ?: true }
 
-    /** Масштаб интерфейса (1.5.6): «Авто» по умолчанию — разбор в ui/theme/UiScale.kt. */
+    /** Масштаб интерфейса (1.5.6): по умолчанию 90 % с 1.8.0 (было «Авто») — разбор в ui/theme/UiScale.kt. */
     val uiScale: Flow<UiScale> = data.map { UiScale.from(it[Keys.UI_SCALE]) }
 
     /** Фото звонящего на экране вызова (1.5.5): разбор в CallPhotoStyle. */
@@ -711,6 +730,23 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      * динамик на совещании пугает сильнее, чем радует удобство.
      */
     val smartSpeaker: Flow<Boolean> = data.map { it[Keys.SMART_SPEAKER] ?: false }
+
+    /**
+     * Автодозвон (1.8.0). По умолчанию — «Предлагать»: экран после «занято»
+     * спрашивает, а без согласия ничего не набирается. Разбор — RedialPolicy.
+     */
+    val autoRedialMode: Flow<AutoRedialMode> = data.map { AutoRedialMode.from(it[Keys.AUTO_REDIAL]) }
+
+    /** Сколько раз и как часто повторять (1.8.0): по умолчанию 5 раз через 10 с. */
+    val autoRedialPace: Flow<RedialPace> = data.map { RedialPace.from(it[Keys.AUTO_REDIAL_PACE]) }
+
+    /**
+     * Памятка о мошенниках (1.8.0). ВКЛЮЧЕНА по умолчанию: она появляется
+     * один раз за разговор и только с незнакомым номером дольше двух
+     * минут — честный звонок курьера до неё не доживает, а тот, кому
+     * она нужна, о настройке не узнает, пока не станет поздно.
+     */
+    val scamMemo: Flow<Boolean> = data.map { it[Keys.SCAM_MEMO] ?: true }
 
     /**
      * Открывать клавиатуру сразу при запуске.
@@ -791,6 +827,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     /** Блокировать номера, помеченные пользователем как спам. Включено по умолчанию:
      *  пользователь ставил метку осознанно, значит ждёт от неё эффекта. */
     val blockTaggedSpam: Flow<Boolean> = data.map { it[Keys.BLOCK_TAGGED_SPAM] ?: true }
+
+    /** Тихие часы для незнакомых (1.8.0). Выключены по умолчанию: правило для тех, кто его выбрал. */
+    val quietHours: Flow<QuietHours> = data.map { QuietHours.from(it[Keys.QUIET_HOURS]) }
     /** Эвристическая автоблокировка. ВЫКЛЮЧЕНА по умолчанию: ложное
      *  срабатывание вредит сильнее, чем пропущенный спам. */
     /** Порог 0..100. Высокий по умолчанию — консервативно. */
@@ -940,6 +979,13 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("smart_speaker", v) { it[Keys.SMART_SPEAKER] = v }
     suspend fun setCallbackSuggestion(v: Boolean) =
         edit("callback_suggestion", v) { it[Keys.CALLBACK_SUGGESTION] = v }
+    suspend fun setAutoRedialMode(v: AutoRedialMode) =
+        edit("auto_redial", v.name) { it[Keys.AUTO_REDIAL] = v.name }
+    suspend fun setAutoRedialPace(v: RedialPace) =
+        edit("auto_redial_pace", v.name) { it[Keys.AUTO_REDIAL_PACE] = v.name }
+    suspend fun setScamMemo(v: Boolean) = edit("scam_memo", v) { it[Keys.SCAM_MEMO] = v }
+    suspend fun setQuietHours(v: QuietHours) =
+        edit("quiet_hours", v.name) { it[Keys.QUIET_HOURS] = v.name }
     suspend fun setNotesRetention(v: NotesRetention.Period) =
         edit("notes_retention", v.name) { it[Keys.NOTES_RETENTION] = v.name }
 

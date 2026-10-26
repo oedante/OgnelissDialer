@@ -25,7 +25,9 @@ class SpamPolicyTest {
         inSystemBlockList: Boolean = false,
         tags: List<String> = emptyList(),
         category: NumberCategory = NumberCategory.PERSONAL,
-        settings: SpamPolicy.Settings = SpamPolicy.Settings()
+        settings: SpamPolicy.Settings = SpamPolicy.Settings(),
+        minuteOfDay: Int = -1,
+        repeatCall: Boolean = false
     ) = SpamPolicy.SpamInput(
         number = number,
         e164 = number ?: "",
@@ -35,7 +37,9 @@ class SpamPolicyTest {
         inSystemBlockList = inSystemBlockList,
         tags = tags,
         category = category,
-        settings = settings
+        settings = settings,
+        minuteOfDay = minuteOfDay,
+        repeatCall = repeatCall
     )
 
     // ── Базовое поведение ──────────────────────────────────────────────────
@@ -201,5 +205,86 @@ class SpamPolicyTest {
         // например, бывшего коллегу. Его воля важнее факта наличия в книге.
         val d = SpamPolicy.evaluate(input(isInContacts = true, inBlockList = true))
         assertTrue(d.block)
+    }
+
+    // ── Тихие часы (1.8.0) ─────────────────────────────────────────────────
+
+    private val night = SpamPolicy.Settings(quietHours = QuietHours.NIGHT_22_08)
+
+    @Test
+    fun `тихие часы глушат незнакомого ночью`() {
+        val d = SpamPolicy.evaluate(input(settings = night, minuteOfDay = 23 * 60))
+        assertEquals(SpamPolicy.Action.SILENCE, d.action)
+        assertEquals(SpamPolicy.Reason.QUIET_HOURS, d.reason)
+    }
+
+    @Test
+    fun `тихие часы не трогают день`() {
+        val d = SpamPolicy.evaluate(input(settings = night, minuteOfDay = 12 * 60))
+        assertEquals(SpamPolicy.Action.ALLOW, d.action)
+    }
+
+    @Test
+    fun `перезвонивший за пятнадцать минут звонит`() {
+        val d = SpamPolicy.evaluate(input(settings = night, minuteOfDay = 3 * 60, repeatCall = true))
+        assertEquals(SpamPolicy.Action.ALLOW, d.action)
+        assertEquals(SpamPolicy.Reason.QUIET_REPEAT, d.reason)
+    }
+
+    @Test
+    fun `контакт и белый список звонят и в тихие часы`() {
+        val contact = SpamPolicy.evaluate(input(isInContacts = true, settings = night, minuteOfDay = 2 * 60))
+        assertEquals(SpamPolicy.Action.ALLOW, contact.action)
+        val allowed = SpamPolicy.evaluate(input(inAllowList = true, settings = night, minuteOfDay = 2 * 60))
+        assertEquals(SpamPolicy.Action.ALLOW, allowed.action)
+    }
+
+    @Test
+    fun `блокировка сильнее тихих часов`() {
+        val strict = night.copy(blockNotInContacts = true)
+        val d = SpamPolicy.evaluate(input(settings = strict, minuteOfDay = 1 * 60))
+        assertEquals(SpamPolicy.Action.BLOCK, d.action)
+    }
+
+    @Test
+    fun `скрытый номер ночью без звука`() {
+        val d = SpamPolicy.evaluate(input(number = null, settings = night, minuteOfDay = 5 * 60))
+        assertEquals(SpamPolicy.Action.SILENCE, d.action)
+        val blocked = SpamPolicy.evaluate(
+            input(number = null, settings = night.copy(blockHidden = true), minuteOfDay = 5 * 60)
+        )
+        assertEquals(SpamPolicy.Action.BLOCK, blocked.action)
+    }
+
+    @Test
+    fun `без времени тихие часы не действуют`() {
+        val d = SpamPolicy.evaluate(input(settings = SpamPolicy.Settings(quietHours = QuietHours.ALWAYS)))
+        assertEquals(SpamPolicy.Action.ALLOW, d.action)
+    }
+
+    @Test
+    fun `границы промежутков`() {
+        assertTrue(QuietHours.NIGHT_22_08.contains(22 * 60))
+        assertTrue(QuietHours.NIGHT_22_08.contains(0))
+        assertTrue(QuietHours.NIGHT_22_08.contains(8 * 60 - 1))
+        assertFalse(QuietHours.NIGHT_22_08.contains(8 * 60))
+        assertFalse(QuietHours.NIGHT_22_08.contains(22 * 60 - 1))
+        assertTrue(QuietHours.NIGHT_23_07.contains(6 * 60 + 59))
+        assertFalse(QuietHours.NIGHT_23_07.contains(7 * 60))
+        assertTrue(QuietHours.ALWAYS.contains(0))
+        assertTrue(QuietHours.ALWAYS.contains(24 * 60 - 1))
+        assertFalse(QuietHours.OFF.contains(3 * 60))
+        assertEquals(QuietHours.OFF, QuietHours.from(null))
+        assertEquals(QuietHours.NIGHT_23_07, QuietHours.from("NIGHT_23_07"))
+    }
+
+    @Test
+    fun `метка тихого вызова живёт минуту и забирается один раз`() {
+        QuietCallGate.mark("+79000000001", now = 1_000L)
+        assertTrue(QuietCallGate.take("+79000000001", now = 30_000L))
+        // Забрана — второй раз нет
+        assertFalse(QuietCallGate.take("+79000000001", now = 31_000L))
+        QuietCallGate.mark("+79000000002", now = 1_000L)
+        assertFalse(QuietCallGate.take("+79000000002", now = 120_000L))
     }
 }

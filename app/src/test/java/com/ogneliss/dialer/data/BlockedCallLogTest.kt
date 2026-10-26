@@ -39,6 +39,8 @@ class BlockedCallLogTest {
             rows.remove(e164)
         }
 
+        override suspend fun get(e164: String): BlockedCallEntity? = rows[e164]
+
         override suspend fun deleteOlderThan(before: Long) {
             rows.values.removeAll { it.at < before }
         }
@@ -144,5 +146,24 @@ class BlockedCallLogTest {
         }
 
         assertTrue("Выборка ограничена", log.snapshot().size <= 500)
+    }
+
+    @Test
+    fun `тихий звонок распознаётся как недавний только в своём окне`() = runTest {
+        // Тихие часы (1.8.0): перезвонил за 15 минут — значит, срочно
+        dao.upsert(
+            BlockedCallEntity(
+                e164 = "+7900Q",
+                reason = SpamPolicy.Reason.QUIET_HOURS.name,
+                outcome = BlockedCallLog.Outcome.SILENCED.name,
+                at = 10_000L
+            )
+        )
+        assertTrue(log.silencedQuietlySince("+7900Q", since = 5_000L))
+        assertEquals(false, log.silencedQuietlySince("+7900Q", since = 20_000L))
+        // Заблокированный по другой причине — не «тихий»
+        log.record("+7900B", SpamPolicy.Reason.APP_BLOCK_LIST, BlockedCallLog.Outcome.BLOCKED)
+        assertEquals(false, log.silencedQuietlySince("+7900B", since = 0L))
+        assertEquals(false, log.silencedQuietlySince("+7900Z", since = 0L))
     }
 }

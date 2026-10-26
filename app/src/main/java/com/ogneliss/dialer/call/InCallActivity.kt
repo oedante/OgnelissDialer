@@ -18,6 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ogneliss.dialer.concurrency.suspendRunCatching
 
 import com.ogneliss.dialer.ui.adaptive.ProvideWindowLayout
+import com.ogneliss.dialer.ui.components.FitText
 import com.ogneliss.dialer.ui.components.Motion
 import com.ogneliss.dialer.ui.theme.BlockRed
 import com.ogneliss.dialer.ui.theme.CallGreen
@@ -39,6 +40,7 @@ import android.os.Bundle
 import android.telecom.Call
 import android.telecom.CallAudioState
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
@@ -215,7 +217,7 @@ class InCallActivity : ComponentActivity() {
             val theme by prefs.theme.collectAsStateWithLifecycle(initialValue = ThemeMode.SYSTEM)
             val dynamic by prefs.dynamicColor.collectAsStateWithLifecycle(initialValue = false)
             // Масштаб интерфейса — тот же, что в приложении (1.5.6)
-            val uiScale by prefs.uiScale.collectAsStateWithLifecycle(initialValue = com.ogneliss.dialer.settings.UiScale.AUTO)
+            val uiScale by prefs.uiScale.collectAsStateWithLifecycle(initialValue = com.ogneliss.dialer.settings.UiScale.DEFAULT)
             // Подписи под кнопками — та же настройка, что во всём приложении.
             // Экран вызова — отдельная активность, корня приложения у него
             // нет, поэтому оформление ставится здесь
@@ -259,7 +261,22 @@ class InCallActivity : ComponentActivity() {
                 val carrierInfo by prefs.carrierInfo
                     .collectAsStateWithLifecycle(initialValue = CarrierInfoMode.UNKNOWN_ONLY)
 
-                LaunchedEffect(calls) { if (calls.isEmpty()) finish() }
+                // Автодозвон (1.8.0): сеанс держит экран между попытками
+                val redial by AutoRedial.state.collectAsStateWithLifecycle()
+                // Памятка о мошенниках (1.8.0): разбор в ScamMemo.kt
+                val scamMemo by prefs.scamMemo.collectAsStateWithLifecycle(initialValue = true)
+
+                /*
+                 * Экран закрывается, когда нет ни вызовов, ни автодозвона (1.8.0).
+                 * Сеанс читается напрямую, а не из состояния: служба создаёт его
+                 * раньше, чем опустеет список вызовов, а до композиции новые
+                 * значения двух потоков могут дойти в любом порядке.
+                 */
+                LaunchedEffect(calls, redial) {
+                    if (calls.isEmpty() && AutoRedial.state.value == null) finish()
+                }
+                // «Назад» между попытками — остановить автодозвон; экран закроется сам
+                BackHandler(enabled = calls.isEmpty() && redial != null) { AutoRedial.stop() }
 
                 // Датчики должны знать о состоянии вызова и аудиомаршрута
                 LaunchedEffect(revision, audio) {
@@ -310,6 +327,8 @@ class InCallActivity : ComponentActivity() {
                     largePortrait = callPhotoSize == CallPhotoSize.LARGE,
                     slideToAnswer = answerMode == AnswerMode.SLIDE,
                     familyFirst = nameFormat == ContactNameFormat.FAMILY_FIRST,
+                    redial = redial,
+                    scamMemo = scamMemo,
                     // Пользователь переключил звук сам — датчики умолкают
                     // до конца разговора
                     onManualAudioChange = { smartSpeaker?.notifyManualToggle() }
@@ -323,6 +342,12 @@ class InCallActivity : ComponentActivity() {
     override fun onDestroy() {
         smartSpeaker?.stop()
         proximity?.release()
+        /*
+         * Экран убрали сами — смахнули задачу, закрыла система, — а вызовов
+         * нет: автодозвон без экрана не продолжаем (1.8.0). Обычное закрытие
+         * сюда приходит уже без сеанса: экран закрывается, когда его нет.
+         */
+        if (isFinishing && CallManager.calls.value.isEmpty()) AutoRedial.stop()
         super.onDestroy()
     }
 }
@@ -374,6 +399,10 @@ private fun InCallScreen(
     slideToAnswer: Boolean = false,
     /** Настройка «Как показывать имя» — «Фамилия Имя» (1.6.2). */
     familyFirst: Boolean = false,
+    /** Сеанс автодозвона (1.8.0): между попытками вместо кнопок вызова — его кнопки. */
+    redial: AutoRedial.Session? = null,
+    /** Памятка о мошенниках (1.8.0): разбор в ScamMemo.kt. */
+    scamMemo: Boolean = true,
     onManualAudioChange: () -> Unit = {}
 ) {
     // Сдвиг вместо кнопок ответа — если выбран и не включён TalkBack
@@ -407,6 +436,14 @@ private fun InCallScreen(
      */
     @Suppress("DEPRECATION")
     val state = remember(revision, call) { call?.state ?: Call.STATE_DISCONNECTED }
+    /*
+     * Между попытками автодозвона (1.8.0) вызова нет, а сеанс есть: экран
+     * остаётся тем же — портрет и имя на месте, — а вместо «Вызов завершён»
+     * и «Завершить» — состояние и кнопки автодозвона. Разбор — RedialPanel.kt.
+     */
+    val redialSession = redial?.takeIf { call == null }
+    // Идёт попытка автодозвона — под плашкой «попытка 2 из 5»
+    val redialAttempt = redial?.takeIf { call != null && it.phase == RedialPolicy.Phase.CALLING }
     /*
      * ЛИЧНОСТЬ СОБЕСЕДНИКА «ЗАЛИПАЕТ».
      *
@@ -444,6 +481,36 @@ private fun InCallScreen(
 
     var number by remember { mutableStateOf(liveNumber) }
     var name by remember { mutableStateOf(liveName) }
+
+    /*
+     * ИМЯ ОТ ОПЕРАТОРА (1.8.0, «маркировка звонков»): название организации,
+     * которое сеть передала вместе с номером. «Залипает» так же, как имя:
+     * пропал вызов — держим последнее. Разбор — CallDetailsCompat.networkName.
+     */
+    val liveNetworkName = remember(revision, call) { CallDetailsCompat.networkName(call?.details) }
+    var networkName by remember { mutableStateOf(liveNetworkName) }
+    LaunchedEffect(liveNetworkName) {
+        if (!liveNetworkName.isNullOrBlank()) networkName = liveNetworkName
+    }
+
+    /*
+     * ДО ANDROID 11 ИМЯ КОНТАКТА ИЩЕМ САМИ (1.8.0).
+     *
+     * Система отдаёт имя контакта в вызове только с Android 11
+     * (CallDetailsCompat.contactDisplayName). На Android 8–10 экран вызова
+     * показывал контакт номером — запасной путь, обещанный в CallDetailsCompat,
+     * так и не был сделан. Поиск по номеру идёт по индексу и занимает
+     * миллисекунды; пока он идёт, на экране номер.
+     */
+    LaunchedEffect(liveNumber) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R && liveNumber.isNotBlank() && name.isNullOrBlank()) {
+            val found = suspendRunCatching { contactsRepo.lookupByNumber(liveNumber) }
+                .getOrNull()?.takeIf { it.isNotBlank() } ?: return@LaunchedEffect
+            name = if (familyFirst) {
+                suspendRunCatching { contactsRepo.familyFirstName(liveNumber, found) }.getOrNull() ?: found
+            } else found
+        }
+    }
 
     /*
      * Ключи здесь — строки, а не объекты.
@@ -648,7 +715,9 @@ private fun InCallScreen(
          * Ключ — строка, сравнение по содержимому: пока имя не изменилось,
          * перезапуска нет.
          */
-        name
+        name,
+        // Имя от оператора (1.8.0) — тоже: приходит вместе с вызовом или чуть позже
+        networkName
     ) {
         value = runCatching {
             val stored = notesRepo.get(PhoneFormatter.toE164(number))
@@ -694,8 +763,10 @@ private fun InCallScreen(
                     titleFromNote = false
                 )
 
+                // Имя от оператора — вместо имени, если нет ни контакта, ни заметки:
+                // заметка человека важнее сведений сети (1.8.0)
                 else -> NoteDisplay.forCallScreen(
-                    displayName = name,
+                    displayName = name ?: networkName?.takeIf { stored?.note.isNullOrBlank() },
                     note = stored?.note,
                     formattedNumber = PhoneFormatter.format(number)
                 )
@@ -717,6 +788,28 @@ private fun InCallScreen(
             spamMarksRepo.get(PhoneFormatter.toE164(number)) != null
         }.getOrDefault(false)
     }
+
+    /*
+     * Чьё имя в заголовке — подписью (1.8.0). Имя от оператора — не контакт
+     * и не заметка: «по данным оператора». Заголовок — заметка или метка, —
+     * имя сети уходит в подпись целиком: «Банк — по данным оператора».
+     * Подменить имя мошенник может так же, как номер, — поэтому оно
+     * не красится и не выдаётся за проверенное.
+     */
+    val operatorLine = when {
+        !name.isNullOrBlank() || networkName.isNullOrBlank() -> null
+        callerDisplay.titleFromNote -> stringResource(R.string.cnap_source_named, networkName.orEmpty())
+        else -> stringResource(R.string.cnap_source)
+    }
+
+    // Памятка о мошенниках (1.8.0): незнакомый номер, разговор дольше двух минут
+    val memo = rememberScamMemo(
+        enabled = scamMemo,
+        active = state == Call.STATE_ACTIVE,
+        unknown = name.isNullOrBlank(),
+        connectedAt = remember(revision, call) { call?.details?.connectTimeMillis ?: 0L },
+        key = number
+    )
 
     if (showQuickReply) {
         QuickReplySheet(
@@ -839,16 +932,27 @@ private fun InCallScreen(
                         carrierLine = carrierLine,
                         numberLine = numberLine,
                         danger = isDangerTagged,
-                        titleSize = FlowUi.callNameSizeLandscape
+                        titleSize = FlowUi.callNameSizeLandscape,
+                        operatorLine = operatorLine
                     )
 
                     Spacer(Modifier.height(Space.s))
-                    CallStatusLine(state, call)
+                    if (redialSession != null) RedialStatus(redialSession) else {
+                        CallStatusLine(state, call)
+                        redialAttempt?.let { RedialAttemptLine(it) }
+                    }
                 }
 
         /** Главные кнопки: ответить и отклонить, или завершить. */
         val mainButtons: @Composable () -> Unit = {
-                    if (state == Call.STATE_RINGING && slideAnswer) {
+                  Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    // Памятка о мошенниках (1.8.0) — над кнопками
+                    AnimatedVisibility(memo.visible) {
+                        ScamMemoCard(onDismiss = memo::dismiss, modifier = Modifier.padding(bottom = Space.m))
+                    }
+                    if (redialSession != null) {
+                        RedialButtons(redialSession)
+                    } else if (state == Call.STATE_RINGING && slideAnswer) {
                         // Ответ сдвигом (1.5.8): от случайного касания
                         SlideToAnswer(
                             onAnswer = { CallManager.answer() },
@@ -888,6 +992,7 @@ private fun InCallScreen(
                             }
                         }
                     }
+                  }
                 }
 
         /*
@@ -1046,10 +1151,14 @@ private fun InCallScreen(
                     carrierLine = carrierLine,
                     numberLine = numberLine,
                     danger = isDangerTagged,
-                    titleSize = FlowUi.callNameSize
+                    titleSize = FlowUi.callNameSize,
+                    operatorLine = operatorLine
                 )
                 Spacer(Modifier.height(Space.m))
-                CallStatusLine(state, call)
+                if (redialSession != null) RedialStatus(redialSession) else {
+                    CallStatusLine(state, call)
+                    redialAttempt?.let { RedialAttemptLine(it) }
+                }
                 secondary?.let {
                     Spacer(Modifier.height(Space.s))
                     Text(
@@ -1089,7 +1198,7 @@ private fun InCallScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                AnimatedVisibility(showDialpad) {
+                AnimatedVisibility(showDialpad && redialSession == null) {
                     DtmfPanel(
                         entered = dtmfBuffer,
                         onDigit = { digit ->
@@ -1111,6 +1220,11 @@ private fun InCallScreen(
                  * решениями: отклонить, ответить с удержанием первого,
                  * ответить и завершить первый.
                  */
+                // Памятка о мошенниках (1.8.0) — над управлением, у глаз
+                AnimatedVisibility(memo.visible) {
+                    ScamMemoCard(onDismiss = memo::dismiss, modifier = Modifier.padding(bottom = Space.m))
+                }
+
                 val waitingCall = remember(revision) { CallManager.waiting }
                 waitingCall?.let { incoming ->
                     WaitingCallBanner(incoming, contactsRepo)
@@ -1145,7 +1259,8 @@ private fun InCallScreen(
                  * что это тот же экран, а не новый.
                  */
                 AnimatedVisibility(
-                    visible = state != Call.STATE_RINGING,
+                    // Между попытками автодозвона управлять нечем (1.8.0)
+                    visible = state != Call.STATE_RINGING && redialSession == null,
                     enter = expandVertically() + fadeIn(),
                     exit = shrinkVertically() + fadeOut()
                 ) {
@@ -1242,7 +1357,7 @@ private fun InCallScreen(
                     }
                 }
 
-                AnimatedVisibility(showNote) {
+                AnimatedVisibility(showNote && redialSession == null) {
                     InCallNoteField(
                         text = noteState.text,
                         onTextChange = { noteState.onTextChange(it) },
@@ -1304,7 +1419,10 @@ private fun InCallScreen(
                     Spacer(Modifier.height(Space.m))
                 }
 
-                if (state == Call.STATE_RINGING && slideAnswer) {
+                if (redialSession != null) {
+                    // Автодозвон (1.8.0): на месте «Завершить» — его кнопки
+                    RedialButtons(redialSession, Modifier.padding(horizontal = Space.s))
+                } else if (state == Call.STATE_RINGING && slideAnswer) {
                     // Ответ сдвигом (1.5.8): от случайного касания, когда
                     // телефон достают из кармана. Разбор — в SlideToAnswer
                     SlideToAnswer(
@@ -1454,7 +1572,15 @@ private fun CallStatusLine(state: Int, call: Call?) {
  * а своя строка у него отличалась и видом, и форматом таймера (0:05 вместо 00:05).
  */
 @Composable
-internal fun CallStatusPill(active: Boolean, text: String) {
+internal fun CallStatusPill(
+    active: Boolean,
+    text: String,
+    /**
+     * Что произнесёт TalkBack (1.8.0): у отсчёта автодозвона текст меняется
+     * каждую секунду, а вслух нужен только этап. null — то же, что на экране.
+     */
+    spoken: String? = null
+) {
     /*
      * ЦВЕТ ПЛАШКИ МЕНЯЕТСЯ ПЛАВНО.
      *
@@ -1488,7 +1614,7 @@ internal fun CallStatusPill(active: Boolean, text: String) {
      * секунду — живой областью он бы говорил без остановки. Время
      * разговора слышно, если коснуться плашки.
      */
-    val stateLabel = if (active) stringResource(R.string.incall_ongoing) else text
+    val stateLabel = spoken ?: if (active) stringResource(R.string.incall_ongoing) else text
     Surface(
         // Пилюля (1.5.3 — снова, как до 1.5.1)
         shape = CircleShape,
@@ -1962,7 +2088,9 @@ private fun CallerIdentity(
      * Заголовок тогда красный: цвет доходит до человека раньше текста,
      * а на экране вызова счёт идёт на секунды.
      */
-    danger: Boolean = false
+    danger: Boolean = false,
+    /** «по данным оператора» (1.8.0): чьё имя в заголовке. null — не нужно. */
+    operatorLine: String? = null
 ) {
     Text(
         display.title,
@@ -2001,6 +2129,18 @@ private fun CallerIdentity(
         maxLines = 3,
         overflow = TextOverflow.Ellipsis
     )
+
+    // Источник имени — сразу под ним, мелко и прямым начертанием:
+    // это сведения сети, а не пометка человека (та — курсивом ниже)
+    operatorLine?.let { line ->
+        Spacer(Modifier.height(Space.xxs))
+        Text(
+            line,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.outline,
+            textAlign = TextAlign.Center
+        )
+    }
 
     display.subtitle?.let { note ->
         Spacer(Modifier.height(Space.xs))
@@ -2183,6 +2323,8 @@ internal fun BigButton(
      * строку целым словом, а не обрезается.
      */
     shareRow: Boolean = false,
+    /** Цвет подписи и значка (1.8.0): белый на цветной кнопке, тёмный — на серой «Закрыть». */
+    contentColor: Color = Color.White,
     onClick: () -> Unit
 ) {
     Button(
@@ -2207,13 +2349,22 @@ internal fun BigButton(
             // попасть; две в ряду — сколько даст ряд
             .then(if (shareRow) Modifier else Modifier.widthIn(min = FlowUi.callActionMinWidth))
     ) {
-        Icon(icon, contentDescription = null, tint = Color.White)
+        Icon(icon, contentDescription = null, tint = contentColor)
         Spacer(Modifier.width(Space.s))
-        Text(
+        /*
+         * FitText (1.8.0): длинное слово уменьшается, а не рвётся посреди.
+         * У автодозвона подписи длиннее прежних — «Дозваниваться» на узком
+         * телефоне в половину ряда не помещалось и ломалось на «Дозванивать /
+         * ся». Короткие подписи («Ответить», «Завершить») не меняются:
+         * пока слово влезает, размер прежний.
+         */
+        FitText(
             text,
-            color = Color.White,
-            fontSize = FlowUi.callNumberSize,
-            fontWeight = FontWeight.Medium,
+            style = androidx.compose.ui.text.TextStyle(
+                fontSize = FlowUi.callNumberSize,
+                fontWeight = FontWeight.Medium
+            ),
+            color = contentColor,
             // Две строки и по центру: при крупном шрифте системы подпись
             // переносится целым словом, а не обрезается
             maxLines = 2,

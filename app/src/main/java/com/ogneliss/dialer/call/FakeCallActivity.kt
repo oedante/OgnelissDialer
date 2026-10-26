@@ -120,7 +120,7 @@ class FakeCallActivity : ComponentActivity() {
         setContent {
             val theme by prefs.theme.collectAsStateWithLifecycle(ThemeMode.SYSTEM)
             val dynamic by prefs.dynamicColor.collectAsStateWithLifecycle(false)
-            val uiScale by prefs.uiScale.collectAsStateWithLifecycle(com.ogneliss.dialer.settings.UiScale.AUTO)
+            val uiScale by prefs.uiScale.collectAsStateWithLifecycle(com.ogneliss.dialer.settings.UiScale.DEFAULT)
             // Живой фон — как у настоящего вызова (1.5.1)
             val callAnimation by prefs.callAnimation.collectAsStateWithLifecycle(true)
             // Фото звонящего — как у настоящего вызова (1.5.5); null — ещё не прочитано

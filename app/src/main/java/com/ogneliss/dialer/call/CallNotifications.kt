@@ -107,6 +107,40 @@ object CallNotifications {
         return builder.build()
     }
 
+    /**
+     * ТИХИЙ ВХОДЯЩИЙ (1.8.0, тихие часы для незнакомых).
+     *
+     * Канал «текущий вызов» — с низкой важностью: без звука, без всплытия
+     * поверх экрана и без полноэкранного показа. Иначе уведомление само
+     * разбудило бы экран посреди ночи — ровно то, от чего тихие часы
+     * защищают. Кнопки «Ответить» и «Отклонить» остаются: кто не спит
+     * и смотрит в телефон, ответит из шторки.
+     */
+    fun quietIncoming(context: Context, callerName: String): Notification {
+        val builder = NotificationCompat.Builder(context, CHANNEL_ONGOING)
+            .setSmallIcon(R.drawable.ic_call)
+            .setContentTitle(callerName)
+            .setContentText(context.getString(R.string.quiet_call_notification))
+            .setCategory(NotificationCompat.CATEGORY_CALL)
+            .setOngoing(true)
+            .setSilent(true)
+            .setContentIntent(pending(context, InCallActivity::class.java, 2))
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            builder.setStyle(
+                NotificationCompat.CallStyle.forIncomingCall(
+                    androidx.core.app.Person.Builder().setName(callerName).build(),
+                    actionIntent(context, CallControlReceiver.ACTION_REJECT),
+                    actionIntent(context, CallControlReceiver.ACTION_ANSWER)
+                )
+            )
+        } else {
+            builder.addAction(0, context.getString(R.string.incall_decline), actionIntent(context, CallControlReceiver.ACTION_REJECT))
+            builder.addAction(0, context.getString(R.string.incall_answer), actionIntent(context, CallControlReceiver.ACTION_ANSWER))
+        }
+        return builder.build()
+    }
+
     fun ongoing(context: Context, callerName: String, startedAt: Long): Notification =
         NotificationCompat.Builder(context, CHANNEL_ONGOING)
             .setSmallIcon(R.drawable.ic_call)

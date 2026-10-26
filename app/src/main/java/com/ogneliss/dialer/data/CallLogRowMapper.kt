@@ -78,13 +78,15 @@ object CallLogRowMapper {
         /** «Фамилия Имя» (1.6.2): ContactNames.journalNames; пусто — имя как в журнале. */
         contactNames: Map<Pair<String, String>, String> = emptyMap(),
         /** Имена из книги по номеру (1.7.0): разбор у nameOf. */
-        bookNames: Map<String, String> = emptyMap()
+        bookNames: Map<String, String> = emptyMap(),
+        /** Имена от оператора по номеру (1.8.0): разбор у networkNameOf. */
+        networkNames: Map<String, String> = emptyMap()
     ): List<CallLogRowState> {
         if (previous.isEmpty()) {
             return map(
                 groups, numberInfo, knownNumbers, simSlots,
                 contactPhotos, blockedLabels, notes, dateFormat, labels, carrierInfo,
-                remindedNumbers, contactNames, bookNames
+                remindedNumbers, contactNames, bookNames, networkNames
             )
         }
 
@@ -106,13 +108,14 @@ object CallLogRowMapper {
             val signature =
                 signatureOf(
                     group, numberInfo, notes, contactPhotos, simSlots,
-                    blockedLabels, carrierInfo, remindedNumbers, contactNames, bookNames
+                    blockedLabels, carrierInfo, remindedNumbers, contactNames, bookNames,
+                    networkNames
                 ) * 31 + (if (group.e164 in knownNumbers) 1 else 0)
 
             if (cached != null && cached.signature == signature) cached else mapOne(
                 group, numberInfo, knownNumbers, simSlots,
                 contactPhotos, blockedLabels, notes, dateFormat, labels, carrierInfo,
-                remindedNumbers, contactNames, bookNames
+                remindedNumbers, contactNames, bookNames, networkNames
             )
         }
     }
@@ -142,12 +145,14 @@ object CallLogRowMapper {
         /** «Фамилия Имя» (1.6.2): ContactNames.journalNames; пусто — имя как в журнале. */
         contactNames: Map<Pair<String, String>, String> = emptyMap(),
         /** Имена из книги по номеру (1.7.0): разбор у nameOf. */
-        bookNames: Map<String, String> = emptyMap()
+        bookNames: Map<String, String> = emptyMap(),
+        /** Имена от оператора по номеру (1.8.0): разбор у networkNameOf. */
+        networkNames: Map<String, String> = emptyMap()
     ): List<CallLogRowState> = groups.map { group ->
         mapOne(
             group, numberInfo, knownNumbers, simSlots, contactPhotos,
             blockedLabels, notes, dateFormat, labels, carrierInfo, remindedNumbers,
-            contactNames, bookNames
+            contactNames, bookNames, networkNames
         )
     }
 
@@ -188,7 +193,8 @@ object CallLogRowMapper {
         carrierInfo: CarrierInfoMode,
         remindedNumbers: Set<String>,
         contactNames: Map<Pair<String, String>, String> = emptyMap(),
-        bookNames: Map<String, String> = emptyMap()
+        bookNames: Map<String, String> = emptyMap(),
+        networkNames: Map<String, String> = emptyMap()
     ): Int {
         val note = notes[group.e164]
         val info = numberInfo[group.e164]
@@ -220,8 +226,26 @@ object CallLogRowMapper {
          * данные вызова те же, а строка должна пересобраться.
          */
         result = 31 * result + (nameOf(group, contactNames, bookNames)?.hashCode() ?: 0)
+        // Имя от оператора (1.8.0): пришло после звонка — строка пересобирается
+        result = 31 * result + (networkNames[group.e164]?.hashCode() ?: 0)
         return result
     }
+
+    /*
+     * ИМЯ ОТ ОПЕРАТОРА (1.8.0, «маркировка звонков»): разбор в data/NetworkNames.kt.
+     *
+     * Только у номеров не из книги и без имени в журнале: книга и журнал
+     * точнее сети. Заметка человека тоже важнее — она остаётся заголовком,
+     * а имя сети уходит в подпись «Сбербанк — по данным оператора».
+     */
+    private fun networkNameOf(
+        group: CallLogGroup,
+        bookOrLogName: String?,
+        knownNumbers: Set<String>,
+        networkNames: Map<String, String>
+    ): String? = if (bookOrLogName.isNullOrBlank() && group.e164 !in knownNumbers) {
+        networkNames[group.e164]?.takeIf { it.isNotBlank() }
+    } else null
 
     /*
      * ИМЯ СТРОКИ — ИЗ КНИГИ, ЕСЛИ НОМЕР В НЕЙ ЕСТЬ (1.7.0).
@@ -266,7 +290,9 @@ object CallLogRowMapper {
         /** «Фамилия Имя» (1.6.2): ContactNames.journalNames; пусто — имя как в журнале. */
         contactNames: Map<Pair<String, String>, String> = emptyMap(),
         /** Имена из книги по номеру (1.7.0): разбор у nameOf. */
-        bookNames: Map<String, String> = emptyMap()
+        bookNames: Map<String, String> = emptyMap(),
+        /** Имена от оператора по номеру (1.8.0): разбор у networkNameOf. */
+        networkNames: Map<String, String> = emptyMap()
     ): CallLogRowState = run {
         val formatted = PhoneFormatter.format(group.number)
 
@@ -279,9 +305,13 @@ object CallLogRowMapper {
          * засорения телефонной книги, а безликий номер — нет.
          */
         val note = notes[group.e164]
+        val bookOrLogName = nameOf(group, contactNames, bookNames)
+        val networkName = networkNameOf(group, bookOrLogName, knownNumbers, networkNames)
+        val hasNote = !note?.note.isNullOrBlank()
         val display = NoteDisplay.resolve(
-            // «Фамилия Имя» (1.6.2) — только для имени того же контакта
-            displayName = nameOf(group, contactNames, bookNames),
+            // «Фамилия Имя» (1.6.2) — только для имени того же контакта.
+            // Имя от оператора — вместо имени, только если нет заметки
+            displayName = bookOrLogName ?: networkName?.takeIf { !hasNote },
             note = note?.note,
             formattedNumber = formatted
         )
@@ -323,10 +353,16 @@ object CallLogRowMapper {
          * По умолчанию — только у незнакомых: у контакта с именем
          * «Мама» оператор ничего не добавляет.
          */
-        val infoLabel = when (carrierInfo) {
+        val carrierLabel = when (carrierInfo) {
             CarrierInfoMode.HIDDEN -> null
             CarrierInfoMode.ALL -> labels.infoSummary(info)
             CarrierInfoMode.UNKNOWN_ONLY -> if (isKnown) null else labels.infoSummary(info)
+        }
+        // Чьё имя в заголовке — видно по подписи (1.8.0): «по данным оператора»
+        val infoLabel = when {
+            networkName == null -> carrierLabel
+            hasNote -> labels.networkNamed(networkName)
+            else -> labels.networkSource(carrierLabel)
         }
 
         /*
@@ -420,7 +456,8 @@ object CallLogRowMapper {
             signature =
                 signatureOf(
                     group, numberInfo, notes, contactPhotos, simSlots,
-                    blockedLabels, carrierInfo, remindedNumbers, contactNames, bookNames
+                    blockedLabels, carrierInfo, remindedNumbers, contactNames, bookNames,
+                    networkNames
                 ),
             group = group
         )
@@ -441,6 +478,15 @@ object CallLogRowMapper {
 
         /** «Вчера, 21:47». */
         fun yesterday(time: String): String
+
+        /**
+         * Подпись строки, где заголовок — имя от оператора (1.8.0):
+         * «По данным оператора · Билайн · Москва». Без ресурсов — как есть.
+         */
+        fun networkSource(carrier: String?): String? = carrier
+
+        /** Имя от оператора, когда заголовок — заметка: «Сбербанк — по данным оператора». */
+        fun networkNamed(name: String): String = name
     }
 
     /**

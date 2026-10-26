@@ -5,19 +5,22 @@ import com.ogneliss.dialer.ui.theme.Space
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.material3.*
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.data.SimSlot
 import com.ogneliss.dialer.ui.theme.Dimens
@@ -29,19 +32,22 @@ import com.ogneliss.dialer.util.PhoneFormatter
  * Назначение: когда у абонента несколько номеров, нужно выбрать,
  * на какой звонить или писать — и с какой SIM.
  *
- * ── Почему шторка, а не диалог ─────────────────────────────────────────────
- * Шторка появляется снизу, у большого пальца. Диалог возникает по центру
- * экрана, куда одной рукой на современном телефоне не дотянуться.
- * Для действия, которое совершают на ходу, это важнее эстетики.
+ * ── С 1.8.0 — карточками, а не шторкой ─────────────────────────────────────
+ * Автор: «панели выбора SIM лучше сделать не выезжающими снизу, а как при
+ * долгом нажатии на карточку в журнале или контакт. Пользователям такое
+ * нравится». Здесь тоже выбирают SIM, поэтому вид тот же: список размыт,
+ * у места нажатия — карточка «кому» и карточка номеров (CardsOverlay).
+ * Было (1.2.1–1.7.0): шторка снизу; довод «у большого пальца» карточки
+ * сохраняют — они встают там, где палец только что нажал.
  *
  * ── Структура строки номера ────────────────────────────────────────────────
  * Номер целиком, под ним подпись из книги («Рабочий»), а справа — ряд
  * действий: вызов с SIM1, вызов с SIM2, SMS, мессенджер, почта.
- * При одной SIM кнопка вызова одна.
+ * При одной SIM кнопка вызова одна. Долгое нажатие на SMS при двух
+ * картах — выбор SIM для сообщения ([onChooseSmsSim]).
  *
  * Последний использованный номер помечается — обычно звонят на него же.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NumberPickerSheet(
     title: String,
@@ -52,49 +58,41 @@ fun NumberPickerSheet(
     onMessenger: (number: String) -> Unit,
     onEmail: ((String) -> Unit)? = null,
     emails: List<String> = emptyList(),
+    /** Долгое нажатие на SMS при двух картах — выбор SIM (1.8.0); null — нет. */
+    onChooseSmsSim: ((String) -> Unit)? = null,
     onDismiss: () -> Unit
 ) {
-    /*
-     * Шторка раскрывается сразу полностью и учитывает системные панели.
-     *
-     * По умолчанию ModalBottomSheet открывается наполовину и не знает
-     * о навигационной панели: нижние пункты оказываются под кнопками
-     * системы, и нажать их нельзя.
-     */
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-    ModalBottomSheet(
-        // Страница настроек, группы — белыми карточками (1.6.1, SheetGroup)
-        containerColor = com.ogneliss.dialer.ui.components.sheetContainerColor(),
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        contentWindowInsets = { WindowInsets.navigationBars }
-    ) {
-        Column(Modifier.padding(bottom = FlowUi.sheetBottomPadding)) {
-            Text(
-                title,
-                Modifier.padding(horizontal = FlowUi.sheetPadding).padding(bottom = Space.m),
-                style = MaterialTheme.typography.titleLarge
-            )
-
-            /*
-             * Номера — в скруглённой панели, почта — во второй (1.2.2).
-             * Раньше линия стояла и под последним номером, а почта шла
-             * сразу за ней без границы — как будто это ещё один номер.
-             */
-            SheetGroup {
+    CardsOverlay(anchorY = LocalTouchAnchor.current?.screenY, onDismiss = onDismiss) { close ->
+        ActionCard {
+            Column(Modifier.padding(Space.l)) {
+                Text(title, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(R.string.number_picker_hint),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        ActionCard {
+            Column(Modifier.padding(vertical = Space.xs)) {
                 numbers.forEachIndexed { index, option ->
-                    NumberRow(option, sims, onCall, onSms, onMessenger)
-                    if (index < numbers.lastIndex) {
-                        RowDivider(Modifier.padding(start = Space.l))
-                    }
+                    if (index > 0) RowDivider(Modifier.padding(start = Space.l))
+                    // Действие — сразу, карточки гаснут после: звонок не ждёт анимации
+                    NumberRow(
+                        option, sims,
+                        onCall = { number, slot -> onCall(number, slot); close() },
+                        onSms = { number -> onSms(number); close() },
+                        onMessenger = { number -> onMessenger(number); close() },
+                        onChooseSmsSim = onChooseSmsSim?.let { choose -> { number -> choose(number); close() } }
+                    )
                 }
             }
-
-            if (emails.isNotEmpty() && onEmail != null) {
-                SheetGroup {
+        }
+        if (emails.isNotEmpty() && onEmail != null) {
+            ActionCard {
+                Column(Modifier.padding(vertical = Space.xs)) {
                     emails.forEachIndexed { index, address ->
-                        SheetRow(OgnelissIcons.Email, address, onClick = { onEmail(address) })
+                        SheetRow(OgnelissIcons.Email, address, onClick = { onEmail(address); close() })
                         if (index < emails.lastIndex) SheetDivider()
                     }
                 }
@@ -121,7 +119,8 @@ private fun NumberRow(
     sims: List<SimSlot>,
     onCall: (String, Int) -> Unit,
     onSms: (String) -> Unit,
-    onMessenger: (String) -> Unit
+    onMessenger: (String) -> Unit,
+    onChooseSmsSim: ((String) -> Unit)? = null
 ) {
     // Поля — внутри панели: её собственный отступ от края уже есть
     Column(Modifier.padding(horizontal = Space.l, vertical = Space.s)) {
@@ -167,14 +166,16 @@ private fun NumberRow(
         Row(horizontalArrangement = Arrangement.spacedBy(Space.m)) {
             if (sims.size > 1) {
                 // Две SIM — две кнопки вызова с номером карты
-                sims.forEachIndexed { index, sim ->
+                sims.forEach { sim ->
                     ActionButton(
                         icon = OgnelissIcons.Call,
-                        badge = (index + 1).toString(),
+                        badge = (sim.slotIndex + 1).toString(),
                         description = stringResource(
                             R.string.a11y_call_with_sim, sim.label, option.number.takeLast(4)
                         )
-                    ) { onCall(option.number, index) }
+                    // Индекс СЛОТА, а не место в списке (как в CallButtons): при картах
+                    // во втором слоте место 0 и слот 1 — звонок ушёл бы не с той карты
+                    ) { onCall(option.number, sim.slotIndex) }
                 }
             } else {
                 ActionButton(
@@ -187,7 +188,9 @@ private fun NumberRow(
             ActionButton(
                 icon = OgnelissIcons.Message,
                 badge = null,
-                description = stringResource(R.string.action_sms)
+                description = stringResource(R.string.action_sms),
+                onLongClick = if (sims.size > 1) onChooseSmsSim?.let { choose -> { choose(option.number) } } else null,
+                onLongClickLabel = stringResource(R.string.a11y_choose_sim_sms)
             ) { onSms(option.number) }
 
             ActionButton(
@@ -205,14 +208,33 @@ private fun ActionButton(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     badge: String?,
     description: String,
+    /** Долгое нажатие (1.8.0) — выбор SIM у SMS; null — только касание. */
+    onLongClick: (() -> Unit)? = null,
+    onLongClickLabel: String? = null,
     onClick: () -> Unit
 ) {
     Box {
-        FilledIconButton(
-            onClick = onClick,
-            modifier = Modifier.size(Dimens.MIN_TOUCH_TARGET)
+        // Круг цвета кнопки FilledIconButton, но с долгим нажатием: у Material его нет
+        Box(
+            Modifier
+                .size(Dimens.MIN_TOUCH_TARGET)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primary)
+                .then(
+                    if (onLongClick != null) {
+                        Modifier.combinedClickableCompat(
+                            onClick = onClick,
+                            onLongClick = onLongClick,
+                            onLongClickLabel = onLongClickLabel
+                        )
+                    } else {
+                        Modifier.clickable(onClick = onClick)
+                    }
+                )
+                .semantics { role = Role.Button; contentDescription = description },
+            contentAlignment = Alignment.Center
         ) {
-            Icon(icon, contentDescription = description)
+            Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary)
         }
         if (badge != null) {
             Badge(

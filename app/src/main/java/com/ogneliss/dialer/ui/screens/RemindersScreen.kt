@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.ActionIconButton
 import androidx.compose.foundation.lazy.itemsIndexed
 import com.ogneliss.dialer.ui.components.GroupPosition
 import com.ogneliss.dialer.ui.components.GroupedRow
@@ -237,7 +238,10 @@ fun RemindersScreen(
                             onOpen = { onOpenCard(reminder.e164) },
                             onCall = { vm.call(reminder.e164) },
                             onEdit = { editing = reminder },
-                            onDelete = { vm.cancelReminder(reminder.e164) }
+                            onDelete = { vm.cancelReminder(reminder.e164) },
+                            onCallLongPress = if (state.sims.size > 1) {
+                                { vm.chooseSim(reminder.e164, DialerViewModel.SimAction.CALL, reminder.displayName) }
+                            } else null
                         )
                     }
                 }
@@ -253,7 +257,9 @@ private fun ReminderListRow(
     onOpen: () -> Unit,
     onCall: () -> Unit,
     onEdit: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    /** Долгое нажатие на трубку — выбор SIM (1.8.0); null — одна карта. */
+    onCallLongPress: (() -> Unit)? = null
 ) {
     Surface(
         onClick = onOpen,
@@ -287,16 +293,14 @@ private fun ReminderListRow(
                 )
             }
 
-            IconButton(
+            ActionIconButton(
+                icon = OgnelissIcons.Call,
+                contentDescription = stringResource(R.string.action_call),
+                tint = CallGreen,
                 onClick = onCall,
-                modifier = Modifier.heightIn(min = Dimens.MIN_TOUCH_TARGET)
-            ) {
-                Icon(
-                    OgnelissIcons.Call,
-                    contentDescription = stringResource(R.string.action_call),
-                    tint = CallGreen
-                )
-            }
+                onLongClick = onCallLongPress,
+                onLongClickLabel = stringResource(R.string.a11y_choose_sim)
+            )
 
             /*
              * Правка и удаление прямо в списке.

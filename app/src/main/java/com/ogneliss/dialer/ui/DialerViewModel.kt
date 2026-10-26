@@ -140,6 +140,8 @@ class DialerViewModel @Inject constructor(
      * пропущенный. Отсюда берутся сведения, почему телефон не зазвонил.
      */
     private val blockedCallLog: com.ogneliss.dialer.data.BlockedCallLog,
+    /** Имена от оператора (1.8.0): разбор в data/NetworkNames.kt. */
+    private val networkNames: com.ogneliss.dialer.data.NetworkNames,
     /**
      * Кэш телефонной книги.
      *
@@ -2358,6 +2360,8 @@ class DialerViewModel @Inject constructor(
                     put(number, BlockedReasonText.format(app, entry))
                 }
             }
+            // Имена от оператора (1.8.0) — тоже до перехода в фон: чтение базы
+            val operatorNames = networkNames.snapshot()
 
             val prepared = withContext(defaultDispatcher) {
                 CallLogRowMapper.mapIncremental(
@@ -2445,12 +2449,18 @@ class DialerViewModel @Inject constructor(
                                 if (contact.displayName.isBlank()) return@forEach
                                 contact.numbers.forEach { number -> putIfAbsent(number.e164, contact.displayName) }
                             }
-                    }
+                    },
+                    // Имена от оператора (1.8.0): у номеров не из книги
+                    networkNames = operatorNames
                 )
             }
             _rows.value = prepared
         }
     }
+
+    /** Имя от оператора по номеру (1.8.0) — для карточки абонента; null — не приходило. */
+    suspend fun networkNameOf(e164: String): String? =
+        if (e164.isBlank()) null else networkNames.get(e164)
 
     // ── Экспорт истории по абоненту ────────────────────────────────────────
 
@@ -2485,22 +2495,81 @@ class DialerViewModel @Inject constructor(
     /**
      * Запрос выбора SIM.
      *
-     * Живёт во ViewModel, а не в экране: диалог вызывается и из журнала,
-     * и из контактов, и держать состояние в двух местах означало бы
-     * два разных поведения.
+     * Живёт во ViewModel, а не в экране: выбор открывается из журнала,
+     * контактов, карточки, карточек действий, заметок, напоминаний —
+     * а показывает его один хозяин в RootScreen (SimChoiceOverlay).
+     * Держать состояние в каждом экране значило бы разное поведение
+     * и два окна сразу, когда журнал и контакты на экране вместе.
      */
     private val _simRequest = MutableStateFlow<SimRequest?>(null)
     val simRequest: StateFlow<SimRequest?> = _simRequest
 
-    /** Что сделать после выбора карты. */
+    /** Для чего выбирается карта (1.8.0): от этого заголовок, значки и пояснения. */
+    enum class SimAction { CALL, SMS }
+
+    /** Что показать в выборе карты и что сделать после него. */
     data class SimRequest(
         val displayName: String,
         val number: String,
         val sims: List<SimSlot>,
+        val action: SimAction = SimAction.CALL,
+        /** Фото и имя контакта — для портрета; у незнакомого номера null. */
+        val photoUri: String? = null,
+        val contactName: String? = null,
+        /** Оператор номера по плану нумерации — для метки «тот же оператор». */
+        val numberOperator: String? = null,
+        /** Выбор для звонка запомнится за номером (настройка «Запоминать SIM»). */
+        val remembers: Boolean = false,
+        /** Только действие; окно закрывает себя само, с затуханием. */
         val onChosen: (slotIndex: Int) -> Unit
     )
 
     fun dismissSimRequest() { _simRequest.value = null }
+
+    /**
+     * ВЫБОР SIM ДОЛГИМ НАЖАТИЕМ — ИЗ ЛЮБОГО МЕСТА (1.8.0).
+     *
+     * Автор: «не на всех кнопках звонка и сообщений можно выбрать
+     * сим-карту» и «окно выбора не учитывает действие». Теперь любая кнопка
+     * звонка или SMS по долгому нажатию зовёт сюда, а окно знает, для чего
+     * карта: звонок — зелёная трубка и запоминание за номером, SMS —
+     * синий конверт и пояснение, что карта — подсказка приложению сообщений.
+     *
+     * Одна карта — выбирать нечего: действие выполняется сразу, как касание.
+     */
+    fun chooseSim(number: String, action: SimAction, displayName: String? = null) {
+        val sims = state.value.sims
+        if (sims.size < 2) {
+            if (action == SimAction.CALL) call(number) else openSms(number)
+            return
+        }
+        val e164 = PhoneFormatter.toE164(number)
+        val contact = state.value.contacts.firstOrNull { c -> c.numbers.any { it.e164 == e164 } }
+        // Оператор номера — тот же разбор, что у строки журнала; из кэша, если он там есть
+        val info = state.value.numberInfo[e164] ?: numberInfoRepo.describe(number, contact != null)
+        viewModelScope.launch {
+            val remembers = action == SimAction.CALL && prefs.rememberSim.first()
+            _simRequest.value = SimRequest(
+                displayName = displayName?.takeIf { it.isNotBlank() }
+                    ?: contact?.displayName
+                    ?: PhoneFormatter.format(number),
+                number = number,
+                sims = sims,
+                action = action,
+                photoUri = contact?.photoUri,
+                contactName = contact?.displayName,
+                numberOperator = info.operatorHint,
+                remembers = remembers,
+                onChosen = { slot ->
+                    when (action) {
+                        SimAction.CALL -> call(number, slot)
+                        SimAction.SMS -> sims.firstOrNull { it.slotIndex == slot }
+                            ?.let { openSmsFromSim(number, it) }
+                    }
+                }
+            )
+        }
+    }
 
     /**
      * ВЫПОЛНЕНИЕ ДЕЙСТВИЯ СВАЙПА.
@@ -2537,18 +2606,9 @@ class DialerViewModel @Inject constructor(
             SwipeSimMode.FIRST -> call(group.number, sims.getOrNull(0)?.slotIndex ?: -1)
             SwipeSimMode.SECOND -> call(group.number, sims.getOrNull(1)?.slotIndex ?: -1)
             SwipeSimMode.ASK -> {
-                // Сначала возвращаем строку, потом показываем диалог
+                // Сначала возвращаем строку, потом показываем выбор
                 onBeforeDialog()
-                _simRequest.value = SimRequest(
-                    displayName = group.displayName
-                        ?: PhoneFormatter.format(group.number),
-                    number = group.number,
-                    sims = sims,
-                    onChosen = { slot ->
-                        call(group.number, slot)
-                        _simRequest.value = null
-                    }
-                )
+                chooseSim(group.number, SimAction.CALL, group.displayName)
             }
         }
     }

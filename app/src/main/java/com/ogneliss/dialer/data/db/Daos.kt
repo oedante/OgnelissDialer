@@ -116,6 +116,10 @@ interface BlockedCallDao {
     @Query("DELETE FROM blocked_calls WHERE e164 = :e164")
     suspend fun delete(e164: String)
 
+    /** Запись о номере (1.8.0): «звонил без звука в тихие часы — и когда». */
+    @Query("SELECT * FROM blocked_calls WHERE e164 = :e164 LIMIT 1")
+    suspend fun get(e164: String): BlockedCallEntity?
+
     /**
      * Очистка старых записей.
      *
@@ -213,3 +217,20 @@ interface SpamMarkDao {
     suspend fun delete(e164: String)
 }
 
+/** Имена от оператора (1.8.0): разбор у NetworkNameEntity. */
+@Dao
+interface NetworkNameDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsert(entry: NetworkNameEntity)
+
+    @Query("SELECT * FROM network_names WHERE e164 = :e164 LIMIT 1")
+    suspend fun get(e164: String): NetworkNameEntity?
+
+    /** Последние — для журнала: ограничение в запросе, как у заблокированных. */
+    @Query("SELECT * FROM network_names ORDER BY seenAt DESC LIMIT :limit")
+    suspend fun recent(limit: Int): List<NetworkNameEntity>
+
+    @Query("DELETE FROM network_names WHERE seenAt < :before")
+    suspend fun deleteOlderThan(before: Long)
+}

@@ -1,23 +1,15 @@
 package com.ogneliss.dialer.ui.components
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.ogneliss.dialer.R
-import com.ogneliss.dialer.ui.theme.Dimens
-import com.ogneliss.dialer.ui.theme.FlowUi
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+import com.ogneliss.dialer.ui.theme.Space
 import java.util.Calendar
 
 /**
@@ -40,16 +32,11 @@ import java.util.Calendar
  * не мыслит.
  *
  * ══════════════════════════════════════════════════════════════════════════
- * ПОЧЕМУ КОНТЕЙНЕР ОБЩИЙ, А НЕ AlertDialog
+ * ВИД — КАРТОЧКИ (1.8.0)
  * ══════════════════════════════════════════════════════════════════════════
- * Здесь шесть строк выбора. С отступами AlertDialog (24 dp по краям)
- * и ListItem (16 внутри каждой строки) список занимал почти весь экран,
- * а на мелких телефонах уезжал под кнопку «Отмена».
- *
- * Строки теперь такие же карточки, как в журнале, и нажимается
- * карточка целиком. Значок часов из шапки убран: он ничего
- * не добавлял к заголовку, но занимал строку в окне, которое
- * и так длинное.
+ * 1.2–1.7: окно посередине (сначала AlertDialog, потом OgnelissDialog)
+ * с серыми плитками. С 1.8.0 — стопка карточек у места нажатия, как
+ * действия по долгому нажатию (CardsOverlay, части — CardSheetParts.kt).
  * ══════════════════════════════════════════════════════════════════════════
  */
 @Composable
@@ -68,108 +55,71 @@ fun ReminderDialog(
     onPick: (atMillis: Long) -> Unit,
     onDismiss: () -> Unit
 ) {
-    OgnelissDialog(
-        onDismissRequest = onDismiss,
-        /*
-         * reminder_dialog_title, а не reminder_title.
-         *
-         * Второй уже занят заголовком УВЕДОМЛЕНИЯ о напоминании,
-         * и у него есть аргумент с именем абонента: «Перезвонить: Андрей».
-         * Здесь имя показано отдельной строкой ниже, и подставлять его
-         * в заголовок незачем.
-         */
-        title = stringResource(R.string.reminder_dialog_title),
-        content = {
-            Text(
-                displayName,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+    /*
+     * 1.8.0 — КАРТОЧКАМИ, КАК ДЕЙСТВИЯ ПО ДОЛГОМУ НАЖАТИЮ (автор: «привести
+     * окна напоминаний и заметок к одному UI с остальным приложением»).
+     * Было: окно посередине с серыми плитками-строками. Стало: шапка с синим
+     * будильником и именем, под ней варианты строками без линий; время —
+     * справа, той же колонкой. «Отмены» нет — касание мимо карточек и «Назад»
+     * закрывают, как у действий.
+     *
+     * reminder_dialog_title, а не reminder_title: второй занят заголовком
+     * УВЕДОМЛЕНИЯ («Перезвонить: Андрей») — здесь имя стоит своей строкой.
+     */
+    val now = remember { System.currentTimeMillis() }
+    CardsOverlay(anchorY = LocalTouchAnchor.current?.screenY, onDismiss = onDismiss) { close ->
+        ActionCard {
+            CardHeader(
+                icon = OgnelissIcons.Alarm,
+                accent = MaterialTheme.colorScheme.primary,
+                title = stringResource(R.string.reminder_dialog_title),
+                subtitle = displayName
             )
-
-            PRESETS.forEach { (minutes, labelRes) ->
-                val at = System.currentTimeMillis() + minutes * 60_000L
-                ReminderRow(
-                    label = stringResource(labelRes),
+        }
+        ActionCard {
+            Column(Modifier.padding(vertical = Space.s)) {
+                PRESETS.forEach { (minutes, labelRes) ->
+                    val at = now + minutes * 60_000L
                     // Точное время рядом с интервалом: «через два часа»
                     // и «в 17:40» человек сверяет с планами по-разному,
                     // и второе нагляднее
-                    trailing = formatTime(at),
-                    onClick = { onPick(at) }
+                    CardChoiceRow(
+                        label = stringResource(labelRes),
+                        trailing = formatTime(at),
+                        onClick = { onPick(at); close() }
+                    )
+                }
+
+                /*
+                 * ЗАВТРА В ДЕВЯТЬ.
+                 *
+                 * Набор интервалов упирался в сутки: «через два часа» есть,
+                 * «завтра» нет. А половина причин перезвонить — рабочие,
+                 * и звонок в 21:40 «через два часа» бессмысленен: нужно утро.
+                 * Девять часов — начало рабочего дня в большинстве мест;
+                 * точное время можно поправить в следующем окне.
+                 */
+                val tomorrow = remember {
+                    Calendar.getInstance().apply {
+                        add(Calendar.DAY_OF_YEAR, 1)
+                        set(Calendar.HOUR_OF_DAY, 9)
+                        set(Calendar.MINUTE, 0)
+                        set(Calendar.SECOND, 0)
+                        set(Calendar.MILLISECOND, 0)
+                    }.timeInMillis
+                }
+                CardChoiceRow(
+                    label = stringResource(R.string.reminder_tomorrow),
+                    trailing = formatTime(tomorrow),
+                    onClick = { onPick(tomorrow); close() }
                 )
-            }
 
-            /*
-             * ЗАВТРА В ДЕВЯТЬ.
-             *
-             * Набор интервалов упирался в сутки: «через два часа» есть,
-             * «завтра» нет. А половина причин перезвонить — рабочие,
-             * и звонок в 21:40 «через два часа» бессмысленен: нужно утро.
-             *
-             * Девять часов — начало рабочего дня в большинстве мест.
-             * Точное время всё равно можно поправить в следующем окне.
-             */
-            val tomorrow = remember {
-                java.util.Calendar.getInstance().apply {
-                    add(java.util.Calendar.DAY_OF_YEAR, 1)
-                    set(java.util.Calendar.HOUR_OF_DAY, 9)
-                    set(java.util.Calendar.MINUTE, 0)
-                    set(java.util.Calendar.SECOND, 0)
-                    set(java.util.Calendar.MILLISECOND, 0)
-                }.timeInMillis
-            }
-            ReminderRow(
-                label = stringResource(R.string.reminder_tomorrow),
-                trailing = formatTime(tomorrow),
-                onClick = { onPick(tomorrow) }
-            )
-
-            /*
-             * «Другое время» ведёт в то же окно, что и остальные варианты,
-             * только предзаполненное ближайшим часом. Отдельного пути
-             * для него больше нет: любой вариант теперь можно поправить.
-             */
-            ReminderRow(
-                label = stringResource(R.string.reminder_custom),
-                trailing = null,
-                onClick = { onPick(System.currentTimeMillis() + 60 * 60_000L) }
-            )
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.nav_cancel))
-            }
-        }
-    )
-}
-
-/**
- * Строка выбора.
- *
- * Время справа, а не второй строкой снизу: так шесть строк занимают
- * шесть высот, а не двенадцать, и колонка времени читается сверху вниз
- * одним взглядом.
- */
-@Composable
-private fun ReminderRow(label: String, trailing: String?, onClick: () -> Unit) {
-    Surface(
-        shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceContainerHighest,
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = Dimens.MIN_TOUCH_TARGET)
-            .clickable(onClick = onClick)
-    ) {
-        Row(
-            modifier = Modifier.padding(FlowUi.cardPadding),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(label, style = MaterialTheme.typography.bodyLarge)
-            if (trailing != null) {
-                Text(
-                    trailing,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                // «Задать время…» — то же окно, что у вариантов, с ближайшим часом
+                CardChoiceRow(
+                    label = stringResource(R.string.reminder_custom),
+                    trailing = null,
+                    icon = OgnelissIcons.CalendarMonth,
+                    onClick = { onPick(now + 60 * 60_000L); close() }
                 )
             }
         }

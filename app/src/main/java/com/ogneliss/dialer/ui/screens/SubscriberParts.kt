@@ -1,7 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
-import androidx.compose.ui.draw.clip
-import androidx.compose.foundation.shape.CircleShape
+import com.ogneliss.dialer.ui.components.ActionIconButton
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.heading
 import com.ogneliss.dialer.ui.components.SectionBand
@@ -433,29 +432,15 @@ internal fun NumberRow(
                 )
             }
         }
-        if (onSmsLongPress == null) {
-            NumberAction(OgnelissIcons.Message, R.string.action_sms, onClick = onSms)
-        } else {
-            // Значок с долгим нажатием: у IconButton его нет
-            Box(
-                Modifier
-                    .size(Dimens.MIN_TOUCH_TARGET)
-                    .clip(CircleShape)
-                    .combinedClickable(
-                        onClickLabel = stringResource(R.string.action_sms),
-                        onLongClickLabel = stringResource(R.string.a11y_choose_sim),
-                        onLongClick = onSmsLongPress,
-                        onClick = onSms
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    OgnelissIcons.Message,
-                    contentDescription = stringResource(R.string.action_sms),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
+        // Конверт с долгим нажатием — выбор SIM для SMS (1.7.0; общая кнопка — 1.8.0)
+        ActionIconButton(
+            icon = OgnelissIcons.Message,
+            contentDescription = stringResource(R.string.action_sms),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            onClick = onSms,
+            onLongClick = onSmsLongPress,
+            onLongClickLabel = stringResource(R.string.a11y_choose_sim_sms)
+        )
     }
 }
 
@@ -697,7 +682,9 @@ internal fun WriteSheet(
      */
     byNumber: List<SwipeAction> = emptyList(),
     byNumberTarget: String = "",
-    onMessengerByNumber: (SwipeAction) -> Unit = {}
+    onMessengerByNumber: (SwipeAction) -> Unit = {},
+    /** Долгое нажатие на SMS — выбор SIM (1.8.0); null — одна карта. */
+    onSmsChooseSim: ((String) -> Unit)? = null
 ) {
     ModalBottomSheet(
         // Страница настроек, группы — белыми карточками (1.6.1, SheetGroup)
@@ -715,7 +702,9 @@ internal fun WriteSheet(
                         smsLabel,
                         // Номер — вторая строка, только если номеров несколько
                         supporting = PhoneFormatter.format(number).takeIf { numbers.size > 1 },
-                        onClick = { onSms(number) }
+                        onClick = { onSms(number) },
+                        onLongClick = onSmsChooseSim?.let { choose -> { choose(number) } },
+                        onLongClickLabel = stringResource(R.string.a11y_choose_sim_sms)
                     )
                     if (index < numbers.lastIndex) SheetDivider()
                 }

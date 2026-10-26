@@ -2,6 +2,7 @@ package com.ogneliss.dialer.call
 
 import android.os.Build
 import android.telecom.Call
+import android.telecom.TelecomManager
 
 /**
  * СОВМЕСТИМЫЙ ДОСТУП К ДАННЫМ ВЫЗОВА.
@@ -44,6 +45,18 @@ object CallDetailsCompat {
         details?.handle?.schemeSpecificPart
 
     /**
+     * Имя от сети (1.8.0, «маркировка звонков»): название, которое оператор
+     * передал вместе с номером, — так с 1.09.2025 подписаны звонки
+     * организаций. Только если сеть разрешила показ; заглушки «unknown»
+     * и цифры вместо имени отбрасывает NetworkNames.clean.
+     */
+    fun networkName(details: Call.Details?): String? {
+        if (details == null) return null
+        if (details.callerDisplayNamePresentation != TelecomManager.PRESENTATION_ALLOWED) return null
+        return com.ogneliss.dialer.data.NetworkNames.clean(details.callerDisplayName)
+    }
+
+    /**
      * Исходящий ли вызов.
      *
      * До API 29 направление в Details не отдаётся. Определяем косвенно:
@@ -71,5 +84,5 @@ object CallDetailsCompat {
      * как сбой приложения.
      */
     fun displayLabel(details: Call.Details?, fallback: String): String =
-        contactDisplayName(details) ?: number(details) ?: fallback
+        contactDisplayName(details) ?: networkName(details) ?: number(details) ?: fallback
 }

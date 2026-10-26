@@ -1,5 +1,8 @@
 package com.ogneliss.dialer.settings
 
+import com.ogneliss.dialer.call.AutoRedialMode
+import com.ogneliss.dialer.call.QuietHours
+import com.ogneliss.dialer.call.RedialPace
 import com.ogneliss.dialer.data.NotesRetention
 import com.ogneliss.dialer.ui.SettingsState
 import kotlinx.coroutines.flow.Flow
@@ -131,13 +134,23 @@ class SettingsStateSource @Inject constructor(
         Notes(retention, scope, language)
     }
 
-    /** Фильтрация вызовов. */
+    /** Фильтрация вызовов. Тихие часы (1.8.0) — сюда же: это правило входящих. */
     private val spam: Flow<Spam> = combine(
         prefs.blockHidden,
         prefs.blockNotInContacts,
         prefs.blockTaggedSpam,
-    ) { hidden, unknown, tagged ->
-        Spam(hidden, unknown, tagged)
+        prefs.quietHours
+    ) { hidden, unknown, tagged, quiet ->
+        Spam(hidden, unknown, tagged, quiet)
+    }
+
+    /** Помощь во время и после вызова (1.8.0): автодозвон и памятка. */
+    private val callHelp: Flow<CallHelp> = combine(
+        prefs.autoRedialMode,
+        prefs.autoRedialPace,
+        prefs.scamMemo
+    ) { mode, pace, memo ->
+        CallHelp(mode, pace, memo)
     }
 
     /**
@@ -148,8 +161,11 @@ class SettingsStateSource @Inject constructor(
      */
     val state: Flow<SettingsState> = combine(
         combine(appearance, notes) { a, n -> a to n },
-        gestures, calls, postCall, spam
-    ) { (a, n), g, c, p, s ->
+        gestures, calls,
+        // Шестая группа — парой со «после звонка»: у combine предел пять
+        combine(postCall, callHelp) { p, h -> p to h },
+        spam
+    ) { (a, n), g, c, (p, h), s ->
         SettingsState(
             theme = a.theme,
             dynamicColor = a.dynamicColor,
@@ -195,6 +211,11 @@ class SettingsStateSource @Inject constructor(
             blockHidden = s.blockHidden,
             blockNotInContacts = s.blockNotInContacts,
             blockTaggedSpam = s.blockTaggedSpam,
+            quietHours = s.quietHours,
+
+            autoRedialMode = h.autoRedialMode,
+            autoRedialPace = h.autoRedialPace,
+            scamMemo = h.scamMemo,
 
             fileLogging = true
         )
@@ -213,7 +234,7 @@ class SettingsStateSource @Inject constructor(
         val callHideContactNumber: Boolean = false,
         val callAnimation: Boolean = true,
         val callPhotoStyle: CallPhotoStyle = CallPhotoStyle.CIRCLE,
-        val uiScale: UiScale = UiScale.AUTO,
+        val uiScale: UiScale = UiScale.DEFAULT,
         val callPhotoSize: CallPhotoSize = CallPhotoSize.LARGE,
         val answerMode: AnswerMode = AnswerMode.TAP,
         val messengersAnyNumber: Boolean = false,
@@ -259,5 +280,12 @@ class SettingsStateSource @Inject constructor(
         val blockHidden: Boolean,
         val blockNotInContacts: Boolean,
         val blockTaggedSpam: Boolean,
+        val quietHours: QuietHours
+    )
+
+    private data class CallHelp(
+        val autoRedialMode: AutoRedialMode,
+        val autoRedialPace: RedialPace,
+        val scamMemo: Boolean
     )
 }

@@ -100,6 +100,20 @@ class BlockedCallLog @Inject constructor(
         }
 
     /** Снятие пометки: вызывается вместе со снятием правила. */
+    /**
+     * Этот номер звонил без звука в тихие часы не раньше [since] (1.8.0).
+     *
+     * Так распознаётся «перезвонил — значит срочно»: второй звонок
+     * за 15 минут проходит со звуком. Ошибка чтения — «нет»: тогда
+     * второй звонок тоже пройдёт без звука, но останется в журнале.
+     */
+    suspend fun silencedQuietlySince(e164: String, since: Long): Boolean = suspendRunCatching {
+        val row = dao.get(e164) ?: return@suspendRunCatching false
+        row.outcome == Outcome.SILENCED.name &&
+            row.reason == SpamPolicy.Reason.QUIET_HOURS.name &&
+            row.at >= since
+    }.getOrDefault(false)
+
     suspend fun forget(e164: String) {
         runCatching { dao.delete(e164) }
     }

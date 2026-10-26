@@ -101,15 +101,21 @@ internal fun NumberActionCards(
         )
     }
 
+    // Долгое нажатие на «Позвонить» и «SMS» — выбор SIM (1.8.0); одна карта — нет
+    val multiSim = state.sims.size > 1
     val quick = listOf(
         CardAction(
             OgnelissIcons.Call, stringResource(R.string.action_call),
             onClick = { vm.call(number) },
-            tint = Color.White, container = CallGreen
+            tint = Color.White, container = CallGreen,
+            onLongClick = if (multiSim) { { vm.chooseSim(number, DialerViewModel.SimAction.CALL) } } else null,
+            longClickLabel = stringResource(R.string.a11y_choose_sim)
         ),
         CardAction(
             OgnelissIcons.Message, stringResource(R.string.action_sms),
-            onClick = { vm.openSms(number) }
+            onClick = { vm.openSms(number) },
+            onLongClick = if (multiSim) { { vm.chooseSim(number, DialerViewModel.SimAction.SMS) } } else null,
+            longClickLabel = stringResource(R.string.a11y_choose_sim_sms)
         ),
         CardAction(
             OgnelissIcons.ContentCopy, stringResource(R.string.action_copy),

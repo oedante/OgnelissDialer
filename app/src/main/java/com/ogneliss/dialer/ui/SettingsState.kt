@@ -2,6 +2,9 @@ package com.ogneliss.dialer.ui
 
 import androidx.compose.runtime.Immutable
 
+import com.ogneliss.dialer.call.AutoRedialMode
+import com.ogneliss.dialer.call.QuietHours
+import com.ogneliss.dialer.call.RedialPace
 import com.ogneliss.dialer.settings.CarrierInfoMode
 import com.ogneliss.dialer.settings.CallPhotoSize
 import com.ogneliss.dialer.settings.AnswerMode
@@ -48,7 +51,7 @@ data class SettingsState(
     /** Живой фон экрана вызова (1.5.1). */
     val callAnimation: Boolean = true,
     /** Масштаб интерфейса (1.5.6). */
-    val uiScale: UiScale = UiScale.AUTO,
+    val uiScale: UiScale = UiScale.DEFAULT,
     /** Фото звонящего: на весь экран, круг или квадрат (1.5.5). */
     val callPhotoStyle: CallPhotoStyle = CallPhotoStyle.CIRCLE,
     /** Размер портрета на экране вызова (1.5.7). */
@@ -99,7 +102,14 @@ data class SettingsState(
     /** Вид журнала: разбор в JournalStyle. */
     val journalStyle: JournalStyle = JournalStyle.GROUPS,
     /** Круглая кнопка псевдозвонка на экранах журнала и контактов. */
-    val fakeCallButton: Boolean = true
+    val fakeCallButton: Boolean = true,
+    /** Автодозвон (1.8.0): разбор в call/RedialPolicy.kt. */
+    val autoRedialMode: AutoRedialMode = AutoRedialMode.DEFAULT,
+    val autoRedialPace: RedialPace = RedialPace.DEFAULT,
+    /** Памятка о мошенниках в долгом разговоре с незнакомым (1.8.0). */
+    val scamMemo: Boolean = true,
+    /** Тихие часы для незнакомых (1.8.0): разбор в call/QuietHours.kt. */
+    val quietHours: QuietHours = QuietHours.DEFAULT
 ) {
 
     /** Значение переключателя по ключу из реестра настроек. */
@@ -127,6 +137,7 @@ data class SettingsState(
         "block_unknown" -> blockNotInContacts
         "block_tagged" -> blockTaggedSpam
         "file_logging" -> fileLogging
+        "scam_memo" -> scamMemo
         else -> false
     }
 
@@ -143,7 +154,9 @@ data class SettingsState(
             // не попали — SettingsRegistryTest падал ещё с 1.3.0
             "button_labels", "proximity_screen_off", "call_hide_contact_number",
             "messengers_any_number",
-            "call_animation"
+            "call_animation",
+            // 1.8.0
+            "scam_memo"
         )
     }
 }

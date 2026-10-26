@@ -357,6 +357,10 @@ internal fun CallLogRow(
              */
             vm.performSwipe(SwipeAction.CALL, group) { swipeController.close() }
         },
+        // Долгое нажатие на трубку — выбор SIM для этого номера (1.8.0)
+        onCallLongPress = if (state.sims.size > 1) {
+            { r -> vm.chooseSim(r.number, DialerViewModel.SimAction.CALL, r.title) }
+        } else null,
         searchQuery = state.query,
         selected = selection.isSelected(row.key),
         selectionActive = selection.isActive,
@@ -481,7 +485,9 @@ data class PinnedOnlyRow(
 internal fun PinnedOnlyCard(
     row: PinnedOnlyRow,
     onCall: () -> Unit,
-    onOpen: () -> Unit
+    onOpen: () -> Unit,
+    /** Долгое нажатие на трубку — выбор SIM (1.8.0); null — одна карта. */
+    onCallLongPress: (() -> Unit)? = null
 ) {
     Surface(
         onClick = onOpen,
@@ -506,13 +512,14 @@ internal fun PinnedOnlyCard(
                 )
             }
 
-            IconButton(onClick = onCall) {
-                Icon(
-                    OgnelissIcons.Call,
-                    contentDescription = stringResource(R.string.action_call),
-                    tint = CallGreen
-                )
-            }
+            ActionIconButton(
+                icon = OgnelissIcons.Call,
+                contentDescription = stringResource(R.string.action_call),
+                tint = CallGreen,
+                onClick = onCall,
+                onLongClick = onCallLongPress,
+                onLongClickLabel = stringResource(R.string.a11y_choose_sim)
+            )
         }
     }
 }

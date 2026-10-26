@@ -650,7 +650,7 @@
     <string name="call_photo_circle">Cercle</string>
     <string name="call_photo_square">Carré</string>
     <string name="settings_ui_scale">Échelle de l’interface</string>
-    <string name="settings_ui_scale_text">Taille des boutons, des marges et du texte. « Auto » s’adapte à la largeur de l’écran : un peu plus compact sur les téléphones étroits, inchangé sur les larges</string>
+    <string name="settings_ui_scale_text">Taille des boutons, des marges et du texte. Par défaut : 90 %. « Auto » s’adapte à la largeur de l’écran : un peu plus compact sur les téléphones étroits, inchangé sur les larges</string>
     <string name="ui_scale_auto">Auto (selon l’écran)</string>
     <string name="ui_scale_auto_now">Auto — actuellement %1$d %%</string>
     <string name="ui_scale_90" formatted="false">Plus petit — 90 %</string>
@@ -728,11 +728,6 @@
     <string name="answer_mode_slide">Glisser</string>
     <string name="incall_slide_hint">Glissez à droite pour répondre, à gauche pour refuser</string>
     <!-- 1.5.8: настройки — «Дополнительно», отметка изменённых, «Вернуть как было» -->
-    <string name="settings_advanced">Avancé</string>
-    <plurals name="settings_advanced_count">
-        <item quantity="one">%1$d autre réglage</item>
-        <item quantity="other">%1$d autres réglages</item>
-    </plurals>
     <string name="settings_reset_section">Rétablir les valeurs par défaut</string>
     <string name="settings_reset_section_text">Modifiés : %1$d — revenir aux valeurs par défaut</string>
     <string name="settings_reset_section_confirm">Rétablir les valeurs par défaut de « %1$s » ? Réglages modifiés : %2$d. Les autres sections, les notes et les listes ne changent pas.</string>
@@ -761,7 +756,6 @@
     <string name="faq_lead">Des réponses courtes aux questions fréquentes. Le bouton sous une réponse ouvre directement le réglage concerné.</string>
     <string name="faq_keywords">aide faq comment question réponse</string>
     <string name="faq_path">%1$s → %2$s → « %3$s »</string>
-    <string name="faq_path_advanced">%1$s → %2$s → %3$s → « %4$s »</string>
     <string name="faq_path_section">%1$s → %2$s</string>
     <string name="faq_make_default">Définir par défaut</string>
     <string name="faq_write">Écrire un e-mail</string>
@@ -786,7 +780,7 @@
     <string name="faq_q_slide">Comment répondre en faisant glisser — ou retrouver les boutons ?</string>
     <string name="faq_a_slide">%1$s. « Toucher » affiche deux boutons ordinaires. Avec « Glisser », on fait glisser le bouton : à droite pour répondre, à gauche pour refuser — impossible ainsi de répondre ou de refuser par mégarde en sortant le téléphone de la poche. Avec TalkBack, les appels se prennent toujours avec des boutons.</string>
     <string name="faq_q_sim">Comment choisir la carte SIM pour un appel ?</string>
-    <string name="faq_a_sim">Chaque carte SIM a son propre bouton d’appel. L’application retient la carte choisie pour un numéro et la propose de nouveau la fois suivante (%1$s). Pour ne pas confondre les cartes, nommez-les : %2$s.</string>
+    <string name="faq_a_sim">Appuyez longuement sur n’importe quel bouton d’appel ou de SMS — dans le journal, les contacts, une fiche — et choisissez la carte pour cette action. L’application retient la carte choisie pour un numéro et la propose de nouveau la fois suivante (%1$s). Pour ne pas confondre les cartes, nommez-les : %2$s.</string>
     <string name="faq_q_missed">Les appels manqués n’apparaissent qu’à l’ouverture de l’application. Que faire ?</string>
     <string name="faq_a_missed">Le système met probablement l’application en veille pour économiser la batterie. Autorisez-la à fonctionner en arrière-plan — %1$s — et les appels manqués s’afficheront aussitôt.</string>
     <string name="faq_q_recording">Peut-on enregistrer les appels ?</string>
@@ -875,4 +869,67 @@
     <string name="sim_chooser_title_sms">Depuis quelle SIM écrire ?</string>
     <string name="a11y_choose_sim">Choisir la SIM</string>
     <string name="a11y_choose_sim_sms">SMS depuis une autre SIM</string>
+    <!-- 1.8.0: выбор SIM карточками -->
+    <string name="sim_choice_same_operator">même opérateur</string>
+    <string name="sim_choice_remember_note">Le choix sera mémorisé pour ce numéro (Paramètres → SIM).</string>
+    <string name="sim_choice_sms_note">La SIM est transmise à l’appli de messages comme indication — certaines redemanderont.</string>
+    <string name="sim_choice_operator_note">Opérateur d’après le plan de numérotation : le numéro a pu changer d’opérateur.</string>
+    <!-- 1.8.0: выбор номера карточками -->
+    <string name="number_picker_hint">Quel numéro ?</string>
+    <!-- Автодозвон (1.8.0): настройка и экран вызова -->
+    <string name="settings_auto_redial">Rappel automatique</string>
+    <string name="settings_auto_redial_text">Si la ligne est occupée ou que personne ne répond, le numéro est rappelé. « Proposer » demande sur l’écran d’appel, « Tout de suite » commence sans demander. Les numéros d’urgence et les numéros courts ne sont jamais rappelés.</string>
+    <string name="auto_redial_off">Désactivé</string>
+    <string name="auto_redial_offer">Proposer</string>
+    <string name="auto_redial_auto">Tout de suite</string>
+    <string name="settings_auto_redial_pace">Tentatives de rappel</string>
+    <string name="settings_auto_redial_pace_text">Combien de fois et à quel rythme rappeler. Vous pouvez arrêter à tout moment sur l’écran d’appel.</string>
+    <string name="redial_pace_3_10">3 tentatives, toutes les 10 s</string>
+    <string name="redial_pace_5_10">5 tentatives, toutes les 10 s</string>
+    <string name="redial_pace_5_30">5 tentatives, toutes les 30 s</string>
+    <string name="redial_pace_10_60">10 tentatives, une par minute</string>
+    <string name="keywords_auto_redial">rappel répéter occupé rappeler encore</string>
+    <string name="redial_reason_busy">Occupé</string>
+    <string name="redial_reason_no_answer">Pas de réponse</string>
+    <string name="redial_reason_failed">L’appel a échoué</string>
+    <string name="redial_offer_hint">Rappel auto : jusqu’à %1$d fois, toutes les %2$d s</string>
+    <string name="redial_waiting">Nouvel essai dans %d s</string>
+    <string name="redial_attempt">Rappel auto · essai %1$d sur %2$d</string>
+    <string name="redial_calling">Nouvel appel…</string>
+    <string name="redial_gave_up">Impossible de joindre</string>
+    <string name="redial_gave_up_detail">Tentatives : %d</string>
+    <string name="redial_action_start">Réessayer</string>
+    <string name="redial_action_now">Appeler maintenant</string>
+    <string name="redial_action_stop">Arrêter</string>
+    <string name="redial_action_again">Encore une fois</string>
+    <string name="redial_spoken">%1$s. Rappel auto, essai %2$d sur %3$d</string>
+    <!-- Памятка о мошенниках и тихие часы (1.8.0) -->
+    <string name="settings_scam_memo">Rappel anti-arnaque</string>
+    <string name="settings_scam_memo_text">Si un appel avec un numéro inconnu dure plus de deux minutes, l’écran d’appel rappelle une fois : ne communiquez jamais de codes SMS, de données de carte ni de mots de passe. Le téléphone vibre brièvement pour attirer votre attention.</string>
+    <string name="keywords_scam_memo">arnaque fraude sécurité banque code avertissement</string>
+    <string name="scam_memo_title">Long appel avec un numéro inconnu</string>
+    <string name="scam_memo_text">Ne communiquez ni codes SMS, ni données de carte, ni mots de passe. Les banques, la police et les « services de sécurité » ne les demandent jamais. En cas de doute, raccrochez et appelez votre banque au numéro inscrit sur la carte.</string>
+    <string name="scam_memo_ok">Compris</string>
+    <string name="settings_quiet_hours">Heures calmes pour les inconnus</string>
+    <string name="settings_quiet_hours_text">Pendant ces heures, les appels de numéros absents de vos contacts arrivent sans sonnerie et n’allument pas l’écran — ils restent dans le journal. Si le même numéro rappelle dans les 15 minutes, le téléphone sonne : c’est ainsi que passent les appels urgents. Les numéros de la liste d’exceptions sonnent toujours.</string>
+    <string name="keywords_quiet_hours">nuit sommeil silencieux ne pas déranger calme inconnu</string>
+    <string name="quiet_hours_off">Désactivées</string>
+    <string name="quiet_hours_22_08">De 22 h à 8 h</string>
+    <string name="quiet_hours_23_07">De 23 h à 7 h</string>
+    <string name="quiet_hours_always">Toute la journée</string>
+    <string name="block_reason_quiet_hours">heures calmes</string>
+    <string name="quiet_call_notification">Appel entrant · heures calmes</string>
+    <!-- Имя от оператора — маркировка звонков (1.8.0) -->
+    <string name="cnap_source">selon l’opérateur</string>
+    <string name="cnap_source_line">Selon l’opérateur</string>
+    <string name="cnap_source_named">%s — selon l’opérateur</string>
+    <!-- Вопросы и ответы 1.8.0: автодозвон, тихие часы, имя от оператора, памятка -->
+    <string name="faq_q_redial">Comment joindre quelqu’un si c’est occupé ?</string>
+    <string name="faq_a_redial">Après « Occupé » ou « Pas de réponse », l’écran d’appel propose « Réessayer » : l’application rappelle le numéro après une pause, autant de fois que réglé (%2$s). Pour rappeler sans demander, choisissez « Tout de suite » : %1$s. Les numéros d’urgence et les numéros courts ne sont jamais rappelés, et « Raccrocher » arrête toujours.</string>
+    <string name="faq_q_quiet">Puis-je ne pas entendre les appels nocturnes d’inconnus ?</string>
+    <string name="faq_a_quiet">Oui : %1$s. Pendant ces heures, un tel appel arrive sans sonnerie et n’allume pas l’écran ; le matin, il figure au journal avec « Silencieux — heures calmes ». Si le même numéro rappelle dans les 15 minutes, le téléphone sonne. Les contacts et les numéros de la liste d’exceptions sonnent toujours.</string>
+    <string name="faq_q_operator_name">Pourquoi un numéro affiche-t-il un nom « selon l’opérateur » ?</string>
+    <string name="faq_a_operator_name">Beaucoup d’organisations appellent avec un nom : l’opérateur transmet le nom de l’entreprise avec le numéro (en Russie, c’est obligatoire depuis le 1er septembre 2025). L’application l’affiche sur l’écran d’appel et le garde pour le journal et la fiche — pour les numéros absents de vos contacts. Le nom vient du réseau, pas de l’application : vos contacts et vos notes priment toujours.</string>
+    <string name="faq_q_scam">Qu’est-ce que le rappel anti-arnaque pendant un appel ?</string>
+    <string name="faq_a_scam">Si un appel avec un numéro inconnu dure plus de deux minutes, l’écran d’appel rappelle une fois : ne communiquez jamais de codes SMS, de données de carte ni de mots de passe. L’application n’écoute pas l’appel et ne sait pas qui est au bout du fil — la règle vaut pour tout appel. Pour le désactiver : %1$s.</string>
 </resources>
