@@ -123,6 +123,9 @@ class OgnelissCallScreeningService : CallScreeningService() {
                  */
                 if (decision.action == SpamPolicy.Action.SILENCE) {
                     QuietCallGate.mark(input.e164)
+                } else {
+                    // Старая метка с того же номера — не про этот вызов
+                    QuietCallGate.clear(input.e164)
                 }
 
                 if (decision.action == SpamPolicy.Action.BLOCK) {

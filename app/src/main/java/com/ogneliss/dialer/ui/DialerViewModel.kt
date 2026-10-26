@@ -2356,8 +2356,20 @@ class DialerViewModel @Inject constructor(
                     }
                 }
 
-                blockedCallLog.snapshot().forEach { (number, entry) ->
-                    put(number, BlockedReasonText.format(app, entry))
+                /*
+                 * «Без звука — тихие часы» (1.8.0) — у звонка, а не у номера:
+                 * по ключу строки, и только той, чей последний звонок — тот
+                 * самый тихий. Маппер ищет сначала по ключу строки, потом
+                 * по номеру. Разбор — BlockedCallLog.silencedRows.
+                 */
+                val reasons = blockedCallLog.snapshot()
+                reasons.forEach { (number, entry) ->
+                    if (entry.outcome != BlockedCallLog.Outcome.SILENCED) {
+                        put(number, BlockedReasonText.format(app, entry))
+                    }
+                }
+                BlockedCallLog.silencedRows(groups, reasons).forEach { (rowKey, entry) ->
+                    put(rowKey, BlockedReasonText.format(app, entry))
                 }
             }
             // Имена от оператора (1.8.0) — тоже до перехода в фон: чтение базы

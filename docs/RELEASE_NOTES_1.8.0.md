@@ -184,6 +184,14 @@ versionCode  48
 - **Экран не просыпается:** экран вызова не открывается, уведомление —
   тихое, с кнопками «Ответить» и «Отклонить» (кто не спит — ответит
   из шторки).
+- **Пропущенный — тоже без звука:** уведомление о пропущенном после
+  тихого звонка приходит беззвучно, иначе оно будило бы через минуту
+  после заглушённого звонка (`QuietCallGate.missedIsQuiet`). После
+  обычного звонка — со звуком, как всегда.
+- **Второй входящий во время разговора — обычный:** человек у телефона,
+  а тихое уведомление заняло бы место уведомления разговора.
+- **Пометка — у самого тихого звонка, а не у номера:** перезвонил днём
+  и поговорили — у строки её уже нет (`BlockedCallLog.silencedRows`).
 - **Срочное прорывается:** тот же номер перезвонил за 15 минут — телефон
   звонит (как «повторные вызовы» в системном «Не беспокоить»).
 - **Звонят всегда:** контакты, белый список. Блокировка незнакомых —
@@ -195,7 +203,7 @@ versionCode  48
 
 Правило — в `SpamPolicy` (8-й шаг, после блокировки незнакомых), тесты —
 `SpamPolicyTest`; метка тихого вызова от проверки до службы вызовов —
-`QuietCallGate` (`call/QuietHours.kt`).
+`QuietCallGate` (`call/QuietHours.kt`, тест `QuietCallGateTest`).
 
 ## 8. Памятка о мошенниках
 
@@ -227,6 +235,10 @@ SMS, данные карты и пароли. Банк, полиция и «сл
   обещанный в `CallDetailsCompat`, не был сделан. Сделан.
 - Выбор номера: звонок с выбранной SIM — по слоту, а не по индексу
   (раздел 1).
+- **Причины блокировки не чистились у большинства.** Очистка стояла
+  в ежедневной задаче после выхода «заметки не удалять» — а это
+  умолчание. Теперь причины (срок 60 дней) и имена от оператора (год)
+  чистятся всегда, до проверки срока заметок (`NotesCleanupWorker`).
 
 ## 10. Вопросы и ответы
 
@@ -247,7 +259,7 @@ SMS, данные карты и пароли. Банк, полиция и «сл
 | Настройки без «Дополнительно», 90 % | `ui/settings/SettingsRegistry.kt`, `ui/screens/SettingsCategoryScreen.kt`, `settings/Prefs.kt` (`UiScale.DEFAULT`) |
 | Автодозвон | `call/RedialPolicy.kt`, `AutoRedial.kt`, `RedialPanel.kt`, `OgnelissInCallService.kt`, `InCallActivity.kt` |
 | Имя от оператора | `call/CallDetailsCompat.kt` (`networkName`), `data/NetworkNames.kt`, `data/db/*` (`network_names`, `MIGRATION_7_8`), `data/CallLogRowMapper.kt` (`networkNames`) |
-| Тихие часы | `call/QuietHours.kt`, `SpamPolicy.kt`, `SpamInputCollector.kt`, `OgnelissCallScreeningService.kt`, `OgnelissInCallService.kt`, `CallNotifications.kt` (`quietIncoming`) |
+| Тихие часы | `call/QuietHours.kt`, `SpamPolicy.kt`, `SpamInputCollector.kt`, `OgnelissCallScreeningService.kt`, `OgnelissInCallService.kt`, `CallNotifications.kt` (`quietIncoming`), `MissedCallsNotifier.kt`, `data/BlockedCallLog.kt` (`silencedRows`) |
 | Памятка о мошенниках | `call/ScamMemo.kt`, `InCallActivity.kt` |
 
 Строки — новые в 4 языках: автодозвон (`settings_auto_redial*`,
@@ -257,9 +269,9 @@ SMS, данные карты и пароли. Банк, полиция и «сл
 (`cnap_source*`), выбор SIM (`sim_choice_*`, `number_picker_hint`), FAQ.
 
 Тесты: `RedialPolicyTest` (11), `ScamMemoPolicyTest` (3), `NetworkNamesTest` (4),
-`OperatorMatchTest`, `SpamPolicyTest` (+9: тихие часы), `BlockedCallLogTest`
-(+1), `SettingsRegistryTest`, `FaqTest`; инструментальный — `MigrationTest`
-(7 → 8).
+`QuietCallGateTest` (4), `OperatorMatchTest`, `SpamPolicyTest` (+9: тихие
+часы), `BlockedCallLogTest` (+4), `SettingsRegistryTest`, `FaqTest`;
+инструментальный — `MigrationTest` (7 → 8).
 
 ## «Что нового» — `store/whats_new_1.8.0.txt`
 
@@ -296,9 +308,11 @@ SMS, данные карты и пароли. Банк, полиция и «сл
    с той же подписью. У контакта — имя из книги.
 9. **Тихие часы** «Круглосуточно» для проверки: звонок с незнакомого —
    тихо, экран не загорелся, в шторке тихое уведомление с кнопками;
-   в журнале «Без звука — тихие часы». Повторный звонок с того же номера
-   в течение 15 минут — звонит. Контакт — звонит. С ролью определителя
-   и без неё.
+   не отвечать — уведомление о пропущенном пришло без звука; в журнале
+   «Без звука — тихие часы». Повторный звонок с того же номера в течение
+   15 минут — звонит, и у строки пометки больше нет. Контакт — звонит.
+   Незнакомый во время разговора — обычный второй входящий. С ролью
+   определителя и без неё.
 10. **Памятка:** разговор с незнакомым номером дольше 2 минут — карточка
     и короткая вибрация, один раз; «Понятно». С контактом — нет.
     Выключить в настройках — нет.

@@ -99,7 +99,6 @@ class BlockedCallLog @Inject constructor(
             emptyMap()
         }
 
-    /** Снятие пометки: вызывается вместе со снятием правила. */
     /**
      * Этот номер звонил без звука в тихие часы не раньше [since] (1.8.0).
      *
@@ -114,6 +113,7 @@ class BlockedCallLog @Inject constructor(
             row.at >= since
     }.getOrDefault(false)
 
+    /** Снятие пометки: вызывается вместе со снятием правила. */
     suspend fun forget(e164: String) {
         runCatching { dao.delete(e164) }
     }
@@ -134,8 +134,8 @@ class BlockedCallLog @Inject constructor(
         runCatching { dao.clear() }
     }
 
-    private companion object {
-        const val TAG = "BlockedCalls"
+    companion object {
+        private const val TAG = "BlockedCalls"
 
         /**
          * Сколько записей читать для показа в журнале.
@@ -144,7 +144,7 @@ class BlockedCallLog @Inject constructor(
          * Больше не нужно: системный журнал вызовов сам хранит
          * ограниченную историю, и пометке не к чему будет привязаться.
          */
-        const val DEFAULT_LIMIT = 500
+        private const val DEFAULT_LIMIT = 500
 
         /**
          * Срок хранения причин.
@@ -152,8 +152,39 @@ class BlockedCallLog @Inject constructor(
          * Через два месяца правило либо давно исправлено, либо оставлено
          * намеренно — объяснять нечего.
          */
-        const val RETENTION_DAYS = 60
+        private const val RETENTION_DAYS = 60
 
-        const val DAY_MILLIS = 24L * 60 * 60 * 1000
+        private const val DAY_MILLIS = 24L * 60 * 60 * 1000
+
+        /**
+         * Насколько звонок в журнале может быть раньше записи о нём — проверка
+         * идёт после начала звонка — и позже, на сдвиг часов (1.8.0).
+         */
+        const val SILENCED_MATCH_BEFORE_MS = 30_000L
+        const val SILENCED_MATCH_AFTER_MS = 5_000L
+
+        /**
+         * СТРОКИ ЖУРНАЛА С ТИХИМ ЗВОНКОМ (1.8.0): ключ строки → запись.
+         *
+         * Блокировка — свойство номера: пока правило стоит, его звонки
+         * не проходят, и пометка верна для любой его строки. Беззвучный
+         * пропуск (тихие часы) — про один звонок. Перезвонил днём,
+         * поговорили — та строка уже не «без звука», а запись живёт 60 дней:
+         * по номеру пометка висела бы на каждом его звонке.
+         *
+         * Поэтому пометку получает только строка, чей последний звонок —
+         * тот самый тихий. В журнале время звонка — его начало, а запись
+         * делается чуть позже, при проверке: окно — [SILENCED_MATCH_BEFORE_MS]
+         * до записи и [SILENCED_MATCH_AFTER_MS] после.
+         */
+        fun silencedRows(groups: List<CallLogGroup>, entries: Map<String, Entry>): Map<String, Entry> {
+            val result = HashMap<String, Entry>()
+            for (group in groups) {
+                val entry = entries[group.e164]?.takeIf { it.outcome == Outcome.SILENCED } ?: continue
+                val window = (entry.at - SILENCED_MATCH_BEFORE_MS)..(entry.at + SILENCED_MATCH_AFTER_MS)
+                if (group.lastDate in window) result[group.key] = entry
+            }
+            return result
+        }
     }
 }

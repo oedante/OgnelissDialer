@@ -166,4 +166,58 @@ class BlockedCallLogTest {
         assertEquals(false, log.silencedQuietlySince("+7900B", since = 0L))
         assertEquals(false, log.silencedQuietlySince("+7900Z", since = 0L))
     }
+
+    // ── «Без звука — тихие часы» у звонка, а не у номера (1.8.0) ───────────
+
+    private fun row(key: String, e164: String, lastDate: Long) = CallLogGroup(
+        key = key, lastCallId = 1, number = e164, e164 = e164,
+        displayName = null, photoUri = null, contactId = null,
+        lastType = CallType.MISSED, lastDate = lastDate, durationSec = 0,
+        count = 1, incomingCount = 0, outgoingCount = 0, missedCount = 1,
+        rejectedCount = 0, totalDurationSec = 0, numbers = listOf(e164),
+        subscriptionLabel = null, subscriptionId = null
+    )
+
+    private fun entry(e164: String, at: Long, outcome: BlockedCallLog.Outcome) = BlockedCallLog.Entry(
+        e164 = e164, reason = SpamPolicy.Reason.QUIET_HOURS, outcome = outcome, at = at
+    )
+
+    @Test
+    fun `пометку тихого звонка получает только его строка`() {
+        val silencedAt = 3_600_000L
+        val rows = listOf(
+            // Перезвонил через 8 минут — зазвонило: строка уже не «без звука»
+            row("number:+7900Q#3", "+7900Q", silencedAt + 8 * 60_000L),
+            // Тот самый тихий звонок: в журнале — начало, на секунду раньше записи
+            row("number:+7900Q#2", "+7900Q", silencedAt - 1_000L),
+            // Вечером, до тихих часов — звонил со звуком
+            row("number:+7900Q#1", "+7900Q", silencedAt - 3 * 3_600_000L)
+        )
+        val result = BlockedCallLog.silencedRows(
+            rows, mapOf("+7900Q" to entry("+7900Q", silencedAt, BlockedCallLog.Outcome.SILENCED))
+        )
+        assertEquals(setOf("number:+7900Q#2"), result.keys)
+    }
+
+    @Test
+    fun `строка после повторного звонка пометки не получает`() {
+        // Журнал по умолчанию собирает звонки номера в одну строку: последний
+        // в ней — повторный, со звуком, и пометка о тихом была бы неправдой
+        val silencedAt = 3_600_000L
+        val merged = row("number:+7900R#5", "+7900R", silencedAt + 10 * 60_000L)
+        val result = BlockedCallLog.silencedRows(
+            listOf(merged), mapOf("+7900R" to entry("+7900R", silencedAt, BlockedCallLog.Outcome.SILENCED))
+        )
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `заблокированные остаются пометкой номера`() {
+        // Блокировка — свойство номера: её строки здесь не выбираются
+        val result = BlockedCallLog.silencedRows(
+            listOf(row("number:+7900S#1", "+7900S", 1_000L)),
+            mapOf("+7900S" to entry("+7900S", 1_000L, BlockedCallLog.Outcome.BLOCKED))
+        )
+        assertTrue(result.isEmpty())
+    }
 }

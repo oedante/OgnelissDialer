@@ -204,7 +204,7 @@ object CallLogRowMapper {
         result = 31 * result + (info?.category?.ordinal ?: -1)
         result = 31 * result + (contactPhotos[group.e164]?.hashCode() ?: 0)
         result = 31 * result + (simSlots[group.subscriptionId] ?: -1)
-        result = 31 * result + (blockedLabels[group.e164]?.hashCode() ?: 0)
+        result = 31 * result + (blockedLabelOf(group, blockedLabels)?.hashCode() ?: 0)
         /*
          * Режим показа оператора — часть отпечатка.
          *
@@ -230,6 +230,15 @@ object CallLogRowMapper {
         result = 31 * result + (networkNames[group.e164]?.hashCode() ?: 0)
         return result
     }
+
+    /**
+     * Пометка о блокировке для строки: сначала по ключу самой строки, потом
+     * по номеру. По ключу строки кладётся «Без звука — тихие часы» (1.8.0):
+     * она про один звонок, а не про номер. Ключ строки («number:…#id»)
+     * с номером в E.164 не совпадает никогда. Разбор — BlockedCallLog.silencedRows.
+     */
+    private fun blockedLabelOf(group: CallLogGroup, blockedLabels: Map<String, String>): String? =
+        blockedLabels[group.key] ?: blockedLabels[group.e164]
 
     /*
      * ИМЯ ОТ ОПЕРАТОРА (1.8.0, «маркировка звонков»): разбор в data/NetworkNames.kt.
@@ -399,7 +408,7 @@ object CallLogRowMapper {
             infoLabel = infoLabel,
             // Пометка о блокировке: показывается вместо подписи
             // определителя — причина важнее сведений о регионе
-            blockedLabel = blockedLabels[group.e164],
+            blockedLabel = blockedLabelOf(group, blockedLabels),
             // Оценки риска больше нет; предупреждающим остаётся
             // только то, что назвал сам человек
             infoIsWarning = false,

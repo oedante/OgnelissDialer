@@ -81,7 +81,16 @@ object MissedCallsNotifier {
     private fun savedCount(context: Context): Int =
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getInt(KEY_COUNT, 0)
 
-    fun show(context: Context, count: Int, number: String?) {
+    fun show(
+        context: Context,
+        count: Int,
+        number: String?,
+        /**
+         * Без звука (1.8.0): пропущенный — от звонка, заглушённого тихими
+         * часами. Разбор — QuietCallGate.missedIsQuiet.
+         */
+        silent: Boolean = false
+    ) {
         saveCount(context, count.coerceAtLeast(0))
         if (count <= 0) {
             cancel(context)
@@ -109,6 +118,7 @@ object MissedCallsNotifier {
             .setContentIntent(open)
             .setAutoCancel(true)
             .setOnlyAlertOnce(true)
+            .setSilent(silent)
             .build()
         NotificationPermission.notify(context, ID, notification, LOG_WHAT)
         Logger.i("Missed", "Пропущенных: $count")
@@ -147,6 +157,7 @@ class MissedCallsReceiver : BroadcastReceiver() {
         if (intent.action != TelecomManager.ACTION_SHOW_MISSED_CALLS_NOTIFICATION) return
         val count = intent.getIntExtra(TelecomManager.EXTRA_NOTIFICATION_COUNT, 0)
         val number = intent.getStringExtra(TelecomManager.EXTRA_NOTIFICATION_PHONE_NUMBER)
-        MissedCallsNotifier.show(context, count, number)
+        // Пропущенный от звонка в тихие часы — без звука: иначе разбудил бы он (1.8.0)
+        MissedCallsNotifier.show(context, count, number, silent = QuietCallGate.missedIsQuiet())
     }
 }

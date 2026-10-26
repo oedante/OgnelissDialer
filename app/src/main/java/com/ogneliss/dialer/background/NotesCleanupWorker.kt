@@ -45,11 +45,29 @@ class NotesCleanupWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val notes: NotesRepository,
     private val blockedCalls: com.ogneliss.dialer.data.BlockedCallLog,
+    /** Имена от оператора (1.8.0): старше года забываются здесь же. */
+    private val networkNames: com.ogneliss.dialer.data.NetworkNames,
     private val contacts: ContactsRepository,
     private val prefs: Prefs
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
+        /*
+         * Заодно чистим причины блокировки и имена от оператора — ДО проверки
+         * срока заметок (1.8.0).
+         *
+         * Отдельная фоновая задача ради одной таблицы не окупается: каждая
+         * стоит пробуждения процесса, а работы здесь на миллисекунды.
+         *
+         * Было: эта очистка стояла после выхода «заметки не удалять» — а это
+         * умолчание. У большинства причины блокировки не чистились вовсе,
+         * хотя срок им — 60 дней. Сроки этих таблиц от заметок не зависят.
+         */
+        suspendRunCatching { blockedCalls.purgeOlderThan() }
+            .onFailure { Logger.w(TAG, "Не удалось очистить причины блокировки", it) }
+        suspendRunCatching { networkNames.purgeOlderThan() }
+            .onFailure { Logger.w(TAG, "Не удалось очистить имена от оператора", it) }
+
         val period = prefs.notesRetention.first()
         if (period == NotesRetention.Period.NEVER) {
             return Result.success()
@@ -72,16 +90,6 @@ class NotesCleanupWorker @AssistedInject constructor(
             )
 
             toDelete.forEach { notes.delete(it) }
-
-            /*
-             * Заодно чистим причины блокировки.
-             *
-             * Отдельная фоновая задача ради одной таблицы не окупается:
-             * каждая стоит пробуждения процесса, а работы здесь
-             * на миллисекунды.
-             */
-            suspendRunCatching { blockedCalls.purgeOlderThan() }
-                .onFailure { Logger.w(TAG, "Не удалось очистить причины блокировки", it) }
 
             if (toDelete.isNotEmpty()) {
                 Logger.i(TAG, "Удалено устаревших заметок: ${toDelete.size}")
