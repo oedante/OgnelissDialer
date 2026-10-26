@@ -22,6 +22,7 @@ import com.ogneliss.dialer.background.CallbackReminder
 import com.ogneliss.dialer.background.T9IndexWorker
 import com.ogneliss.dialer.data.*
 import com.ogneliss.dialer.settings.Prefs
+import com.ogneliss.dialer.settings.ContactNameFormat
 import com.ogneliss.dialer.settings.SpeedDialStore
 import com.ogneliss.dialer.settings.SwipeAction
 import com.ogneliss.dialer.ui.theme.MessageBlue
@@ -2252,6 +2253,16 @@ class DialerViewModel @Inject constructor(
 
     private val _rows = MutableStateFlow<List<CallLogRowState>>(emptyList())
 
+    /** Идущая пересборка строк: новая отменяет её (1.8.0) — разбор у rebuildRows. */
+    private var rowsJob: Job? = null
+
+    /** В какой обстановке собраны нынешние строки (1.8.0): CallLogRowMapper.Context. */
+    private var rowsContext: CallLogRowMapper.Context? = null
+
+    /** Карты из книги для строк журнала (1.8.0) — разбор у bookMapsFor. */
+    @Volatile
+    private var bookMaps: BookMaps? = null
+
     /**
      * ГОТОВЫЕ К ОТРИСОВКЕ СТРОКИ.
      *
@@ -2282,7 +2293,19 @@ class DialerViewModel @Inject constructor(
         labels: CallLogRowMapper.Labels,
         dateFormat: java.text.SimpleDateFormat
     ) {
-        viewModelScope.launch {
+        /*
+         * ПОСЛЕДНЯЯ ПЕРЕСБОРКА ВЫИГРЫВАЕТ (1.8.0).
+         *
+         * Звонок, заметка, подгрузка страницы — каждое запускало пересборку
+         * отдельной корутиной, и прежняя не отменялась. Две шли рядом,
+         * и та, что заканчивалась позже, — иногда это была СТАРАЯ — писала
+         * свои строки поверх свежих: до следующего обновления журнал
+         * показывал прошлое. Теперь новая отменяет прежнюю; результат
+         * отменённой отбрасывается: withContext возвращается отменой,
+         * и до записи в _rows дело не доходит.
+         */
+        rowsJob?.cancel()
+        rowsJob = viewModelScope.launch {
             val current = state.value
             /*
              * Подписи о блокировке читаются ДО перехода в фон.
@@ -2375,13 +2398,25 @@ class DialerViewModel @Inject constructor(
             // Имена от оператора (1.8.0) — тоже до перехода в фон: чтение базы
             val operatorNames = networkNames.snapshot()
 
+            /*
+             * ГОТОВЫЕ СТРОКИ — ТОЛЬКО ИЗ ТОЙ ЖЕ ОБСТАНОВКИ (1.8.0).
+             *
+             * Строки прошлой сборки берутся повторно, если подписи, формат
+             * даты, часовой пояс и регион номеров те же: они общие для всех
+             * строк и в отпечаток строки не входят. Сменили язык — всё
+             * собирается заново. Разбор — CallLogRowMapper.Context.
+             */
+            val buildContext = CallLogRowMapper.contextOf(labels, dateFormat)
+            val previous = if (buildContext != null && buildContext == rowsContext) _rows.value else emptyList()
+            val nameFormat = settingsState.value.contactNameFormat
+
             val prepared = withContext(defaultDispatcher) {
+                val book = bookMapsFor(current.contacts, nameFormat)
                 CallLogRowMapper.mapIncremental(
                     groups = groups,
-                    previous = _rows.value,
+                    previous = previous,
                     numberInfo = current.numberInfo,
-                    knownNumbers = current.contacts
-                        .flatMapTo(HashSet()) { c -> c.numbers.map { it.e164 } },
+                    knownNumbers = book.known,
                     /*
                      * ЗНАЧОК SIM — ТОЛЬКО КОГДА КАРТ ДВЕ.
                      *
@@ -2429,16 +2464,7 @@ class DialerViewModel @Inject constructor(
                      * и о ресурсах не знает.
                      */
                     blockedLabels = blockedLabels,
-                    contactPhotos = buildMap {
-                        current.contacts
-                            .sortedBy { it.displayName.lowercase() }
-                            .forEach { contact ->
-                                val photo = contact.photoUri ?: return@forEach
-                                contact.numbers.forEach { number ->
-                                    putIfAbsent(number.e164, photo)
-                                }
-                            }
-                    },
+                    contactPhotos = book.photos,
                     notes = current.notes,
                     dateFormat = dateFormat,
                     labels = labels,
@@ -2449,25 +2475,75 @@ class DialerViewModel @Inject constructor(
                     remindedNumbers = activeReminders.value.mapTo(HashSet()) { it.e164 },
                     // «Фамилия Имя» (1.6.2): имя из журнала переставляется,
                     // только если это имя того же контакта — ContactNames
-                    contactNames = ContactNames.journalNames(
-                        current.contacts, settingsState.value.contactNameFormat
-                    ),
+                    contactNames = book.journalNames,
                     // Имя — из книги, а не из журнала (1.7.0): разбор у CallLogRowMapper.nameOf.
                     // Тот же порядок, что у фото: первый по алфавиту
-                    bookNames = buildMap {
-                        current.contacts
-                            .sortedBy { it.displayName.lowercase() }
-                            .forEach { contact ->
-                                if (contact.displayName.isBlank()) return@forEach
-                                contact.numbers.forEach { number -> putIfAbsent(number.e164, contact.displayName) }
-                            }
-                    },
+                    bookNames = book.names,
                     // Имена от оператора (1.8.0): у номеров не из книги
                     networkNames = operatorNames
                 )
             }
             _rows.value = prepared
+            rowsContext = buildContext
         }
+    }
+
+    /**
+     * КАРТЫ ИЗ ТЕЛЕФОННОЙ КНИГИ ДЛЯ СТРОК ЖУРНАЛА (1.8.0).
+     *
+     * «Номер в книге», фото, имя по номеру и «Фамилия Имя». Книга меняется
+     * редко, а строки пересобираются при каждом звонке, заметке, подгрузке
+     * страницы — и каждый раз тысячи контактов сортировались дважды (для фото
+     * и для имени) со строчными буквами в каждом сравнении. С тех пор как
+     * готовые строки снова берутся повторно, это была бы почти вся работа
+     * пересборки. Теперь карты считаются заново, только когда изменилась
+     * книга или «Как показывать имя».
+     */
+    private class BookMaps(
+        val contacts: List<Contact>,
+        val nameFormat: ContactNameFormat,
+        val known: Set<String>,
+        val photos: Map<String, String>,
+        val names: Map<String, String>,
+        val journalNames: Map<Pair<String, String>, String>
+    )
+
+    /*
+     * Книга сравнивается по содержимому: при обновлении журнала она
+     * перечитывается и приходит новым списком с теми же контактами.
+     * Сравнение — один проход, сортировка с картами — несколько.
+     */
+    private fun bookMapsFor(contacts: List<Contact>, nameFormat: ContactNameFormat): BookMaps {
+        bookMaps?.let { cached ->
+            if (cached.nameFormat == nameFormat && (cached.contacts === contacts || cached.contacts == contacts)) {
+                return cached
+            }
+        }
+        /*
+         * Фото и имя — первого по алфавиту, один порядок на обе карты:
+         * иначе строка могла показать имя одного контакта с фотографией
+         * другого. Строчные буквы считаются один раз на контакт, а не
+         * в каждом сравнении сортировки.
+         */
+        val sorted = contacts
+            .map { it.displayName.lowercase() to it }
+            .sortedBy { it.first }
+        val photos = HashMap<String, String>()
+        val names = HashMap<String, String>()
+        sorted.forEach { (_, contact) ->
+            contact.photoUri?.let { photo -> contact.numbers.forEach { photos.putIfAbsent(it.e164, photo) } }
+            if (contact.displayName.isNotBlank()) {
+                contact.numbers.forEach { names.putIfAbsent(it.e164, contact.displayName) }
+            }
+        }
+        return BookMaps(
+            contacts = contacts,
+            nameFormat = nameFormat,
+            known = contacts.flatMapTo(HashSet()) { c -> c.numbers.map { it.e164 } },
+            photos = photos,
+            names = names,
+            journalNames = ContactNames.journalNames(contacts, nameFormat)
+        ).also { bookMaps = it }
     }
 
     /** Имя от оператора по номеру (1.8.0) — для карточки абонента; null — не приходило. */

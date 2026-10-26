@@ -5,6 +5,7 @@ import com.ogneliss.dialer.ui.theme.Space
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 
 
 import com.ogneliss.dialer.data.PinnedContacts
@@ -49,6 +50,7 @@ import com.ogneliss.dialer.ui.components.ReminderTimeDialog
 import com.ogneliss.dialer.ui.components.OgnelissDialog
 import com.ogneliss.dialer.data.CallLogDateGroup
 import com.ogneliss.dialer.data.CallLogGroup
+import com.ogneliss.dialer.data.CallLogRowMapper
 import com.ogneliss.dialer.data.CallType
 import com.ogneliss.dialer.data.NumberCategory
 import com.ogneliss.dialer.settings.SwipeAction
@@ -65,6 +67,7 @@ import com.ogneliss.dialer.util.PhoneFormatter
 import com.ogneliss.dialer.util.PreDialWarning
 import com.ogneliss.dialer.util.VoiceInput
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
@@ -386,10 +389,35 @@ fun MainDialerScreen(
     }
 
     /*
+     * ДЕНЬ НА ЧАСАХ — ДЛЯ «СЕГОДНЯ» И «ВЧЕРА» (1.8.0).
+     *
+     * Подпись «Сегодня, 18:02» собирается вместе со строкой, а строки
+     * с 1.8.0 снова берутся из прошлой сборки, пока не изменились их
+     * данные. Сам по себе журнал в полночь не меняется — и без этих часов
+     * «Сегодня» висело бы до следующего звонка. Здесь полночь входит
+     * в ключ пересборки: наступила — пересобираются звонки последних двух
+     * дней (остальные берутся готовыми).
+     *
+     * Пока экран виден — ждём полночь; ушли и вернулись — день сверяется
+     * сразу: ожидание в фоне с телефоном во сне не идёт.
+     */
+    var today by remember { mutableLongStateOf(CallLogRowMapper.Days().today) }
+    LaunchedEffect(lifecycleOwner) {
+        lifecycleOwner.repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED) {
+            while (true) {
+                val days = CallLogRowMapper.Days()
+                today = days.today
+                delay(days.untilTomorrow() + 1_000L)
+            }
+        }
+    }
+
+    /*
      * Напоминания на сегодня — для полосы над журналом (1.6.0): все
      * до полуночи, ближайшее первым. Сработавшие уже убраны (reminders.active).
      */
-    val todayReminders = remember(reminders) {
+    // Ключ today (1.8.0): после полуночи «сегодня» — уже другой день
+    val todayReminders = remember(reminders, today) {
         val endOfToday = java.util.Calendar.getInstance().apply {
             add(java.util.Calendar.DAY_OF_YEAR, 1)
             set(java.util.Calendar.HOUR_OF_DAY, 0)
@@ -870,7 +898,13 @@ fun MainDialerScreen(
              */
             h = 31 * h + state.query.length
             h = 31 * h + state.numberInfo.size
-            h = 31 * h + state.notes.size
+            /*
+             * Заметки — по самому списку, а не по числу (1.8.0): поправили
+             * текст заметки — число то же, ключ был прежним, и строка
+             * показывала старый текст до следующего звонка. Новый список
+             * заметок приходит только при их изменении.
+             */
+            h = 31 * h + System.identityHashCode(state.notes)
             h = 31 * h + state.contacts.size
 
             /*
@@ -886,11 +920,10 @@ fun MainDialerScreen(
              * Появлялось это только после захода в контакты: там свой
              * пересчёт с другими ключами.
              *
-             * Карта фотографий отражает и наличие книги, и её содержимое:
-             * пока контактов нет, она пуста, и любое их появление
-             * меняет ключ.
+             * Фотографии теперь входят в отпечаток книги ниже — вместе
+             * с именами и номерами (1.8.0): прежний размер карты фотографий
+             * в этом месте не обновлялся вовсе, разбор там же.
              */
-            h = 31 * h + contactPhotos.size
             h = 31 * h + state.sims.size
             /*
              * Режим показа оператора — тоже часть ключа.
@@ -902,9 +935,22 @@ fun MainDialerScreen(
             h = 31 * h + settings.carrierInfo.ordinal
             // «Как показывать имя» (1.6.2): строки пересобираются с новым именем
             h = 31 * h + settings.contactNameFormat.ordinal
-            // Имена из книги (1.7.0): переименовали контакт — число контактов
-            // то же, а строки должны пересобраться
-            h = 31 * h + state.contacts.sumOf { it.displayName.hashCode() }
+            /*
+             * Имена из книги (1.7.0): переименовали контакт — число контактов
+             * то же, а строки должны пересобраться. С 1.8.0 — и фото, и номера:
+             * раньше здесь стоял размер карты фотографий, но карта — обычная
+             * переменная экрана, и внутри derivedStateOf она осталась такой,
+             * какой была при первом показе (та же ошибка, что разобрана выше
+             * про список). Сменили фото — строка его не получала.
+             */
+            h = 31 * h + state.contacts.sumOf { contact ->
+                var c = contact.displayName.hashCode()
+                c = 31 * c + (contact.photoUri?.hashCode() ?: 0)
+                contact.numbers.forEach { c = 31 * c + it.e164.hashCode() }
+                c
+            }
+            // Полночь (1.8.0): «Сегодня» становится «Вчера» — разбор у today
+            h = 31 * h + today.hashCode()
 
             /*
              * ПРАВИЛА БЛОКИРОВКИ — ТОЖЕ ЧАСТЬ КЛЮЧА.
@@ -944,7 +990,8 @@ fun MainDialerScreen(
     }
 
 
-    LaunchedEffect(rowsKey) {
+    // Подписи и формат даты — тоже ключи: сменились — строки собираются заново
+    LaunchedEffect(rowsKey, infoLabels, dateFormat) {
         vm.rebuildRows(list, infoLabels, dateFormat)
     }
 

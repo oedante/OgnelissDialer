@@ -51,6 +51,19 @@ fun rememberNumberInfoLabels(): CallLogRowMapper.Labels {
     ) {
         object : CallLogRowMapper.Labels {
 
+            /*
+             * Отпечаток (1.8.0): все тексты, из которых собираются подписи,
+             * и язык (он нужен формату «по данным оператора»). Подписи
+             * создаются заново при каждом заходе на журнал, а по отпечатку
+             * пересборка видит, что тексты те же, и берёт готовые строки.
+             * Ноль означает «отпечатка нет» — его не бывает.
+             */
+            override val fingerprint: Int = listOf(
+                premium, tollFree, shortCode, international,
+                incoming, outgoing, missed, rejected, blocked, today, yesterday,
+                networkLine, networkNamedFormat, java.util.Locale.getDefault().toLanguageTag()
+            ).hashCode().let { if (it == 0) 1 else it }
+
             override fun infoSummary(info: NumberInfo?): String? {
                 if (info == null) return null
 

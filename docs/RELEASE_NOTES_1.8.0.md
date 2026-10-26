@@ -235,6 +235,18 @@ SMS, данные карты и пароли. Банк, полиция и «сл
   обещанный в `CallDetailsCompat`, не был сделан. Сделан.
 - Выбор номера: звонок с выбранной SIM — по слоту, а не по индексу
   (раздел 1).
+- **Журнал пересобирался целиком при каждом звонке.** Готовые строки
+  должны были браться повторно, но отпечаток для сравнения и отпечаток
+  в строке считались по-разному (с 1.3.5) и не совпадали никогда; кэш
+  форматтера (512 номеров) большой журнал не вмещает, и номера каждый
+  раз разбирались через libphonenumber заново. Теперь при новом звонке
+  собирается одна строка, остальные берутся готовыми (`CallLogRowMapper`,
+  разбор — `docs/PERFORMANCE.md`). Заодно:
+  - новый текст заметки и новое фото контакта появляются в журнале сразу,
+    а не после следующего звонка;
+  - «Сегодня» в полночь становится «Вчера» само, без нового звонка;
+  - в день перевода часов вчерашний звонок больше не подписан «Сегодня»;
+  - две пересборки подряд не записывают старое поверх нового.
 - **Причины блокировки не чистились у большинства.** Очистка стояла
   в ежедневной задаче после выхода «заметки не удалять» — а это
   умолчание. Теперь причины (срок 60 дней) и имена от оператора (год)
@@ -261,6 +273,7 @@ SMS, данные карты и пароли. Банк, полиция и «сл
 | Имя от оператора | `call/CallDetailsCompat.kt` (`networkName`), `data/NetworkNames.kt`, `data/db/*` (`network_names`, `MIGRATION_7_8`), `data/CallLogRowMapper.kt` (`networkNames`) |
 | Тихие часы | `call/QuietHours.kt`, `SpamPolicy.kt`, `SpamInputCollector.kt`, `OgnelissCallScreeningService.kt`, `OgnelissInCallService.kt`, `CallNotifications.kt` (`quietIncoming`), `MissedCallsNotifier.kt`, `data/BlockedCallLog.kt` (`silencedRows`) |
 | Памятка о мошенниках | `call/ScamMemo.kt`, `InCallActivity.kt` |
+| Готовые строки журнала | `data/CallLogRowMapper.kt` (`Inputs.signatureOf`, `Context`, `Days`), `ui/DialerViewModel.kt` (`rebuildRows`, `bookMapsFor`), `ui/screens/MainDialerScreen.kt` (полночь, ключ пересборки), `ui/components/NumberInfoLabels.kt` (`fingerprint`) |
 
 Строки — новые в 4 языках: автодозвон (`settings_auto_redial*`,
 `auto_redial_*`, `redial_*`), памятка (`settings_scam_memo*`, `scam_memo_*`),
@@ -269,8 +282,9 @@ SMS, данные карты и пароли. Банк, полиция и «сл
 (`cnap_source*`), выбор SIM (`sim_choice_*`, `number_picker_hint`), FAQ.
 
 Тесты: `RedialPolicyTest` (11), `ScamMemoPolicyTest` (3), `NetworkNamesTest` (4),
-`QuietCallGateTest` (4), `OperatorMatchTest`, `SpamPolicyTest` (+9: тихие
-часы), `BlockedCallLogTest` (+4), `SettingsRegistryTest`, `FaqTest`;
+`QuietCallGateTest` (4), `CallLogRowMapperTest` (10), `OperatorMatchTest`,
+`SpamPolicyTest` (+9: тихие часы), `BlockedCallLogTest` (+4),
+`SettingsRegistryTest`, `FaqTest`;
 инструментальный — `MigrationTest` (7 → 8).
 
 ## «Что нового» — `store/whats_new_1.8.0.txt`
@@ -323,6 +337,11 @@ SMS, данные карты и пароли. Банк, полиция и «сл
     после «Занято» нет «Перезвонить?».
 13. TalkBack: отсчёт автодозвона не читается каждую секунду — только смена
     этапа; памятка читается при появлении; долгое нажатие — «Выбрать SIM».
+14. **Журнал:** поправить текст уже существующей заметки — строка
+    в журнале сразу с новым текстом; сменить фото контакта — новое фото
+    в журнале после возврата; оставить журнал открытым через полночь —
+    «Сегодня» стало «Вчера». Сменить язык в настройках — подписи журнала
+    на новом языке. Прокрутка и подгрузка страниц — как раньше или плавнее.
 
 ## Команды
 

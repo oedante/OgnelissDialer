@@ -4,7 +4,10 @@ import com.ogneliss.dialer.settings.CarrierInfoMode
 import com.ogneliss.dialer.ui.components.CallLogRowState
 import com.ogneliss.dialer.util.PhoneFormatter
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 /**
  * ПОДГОТОВКА СТРОК ЖУРНАЛА К ОТРИСОВКЕ.
@@ -23,35 +26,43 @@ import java.util.Date
  * ── Почему форматтер даты передаётся снаружи ───────────────────────────────
  * Он зависит от локали, а её знает только слой интерфейса. Создавать
  * форматтер на каждую строку — ещё одна дорогая операция, поэтому
- * создаётся один и переиспользуется для всего списка.
+ * на пересборку берётся одна его копия (разбор у [Render]).
  */
 object CallLogRowMapper {
 
-    /**
-     * @param labels готовые подписи, зависящие от локали и ресурсов
-     */
-    /**
-     * @param contactPhotos фотографии из телефонной книги по contactId
-     */
     /**
      * ИНКРЕМЕНТАЛЬНАЯ ПОДГОТОВКА.
      *
      * ── Зачем ──────────────────────────────────────────────────────────────
      * Подгрузка страницы добавляет к списку сто пятьдесят записей,
      * а пересобирался он целиком: три тысячи строк заново разбирались
-     * через libphonenumber ради ста пятидесяти новых.
+     * через libphonenumber ради ста пятидесяти новых. То же при каждом
+     * звонке: журнал перечитывается, и меняется в нём одна строка.
      *
      * Здесь готовые строки переиспользуются: карточка пересобирается
      * только если изменились данные, от которых она зависит.
      *
      * ── Как определяется «изменилось» ──────────────────────────────────────
-     * По ключу карточки и времени последнего вызова. Ключ уникален
-     * и включает идентификатор вызова, поэтому при изменении группы
-     * он меняется — и старая строка не подойдёт.
+     * У строки есть отпечаток всего, от чего зависит её вид (разбор
+     * у [Inputs.signatureOf]). Совпал с отпечатком готовой строки того же
+     * ключа — строка берётся как есть, без разбора номера и дат.
      *
-     * Дополнительно сверяется заметка и подпись определителя: они
-     * приходят позже основного списка, и строка должна обновиться,
-     * когда они появятся.
+     * ══════════════════════════════════════════════════════════════════════
+     * ДО 1.8.0 ПЕРЕИСПОЛЬЗОВАНИЕ НЕ СРАБАТЫВАЛО НИКОГДА
+     * ══════════════════════════════════════════════════════════════════════
+     * Отпечаток для сравнения считался с добавкой «номер в книге» (1.3.5),
+     * а в готовой строке хранился без неё. Числа не совпадали, и журнал
+     * при каждом обновлении собирался целиком — а кэш форматтера номеров
+     * держит 512 номеров, так что большой журнал каждый раз разбирался
+     * через libphonenumber заново. Теперь отпечаток считается одной
+     * функцией — и для записи в строку, и для сравнения.
+     *
+     * ── Чего отпечаток не покрывает ────────────────────────────────────────
+     * Подписи, формат даты, часовой пояс, регион номеров — общие для всех
+     * строк. Их сверяет [Context]: поменялись (сменили язык) — вызывающий
+     * передаёт пустой [previous], и список собирается заново.
+     *
+     * @param days границы «Сегодня» и «Вчера»; снаружи — только в тестах
      */
     fun mapIncremental(
         groups: List<CallLogGroup>,
@@ -62,7 +73,8 @@ object CallLogRowMapper {
         /** Фотографии из книги по номеру в E.164. */
         contactPhotos: Map<String, String>,
         /**
-         * Подписи о блокировке по номеру.
+         * Подписи о блокировке по номеру — или по ключу строки, для пометки
+         * одного звонка (тихие часы, BlockedCallLog.silencedRows).
          *
          * Готовые строки, а не сами причины: формирование текста требует
          * контекста, а маппер работает в фоне и о ресурсах не знает.
@@ -80,21 +92,18 @@ object CallLogRowMapper {
         /** Имена из книги по номеру (1.7.0): разбор у nameOf. */
         bookNames: Map<String, String> = emptyMap(),
         /** Имена от оператора по номеру (1.8.0): разбор у networkNameOf. */
-        networkNames: Map<String, String> = emptyMap()
+        networkNames: Map<String, String> = emptyMap(),
+        days: Days = Days()
     ): List<CallLogRowState> {
-        if (previous.isEmpty()) {
-            return map(
-                groups, numberInfo, knownNumbers, simSlots,
-                contactPhotos, blockedLabels, notes, dateFormat, labels, carrierInfo,
-                remindedNumbers, contactNames, bookNames, networkNames
-            )
-        }
-
-        val byKey = previous.associateBy { it.key }
+        val inputs = Inputs(
+            numberInfo, knownNumbers, simSlots, contactPhotos, blockedLabels, notes,
+            carrierInfo, remindedNumbers, contactNames, bookNames, networkNames, days
+        )
+        // Форматтеры — только если хоть одна строка собирается заново
+        val render = lazy(LazyThreadSafetyMode.NONE) { Render(dateFormat, labels, days) }
+        val byKey = if (previous.isEmpty()) emptyMap() else previous.associateBy { it.key }
 
         return groups.map { group ->
-            val cached = byKey[group.key]
-
             /*
              * Сравнение отпечатка, а не пересчёт полей.
              *
@@ -103,23 +112,14 @@ object CallLogRowMapper {
              * и оптимизация превратилась бы в замедление. Целое число
              * сравнивается за наносекунды.
              */
-            // «Номер в книге» — часть отпечатка (1.3.5): номер сохранили
-            // в контакты — строка пересобирается и получает буквы
-            val signature =
-                signatureOf(
-                    group, numberInfo, notes, contactPhotos, simSlots,
-                    blockedLabels, carrierInfo, remindedNumbers, contactNames, bookNames,
-                    networkNames
-                ) * 31 + (if (group.e164 in knownNumbers) 1 else 0)
-
-            if (cached != null && cached.signature == signature) cached else mapOne(
-                group, numberInfo, knownNumbers, simSlots,
-                contactPhotos, blockedLabels, notes, dateFormat, labels, carrierInfo,
-                remindedNumbers, contactNames, bookNames, networkNames
-            )
+            val signature = inputs.signatureOf(group)
+            val cached = byKey[group.key]
+            if (cached != null && cached.signature == signature) cached
+            else mapOne(group, inputs, render.value, signature)
         }
     }
 
+    /** Полная сборка — без готовых строк. */
     fun map(
         groups: List<CallLogGroup>,
         numberInfo: Map<String, NumberInfo>,
@@ -128,7 +128,7 @@ object CallLogRowMapper {
         /** Фотографии из книги по номеру в E.164. */
         contactPhotos: Map<String, String>,
         /**
-         * Подписи о блокировке по номеру.
+         * Подписи о блокировке по номеру (или по ключу строки).
          *
          * Готовые строки, а не причины: текст требует контекста,
          * а маппер работает в фоне и о ресурсах не знает.
@@ -147,88 +147,212 @@ object CallLogRowMapper {
         /** Имена из книги по номеру (1.7.0): разбор у nameOf. */
         bookNames: Map<String, String> = emptyMap(),
         /** Имена от оператора по номеру (1.8.0): разбор у networkNameOf. */
-        networkNames: Map<String, String> = emptyMap()
-    ): List<CallLogRowState> = groups.map { group ->
-        mapOne(
-            group, numberInfo, knownNumbers, simSlots, contactPhotos,
-            blockedLabels, notes, dateFormat, labels, carrierInfo, remindedNumbers,
-            contactNames, bookNames, networkNames
+        networkNames: Map<String, String> = emptyMap(),
+        days: Days = Days()
+    ): List<CallLogRowState> = mapIncremental(
+        groups, emptyList(), numberInfo, knownNumbers, simSlots, contactPhotos,
+        blockedLabels, notes, dateFormat, labels, carrierInfo, remindedNumbers,
+        contactNames, bookNames, networkNames, days
+    )
+
+    /**
+     * ОБСТАНОВКА, В КОТОРОЙ СОБРАНЫ СТРОКИ (1.8.0).
+     *
+     * Подписи («Сегодня», «Входящий», «по данным оператора»), формат даты,
+     * часовой пояс и регион, по которому форматируются номера, — общие
+     * для всех строк, поэтому в отпечаток строки не входят. Поменялись —
+     * сменили язык, переехали, вставили SIM другой страны, — и готовые
+     * строки показывали бы прежнее. Вызывающий сравнивает обстановку
+     * прошлой сборки с нынешней и при несовпадении собирает всё заново.
+     *
+     * Формат даты сравнивается по значению (SimpleDateFormat.equals: шаблон,
+     * язык, часовой пояс), подписи — по отпечатку [Labels.fingerprint].
+     */
+    data class Context(
+        val labels: Int,
+        val dateFormat: SimpleDateFormat,
+        val timeZone: String,
+        val region: String
+    )
+
+    /** Обстановка нынешней сборки; null — подписи без отпечатка, готовые строки не годятся. */
+    fun contextOf(labels: Labels, dateFormat: SimpleDateFormat): Context? {
+        if (labels.fingerprint == 0) return null
+        return Context(
+            labels = labels.fingerprint,
+            dateFormat = dateFormat.clone() as SimpleDateFormat,
+            timeZone = TimeZone.getDefault().id,
+            region = PhoneFormatter.defaultRegion
         )
     }
 
     /**
-     * Отпечаток данных, влияющих на вид строки.
+     * ВСЁ, ОТ ЧЕГО ЗАВИСИТ СТРОКА, КРОМЕ САМОЙ ГРУППЫ И ПОДПИСЕЙ.
      *
-     * Заметка сравнивается по времени изменения, а не по тексту:
-     * число дешевле строки, а меняются они вместе.
+     * Собрано в одно место, чтобы отпечаток ([signatureOf]) и сама строка
+     * ([mapOne]) читали одно и то же: всё, что попадает в строку, должно
+     * попадать и в отпечаток — иначе строка возьмётся из прошлого списка
+     * со старым видом.
      */
-    private fun signatureOf(
-        group: CallLogGroup,
-        numberInfo: Map<String, NumberInfo>,
-        notes: Map<String, NumberNote>,
-        /** Фотографии из книги по номеру в E.164. */
-        contactPhotos: Map<String, String>,
-        simSlots: Map<String, Int>,
+    private class Inputs(
+        val numberInfo: Map<String, NumberInfo>,
+        val knownNumbers: Set<String>,
+        val simSlots: Map<String, Int>,
+        val contactPhotos: Map<String, String>,
+        val blockedLabels: Map<String, String>,
+        val notes: Map<String, NumberNote>,
+        val carrierInfo: CarrierInfoMode,
+        val remindedNumbers: Set<String>,
+        val contactNames: Map<Pair<String, String>, String>,
+        val bookNames: Map<String, String>,
+        val networkNames: Map<String, String>,
+        val days: Days
+    ) {
+
         /**
-         * Подпись о блокировке.
+         * Отпечаток данных, влияющих на вид строки.
+         *
+         * Один на запись и на сравнение — разбор у [mapIncremental].
          *
          * ══════════════════════════════════════════════════════════════════
-         * ПОЧЕМУ ЕЁ ЗДЕСЬ НЕ ХВАТАЛО
+         * ЧТО В НЁМ И ПОЧЕМУ
          * ══════════════════════════════════════════════════════════════════
-         * Блокировка номера не меняет ни число вызовов, ни заметку,
-         * ни фотографию, ни SIM — то есть ничего из прежнего отпечатка.
-         * Отпечаток совпадал, строка бралась из прошлого списка вместе
-         * со старым (пустым) полем blockedLabel, и пометка в журнале
-         * не появлялась.
-         *
-         * Заметно это было так: блокируешь из карточки — в журнале
-         * ничего. После перезапуска приложения пометка на месте:
-         * при пустом previous список собирается заново, и путь
-         * с переиспользованием не работает.
-         *
-         * Разблокировка ломалась так же, только наоборот: пометка
-         * оставалась висеть.
+         * • Группа целиком (1.8.0). Раньше — ключ и число вызовов, а имя
+         *   из журнала, фото из кэша журнала, подпись SIM в отпечаток
+         *   не входили. Ключ включает номер последнего вызова, и почти
+         *   любое изменение группы меняет его, — но «почти» здесь означает
+         *   строку со старым видом. Группа — data class, её отпечаток
+         *   считается за доли миллисекунды на весь журнал.
+         * • Заметка и сведения определителя — целиком (раньше — время
+         *   заметки и категория номера): оператор и регион в подписи
+         *   тоже из сведений.
+         * • «Номер в книге» (1.3.5): номер сохранили в контакты — строка
+         *   пересобирается и получает буквы.
+         * • Подпись о блокировке. Блокировка номера не меняет ни число
+         *   вызовов, ни заметку, ни фотографию, ни SIM. Без неё отпечаток
+         *   совпадал, строка бралась из прошлого списка вместе со старым
+         *   (пустым) полем blockedLabel, и пометка в журнале не появлялась;
+         *   разблокировка ломалась так же, только наоборот.
+         * • Режим показа оператора: иначе переключение настройки не меняло
+         *   бы уже построенные строки — та же ошибка, что с блокировкой.
+         * • Напоминание: поставили — в строке появился значок, а данные
+         *   вызова не изменились.
+         * • Имя для показа (1.6.2): переключили «Как показывать имя».
+         * • Имя от оператора (1.8.0): пришло после звонка.
+         * • Календарный день звонка (1.8.0): «Сегодня, 18:02» после полуночи
+         *   должно стать «Вчера, 18:02». Только день строки, а не дата
+         *   сборки: в полночь пересобираются звонки последних двух дней,
+         *   а не весь журнал.
          */
-        blockedLabels: Map<String, String>,
-        carrierInfo: CarrierInfoMode,
-        remindedNumbers: Set<String>,
-        contactNames: Map<Pair<String, String>, String> = emptyMap(),
-        bookNames: Map<String, String> = emptyMap(),
-        networkNames: Map<String, String> = emptyMap()
-    ): Int {
-        val note = notes[group.e164]
-        val info = numberInfo[group.e164]
-        var result = group.key.hashCode()
-        result = 31 * result + group.count
-        result = 31 * result + (note?.updatedAt?.hashCode() ?: 0)
-        result = 31 * result + (info?.category?.ordinal ?: -1)
-        result = 31 * result + (contactPhotos[group.e164]?.hashCode() ?: 0)
-        result = 31 * result + (simSlots[group.subscriptionId] ?: -1)
-        result = 31 * result + (blockedLabelOf(group, blockedLabels)?.hashCode() ?: 0)
+        fun signatureOf(group: CallLogGroup): Int {
+            var result = group.hashCode()
+            result = 31 * result + (notes[group.e164]?.hashCode() ?: 0)
+            result = 31 * result + (numberInfo[group.e164]?.hashCode() ?: 0)
+            result = 31 * result + (if (group.e164 in knownNumbers) 1 else 0)
+            result = 31 * result + (contactPhotos[group.e164]?.hashCode() ?: 0)
+            result = 31 * result + (simSlots[group.subscriptionId] ?: -1)
+            result = 31 * result + (blockedLabelOf(group, blockedLabels)?.hashCode() ?: 0)
+            result = 31 * result + carrierInfo.ordinal
+            result = 31 * result + (if (group.e164 in remindedNumbers) 1 else 0)
+            result = 31 * result + (nameOf(group, contactNames, bookNames)?.hashCode() ?: 0)
+            result = 31 * result + (networkNames[group.e164]?.hashCode() ?: 0)
+            result = 31 * result + days.of(group.lastDate).ordinal
+            return result
+        }
+    }
+
+    /**
+     * Подписи и форматы на одну пересборку.
+     *
+     * ── Почему копии форматтеров ───────────────────────────────────────────
+     * SimpleDateFormat не потокобезопасен, а пересборки идут в пуле Default:
+     * новая начинается, пока прежняя ещё досчитывает отменённую работу.
+     * Общий форматтер на двоих путал бы цифры дат. Копия на пересборку —
+     * одно выделение памяти, и только если строку правда надо собрать.
+     *
+     * Часовой пояс — нынешний: форматтер из интерфейса запомнил тот,
+     * что был при его создании, а «Сегодня» считается по нынешнему.
+     */
+    private class Render(dateFormat: SimpleDateFormat, val labels: Labels, private val days: Days) {
+        private val zone = TimeZone.getDefault()
+        private val date = (dateFormat.clone() as SimpleDateFormat).apply { timeZone = zone }
+
+        /** Время без даты: подставляется в «Сегодня, …». */
+        private val time = SimpleDateFormat("HH:mm", Locale.getDefault()).apply { timeZone = zone }
+
         /*
-         * Режим показа оператора — часть отпечатка.
+         * ДАТА СЛОВАМИ ДЛЯ БЛИЖАЙШИХ ДНЕЙ.
          *
-         * Иначе переключение настройки не меняло бы уже построенные
-         * строки: отпечаток совпадал, строка бралась из прошлого списка
-         * вместе со старой подписью. Ровно та же ошибка, из-за которой
-         * не появлялась пометка о блокировке.
+         * «5 сент. 2026 г. 18:02» человек читает и сравнивает с сегодняшним
+         * числом в уме. «Сегодня, 18:02» сравнивать не надо — а именно
+         * вчерашние и сегодняшние звонки смотрят чаще всего.
+         *
+         * Дальше двух дней слова бесполезны: «12 дней назад» хуже даты,
+         * потому что по дате видно и день недели, и месяц.
+         *
+         * Подписи приходят из labels: строки берутся из ресурсов,
+         * а маппер работает без контекста и локали.
          */
-        result = 31 * result + carrierInfo.ordinal
-        /*
-         * Напоминание — часть отпечатка по той же причине, что
-         * и блокировка: поставили напоминание — в строке появился
-         * значок, а сами данные вызова не изменились. Без этого
-         * строка бралась бы из прошлого списка без значка.
-         */
-        result = 31 * result + (if (group.e164 in remindedNumbers) 1 else 0)
-        /*
-         * Имя для показа — тоже (1.6.2): переключили «Как показывать имя» —
-         * данные вызова те же, а строка должна пересобраться.
-         */
-        result = 31 * result + (nameOf(group, contactNames, bookNames)?.hashCode() ?: 0)
-        // Имя от оператора (1.8.0): пришло после звонка — строка пересобирается
-        result = 31 * result + (networkNames[group.e164]?.hashCode() ?: 0)
-        return result
+        fun dateLabel(millis: Long): String = when (days.of(millis)) {
+            Day.TODAY -> labels.today(time.format(Date(millis)))
+            Day.YESTERDAY -> labels.yesterday(time.format(Date(millis)))
+            Day.EARLIER -> date.format(Date(millis))
+        }
+    }
+
+    /** Календарный день звонка — для подписи даты. */
+    enum class Day { TODAY, YESTERDAY, EARLIER }
+
+    /**
+     * ГРАНИЦЫ «СЕГОДНЯ» И «ВЧЕРА» — РАЗ НА ПЕРЕСБОРКУ (1.8.0).
+     *
+     * По календарным датам, а не по разнице в миллисекундах: звонок в 23:50
+     * и звонок в 00:10 разделяют двадцать минут, но это «вчера» и «сегодня»,
+     * и человек различает их именно так.
+     *
+     * ── Было ───────────────────────────────────────────────────────────────
+     * Разница начал двух дней делилась на 24 часа — для каждой строки,
+     * с двумя календарями на строку. В день перевода часов сутки длятся
+     * 23 или 25 часов, и вчерашний звонок на следующий день после перевода
+     * подписывался «Сегодня». Границы теперь — полночь сегодня, вчера
+     * и завтра по календарю, считаются один раз; строка только сравнивает
+     * два числа.
+     *
+     * Звонок «из будущего» (часы телефона отвели назад) — датой, как раньше.
+     */
+    class Days(now: Long = System.currentTimeMillis()) {
+        private val startOfYesterday: Long
+        private val startOfToday: Long
+        private val startOfTomorrow: Long
+
+        init {
+            val day = Calendar.getInstance().apply {
+                timeInMillis = now
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+            startOfToday = day.timeInMillis
+            day.add(Calendar.DAY_OF_MONTH, 1)
+            startOfTomorrow = day.timeInMillis
+            day.add(Calendar.DAY_OF_MONTH, -2)
+            startOfYesterday = day.timeInMillis
+        }
+
+        fun of(millis: Long): Day = when {
+            millis >= startOfTomorrow -> Day.EARLIER
+            millis >= startOfToday -> Day.TODAY
+            millis >= startOfYesterday -> Day.YESTERDAY
+            else -> Day.EARLIER
+        }
+
+        /** Полночь, с которой начался нынешний день: сменилась — подписи пора пересобрать. */
+        val today: Long get() = startOfToday
+
+        /** Сколько осталось до следующей полуночи. */
+        fun untilTomorrow(now: Long = System.currentTimeMillis()): Long =
+            (startOfTomorrow - now).coerceAtLeast(0L)
     }
 
     /**
@@ -274,36 +398,15 @@ object CallLogRowMapper {
         bookNames: Map<String, String>
     ): String? = ContactNames.inJournal(bookNames[group.e164] ?: group.displayName, group.e164, contactNames)
 
-    /** Подготовка одной строки. Вынесено, чтобы переиспользовать в обоих путях. */
+    /** Подготовка одной строки. Отпечаток уже посчитан — он кладётся в строку как есть. */
     private fun mapOne(
         group: CallLogGroup,
-        numberInfo: Map<String, NumberInfo>,
-        knownNumbers: Set<String>,
-        simSlots: Map<String, Int>,
-        /** Фотографии из книги по номеру в E.164. */
-        contactPhotos: Map<String, String>,
-        /**
-         * Подписи о блокировке по номеру.
-         *
-         * Готовые строки, а не сами причины: формирование текста требует
-         * контекста, а маппер работает в фоне и о ресурсах не знает.
-         */
-        blockedLabels: Map<String, String> = emptyMap(),
-        notes: Map<String, NumberNote>,
-        dateFormat: SimpleDateFormat,
-        labels: Labels,
-        /** Где показывать оператора и регион — из настроек. */
-        carrierInfo: CarrierInfoMode = CarrierInfoMode.UNKNOWN_ONLY,
-        /** Номера с назначенным напоминанием: у них в строке значок. */
-        remindedNumbers: Set<String> = emptySet(),
-        /** «Фамилия Имя» (1.6.2): ContactNames.journalNames; пусто — имя как в журнале. */
-        contactNames: Map<Pair<String, String>, String> = emptyMap(),
-        /** Имена из книги по номеру (1.7.0): разбор у nameOf. */
-        bookNames: Map<String, String> = emptyMap(),
-        /** Имена от оператора по номеру (1.8.0): разбор у networkNameOf. */
-        networkNames: Map<String, String> = emptyMap()
+        inputs: Inputs,
+        render: Render,
+        signature: Int
     ): CallLogRowState = run {
         val formatted = PhoneFormatter.format(group.number)
+        val labels = render.labels
 
         /*
          * Заголовок: имя, заметка или номер.
@@ -313,9 +416,9 @@ object CallLogRowMapper {
          * Строка «доставка мебели» отвечает на вопрос «кто это» без
          * засорения телефонной книги, а безликий номер — нет.
          */
-        val note = notes[group.e164]
-        val bookOrLogName = nameOf(group, contactNames, bookNames)
-        val networkName = networkNameOf(group, bookOrLogName, knownNumbers, networkNames)
+        val note = inputs.notes[group.e164]
+        val bookOrLogName = nameOf(group, inputs.contactNames, inputs.bookNames)
+        val networkName = networkNameOf(group, bookOrLogName, inputs.knownNumbers, inputs.networkNames)
         val hasNote = !note?.note.isNullOrBlank()
         val display = NoteDisplay.resolve(
             // «Фамилия Имя» (1.6.2) — только для имени того же контакта.
@@ -325,7 +428,7 @@ object CallLogRowMapper {
             formattedNumber = formatted
         )
 
-        val info = numberInfo[group.e164]
+        val info = inputs.numberInfo[group.e164]
         /*
          * ══════════════════════════════════════════════════════════════════
          * «ЗНАКОМЫЙ» — ТОЛЬКО ЕСЛИ НОМЕР ЕСТЬ В КНИГЕ СЕЙЧАС
@@ -349,7 +452,7 @@ object CallLogRowMapper {
          * если он в ней есть. knownNumbers строится из неё при каждом
          * обновлении, и устаревших ссылок в нём не бывает.
          */
-        val isKnown = group.e164 in knownNumbers
+        val isKnown = group.e164 in inputs.knownNumbers
 
         /*
          * ГДЕ ПОКАЗЫВАТЬ ОПЕРАТОРА И РЕГИОН — РЕШАЕТ ЧЕЛОВЕК.
@@ -362,7 +465,7 @@ object CallLogRowMapper {
          * По умолчанию — только у незнакомых: у контакта с именем
          * «Мама» оператор ничего не добавляет.
          */
-        val carrierLabel = when (carrierInfo) {
+        val carrierLabel = when (inputs.carrierInfo) {
             CarrierInfoMode.HIDDEN -> null
             CarrierInfoMode.ALL -> labels.infoSummary(info)
             CarrierInfoMode.UNKNOWN_ONLY -> if (isKnown) null else labels.infoSummary(info)
@@ -374,41 +477,24 @@ object CallLogRowMapper {
             else -> labels.networkSource(carrierLabel)
         }
 
-        /*
-         * ДАТА СЛОВАМИ ДЛЯ БЛИЖАЙШИХ ДНЕЙ.
-         *
-         * «5 сент. 2026 г. 18:02» человек читает и сравнивает с сегодняшним
-         * числом в уме. «Сегодня, 18:02» сравнивать не надо — а именно
-         * вчерашние и сегодняшние звонки смотрят чаще всего.
-         *
-         * Дальше двух дней слова бесполезны: «12 дней назад» хуже даты,
-         * потому что по дате видно и день недели, и месяц.
-         *
-         * Подписи приходят из labels: строки берутся из ресурсов,
-         * а маппер работает без контекста и локали.
-         */
-        val dateLabel = when (daysAgo(group.lastDate)) {
-            0 -> labels.today(timeFormat.format(Date(group.lastDate)))
-            1 -> labels.yesterday(timeFormat.format(Date(group.lastDate)))
-            else -> dateFormat.format(Date(group.lastDate))
-        }
+        val dateLabel = render.dateLabel(group.lastDate)
 
         CallLogRowState(
             key = group.key,
             number = group.number,
             e164 = group.e164,
             contactId = group.contactId,
-            isContact = group.contactId != null || group.e164 in knownNumbers,
+            isContact = group.contactId != null || isKnown,
             title = display.title,
             noteLine = display.subtitle?.takeIf { display.titleFromNote.not() },
-            hasReminder = group.e164 in remindedNumbers,
+            hasReminder = group.e164 in inputs.remindedNumbers,
             titleFromNote = display.titleFromNote,
             formattedNumber = formatted,
             dateLabel = dateLabel,
             infoLabel = infoLabel,
             // Пометка о блокировке: показывается вместо подписи
             // определителя — причина важнее сведений о регионе
-            blockedLabel = blockedLabelOf(group, blockedLabels),
+            blockedLabel = blockedLabelOf(group, inputs.blockedLabels),
             // Оценки риска больше нет; предупреждающим остаётся
             // только то, что назвал сам человек
             infoIsWarning = false,
@@ -428,7 +514,7 @@ object CallLogRowMapper {
              * с тех пор поменял, а книга всегда актуальна. Кэш остаётся
              * запасным вариантом для номеров, которых в книге нет.
              */
-            photoUri = contactPhotos[group.e164] ?: group.photoUri,
+            photoUri = inputs.contactPhotos[group.e164] ?: group.photoUri,
             lastType = group.lastType,
             count = group.count,
             incomingCount = group.incomingCount,
@@ -457,17 +543,12 @@ object CallLogRowMapper {
             hasMissed = group.lastType == CallType.MISSED ||
                 group.lastType == CallType.REJECTED,
             simLabel = group.subscriptionLabel,
-            simSlotIndex = simSlots[group.subscriptionId],
+            simSlotIndex = inputs.simSlots[group.subscriptionId],
             numbersCount = group.numbers.size,
             accessibilityLabel = labels.accessibility(
                 display.title, group.lastType, dateLabel
             ),
-            signature =
-                signatureOf(
-                    group, numberInfo, notes, contactPhotos, simSlots,
-                    blockedLabels, carrierInfo, remindedNumbers, contactNames, bookNames,
-                    networkNames
-                ),
+            signature = signature,
             group = group
         )
     }
@@ -496,29 +577,15 @@ object CallLogRowMapper {
 
         /** Имя от оператора, когда заголовок — заметка: «Сбербанк — по данным оператора». */
         fun networkNamed(name: String): String = name
+
+        /**
+         * Отпечаток подписей (1.8.0): те же тексты — то же число.
+         *
+         * Подписи пересоздаются при каждом заходе на экран журнала, а тексты
+         * у них меняются только со сменой языка. По отпечатку пересборка
+         * понимает, годятся ли строки прошлой сборки ([Context]). 0 — отпечатка
+         * нет: тогда готовые строки не берутся вовсе.
+         */
+        val fingerprint: Int get() = 0
     }
-
-    /**
-     * Сколько КАЛЕНДАРНЫХ дней назад.
-     *
-     * По датам, а не по разнице в миллисекундах: звонок в 23:50
-     * и звонок в 00:10 разделяют двадцать минут, но это «вчера»
-     * и «сегодня», и человек различает их именно так.
-     */
-    private fun daysAgo(date: Long): Int {
-        fun startOfDay(millis: Long) = java.util.Calendar.getInstance().apply {
-            timeInMillis = millis
-            set(java.util.Calendar.HOUR_OF_DAY, 0)
-            set(java.util.Calendar.MINUTE, 0)
-            set(java.util.Calendar.SECOND, 0)
-            set(java.util.Calendar.MILLISECOND, 0)
-        }.timeInMillis
-
-        val diff = startOfDay(System.currentTimeMillis()) - startOfDay(date)
-        return (diff / (24L * 60 * 60 * 1000)).toInt()
-    }
-
-    /** Время без даты: подставляется в «Сегодня, …». */
-    private val timeFormat = SimpleDateFormat("HH:mm", java.util.Locale.getDefault())
-
 }
