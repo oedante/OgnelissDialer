@@ -77,9 +77,33 @@ object UiScaleMath {
         return (smallestWidthDp / REFERENCE_WIDTH_DP).coerceIn(AUTO_MIN, 1f)
     }
 
-    /** Итоговый коэффициент по настройке. */
-    fun factor(scale: UiScale, smallestWidthDp: Int, densityDpi: Int): Float =
-        scale.fixed ?: autoFactor(smallestWidthDp, densityDpi)
+    /**
+     * Итоговый коэффициент по настройке.
+     *
+     * ══════════════════════════════════════════════════════════════════════
+     * 90 % — НЕ ПОВЕРХ УВЕЛИЧЕННОГО И НЕ НА ПЛАНШЕТЕ (1.8.1)
+     * ══════════════════════════════════════════════════════════════════════
+     * С 1.8.0 по умолчанию 90 % вместо «Авто». Но «Авто» умело две вещи,
+     * которых у постоянного множителя нет: не уменьшать, если человек сам
+     * увеличил «Размер экрана» в Android (обычно — чтобы лучше видеть),
+     * и не трогать раскладушки и планшеты — у них свои раскладки. 90 %
+     * поверх увеличенного размера сводили настройку Android на нет.
+     * Теперь 90 % в этих двух случаях — как 100 %. Остальные значения
+     * действуют как выбраны.
+     */
+    fun factor(
+        scale: UiScale,
+        smallestWidthDp: Int,
+        densityDpi: Int,
+        stableDensityDpi: Int = DisplayMetrics.DENSITY_DEVICE_STABLE
+    ): Float {
+        val fixed = scale.fixed ?: return autoFactor(smallestWidthDp, densityDpi, stableDensityDpi)
+        if (scale == UiScale.DEFAULT && fixed < 1f) {
+            val enlarged = stableDensityDpi > 0 && densityDpi > stableDensityDpi
+            if (enlarged || smallestWidthDp >= WIDE_WIDTH_DP) return 1f
+        }
+        return fixed
+    }
 
     /** Множитель текста: при уменьшении мягче (√k), при увеличении — как всё. */
     fun textFactor(layout: Float): Float = if (layout < 1f) sqrt(layout) else layout

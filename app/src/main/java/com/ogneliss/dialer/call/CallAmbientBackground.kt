@@ -109,10 +109,21 @@ fun ambientMoodOf(state: Int): AmbientMood = when (state) {
 /**
  * Откуда расходятся волны: центр и радиус портрета звонящего в координатах
  * окна (1.5.5). Волна рождается гребнем у края портрета, свечение — вокруг
- * него. Нет портрета (фото нет) — волны идут от имени (RING_CENTER_Y).
+ * него.
+ *
+ * Нет портрета (фото нет) — волны идут от имени (1.8.1): экран вызова
+ * сообщает, где оно, с [edge] = false — тогда у центра нет края, волна
+ * проявляется по пути, как раньше от середины верха. Было: от точки
+ * на 13 % высоты экрана, где имя стояло до 1.7.0; с тех пор имя опустилось
+ * к середине, и волны расходились от пустого места над ним (снимок автора).
  */
 @Immutable
-data class AmbientFocus(val center: Offset, val radius: Float)
+data class AmbientFocus(
+    val center: Offset,
+    val radius: Float,
+    /** У фокуса есть край — портрет: волна рождается у края и видна сразу. */
+    val edge: Boolean = true
+)
 
 @Composable
 fun CallAmbientBackground(
@@ -298,13 +309,15 @@ fun CallAmbientBackground(
                 val strength = ringStrength
                 val target = focus()
                 val center = target?.center ?: Offset(w / 2f, size.height * RING_CENTER_Y)
+                // Портрет — фокус с краем; имя (1.8.1) — точка без края
+                val portrait = target?.takeIf { it.edge }
                 // С портретом волна рождается гребнем у его края: гребень
                 // текстуры — на RING_CREST[0] её радиуса
-                val ringStart = target?.let { it.radius / RING_CREST[0] } ?: (w * RING_START)
+                val ringStart = portrait?.let { it.radius / RING_CREST[0] } ?: (w * RING_START)
                 // От портрета волна видна сразу у края; без него — проявляется
                 // по пути, иначе возникала бы из ниоткуда посреди экрана
-                val appear = if (target != null) RING_APPEAR_FROM_PORTRAIT else RING_APPEAR
-                val haloBase = target?.let { max(w * HALO_RADIUS, it.radius * HALO_OVER_PORTRAIT) }
+                val appear = if (portrait != null) RING_APPEAR_FROM_PORTRAIT else RING_APPEAR
+                val haloBase = portrait?.let { max(w * HALO_RADIUS, it.radius * HALO_OVER_PORTRAIT) }
                     ?: (w * HALO_RADIUS)
                 val ripplePhase = ripple.floatValue
 
@@ -540,6 +553,10 @@ private const val SPARK_SPAN = 1.16f
 private const val SPARK_LIT_BAND = 0.08f
 /** Слабее этого не рисуем — глазом не видно, а работа та же. */
 private const val MIN_ALPHA = 0.004f
+/**
+ * Центр волн, пока экран не сообщил, где портрет или имя (первый кадр,
+ * псевдозвонок без фокуса), — в долях высоты экрана.
+ */
 private const val RING_CENTER_Y = 0.13f
 private const val RING_PERIOD_CALL = 4.2f
 private const val RING_PERIOD_CALM = 8f

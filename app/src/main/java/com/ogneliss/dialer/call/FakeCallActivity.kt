@@ -303,6 +303,8 @@ private fun FakeCallScreen(
     val showPortrait = photoStyle != null && !photoUri.isNullOrBlank() && !photoBackground
     val squarePortrait = photoStyle == CallPhotoStyle.SQUARE
     var portraitFocus by remember { mutableStateOf<AmbientFocus?>(null) }
+    // Нет фото — волны от имени (1.8.1, разбор у AmbientFocus)
+    var nameFocus by remember { mutableStateOf<AmbientFocus?>(null) }
     LightStatusIconsOnPhoto(photoBackground)
     // Живой фон — по тем же состояниям, что у настоящего вызова
     val ambient = ambientBackground && !photoBackground
@@ -316,7 +318,7 @@ private fun FakeCallScreen(
                 holding -> AmbientMood.HOLDING
                 else -> AmbientMood.ACTIVE
             },
-            focus = { if (showPortrait) portraitFocus else null }
+            focus = { if (showPortrait) portraitFocus else nameFocus }
         )
     }
     // Как у настоящего вызова: панели нет над живым и ровным фоном (1.6.2)
@@ -372,7 +374,11 @@ private fun FakeCallScreen(
                     name,
                     fontSize = FlowUi.callNameSize,
                     fontWeight = FontWeight.Medium,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.onGloballyPositioned { coords ->
+                        val bounds = coords.boundsInRoot()
+                        nameFocus = AmbientFocus(bounds.center, bounds.height / 2f, edge = false)
+                    }
                 )
 
                 if (number.isNotBlank()) {
@@ -417,12 +423,17 @@ private fun FakeCallScreen(
                         entered = dtmf,
                         onDigit = { dtmf += it },
                         onBackspace = { dtmf = dtmf.dropLast(1) },
-                        onClose = { showDialpad = false }
+                        onClose = { showDialpad = false },
+                        keyHeight = fittedDtmfKeyHeight(
+                            LocalWindowLayout.current.heightDp, CallScreenRules.DTMF_RESERVED_PORTRAIT_DP
+                        )
                     )
                 }
 
                 androidx.compose.animation.AnimatedVisibility(
-                    visible = answered,
+                    // Клавиши открыты — кнопки разговора убраны, как у настоящего
+                    // вызова (1.8.1): вместе не помещались на экран 16 : 9
+                    visible = answered && !showDialpad,
                     enter = androidx.compose.animation.expandVertically() + androidx.compose.animation.fadeIn(),
                     exit = androidx.compose.animation.shrinkVertically() + androidx.compose.animation.fadeOut()
                 ) {

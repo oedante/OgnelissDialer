@@ -1,0 +1,162 @@
+<ru-RU>
+• Автодозвон: после «Занято» или «Не отвечает» экран вызова предложит дозваниваться; в настройках — сразу и число попыток.
+• Название организации от оператора («маркировка звонков») — на экране вызова, в журнале и карточке.
+• Тихие часы: ночью незнакомые звонят без звука, повторный звонок за 15 минут — со звуком. Памятка о мошенниках в долгом разговоре с незнакомым.
+• SIM — долгим нажатием на любую кнопку звонка или SMS. Экран вызова надёжнее загорается и удобнее на небольших телефонах.
+</ru-RU>
+<ar>
+• إعادة الاتصال التلقائي: بعد «مشغول» أو «لا يرد» تعرض شاشة المكالمة مواصلة المحاولة؛ وفي الإعدادات: فورًا وعدد المحاولات.
+• اسم الجهة الذي يرسله المشغّل — على شاشة المكالمة وفي السجل والبطاقة.
+• ساعات الهدوء: ليلًا ترنّ الأرقام غير المعروفة بصمت، والمتكررة خلال 15 دقيقة ترنّ. تذكير بالاحتيال في المكالمات الطويلة مع رقم غير معروف.
+• اختيار SIM بالضغط المطوّل على أي زر اتصال أو رسالة. شاشة المكالمة تضيء بشكل موثوق وتناسب الهواتف الصغيرة.
+</ar>
+<cs-CZ>
+• Automatické opakování: když je obsazeno nebo to nikdo nebere, obrazovka hovoru nabídne volat znovu; v nastavení hned a počet pokusů.
+• Název firmy od operátora — na obrazovce hovoru, v seznamu hovorů a na kartě.
+• Tiché hodiny: v noci neznámá čísla zvoní potichu, opakovaný hovor do 15 minut zazvoní. Upozornění na podvodníky při dlouhém hovoru s neznámým číslem.
+• SIM vyberete podržením tlačítka volání či SMS. Obrazovka hovoru se spolehlivě rozsvítí a vejde se i na menší telefony.
+</cs-CZ>
+<da-DK>
+• Automatisk genopkald: ved "Optaget" eller intet svar tilbyder opkaldsskærmen at prøve igen; i indstillinger: straks og antal forsøg.
+• Firmanavn fra dit teleselskab — på opkaldsskærmen, i opkaldslisten og på kortet.
+• Stille timer: om natten ringer ukendte numre lydløst; et nyt opkald inden for 15 minutter ringer. Svindelpåmindelse i lange samtaler med ukendte.
+• Vælg SIM med langt tryk på en opkalds- eller SMS-knap. Opkaldsskærmen tænder pålideligt og passer til små telefoner.
+</da-DK>
+<de-DE>
+• Wahlwiederholung: Bei „Besetzt“ oder „Keine Antwort“ bietet der Anrufbildschirm weitere Versuche an; einstellbar: sofort, Zahl der Versuche.
+• Firmenname vom Netzbetreiber — auf dem Anrufbildschirm, in der Anrufliste und der Karte.
+• Ruhezeit: Nachts klingeln Unbekannte lautlos, ein erneuter Anruf binnen 15 Minuten klingelt. Betrugshinweis bei langen Gesprächen mit Unbekannten.
+• SIM per langem Druck auf eine Anruf- oder SMS-Taste. Der Anrufbildschirm geht zuverlässig an.
+</de-DE>
+<en-US>
+• Auto redial: after "Busy" or "No answer" the call screen offers to keep trying; in Settings: redial right away, number of attempts.
+• Company name sent by your carrier — on the call screen, in the call log and on the card.
+• Quiet hours: at night unknown numbers ring silently; a repeat call within 15 minutes rings. Fraud reminder in long calls with unknown numbers.
+• Long-press any call or SMS button to pick the SIM. The call screen turns on reliably and fits small phones.
+</en-US>
+<es-ES>
+• Rellamada automática: tras «Ocupado» o «Sin respuesta», la pantalla de llamada ofrece reintentar; en Ajustes: al momento y n.º de intentos.
+• Nombre de la empresa enviado por el operador: en la llamada, el registro y la ficha.
+• Horas de silencio: de noche los desconocidos suenan en silencio; si repiten en 15 minutos, suena. Aviso antifraude en llamadas largas con desconocidos.
+• Mantén pulsado un botón de llamada o SMS para elegir la SIM. La pantalla de llamada se enciende con fiabilidad.
+</es-ES>
+<fi-FI>
+• Automaattinen uudelleenvalinta: kun on varattu tai ei vastata, puhelunäkymä tarjoaa uutta yritystä; asetuksissa heti ja yritysten määrä.
+• Operaattorin välittämä yrityksen nimi — puhelunäkymässä, lokissa ja kortilla.
+• Hiljaiset tunnit: yöllä tuntemattomat soivat äänettä, uusi soitto 15 minuutin sisällä soi. Huijausmuistutus pitkissä puheluissa tuntemattoman kanssa.
+• Valitse SIM painamalla soitto- tai tekstiviestipainiketta pitkään. Puhelunäyttö syttyy luotettavasti.
+</fi-FI>
+<fr-FR>
+• Rappel automatique : après « Occupé » ou « Pas de réponse », l’écran d’appel propose de réessayer ; réglages : tout de suite, nombre d’essais.
+• Nom de l’entreprise transmis par l’opérateur : sur l’écran d’appel, le journal et la fiche.
+• Heures calmes : la nuit, les inconnus sonnent en silence ; un rappel sous 15 minutes sonne. Rappel anti-arnaque lors des longs appels avec un inconnu.
+• Appui long sur un bouton d’appel ou SMS pour choisir la SIM. L’écran d’appel s’allume de façon fiable.
+</fr-FR>
+<hi-IN>
+• ऑटो रीडायल: "व्यस्त" या "जवाब नहीं" के बाद कॉल स्क्रीन फिर कोशिश का सुझाव देती है; सेटिंग्स में तुरंत डायल और कोशिशों की संख्या।
+• ऑपरेटर द्वारा भेजा गया संस्था का नाम — कॉल स्क्रीन, कॉल लॉग और कार्ड पर।
+• शांत घंटे: रात में अनजान नंबर बिना आवाज़ के आते हैं; 15 मिनट में दोबारा कॉल पर रिंग होगी। अनजान नंबर से लंबी बातचीत में धोखाधड़ी की चेतावनी।
+• कॉल या SMS बटन को देर तक दबाकर SIM चुनें। कॉल स्क्रीन भरोसेमंद ढंग से चालू होती है और छोटे फ़ोन पर भी पूरी दिखती है।
+</hi-IN>
+<hu-HU>
+• Automatikus újrahívás: „Foglalt” vagy „Nem válaszol” után a hívásképernyő újrapróbálást kínál; beállítható: azonnal, próbák száma.
+• A szolgáltató által küldött cégnév — a hívásképernyőn, a hívásnaplóban és a kártyán.
+• Csendes órák: éjjel az ismeretlenek hangtalanul csörögnek, a 15 percen belüli újrahívás megszólal. Csalásfigyelmeztetés hosszú hívásnál ismeretlennel.
+• SIM választása hívás- vagy SMS-gomb hosszú nyomásával. A hívásképernyő megbízhatóan bekapcsol.
+</hu-HU>
+<id>
+• Panggil ulang otomatis: setelah "Sibuk" atau "Tidak menjawab", layar panggilan menawarkan mencoba lagi; di Setelan: langsung dan jumlah percobaan.
+• Nama perusahaan dari operator — di layar panggilan, log, dan kartu.
+• Jam tenang: malam hari nomor tak dikenal berdering senyap; panggilan ulang dalam 15 menit berdering. Pengingat penipuan saat panggilan panjang dengan nomor tak dikenal.
+• Tekan lama tombol panggil atau SMS untuk memilih SIM. Layar panggilan menyala dengan andal.
+</id>
+<it-IT>
+• Richiamata automatica: dopo «Occupato» o «Nessuna risposta» la chiamata propone di riprovare; nelle Impostazioni: subito e n. di tentativi.
+• Nome dell’azienda inviato dall’operatore: in chiamata, nel registro e nella scheda.
+• Ore silenziose: di notte gli sconosciuti squillano in silenzio; se richiamano entro 15 minuti, squilla. Avviso antitruffa nelle chiamate lunghe con sconosciuti.
+• Pressione lunga su un tasto di chiamata o SMS per la SIM. Schermata di chiamata più affidabile.
+</it-IT>
+<iw-IL>
+• חיוג חוזר אוטומטי: אחרי "תפוס" או "אין מענה" מסך השיחה מציע להמשיך לנסות. בהגדרות: חיוג מיד בלי לשאול ומספר הניסיונות.
+• שם החברה שנשלח מהמפעיל (סימון שיחות) — במסך השיחה, ביומן ובכרטיס.
+• שעות שקטות: בלילה מספרים לא מוכרים מצלצלים בשקט; שיחה חוזרת תוך 15 דקות מצלצלת. תזכורת מפני הונאה בשיחה ארוכה עם מספר לא מוכר.
+• בחירת SIM לשיחה או ל-SMS בלחיצה ארוכה על כל כפתור. מסך השיחה נדלק באופן אמין ומתאים גם לטלפונים קטנים.
+</iw-IL>
+<ja-JP>
+• 自動リダイヤル：「話し中」や「応答なし」のとき、通話画面がかけ直しを提案。設定で確認なしの即時発信と回数を選べます。
+• 通信事業者が送る企業名（発信者表示）を通話画面・履歴・カードに表示。
+• おやすみ時間：夜間は知らない番号の着信を無音に。15分以内の再着信は鳴ります。知らない番号との長い通話では詐欺への注意を表示。
+• 通話やSMSのボタンを長押ししてSIMを選択。着信時に通話画面が確実に点灯し、小さな画面にも収まるようになりました。
+</ja-JP>
+<ko-KR>
+• 자동 재다이얼: '통화 중'이나 '응답 없음'이면 통화 화면에서 다시 걸기를 제안합니다. 설정에서 묻지 않고 바로 걸기와 시도 횟수를 고를 수 있습니다.
+• 통신사가 보낸 업체 이름(발신 표시)을 통화 화면, 통화 기록, 카드에 표시.
+• 조용한 시간: 밤에는 모르는 번호가 무음으로 울리고, 15분 안에 다시 오면 울립니다. 모르는 번호와 긴 통화 중에는 사기 주의 안내.
+• 통화·SMS 버튼을 길게 눌러 SIM 선택. 통화 화면이 확실히 켜지고 작은 휴대전화에도 잘 맞습니다.
+</ko-KR>
+<nl-NL>
+• Automatisch opnieuw bellen: na ‘In gesprek’ of ‘Geen antwoord’ biedt het belscherm een nieuwe poging; instelbaar: meteen, aantal pogingen.
+• Bedrijfsnaam van je provider — op het belscherm, in de geschiedenis en op de kaart.
+• Stille uren: ’s nachts gaan onbekende nummers stil over; een nieuwe oproep binnen 15 minuten gaat over. Fraudewaarschuwing bij lange gesprekken met onbekenden.
+• Houd een bel- of sms-knop ingedrukt voor de simkaart. Het belscherm gaat betrouwbaar aan.
+</nl-NL>
+<no-NO>
+• Automatisk ny oppringing: ved «Opptatt» eller «Ikke svar» tilbyr anropsskjermen å prøve igjen; i innstillinger: med en gang og antall forsøk.
+• Firmanavn fra operatøren — på anropsskjermen, i anropsloggen og på kortet.
+• Stille timer: om natten ringer ukjente numre lydløst; et nytt anrop innen 15 minutter ringer. Svindelpåminnelse i lange samtaler med ukjente.
+• Velg SIM med langt trykk på en anrops- eller SMS-knapp. Anropsskjermen slås pålitelig på og passer til små telefoner.
+</no-NO>
+<pl-PL>
+• Ponowne wybieranie: po „Zajęte” lub „Brak odpowiedzi” ekran połączenia zaproponuje kolejne próby; w ustawieniach: od razu i liczba prób.
+• Nazwa firmy od operatora — na ekranie połączenia, w rejestrze i na karcie.
+• Godziny ciszy: nocą nieznane numery dzwonią bez dźwięku; ponowne połączenie w ciągu 15 minut zadzwoni. Przypomnienie o oszustach w długiej rozmowie z nieznanym.
+• SIM wybierzesz, przytrzymując przycisk połączenia lub SMS. Ekran połączenia niezawodnie się włącza.
+</pl-PL>
+<pt-BR>
+• Rediscagem automática: após “Ocupado” ou “Sem resposta”, a tela de chamada oferece tentar de novo; nas Configurações: na hora e nº de tentativas.
+• Nome da empresa enviado pela operadora — na chamada, no histórico e no cartão.
+• Horas de silêncio: à noite, desconhecidos tocam no silencioso; se ligarem de novo em 15 minutos, toca. Aviso contra golpes em ligações longas com desconhecidos.
+• Toque longo num botão de ligar ou SMS escolhe o SIM. A tela de chamada acende com confiabilidade.
+</pt-BR>
+<ro>
+• Reapelare automată: după „Ocupat” sau „Nu răspunde”, ecranul de apel propune încă o încercare; în Setări: imediat și numărul de încercări.
+• Numele firmei transmis de operator — pe ecranul de apel, în jurnal și pe fișă.
+• Ore de liniște: noaptea numerele necunoscute sună fără sonor; un nou apel în 15 minute sună. Avertisment antifraudă în convorbirile lungi cu necunoscuți.
+• Apasă lung un buton de apel sau SMS pentru a alege SIM-ul. Ecranul de apel se aprinde fiabil.
+</ro>
+<sk>
+• Automatické opakovanie: keď je obsadené alebo nikto nedvíha, obrazovka hovoru ponúkne volať znova; v nastaveniach hneď a počet pokusov.
+• Názov firmy od operátora — na obrazovke hovoru, v zozname hovorov a na karte.
+• Tiché hodiny: v noci neznáme čísla zvonia potichu, opakovaný hovor do 15 minút zazvoní. Upozornenie na podvodníkov pri dlhom hovore s neznámym číslom.
+• SIM vyberiete podržaním tlačidla volania či SMS. Obrazovka hovoru sa spoľahlivo rozsvieti.
+</sk>
+<sv-SE>
+• Automatisk återuppringning: vid ”Upptaget” eller ”Inget svar” erbjuder samtalsskärmen ett nytt försök; i inställningar: direkt och antal försök.
+• Företagsnamn från operatören — på samtalsskärmen, i samtalsloggen och på kortet.
+• Tysta timmar: på natten ringer okända nummer ljudlöst; ett nytt samtal inom 15 minuter ringer. Bedrägerivarning vid långa samtal med okända.
+• Välj SIM med en lång tryckning på en samtals- eller sms-knapp. Samtalsskärmen tänds pålitligt.
+</sv-SE>
+<th>
+• โทรซ้ำอัตโนมัติ: เมื่อสาย "ไม่ว่าง" หรือ "ไม่มีผู้รับ" หน้าจอการโทรจะเสนอให้โทรซ้ำ ตั้งค่าให้โทรทันทีและจำนวนครั้งได้
+• ชื่อองค์กรที่ผู้ให้บริการส่งมา แสดงบนหน้าจอการโทร ในประวัติ และในการ์ด
+• ช่วงเวลาเงียบ: กลางคืนเบอร์ที่ไม่รู้จักเข้าแบบไม่มีเสียง โทรซ้ำภายใน 15 นาทีจะมีเสียง เตือนระวังมิจฉาชีพเมื่อคุยนานกับเบอร์ที่ไม่รู้จัก
+• กดค้างที่ปุ่มโทรหรือ SMS เพื่อเลือกซิม หน้าจอการโทรสว่างขึ้นอย่างเชื่อถือได้ และแสดงผลพอดีบนมือถือจอเล็ก
+</th>
+<tr-TR>
+• Otomatik yeniden arama: "Meşgul" ya da "Yanıt yok" sonrası arama ekranı yeniden denemeyi önerir; ayarlarda: hemen ve deneme sayısı.
+• Operatörün gönderdiği şirket adı — arama ekranında, arama kaydında ve kartta.
+• Sessiz saatler: gece bilinmeyen numaralar sessiz çalar; 15 dakika içinde tekrar arayan çalar. Bilinmeyenle uzun görüşmede dolandırıcılık uyarısı.
+• SIM seçmek için arama veya SMS düğmesine uzun basın. Arama ekranı güvenilir biçimde açılır ve küçük telefonlara sığar.
+</tr-TR>
+<vi>
+• Tự động gọi lại: khi "Máy bận" hoặc "Không trả lời", màn hình cuộc gọi đề nghị thử lại; trong Cài đặt: gọi ngay và số lần thử.
+• Tên doanh nghiệp do nhà mạng gửi — trên màn hình cuộc gọi, nhật ký và thẻ.
+• Giờ yên tĩnh: ban đêm số lạ đổ chuông im lặng; gọi lại trong 15 phút sẽ đổ chuông. Lời nhắc chống lừa đảo khi nói chuyện lâu với số lạ.
+• Nhấn giữ nút gọi hoặc SMS để chọn SIM. Màn hình cuộc gọi sáng lên ổn định và vừa với điện thoại nhỏ.
+</vi>
+<zh-CN>
+• 自动重拨：遇到“占线”或“无人接听”时，通话界面会提议继续拨打。可在设置中改为不询问直接重拨，并选择次数。
+• 显示运营商发送的企业名称（来电标记）：通话界面、通话记录和名片中都能看到。
+• 安静时段：夜间陌生号码来电静音；15 分钟内再次来电会响铃。与陌生号码长时间通话时提示防范诈骗。
+• 长按任意通话或短信按钮即可选择 SIM 卡。来电时通话界面可靠亮屏，小屏手机也能完整显示。
+</zh-CN>

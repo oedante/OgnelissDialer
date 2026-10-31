@@ -9,6 +9,9 @@ import androidx.compose.material3.IconButtonDefaults
 import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
 import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -183,11 +186,11 @@ class InCallActivity : ComponentActivity() {
          * Выключить просили в отзыве в Google Play: на части телефонов
          * датчик гасит экран не вовремя. Без него щека может нажать
          * кнопку — об этом сказано в описании настройки.
+         *
+         * С 1.8.1 — только у уха: держит его LaunchedEffect ниже, по состоянию
+         * вызова и звуку. Разбор — ProximityLock.
          */
         proximity = ProximityLock(this)
-        lifecycleScope.launch {
-            if (prefs.proximityScreenOff.first()) proximity?.acquire()
-        }
 
         // Авто-громкая связь: подписка на датчики только если функция
         // включена, иначе разговор час жёг бы батарею впустую
@@ -279,8 +282,26 @@ class InCallActivity : ComponentActivity() {
                 BackHandler(enabled = calls.isEmpty() && redial != null) { AutoRedial.stop() }
 
                 // Датчики должны знать о состоянии вызова и аудиомаршрута
-                LaunchedEffect(revision, audio) {
-                    smartSpeaker?.updateCallState(CallManager.primary, audio)
+                val proximityOn by prefs.proximityScreenOff.collectAsStateWithLifecycle(initialValue = false)
+                LaunchedEffect(revision, audio, proximityOn, redial, calls) {
+                    val primary = CallManager.primary
+                    smartSpeaker?.updateCallState(primary, audio)
+                    @Suppress("DEPRECATION")
+                    val callState = primary?.state
+                    // Датчик — только у уха (1.8.1): разбор в ProximityLock
+                    proximity?.hold(proximityOn && CallScreenRules.proximityWanted(callState, audio?.route))
+                    /*
+                     * Экран не гаснет, пока звонит и пока идёт отсчёт автодозвона
+                     * (1.8.1): на экране блокировки система гасит его через
+                     * несколько секунд, и звонящий телефон темнел посреди звонка.
+                     * В разговоре — как обычно: у уха гасит датчик, на громкой
+                     * связи — тайм-аут экрана.
+                     */
+                    if (callState == Call.STATE_RINGING || (calls.isEmpty() && redial != null)) {
+                        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    } else {
+                        window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    }
                 }
 
                 /*
@@ -337,6 +358,24 @@ class InCallActivity : ComponentActivity() {
             }
                 }
         }
+    }
+
+    /*
+     * ПОКАЗАН ЛИ ЭКРАН ВЫЗОВА НА САМОМ ДЕЛЕ (1.8.1).
+     *
+     * Служба вызовов не может знать это по startActivity: прошивка бывает
+     * молча не пускает окно из фона. Окно сообщает само — и уведомление
+     * входящего становится тихим (на экране свои кнопки) или, если ушли
+     * с экрана, пока звонит, снова с кнопками. Разбор — IncomingScreen.
+     */
+    override fun onStart() {
+        super.onStart()
+        IncomingScreen.onShown(this)
+    }
+
+    override fun onStop() {
+        IncomingScreen.onHidden(this)
+        super.onStop()
     }
 
     override fun onDestroy() {
@@ -862,6 +901,16 @@ private fun InCallScreen(
     val squarePortrait = photoStyle == CallPhotoStyle.SQUARE
     // Где портрет на экране — от него расходятся волны (CallAmbientBackground)
     var portraitFocus by remember { mutableStateOf<AmbientFocus?>(null) }
+    /*
+     * Нет фото — волны от имени (1.8.1). Было: от точки на 13 % высоты,
+     * где имя стояло до 1.7.0; имя с тех пор ниже, и волны шли от пустого
+     * места над ним (снимок автора). Разбор у AmbientFocus.
+     */
+    var nameFocus by remember { mutableStateOf<AmbientFocus?>(null) }
+    val trackName = Modifier.onGloballyPositioned { coords ->
+        val bounds = coords.boundsInRoot()
+        nameFocus = AmbientFocus(bounds.center, bounds.height / 2f, edge = false)
+    }
     val trackPortrait = Modifier.onGloballyPositioned { coords ->
         val bounds = coords.boundsInRoot()
         // У квадрата волна начинается у углов, а не у середины стороны
@@ -880,7 +929,7 @@ private fun InCallScreen(
     if (ambient) {
         CallAmbientBackground(
             ambientMoodOf(state),
-            focus = { if (showPortrait) portraitFocus else null }
+            focus = { if (showPortrait) portraitFocus else nameFocus }
         )
     }
     // Ровный фон без панели — до краёв экрана (1.6.2)
@@ -933,7 +982,8 @@ private fun InCallScreen(
                         numberLine = numberLine,
                         danger = isDangerTagged,
                         titleSize = FlowUi.callNameSizeLandscape,
-                        operatorLine = operatorLine
+                        operatorLine = operatorLine,
+                        titleModifier = trackName
                     )
 
                     Spacer(Modifier.height(Space.s))
@@ -944,6 +994,67 @@ private fun InCallScreen(
                 }
 
         /** Главные кнопки: ответить и отклонить, или завершить. */
+        /*
+         * Кнопки разговора — звук, громкая связь, клавиши, удержание.
+         * Один блок на портретную и альбомную раскладки (1.8.1): лёжа их
+         * не было вовсе — ни выключить микрофон, ни включить громкую связь.
+         */
+        val controlsBlock: @Composable () -> Unit = {
+            Box(
+                Modifier.fillMaxWidth().padding(vertical = Space.s, horizontal = Space.s),
+                contentAlignment = Alignment.Center
+            ) {
+                // Возможности читаются заново на каждое событие
+                // телефонии: сеть сообщает их не сразу
+                val canHold = remember(revision, call) { CallManager.canHold }
+                val canMerge = remember(revision, call, secondary) { CallManager.canMerge }
+                val canAddCall = remember(revision, call, secondary) { CallManager.canAddCall }
+                val context = androidx.compose.ui.platform.LocalContext.current
+
+                ControlsRow(
+                    audioState = audioState,
+                    onManualAudioChange = onManualAudioChange,
+                    onHold = { CallManager.toggleHold() },
+                    onDialpad = { showDialpad = !showDialpad },
+                    onSwap = { CallManager.swapCalls() },
+                    onMerge = { CallManager.merge() },
+                    hasSecondary = secondary != null,
+                    isHolding = state == Call.STATE_HOLDING,
+                    canHold = canHold,
+                    canMerge = canMerge,
+                    canAddCall = canAddCall,
+                    onAddCall = { openDialerForSecondCall(context) }
+                )
+            }
+        }
+
+        /*
+         * Клавиши тонового набора — высота по окну (1.8.1).
+         *
+         * Панель клавиш со своей строкой и отступами — около 360 dp. На
+         * телефоне 16 : 9 вместе с кнопками разговора она не помещалась,
+         * и «Завершить» уезжала за край. Теперь при открытых клавишах кнопки
+         * разговора убраны (как в системном диалере), а клавиши ниже, если
+         * места мало, — не ниже 48 dp, удобной для пальца высоты.
+         */
+        val dtmfKeyHeight = fittedDtmfKeyHeight(
+            windowHeightDp = windowLayout0.heightDp,
+            reservedDp = if (landscape) CallScreenRules.DTMF_RESERVED_LANDSCAPE_DP
+            else CallScreenRules.DTMF_RESERVED_PORTRAIT_DP
+        )
+        val dtmfBlock: @Composable () -> Unit = {
+            DtmfPanel(
+                entered = dtmfBuffer,
+                onDigit = { digit ->
+                    CallManager.playDtmf(digit)
+                    dtmfBuffer += digit
+                },
+                onBackspace = { dtmfBuffer = dtmfBuffer.dropLast(1) },
+                onClose = { showDialpad = false },
+                keyHeight = dtmfKeyHeight
+            )
+        }
+
         val mainButtons: @Composable () -> Unit = {
                   Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     // Памятка о мошенниках (1.8.0) — над кнопками
@@ -1053,20 +1164,45 @@ private fun InCallScreen(
         }
 
         if (landscape) {
+            /*
+             * ЛЁЖА — И КНОПКИ РАЗГОВОРА (1.8.1).
+             *
+             * Было: слева кто звонит, справа только «Завершить» — повернул
+             * телефон, и ни выключить микрофон, ни громкую связь, ни клавиш.
+             * Теперь справа над главной кнопкой — те же кнопки разговора,
+             * а клавиши открываются слева, на месте имени: по высоте лёжа
+             * их больше некуда положить. Обе половины прокручиваются, если
+             * места меньше, чем нужно; главные кнопки — всегда на виду.
+             */
+            val inCall = state != Call.STATE_RINGING && redialSession == null
             Row(
                 Modifier.fillMaxSize().padding(FlowUi.contentPadding),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
-                    Modifier.weight(1f),
+                    Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    identityBlock()
+                    if (showDialpad && inCall) dtmfBlock() else identityBlock()
                 }
+                Spacer(Modifier.width(FlowUi.contentPadding))
                 Column(
                     Modifier.weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    if (inCall) {
+                        Column(
+                            Modifier
+                                .weight(1f, fill = false)
+                                .verticalScroll(rememberScrollState()),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            controlsBlock()
+                            Spacer(Modifier.height(Space.m))
+                        }
+                    }
                     mainButtons()
                 }
             }
@@ -1098,6 +1234,9 @@ private fun InCallScreen(
                     // размер портрета считается от него (AdaptivePortraitColumn)
                     .weight(1f)
                     .fillMaxWidth()
+                    // Места меньше, чем подписям, — они обрезаются здесь,
+                    // а не ложатся на кнопки под ними (1.8.1)
+                    .clipToBounds()
                     .padding(
                         top = Space.xl,
                         start = FlowUi.contentPadding,
@@ -1152,7 +1291,8 @@ private fun InCallScreen(
                     numberLine = numberLine,
                     danger = isDangerTagged,
                     titleSize = FlowUi.callNameSize,
-                    operatorLine = operatorLine
+                    operatorLine = operatorLine,
+                    titleModifier = trackName
                 )
                 Spacer(Modifier.height(Space.m))
                 if (redialSession != null) RedialStatus(redialSession) else {
@@ -1198,225 +1338,213 @@ private fun InCallScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                AnimatedVisibility(showDialpad && redialSession == null) {
-                    DtmfPanel(
-                        entered = dtmfBuffer,
-                        onDigit = { digit ->
-                            CallManager.playDtmf(digit)
-                            dtmfBuffer += digit
-                        },
-                        onBackspace = { dtmfBuffer = dtmfBuffer.dropLast(1) },
-                        onClose = { showDialpad = false }
-                    )
-                }
-
                 /*
-                 * ══════════════════════════════════════════════════════════
-                 * ВТОРОЙ ВХОДЯЩИЙ ВО ВРЕМЯ РАЗГОВОРА
-                 * ══════════════════════════════════════════════════════════
-                 * Раньше его не было на экране вовсе: текущим оставался
-                 * идущий разговор, и ответить на второй звонок можно было
-                 * только из шторки уведомлений. Теперь — плашка с тремя
-                 * решениями: отклонить, ответить с удержанием первого,
-                 * ответить и завершить первый.
-                 */
-                // Памятка о мошенниках (1.8.0) — над управлением, у глаз
-                AnimatedVisibility(memo.visible) {
-                    ScamMemoCard(onDismiss = memo::dismiss, modifier = Modifier.padding(bottom = Space.m))
-                }
-
-                val waitingCall = remember(revision) { CallManager.waiting }
-                waitingCall?.let { incoming ->
-                    WaitingCallBanner(incoming, contactsRepo)
-                    Spacer(Modifier.height(Space.m))
-                }
-
-                /*
-                 * УЧАСТНИКИ КОНФЕРЕНЦИИ.
+                 * ВСЁ, КРОМЕ ГЛАВНЫХ КНОПОК, — ПРОКРУЧИВАЕТСЯ (1.8.1).
                  *
-                 * После объединения на экране была одна «конференция»
-                 * без людей: кто в ней, не видно, отключить одного
-                 * нельзя. Теперь — список участников, у каждого
-                 * «поговорить отдельно» и «отключить», если сеть это
-                 * позволяет.
+                 * Клавиши, памятка, второй вызов, конференция, кнопки
+                 * разговора, заметка с клавиатурой — вместе они бывают выше
+                 * экрана, особенно на телефонах 16 : 9 и с крупным шрифтом.
+                 * Раньше тогда обрезалось то, что внизу, — «Завершить»
+                 * и «Ответить». Теперь эта часть занимает не больше места,
+                 * чем есть, и прокручивается, а главные кнопки всегда на виду.
                  */
-                val participants = remember(revision, call) { CallManager.conferenceParticipants }
-                if (participants.isNotEmpty()) {
-                    ConferencePanel(participants, contactsRepo)
-                    Spacer(Modifier.height(Space.m))
-                }
-
-                /*
-                 * Панель управления появляется раскрытием.
-                 *
-                 * Момент ответа — единственный, когда на экране меняется
-                 * всё сразу: две кнопки становятся одной, и снизу
-                 * выезжает панель управления. Мгновенная подмена читалась
-                 * как переход на другой экран, и палец, летевший
-                 * к «Ответить», оказывался над «Удержать».
-                 *
-                 * Раскрытие занимает те же доли секунды, но показывает,
-                 * что это тот же экран, а не новый.
-                 */
-                AnimatedVisibility(
-                    // Между попытками автодозвона управлять нечем (1.8.0)
-                    visible = state != Call.STATE_RINGING && redialSession == null,
-                    enter = expandVertically() + fadeIn(),
-                    exit = shrinkVertically() + fadeOut()
+                Column(
+                    Modifier
+                        .weight(1f, fill = false)
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                  Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    /*
-                     * УПРАВЛЕНИЕ — ОДНИМ БЛОКОМ, БЕЗ ПОДЛОЖКИ.
-                     *
-                     * ── Что было ───────────────────────────────────────────
-                     * Кнопки висели прямо на фоне экрана. Вместе с именем,
-                     * номером, состоянием и кнопкой завершения получалось
-                     * пять уровней, ничем не разделённых: глаз не понимал,
-                     * где кончается «кто звонит» и начинается «что я могу
-                     * сделать».
-                     *
-                     * ── Как было в 1.0 — 1.2.0 ─────────────────────────────
-                     * Те же кнопки на подложке — по общему правилу
-                     * приложения: смысловой блок живёт в карточке.
-                     *
-                     * ── Как теперь (1.2.1) ─────────────────────────────────
-                     * Подложка убрана. Первый же отзыв в Google Play
-                     * просил убрать «большую квадратную тень вокруг
-                     * кнопок»: большой светло-серый прямоугольник занимал
-                     * треть экрана и спорил с портретом за внимание.
-                     * Круглые кнопки группируются и сами — одинаковой
-                     * формой и ровной сеткой; отдельный фон под ними
-                     * не нужен. Сами кружки стали заметнее: теперь они
-                     * лежат прямо на светлом фоне экрана, а не на сером.
-                     *
-                     * Полоски-«ручки» сверху, как в макете, здесь нет:
-                     * она обещает, что панель тянется пальцем, а она
-                     * не тянется. Обещать жест и не дать его — хуже,
-                     * чем не обещать.
-                     */
-                    Box(
-                        Modifier.fillMaxWidth().padding(vertical = Space.s, horizontal = Space.s),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        // Возможности читаются заново на каждое событие
-                        // телефонии: сеть сообщает их не сразу
-                        val canHold = remember(revision, call) { CallManager.canHold }
-                        val canMerge = remember(revision, call, secondary) { CallManager.canMerge }
-                        val canAddCall = remember(revision, call, secondary) { CallManager.canAddCall }
-                        val context = androidx.compose.ui.platform.LocalContext.current
+                    AnimatedVisibility(showDialpad && redialSession == null) {
+                        dtmfBlock()
+                    }
 
-                        ControlsRow(
-                            audioState = audioState,
-                            onManualAudioChange = onManualAudioChange,
-                            onHold = { CallManager.toggleHold() },
-                            onDialpad = { showDialpad = !showDialpad },
-                            onSwap = { CallManager.swapCalls() },
-                            onMerge = { CallManager.merge() },
-                            hasSecondary = secondary != null,
-                            isHolding = state == Call.STATE_HOLDING,
-                            canHold = canHold,
-                            canMerge = canMerge,
-                            canAddCall = canAddCall,
-                            onAddCall = { openDialerForSecondCall(context) }
+                    /*
+                     * ══════════════════════════════════════════════════════════
+                     * ВТОРОЙ ВХОДЯЩИЙ ВО ВРЕМЯ РАЗГОВОРА
+                     * ══════════════════════════════════════════════════════════
+                     * Раньше его не было на экране вовсе: текущим оставался
+                     * идущий разговор, и ответить на второй звонок можно было
+                     * только из шторки уведомлений. Теперь — плашка с тремя
+                     * решениями: отклонить, ответить с удержанием первого,
+                     * ответить и завершить первый.
+                     */
+                    // Памятка о мошенниках (1.8.0) — над управлением, у глаз
+                    AnimatedVisibility(memo.visible) {
+                        ScamMemoCard(onDismiss = memo::dismiss, modifier = Modifier.padding(bottom = Space.m))
+                    }
+
+                    val waitingCall = remember(revision) { CallManager.waiting }
+                    waitingCall?.let { incoming ->
+                        WaitingCallBanner(incoming, contactsRepo)
+                        Spacer(Modifier.height(Space.m))
+                    }
+
+                    /*
+                     * УЧАСТНИКИ КОНФЕРЕНЦИИ.
+                     *
+                     * После объединения на экране была одна «конференция»
+                     * без людей: кто в ней, не видно, отключить одного
+                     * нельзя. Теперь — список участников, у каждого
+                     * «поговорить отдельно» и «отключить», если сеть это
+                     * позволяет.
+                     */
+                    val participants = remember(revision, call) { CallManager.conferenceParticipants }
+                    if (participants.isNotEmpty()) {
+                        ConferencePanel(participants, contactsRepo)
+                        Spacer(Modifier.height(Space.m))
+                    }
+
+                    /*
+                     * Панель управления появляется раскрытием.
+                     *
+                     * Момент ответа — единственный, когда на экране меняется
+                     * всё сразу: две кнопки становятся одной, и снизу
+                     * выезжает панель управления. Мгновенная подмена читалась
+                     * как переход на другой экран, и палец, летевший
+                     * к «Ответить», оказывался над «Удержать».
+                     *
+                     * Раскрытие занимает те же доли секунды, но показывает,
+                     * что это тот же экран, а не новый.
+                     */
+                    AnimatedVisibility(
+                        // Между попытками автодозвона управлять нечем (1.8.0).
+                        // Открыты клавиши или заметка — кнопки разговора убраны
+                        // (1.8.1): вместе они не помещались на экран 16 : 9
+                        visible = state != Call.STATE_RINGING && redialSession == null &&
+                            !showDialpad && !showNote,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut()
+                    ) {
+                      Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        /*
+                         * УПРАВЛЕНИЕ — ОДНИМ БЛОКОМ, БЕЗ ПОДЛОЖКИ.
+                         *
+                         * ── Что было ───────────────────────────────────────────
+                         * Кнопки висели прямо на фоне экрана. Вместе с именем,
+                         * номером, состоянием и кнопкой завершения получалось
+                         * пять уровней, ничем не разделённых: глаз не понимал,
+                         * где кончается «кто звонит» и начинается «что я могу
+                         * сделать».
+                         *
+                         * ── Как было в 1.0 — 1.2.0 ─────────────────────────────
+                         * Те же кнопки на подложке — по общему правилу
+                         * приложения: смысловой блок живёт в карточке.
+                         *
+                         * ── Как теперь (1.2.1) ─────────────────────────────────
+                         * Подложка убрана. Первый же отзыв в Google Play
+                         * просил убрать «большую квадратную тень вокруг
+                         * кнопок»: большой светло-серый прямоугольник занимал
+                         * треть экрана и спорил с портретом за внимание.
+                         * Круглые кнопки группируются и сами — одинаковой
+                         * формой и ровной сеткой; отдельный фон под ними
+                         * не нужен. Сами кружки стали заметнее: теперь они
+                         * лежат прямо на светлом фоне экрана, а не на сером.
+                         *
+                         * Полоски-«ручки» сверху, как в макете, здесь нет:
+                         * она обещает, что панель тянется пальцем, а она
+                         * не тянется. Обещать жест и не дать его — хуже,
+                         * чем не обещать.
+                         */
+                        controlsBlock()
+                        Spacer(Modifier.height(Space.l))
+                      }
+                    }
+
+                    /*
+                     * ЗАМЕТКА ВО ВРЕМЯ РАЗГОВОРА.
+                     *
+                     * Договорённости забываются за минуты: «привезут
+                     * во вторник после четырёх» произносится один раз.
+                     * Экран после звонка помогает не всегда — разговор
+                     * может длиться двадцать минут, и к концу начало
+                     * уже забыто.
+                     *
+                     * Показывается только на активном вызове: во время
+                     * гудков записывать нечего.
+                     */
+                    if (state == Call.STATE_ACTIVE) {
+                        // Подпись — по настройке «Подписи под кнопками»
+                        // (1.3.2, отзыв в Google Play); без подписи значок
+                        // описан для TalkBack
+                        val noteLabel = stringResource(
+                            if (showNote) R.string.incall_note_hide
+                            else R.string.incall_note_add
+                        )
+                        if (com.ogneliss.dialer.ui.theme.LocalAppearance.current.buttonLabels) {
+                            TextButton(onClick = { showNote = !showNote }) {
+                                Icon(OgnelissIcons.EditNote, contentDescription = null)
+                                Spacer(Modifier.width(Space.s))
+                                Text(noteLabel)
+                            }
+                        } else {
+                            IconButton(onClick = { showNote = !showNote }) {
+                                Icon(OgnelissIcons.EditNote, contentDescription = noteLabel)
+                            }
+                        }
+                    }
+
+                    AnimatedVisibility(showNote && redialSession == null) {
+                        InCallNoteField(
+                            text = noteState.text,
+                            onTextChange = { noteState.onTextChange(it) },
+                            selectedTags = noteState.tags,
+                            onToggleTag = { noteState.toggleTag(it) },
+                            /*
+                             * Клавиатура открывается сразу.
+                             *
+                             * Человек нажал «Записать заметку» во время
+                             * разговора — значит, хочет писать сейчас,
+                             * а не искать, куда ещё нажать. Лишнее касание
+                             * здесь стоит дорого: собеседник ждёт.
+                             */
+                            requestFocus = showNote
                         )
                     }
-                    Spacer(Modifier.height(Space.l))
-                  }
-                }
 
-                /*
-                 * ЗАМЕТКА ВО ВРЕМЯ РАЗГОВОРА.
-                 *
-                 * Договорённости забываются за минуты: «привезут
-                 * во вторник после четырёх» произносится один раз.
-                 * Экран после звонка помогает не всегда — разговор
-                 * может длиться двадцать минут, и к концу начало
-                 * уже забыто.
-                 *
-                 * Показывается только на активном вызове: во время
-                 * гудков записывать нечего.
-                 */
-                if (state == Call.STATE_ACTIVE) {
-                    // Подпись — по настройке «Подписи под кнопками»
-                    // (1.3.2, отзыв в Google Play); без подписи значок
-                    // описан для TalkBack
-                    val noteLabel = stringResource(
-                        if (showNote) R.string.incall_note_hide
-                        else R.string.incall_note_add
-                    )
-                    if (com.ogneliss.dialer.ui.theme.LocalAppearance.current.buttonLabels) {
-                        TextButton(onClick = { showNote = !showNote }) {
-                            Icon(OgnelissIcons.EditNote, contentDescription = null)
-                            Spacer(Modifier.width(Space.s))
-                            Text(noteLabel)
-                        }
-                    } else {
-                        IconButton(onClick = { showNote = !showNote }) {
-                            Icon(OgnelissIcons.EditNote, contentDescription = noteLabel)
-                        }
-                    }
-                }
-
-                AnimatedVisibility(showNote && redialSession == null) {
-                    InCallNoteField(
-                        text = noteState.text,
-                        onTextChange = { noteState.onTextChange(it) },
-                        selectedTags = noteState.tags,
-                        onToggleTag = { noteState.toggleTag(it) },
+                    // Отклонить с сообщением. Кнопка появляется только если
+                    // оператор и прошивка это поддерживают: объяснять
+                    // пользователю особенности его оператора бессмысленно
+                    if (state == Call.STATE_RINGING && QuickReply.isAvailable()) {
                         /*
-                         * Клавиатура открывается сразу.
+                         * Крупнее обычной текстовой кнопки.
                          *
-                         * Человек нажал «Записать заметку» во время
-                         * разговора — значит, хочет писать сейчас,
-                         * а не искать, куда ещё нажать. Лишнее касание
-                         * здесь стоит дорого: собеседник ждёт.
+                         * По ней попадают в тех же условиях, что и по ответу:
+                         * телефон звонит, человек торопится. Стандартная
+                         * высота текстовой кнопки — 40 dp, и промах мимо неё
+                         * попадает в «Отклонить» рядом.
                          */
-                        requestFocus = showNote
-                    )
-                }
-
-                // Отклонить с сообщением. Кнопка появляется только если
-                // оператор и прошивка это поддерживают: объяснять
-                // пользователю особенности его оператора бессмысленно
-                if (state == Call.STATE_RINGING && QuickReply.isAvailable()) {
-                    /*
-                     * Крупнее обычной текстовой кнопки.
-                     *
-                     * По ней попадают в тех же условиях, что и по ответу:
-                     * телефон звонит, человек торопится. Стандартная
-                     * высота текстовой кнопки — 40 dp, и промах мимо неё
-                     * попадает в «Отклонить» рядом.
-                     */
-                    /*
-                     * Подпись — по настройке «Подписи под кнопками»
-                     * (1.3.2, 01.10.2026, отзыв в Google Play).
-                     * Было: текст показывался всегда, даже с выключенными
-                     * подписями. Стало: подписи выключены — только значок
-                     * сообщения той же высоты 56 dp; описание для TalkBack
-                     * остаётся.
-                     */
-                    val replyLabel = stringResource(R.string.quick_reply_action)
-                    if (com.ogneliss.dialer.ui.theme.LocalAppearance.current.buttonLabels) {
-                        TextButton(
-                            onClick = { showQuickReply = true },
-                            modifier = Modifier.heightIn(min = 56.dp)
-                        ) {
-                            // Стиль темы вместо числа: кегль подписи кнопки
-                            // задаётся типографикой, а не на месте
-                            Text(replyLabel, style = MaterialTheme.typography.bodyLarge)
+                        /*
+                         * Подпись — по настройке «Подписи под кнопками»
+                         * (1.3.2, 01.10.2026, отзыв в Google Play).
+                         * Было: текст показывался всегда, даже с выключенными
+                         * подписями. Стало: подписи выключены — только значок
+                         * сообщения той же высоты 56 dp; описание для TalkBack
+                         * остаётся.
+                         */
+                        val replyLabel = stringResource(R.string.quick_reply_action)
+                        if (com.ogneliss.dialer.ui.theme.LocalAppearance.current.buttonLabels) {
+                            TextButton(
+                                onClick = { showQuickReply = true },
+                                modifier = Modifier.heightIn(min = 56.dp)
+                            ) {
+                                // Стиль темы вместо числа: кегль подписи кнопки
+                                // задаётся типографикой, а не на месте
+                                Text(replyLabel, style = MaterialTheme.typography.bodyLarge)
+                            }
+                        } else {
+                            FilledTonalIconButton(
+                                onClick = { showQuickReply = true },
+                                modifier = Modifier.size(56.dp)
+                            ) {
+                                Icon(
+                                    OgnelissIcons.Message,
+                                    contentDescription = replyLabel
+                                )
+                            }
                         }
-                    } else {
-                        FilledTonalIconButton(
-                            onClick = { showQuickReply = true },
-                            modifier = Modifier.size(56.dp)
-                        ) {
-                            Icon(
-                                OgnelissIcons.Message,
-                                contentDescription = replyLabel
-                            )
-                        }
+                        Spacer(Modifier.height(Space.m))
                     }
-                    Spacer(Modifier.height(Space.m))
                 }
 
                 if (redialSession != null) {
@@ -1981,12 +2109,18 @@ private fun InCallNoteField(
     }
 }
 
+/** Высота клавиш тонового набора по месту (1.8.1): разбор в CallScreenRules. */
+internal fun fittedDtmfKeyHeight(windowHeightDp: Int, reservedDp: Int): Dp =
+    CallScreenRules.dtmfKeyHeightDp(windowHeightDp, reservedDp).dp
+
 @Composable
 internal fun DtmfPanel(
     entered: String,
     onDigit: (Char) -> Unit,
     onBackspace: () -> Unit,
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    /** Высота клавиш по месту на экране (1.8.1); null — обычная. */
+    keyHeight: Dp? = null
 ) {
     Surface(
         // Клавиши лежат на той же панели, что и кнопки разговора (1.4.0):
@@ -2043,7 +2177,7 @@ internal fun DtmfPanel(
 
             // Та же клавиатура, что на главном экране: одинаковые размеры
             // и одинаковый отклик — переучиваться не приходится
-            Dialpad(onDigit = onDigit, onLongDigit = {})
+            Dialpad(onDigit = onDigit, onLongDigit = {}, keyHeight = keyHeight)
         }
     }
 }
@@ -2090,10 +2224,13 @@ private fun CallerIdentity(
      */
     danger: Boolean = false,
     /** «по данным оператора» (1.8.0): чьё имя в заголовке. null — не нужно. */
-    operatorLine: String? = null
+    operatorLine: String? = null,
+    /** Для заголовка: от него идут волны, когда фото нет (1.8.1). */
+    titleModifier: Modifier = Modifier
 ) {
     Text(
         display.title,
+        modifier = titleModifier,
         fontSize = titleSize,
         color = if (danger) BlockRed else androidx.compose.ui.graphics.Color.Unspecified,
         /*

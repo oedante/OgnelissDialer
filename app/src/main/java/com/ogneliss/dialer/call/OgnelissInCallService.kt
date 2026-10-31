@@ -159,6 +159,8 @@ class OgnelissInCallService : InCallService() {
          */
         call.registerCallback(object : Call.Callback() {
             override fun onStateChanged(c: Call, state: Int) {
+                // Перестал звонить — подсветка экрана больше не нужна (1.8.1)
+                if (state != Call.STATE_RINGING) IncomingScreen.ringingStopped()
                 if (state == Call.STATE_ACTIVE) {
                     // Автодозвон (1.8.0): попытка соединилась — сеанс окончен
                     AutoRedial.onCallConnected(CallDetailsCompat.number(c.details))
@@ -238,20 +240,38 @@ class OgnelissInCallService : InCallService() {
         if (!outgoing) QuietCallGate.noteIncoming(quiet)
         if (quiet) {
             Logger.i(TAG, "Тихий входящий: экран не открываем, звонок глушим")
+            IncomingScreen.markQuiet(call)
             CallNotifications.ensureChannels(this)
             CallForegroundService.start(this, name, incoming = true, quiet = true)
             silenceRinger()
             return
         }
 
-        // Foreground-сервис держит процесс живым на всё время вызова
         /*
-         * Сервис запускается обычным уведомлением.
+         * ВХОДЯЩИЙ ПРИ ВЫКЛЮЧЕННОМ ИЛИ ЗАБЛОКИРОВАННОМ ЭКРАНЕ (1.8.1).
          *
-         * Вид уточняется ниже, когда станет известно, открылся ли экран
-         * вызова: если да — кнопки в уведомлении лишние.
+         * Отзыв: «при звонке не загорается экран». Окно вызова просит
+         * систему включить экран само, но часть прошивок эту просьбу
+         * не выполняет или молча не даёт открыть окно из фона. Поэтому:
+         * экран выключен — включаем его сами; выключен или заблокирован —
+         * сразу уведомление с полноэкранным показом и кнопками ответа:
+         * не откроется наше окно — система откроет его по уведомлению,
+         * а нет — ответить можно с экрана блокировки. Разбор — IncomingScreen.
          */
-        CallForegroundService.start(this, name, incoming = false)
+        @Suppress("DEPRECATION")
+        val ringing = !outgoing && call.state == Call.STATE_RINGING
+        val screenOff = ringing && IncomingScreen.screenOff(this)
+        val locked = ringing && IncomingScreen.locked(this)
+        if (!ringing) Logger.i(TAG, "Вызов: открываю экран")
+        else Logger.i(TAG, "Входящий: экран ${if (screenOff) "выключен" else "включён"}${if (locked) ", заблокирован" else ""}")
+        if (screenOff) IncomingScreen.wake(this)
+
+        // Foreground-сервис держит процесс живым на всё время вызова
+        if (ringing) {
+            IncomingScreen.notify(this, name, alert = screenOff || locked)
+        } else {
+            CallForegroundService.start(this, name, incoming = false)
+        }
 
 
         /*
@@ -342,7 +362,7 @@ class OgnelissInCallService : InCallService() {
         }
 
         /*
-         * УВЕДОМЛЕНИЕ С КНОПКАМИ — ТОЛЬКО ЕСЛИ ЭКРАН НЕ ОТКРЫЛСЯ.
+         * УВЕДОМЛЕНИЕ С КНОПКАМИ — ЕСЛИ ЭКРАН ВЫЗОВА НЕ ПОКАЗАЛСЯ.
          *
          * ══════════════════════════════════════════════════════════════════
          * ПОЧЕМУ ОНО ВЫСКАКИВАЛО ПОВЕРХ
@@ -365,14 +385,31 @@ class OgnelissInCallService : InCallService() {
          * Передний сервис без уведомления существовать не может: система
          * его остановит. Поэтому показываем обычное — с именем
          * и длительностью, без кнопок и без всплытия.
+         *
+         * ── «Запуск удался» ещё не значит «экран показан» (1.8.1) ──────────
+         * startActivity не бросает ошибку, когда прошивка молча запрещает
+         * окно из фона: раньше в этом случае уведомление оставалось
+         * без кнопок, и ответить было нечем. Теперь решает само окно —
+         * показалось (IncomingScreen.visible) или нет: не показалось
+         * за SHOW_TIMEOUT_MS — уведомление с кнопками и всплытием.
          */
-        CallForegroundService.start(
-            this,
-            name,
-            // call.state объявлено устаревшим; разбор — в аннотации
-            // над onCallAdded
-            incoming = call.state == Call.STATE_RINGING && !screenOpened
-        )
+        if (!ringing) return
+        if (!screenOpened) {
+            IncomingScreen.notify(this, name, alert = true)
+            return
+        }
+        serviceScope.launch {
+            delay(IncomingScreen.SHOW_TIMEOUT_MS)
+            @Suppress("DEPRECATION")
+            val stillRinging = call.state == Call.STATE_RINGING
+            // Уже всплывает — не дёргаем повторно; экран погасили кнопкой
+            // за эти полторы секунды — тоже не будим
+            val shown = IncomingScreen.visible || IncomingScreen.alerting
+            if (stillRinging && !shown && !IncomingScreen.screenOff(this@OgnelissInCallService)) {
+                Logger.w(TAG, "Экран вызова не появился за 1,5 с — уведомление с кнопками")
+                IncomingScreen.notify(this@OgnelissInCallService, name, alert = true)
+            }
+        }
     }
 
     /*
@@ -512,6 +549,8 @@ class OgnelissInCallService : InCallService() {
             otherCalls = CallManager.calls.value.any { it != call }
         )
         CallManager.remove(call)
+        // Звонков больше нет — подсветку и отметки входящего снимаем (1.8.1)
+        IncomingScreen.forget(call)
 
         /*
          * Отдельное уведомление больше не снимаем: его нет.
