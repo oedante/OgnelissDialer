@@ -210,7 +210,9 @@ fun SectionBand(
     text: String,
     modifier: Modifier = Modifier,
     icon: (@Composable () -> Unit)? = null,
-    action: (@Composable () -> Unit)? = null
+    action: (@Composable () -> Unit)? = null,
+    /** Что читать TalkBack, если подпись читается плохо («29 ОКТЯБРЯ · ЧЕТВЕРГ»). */
+    description: String? = null
 ) {
     val tinted = LocalPageTone.current == PageTone.TINTED
     if (!OgnelissTheme.surfaces.outlined) {
@@ -232,7 +234,7 @@ fun SectionBand(
                 drawIcon()
                 Spacer(Modifier.width(Space.s))
             }
-            SectionCaption(text, Modifier.weight(1f))
+            SectionCaption(text, Modifier.weight(1f), description)
             action?.invoke()
         }
         return
@@ -258,7 +260,7 @@ fun SectionBand(
             drawIcon()
             Spacer(Modifier.width(Space.s))
         }
-        SectionCaption(text, Modifier.weight(1f).padding(vertical = Space.s))
+        SectionCaption(text, Modifier.weight(1f).padding(vertical = Space.s), description)
         action?.invoke()
     }
 }
@@ -322,13 +324,13 @@ fun RowDivider(modifier: Modifier = Modifier) {
  * TalkBack перескакивает по разделам, не слушая каждую строку.
  */
 @Composable
-fun SectionCaption(text: String, modifier: Modifier = Modifier) {
+fun SectionCaption(text: String, modifier: Modifier = Modifier, description: String? = null) {
     val outlined = OgnelissTheme.surfaces.outlined
     Text(
         if (outlined) text.uppercase() else text,
         modifier = modifier.semantics {
             heading()
-            contentDescription = text
+            contentDescription = description ?: text
         },
         style = if (outlined) {
             MaterialTheme.typography.labelMedium.copy(

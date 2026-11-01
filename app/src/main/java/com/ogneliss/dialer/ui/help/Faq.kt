@@ -147,6 +147,11 @@ object Faq {
                     "missed", R.string.faq_q_missed, R.string.faq_a_missed,
                     listOf(FaqLink.Setting("battery"))
                 ),
+                // 1.8.1: отзыв «при звонке не загорается экран» и проверка прошивок
+                FaqItem(
+                    "incoming", R.string.faq_q_incoming, R.string.faq_a_incoming,
+                    listOf(FaqLink.Setting("incoming_screen"))
+                ),
                 FaqItem("recording", R.string.faq_q_recording, R.string.faq_a_recording)
             )
         ),

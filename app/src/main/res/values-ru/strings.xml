@@ -509,9 +509,9 @@
     <string name="msg_reminder_set_inexact">Напоминание поставлено: %1$s — может прийти позже</string>
     <string name="msg_reminder_exact_fix">Настроить</string>
     <string name="dialer_role_blocked_title">Окно выбора не открылось</string>
-    <string name="dialer_role_blocked_text">Некоторые оболочки — Xiaomi, Samsung, Huawei, nubia — блокируют замену системного приложения для набора номера в целях безопасности.
+    <string name="dialer_role_blocked_text">Так бывает, если выбор уже отклоняли раньше (тогда система больше не спрашивает) или оболочка телефона заменила окно своим.
 
-Откройте «Настройки → Безопасность → Доступ для приложений с особыми правами» и разрешите изменение системных настроек. После этого вернитесь и попробуйте снова.</string>
+Откройте «Настройки → Приложения → Приложения по умолчанию → Телефон» (названия зависят от телефона) и выберите Ogneliss Dialer.</string>
     <string name="dialer_role_open_settings">Открыть настройки</string>
     <string name="subscriber_same_number">Другие контакты с этим номером</string>
     <string name="subscriber_shown_here">Показан на этой карточке</string>
@@ -568,8 +568,13 @@
     <string name="wizard_battery_rationale">Разрешите работу в фоне, чтобы пропущенные появлялись сразу</string>
     <string name="wizard_battery_consequence">Без этого журнал обновляется только при открытии приложения</string>
     <string name="wizard_autostart_title">Автозапуск</string>
-    <string name="wizard_autostart_rationale">Производитель телефона запрещает приложениям запускаться самостоятельно. Найдите Ogneliss Dialer в списке и разрешите</string>
+    <string name="wizard_autostart_rationale">Производитель телефона ограничивает работу приложений в фоне. Откроются настройки телефона: разрешите Ogneliss Dialer автозапуск или работу в фоне</string>
     <string name="wizard_autostart_consequence">Без этого пропущенные могут не появляться, пока вы не откроете приложение</string>
+    <string name="incoming_access_title">Экран входящего вызова</string>
+    <string name="incoming_access_text">Показ на экране блокировки и всплывающие окна в фоне: без них телефон может не показать экран вызова</string>
+    <string name="incoming_access_consequence">Без этого входящий может быть виден только в шторке уведомлений</string>
+    <string name="incoming_blocked_banner">Телефон не дал показать экран вызова. Разрешите это в настройках телефона</string>
+    <string name="incoming_blocked_action">Разрешить</string>
     <string name="menu_my_contact">Мой контакт</string>
     <string name="settings_own_number_text">Нужен, чтобы делиться своей карточкой. Нажмите, чтобы изменить или убрать</string>
     <string name="note_tags_hint">Эти метки включают автоблокировку, если она разрешена в настройках</string>
@@ -795,6 +800,8 @@
     <string name="faq_a_sim">Долгое нажатие на любую кнопку звонка или SMS — в журнале, контактах, карточке — открывает выбор карты для этого действия. Выбранную для номера карту приложение запоминает и в следующий раз предложит её же (%1$s). Чтобы не путать карты, подпишите их: %2$s.</string>
     <string name="faq_q_missed">Пропущенные появляются, только когда открываешь приложение. Что делать?</string>
     <string name="faq_a_missed">Скорее всего, система усыпляет приложение ради экономии батареи. Разрешите ему работать в фоне — %1$s, — и пропущенные вызовы будут появляться сразу.</string>
+    <string name="faq_q_incoming">Экран вызова не появляется при входящем звонке. Что делать?</string>
+    <string name="faq_a_incoming">Часть телефонов — Xiaomi, Redmi, POCO, vivo, OPPO, realme, OnePlus — по умолчанию не дают приложениям показывать окна поверх экрана блокировки и из фона. Откройте %1$s и разрешите показ на экране блокировки и всплывающие окна в фоне. На Huawei, Honor, Tecno и Infinix ещё разрешите автозапуск. Пока это не сделано, ответить можно из уведомления о звонке.</string>
     <string name="faq_q_recording">Можно ли записывать разговоры?</string>
     <string name="faq_a_recording">Нет. На Android 10 и новее система не даёт сторонним приложениям доступа к звуку разговора, а обход этого запрета нарушает правила Google Play. Если ваш телефон записывает звонки, это встроенная функция производителя: она работает независимо от выбранного диалера.</string>
     <string name="faq_q_work">Можно ли пользоваться приложением на работе? Где исходный код?</string>

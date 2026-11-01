@@ -42,6 +42,9 @@ import java.util.concurrent.ConcurrentHashMap
  * Причина видна в журнале приложения: «экран вызова не появился за 1,5 с»
  * значит, что прошивка не дала открыть окно; тогда стоит разрешить
  * приложению всплывающие окна и запуск из фона в настройках телефона.
+ * С проверки прошивок (1.8.1) об этом говорит и само приложение: полоса
+ * «Телефон не дал показать экран вызова» с кнопкой на нужный экран
+ * ([checkShown] → IncomingCallAccess.reportBlocked).
  */
 internal object IncomingScreen {
 
@@ -55,6 +58,14 @@ internal object IncomingScreen {
      * (пока звонит), а не показалось оно — экран гаснет как обычно.
      */
     private const val WAKE_MS = 20_000L
+
+    /**
+     * Экран вызова показывался, пока звонит этот входящий. Отдельно от
+     * [visible]: экран погасили кнопкой — окно ушло (onStop), но оно было,
+     * и запрета прошивки тут нет.
+     */
+    @Volatile
+    private var everShown = false
 
     /** Экран вызова сейчас на виду. */
     @Volatile
@@ -79,6 +90,7 @@ internal object IncomingScreen {
         quietCalls -= call
         if (ringing() == null) {
             alerting = false
+            everShown = false
             releaseWake()
         }
     }
@@ -113,10 +125,7 @@ internal object IncomingScreen {
         val power = context.getSystemService(PowerManager::class.java) ?: return
         if (power.isInteractive) return
         // «Не беспокоить»: звонок мог быть приглушён системой — будить не нам
-        val filter = context.getSystemService(NotificationManager::class.java)?.currentInterruptionFilter
-        if (filter != null && filter != NotificationManager.INTERRUPTION_FILTER_ALL &&
-            filter != NotificationManager.INTERRUPTION_FILTER_UNKNOWN
-        ) {
+        if (doNotDisturb(context)) {
             Logger.i(TAG, "Входящий при «Не беспокоить» — экран не будим")
             return
         }
@@ -142,6 +151,7 @@ internal object IncomingScreen {
     fun onShown(context: Context) {
         visible = true
         val call = ringing() ?: return
+        everShown = true
         Logger.i(TAG, "Экран вызова на виду")
         if (call in quietCalls || !alerting) return
         notify(context, label(context, call), alert = false)
@@ -160,8 +170,35 @@ internal object IncomingScreen {
     fun ringingStopped() {
         if (ringing() == null) {
             alerting = false
+            everShown = false
             releaseWake()
         }
+    }
+
+    /**
+     * ЭКРАН ВЫЗОВА ПОКАЗАЛСЯ? Через [SHOW_TIMEOUT_MS] после входящего.
+     *
+     * Нет — прошивка не дала открыть окно (или не пустила его поверх
+     * блокировки): уведомление с кнопками, если его ещё нет, и полоса
+     * в приложении «Телефон не дал показать экран вызова»
+     * (IncomingCallAccess). Не считаем запретом: звонок уже не звонит,
+     * окно уже показывалось (погасили кнопкой) или на виду (второй
+     * входящий во время разговора), «Не беспокоить» — там система сама
+     * может не показать полноэкранное уведомление.
+     */
+    fun checkShown(context: Context) {
+        val call = ringing() ?: return
+        if (visible || everShown || call in quietCalls || doNotDisturb(context)) return
+        Logger.w(TAG, "Экран вызова не появился за 1,5 с: ${com.ogneliss.dialer.util.IncomingCallAccess.describe(context)}")
+        com.ogneliss.dialer.util.IncomingCallAccess.reportBlocked(context)
+        // Уже всплывает — не дёргаем; экран погасили кнопкой — не будим
+        if (!alerting && !screenOff(context)) notify(context, label(context, call), alert = true)
+    }
+
+    private fun doNotDisturb(context: Context): Boolean {
+        val filter = context.getSystemService(NotificationManager::class.java)?.currentInterruptionFilter
+        return filter != null && filter != NotificationManager.INTERRUPTION_FILTER_ALL &&
+            filter != NotificationManager.INTERRUPTION_FILTER_UNKNOWN
     }
 
     @Suppress("DEPRECATION")

@@ -718,6 +718,14 @@ object SettingsRegistry {
             R.string.settings_battery, R.string.settings_battery_text,
             SettingKind.Action("battery")
         ),
+        // 1.8.1, проверка прошивок: разрешения прошивки для экрана входящего
+        // (Xiaomi, vivo, OPPO…) и полноэкранные уведомления Android 14+ —
+        // разбор в IncomingCallAccess
+        SettingEntry(
+            "incoming_screen", SettingsCategory.SYSTEM,
+            R.string.incoming_access_title, R.string.incoming_access_text,
+            SettingKind.Action("incoming_screen")
+        ),
         SettingEntry(
             /*
              * Разрешения — в разделе системных настроек, а не в «О приложении».

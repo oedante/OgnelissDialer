@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import com.ogneliss.dialer.util.AutoStart
+import com.ogneliss.dialer.util.IncomingCallAccess
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -333,6 +334,7 @@ private fun WizardButtons(
 private const val STEP_DIALER = "dialer"
 private const val STEP_BATTERY = "battery"
 private const val STEP_AUTOSTART = "autostart"
+private const val STEP_INCOMING = "incoming_screen"
 
 private /**
  * @Immutable: шаг мастера перерисовывается при каждом изменении
@@ -444,6 +446,33 @@ private fun buildSteps(
             openSettings = { AppPermissions.requestIgnoreBatteryOptimizations(context) }
         )
     )
+
+    /*
+     * ЭКРАН ВХОДЯЩЕГО — НА ПРОШИВКАХ СО СВОИМИ ЗАПРЕТАМИ (1.8.1).
+     *
+     * Xiaomi, vivo, OPPO/realme/OnePlus не дают сторонним приложениям
+     * показывать окна поверх блокировки и из фона; на Android 14+ можно
+     * отозвать полноэкранные уведомления. Без этого телефон звонит,
+     * а экрана вызова нет (отзыв «не загорается экран»). Где состояние
+     * читается (Xiaomi, OPPO, полноэкранные) — шаг отмечается выданным;
+     * где нет (vivo) — остаётся подсказкой, как автозапуск. На телефонах
+     * без своих запретов шага нет. Разбор — IncomingCallAccess.
+     */
+    val incoming = IncomingCallAccess.state(context)
+    if (incoming != IncomingCallAccess.State.NOT_NEEDED) {
+        add(
+            WizardStep(
+                id = STEP_INCOMING,
+                icon = OgnelissIcons.PhonelinkLock,
+                titleRes = R.string.incoming_access_title,
+                rationaleRes = R.string.incoming_access_text,
+                consequenceRes = R.string.incoming_access_consequence,
+                required = false,
+                isGranted = incoming == IncomingCallAccess.State.GRANTED,
+                openSettings = { IncomingCallAccess.open(context) }
+            )
+        )
+    }
 
     /*
      * АВТОЗАПУСК — ТОЛЬКО НА ОБОЛОЧКАХ, ГДЕ ОН ЕСТЬ.

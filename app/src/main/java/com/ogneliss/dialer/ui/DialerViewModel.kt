@@ -2006,6 +2006,11 @@ class DialerViewModel @Inject constructor(
                     AppPermissions.requestIgnoreBatteryOptimizations(app)
                 }
             }
+            // Экран входящего на прошивках (1.8.1): нужный экран телефона
+            key == "incoming_screen" -> {
+                com.ogneliss.dialer.util.IncomingCallAccess.dismissNotice(app)
+                com.ogneliss.dialer.util.IncomingCallAccess.open(app)
+            }
             key == "sim_labels" -> Unit   // диалог открывает экран настроек
             // Остальные действия обрабатывает навигация в RootScreen:
             // им нужен доступ к NavController, которого у ViewModel нет

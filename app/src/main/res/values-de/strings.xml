@@ -514,9 +514,9 @@
     <string name="msg_reminder_set_inexact">Erinnerung gesetzt: %1$s — kann sich verzögern</string>
     <string name="msg_reminder_exact_fix">Einrichten</string>
     <string name="dialer_role_blocked_title">Auswahlfenster ließ sich nicht öffnen</string>
-    <string name="dialer_role_blocked_text">Manche Hersteller-Oberflächen — Xiaomi, Samsung, Huawei, nubia — verhindern das Ersetzen der System-Telefon-App aus Sicherheitsgründen.
+    <string name="dialer_role_blocked_text">Das passiert, wenn die Auswahl schon einmal abgelehnt wurde (dann fragt das System nicht mehr) oder die Hersteller-Oberfläche das Fenster ersetzt hat.
 
-Öffnen Sie „Einstellungen → Sicherheit → Spezieller App-Zugriff“ und erlauben Sie das Ändern von Systemeinstellungen. Kehren Sie danach zurück und versuchen Sie es erneut.</string>
+Öffnen Sie „Einstellungen → Apps → Standard-Apps → Telefon-App“ (die Namen hängen vom Telefon ab) und wählen Sie Ogneliss Dialer.</string>
     <string name="dialer_role_open_settings">Einstellungen öffnen</string>
     <string name="subscriber_same_number">Weitere Kontakte mit dieser Nummer</string>
     <string name="subscriber_shown_here">Auf dieser Karte angezeigt</string>
@@ -573,8 +573,13 @@
     <string name="wizard_battery_rationale">Hintergrundbetrieb erlauben, damit verpasste Anrufe sofort erscheinen</string>
     <string name="wizard_battery_consequence">Sonst wird die Anrufliste nur beim Öffnen aktualisiert</string>
     <string name="wizard_autostart_title">Autostart</string>
-    <string name="wizard_autostart_rationale">Ihr Hersteller verbietet Apps den Selbststart. Suchen Sie Ogneliss Dialer in der Liste und erlauben Sie es</string>
+    <string name="wizard_autostart_rationale">Ihr Hersteller schränkt Apps im Hintergrund ein. Die Telefoneinstellungen öffnen sich: Erlauben Sie Ogneliss Dialer den Autostart oder den Hintergrundbetrieb</string>
     <string name="wizard_autostart_consequence">Sonst erscheinen verpasste Anrufe erst beim Öffnen der App</string>
+    <string name="incoming_access_title">Anrufbildschirm bei Anrufen</string>
+    <string name="incoming_access_text">Anzeige auf dem Sperrbildschirm und Pop-up-Fenster im Hintergrund: ohne sie zeigt das Telefon den Anrufbildschirm eventuell nicht</string>
+    <string name="incoming_access_consequence">Sonst erscheint ein eingehender Anruf eventuell nur in der Benachrichtigungsleiste</string>
+    <string name="incoming_blocked_banner">Das Telefon hat den Anrufbildschirm nicht angezeigt. Erlauben Sie es in den Telefoneinstellungen</string>
+    <string name="incoming_blocked_action">Erlauben</string>
     <string name="menu_my_contact">Mein Kontakt</string>
     <string name="settings_own_number_text">Nötig, um die eigene Karte zu teilen. Zum Ändern oder Löschen tippen</string>
     <string name="note_tags_hint">Diese Tags aktivieren die automatische Sperre, wenn sie in den Einstellungen aktiv ist</string>
@@ -786,6 +791,8 @@
     <string name="faq_a_sim">Halten Sie eine Anruf- oder SMS-Taste gedrückt — in der Anrufliste, den Kontakten, einer Kontaktkarte — und wählen Sie die Karte für diese Aktion. Die für eine Nummer gewählte Karte merkt sich die App und schlägt sie beim nächsten Mal wieder vor (%1$s). Damit Sie die Karten nicht verwechseln, benennen Sie sie: %2$s.</string>
     <string name="faq_q_missed">Verpasste Anrufe erscheinen erst, wenn ich die App öffne. Was tun?</string>
     <string name="faq_a_missed">Wahrscheinlich schickt das System die App in den Ruhezustand, um Akku zu sparen. Erlauben Sie ihr den Hintergrundbetrieb — %1$s —, dann erscheinen verpasste Anrufe sofort.</string>
+    <string name="faq_q_incoming">Bei eingehenden Anrufen erscheint kein Anrufbildschirm. Was tun?</string>
+    <string name="faq_a_incoming">Manche Telefone — Xiaomi, Redmi, POCO, vivo, OPPO, realme, OnePlus — erlauben Apps standardmäßig keine Fenster über dem Sperrbildschirm oder aus dem Hintergrund. Öffnen Sie %1$s und erlauben Sie die Anzeige auf dem Sperrbildschirm und Pop-up-Fenster im Hintergrund. Bei Huawei, Honor, Tecno und Infinix erlauben Sie zusätzlich den Autostart. Bis dahin können Sie über die Anrufbenachrichtigung annehmen.</string>
     <string name="faq_q_recording">Kann ich Anrufe aufzeichnen?</string>
     <string name="faq_a_recording">Nein. Ab Android 10 gibt das System Dritt-Apps keinen Zugriff auf den Gesprächston, und eine Umgehung verstößt gegen die Google-Play-Richtlinien. Zeichnet Ihr Telefon Anrufe auf, ist das eine eingebaute Funktion des Herstellers — sie arbeitet unabhängig vom gewählten Dialer.</string>
     <string name="faq_q_work">Darf ich die App beruflich nutzen? Wo ist der Quellcode?</string>

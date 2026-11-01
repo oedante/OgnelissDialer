@@ -30,6 +30,7 @@ import com.ogneliss.dialer.ui.components.OgnelissDialog
 import com.ogneliss.dialer.ui.components.ScreenScaffold
 import com.ogneliss.dialer.ui.theme.Dimens
 import com.ogneliss.dialer.util.AppPermissions
+import com.ogneliss.dialer.util.IncomingCallAccess
 
 /**
  * ПЕРЕЧЕНЬ РАЗРЕШЕНИЙ В НАСТРОЙКАХ.
@@ -76,12 +77,25 @@ fun PermissionsSettingsScreen(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { refreshTrigger++ }
 
+    // Разрешения прошивки выдают в её настройках — после возврата
+    // состояние перечитывается (1.8.1)
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) refreshTrigger++
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+    val incoming = remember(refreshTrigger) { IncomingCallAccess.state(context) }
+
     /*
-     * Оболочка заблокировала выбор диалера по умолчанию.
+     * Окно выбора диалера по умолчанию не открылось.
      *
-     * Xiaomi, Samsung, Huawei и nubia требуют сперва разрешить
-     * изменение системных настроек. Без объяснения человек упирается
-     * в стену: кнопка нажата, ничего не произошло.
+     * Выбор уже отклоняли (система больше не спрашивает) или оболочка
+     * заменила окно своим. Без объяснения человек упирается в стену:
+     * кнопка нажата, ничего не произошло. Разбор — DefaultDialer
+     * .openSystemDefaultApps.
      */
     var roleBlocked by remember { mutableStateOf(false) }
 
@@ -151,6 +165,29 @@ fun PermissionsSettingsScreen(
                         }
                     }
                 )
+                }
+            }
+
+            /*
+             * Экран входящего на прошивках со своими запретами (1.8.1):
+             * Xiaomi, vivo, OPPO/realme/OnePlus, полноэкранные уведомления
+             * Android 14+. Разбор — IncomingCallAccess.
+             */
+            if (incoming != IncomingCallAccess.State.NOT_NEEDED) {
+                item(key = "incoming_screen") {
+                    Spacer(Modifier.height(Space.l))
+                    GroupedRow(GroupPosition.SINGLE) {
+                        PermissionRow(
+                            title = stringResource(R.string.incoming_access_title),
+                            description = stringResource(R.string.incoming_access_text),
+                            granted = incoming == IncomingCallAccess.State.GRANTED,
+                            required = false,
+                            onClick = {
+                                IncomingCallAccess.dismissNotice(context)
+                                IncomingCallAccess.open(context)
+                            }
+                        )
+                    }
                 }
             }
 

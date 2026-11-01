@@ -501,6 +501,23 @@ fun RootScreen(
             DefaultDialerBanner { onRequestDefault() }
         }
         /*
+         * «Телефон не дал показать экран вызова» (1.8.1) — после входящего,
+         * у которого экран вызова так и не появился (IncomingScreen.checkShown).
+         * Подсказка — тому, у кого действительно не работает, а не каждому.
+         */
+        val incomingBlocked by remember {
+            com.ogneliss.dialer.util.IncomingCallAccess.blockedNotice(context)
+        }.collectAsStateWithLifecycle()
+        if (isDefaultDialer && incomingBlocked == true) {
+            IncomingBlockedBanner(
+                onFix = {
+                    com.ogneliss.dialer.util.IncomingCallAccess.dismissNotice(context)
+                    com.ogneliss.dialer.util.IncomingCallAccess.open(context)
+                },
+                onDismiss = { com.ogneliss.dialer.util.IncomingCallAccess.dismissNotice(context) }
+            )
+        }
+        /*
          * СООБЩЕНИЯ О ДЕЙСТВИЯХ — ОДНО ПОЛЕ НА ВСЁ ПРИЛОЖЕНИЕ.
          *
          * ══════════════════════════════════════════════════════════════════
@@ -1067,6 +1084,34 @@ fun RootScreen(
 }
 }
 
+
+/**
+ * «Телефон не дал показать экран вызова» (1.8.1): тем же видом, что
+ * приглашение стать телефоном по умолчанию, — с кнопкой на нужный экран
+ * прошивки и крестиком.
+ */
+@Composable
+private fun IncomingBlockedBanner(onFix: () -> Unit, onDismiss: () -> Unit) {
+    Surface(color = MaterialTheme.colorScheme.primaryContainer) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
+                .padding(start = Space.m, top = Space.s, bottom = Space.s),
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+        ) {
+            Text(
+                stringResource(R.string.incoming_blocked_banner),
+                Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            TextButton(onClick = onFix) { Text(stringResource(R.string.incoming_blocked_action)) }
+            IconButton(onClick = onDismiss) {
+                Icon(OgnelissIcons.Close, contentDescription = stringResource(R.string.nav_close))
+            }
+        }
+    }
+}
 
 @Composable
 private fun DefaultDialerBanner(onRequest: () -> Unit) {

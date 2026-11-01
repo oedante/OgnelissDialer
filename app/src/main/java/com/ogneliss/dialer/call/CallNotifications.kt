@@ -36,7 +36,22 @@ import com.ogneliss.dialer.R
 object CallNotifications {
 
     const val CHANNEL_ONGOING = "call_ongoing"
-    const val CHANNEL_INCOMING = "call_incoming"
+    /*
+     * ВХОДЯЩИЕ — КАНАЛ БЕЗ ЗВУКА (1.8.1).
+     *
+     * Мелодию и вибрацию входящего играет система (Telecom) — с мелодиями
+     * контактов и «Не беспокоить». У прежнего канала «call_incoming» был
+     * звук уведомления по умолчанию: пока уведомление входящего ставилось
+     * редко (только если экран вызова не открылся), этого не замечали.
+     * С 1.8.1 оно ставится при каждом входящем на заблокированном экране —
+     * и поверх мелодии звякало бы уведомление. Так же и в системном
+     * диалере Android: канал входящих без звука.
+     *
+     * Звук канала после создания приложению не изменить, поэтому канал
+     * новый, а прежний удаляется (ensureChannels).
+     */
+    const val CHANNEL_INCOMING = "call_incoming_silent"
+    private const val CHANNEL_INCOMING_OLD = "call_incoming"
     const val CHANNEL_MISSED = "call_missed"
     const val CHANNEL_REMINDER = "call_reminder"
 
@@ -61,8 +76,14 @@ object CallNotifications {
 
         nm.createNotificationChannel(
             NotificationChannel(CHANNEL_INCOMING, context.getString(R.string.incall_incoming), NotificationManager.IMPORTANCE_HIGH)
-                .apply { setBypassDnd(true); lockscreenVisibility = Notification.VISIBILITY_PUBLIC }
+                .apply {
+                    setBypassDnd(true)
+                    lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+                    setSound(null, null)
+                    enableVibration(false)
+                }
         )
+        runCatching { nm.deleteNotificationChannel(CHANNEL_INCOMING_OLD) }
         nm.createNotificationChannel(
             NotificationChannel(CHANNEL_ONGOING, context.getString(R.string.incall_ongoing), NotificationManager.IMPORTANCE_LOW)
         )

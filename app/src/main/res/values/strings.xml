@@ -542,9 +542,9 @@
     <string name="msg_reminder_set_inexact">Reminder set for %1$s — may be delayed</string>
     <string name="msg_reminder_exact_fix">Set up</string>
     <string name="dialer_role_blocked_title">Could not open the chooser</string>
-    <string name="dialer_role_blocked_text">Some shells — Xiaomi, Samsung, Huawei, nubia — block replacing the system dialer for safety.
+    <string name="dialer_role_blocked_text">Usually this happens when the request was declined before (the system stops asking) or the phone’s shell replaced the chooser with its own.
 
-Open Settings → Security → Special app access and allow this app to modify system settings. After that come back and try again.</string>
+Open Settings → Apps → Default apps → Phone app (names differ by phone) and choose Ogneliss Dialer.</string>
     <string name="dialer_role_open_settings">Open settings</string>
     <string name="subscriber_same_number">Other contacts with this number</string>
     <string name="subscriber_shown_here">Shown on this card</string>
@@ -601,8 +601,13 @@ Open Settings → Security → Special app access and allow this app to modify s
     <string name="wizard_battery_rationale">Allow the app to work in the background so missed calls appear right away</string>
     <string name="wizard_battery_consequence">Without it the call log updates only when you open the app</string>
     <string name="wizard_autostart_title">Auto-start</string>
-    <string name="wizard_autostart_rationale">Your phone maker blocks apps from starting on their own. Find Ogneliss Dialer in the list and allow it</string>
+    <string name="wizard_autostart_rationale">Your phone maker limits apps running in the background. The phone settings will open: allow Ogneliss Dialer to start automatically or run in the background</string>
     <string name="wizard_autostart_consequence">Without it missed calls may not appear until you open the app</string>
+    <string name="incoming_access_title">Incoming call screen</string>
+    <string name="incoming_access_text">Show on the lock screen and pop-up windows in the background: without them the phone may not show the call screen</string>
+    <string name="incoming_access_consequence">Without it, an incoming call may show up only in the notification shade</string>
+    <string name="incoming_blocked_banner">The phone did not let the call screen appear. Allow it in the phone settings</string>
+    <string name="incoming_blocked_action">Allow</string>
     <string name="menu_my_contact">My contact</string>
     <string name="settings_own_number_text">Used to share your own card. Tap to change or clear</string>
     <string name="note_tags_hint">These tags enable auto-blocking if it is turned on in settings</string>
@@ -815,6 +820,8 @@ Open Settings → Security → Special app access and allow this app to modify s
     <string name="faq_a_sim">Long-press any call or SMS button — in the call log, contacts, a contact card — and choose the card for that action. The app remembers the card chosen for a number and offers it again next time (%1$s). To tell the cards apart, name them: %2$s.</string>
     <string name="faq_q_missed">Missed calls only appear when I open the app. What can I do?</string>
     <string name="faq_a_missed">Most likely the system puts the app to sleep to save battery. Allow it to work in the background — %1$s — and missed calls will appear right away.</string>
+    <string name="faq_q_incoming">The call screen does not appear for incoming calls. What can I do?</string>
+    <string name="faq_a_incoming">Some phones — Xiaomi, Redmi, POCO, vivo, OPPO, realme, OnePlus — do not let apps show windows over the lock screen or from the background by default. Open %1$s and allow showing on the lock screen and pop-up windows in the background. On Huawei, Honor, Tecno and Infinix also allow auto-start. Until then you can answer from the call notification.</string>
     <string name="faq_q_recording">Can I record calls?</string>
     <string name="faq_a_recording">No. On Android 10 and later the system gives third-party apps no access to call audio, and working around this breaks Google Play rules. If your phone records calls, that is a feature built in by the manufacturer — it works regardless of the dialer you use.</string>
     <string name="faq_q_work">Can I use the app at work? Where is the source code?</string>

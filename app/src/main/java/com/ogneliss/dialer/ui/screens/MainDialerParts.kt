@@ -458,6 +458,15 @@ internal fun dateGroupLabel(group: CallLogDateGroup): Int = when (group) {
 }
 
 
+/**
+ * Подпись дня для TalkBack (1.8.1): «29 ОКТЯБРЯ · ЧЕТВЕРГ» → «29 октября,
+ * четверг». Прописные он может читать по буквам, а точку посередине —
+ * вслух.
+ */
+internal fun spokenDayLabel(label: String, locale: java.util.Locale): String =
+    label.replace(" · ", ", ").lowercase(locale)
+        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
+
 internal const val LOAD_MORE_THRESHOLD = 5
 
 

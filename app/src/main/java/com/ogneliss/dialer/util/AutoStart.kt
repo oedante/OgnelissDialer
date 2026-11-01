@@ -50,13 +50,26 @@ object AutoStart {
         "huawei", "honor",
         "oppo", "realme", "oneplus",
         "vivo", "iqoo",
-        "meizu", "asus", "nubia", "zte", "letv", "samsung"
+        "meizu", "asus", "nubia", "zte", "letv", "samsung",
+        // 1.8.1: Transsion — «Phone Master» усыпляет и не даёт запускаться
+        "tecno", "infinix", "itel"
     )
 
+    /**
+     * Производитель — словом из [AGGRESSIVE]. У Transsion в MANUFACTURER
+     * полное название («TECNO MOBILE LIMITED»), поэтому сверяем и начало,
+     * и марку (BRAND).
+     */
+    private val maker: String by lazy {
+        val m = Build.MANUFACTURER.lowercase()
+        val b = Build.BRAND.lowercase()
+        AGGRESSIVE.firstOrNull { it == m || it == b }
+            ?: AGGRESSIVE.firstOrNull { m.startsWith(it) || b.startsWith(it) }
+            ?: m
+    }
+
     /** Есть ли на этом телефоне экран автозапуска. */
-    fun isSupported(): Boolean =
-        Build.MANUFACTURER.lowercase() in AGGRESSIVE ||
-            Build.BRAND.lowercase() in AGGRESSIVE
+    fun isSupported(): Boolean = maker in AGGRESSIVE
 
     /**
      * Открытие экрана автозапуска.
@@ -65,7 +78,7 @@ object AutoStart {
      * Первый сработавший открывается — молчаливого отказа не остаётся.
      */
     fun open(context: Context) {
-        val candidates = componentsFor(Build.MANUFACTURER.lowercase()) + listOf(
+        val candidates = componentsFor(maker) + listOf(
             // Запасной путь: свойства приложения есть везде, и оттуда
             // человек доберётся до нужного раздела сам
             Intent(
@@ -105,6 +118,9 @@ object AutoStart {
             )
 
             manufacturer in setOf("huawei", "honor") -> listOf(
+                // Honor после отделения от Huawei (MagicOS) — свой пакет
+                "com.hihonor.systemmanager" to
+                    "com.hihonor.systemmanager.startupmgr.ui.StartupNormalAppListActivity",
                 "com.huawei.systemmanager" to
                     "com.huawei.systemmanager.startupmgr.ui.StartupNormalAppListActivity",
                 "com.huawei.systemmanager" to
@@ -113,6 +129,8 @@ object AutoStart {
 
             manufacturer in setOf("oppo", "realme") -> listOf(
                 "com.coloros.safecenter" to
+                    "com.coloros.safecenter.startupapp.StartupAppListActivity",
+                "com.coloros.safecenter" to
                     "com.coloros.safecenter.permission.startup.StartupAppListActivity",
                 "com.oppo.safe" to
                     "com.oppo.safe.permission.startup.StartupAppListActivity"
@@ -120,12 +138,32 @@ object AutoStart {
 
             manufacturer in setOf("vivo", "iqoo") -> listOf(
                 "com.vivo.permissionmanager" to
-                    "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"
+                    "com.vivo.permissionmanager.activity.BgStartUpManagerActivity",
+                "com.iqoo.secure" to
+                    "com.iqoo.secure.ui.phoneoptimize.BgStartUpManager"
+            )
+
+            // Samsung: автозапуска нет, есть «Спящие приложения» —
+            // экран батареи, оттуда «Ограничения в фоне»
+            manufacturer == "samsung" -> listOf(
+                "com.samsung.android.lool" to
+                    "com.samsung.android.sm.battery.ui.BatteryActivity",
+                "com.samsung.android.lool" to
+                    "com.samsung.android.sm.ui.battery.BatteryActivity"
+            )
+
+            // Tecno, Infinix, itel — автозапуск в «Phone Master»
+            manufacturer in setOf("tecno", "infinix", "itel") -> listOf(
+                "com.transsion.phonemaster" to
+                    "com.cyin.himgr.autostart.AutoStartActivity"
             )
 
             manufacturer == "oneplus" -> listOf(
                 "com.oneplus.security" to
-                    "com.oneplus.security.chainlaunch.view.ChainLaunchAppListActivity"
+                    "com.oneplus.security.chainlaunch.view.ChainLaunchAppListActivity",
+                // OxygenOS 12+ собрана на ColorOS
+                "com.coloros.safecenter" to
+                    "com.coloros.safecenter.startupapp.StartupAppListActivity"
             )
 
             manufacturer == "asus" -> listOf(

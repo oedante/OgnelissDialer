@@ -264,6 +264,7 @@ class OgnelissInCallService : InCallService() {
         val locked = ringing && IncomingScreen.locked(this)
         if (!ringing) Logger.i(TAG, "Вызов: открываю экран")
         else Logger.i(TAG, "Входящий: экран ${if (screenOff) "выключен" else "включён"}${if (locked) ", заблокирован" else ""}")
+        if (ringing && !com.ogneliss.dialer.util.IncomingCallAccess.fullScreenAllowed(this)) Logger.w(TAG, "Полноэкранные уведомления запрещены — на блокировке входящий будет только плашкой")
         if (screenOff) IncomingScreen.wake(this)
 
         // Foreground-сервис держит процесс живым на всё время вызова
@@ -396,19 +397,12 @@ class OgnelissInCallService : InCallService() {
         if (!ringing) return
         if (!screenOpened) {
             IncomingScreen.notify(this, name, alert = true)
+            com.ogneliss.dialer.util.IncomingCallAccess.reportBlocked(this)
             return
         }
         serviceScope.launch {
             delay(IncomingScreen.SHOW_TIMEOUT_MS)
-            @Suppress("DEPRECATION")
-            val stillRinging = call.state == Call.STATE_RINGING
-            // Уже всплывает — не дёргаем повторно; экран погасили кнопкой
-            // за эти полторы секунды — тоже не будим
-            val shown = IncomingScreen.visible || IncomingScreen.alerting
-            if (stillRinging && !shown && !IncomingScreen.screenOff(this@OgnelissInCallService)) {
-                Logger.w(TAG, "Экран вызова не появился за 1,5 с — уведомление с кнопками")
-                IncomingScreen.notify(this@OgnelissInCallService, name, alert = true)
-            }
+            IncomingScreen.checkShown(this@OgnelissInCallService)
         }
     }
 

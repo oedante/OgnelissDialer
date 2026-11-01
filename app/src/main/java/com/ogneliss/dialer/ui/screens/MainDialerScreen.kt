@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.Dp
 import com.ogneliss.dialer.ui.adaptive.LocalWindowLayout
 import com.ogneliss.dialer.ui.components.ReminderTimeDialog
 import com.ogneliss.dialer.ui.components.OgnelissDialog
-import com.ogneliss.dialer.data.CallLogDateGroup
+import com.ogneliss.dialer.data.JournalDays
 import com.ogneliss.dialer.data.CallLogGroup
 import com.ogneliss.dialer.data.CallLogRowMapper
 import com.ogneliss.dialer.data.CallType
@@ -792,16 +792,58 @@ fun MainDialerScreen(
      *
      * На тысяче записей она занимает десятки миллисекунд — в главном
      * потоке это заметный рывок при каждом обновлении журнала.
+     *
+     * С 1.8.1 — по дням, как лента Ogneliss Mail (разбор в JournalDays):
+     * «СЕГОДНЯ», «ВЧЕРА», «29 октября · ЧЕТВЕРГ». Заодно — день каждой
+     * строки для плавающей даты (FloatingDatePill).
      */
-    val dateGroups by produceState(
-        initialValue = emptyList<Pair<CallLogDateGroup, List<CallLogRowState>>>(),
+    val dayList by produceState(
+        initialValue = emptyList<Pair<Long, List<CallLogRowState>>>() to emptyMap<String, Long>(),
         unpinnedRows
     ) {
         value = withContext(Dispatchers.Default) {
             val now = System.currentTimeMillis()
-            unpinnedRows.groupBy { CallLogDateGroup.of(it.group.lastDate, now) }
+            val groups = unpinnedRows.groupBy { JournalDays.dayStart(it.group.lastDate, now) }
                 .toList()
-                .sortedBy { it.first.ordinal }
+                .sortedByDescending { it.first }
+            val dayOfKey = HashMap<String, Long>(unpinnedRows.size * 2)
+            groups.forEach { (day, rowsOfDay) -> rowsOfDay.forEach { dayOfKey[it.key] = day } }
+            groups to dayOfKey
+        }
+    }
+    val dateGroups = dayList.first
+
+    // Подписи дней — на языке приложения; пересчёт — вместе с разбивкой
+    // (она пересобирается и в полночь: «Сегодня» становится «Вчера»)
+    val dayLocale = LocalConfiguration.current.locales[0] ?: Locale.getDefault()
+    val todayText = stringResource(R.string.date_group_today)
+    val yesterdayText = stringResource(R.string.date_group_yesterday)
+    val dayLabels = remember(dateGroups, dayLocale, todayText, yesterdayText) {
+        val now = System.currentTimeMillis()
+        val dayMonth = android.text.format.DateFormat.getBestDateTimePattern(dayLocale, "dMMMM")
+        val dayMonthYear = android.text.format.DateFormat.getBestDateTimePattern(dayLocale, "dMMMMy")
+        dateGroups.associate { (day, _) ->
+            day to JournalDays.label(day, now, dayLocale, todayText, yesterdayText, dayMonth, dayMonthYear)
+        }
+    }
+    val pinnedHeader = stringResource(R.string.pinned_header)
+    val pinnedKeys = remember(pinnedRows, pinnedWithoutCalls) {
+        buildSet {
+            pinnedRows.forEach { add("pin_${it.key}") }
+            pinnedWithoutCalls.forEach { add("pin_only_${it.key}") }
+        }
+    }
+    val dayOfKey = dayList.second
+    // Подпись дня для плавающей даты по ключу строки ленты; закреплённые —
+    // «Закреплённые», как в почте; подписи разделов, поиск, напоминания — нет
+    val dayLabelForKey: (Any) -> String? = remember(dayOfKey, dayLabels, pinnedKeys, pinnedHeader) {
+        { key ->
+            val rowKey = key as? String
+            when {
+                rowKey == null -> null
+                rowKey in pinnedKeys -> pinnedHeader
+                else -> dayOfKey[rowKey]?.let { dayLabels[it] }
+            }
         }
     }
 
@@ -1756,9 +1798,10 @@ fun MainDialerScreen(
                     }
 
 
-                    dateGroups.forEach { (bucket, rowsInBucket) ->
-                        item(key = "date_${bucket.ordinal}", contentType = "date_header") {
-                            LetterHeader(stringResource(dateGroupLabel(bucket)))
+                    dateGroups.forEach { (day, rowsInBucket) ->
+                        item(key = "day_$day", contentType = "date_header") {
+                            val dayText = dayLabels[day].orEmpty()
+                            SectionBand(dayText, description = spokenDayLabel(dayText, dayLocale))
                         }
 
 
@@ -1806,13 +1849,24 @@ fun MainDialerScreen(
                     }
                 }
 
+                // Плавающая дата (1.8.1, как в Ogneliss Mail): пока листают —
+                // день верхней строки по центру сверху
+                FloatingDatePill(
+                    listState = listState,
+                    labelForKey = dayLabelForKey,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = padding.calculateTopPadding() + Space.s)
+                )
+
                 // «Наверх» — при прокрутке вверх далеко от начала (1.5.7);
-                // с числом вызовов, пришедших, пока листали (1.5.8)
+                // с числом вызовов, пришедших, пока листали (1.5.8).
+                // Ниже плавающей даты, как «↑ N новых» в почте: не закрывает её
                 ScrollToTopPill(
                     listState,
                     Modifier
                         .align(Alignment.TopCenter)
-                        .padding(top = padding.calculateTopPadding() + Space.s),
+                        .padding(top = padding.calculateTopPadding() + Space.xxl + Space.m),
                     newCount = newCalls
                 )
             }
