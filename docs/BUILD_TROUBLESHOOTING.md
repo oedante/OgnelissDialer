@@ -125,6 +125,36 @@ androidResources {
 с `res/xml/locales_config.xml`, иначе выбор языка в приложении
 покажет язык, которого в APK нет.
 
+## generateBaselineProfile: «окно другого приложения: android»
+
+```
+IllegalStateException: После подготовки вместо журнала открылся окно другого
+приложения: android — замер был бы недостоверен.
+> Task :benchmark:benchmarkDeviceNonMinifiedReleaseAndroidTest FAILED
+```
+
+**Причина (02.11.2026, 1.8.1):** на эмуляторе сборки профиля всплыло
+окно «Process system isn't responding» — не отвечала сама система
+эмулятора, а не приложение. Сразу после загрузки она ещё занята, графика
+у образа `aosp-atd` программная, и на небыстром компьютере система
+не успевает. Окно перекрыло журнал. Снимок экрана у такого образа
+чёрный — смотреть надо дерево окон `setup-failed-*.xml`
+(`benchmark/build/outputs/managed_device_android_test_additional_output/…`):
+в нём заголовок окна (`android:id/alertTitle`).
+
+**Что сделано:** подготовка (`DeviceSetup`) и генератор профиля нажимают
+«Подождать» в окнах «не отвечает» и запускают приложение заново;
+если приложение действительно упало, причина из буфера сбоев эмулятора
+попадает в текст ошибки (`setup-failed-*-crash.txt` рядом со снимком).
+
+**Если повторится:** запустить `generateBaselineProfile` ещё раз, ничего
+тяжёлого параллельно не держа (браузер, вторая сборка). Выпуск это
+не задерживает: `bundleRelease` берёт профиль, который уже лежит
+в `app/src/release/generated/baselineProfiles`.
+
+Строки `AssumptionViolatedException` в отчёте того же прогона — не ошибки:
+так замеры пропускаются, пока собирается профиль.
+
 ## generateBaselineProfile: INSTALL_FAILED_UPDATE_INCOMPATIBLE
 
 ```

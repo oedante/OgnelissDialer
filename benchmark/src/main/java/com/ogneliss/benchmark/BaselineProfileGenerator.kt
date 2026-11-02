@@ -61,6 +61,9 @@ class BaselineProfileGenerator {
         CallLogSeed.ensureOnEmulator()
 
         pressHome()
+        // «Process system isn't responding» на эмуляторе (02.11.2026) —
+        // поверх приложения профиль собирался бы с системного окна
+        DeviceSetup.dismissNotResponding(device)
         startActivityAndWait()
 
         // Журнал вызовов — первое, что видит пользователь. Жест по координатам,

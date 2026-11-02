@@ -74,6 +74,9 @@ object DeviceSetup {
          */
         device.wakeUp()
         device.executeShellCommand("wm dismiss-keyguard")
+        // Эмулятор после загрузки ещё занят и показывает «Process system
+        // isn't responding» (02.11.2026) — до разрешений и запуска
+        dismissNotResponding(device)
         if (!traceProcessorCleaned) {
             device.executeShellCommand("rm -f /data/local/tmp/trace_processor_shell")
             traceProcessorCleaned = true
@@ -104,12 +107,17 @@ object DeviceSetup {
         // 10 с, а не 5: первый запуск после согласия бывает дольше (04.10.2026)
         var main = device.wait(Until.findObject(By.res("root_screen")), 10_000)
         /*
-         * «Не отвечает» на медленном эмуляторе (02.11.2026: сборка профиля
-         * упала с «окно другого приложения: android» — окна «не отвечает»
-         * и «остановлено» принадлежат системе, пакет «android»). Ждём:
-         * первый запуск на образе без ускорения графики бывает долгим.
+         * «НЕ ОТВЕЧАЕТ» НА ЭМУЛЯТОРЕ (02.11.2026).
+         *
+         * Сборка профиля упала с «окно другого приложения: android». Снимок:
+         * «Process system isn't responding» — не отвечала сама система
+         * эмулятора, а не приложение: сразу после загрузки она ещё занята,
+         * а графика у образа программная. Окно перекрыло журнал, проверка
+         * сочла это чужим экраном. Теперь — «Подождать», запуск заново
+         * и ещё 20 с на журнал.
          */
-        if (main == null && waitIfNotResponding(device)) {
+        if (main == null && dismissNotResponding(device)) {
+            device.executeShellCommand("am start -W -n $PACKAGE/$PACKAGE.MainActivity")
             main = device.wait(Until.findObject(By.res("root_screen")), 20_000)
         }
         if (main == null && device.currentPackageName == PACKAGE) {
@@ -128,8 +136,10 @@ object DeviceSetup {
                 device.findObject(By.res("permission_wizard")) != null ->
                     "мастер разрешений — не хватает разрешения или роли"
                 device.findObject(By.res(CONSENT_ACCEPT)) != null -> "экран согласия"
+                // «не отвечает» (есть «Подождать») или «остановлено»: заголовок
+                // окна говорит, кто — система или приложение
                 device.findObject(By.res("android", "aerr_close")) != null ->
-                    "окно «приложение остановлено» — приложение упало при запуске"
+                    "системное окно «${device.findObject(By.res("android", "alertTitle"))?.text ?: "?"}»"
                 // Чужое окно поверх (системный запрос, диалог прошивки)
                 device.currentPackageName != PACKAGE ->
                     "окно другого приложения: ${device.currentPackageName}"
@@ -147,12 +157,22 @@ object DeviceSetup {
      * не разобрать. Папка additional_test_output забирается Gradle
      * в benchmark/build/outputs/connected_android_test_additional_output.
      */
-    /** Окно «не отвечает» — нажать «Подождать». true — окно было. */
-    private fun waitIfNotResponding(device: UiDevice): Boolean {
-        val wait = device.findObject(By.res("android", "aerr_wait")) ?: return false
-        runCatching { wait.click() }
-        device.waitForIdle()
-        return true
+    /**
+     * Окна «… isn't responding» (системы или приложения) — «Подождать»,
+     * до трёх подряд: занятая система показывает их одно за другим.
+     * true — окно было.
+     */
+    fun dismissNotResponding(device: UiDevice): Boolean {
+        var seen = false
+        repeat(3) {
+            val wait = device.wait(Until.findObject(By.res("android", "aerr_wait")), 1_000)
+                ?: return seen
+            seen = true
+            runCatching { wait.click() }
+            device.waitForIdle()
+            Thread.sleep(2_000)
+        }
+        return seen
     }
 
     /*
