@@ -12,9 +12,10 @@ import java.io.FileInputStream
  * у кого есть доступ к коду, может выпустить обновление вашего приложения.
  * Отозвать ключ нельзя — Google Play привязывает приложение к нему навсегда.
  *
- * Если файла нет, релизная сборка подписывается отладочным ключом:
+ * Если файла нет, релизный APK подписывается отладочным ключом:
  * так можно собрать и проверить сборку локально, но опубликовать её
- * не получится, и это правильно.
+ * не получится, и это правильно. Бандл для Google Play без ключа
+ * не собирается вовсе (1.8.1) — разбор ниже, у releaseKeyReady.
  */
 plugins {
     alias(libs.plugins.android.application)
@@ -32,6 +33,32 @@ val keystoreProperties = Properties().apply {
     }
 }
 val hasReleaseKeystore = keystoreProperties.getProperty("storeFile") != null
+
+/*
+ * БАНДЛ ДЛЯ GOOGLE PLAY — ТОЛЬКО КЛЮЧОМ ВЫПУСКА (1.8.1, 02.11.2026).
+ *
+ * Было: без keystore.properties выпускная сборка тихо подписывалась
+ * отладочным ключом. 1.8.1 собрали в чистой папке без этого файла —
+ * Play Console отклонил бандл: «APK подписаны сертификатами SHA1
+ * BA:3B:…, а новый — 90:CB:…» (отладочный ключ компьютера).
+ *
+ * Стало: bundleRelease без ключа останавливается с понятной ошибкой.
+ * Собрать и проверить APK (assembleRelease) по-прежнему можно и без
+ * ключа — его в Play не загружают.
+ */
+val releaseKeyReady = hasReleaseKeystore
+tasks.matching { it.name == "bundleRelease" }.configureEach {
+    doFirst {
+        if (!releaseKeyReady) {
+            throw GradleException(
+                "Нет keystore.properties рядом с проектом — бандл подписался бы отладочным " +
+                    "ключом, и Google Play его не примет. Перенесите keystore.properties " +
+                    "(и файл ключа, если путь к нему в storeFile относительный) из прежней " +
+                    "папки проекта и соберите снова."
+            )
+        }
+    }
+}
 
 android {
     namespace = "com.ogneliss.dialer"
