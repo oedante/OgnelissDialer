@@ -103,12 +103,22 @@ object DeviceSetup {
         device.executeShellCommand("am start -W -n $PACKAGE/$PACKAGE.MainActivity")
         // 10 с, а не 5: первый запуск после согласия бывает дольше (04.10.2026)
         var main = device.wait(Until.findObject(By.res("root_screen")), 10_000)
-        if (main == null) {
+        /*
+         * «Не отвечает» на медленном эмуляторе (02.11.2026: сборка профиля
+         * упала с «окно другого приложения: android» — окна «не отвечает»
+         * и «остановлено» принадлежат системе, пакет «android»). Ждём:
+         * первый запуск на образе без ускорения графики бывает долгим.
+         */
+        if (main == null && waitIfNotResponding(device)) {
+            main = device.wait(Until.findObject(By.res("root_screen")), 20_000)
+        }
+        if (main == null && device.currentPackageName == PACKAGE) {
             /*
              * Сразу после выдачи разрешений приложение один раз показывает
              * подсказки поверх журнала (автор, 04.10.2026: это и был
              * «неизвестный экран» в тёплом запуске). Закрываем «Назад»
-             * и проверяем снова.
+             * и проверяем снова. Только когда на экране наше окно:
+             * «Назад» по системному окну ничего бы не объяснило.
              */
             device.pressBack()
             main = device.wait(Until.findObject(By.res("root_screen")), 3_000)
@@ -118,6 +128,8 @@ object DeviceSetup {
                 device.findObject(By.res("permission_wizard")) != null ->
                     "мастер разрешений — не хватает разрешения или роли"
                 device.findObject(By.res(CONSENT_ACCEPT)) != null -> "экран согласия"
+                device.findObject(By.res("android", "aerr_close")) != null ->
+                    "окно «приложение остановлено» — приложение упало при запуске"
                 // Чужое окно поверх (системный запрос, диалог прошивки)
                 device.currentPackageName != PACKAGE ->
                     "окно другого приложения: ${device.currentPackageName}"
@@ -135,6 +147,31 @@ object DeviceSetup {
      * не разобрать. Папка additional_test_output забирается Gradle
      * в benchmark/build/outputs/connected_android_test_additional_output.
      */
+    /** Окно «не отвечает» — нажать «Подождать». true — окно было. */
+    private fun waitIfNotResponding(device: UiDevice): Boolean {
+        val wait = device.findObject(By.res("android", "aerr_wait")) ?: return false
+        runCatching { wait.click() }
+        device.waitForIdle()
+        return true
+    }
+
+    /*
+     * Причина падения — из буфера сбоев эмулятора (02.11.2026): эмулятор
+     * сборки профиля после прогона выключается, и logcat потом не снять.
+     * Весь буфер — файлом рядом со снимком, главное — в текст ошибки.
+     */
+    private fun crashSummary(device: UiDevice, dir: java.io.File, stamp: Long): String = runCatching {
+        val log = device.executeShellCommand("logcat -d -b crash -t 200")
+        if (log.isBlank()) return@runCatching ""
+        java.io.File(dir, "setup-failed-$stamp-crash.txt").writeText(log)
+        val lines = log.lines()
+        val start = lines.indexOfLast { "FATAL EXCEPTION" in it }
+        if (start < 0) return@runCatching " Буфер сбоев: setup-failed-$stamp-crash.txt."
+        val main = lines.drop(start).take(4).joinToString(" | ") { it.substringAfter(": ").trim() }
+        val cause = lines.drop(start).lastOrNull { "Caused by" in it }?.substringAfter(": ")?.trim()
+        " Сбой: $main${cause?.let { " | $it" } ?: ""} (весь буфер: setup-failed-$stamp-crash.txt)."
+    }.getOrDefault("")
+
     private fun saveScreen(device: UiDevice): String = runCatching {
         // Каталог дополнительных выходных файлов передаёт сам AGP
         // (additionalTestOutputDir) и забирает его на компьютер после прогона
@@ -144,7 +181,8 @@ object DeviceSetup {
         val stamp = System.currentTimeMillis()
         device.takeScreenshot(java.io.File(dir, "setup-failed-$stamp.png"))
         device.dumpWindowHierarchy(java.io.File(dir, "setup-failed-$stamp.xml"))
-        "Снимок и дерево окон: setup-failed-$stamp.png / .xml в выходных файлах замеров."
+        "Снимок и дерево окон: setup-failed-$stamp.png / .xml в выходных файлах замеров." +
+            crashSummary(device, dir, stamp)
     }.getOrElse { "Снимок сохранить не удалось: ${it.message}" }
 
     /** Принять условия, если экран согласия показан; уже принято — ничего не делать. */
