@@ -109,8 +109,33 @@ internal object IncomingScreen {
      */
     fun notify(context: Context, name: String, alert: Boolean) {
         alerting = alert
+        if (alert) logChannelSound(context)
         runCatching { CallForegroundService.start(context, name, incoming = alert) }
             .onFailure { Logger.w(TAG, "Не удалось обновить уведомление вызова", it) }
+    }
+
+    /*
+     * ЗВУК КАНАЛА ВХОДЯЩИХ — В ЖУРНАЛ (1.8.2).
+     *
+     * Жалоба на 1.8.1: «перед звонком сначала сигнал уведомления, потом
+     * мелодия». Звенел канал входящих со звуком по умолчанию; с канала
+     * без звука (call_incoming_silent) звенеть нечему. Если жалоба
+     * повторится, журнал покажет, что на этом телефоне у канала: звук
+     * мог включить человек в настройках уведомлений или прошивка.
+     */
+    @Volatile
+    private var channelLogged = false
+
+    private fun logChannelSound(context: Context) {
+        if (channelLogged) return
+        channelLogged = true
+        runCatching {
+            val channel = context.getSystemService(NotificationManager::class.java)
+                ?.getNotificationChannel(CallNotifications.CHANNEL_INCOMING) ?: return
+            val sound = channel.sound
+            if (sound == null) Logger.i(TAG, "Канал входящих: без звука, вибрация ${if (channel.shouldVibrate()) "да" else "нет"}")
+            else Logger.w(TAG, "Канал входящих со звуком: $sound — уведомление прозвучит перед мелодией")
+        }
     }
 
     /**
