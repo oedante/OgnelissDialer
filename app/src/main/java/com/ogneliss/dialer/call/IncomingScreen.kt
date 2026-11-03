@@ -28,10 +28,11 @@ import java.util.concurrent.ConcurrentHashMap
  *    блокировкой сна с пробуждением ([wake]): так делают и системные
  *    диалеры на прошивках, где окно само экран не включает. В режиме
  *    «Не беспокоить» — не будим: решает система.
- * 2. Экран выключен или заблокирован — сразу уведомление входящего
- *    с полноэкранным показом и кнопками «Ответить»/«Отклонить». Не открылся
- *    наш экран — система откроет его по уведомлению, а нет — ответить
- *    можно из уведомления на экране блокировки.
+ * 2. (1.8.1–1.8.2) Экран выключен или заблокирован — сразу уведомление
+ *    входящего с полноэкранным показом. С 1.8.3 — нет: на части прошивок
+ *    оно звенело перед мелодией даже из канала без звука («сначала сигнал
+ *    сообщения, потом звонок»). Всплывающее уведомление — только
+ *    по [checkShown], когда окно вызова не показалось.
  * 3. Телефон в руках и разблокирован — экран вызова открывается напрямую,
  *    уведомление — тихое. Если за [SHOW_TIMEOUT_MS] экран так и не показался
  *    ([visible]), уведомление становится всплывающим, с кнопками.
@@ -109,19 +110,19 @@ internal object IncomingScreen {
      */
     fun notify(context: Context, name: String, alert: Boolean) {
         alerting = alert
-        if (alert) logChannelSound(context)
+        logChannelSound(context)
         runCatching { CallForegroundService.start(context, name, incoming = alert) }
             .onFailure { Logger.w(TAG, "Не удалось обновить уведомление вызова", it) }
     }
 
     /*
-     * ЗВУК КАНАЛА ВХОДЯЩИХ — В ЖУРНАЛ (1.8.2).
+     * ЗВУК КАНАЛОВ ВЫЗОВА — В ЖУРНАЛ (1.8.2, 1.8.3).
      *
-     * Жалоба на 1.8.1: «перед звонком сначала сигнал уведомления, потом
-     * мелодия». Звенел канал входящих со звуком по умолчанию; с канала
-     * без звука (call_incoming_silent) звенеть нечему. Если жалоба
-     * повторится, журнал покажет, что на этом телефоне у канала: звук
-     * мог включить человек в настройках уведомлений или прошивка.
+     * Жалоба на 1.8.1–1.8.2: «перед звонком сначала сигнал сообщения, потом
+     * мелодия». Раз за запуск приложения журнал записывает, что у каналов
+     * «Входящий вызов» и «Текущий вызов» на этом телефоне: звук мог
+     * включить человек в настройках уведомлений или прошивка. Если жалоба
+     * повторится, по журналу видно, наш ли это сигнал.
      */
     @Volatile
     private var channelLogged = false
@@ -129,12 +130,14 @@ internal object IncomingScreen {
     private fun logChannelSound(context: Context) {
         if (channelLogged) return
         channelLogged = true
-        runCatching {
-            val channel = context.getSystemService(NotificationManager::class.java)
-                ?.getNotificationChannel(CallNotifications.CHANNEL_INCOMING) ?: return
-            val sound = channel.sound
-            if (sound == null) Logger.i(TAG, "Канал входящих: без звука, вибрация ${if (channel.shouldVibrate()) "да" else "нет"}")
-            else Logger.w(TAG, "Канал входящих со звуком: $sound — уведомление прозвучит перед мелодией")
+        val nm = context.getSystemService(NotificationManager::class.java) ?: return
+        listOf(CallNotifications.CHANNEL_INCOMING, CallNotifications.CHANNEL_ONGOING).forEach { id ->
+            runCatching {
+                val channel = nm.getNotificationChannel(id) ?: return@runCatching
+                val sound = channel.sound
+                if (sound == null) Logger.i(TAG, "Канал $id: без звука, важность ${channel.importance}, вибрация ${channel.shouldVibrate()}")
+                else Logger.w(TAG, "Канал $id со звуком: $sound, важность ${channel.importance} — он прозвучит перед мелодией")
+            }
         }
     }
 

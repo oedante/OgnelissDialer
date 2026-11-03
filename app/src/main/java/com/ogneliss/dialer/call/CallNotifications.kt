@@ -171,6 +171,10 @@ object CallNotifications {
             .setOngoing(true)
             .setUsesChronometer(true)
             .setWhen(startedAt)
+            // Уведомление вызова обновляется несколько раз за звонок
+            // (входящий → разговор): не озвучивать повторно, даже если
+            // звук каналу включили в настройках (1.8.3)
+            .setOnlyAlertOnce(true)
             .setContentIntent(pending(context, InCallActivity::class.java, 1))
             .addAction(0, context.getString(R.string.incall_hangup), actionIntent(context, CallControlReceiver.ACTION_HANGUP))
             .build()
