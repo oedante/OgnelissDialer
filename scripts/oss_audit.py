@@ -42,10 +42,11 @@ FORBIDDEN_NAMES = {"keystore.properties", "local.properties", "google-services.j
 FORBIDDEN_EXT = {".jks", ".keystore", ".p12", ".pem", ".apk", ".aab"}
 
 SECRET_PATTERNS = [
-    # Пароль подписи — если это значение, а не чтение из keystore.properties
+    # Пароль подписи — если это значение, а не чтение из keystore.properties,
+    # не ссылка на секрет GitHub (${{ secrets.… }}, сборка на GitHub, 1.8.2)
     # и не заглушка из шаблона («ваш_пароль», «ЗАМЕНИТЬ»)
     (re.compile(r"(storePassword|keyPassword|store_password|key_password)\s*[=:]\s*"
-                r"(?!keystoreProperties|System\.getenv|providers\.|project\.|ваш_пароль|ЗАМЕНИТЬ|CHANGE_ME)\S+",
+                r"(?!keystoreProperties|System\.getenv|providers\.|project\.|\$\{\{\s*secrets\.|ваш_пароль|ЗАМЕНИТЬ|CHANGE_ME)\S+",
                 re.I), "пароль подписи"),
     (re.compile(r"-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----"), "закрытый ключ"),
     (re.compile(r"AIza[0-9A-Za-z\-_]{35}"), "ключ Google API"),
