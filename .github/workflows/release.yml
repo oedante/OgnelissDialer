@@ -1,0 +1,137 @@
+# Подписанный бандл для Google Play — на GitHub (1.8.2, 03.11.2026).
+#
+# Запуск: вручную (Actions → «Выпуск: подписанный бандл» → Run workflow)
+# или меткой версии: git tag v1.8.2 && git push origin v1.8.2.
+# Результат — артефакт с app-release.aab и mapping.txt: скачать
+# и загрузить в Play Console.
+#
+# Ключ — в секретах репозитория (Settings → Secrets and variables →
+# Actions), не в коде: KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS,
+# KEY_PASSWORD. Как их завести — docs/RELEASE_BUILD.md, «Сборка на GitHub».
+#
+# Почему секреты не утекут через чужой код: запускается только вручную
+# и меткой — то и другое может лишь владелец репозитория. Запросы на
+# слияние (pull_request) этот файл не запускают, а запускам из чужих
+# копий репозитория GitHub секреты не отдаёт вовсе.
+name: "Выпуск: подписанный бандл"
+
+on:
+  workflow_dispatch:
+  push:
+    tags: [ 'v*' ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # Платформа compileSdk 37 может ещё не стоять на машине GitHub.
+      # Не поставилась — Android Gradle Plugin докачает сам
+      - name: Android SDK 37
+        run: |
+          SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKM" --licenses > /dev/null || true
+          "$SDKM" "platforms;android-37" > /dev/null || true
+
+      # Ключ — во временный файл вне проекта, пароли — в keystore.properties,
+      # который читает app/build.gradle.kts. Формат .properties читается
+      # в ISO-8859-1 и считает «\» спецзнаком: обратная косая удваивается,
+      # остальное вне ASCII пишется как \uXXXX — пароль любой
+      - name: Ключ подписи из секретов
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          for name in KEYSTORE_BASE64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Нет секрета $name — см. docs/RELEASE_BUILD.md, «Сборка на GitHub»"
+              exit 1
+            fi
+          done
+          echo "$KEYSTORE_BASE64" | base64 -d --ignore-garbage > "$RUNNER_TEMP/upload.jks"
+          python3 - <<'PY'
+          import os
+          def esc(v):
+              out = []
+              for ch in v:
+                  if ch == '\\':
+                      out.append('\\\\')
+                  elif ord(ch) < 0x20 or ord(ch) > 0x7e:
+                      b = ch.encode('utf-16-be')
+                      out.extend('\\u%02x%02x' % (b[i], b[i + 1]) for i in range(0, len(b), 2))
+                  else:
+                      out.append(ch)
+              s = ''.join(out)
+              return '\\' + s if s.startswith(' ') else s
+          with open('keystore.properties', 'w', encoding='ascii') as f:
+              f.write('storeFile=%s\n' % esc(os.path.join(os.environ['RUNNER_TEMP'], 'upload.jks')))
+              for key, env in (('storePassword', 'KEYSTORE_PASSWORD'), ('keyAlias', 'KEY_ALIAS'), ('keyPassword', 'KEY_PASSWORD')):
+                  f.write('%s=%s\n' % (key, esc(os.environ[env])))
+          PY
+
+      - name: Сборка бандла
+        run: ./gradlew bundleRelease
+
+      # Тот ли ключ: Play принимает только ключ загрузки приложения.
+      # Отпечаток сертификата не секрет — он виден в любом APK
+      - name: Проверка подписи
+        run: |
+          AAB=app/build/outputs/bundle/release/app-release.aab
+          keytool -printcert -jarfile "$AAB" | tee cert.txt
+          if ! grep -q "BA:3B:66:1C:85:F6:34:E8:45:CF:DC:7F:68:AF:27:42:BC:97:4F:A6" cert.txt; then
+            echo "::error::Бандл подписан не ключом загрузки (ожидался SHA1 BA:3B:66:1C:…)"
+            exit 1
+          fi
+
+      # Обещание «данные не покидают телефон» держится на отсутствии
+      # разрешения INTERNET — проверяем и выпускную сборку
+      - name: Нет разрешения INTERNET
+        run: |
+          MANIFEST=$(find app/build/intermediates -name AndroidManifest.xml -path "*merged_manifest*" -path "*release*" | head -1)
+          echo "Проверяю $MANIFEST"
+          if [ -z "$MANIFEST" ]; then echo "::error::Итоговый манифест не найден"; exit 1; fi
+          if grep -q 'android.permission.INTERNET' "$MANIFEST"; then
+            echo "::error::В выпускной сборке появилось разрешение INTERNET!"
+            exit 1
+          fi
+
+      - name: Версия
+        id: version
+        run: |
+          NAME=$(grep -m1 'versionName = ' app/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/')
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+
+      # mapping.txt — для расшифровки отчётов о сбоях в Play Console
+      - name: Артефакт
+        uses: actions/upload-artifact@v4
+        with:
+          name: ogneliss-dialer-${{ steps.version.outputs.name }}
+          path: |
+            app/build/outputs/bundle/release/app-release.aab
+            app/build/outputs/mapping/release/mapping.txt
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Убрать ключ
+        if: always()
+        run: rm -f "$RUNNER_TEMP/upload.jks" keystore.properties
