@@ -1,6 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
 import com.ogneliss.dialer.ui.components.ActionIconButton
+import com.ogneliss.dialer.ui.theme.listName
 import com.ogneliss.dialer.settings.ContactSort
 import com.ogneliss.dialer.data.ContactNames
 import com.ogneliss.dialer.ui.components.SectionBand
@@ -1257,8 +1258,9 @@ private fun ContactRow(
                     HighlightedName(
                         name = contact.displayName,
                         query = query,
-                        // Обычной толщины, как в журнале (1.7.0; полужирное — с 1.5.6)
-                        style = MaterialTheme.typography.titleMedium
+                        // Обычной толщины, как в журнале (1.7.0; полужирное — с 1.5.6);
+                        // размер — как имя в списке писем почты (1.8.4)
+                        style = MaterialTheme.typography.listName
                     )
 
                     /*

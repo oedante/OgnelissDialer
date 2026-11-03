@@ -1,6 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
 import com.ogneliss.dialer.ui.components.ActionIconButton
+import com.ogneliss.dialer.ui.theme.listName
 import androidx.compose.foundation.lazy.itemsIndexed
 import com.ogneliss.dialer.ui.components.GroupPosition
 import com.ogneliss.dialer.ui.components.GroupedRow
@@ -311,7 +312,8 @@ private fun NoteListRow(
                  */
                 Text(
                     row.note,
-                    style = MaterialTheme.typography.titleMedium,
+                    // Размер — как имя в строке списка почты (1.8.4)
+                    style = MaterialTheme.typography.listName,
                     // Две строки: заметка бывает длинной, но список
                     // должен оставаться списком
                     maxLines = 2,

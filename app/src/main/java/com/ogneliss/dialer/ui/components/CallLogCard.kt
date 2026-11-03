@@ -1,6 +1,7 @@
 package com.ogneliss.dialer.ui.components
 
 import androidx.compose.foundation.shape.CircleShape
+import com.ogneliss.dialer.ui.theme.listName
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -260,9 +261,9 @@ fun CallLogCard(
                     HighlightedName(
                         name = row.title,
                         query = searchQuery,
-                        // Имя — обычной толщины titleMedium (Medium), 1.7.0: полужирное
-                        // (1.5.6, как в списке писем Mail) делало журнал тяжёлым
-                        style = MaterialTheme.typography.titleMedium,
+                        // Имя — Medium, 1.7.0: полужирное (1.5.6, как в списке писем
+                        // Mail) делало журнал тяжёлым; размер — как у почты (1.8.4)
+                        style = MaterialTheme.typography.listName,
                         modifier = Modifier.weight(1f, fill = false)
                     )
 

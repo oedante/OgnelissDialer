@@ -1,6 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
 import com.ogneliss.dialer.ui.theme.Space
+import com.ogneliss.dialer.ui.theme.listName
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import com.ogneliss.dialer.ui.theme.FlowUi
@@ -513,7 +514,7 @@ internal fun PinnedOnlyCard(
             RowAvatar(row.photoUri, name = row.title)
             Spacer(Modifier.width(Space.m))
             Column(Modifier.weight(1f)) {
-                Text(row.title, style = MaterialTheme.typography.titleMedium, maxLines = 1)
+                Text(row.title, style = MaterialTheme.typography.listName, maxLines = 1)
                 Text(
                     PhoneFormatter.format(row.e164),
                     style = MaterialTheme.typography.bodySmall,

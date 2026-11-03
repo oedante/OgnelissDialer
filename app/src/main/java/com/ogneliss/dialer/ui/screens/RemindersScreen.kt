@@ -1,6 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
 import com.ogneliss.dialer.ui.components.ActionIconButton
+import com.ogneliss.dialer.ui.theme.listName
 import androidx.compose.foundation.lazy.itemsIndexed
 import com.ogneliss.dialer.ui.components.GroupPosition
 import com.ogneliss.dialer.ui.components.GroupedRow
@@ -282,7 +283,7 @@ private fun ReminderListRow(
                     .weight(1f)
                     .padding(horizontal = Space.m)
             ) {
-                Text(title, style = MaterialTheme.typography.titleMedium, maxLines = 1)
+                Text(title, style = MaterialTheme.typography.listName, maxLines = 1)
                 // Время без даты: дата уже написана заголовком группы,
                 // повторять её в каждой строке значит тратить ширину
                 // на известное
