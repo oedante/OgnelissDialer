@@ -930,6 +930,8 @@ private fun InCallScreen(
     if (ambient) {
         CallAmbientBackground(
             ambientMoodOf(state),
+            // В цветах снимка звонящего (1.8.4), если портрет на экране
+            photoUri = photoUri.takeIf { showPortrait },
             focus = { if (showPortrait) portraitFocus else nameFocus }
         )
     }

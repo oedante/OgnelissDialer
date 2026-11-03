@@ -22,7 +22,10 @@ Android-диалер (замена системного) — `com.ogneliss.diale
   Лес, Закат, Графит, Полночь; Оформление → «Цветовая тема»; расчёт `ThemePresetMath` — перенос
   `theme_palette.dart`/`AccentFit`, применение `ThemePresets`; «Классика» — прежние цвета).
   **Плотность как в почте:** строки `OgnelissRowLayout` (двухстрочная 56 dp вместо 72), заголовок
-  верхней панели +16 dp, карточки 20 dp. В 1.8.4 всё из 1.8.3.
+  верхней панели +16 dp, карточки 20 dp. **Шапка карточки:** страница заходит на фото листом 28 dp,
+  затемнение под именем тоном снимка (`PhotoPalette`), параллакс, нажатие — фото на весь экран
+  (`PhotoViewerDialog`). **Живой фон вызова:** цветовые поля из снимка звонящего или темы, градиенты
+  с матрицей, без искр. В 1.8.4 всё из 1.8.3.
 - **1.8.3** (versionCode 51, база 8) — к тесту (`docs/RELEASE_NOTES_1.8.3.md`): сигнал перед мелодией
   остался и в 1.8.2 — всплывающее уведомление входящего больше не ставится сразу при блокировке,
   только если экран вызова не показался за 1,5 с (`IncomingScreen.checkShown`); `setOnlyAlertOnce`
@@ -252,6 +255,8 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 | Разрешения прошивок для экрана входящего, полоса «не дал показать» | `util/IncomingCallAccess.kt` (1.8.1), разбор — `docs/OEM_COMPAT.md` |
 | Журнал по дням, плавающая дата | `data/JournalDays.kt`, `ui/components/FloatingDatePill.kt` (1.8.1) |
 | Цветовые темы (как в почте), плотность строк | `ui/theme/ThemePresetMath.kt`, `ThemePresets.kt`, `ui/components/OgnelissListRow.kt` (`OgnelissRowLayout`) (1.8.4) |
+| Цвета снимка: тон под именем на обложке, тоны живого фона | `ui/theme/PhotoPalette.kt`, `ui/components/PhotoColors.kt` (1.8.4) |
+| Фото на весь экран | `ui/components/PhotoViewer.kt` (1.8.4) |
 | Авто-громкая связь | `call/SmartSpeakerController.kt` |
 | Пропущенные + счётчик на значке | `call/MissedCallsNotifier.kt` |
 | Диагностика вызовов в журнал | `log/CallDiagnostics.kt` |

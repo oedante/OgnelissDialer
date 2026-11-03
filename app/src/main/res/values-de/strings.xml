@@ -17,6 +17,7 @@
     <string name="a11y_call_with_sim">%2$s mit %1$s anrufen</string>
     <string name="a11y_call_with_sim_only">Mit %1$s anrufen</string>
     <string name="a11y_contact_photo">Foto von %1$s</string>
+    <string name="a11y_open_photo">Foto öffnen</string>
     <string name="a11y_dial_key">Taste %1$s</string>
     <string name="a11y_expand_category">Bereich %1$s öffnen</string>
     <string name="a11y_setting_off">Aus</string>
@@ -661,7 +662,7 @@
     <string name="settings_proximity_text">Der Näherungssensor schaltet den Bildschirm während eines Anrufs aus. Ohne ihn kann die Wange „Beenden“ oder „Stumm“ drücken</string>
     <string name="settings_hide_contact_number">Nummerntyp statt Nummer</string>
     <string name="settings_call_animation">Lebendiger Anrufhintergrund</string>
-    <string name="settings_call_animation_text">Hinter dem Anrufbildschirm ziehen langsam weiche Flächen in den Farben des Designs. Bleibt still, wenn Animationen in den Systemeinstellungen aus sind</string>
+    <string name="settings_call_animation_text">Hinter dem Anrufbildschirm ziehen langsam weiche Farben – aus dem Foto des Anrufers, ohne Foto in den Farben des Designs. Bleibt still, wenn Animationen in den Systemeinstellungen aus sind</string>
     <string name="settings_call_photo">Kontaktfoto beim Anruf</string>
     <string name="settings_call_photo_text">Wie das Foto des Anrufers erscheint: als Vollbild-Hintergrund oder als Porträt im Kreis oder Quadrat über dem Namen</string>
     <string name="call_photo_full_screen">Vollbild</string>

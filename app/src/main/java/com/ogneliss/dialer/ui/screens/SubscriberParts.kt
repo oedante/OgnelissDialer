@@ -266,20 +266,42 @@ internal fun daysAgo(date: Long): Int {
 }
 
 
-/** Заголовок раздела, содержимое которого идёт отдельными элементами списка. */
+/**
+ * Заголовок раздела, содержимое которого идёт отдельными элементами списка
+ * («История вызовов»).
+ *
+ * 1.8.4 — подписью раздела, как «Номера» и «Сведения» (и «Письма»
+ * в карточке человека Ogneliss Mail). Было (1.5.3–1.8.4): тёмный текст
+ * titleMedium, а под ним синие подписи дат — дата выглядела главнее
+ * раздела, в котором стоит, и заголовок карточки выбивался из соседних
+ * (снимок автора, 03.11). Даты теперь — ступенью ниже: HistoryDateCaption.
+ */
 @Composable
 internal fun SectionPanelHeader(text: String) {
-    // Заголовок блока («История вызовов») — текстом на белом: под ним сразу
-    // полосы дат, и вторая полоса подряд читалась бы как пустой раздел (1.5.3)
+    SectionBand(text)
+}
+
+/**
+ * ДАТА В ИСТОРИИ ВЫЗОВОВ (1.8.4) — подпись ступенью ниже раздела:
+ * labelLarge цветом второстепенного текста, по тексту карточки. Синие
+ * подписи — у разделов, серые — у групп внутри раздела.
+ */
+@Composable
+internal fun HistoryDateCaption(text: String) {
     Text(
         text,
         Modifier
             .fillMaxWidth()
-            // 1.5.6: без своей подложки — на странице карточки (серо-голубой,
-            // как настройки Mail); поле слева — как у полос и карточек
-            .padding(start = FlowUi.groupInset + Space.xs, end = Space.l, top = FlowUi.sheetPadding, bottom = Space.xs)
+            .padding(
+                start = FlowUi.groupInset + Space.l,
+                end = Space.l,
+                top = Space.s,
+                bottom = Space.xs
+            )
             .semantics { heading() },
-        style = MaterialTheme.typography.titleMedium
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 1
     )
 }
 

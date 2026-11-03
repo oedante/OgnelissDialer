@@ -9,10 +9,15 @@ import com.ogneliss.dialer.data.CallLogDateGroup
 import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.layout.layout
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import com.ogneliss.dialer.ui.components.Motion
+import com.ogneliss.dialer.ui.components.rememberPhotoPixels
+import com.ogneliss.dialer.ui.theme.PhotoPalette
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.components.DeleteContactDialog
@@ -846,6 +851,15 @@ fun SubscriberScreen(
      * в заголовке: оно всегда видно слева.
      */
     val cardListState = rememberLazyListState()
+    // Фото на весь экран по нажатию на обложку (1.8.4): адрес открытого снимка
+    var photoViewer by remember { mutableStateOf<String?>(null) }
+    photoViewer?.let { uri ->
+        com.ogneliss.dialer.ui.components.PhotoViewerDialog(
+            uri = uri,
+            title = title,
+            onDismiss = { photoViewer = null }
+        )
+    }
     val cardTwoColumns = LocalWindowLayout.current.hasRoomForSidePanel
     val coverBehindBar = !photoUri.isNullOrBlank() && !cardTwoColumns
     /*
@@ -1318,6 +1332,9 @@ fun SubscriberScreen(
                 QuickAction(OgnelissIcons.MoreVert, R.string.action_more, container = actionKey) { moreOpen = true }
             }
 
+            // Обложка во всю ширину, а под ней в шапке ничего: кнопки — в нижней
+            // панели. Тогда отступ под фото даёт лист обложки (1.8.4)
+            val coverSheetOnly = !photoUri.isNullOrBlank() && !twoColumns
             val header: @Composable () -> Unit = {
                 /*
                  * Шапка карточки на цветном контейнере.
@@ -1374,26 +1391,64 @@ fun SubscriberScreen(
                              * начинается с чистого края.
                              */
                             /*
-                             * НИЗ ОБЛОЖКИ РАСТВОРЯЕТСЯ В СТРАНИЦЕ (1.5.7).
+                             * ══════════════════════════════════════════════════
+                             * СТРАНИЦА НАЕЗЖАЕТ НА ФОТО ЛИСТОМ (1.8.4)
+                             * ══════════════════════════════════════════════════
+                             * Автор, 03.11, снимок карточки: «не нравится, как фото
+                             * переходит в панель. Как-то дёшево и топорно».
                              *
-                             * Автор, 22.10: «границы портретов на экране звонка
-                             * и в карточке слишком резкие и выбиваются из общего
-                             * оформления». Было (1.3.4–1.5.6): тёмный низ фото
-                             * и скруглённые на 24 dp нижние углы — чёткая
-                             * граница посреди мягкой страницы.
+                             * Было (1.5.7–1.8.4): под именем фото затемнялось
+                             * чёрным (60 %), а нижние 64 dp вместе с затемнением
+                             * линейно таяли в светлую страницу. Чёрное поверх
+                             * снимка, растворённое в светлом, — это серая дымка
+                             * поперёк экрана: детали снимка проступают сквозь
+                             * муть, а у линейного перехода видны начало и конец.
+                             * Ещё 28 dp пустоты под ней — и до «Номеров» выходило
+                             * около 45 dp ничьего места.
                              *
-                             * Стало (набросок «растворение 64 dp, имя на 44 dp»):
-                             * без скругления, нижние 64 dp фото вместе
-                             * с затемнением плавно уходят в цвет страницы.
-                             * Затемнение — сильнее всего под именем, а не у края:
-                             * белое имя читается, а растворяется уже затемнённое.
-                             * Имя — поверх маски, его она не гасит.
-                             *
-                             * На плоской обложке (лёжа, 3 : 1) полоса растворения
-                             * короче — 28 % высоты, иначе ушла бы половина фото.
+                             * Стало (набросок «Б», docs/contact_cover_1.8.4.png):
+                             * • фото чистое до самого низа, без растворения;
+                             * • страница заходит на него листом — полосой цвета
+                             *   страницы со скруглёнными на 28 dp верхними углами,
+                             *   как шторки и нижние панели приложения. Граница —
+                             *   край страницы, а не край снимка: та же форма, что
+                             *   у всех листов, поэтому не выбивается (замечание
+                             *   22.10 было про обрезанный по форме снимок);
+                             * • под именем — затемнение тоном самого снимка
+                             *   (PhotoPalette.scrimTone: его цвет, яркость 15 %),
+                             *   а не чёрным, и по плавной кривой, без видимых
+                             *   начала и конца;
+                             * • при прокрутке фото уезжает вдвое медленнее листа —
+                             *   лист наезжает на снимок (параллакс);
+                             * • нажатие на фото — снимок на весь экран
+                             *   (PhotoViewerDialog, как в Ogneliss Mail).
                              */
+                            val coverPixels = rememberPhotoPixels(uri)
+                            val coverToneTarget = coverPixels?.let {
+                                Color(PhotoPalette.scrimTone(it.argb, it.width, COVER_TONE_FROM, COVER_TONE_TO))
+                            } ?: COVER_TONE_NEUTRAL
+                            val coverTone by animateColorAsState(
+                                coverToneTarget,
+                                tween(Motion.NORMAL_MS),
+                                label = "coverTone"
+                            )
+                            val pageColor = com.ogneliss.dialer.ui.theme.OgnelissTheme.pageColor()
                             BoxWithConstraints(
                                 Modifier
+                                    /*
+                                     * Следующий раздел начинается на COVER_SHEET_PULL
+                                     * выше низа обложки — уже на листе: иначе между
+                                     * краем листа и «Номерами» было бы 28 dp листа
+                                     * и ещё 16 dp поля подписи. Обложка рисуется
+                                     * целиком, а место занимает на эти 20 dp меньше.
+                                     */
+                                    .layout { measurable, constraints ->
+                                        val placeable = measurable.measure(constraints)
+                                        val pull = COVER_SHEET_PULL.roundToPx().coerceAtMost(placeable.height)
+                                        layout(placeable.width, placeable.height - pull) {
+                                            placeable.place(0, 0)
+                                        }
+                                    }
                                     .fillMaxWidth()
                                     /*
                                      * Лёжа в две колонки обложка — 3 : 1, а не 1,5 : 1.
@@ -1411,32 +1466,34 @@ fun SubscriberScreen(
                                         }
                                     )
                                     .onGloballyPositioned { coverHeightPx = it.size.height }
+                                    .clipToBounds()
                             ) {
-                                val fade = minOf(COVER_FADE, maxHeight * COVER_FADE_MAX_SHARE)
-                                // Доля высоты, где начинается растворение, — там же
-                                // затемнение набирает полную силу
-                                val fadeStart = if (maxHeight > 0.dp) {
-                                    ((maxHeight - fade) / maxHeight).coerceIn(0.5f, 1f)
+                                // Лист — не выше трети обложки (плоская лёжа — 120 dp)
+                                val sheet = minOf(COVER_SHEET, maxHeight / 3)
+                                // Доля высоты, где начинается лист: там затемнение
+                                // под именем уже набрало силу
+                                val sheetTop = if (maxHeight > 0.dp) {
+                                    ((maxHeight - sheet) / maxHeight).coerceIn(0.5f, 1f)
                                 } else {
                                     1f
                                 }
                                 Box(
                                     Modifier
                                         .fillMaxSize()
-                                        .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
-                                        .drawWithContent {
-                                            drawContent()
-                                            val fadePx = fade.toPx()
-                                            drawRect(
-                                                Brush.verticalGradient(
-                                                    0f to Color.Black,
-                                                    1f to Color.Transparent,
-                                                    startY = size.height - fadePx,
-                                                    endY = size.height
-                                                ),
-                                                blendMode = BlendMode.DstIn
-                                            )
+                                        .graphicsLayer {
+                                            // Параллакс: пока обложка — первая строка
+                                            // списка, фото сдвигается вниз на половину
+                                            // прокрутки. В две колонки обложка
+                                            // в своей колонке — там не двигается
+                                            translationY = if (!twoColumns && cardListState.firstVisibleItemIndex == 0) {
+                                                cardListState.firstVisibleItemScrollOffset * COVER_PARALLAX
+                                            } else {
+                                                0f
+                                            }
                                         }
+                                        .clickable(
+                                            onClickLabel = stringResource(R.string.a11y_open_photo)
+                                        ) { photoViewer = uri }
                                 ) {
                                     AsyncImage(
                                         model = uri,
@@ -1448,6 +1505,7 @@ fun SubscriberScreen(
                                         alignment = COVER_FOCUS,
                                         modifier = Modifier.fillMaxSize()
                                     )
+                                    // Сверху — под значками «назад» и меню
                                     Box(
                                         Modifier
                                             .fillMaxWidth()
@@ -1458,28 +1516,17 @@ fun SubscriberScreen(
                                                 )
                                             )
                                     )
+                                    // Под именем — тон снимка по плавной кривой
+                                    // (smootherstep): без видимых начала и конца
                                     Box(
                                         Modifier
                                             .fillMaxSize()
-                                            .background(
-                                                Brush.verticalGradient(
-                                                    0.4f to Color.Transparent,
-                                                    fadeStart to Color.Black.copy(alpha = COVER_SHADE),
-                                                    1f to Color.Black.copy(alpha = COVER_SHADE)
-                                                )
-                                            )
+                                            .background(coverScrim(coverTone, COVER_SCRIM_FROM, sheetTop))
                                     )
                                 }
                                 /*
-                                 * ИМЯ — НА ОБЛОЖКЕ, ВНИЗУ (1.2.5).
-                                 *
-                                 * Под обложкой имя стояло после её растворённой
-                                 * в фоне нижней части — а эта часть сама выглядит
-                                 * пустым местом. Между лицом и именем выходил
-                                 * большой зазор (с телефона, 30.09.2026).
-                                 *
-                                 * 1.5.7: над полосой растворения — на 44 dp от края
-                                 * (на плоской обложке — на ту же долю полосы).
+                                 * ИМЯ — НА ОБЛОЖКЕ, НАД ЛИСТОМ (1.2.5; 1.8.4 —
+                                 * на 14 dp выше края листа).
                                  */
                                 Text(
                                     title,
@@ -1501,11 +1548,22 @@ fun SubscriberScreen(
                                         .padding(
                                             start = FlowUi.screenPadding * 2,
                                             end = FlowUi.screenPadding * 2,
-                                            bottom = fade * COVER_NAME_SHARE
+                                            bottom = sheet + COVER_NAME_GAP
                                         )
                                         .onGloballyPositioned { coords ->
                                             nameBottomInRoot = coords.positionInRoot().y + coords.size.height
                                         }
+                                )
+                                // Лист страницы со скруглёнными верхними углами
+                                Box(
+                                    Modifier
+                                        .align(Alignment.BottomCenter)
+                                        .fillMaxWidth()
+                                        .height(sheet)
+                                        .background(
+                                            pageColor,
+                                            RoundedCornerShape(topStart = sheet, topEnd = sheet)
+                                        )
                                 )
                             }
                         }
@@ -1526,9 +1584,11 @@ fun SubscriberScreen(
                         // Поля как в списках: 12 dp. Было 16 — на глаз
                         // немного, но рядом с журналом карточка выглядела
                         // разреженной
+                        // С обложкой во всю ширину (1.8.4) под ней пусто —
+                        // отступ даёт лист обложки, своих полей не нужно
                         modifier = Modifier.fillMaxWidth().padding(
                             horizontal = FlowUi.screenPadding * 2,
-                            vertical = FlowUi.screenPadding
+                            vertical = if (coverSheetOnly) 0.dp else FlowUi.screenPadding
                         )
                     ) {
                         /*
@@ -1664,7 +1724,7 @@ fun SubscriberScreen(
                          * под строкой заголовка. Было 16 dp сверх поля —
                          * зазор над именем выглядел пустым местом.
                          */
-                        Spacer(Modifier.height(if (photoUri.isNullOrBlank()) 0.dp else 4.dp))
+                        Spacer(Modifier.height(if (photoUri.isNullOrBlank() || coverSheetOnly) 0.dp else 4.dp))
 
                         /*
                          * ══════════════════════════════════════════════════
@@ -2405,7 +2465,8 @@ fun SubscriberScreen(
                  */
                 visibleHistory.groupBy { CallLogDateGroup.of(it.date) }.forEach { (bucket, entriesInBucket) ->
                     item(key = "history_${bucket.ordinal}") {
-                        LetterHeader(stringResource(dateGroupLabel(bucket)))
+                        // Ступенью ниже раздела (1.8.4): разбор у HistoryDateCaption
+                        HistoryDateCaption(stringResource(dateGroupLabel(bucket)))
                     }
                     itemsIndexed(entriesInBucket, key = { _, entry -> entry.id }) { index, entry ->
                         /*
@@ -2604,14 +2665,50 @@ fun SubscriberScreen(
     }
 }
 
-/** Обложка карточки (1.5.7): высота полосы, где фото растворяется в странице. */
-private val COVER_FADE = 64.dp
-/** На плоской обложке полоса не больше этой доли высоты. */
-private const val COVER_FADE_MAX_SHARE = 0.28f
-/** Низ имени — на этой доле полосы растворения от края: 44 из 64 dp. */
-private const val COVER_NAME_SHARE = 0.69f
-/** Затемнение под именем. */
-private const val COVER_SHADE = 0.6f
+/**
+ * Обложка карточки (1.8.4): лист страницы заходит на фото — высота
+ * и скругление его верхних углов, как у шторок и нижних панелей.
+ */
+private val COVER_SHEET = 28.dp
+/** Следующий раздел начинается выше низа обложки — уже на листе. */
+private val COVER_SHEET_PULL = 20.dp
+/** Низ имени — над краем листа. */
+private val COVER_NAME_GAP = 14.dp
+/** Фото при прокрутке уезжает с этой долей скорости листа. */
+private const val COVER_PARALLAX = 0.5f
+/** Затемнение под именем: начинается на этой доле высоты, сила у листа. */
+private const val COVER_SCRIM_FROM = 0.4f
+private const val COVER_SCRIM_ALPHA = 0.6f
+private const val COVER_SCRIM_STEPS = 8
+/** Тон затемнения — по строкам снимка у имени (доли высоты снимка). */
+private const val COVER_TONE_FROM = 0.4f
+private const val COVER_TONE_TO = 0.75f
+/** Пока снимок читается (или не читается) — нейтральный тёмный, яркость 15 %. */
+private val COVER_TONE_NEUTRAL = Color(0xFF26272A)
+
+/**
+ * Затемнение под именем на обложке (1.8.4): тон [tone] от [from] до [to]
+ * долей высоты по кривой smootherstep (k³(6k² − 15k + 10)), дальше —
+ * ровно. У линейного перехода глаз видит начало и конец полосы; у этой
+ * кривой нет излома ни там, ни там. Прозрачный край — тот же тон с нулевой
+ * прозрачностью, а не Color.Transparent: тот — прозрачный чёрный,
+ * и по пути цвет проходил бы через серый.
+ */
+private fun coverScrim(tone: Color, from: Float, to: Float): Brush {
+    val end = to.coerceAtLeast(from + 0.05f)
+    fun strength(k: Float) = COVER_SCRIM_ALPHA * k * k * k * (k * (k * 6f - 15f) + 10f)
+    val stops = Array(COVER_SCRIM_STEPS + 3) { i ->
+        when (i) {
+            0 -> 0f to tone.copy(alpha = 0f)
+            COVER_SCRIM_STEPS + 2 -> 1f to tone.copy(alpha = strength(1f))
+            else -> {
+                val k = (i - 1) / COVER_SCRIM_STEPS.toFloat()
+                (from + (end - from) * k) to tone.copy(alpha = strength(k))
+            }
+        }
+    }
+    return Brush.verticalGradient(*stops)
+}
 
 /**
  * ЧТО ОСТАЁТСЯ ОТ ФОТО НА ОБЛОЖКЕ (1.7.0).

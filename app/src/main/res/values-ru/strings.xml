@@ -5,6 +5,7 @@
     <string name="a11y_call_with_sim">Позвонить на %2$s с %1$s</string>
     <string name="a11y_call_with_sim_only">Позвонить с %1$s</string>
     <string name="a11y_contact_photo">Фото контакта %1$s</string>
+    <string name="a11y_open_photo">открыть фото</string>
     <string name="a11y_dial_key">Клавиша %1$s</string>
     <string name="a11y_expand_category">Открыть раздел %1$s</string>
     <string name="a11y_setting_off">Выключено</string>
@@ -662,7 +663,7 @@
     <string name="settings_proximity_text">Датчик приближения гасит экран во время разговора. Без него щека может нажать «Завершить» или «Звук»</string>
     <string name="settings_hide_contact_number">Тип номера вместо номера</string>
     <string name="settings_call_animation">Живой фон вызова</string>
-    <string name="settings_call_animation_text">За экраном вызова медленно плывут мягкие пятна цветов темы. Неподвижен, если анимация отключена в настройках системы</string>
+    <string name="settings_call_animation_text">За экраном вызова медленно плывут мягкие цвета: из фото звонящего, а без фото — цвета темы. Неподвижен, если анимация отключена в настройках системы</string>
     <string name="settings_call_photo">Фото на экране вызова</string>
     <string name="settings_call_photo_text">Как показывать фото звонящего: фоном на весь экран или портретом в круге или квадрате над именем</string>
     <string name="call_photo_full_screen">На весь экран</string>

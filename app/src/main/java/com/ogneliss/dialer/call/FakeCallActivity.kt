@@ -319,6 +319,7 @@ private fun FakeCallScreen(
                 holding -> AmbientMood.HOLDING
                 else -> AmbientMood.ACTIVE
             },
+            photoUri = photoUri.takeIf { showPortrait },
             focus = { if (showPortrait) portraitFocus else nameFocus }
         )
     }

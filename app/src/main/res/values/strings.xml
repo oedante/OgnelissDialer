@@ -28,6 +28,7 @@
     <string name="a11y_call_with_sim">Call %2$s with %1$s</string>
     <string name="a11y_call_with_sim_only">Call with %1$s</string>
     <string name="a11y_contact_photo">Photo of %1$s</string>
+    <string name="a11y_open_photo">open the photo</string>
     <string name="a11y_dial_key">Key %1$s</string>
     <string name="a11y_expand_category">Open section %1$s</string>
     <string name="a11y_setting_off">Off</string>
@@ -690,7 +691,7 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="settings_proximity_text">The proximity sensor turns the screen off during a call. Without it your cheek may press End call or Mute</string>
     <string name="settings_hide_contact_number">Number type instead of number</string>
     <string name="settings_call_animation">Live call background</string>
-    <string name="settings_call_animation_text">Slow soft shapes in theme colors behind the call screen. Stays still if animations are turned off in system settings</string>
+    <string name="settings_call_animation_text">Slow soft colors behind the call screen: from the caller’s photo, or from the theme without one. Stays still if animations are turned off in system settings</string>
     <string name="settings_call_photo">Contact photo during a call</string>
     <string name="settings_call_photo_text">How to show the caller’s photo: as a full-screen background, or as a portrait in a circle or a square above the name</string>
     <string name="call_photo_full_screen">Full screen</string>
