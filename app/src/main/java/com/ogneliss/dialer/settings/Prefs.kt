@@ -287,6 +287,19 @@ enum class JournalStyle {
 enum class ThemeMode { SYSTEM, LIGHT, DARK, BLACK_AMOLED, HIGH_CONTRAST }
 
 /**
+ * Цветовая тема (1.8.4) — как «Цветовая тема» Ogneliss Mail: тон фона
+ * и акцент, у каждой светлый и тёмный вариант. Расчёт — ThemePresetMath.
+ * Хранится строкой, имена не менять: они же ключи ThemePresetMath.SPECS.
+ */
+enum class ThemePreset {
+    CLASSIC, SKY, OCEAN, FOREST, SUNSET, GRAPHITE, MIDNIGHT;
+
+    companion object {
+        fun from(name: String?): ThemePreset = entries.firstOrNull { it.name == name } ?: CLASSIC
+    }
+}
+
+/**
  * Режим группировки журнала. Значения совпадают с CallLogGrouper.Mode.
  * Хранится строкой, поэтому имена менять нельзя.
  */
@@ -355,6 +368,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val SWIPE_LEFT = stringPreferencesKey("swipe_left")
         // Оформление
         val THEME = stringPreferencesKey("theme")
+        val THEME_PRESET = stringPreferencesKey("theme_preset")
         val LANGUAGE = stringPreferencesKey("language")
         val SWIPE_SIM_MODE = stringPreferencesKey("swipe_sim_mode")
         val CARRIER_INFO = stringPreferencesKey("carrier_info")
@@ -614,6 +628,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         runCatching { ThemeMode.valueOf(p[Keys.THEME] ?: ThemeMode.SYSTEM.name) }
             .getOrDefault(ThemeMode.SYSTEM)
     }
+
+    /** Цветовая тема (1.8.4), по умолчанию «Классика» — прежние цвета. */
+    val themePreset: Flow<ThemePreset> = data.map { ThemePreset.from(it[Keys.THEME_PRESET]) }
     /** По умолчанию false: динамический цвет системы перекрасил бы бренд. */
     /**
      * Цвета из обоев пользователя.
@@ -933,6 +950,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("language", tag) { it[Keys.LANGUAGE] = tag }
 
     suspend fun setTheme(v: ThemeMode) = edit("theme", v.name) { it[Keys.THEME] = v.name }
+    suspend fun setThemePreset(v: ThemePreset) =
+        edit("theme_preset", v.name) { it[Keys.THEME_PRESET] = v.name }
     suspend fun setDynamicColor(v: Boolean) = edit("dynamic_color", v) { it[Keys.DYNAMIC_COLOR] = v }
     suspend fun setShowPhoto(v: Boolean) = edit("show_photo", v) { it[Keys.SHOW_PHOTO] = v }
     suspend fun setMessengersAnyNumber(v: Boolean) = edit("messengers_any_number", v) { it[Keys.MESSENGERS_ANY_NUMBER] = v }

@@ -75,11 +75,14 @@ object OgnelissShapeTokens {
      * Сняты по снимкам Mail: полоса — скругление ≈ 11 dp при высоте 32–37,
      * карточка настроек — ≈ 22 dp. Полоса не «пилюля»: с полным скруглением
      * она читалась бы кнопкой.
+     *
+     * 1.8.4: карточка — 20 dp, как Radii.card почты (tokens.dart): сравнение
+     * экранов автором — у диалера углы заметно круглее.
      */
     val band = RoundedCornerShape(12.dp)
-    val card = RoundedCornerShape(22.dp)
+    val card = RoundedCornerShape(20.dp)
     /** Радиус карточки отдельно — для рамки сегментов группы (GroupedRow). */
-    val cardRadius = 22.dp
+    val cardRadius = 20.dp
 
     /**
      * Кнопки вызова: «Позвонить», SIM, «Ответить», «Отклонить», «Завершить» —

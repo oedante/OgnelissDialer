@@ -52,6 +52,8 @@ data class SettingsState(
     val callAnimation: Boolean = true,
     /** Масштаб интерфейса (1.5.6). */
     val uiScale: UiScale = UiScale.DEFAULT,
+    /** Цветовая тема, как в Ogneliss Mail (1.8.4). */
+    val themePreset: com.ogneliss.dialer.settings.ThemePreset = com.ogneliss.dialer.settings.ThemePreset.CLASSIC,
     /** Фото звонящего: на весь экран, круг или квадрат (1.5.5). */
     val callPhotoStyle: CallPhotoStyle = CallPhotoStyle.CIRCLE,
     /** Размер портрета на экране вызова (1.5.7). */

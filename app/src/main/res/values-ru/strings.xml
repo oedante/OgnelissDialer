@@ -262,7 +262,7 @@
     <string name="settings_section_about">О приложении</string>
     <string name="settings_section_about_summary">Конфиденциальность, условия, версия</string>
     <string name="settings_section_appearance">Оформление</string>
-    <string name="settings_section_appearance_summary">Язык, тема, размер кнопок</string>
+    <string name="settings_section_appearance_summary">Язык, тема, цвета, размер кнопок</string>
     <string name="settings_section_maintenance">Данные и диагностика</string>
     <string name="settings_section_maintenance_summary">Экспорт и импорт, файл журнала, сброс</string>
     <string name="settings_section_calls">Вызовы</string>
@@ -307,6 +307,15 @@
     <string name="settings_theme_dark">Тёмная</string>
     <string name="settings_theme_light">Светлая</string>
     <string name="settings_theme_summary">Светлая, тёмная или AMOLED-чёрная</string>
+    <string name="settings_theme_preset">Цветовая тема</string>
+    <string name="settings_theme_preset_text">Тон фона и акцент — те же темы, что в Ogneliss Mail</string>
+    <string name="theme_preset_classic">Классика</string>
+    <string name="theme_preset_sky">Небо</string>
+    <string name="theme_preset_ocean">Океан</string>
+    <string name="theme_preset_forest">Лес</string>
+    <string name="theme_preset_sunset">Закат</string>
+    <string name="theme_preset_graphite">Графит</string>
+    <string name="theme_preset_midnight">Полночь</string>
     <string name="settings_theme_system">Как в системе</string>
     <string name="settings_version">Версия %1$s</string>
     <string name="settings_version_title">Версия</string>

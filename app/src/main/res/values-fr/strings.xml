@@ -272,7 +272,7 @@
     <string name="settings_section_about">À propos</string>
     <string name="settings_section_about_summary">Confidentialité, conditions, version</string>
     <string name="settings_section_appearance">Apparence</string>
-    <string name="settings_section_appearance_summary">Langue, thème, taille des boutons</string>
+    <string name="settings_section_appearance_summary">Langue, thème, couleurs, taille des boutons</string>
     <string name="settings_section_maintenance">Données et diagnostic</string>
     <string name="settings_section_maintenance_summary">Export et import, fichier journal, réinitialisation</string>
     <string name="settings_section_calls">Appels</string>
@@ -317,6 +317,15 @@
     <string name="settings_theme_dark">Sombre</string>
     <string name="settings_theme_light">Clair</string>
     <string name="settings_theme_summary">Clair, sombre ou noir AMOLED</string>
+    <string name="settings_theme_preset">Thème de couleurs</string>
+    <string name="settings_theme_preset_text">Teinte du fond et couleur d’accent — les mêmes thèmes que dans Ogneliss Mail</string>
+    <string name="theme_preset_classic">Classique</string>
+    <string name="theme_preset_sky">Ciel</string>
+    <string name="theme_preset_ocean">Océan</string>
+    <string name="theme_preset_forest">Forêt</string>
+    <string name="theme_preset_sunset">Couchant</string>
+    <string name="theme_preset_graphite">Graphite</string>
+    <string name="theme_preset_midnight">Minuit</string>
     <string name="settings_theme_system">Comme le système</string>
     <string name="settings_version">Version %1$s</string>
     <string name="settings_version_title">Version</string>

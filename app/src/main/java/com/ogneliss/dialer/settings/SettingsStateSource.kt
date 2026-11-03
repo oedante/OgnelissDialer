@@ -65,6 +65,7 @@ class SettingsStateSource @Inject constructor(
         .combine(prefs.callAnimation) { a, v -> a.copy(callAnimation = v) }
         .combine(prefs.callPhotoStyle) { a, v -> a.copy(callPhotoStyle = v) }
         .combine(prefs.uiScale) { a, v -> a.copy(uiScale = v) }
+        .combine(prefs.themePreset) { a, v -> a.copy(themePreset = v) }
         .combine(prefs.callPhotoSize) { a, v -> a.copy(callPhotoSize = v) }
         .combine(prefs.answerMode) { a, v -> a.copy(answerMode = v) }
         .combine(prefs.contactNameFormat) { a, v -> a.copy(contactNameFormat = v) }
@@ -178,6 +179,7 @@ class SettingsStateSource @Inject constructor(
             callAnimation = a.callAnimation,
             callPhotoStyle = a.callPhotoStyle,
             uiScale = a.uiScale,
+            themePreset = a.themePreset,
             callPhotoSize = a.callPhotoSize,
             answerMode = a.answerMode,
             contactNameFormat = a.contactNameFormat,
@@ -235,6 +237,7 @@ class SettingsStateSource @Inject constructor(
         val callAnimation: Boolean = true,
         val callPhotoStyle: CallPhotoStyle = CallPhotoStyle.CIRCLE,
         val uiScale: UiScale = UiScale.DEFAULT,
+        val themePreset: ThemePreset = ThemePreset.CLASSIC,
         val callPhotoSize: CallPhotoSize = CallPhotoSize.LARGE,
         val answerMode: AnswerMode = AnswerMode.TAP,
         val messengersAnyNumber: Boolean = false,

@@ -169,7 +169,8 @@ class FakeCallActivity : ComponentActivity() {
                 }
             }
 
-            OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic, uiScale = uiScale) {
+            val themePreset by prefs.themePreset.collectAsStateWithLifecycle(com.ogneliss.dialer.settings.ThemePreset.CLASSIC)
+            OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic, uiScale = uiScale, themePreset = themePreset) {
                 // Раскладка окна: телефон, лёжа, раскладушка, планшет.
                 // Разбор — в ui/adaptive/WindowLayout.kt
                 ProvideWindowLayout(this@FakeCallActivity) {

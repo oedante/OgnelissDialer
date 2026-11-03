@@ -214,6 +214,13 @@ object SettingsRegistry {
             SettingKind.Choice("theme"),
             keywordsRes = R.string.keywords_theme
         ),
+        // 1.8.4: цветовые темы, как в Ogneliss Mail — расчёт в ThemePresetMath
+        SettingEntry(
+            "theme_preset", SettingsCategory.APPEARANCE,
+            R.string.settings_theme_preset, R.string.settings_theme_preset_text,
+            SettingKind.Choice("theme_preset"),
+            keywordsRes = R.string.keywords_theme
+        ),
         SettingEntry(
             "dynamic_color", SettingsCategory.APPEARANCE,
             R.string.settings_dynamic_color, R.string.settings_dynamic_color_text,

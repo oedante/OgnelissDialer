@@ -19,8 +19,6 @@ import androidx.compose.ui.semantics.*
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.theme.BlockRed
 import com.ogneliss.dialer.ui.theme.FlowUi
-import androidx.compose.ui.graphics.Color
-import androidx.compose.material3.ListItemDefaults
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.theme.Dimens
 
@@ -99,8 +97,8 @@ fun SettingsSwitchRow(
         if (checked) R.string.a11y_setting_on else R.string.a11y_setting_off
     )
 
-    ListItem(
-        headlineContent = {
+    OgnelissRowLayout(
+        headline = {
             Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
                 if (dangerous) {
                     Icon(
@@ -115,25 +113,17 @@ fun SettingsSwitchRow(
                 if (changed) ChangedDot()
             }
         },
-        supportingContent = summary?.let { { Text(it) } },
-        trailingContent = {
+        supporting = summary?.let { { Text(it) } },
+        trailing = {
             // null: нажатие ловит вся строка, отдельная цель не нужна
             Switch(checked = checked, onCheckedChange = null)
         },
         /*
-         * Эта строка осталась на ListItem: её заголовок — не текст,
-         * а строка со значком предупреждения у опасных настроек.
-         * Общая OgnelissListRow принимает заголовок строкой, и втащить
-         * сюда значок можно было бы только добавив ей ещё один
-         * параметр «произвольный заголовок» — то есть размыв её смысл.
-         *
-         * Высота и подложка при этом взяты общие: разнобой был именно
-         * в них.
+         * Заголовок — не текст, а строка со значком предупреждения
+         * у опасных настроек; раскладка — общая (OgnelissRowLayout,
+         * плотность как в почте, 1.8.4).
          */
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-        modifier = Modifier
-            .heightIn(min = FlowUi.rowHeight)
-            .toggleableRow(checked, stateText) { onChange(!checked) }
+        modifier = Modifier.toggleableRow(checked, stateText) { onChange(!checked) }
     )
 }
 
@@ -156,23 +146,15 @@ fun SettingsChoiceRow(
         return
     }
     // С отметкой — заголовок строкой со значком, как у переключателя
-    ListItem(
-        headlineContent = {
+    OgnelissRowLayout(
+        headline = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(title)
                 ChangedDot()
             }
         },
-        supportingContent = {
-            Text(
-                currentValue,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        },
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+        supporting = { Text(currentValue) },
         modifier = Modifier
-            .heightIn(min = FlowUi.rowHeight)
             .clickable(onClick = onClick)
             .semantics(mergeDescendants = true) { role = Role.Button }
     )

@@ -86,6 +86,9 @@ fun SettingsChoiceDialog(
             "GROUPS" to stringResource(R.string.journal_style_groups)
         )
 
+        "theme_preset" -> com.ogneliss.dialer.settings.ThemePreset.entries.map {
+            it.name to stringResource(SettingsCommands.themePresetLabelRes(it))
+        }
         "ui_scale" -> com.ogneliss.dialer.settings.UiScale.entries.map {
             it.name to stringResource(SettingsCommands.uiScaleLabelRes(it))
         }

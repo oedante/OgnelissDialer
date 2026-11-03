@@ -9,6 +9,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import com.ogneliss.dialer.ui.theme.LocalPageTone
 import com.ogneliss.dialer.ui.theme.OgnelissTheme
 import com.ogneliss.dialer.ui.theme.PageTone
+import com.ogneliss.dialer.ui.theme.FlowUi
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
@@ -84,7 +86,13 @@ fun ScreenScaffold(
         containerColor = OgnelissTheme.pageColor(tone),
         topBar = {
             TopAppBar(
-                title = { Text(title) },
+                // Отступ заголовка — как в почте (FlowUi.topBarTitleInset, 1.8.4)
+                title = {
+                    Text(
+                        title,
+                        Modifier.padding(start = if (showBack) FlowUi.topBarTitleInset else 0.dp)
+                    )
+                },
                 navigationIcon = {
                     if (showBack) {
                     IconButton(onClick = onBack) {

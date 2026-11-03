@@ -244,7 +244,8 @@ class InCallActivity : ComponentActivity() {
             val nameFormat by prefs.contactNameFormat
                 .collectAsStateWithLifecycle(initialValue = ContactNameFormat.GIVEN_FIRST)
 
-            OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic, uiScale = uiScale) {
+            val themePreset by prefs.themePreset.collectAsStateWithLifecycle(com.ogneliss.dialer.settings.ThemePreset.CLASSIC)
+            OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic, uiScale = uiScale, themePreset = themePreset) {
                 // Раскладка окна: телефон, лёжа, раскладушка, планшет.
                 // Разбор — в ui/adaptive/WindowLayout.kt
                 ProvideWindowLayout(this@InCallActivity) {

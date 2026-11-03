@@ -274,7 +274,7 @@
     <string name="settings_section_about">Über die App</string>
     <string name="settings_section_about_summary">Datenschutz, Bedingungen, Version</string>
     <string name="settings_section_appearance">Darstellung</string>
-    <string name="settings_section_appearance_summary">Sprache, Design, Tastengröße</string>
+    <string name="settings_section_appearance_summary">Sprache, Design, Farben, Tastengröße</string>
     <string name="settings_section_maintenance">Daten und Diagnose</string>
     <string name="settings_section_maintenance_summary">Export und Import, Protokolldatei, Zurücksetzen</string>
     <string name="settings_section_calls">Anrufe</string>
@@ -319,6 +319,15 @@
     <string name="settings_theme_dark">Dunkel</string>
     <string name="settings_theme_light">Hell</string>
     <string name="settings_theme_summary">Hell, dunkel oder AMOLED-Schwarz</string>
+    <string name="settings_theme_preset">Farbschema</string>
+    <string name="settings_theme_preset_text">Hintergrundton und Akzentfarbe — dieselben Schemata wie in Ogneliss Mail</string>
+    <string name="theme_preset_classic">Klassisch</string>
+    <string name="theme_preset_sky">Himmel</string>
+    <string name="theme_preset_ocean">Ozean</string>
+    <string name="theme_preset_forest">Wald</string>
+    <string name="theme_preset_sunset">Abendrot</string>
+    <string name="theme_preset_graphite">Graphit</string>
+    <string name="theme_preset_midnight">Mitternacht</string>
     <string name="settings_theme_system">Wie im System</string>
     <string name="settings_version">Version %1$s</string>
     <string name="settings_version_title">Version</string>

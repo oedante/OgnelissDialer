@@ -167,6 +167,7 @@ class SettingsCommands @Inject constructor(
             "contact_name_format" -> prefs.setContactNameFormat(ContactNameFormat.from(value))
             "contact_sort" -> prefs.setContactSort(ContactSort.from(value))
             "ui_scale" -> prefs.setUiScale(UiScale.from(value))
+            "theme_preset" -> prefs.setThemePreset(ThemePreset.from(value))
             "journal_style" -> prefs.setJournalStyle(JournalStyle.from(value))
             "auto_redial" -> prefs.setAutoRedialMode(AutoRedialMode.from(value))
             "auto_redial_pace" -> prefs.setAutoRedialPace(RedialPace.from(value))
@@ -199,6 +200,7 @@ class SettingsCommands @Inject constructor(
         "contact_name_format" -> state.contactNameFormat.name
         "contact_sort" -> state.contactSort.name
         "ui_scale" -> state.uiScale.name
+        "theme_preset" -> state.themePreset.name
         "journal_style" -> state.journalStyle.name
         "notes_retention" -> state.notesRetention.name
         "notes_retention_scope" -> state.notesRetentionScope.name
@@ -232,6 +234,8 @@ class SettingsCommands @Inject constructor(
                 ThemeMode.HIGH_CONTRAST -> R.string.settings_theme_contrast
             }
         )
+
+        "theme_preset" -> context.getString(themePresetLabelRes(state.themePreset))
 
         "swipe_right" -> context.getString(swipeActionLabelRes(state.swipeRight))
         "swipe_left" -> context.getString(swipeActionLabelRes(state.swipeLeft))
@@ -322,6 +326,7 @@ class SettingsCommands @Inject constructor(
         when (key) {
             "language" -> R.string.settings_language
             "theme" -> R.string.settings_theme
+            "theme_preset" -> R.string.settings_theme_preset
             "swipe_right" -> R.string.settings_swipe_right
             "swipe_left" -> R.string.settings_swipe_left
             "grouping" -> R.string.settings_grouping
@@ -347,6 +352,17 @@ class SettingsCommands @Inject constructor(
     companion object {
 
         private const val TAG = "Settings"
+
+        /** Подпись цветовой темы — для строки настройки и диалога (1.8.4). */
+        fun themePresetLabelRes(preset: ThemePreset): Int = when (preset) {
+            ThemePreset.CLASSIC -> R.string.theme_preset_classic
+            ThemePreset.SKY -> R.string.theme_preset_sky
+            ThemePreset.OCEAN -> R.string.theme_preset_ocean
+            ThemePreset.FOREST -> R.string.theme_preset_forest
+            ThemePreset.SUNSET -> R.string.theme_preset_sunset
+            ThemePreset.GRAPHITE -> R.string.theme_preset_graphite
+            ThemePreset.MIDNIGHT -> R.string.theme_preset_midnight
+        }
 
         /** Подпись варианта масштаба — для строки настройки и диалога. */
         fun uiScaleLabelRes(scale: UiScale): Int = when (scale) {
@@ -456,6 +472,8 @@ class SettingsCommands @Inject constructor(
             "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info",
             "call_photo_style", "call_photo_size", "answer_mode", "ui_scale",
             "contact_name_format", "contact_sort",
+            // 1.8.4
+            "theme_preset",
             // 1.8.0
             "auto_redial", "auto_redial_pace", "quiet_hours"
             // "journal_style" — снят из реестра в 1.5.3 (вид журнала один)

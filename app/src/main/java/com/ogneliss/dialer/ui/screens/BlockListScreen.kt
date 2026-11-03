@@ -86,7 +86,12 @@ fun BlockListScreen(
                     return@Scaffold
                 }
                 TopAppBar(
-                    title = { Text(stringResource(R.string.settings_section_spam)) },
+                    title = {
+                        Text(
+                            stringResource(R.string.settings_section_spam),
+                            Modifier.padding(start = com.ogneliss.dialer.ui.theme.FlowUi.topBarTitleInset)
+                        )
+                    },
                     navigationIcon = {
                         IconButton(onClick = onBack) {
                             Icon(

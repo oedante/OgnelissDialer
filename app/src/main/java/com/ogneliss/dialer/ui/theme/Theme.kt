@@ -7,6 +7,7 @@ import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -23,6 +24,7 @@ import androidx.compose.runtime.remember
 import com.ogneliss.dialer.settings.UiScale
 import androidx.core.view.WindowCompat
 import com.ogneliss.dialer.settings.ThemeMode
+import com.ogneliss.dialer.settings.ThemePreset
 
 /**
  * ТЕМА ПРИЛОЖЕНИЯ.
@@ -314,6 +316,8 @@ fun OgnelissDialerTheme(
     dynamicColor: Boolean = false,
     /** Масштаб интерфейса (1.5.6): разбор в UiScale.kt. */
     uiScale: UiScale = UiScale.DEFAULT,
+    /** Цветовая тема, как в Ogneliss Mail (1.8.4): разбор в ThemePresetMath. */
+    themePreset: ThemePreset = ThemePreset.CLASSIC,
     content: @Composable () -> Unit
 ) {
     val systemDark = isSystemInDarkTheme()
@@ -341,6 +345,15 @@ fun OgnelissDialerTheme(
      * Своя схема осталась доступной отдельным пунктом настроек для тех,
      * кому важна узнаваемость приложения, а не единство с системой.
      */
+    /*
+     * Цветовая тема (1.8.4) — к светлой, тёмной и чёрной палитре; высокий
+     * контраст и цвета из обоев — свои, как в почте. «Полночь» в тёмной
+     * теме — чистый чёрный (палитра AMOLED).
+     */
+    val presetApplies = themePreset != ThemePreset.CLASSIC &&
+        themeMode != ThemeMode.HIGH_CONTRAST &&
+        !(dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+    val midnightBlack = presetApplies && darkTheme && ThemePresets.blackDark(themePreset)
     val scheme = when {
         // Material You: цвета берутся из обоев пользователя.
         // Выключено по умолчанию — брендовый оранжевый превратился бы
@@ -353,9 +366,10 @@ fun OgnelissDialerTheme(
         }
         themeMode == ThemeMode.HIGH_CONTRAST ->
             if (darkTheme) HighContrastDark else HighContrastLight
-        themeMode == ThemeMode.BLACK_AMOLED -> AmoledColors
-        darkTheme -> DarkColors
-        else -> LightColors
+        themeMode == ThemeMode.BLACK_AMOLED || midnightBlack ->
+            presetScheme(AmoledColors, themePreset, presetApplies, dark = true)
+        darkTheme -> presetScheme(DarkColors, themePreset, presetApplies, dark = true)
+        else -> presetScheme(LightColors, themePreset, presetApplies, dark = false)
     }
 
     // Иконки системных панелей должны быть контрастны фону под ними,
@@ -377,9 +391,10 @@ fun OgnelissDialerTheme(
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> dynamicSurfaces(scheme, darkTheme)
         themeMode == ThemeMode.HIGH_CONTRAST ->
             if (darkTheme) HighContrastDarkSurfaces else HighContrastLightSurfaces
-        themeMode == ThemeMode.BLACK_AMOLED -> AmoledSurfaces
-        darkTheme -> DarkSurfaces
-        else -> LightSurfaces
+        themeMode == ThemeMode.BLACK_AMOLED || midnightBlack ->
+            if (presetApplies) ThemePresets.surfaces(AmoledSurfaces, themePreset, scheme) else AmoledSurfaces
+        darkTheme -> if (presetApplies) ThemePresets.surfaces(DarkSurfaces, themePreset, scheme) else DarkSurfaces
+        else -> if (presetApplies) ThemePresets.surfaces(LightSurfaces, themePreset, scheme) else LightSurfaces
     }
 
     /*
@@ -437,3 +452,14 @@ fun OgnelissDialerTheme(
     }
     }
 }
+
+/*
+ * Схема темы — один раз на сочетание: расчёт яркостей идёт циклами,
+ * а тема собирается заново при каждой смене настроек и на каждом экране
+ * вызова (1.8.4).
+ */
+private val presetSchemes = java.util.concurrent.ConcurrentHashMap<Triple<ColorScheme, ThemePreset, Boolean>, ColorScheme>()
+
+private fun presetScheme(base: ColorScheme, preset: ThemePreset, applies: Boolean, dark: Boolean): ColorScheme =
+    if (!applies) base
+    else presetSchemes.getOrPut(Triple(base, preset, dark)) { ThemePresets.scheme(base, preset, dark) }

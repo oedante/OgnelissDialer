@@ -132,7 +132,10 @@ fun SettingsHomeScreen(
                                 modifier = Modifier.fillMaxWidth()
                             )
                         } else {
-                            Text(stringResource(R.string.nav_settings))
+                            Text(
+                                stringResource(R.string.nav_settings),
+                                Modifier.padding(start = com.ogneliss.dialer.ui.theme.FlowUi.topBarTitleInset)
+                            )
                         }
                     },
                     navigationIcon = {
