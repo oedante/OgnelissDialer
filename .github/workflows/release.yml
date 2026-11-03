@@ -1,34 +1,42 @@
-# Подписанный бандл для Google Play — на GitHub (1.8.2, 03.11.2026).
+# Выпуск APK на GitHub — для тех, кто ставит не из Google Play (1.8.2, 03.11.2026).
 #
-# Запуск: вручную (Actions → «Выпуск: подписанный бандл» → Run workflow)
-# или меткой версии: git tag v1.8.2 && git push origin v1.8.2.
-# Результат — артефакт с app-release.aab и mapping.txt: скачать
-# и загрузить в Play Console.
+# Автор: «выпускать не бандл, а release для скачивания другими людьми.
+# Бандлы я буду собирать у себя».
 #
-# Ключ — в секретах репозитория (Settings → Secrets and variables →
-# Actions), не в коде: KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS,
-# KEY_PASSWORD. Как их завести — docs/RELEASE_BUILD.md, «Сборка на GitHub».
+# Запуск:
+#   • меткой версии — git tag v1.8.2 && git push origin v1.8.2:
+#     APK собирается и выкладывается в Releases с описанием;
+#   • вручную (Actions → «Выпуск APK на GitHub» → Run workflow): пробная
+#     сборка — APK только артефактом запуска, без выпуска.
 #
-# Почему секреты не утекут через чужой код: запускается только вручную
-# и меткой — то и другое может лишь владелец репозитория. Запросы на
-# слияние (pull_request) этот файл не запускают, а запускам из чужих
-# копий репозитория GitHub секреты не отдаёт вовсе.
-name: "Выпуск: подписанный бандл"
+# КЛЮЧ — ОТДЕЛЬНЫЙ, НЕ КЛЮЧ ЗАГРУЗКИ GOOGLE PLAY. Приложения из Play
+# подписывает своим ключом Google (бандлы публикуются только с Play App
+# Signing), поэтому APK с GitHub поверх версии из Play всё равно
+# не встанет, каким бы ключом его ни подписать. А отдельный ключ
+# не подвергает риску выпуск в Play. Секреты репозитория (Settings →
+# Secrets and variables → Actions): APK_KEYSTORE_BASE64,
+# APK_KEYSTORE_PASSWORD, APK_KEY_ALIAS, APK_KEY_PASSWORD. Как завести —
+# docs/RELEASE_BUILD.md, «Выпуск APK на GitHub».
+#
+# Секреты не утекут через чужой код: метку и ручной запуск может только
+# владелец репозитория, запросы на слияние этот файл не запускают,
+# а копиям репозитория GitHub секреты не отдаёт.
+name: "Выпуск APK на GitHub"
 
 on:
-  workflow_dispatch:
   push:
     tags: [ 'v*' ]
+  workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write   # создать выпуск и приложить к нему APK
 
 concurrency:
-  group: release
+  group: github-release
   cancel-in-progress: false
 
 jobs:
-  bundle:
+  apk:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -51,24 +59,36 @@ jobs:
           yes | "$SDKM" --licenses > /dev/null || true
           "$SDKM" "platforms;android-37" > /dev/null || true
 
+      - name: Версия
+        id: version
+        run: |
+          NAME=$(grep -m1 'versionName = ' app/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/')
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          # Метка v1.8.2 — только для кода с versionName 1.8.2: иначе
+          # выпуск назывался бы одной версией, а внутри была бы другая
+          if [ "$GITHUB_REF_TYPE" = "tag" ] && [ "$GITHUB_REF_NAME" != "v$NAME" ]; then
+            echo "::error::Метка $GITHUB_REF_NAME, а в app/build.gradle.kts versionName $NAME"
+            exit 1
+          fi
+
       # Ключ — во временный файл вне проекта, пароли — в keystore.properties,
       # который читает app/build.gradle.kts. Формат .properties читается
       # в ISO-8859-1 и считает «\» спецзнаком: обратная косая удваивается,
       # остальное вне ASCII пишется как \uXXXX — пароль любой
       - name: Ключ подписи из секретов
         env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEYSTORE_BASE64: ${{ secrets.APK_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.APK_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.APK_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.APK_KEY_PASSWORD }}
         run: |
           for name in KEYSTORE_BASE64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
             if [ -z "${!name}" ]; then
-              echo "::error::Нет секрета $name — см. docs/RELEASE_BUILD.md, «Сборка на GitHub»"
+              echo "::error::Нет секрета APK_$name — см. docs/RELEASE_BUILD.md, «Выпуск APK на GitHub»"
               exit 1
             fi
           done
-          echo "$KEYSTORE_BASE64" | base64 -d --ignore-garbage > "$RUNNER_TEMP/upload.jks"
+          echo "$KEYSTORE_BASE64" | base64 -d --ignore-garbage > "$RUNNER_TEMP/apk.jks"
           python3 - <<'PY'
           import os
           def esc(v):
@@ -84,24 +104,13 @@ jobs:
               s = ''.join(out)
               return '\\' + s if s.startswith(' ') else s
           with open('keystore.properties', 'w', encoding='ascii') as f:
-              f.write('storeFile=%s\n' % esc(os.path.join(os.environ['RUNNER_TEMP'], 'upload.jks')))
+              f.write('storeFile=%s\n' % esc(os.path.join(os.environ['RUNNER_TEMP'], 'apk.jks')))
               for key, env in (('storePassword', 'KEYSTORE_PASSWORD'), ('keyAlias', 'KEY_ALIAS'), ('keyPassword', 'KEY_PASSWORD')):
                   f.write('%s=%s\n' % (key, esc(os.environ[env])))
           PY
 
-      - name: Сборка бандла
-        run: ./gradlew bundleRelease
-
-      # Тот ли ключ: Play принимает только ключ загрузки приложения.
-      # Отпечаток сертификата не секрет — он виден в любом APK
-      - name: Проверка подписи
-        run: |
-          AAB=app/build/outputs/bundle/release/app-release.aab
-          keytool -printcert -jarfile "$AAB" | tee cert.txt
-          if ! grep -q "BA:3B:66:1C:85:F6:34:E8:45:CF:DC:7F:68:AF:27:42:BC:97:4F:A6" cert.txt; then
-            echo "::error::Бандл подписан не ключом загрузки (ожидался SHA1 BA:3B:66:1C:…)"
-            exit 1
-          fi
+      - name: Сборка APK
+        run: ./gradlew assembleRelease
 
       # Обещание «данные не покидают телефон» держится на отсутствии
       # разрешения INTERNET — проверяем и выпускную сборку
@@ -115,23 +124,101 @@ jobs:
             exit 1
           fi
 
-      - name: Версия
-        id: version
+      # Подпись: не отладочная, и — если задан отпечаток в переменной
+      # репозитория APK_CERT_SHA256 — тот же ключ, что у прошлых выпусков:
+      # APK с другим ключом поверх установленного не встанет
+      - name: Подпись и контрольная сумма
+        id: apk
+        env:
+          EXPECTED_SHA256: ${{ vars.APK_CERT_SHA256 }}
         run: |
-          NAME=$(grep -m1 'versionName = ' app/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/')
-          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          VER="${{ steps.version.outputs.name }}"
+          mkdir -p dist
+          cp app/build/outputs/apk/release/app-release.apk "dist/OgnelissDialer-$VER.apk"
+          APKSIGNER=$(ls -d "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
+          "$APKSIGNER" verify --print-certs "dist/OgnelissDialer-$VER.apk" | tee certs.txt
+          if grep -qi "CN=Android Debug" certs.txt; then
+            echo "::error::APK подписан отладочным ключом"
+            exit 1
+          fi
+          CERT=$(grep -m1 'certificate SHA-256 digest' certs.txt | sed 's/.*: //')
+          if [ -n "$EXPECTED_SHA256" ] && [ "${CERT,,}" != "$(echo "${EXPECTED_SHA256//:/}" | tr 'A-F' 'a-f')" ]; then
+            echo "::error::Ключ подписи не тот, что у прошлых выпусков (ожидался $EXPECTED_SHA256, получен $CERT)"
+            exit 1
+          fi
+          (cd dist && sha256sum "OgnelissDialer-$VER.apk" > "OgnelissDialer-$VER.apk.sha256")
+          echo "cert=$CERT" >> "$GITHUB_OUTPUT"
 
-      # mapping.txt — для расшифровки отчётов о сбоях в Play Console
-      - name: Артефакт
+      # Описание выпуска: «Что нового» на русском и английском из
+      # store/whats_new_<версия>.txt, как поставить и как проверить подпись
+      - name: Описание выпуска
+        env:
+          VER: ${{ steps.version.outputs.name }}
+          CERT: ${{ steps.apk.outputs.cert }}
+        run: |
+          python3 - <<'PY'
+          import os, re
+          ver, cert = os.environ['VER'], os.environ['CERT']
+          repo = os.environ.get('GITHUB_REPOSITORY', 'oedante/OgnelissDialer')
+          notes_url = f'https://github.com/{repo}/blob/v{ver}/docs/RELEASE_NOTES_{ver}.md'
+          def whats_new(lang):
+              try:
+                  t = open(f'store/whats_new_{ver}.txt', encoding='utf-8').read()
+              except FileNotFoundError:
+                  return ''
+              m = re.search(rf'<{lang}>\n(.*?)\n</{lang}>', t, re.S)
+              return m.group(1).strip() if m else ''
+          ru, en = whats_new('ru-RU'), whats_new('en-US')
+          pretty = ':'.join(cert[i:i + 2] for i in range(0, len(cert), 2)).upper()
+          parts = [f'## Ogneliss Dialer {ver}', '']
+          if ru:
+              parts += ['### Что нового', '', ru, '']
+          parts += [
+              f'Подробно — [RELEASE_NOTES_{ver}.md]({notes_url}).', '',
+              '### Как поставить', '',
+              f'Скачайте `OgnelissDialer-{ver}.apk` ниже и откройте на телефоне '
+              '(Android 8 и новее; понадобится разрешить установку из этого источника).', '',
+              'Версия из Google Play и версия отсюда подписаны разными ключами: '
+              'одна поверх другой не встанет. Чтобы перейти, сохраните заметки и списки '
+              '(«Настройки → Данные и диагностика → Экспорт заметок и списков»), удалите приложение '
+              'и поставьте другую версию. Обновления отсюда ставятся поверх друг друга.', '',
+              'Отпечаток сертификата подписи (SHA-256):', '', f'`{pretty}`', '',
+              'Проверить: `apksigner verify --print-certs OgnelissDialer-' + ver + '.apk`; '
+              'целостность файла — по `.sha256`.', '',
+          ]
+          if en:
+              parts += ['---', '', "### What's new", '', en, '',
+                        'The Google Play version and this one are signed with different keys: '
+                        'uninstall one before installing the other (first save notes and lists: Settings → Data and diagnostics → Export notes and lists). '
+                        f'Signing certificate SHA-256: `{pretty}`.', '']
+          open('release-notes.md', 'w', encoding='utf-8').write('\n'.join(parts))
+          PY
+          cat release-notes.md
+
+      - name: Выпуск на GitHub
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VER: ${{ steps.version.outputs.name }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            "dist/OgnelissDialer-$VER.apk" "dist/OgnelissDialer-$VER.apk.sha256" \
+            --title "Ogneliss Dialer $VER" \
+            --notes-file release-notes.md \
+            --verify-tag
+
+      # Пробный запуск вручную — APK только артефактом, без выпуска
+      - name: Артефакт пробной сборки
+        if: github.ref_type != 'tag'
         uses: actions/upload-artifact@v4
         with:
-          name: ogneliss-dialer-${{ steps.version.outputs.name }}
+          name: ogneliss-dialer-${{ steps.version.outputs.name }}-apk
           path: |
-            app/build/outputs/bundle/release/app-release.aab
-            app/build/outputs/mapping/release/mapping.txt
-          retention-days: 14
+            dist/
+            release-notes.md
+          retention-days: 7
           if-no-files-found: error
 
       - name: Убрать ключ
         if: always()
-        run: rm -f "$RUNNER_TEMP/upload.jks" keystore.properties
+        run: rm -f "$RUNNER_TEMP/apk.jks" keystore.properties

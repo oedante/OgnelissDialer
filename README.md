@@ -5,6 +5,8 @@
 в интернет.** Код открыт по [лицензии Apache 2.0](LICENSE).
 
 - Google Play: https://play.google.com/store/apps/details?id=com.ogneliss.dialer
+- APK без Google Play: [Releases](https://github.com/oedante/OgnelissDialer/releases)
+  (подписан другим ключом — поверх версии из Play не встанет)
 - Сайт и документы: https://ogneliss.ru/dialer
 - Вопросы и предложения: [Issues](https://github.com/oedante/OgnelissDialer/issues)
   или oedante@gmail.com
@@ -140,6 +142,10 @@ unknown numbers, a calm in-call screen, two SIM cards (long-press any call
 or SMS button to pick one), a fake call, in-app questions and answers that
 open the right setting, light/dark/black themes. No ads, no subscriptions,
 no analytics.
+
+Google Play: https://play.google.com/store/apps/details?id=com.ogneliss.dialer ·
+APK without Google Play: [Releases](https://github.com/oedante/OgnelissDialer/releases)
+(signed with a different key — it will not install over the Play version).
 
 Build with a recent Android Studio and JDK 17: `./gradlew assembleDebug`.
 
