@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -112,7 +111,8 @@ fun FloatingDatePill(
 private fun DateChip(text: String) {
     val outlined = OgnelissTheme.surfaces.outlined
     Surface(
-        shape = RoundedCornerShape(10.dp),
+        // shapes.small — 10 dp, как у почты; со скруглением из настроек (1.9.0)
+        shape = MaterialTheme.shapes.small,
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
         shadowElevation = 2.dp,
         modifier = Modifier.clearAndSetSemantics { }

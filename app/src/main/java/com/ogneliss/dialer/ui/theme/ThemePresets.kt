@@ -27,26 +27,35 @@ internal object ThemePresets {
 
     fun spec(preset: ThemePreset): ThemePresetMath.Spec = ThemePresetMath.SPECS.getValue(preset.name)
 
-    /** Цветовая схема [base] («Классика» диалера) в теме [preset]. */
-    fun scheme(base: ColorScheme, preset: ThemePreset, dark: Boolean): ColorScheme {
-        if (preset == ThemePreset.CLASSIC) return base
+    /**
+     * Цветовая схема [base] («Классика» диалера) в теме [preset] со своим
+     * акцентом [accent] (1.9.0; null — акцент темы).
+     *
+     * «Классика» со своим акцентом — серые прежние, меняются только акцент
+     * и его производные: тот, кто выбрал «зелёный», получает прежний
+     * диалер с зелёным акцентом, а не другую тему (как в почте).
+     */
+    fun scheme(base: ColorScheme, preset: ThemePreset, dark: Boolean, accent: Int? = null): ColorScheme {
+        if (preset == ThemePreset.CLASSIC && accent == null) return base
         val spec = spec(preset)
-        val n = { c: Color -> neutralOf(c, spec) }
-        fun tone(maxSat: Double, light: Double) = Color(ThemePresetMath.accentTone(spec, maxSat, light))
+        val keepNeutrals = preset == ThemePreset.CLASSIC
+        val n = { c: Color -> if (keepNeutrals) c else neutralOf(c, spec) }
+        val source = accent ?: spec.accent
+        fun tone(maxSat: Double, light: Double) = Color(ThemePresetMath.accentToneOf(source, maxSat, light))
 
         val fitOn = n(base.surfaceContainerHighest).toArgb()
         val primary = Color(
-            if (dark) ThemePresetMath.accentDark(spec.accent, fitOn)
-            else ThemePresetMath.accentLight(spec.accent, fitOn)
+            if (dark) ThemePresetMath.accentDark(source, fitOn)
+            else ThemePresetMath.accentLight(source, fitOn)
         )
         // Обратный акцент — для светлых подписей на тёмном и наоборот
         val inverse = Color(
-            if (dark) ThemePresetMath.accentLight(spec.accent, n(Color(0xFFE3E8EF)).toArgb())
-            else ThemePresetMath.accentDark(spec.accent, n(Color(0xFF33363C)).toArgb())
+            if (dark) ThemePresetMath.accentLight(source, n(Color(0xFFE3E8EF)).toArgb())
+            else ThemePresetMath.accentDark(source, n(Color(0xFF33363C)).toArgb())
         )
         val backs = listOf(base.surfaceContainerHighest, base.surfaceContainerLow, base.background)
             .map { n(it).toArgb() }
-        fun text(c: Color) = Color(ThemePresetMath.text(n(c).toArgb(), backs, dark))
+        fun text(c: Color) = if (keepNeutrals) c else Color(ThemePresetMath.text(n(c).toArgb(), backs, dark))
 
         return base.copy(
             primary = primary,
@@ -78,9 +87,19 @@ internal object ThemePresets {
         )
     }
 
-    /** Поверхности диалера [base] в теме [preset]; выбранное — цветом акцента темы. */
-    fun surfaces(base: OgnelissSurfaces, preset: ThemePreset, scheme: ColorScheme): OgnelissSurfaces {
-        if (preset == ThemePreset.CLASSIC) return base
+    /**
+     * Поверхности диалера [base] в теме [preset]; выбранное — цветом акцента
+     * ([scheme] уже со своим акцентом, если он задан, — [customAccent]).
+     */
+    fun surfaces(
+        base: OgnelissSurfaces,
+        preset: ThemePreset,
+        scheme: ColorScheme,
+        customAccent: Boolean = false
+    ): OgnelissSurfaces {
+        if (preset == ThemePreset.CLASSIC) {
+            return if (customAccent) base.copy(navIndicator = scheme.primaryContainer) else base
+        }
         val spec = spec(preset)
         val n = { c: Color -> neutralOf(c, spec) }
         return base.copy(

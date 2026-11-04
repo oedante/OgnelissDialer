@@ -29,6 +29,7 @@ Apache License 2.0
 - Accompanist — © The Android Open Source Project
 - ZXing (QR-коды) — © ZXing authors
 - Material Symbols (иконки) — © Google LLC
+- Roboto (шрифт, встроен в приложение) — © Google Inc.
 
 Полный текст лицензии: https://www.apache.org/licenses/LICENSE-2.0
 

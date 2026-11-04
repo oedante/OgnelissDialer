@@ -380,7 +380,8 @@ fun RootScreen(
             showPhoto = settings.showPhoto,
             haptic = settings.haptic,
             keyTones = settings.keyTones,
-            buttonLabels = settings.buttonLabels
+            buttonLabels = settings.buttonLabels,
+            listDensity = settings.listDensity
         )
     }
 

@@ -89,6 +89,16 @@ fun SettingsChoiceDialog(
         "theme_preset" -> com.ogneliss.dialer.settings.ThemePreset.entries.map {
             it.name to stringResource(SettingsCommands.themePresetLabelRes(it))
         }
+        // 1.9.0: как «Оформление» Ogneliss Mail
+        "corner_size" -> com.ogneliss.dialer.settings.CornerSize.entries.map {
+            it.name to stringResource(SettingsCommands.cornerSizeLabelRes(it))
+        }
+        "list_density" -> com.ogneliss.dialer.settings.ListDensity.entries.map {
+            it.name to stringResource(SettingsCommands.listDensityLabelRes(it))
+        }
+        "ui_font" -> com.ogneliss.dialer.settings.UiFont.entries.map {
+            it.name to stringResource(SettingsCommands.uiFontLabelRes(it))
+        }
         "ui_scale" -> com.ogneliss.dialer.settings.UiScale.entries.map {
             it.name to stringResource(SettingsCommands.uiScaleLabelRes(it))
         }
@@ -162,6 +172,13 @@ fun SettingsChoiceDialog(
         return
     }
 
+    // Цветовая тема и свой акцент — своё окно (1.9.0): плитки тем и кружки
+    // акцентов, как «Оформление» Ogneliss Mail (разбор в ColorThemeDialog)
+    if (settingKey == "theme_preset") {
+        ColorThemeDialog(vm = vm, current = current, onDismiss = onDismiss)
+        return
+    }
+
     // Язык — своё окно: 48 вариантов, поиск, два названия (разбор там)
     if (settingKey == "language") {
         LanguagePickerDialog(vm = vm, current = current, onDismiss = onDismiss)
@@ -209,6 +226,11 @@ fun SettingsChoiceDialog(
                     ChoiceRow(
                         selected = value == current,
                         label = label,
+                        hint = choiceHint(settingKey, value),
+                        // Шрифт — каждый вариант своим шрифтом (как в почте)
+                        labelFont = if (settingKey == "ui_font") {
+                            com.ogneliss.dialer.ui.theme.uiFontFamily(com.ogneliss.dialer.settings.UiFont.from(value))
+                        } else null,
                         icon = visual?.first,
                         iconTint = visual?.second,
                         // У «Ничего» значка нет, но место под него оставлено:
@@ -235,7 +257,11 @@ private fun ChoiceRow(
     onSelect: () -> Unit,
     icon: androidx.compose.ui.graphics.vector.ImageVector? = null,
     iconTint: androidx.compose.ui.graphics.Color? = null,
-    reserveIconSpace: Boolean = false
+    reserveIconSpace: Boolean = false,
+    /** Пояснение под вариантом (1.9.0: плотность, шрифт). */
+    hint: String? = null,
+    /** Шрифт подписи — вариант «Шрифта» показан своим шрифтом (1.9.0). */
+    labelFont: androidx.compose.ui.text.font.FontFamily? = null
 ) {
     Row(
         Modifier
@@ -259,6 +285,34 @@ private fun ChoiceRow(
         } else if (reserveIconSpace) {
             Spacer(Modifier.width(36.dp))
         }
-        Text(label, style = MaterialTheme.typography.bodyLarge)
+        Column {
+            Text(label, style = MaterialTheme.typography.bodyLarge.copy(fontFamily = labelFont ?: MaterialTheme.typography.bodyLarge.fontFamily))
+            hint?.let {
+                Text(
+                    it,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontFamily = labelFont ?: MaterialTheme.typography.bodyMedium.fontFamily),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
     }
+}
+
+/**
+ * Пояснение под вариантом (1.9.0) — как подписи вариантов в «Оформлении»
+ * почты: плотность — что меняется, шрифт — откуда он.
+ */
+@Composable
+private fun choiceHint(key: String, value: String): String? = when (key) {
+    "list_density" -> when (value) {
+        "COMPACT" -> stringResource(R.string.list_density_compact_hint)
+        "COMFORTABLE" -> stringResource(R.string.list_density_comfortable_hint)
+        else -> null
+    }
+    "ui_font" -> when (value) {
+        "SYSTEM" -> stringResource(R.string.ui_font_system_hint)
+        "ROBOTO" -> stringResource(R.string.ui_font_roboto_hint)
+        else -> null
+    }
+    else -> null
 }

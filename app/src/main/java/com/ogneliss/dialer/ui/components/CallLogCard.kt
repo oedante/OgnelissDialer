@@ -201,7 +201,8 @@ fun CallLogCard(
                     // Высококонтрастная тема — с линией и прежними 6 dp
                     .padding(
                         horizontal = Space.l,
-                        vertical = if (OgnelissTheme.surfaces.outlined) 6.dp else 10.dp
+                        // 1.9.0: по плотности списков (Оформление), обычная — как было
+                        vertical = LocalAppearance.current.rowPadding(OgnelissTheme.surfaces.outlined)
                     ),
                 verticalAlignment = Alignment.CenterVertically
             ) {

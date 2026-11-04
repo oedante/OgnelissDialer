@@ -80,6 +80,7 @@ Android, Google Play и связанные обозначения — товар
 - **Accompanist** — © The Android Open Source Project
 - **ZXing** (QR-коды) — © ZXing authors
 - **Material Symbols** (иконки) — © Google LLC
+- **Roboto** (шрифт, встроен в приложение, 1.9.0) — © Google Inc.
 
 Полный текст лицензии: https://www.apache.org/licenses/LICENSE-2.0
 
@@ -123,7 +124,7 @@ use their own name and icon. See [`TRADEMARKS.md`](../TRADEMARKS.md).
 
 Apache License 2.0: AndroidX (incl. Compose, Room, DataStore, WorkManager,
 Navigation, Window), Kotlin and Kotlin Coroutines, Dagger Hilt,
-libphonenumber, Coil, Accompanist, ZXing, Material Symbols —
+libphonenumber, Coil, Accompanist, ZXing, Material Symbols, Roboto font —
 https://www.apache.org/licenses/LICENSE-2.0
 
 The operator and region directory is built from the open exports of the

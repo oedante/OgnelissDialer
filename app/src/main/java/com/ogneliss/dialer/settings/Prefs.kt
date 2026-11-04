@@ -13,6 +13,7 @@ import com.ogneliss.dialer.log.Logger
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 import javax.inject.Inject
@@ -299,6 +300,59 @@ enum class ThemePreset {
     }
 }
 
+/*
+ * ОФОРМЛЕНИЕ КАК В OGNELISS MAIL (1.9.0).
+ *
+ * Автор, 03.11.2026: «переноси все» — четыре настройки «Оформления» почты
+ * (lib/core/theme/appearance.dart, ui_fonts.dart), которых не было
+ * в диалере: свой акцент, скругление углов, плотность списков, шрифт.
+ * Значения по умолчанию — прежний вид диалера: кто не трогал настройки,
+ * разницы не увидит. Хранятся строкой (имена не менять) и числом (акцент).
+ */
+
+/** Скругление углов: множитель радиусов карточек, окон, шторок, полей (как в почте). */
+enum class CornerSize(val factor: Float) {
+    SMALL(0.5f), MEDIUM(1f), LARGE(1.4f);
+
+    companion object {
+        fun from(name: String?): CornerSize = entries.firstOrNull { it.name == name } ?: MEDIUM
+    }
+}
+
+/** Плотность журнала и контактов: поле строки и размер аватара (DensitySpec почты). */
+enum class ListDensity {
+    COMPACT, NORMAL, COMFORTABLE;
+
+    companion object {
+        fun from(name: String?): ListDensity = entries.firstOrNull { it.name == name } ?: NORMAL
+    }
+}
+
+/**
+ * Шрифт интерфейса (как UiFonts почты на Android): системный (по умолчанию —
+ * прежний вид), Roboto из пакета приложения (одинаков на любом телефоне,
+ * как в почте), Noto Serif и Roboto Condensed — шрифты системы.
+ */
+enum class UiFont {
+    SYSTEM, ROBOTO, SERIF, CONDENSED;
+
+    companion object {
+        fun from(name: String?): UiFont = entries.firstOrNull { it.name == name } ?: SYSTEM
+    }
+}
+
+/**
+ * Всё, из чего строится тема приложения, кроме режима и масштаба:
+ * цветовая тема, свой акцент (ARGB; null — акцент темы), скругление, шрифт.
+ * Одно значение — экраны (главный, вызов, псевдозвонок) берут его одним потоком.
+ */
+data class ThemeLook(
+    val preset: ThemePreset = ThemePreset.CLASSIC,
+    val accent: Int? = null,
+    val corners: CornerSize = CornerSize.MEDIUM,
+    val font: UiFont = UiFont.SYSTEM
+)
+
 /**
  * Режим группировки журнала. Значения совпадают с CallLogGrouper.Mode.
  * Хранится строкой, поэтому имена менять нельзя.
@@ -369,6 +423,11 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         // Оформление
         val THEME = stringPreferencesKey("theme")
         val THEME_PRESET = stringPreferencesKey("theme_preset")
+        // 1.9.0: оформление как в Ogneliss Mail
+        val ACCENT_COLOR = intPreferencesKey("accent_color")
+        val CORNER_SIZE = stringPreferencesKey("corner_size")
+        val LIST_DENSITY = stringPreferencesKey("list_density")
+        val UI_FONT = stringPreferencesKey("ui_font")
         val LANGUAGE = stringPreferencesKey("language")
         val SWIPE_SIM_MODE = stringPreferencesKey("swipe_sim_mode")
         val CARRIER_INFO = stringPreferencesKey("carrier_info")
@@ -631,6 +690,22 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     /** Цветовая тема (1.8.4), по умолчанию «Классика» — прежние цвета. */
     val themePreset: Flow<ThemePreset> = data.map { ThemePreset.from(it[Keys.THEME_PRESET]) }
+
+    /** Свой акцент (1.9.0): ARGB; null — акцент цветовой темы. */
+    val accentColor: Flow<Int?> = data.map { it[Keys.ACCENT_COLOR] }
+    val cornerSize: Flow<CornerSize> = data.map { CornerSize.from(it[Keys.CORNER_SIZE]) }
+    val listDensity: Flow<ListDensity> = data.map { ListDensity.from(it[Keys.LIST_DENSITY]) }
+    val uiFont: Flow<UiFont> = data.map { UiFont.from(it[Keys.UI_FONT]) }
+
+    /** Тема целиком (1.9.0): одно чтение хранилища на все четыре значения. */
+    val themeLook: Flow<ThemeLook> = data.map {
+        ThemeLook(
+            preset = ThemePreset.from(it[Keys.THEME_PRESET]),
+            accent = it[Keys.ACCENT_COLOR],
+            corners = CornerSize.from(it[Keys.CORNER_SIZE]),
+            font = UiFont.from(it[Keys.UI_FONT])
+        )
+    }.distinctUntilChanged()
     /** По умолчанию false: динамический цвет системы перекрасил бы бренд. */
     /**
      * Цвета из обоев пользователя.
@@ -952,6 +1027,17 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setTheme(v: ThemeMode) = edit("theme", v.name) { it[Keys.THEME] = v.name }
     suspend fun setThemePreset(v: ThemePreset) =
         edit("theme_preset", v.name) { it[Keys.THEME_PRESET] = v.name }
+    /** null — акцент цветовой темы: ключ удаляется. */
+    suspend fun setAccentColor(v: Int?) = edit("accent_color", v?.let { Integer.toHexString(it) }) {
+        if (v == null) {
+            it.remove(Keys.ACCENT_COLOR)
+        } else {
+            it[Keys.ACCENT_COLOR] = v
+        }
+    }
+    suspend fun setCornerSize(v: CornerSize) = edit("corner_size", v.name) { it[Keys.CORNER_SIZE] = v.name }
+    suspend fun setListDensity(v: ListDensity) = edit("list_density", v.name) { it[Keys.LIST_DENSITY] = v.name }
+    suspend fun setUiFont(v: UiFont) = edit("ui_font", v.name) { it[Keys.UI_FONT] = v.name }
     suspend fun setDynamicColor(v: Boolean) = edit("dynamic_color", v) { it[Keys.DYNAMIC_COLOR] = v }
     suspend fun setShowPhoto(v: Boolean) = edit("show_photo", v) { it[Keys.SHOW_PHOTO] = v }
     suspend fun setMessengersAnyNumber(v: Boolean) = edit("messengers_any_number", v) { it[Keys.MESSENGERS_ANY_NUMBER] = v }

@@ -12,6 +12,7 @@ import com.ogneliss.dialer.ui.SettingsState
 import com.ogneliss.dialer.util.LocaleManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -167,7 +168,26 @@ class SettingsCommands @Inject constructor(
             "contact_name_format" -> prefs.setContactNameFormat(ContactNameFormat.from(value))
             "contact_sort" -> prefs.setContactSort(ContactSort.from(value))
             "ui_scale" -> prefs.setUiScale(UiScale.from(value))
-            "theme_preset" -> prefs.setThemePreset(ThemePreset.from(value))
+            /*
+             * Цветовая тема и свой акцент (1.9.0) — одна настройка, как
+             * в «Оформлении» почты: значение «ТЕМА» или «ТЕМА|#AARRGGBB»
+             * ([themeChoice]). Выбор темы без акцента сбрасывает свой акцент —
+             * у темы свой (pickPreset почты). Выбрали тему или акцент при
+             * цветах из обоев — обои выключаются: иначе выбор не был бы
+             * виден. Возврат к «Классике» без акцента обои не трогает.
+             */
+            "theme_preset" -> {
+                val (preset, accent) = parseThemeChoice(value)
+                prefs.setThemePreset(preset)
+                prefs.setAccentColor(accent)
+                if ((preset != ThemePreset.CLASSIC || accent != null) && prefs.dynamicColor.first()) {
+                    prefs.setDynamicColor(false)
+                }
+            }
+            // 1.9.0: скругление, плотность, шрифт — как в Ogneliss Mail
+            "corner_size" -> prefs.setCornerSize(CornerSize.from(value))
+            "list_density" -> prefs.setListDensity(ListDensity.from(value))
+            "ui_font" -> prefs.setUiFont(UiFont.from(value))
             "journal_style" -> prefs.setJournalStyle(JournalStyle.from(value))
             "auto_redial" -> prefs.setAutoRedialMode(AutoRedialMode.from(value))
             "auto_redial_pace" -> prefs.setAutoRedialPace(RedialPace.from(value))
@@ -200,7 +220,10 @@ class SettingsCommands @Inject constructor(
         "contact_name_format" -> state.contactNameFormat.name
         "contact_sort" -> state.contactSort.name
         "ui_scale" -> state.uiScale.name
-        "theme_preset" -> state.themePreset.name
+        "theme_preset" -> themeChoice(state.themePreset, state.accentColor)
+        "corner_size" -> state.cornerSize.name
+        "list_density" -> state.listDensity.name
+        "ui_font" -> state.uiFont.name
         "journal_style" -> state.journalStyle.name
         "notes_retention" -> state.notesRetention.name
         "notes_retention_scope" -> state.notesRetentionScope.name
@@ -235,7 +258,12 @@ class SettingsCommands @Inject constructor(
             }
         )
 
-        "theme_preset" -> context.getString(themePresetLabelRes(state.themePreset))
+        "theme_preset" -> state.accentColor?.let { accent ->
+            context.getString(themePresetLabelRes(state.themePreset)) + " · " + accentLabel(context, accent)
+        } ?: context.getString(themePresetLabelRes(state.themePreset))
+        "corner_size" -> context.getString(cornerSizeLabelRes(state.cornerSize))
+        "list_density" -> context.getString(listDensityLabelRes(state.listDensity))
+        "ui_font" -> context.getString(uiFontLabelRes(state.uiFont))
 
         "swipe_right" -> context.getString(swipeActionLabelRes(state.swipeRight))
         "swipe_left" -> context.getString(swipeActionLabelRes(state.swipeLeft))
@@ -327,6 +355,9 @@ class SettingsCommands @Inject constructor(
             "language" -> R.string.settings_language
             "theme" -> R.string.settings_theme
             "theme_preset" -> R.string.settings_theme_preset
+            "corner_size" -> R.string.settings_corner_size
+            "list_density" -> R.string.settings_list_density
+            "ui_font" -> R.string.settings_ui_font
             "swipe_right" -> R.string.settings_swipe_right
             "swipe_left" -> R.string.settings_swipe_left
             "grouping" -> R.string.settings_grouping
@@ -362,6 +393,56 @@ class SettingsCommands @Inject constructor(
             ThemePreset.SUNSET -> R.string.theme_preset_sunset
             ThemePreset.GRAPHITE -> R.string.theme_preset_graphite
             ThemePreset.MIDNIGHT -> R.string.theme_preset_midnight
+        }
+
+        /** Значение настройки «Цветовая тема» (1.9.0): тема и, если задан, свой акцент. */
+        fun themeChoice(preset: ThemePreset, accent: Int?): String =
+            // Locale.ROOT: цифры латинские при любом языке телефона
+            if (accent == null) preset.name else preset.name + "|#" + String.format(java.util.Locale.ROOT, "%08X", accent)
+
+        /** Обратно: тема и свой акцент (null — акцент темы). Испорченное — «Классика». */
+        fun parseThemeChoice(value: String): Pair<ThemePreset, Int?> {
+            val preset = ThemePreset.from(value.substringBefore('|'))
+            val accent = value.substringAfter('|', "").removePrefix("#")
+                .takeIf { it.length == 8 }
+                ?.toLongOrNull(16)?.toInt()
+            return preset to accent
+        }
+
+        /** Названия двенадцати готовых акцентов — в порядке ThemePresetMath.ACCENTS. */
+        val ACCENT_NAMES = intArrayOf(
+            R.string.accent_blue, R.string.accent_sky, R.string.accent_teal, R.string.accent_green,
+            R.string.accent_olive, R.string.accent_amber, R.string.accent_orange, R.string.accent_red,
+            R.string.accent_raspberry, R.string.accent_purple, R.string.accent_indigo, R.string.accent_blue_grey
+        )
+
+        /** Подпись своего акцента: имя готового или «Свой, #RRGGBB». */
+        fun accentLabel(context: Context, accent: Int): String {
+            val i = com.ogneliss.dialer.ui.theme.ThemePresetMath.ACCENTS.indexOf(accent)
+            return if (i >= 0) context.getString(ACCENT_NAMES[i])
+            else context.getString(
+                R.string.accent_custom_named,
+                String.format(java.util.Locale.ROOT, "#%06X", accent and 0xFFFFFF)
+            )
+        }
+
+        fun cornerSizeLabelRes(v: CornerSize): Int = when (v) {
+            CornerSize.SMALL -> R.string.corner_size_small
+            CornerSize.MEDIUM -> R.string.corner_size_medium
+            CornerSize.LARGE -> R.string.corner_size_large
+        }
+
+        fun listDensityLabelRes(v: ListDensity): Int = when (v) {
+            ListDensity.COMPACT -> R.string.list_density_compact
+            ListDensity.NORMAL -> R.string.list_density_normal
+            ListDensity.COMFORTABLE -> R.string.list_density_comfortable
+        }
+
+        fun uiFontLabelRes(v: UiFont): Int = when (v) {
+            UiFont.SYSTEM -> R.string.ui_font_system
+            UiFont.ROBOTO -> R.string.ui_font_roboto
+            UiFont.SERIF -> R.string.ui_font_serif
+            UiFont.CONDENSED -> R.string.ui_font_condensed
         }
 
         /** Подпись варианта масштаба — для строки настройки и диалога. */
@@ -474,6 +555,8 @@ class SettingsCommands @Inject constructor(
             "contact_name_format", "contact_sort",
             // 1.8.4
             "theme_preset",
+            // 1.9.0
+            "corner_size", "list_density", "ui_font",
             // 1.8.0
             "auto_redial", "auto_redial_pace", "quiet_hours"
             // "journal_style" — снят из реестра в 1.5.3 (вид журнала один)

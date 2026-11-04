@@ -1244,7 +1244,8 @@ private fun ContactRow(
                     // выглядеть одинаково (1.7.0: 10 dp без линий, 6 — с ними)
                     .padding(
                         horizontal = Space.l,
-                        vertical = if (com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.outlined) 6.dp else 10.dp
+                        // 1.9.0: по плотности списков (Оформление), обычная — как было
+                        vertical = appearance.rowPadding(com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.outlined)
                     ),
                 verticalAlignment = Alignment.CenterVertically
             ) {

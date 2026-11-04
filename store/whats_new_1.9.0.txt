@@ -1,0 +1,162 @@
+<ru-RU>
+• Оформление как в Ogneliss Mail: семь цветовых тем, свой акцент, шрифт, скругление углов и плотность списков.
+• Карточка контакта: фото во всю ширину, страница ложится на него листом; нажмите на фото — откроется целиком.
+• Живой фон звонка — в цветах фото звонящего или темы.
+• Экран входящего надёжнее загорается, без сигнала уведомления перед мелодией. Журнал по дням.
+</ru-RU>
+<ar>
+• مظهر مثل Ogneliss Mail: سبعة أنماط ألوان، ولون تمييز خاص، والخط، وتدوير الزوايا، وكثافة القوائم.
+• بطاقة جهة الاتصال: صورة بعرض الشاشة تعلوها الصفحة كورقة؛ اضغط على الصورة لفتحها كاملة.
+• خلفية المكالمة الحية بألوان صورة المتصل أو النمط.
+• شاشة المكالمة الواردة تضيء بشكل موثوق، دون صوت إشعار قبل النغمة. السجل حسب الأيام.
+</ar>
+<cs-CZ>
+• Vzhled jako v Ogneliss Mail: sedm barevných motivů, vlastní zvýraznění, písmo, zaoblení rohů a hustota seznamů.
+• Karta kontaktu: fotka přes celou šířku, stránka na ni nasedá jako list; klepnutím se fotka otevře celá.
+• Živé pozadí hovoru v barvách fotky volajícího nebo motivu.
+• Obrazovka příchozího hovoru se spolehlivě rozsvítí, bez zvuku oznámení před vyzváněním. Seznam hovorů po dnech.
+</cs-CZ>
+<da-DK>
+• Udseende som i Ogneliss Mail: syv farvetemaer, egen accentfarve, skrifttype, afrundede hjørner og listetæthed.
+• Kontaktkort: foto i fuld bredde, siden lægger sig over det som et ark; tryk på fotoet for at se det helt.
+• Levende opkaldsbaggrund i farverne fra opkalderens foto eller temaet.
+• Skærmen for indgående opkald tænder pålideligt, uden notifikationslyd før ringetonen. Opkaldsliste efter dag.
+</da-DK>
+<de-DE>
+• Aussehen wie in Ogneliss Mail: sieben Farbschemata, eigener Akzent, Schriftart, Eckenrundung und Listendichte.
+• Kontaktkarte: Foto in voller Breite, die Seite legt sich wie ein Blatt darüber; Tippen öffnet das ganze Foto.
+• Lebendiger Anrufhintergrund in den Farben des Anruferfotos oder des Schemas.
+• Der Bildschirm für eingehende Anrufe geht zuverlässig an, ohne Benachrichtigungston vor dem Klingeln. Anrufliste nach Tagen.
+</de-DE>
+<en-US>
+• Appearance as in Ogneliss Mail: seven color themes, your own accent, font, corner rounding and list density.
+• Contact card: a full-width photo with the page sliding over it like a sheet; tap the photo to see it whole.
+• Live call background in the colors of the caller’s photo or the theme.
+• The incoming call screen lights up reliably, with no notification sound before the ringtone. Call log by day.
+</en-US>
+<es-ES>
+• Aspecto como en Ogneliss Mail: siete temas de color, acento propio, fuente, redondeo de esquinas y densidad de listas.
+• Ficha de contacto: foto a todo el ancho y la página encima como una hoja; toca la foto para verla entera.
+• Fondo vivo de llamada con los colores de la foto de quien llama o del tema.
+• La pantalla de llamada entrante se enciende de forma fiable, sin sonido de notificación antes del tono. Registro por días.
+</es-ES>
+<fi-FI>
+• Ulkoasu kuten Ogneliss Mailissa: seitsemän väriteemaa, oma korostusväri, fontti, kulmien pyöristys ja luettelon tiheys.
+• Yhteystietokortti: koko leveyden kuva, jonka päälle sivu asettuu arkkina; napauta kuvaa nähdäksesi sen kokonaan.
+• Elävä puhelutausta soittajan kuvan tai teeman väreissä.
+• Saapuvan puhelun näyttö syttyy luotettavasti, ilman ilmoitusääntä ennen soittoääntä. Puheluloki päivittäin.
+</fi-FI>
+<fr-FR>
+• Apparence comme dans Ogneliss Mail : sept thèmes de couleurs, accent personnalisé, police, arrondi des coins et densité des listes.
+• Fiche contact : photo pleine largeur, la page s’y pose comme une feuille ; touchez la photo pour la voir en entier.
+• Fond d’appel animé aux couleurs de la photo de l’appelant ou du thème.
+• L’écran d’appel entrant s’allume de façon fiable, sans son de notification avant la sonnerie. Journal par jour.
+</fr-FR>
+<hi-IN>
+• Ogneliss Mail जैसा रूप: सात रंग थीम, अपना एक्सेंट रंग, फ़ॉन्ट, कोनों की गोलाई और सूची घनत्व।
+• संपर्क कार्ड: पूरी चौड़ाई की फ़ोटो, जिस पर पेज एक शीट की तरह आता है; पूरी फ़ोटो देखने के लिए उस पर टैप करें।
+• कॉल की जीवंत पृष्ठभूमि — कॉलर की फ़ोटो या थीम के रंगों में।
+• इनकमिंग कॉल स्क्रीन भरोसेमंद ढंग से जलती है, रिंगटोन से पहले सूचना ध्वनि के बिना। दिन के अनुसार कॉल लॉग।
+</hi-IN>
+<hu-HU>
+• Megjelenés, mint az Ogneliss Mailben: hét színtéma, saját kiemelőszín, betűtípus, sarkok kerekítése és listasűrűség.
+• Névjegykártya: teljes szélességű fotó, amelyre lapként fekszik rá az oldal; koppintva a teljes fotó megnyílik.
+• Élő hívásháttér a hívó fotójának vagy a témának a színeiben.
+• A bejövő hívás képernyője megbízhatóan bekapcsol, csengőhang előtti értesítési hang nélkül. Hívásnapló napok szerint.
+</hu-HU>
+<id>
+• Tampilan seperti Ogneliss Mail: tujuh tema warna, warna aksen sendiri, font, kebulatan sudut, dan kerapatan daftar.
+• Kartu kontak: foto selebar layar dengan halaman menutupinya seperti lembaran; ketuk foto untuk melihatnya utuh.
+• Latar panggilan hidup dengan warna foto penelepon atau tema.
+• Layar panggilan masuk menyala dengan andal, tanpa suara notifikasi sebelum nada dering. Log panggilan per hari.
+</id>
+<it-IT>
+• Aspetto come in Ogneliss Mail: sette temi di colore, accento personale, carattere, arrotondamento degli angoli e densità degli elenchi.
+• Scheda contatto: foto a tutta larghezza con la pagina che vi scorre sopra come un foglio; tocca la foto per vederla intera.
+• Sfondo animato della chiamata nei colori della foto di chi chiama o del tema.
+• La schermata di chiamata in arrivo si accende in modo affidabile, senza suono di notifica prima della suoneria. Registro per giorni.
+</it-IT>
+<iw-IL>
+• מראה כמו ב-Ogneliss Mail: שבע ערכות צבע, צבע הדגשה משלך, גופן, עיגול פינות וצפיפות רשימות.
+• כרטיס איש קשר: תמונה ברוחב מלא שהדף נח עליה כגיליון; הקשה על התמונה פותחת אותה במלואה.
+• רקע שיחה חי בצבעי התמונה של המתקשר או ערכת הצבע.
+• מסך שיחה נכנסת נדלק באופן אמין, בלי צליל התראה לפני הרינגטון. יומן שיחות לפי ימים.
+</iw-IL>
+<ja-JP>
+• Ogneliss Mail と同じ外観：7 つのカラーテーマ、好みのアクセント色、フォント、角の丸み、リストの密度。
+• 連絡先カード：横幅いっぱいの写真にページがシートのように重なります。写真をタップすると全体を表示。
+• 通話のライブ背景は、発信者の写真またはテーマの色で表示。
+• 着信画面が確実に点灯し、着信音の前に通知音が鳴りません。通話履歴は日付ごとに表示。
+</ja-JP>
+<ko-KR>
+• Ogneliss Mail과 같은 모양: 7가지 색상 테마, 나만의 강조 색상, 글꼴, 모서리 둥글기, 목록 밀도.
+• 연락처 카드: 화면 너비의 사진 위로 페이지가 시트처럼 올라옵니다. 사진을 탭하면 전체가 열립니다.
+• 통화 라이브 배경이 발신자 사진이나 테마의 색으로 표시됩니다.
+• 수신 화면이 확실하게 켜지고, 벨소리 전에 알림음이 울리지 않습니다. 날짜별 통화 기록.
+</ko-KR>
+<nl-NL>
+• Uiterlijk zoals in Ogneliss Mail: zeven kleurthema’s, eigen accentkleur, lettertype, afgeronde hoeken en lijstdichtheid.
+• Contactkaart: foto over de volle breedte, de pagina schuift er als een vel overheen; tik op de foto om hem helemaal te zien.
+• Levende belachtergrond in de kleuren van de foto van de beller of het thema.
+• Het scherm voor inkomende oproepen gaat betrouwbaar aan, zonder meldingsgeluid vóór de beltoon. Oproeplijst per dag.
+</nl-NL>
+<no-NO>
+• Utseende som i Ogneliss Mail: sju fargetemaer, egen aksentfarge, skrift, avrundede hjørner og listetetthet.
+• Kontaktkort: bilde i full bredde, siden legger seg over som et ark; trykk på bildet for å se det helt.
+• Levende samtalebakgrunn i fargene fra bildet til den som ringer, eller temaet.
+• Skjermen for innkommende anrop slår seg pålitelig på, uten varsellyd før ringetonen. Anropslogg per dag.
+</no-NO>
+<pl-PL>
+• Wygląd jak w Ogneliss Mail: siedem motywów kolorów, własny akcent, czcionka, zaokrąglenie rogów i gęstość list.
+• Karta kontaktu: zdjęcie na całą szerokość, a strona nachodzi na nie jak arkusz; dotknij zdjęcia, by zobaczyć całe.
+• Żywe tło połączenia w kolorach zdjęcia dzwoniącego lub motywu.
+• Ekran połączenia przychodzącego niezawodnie się włącza, bez dźwięku powiadomienia przed dzwonkiem. Rejestr według dni.
+</pl-PL>
+<pt-BR>
+• Visual como no Ogneliss Mail: sete temas de cor, cor de destaque própria, fonte, arredondamento dos cantos e densidade das listas.
+• Ficha do contato: foto em largura total com a página deslizando por cima como uma folha; toque na foto para vê-la inteira.
+• Fundo animado da chamada nas cores da foto de quem liga ou do tema.
+• A tela de chamada recebida acende com confiabilidade, sem som de notificação antes do toque. Registro por dia.
+</pt-BR>
+<ro>
+• Aspect ca în Ogneliss Mail: șapte teme de culoare, accent propriu, font, rotunjirea colțurilor și densitatea listelor.
+• Fișa contactului: fotografie pe toată lățimea, pagina se așază peste ea ca o foaie; atingeți fotografia ca s-o vedeți întreagă.
+• Fundal viu al apelului în culorile fotografiei apelantului sau ale temei.
+• Ecranul apelului primit se aprinde fiabil, fără sunet de notificare înaintea tonului de apel. Jurnal pe zile.
+</ro>
+<sk>
+• Vzhľad ako v Ogneliss Mail: sedem farebných motívov, vlastný akcent, písmo, zaoblenie rohov a hustota zoznamov.
+• Karta kontaktu: fotka na celú šírku, stránka na ňu nasadá ako list; ťuknutím sa fotka otvorí celá.
+• Živé pozadie hovoru vo farbách fotky volajúceho alebo motívu.
+• Obrazovka prichádzajúceho hovoru sa spoľahlivo rozsvieti, bez zvuku upozornenia pred zvonením. Zoznam hovorov po dňoch.
+</sk>
+<sv-SE>
+• Utseende som i Ogneliss Mail: sju färgteman, egen accentfärg, typsnitt, rundade hörn och listtäthet.
+• Kontaktkort: foto i full bredd där sidan lägger sig över som ett ark; tryck på fotot för att se det helt.
+• Levande samtalsbakgrund i färgerna från uppringarens foto eller temat.
+• Skärmen för inkommande samtal tänds pålitligt, utan aviseringsljud före ringsignalen. Samtalslogg per dag.
+</sv-SE>
+<th>
+• หน้าตาแบบ Ogneliss Mail: ธีมสีเจ็ดแบบ สีเน้นของคุณเอง แบบอักษร ความโค้งของมุม และความหนาแน่นของรายการ
+• การ์ดผู้ติดต่อ: รูปเต็มความกว้าง หน้าซ้อนทับเหมือนแผ่นกระดาษ แตะที่รูปเพื่อดูทั้งรูป
+• พื้นหลังการโทรแบบเคลื่อนไหวในสีจากรูปของผู้โทรหรือธีม
+• หน้าจอสายเรียกเข้าสว่างขึ้นอย่างเชื่อถือได้ ไม่มีเสียงแจ้งเตือนก่อนเสียงเรียกเข้า บันทึกการโทรตามวัน
+</th>
+<tr-TR>
+• Ogneliss Mail’deki gibi görünüm: yedi renk teması, kendi vurgu renginiz, yazı tipi, köşe yuvarlaklığı ve liste yoğunluğu.
+• Kişi kartı: tam genişlikte fotoğraf, sayfa üzerine bir yaprak gibi oturur; fotoğrafa dokununca tamamı açılır.
+• Arayanın fotoğrafının veya temanın renklerinde canlı arama arka planı.
+• Gelen arama ekranı güvenilir şekilde açılır, zil sesinden önce bildirim sesi çalmaz. Günlere göre arama kaydı.
+</tr-TR>
+<vi>
+• Giao diện như Ogneliss Mail: bảy chủ đề màu, màu nhấn riêng, phông chữ, độ bo góc và mật độ danh sách.
+• Thẻ liên hệ: ảnh tràn chiều rộng, trang phủ lên như một tờ giấy; chạm vào ảnh để xem toàn bộ.
+• Nền cuộc gọi sống động theo màu ảnh người gọi hoặc chủ đề.
+• Màn hình cuộc gọi đến sáng lên ổn định, không có âm thông báo trước nhạc chuông. Nhật ký cuộc gọi theo ngày.
+</vi>
+<zh-CN>
+• 外观与 Ogneliss Mail 一致：七种颜色主题、自定义强调色、字体、圆角大小和列表密度。
+• 联系人卡片：全宽照片，页面像纸张一样覆盖其上；点按照片即可查看完整照片。
+• 通话动态背景采用来电者照片或主题的颜色。
+• 来电屏幕可靠点亮，响铃前不再有通知提示音。通话记录按天显示。
+</zh-CN>

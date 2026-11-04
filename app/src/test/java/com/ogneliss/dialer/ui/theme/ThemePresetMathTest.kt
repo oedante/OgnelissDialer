@@ -81,6 +81,28 @@ class ThemePresetMathTest {
     }
 
     @Test
+    fun `двенадцать акцентов на любой теме проходят AA`() {
+        // Свой акцент (1.9.0): готовые и с любым тоном — как accentSwatches почты
+        assertEquals(12, M.ACCENTS.size)
+        val accents = M.ACCENTS.toList() + (0 until 360 step 30).map { M.hsl(it.toDouble(), 0.8, 0.45) }
+        M.SPECS.forEach { (name, spec) ->
+            val light = lightBacks.map { M.neutral(it, spec) }
+            val dark = darkBacks.map { M.neutral(it, spec) }
+            accents.forEach { a ->
+                val pl = M.accentLight(a, light[0])
+                assertTrue("$name ${Integer.toHexString(a)}: белый на акценте", M.contrast(c(0xFFFFFFFF), pl) >= 4.5)
+                light.forEach { assertTrue("$name ${Integer.toHexString(a)}: акцент на светлом", M.contrast(pl, it) >= 4.5) }
+                val pd = M.accentDark(a, dark[0])
+                dark.forEach { assertTrue("$name ${Integer.toHexString(a)}: акцент на тёмном", M.contrast(pd, it) >= 4.5) }
+                assertTrue(
+                    "$name ${Integer.toHexString(a)}: текст на акценте",
+                    M.contrast(M.accentToneOf(a, 0.72, 0.14), pd) >= 4.5
+                )
+            }
+        }
+    }
+
+    @Test
     fun `контраст — как WCAG`() {
         assertEquals(21.0, M.contrast(c(0xFF000000), c(0xFFFFFFFF)), 0.01)
         assertEquals(1.0, M.contrast(c(0xFF777777), c(0xFF777777)), 1e-9)

@@ -233,6 +233,29 @@ object SettingsRegistry {
             SettingKind.Choice("ui_scale"),
             keywordsRes = R.string.keywords_accessibility
         ),
+        /*
+         * 1.9.0: шрифт, скругление и плотность — как «Оформление» Ogneliss
+         * Mail (свой акцент — в окне «Цветовой темы», ColorThemeDialog:
+         * в разделе не больше 14 пунктов, а тема и акцент — одно решение).
+         */
+        SettingEntry(
+            "ui_font", SettingsCategory.APPEARANCE,
+            R.string.settings_ui_font, R.string.settings_ui_font_text,
+            SettingKind.Choice("ui_font"),
+            keywordsRes = R.string.keywords_theme
+        ),
+        SettingEntry(
+            "corner_size", SettingsCategory.APPEARANCE,
+            R.string.settings_corner_size, R.string.settings_corner_size_text,
+            SettingKind.Choice("corner_size"),
+            keywordsRes = R.string.keywords_theme
+        ),
+        SettingEntry(
+            "list_density", SettingsCategory.APPEARANCE,
+            R.string.settings_list_density, R.string.settings_list_density_text,
+            SettingKind.Choice("list_density"),
+            keywordsRes = R.string.keywords_theme
+        ),
         SettingEntry(
             "large_buttons", SettingsCategory.APPEARANCE,
             R.string.settings_large_buttons, R.string.settings_large_buttons_text,

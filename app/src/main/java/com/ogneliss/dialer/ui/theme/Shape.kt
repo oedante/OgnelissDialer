@@ -2,7 +2,12 @@ package com.ogneliss.dialer.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 
 /**
  * ФОРМЫ — СТРОГИЙ СТИЛЬ (1.5.1, 11.10.2026).
@@ -44,6 +49,43 @@ val OgnelissShapes = Shapes(
     extraLarge = RoundedCornerShape(24.dp)
 )
 
+/**
+ * СКРУГЛЕНИЕ УГЛОВ НА ВЫБОР (1.9.0, как «Скругление» Ogneliss Mail).
+ *
+ * Настройки → Оформление → «Скругление углов»: малое (× 0,5), среднее
+ * (× 1 — прежний вид), большое (× 1,4). Множитель меняет формы темы
+ * ([shapesFor]: поля, плашки, шторки, диалоги) и токены карточек и полос
+ * ([OgnelissShapeTokens]). «Пилюли» — кнопки вызова, клавиши, поиск — и круги
+ * остаются как есть: их форма — смысл, а не стиль. Крупные формы — не больше
+ * [MAX_SHEET_RADIUS]: иначе верх шторки становится «капсулой» (как в почте).
+ *
+ * Множитель — состояние Compose: токены читают его, и экраны, где они
+ * использованы, перерисовываются сами, когда тема его меняет
+ * (OgnelissDialerTheme).
+ */
+object CornerScale {
+    var factor by mutableFloatStateOf(1f)
+        internal set
+}
+
+/** Не больше этого — у шторок, окон, листа обложки карточки. */
+val MAX_SHEET_RADIUS = 32.dp
+
+/** Радиус [base] со скруглением из настроек. */
+fun scaledRadius(base: Dp): Dp = base * CornerScale.factor
+
+/** Радиус крупной формы (шторка, лист) со скруглением, не больше [MAX_SHEET_RADIUS]. */
+fun sheetRadius(base: Dp): Dp = min(base * CornerScale.factor, MAX_SHEET_RADIUS)
+
+/** Формы темы со скруглением × [k]; при × 1 — прежний набор цвет в цвет. */
+fun shapesFor(k: Float): Shapes = if (k == 1f) OgnelissShapes else Shapes(
+    extraSmall = RoundedCornerShape(6.dp * k),
+    small = RoundedCornerShape(10.dp * k),
+    medium = RoundedCornerShape(14.dp * k),
+    large = RoundedCornerShape(18.dp * k),
+    extraLarge = RoundedCornerShape(min(24.dp * k, MAX_SHEET_RADIUS))
+)
+
 /** Формы для случаев, которых нет в стандартном наборе. */
 object OgnelissShapeTokens {
 
@@ -79,10 +121,10 @@ object OgnelissShapeTokens {
      * 1.8.4: карточка — 20 dp, как Radii.card почты (tokens.dart): сравнение
      * экранов автором — у диалера углы заметно круглее.
      */
-    val band = RoundedCornerShape(12.dp)
-    val card = RoundedCornerShape(20.dp)
+    val band: RoundedCornerShape get() = scaled().band
+    val card: RoundedCornerShape get() = scaled().card
     /** Радиус карточки отдельно — для рамки сегментов группы (GroupedRow). */
-    val cardRadius = 20.dp
+    val cardRadius: Dp get() = CARD_RADIUS * CornerScale.factor
 
     /**
      * Кнопки вызова: «Позвонить», SIM, «Ответить», «Отклонить», «Завершить» —
@@ -99,4 +141,25 @@ object OgnelissShapeTokens {
     val settingsGroupBottom = RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp)
     val settingsGroupSingle = RoundedCornerShape(18.dp)
     val settingsGroupMiddle = RoundedCornerShape(0.dp)
+
+    /**
+     * Полоса и карточка при текущем скруглении (1.9.0). Формы создаются
+     * один раз на множитель, а не при каждом чтении: карточку читают
+     * все строки списков.
+     */
+    private class Scaled(val k: Float) {
+        val band = RoundedCornerShape(BAND_RADIUS * k)
+        val card = RoundedCornerShape(CARD_RADIUS * k)
+    }
+
+    // Не создаётся при загрузке объекта: радиусы ниже ещё не заданы
+    private var cache: Scaled? = null
+
+    private fun scaled(): Scaled {
+        val k = CornerScale.factor
+        return cache?.takeIf { it.k == k } ?: Scaled(k).also { cache = it }
+    }
+
+    private val BAND_RADIUS = 12.dp
+    private val CARD_RADIUS = 20.dp
 }

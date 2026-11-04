@@ -66,6 +66,11 @@ class SettingsStateSource @Inject constructor(
         .combine(prefs.callPhotoStyle) { a, v -> a.copy(callPhotoStyle = v) }
         .combine(prefs.uiScale) { a, v -> a.copy(uiScale = v) }
         .combine(prefs.themePreset) { a, v -> a.copy(themePreset = v) }
+        // 1.9.0: свой акцент, скругление, плотность, шрифт — как в Ogneliss Mail
+        .combine(prefs.accentColor) { a, v -> a.copy(accentColor = v) }
+        .combine(prefs.cornerSize) { a, v -> a.copy(cornerSize = v) }
+        .combine(prefs.listDensity) { a, v -> a.copy(listDensity = v) }
+        .combine(prefs.uiFont) { a, v -> a.copy(uiFont = v) }
         .combine(prefs.callPhotoSize) { a, v -> a.copy(callPhotoSize = v) }
         .combine(prefs.answerMode) { a, v -> a.copy(answerMode = v) }
         .combine(prefs.contactNameFormat) { a, v -> a.copy(contactNameFormat = v) }
@@ -180,6 +185,10 @@ class SettingsStateSource @Inject constructor(
             callPhotoStyle = a.callPhotoStyle,
             uiScale = a.uiScale,
             themePreset = a.themePreset,
+            accentColor = a.accentColor,
+            cornerSize = a.cornerSize,
+            listDensity = a.listDensity,
+            uiFont = a.uiFont,
             callPhotoSize = a.callPhotoSize,
             answerMode = a.answerMode,
             contactNameFormat = a.contactNameFormat,
@@ -238,6 +247,10 @@ class SettingsStateSource @Inject constructor(
         val callPhotoStyle: CallPhotoStyle = CallPhotoStyle.CIRCLE,
         val uiScale: UiScale = UiScale.DEFAULT,
         val themePreset: ThemePreset = ThemePreset.CLASSIC,
+        val accentColor: Int? = null,
+        val cornerSize: CornerSize = CornerSize.MEDIUM,
+        val listDensity: ListDensity = ListDensity.NORMAL,
+        val uiFont: UiFont = UiFont.SYSTEM,
         val callPhotoSize: CallPhotoSize = CallPhotoSize.LARGE,
         val answerMode: AnswerMode = AnswerMode.TAP,
         val messengersAnyNumber: Boolean = false,

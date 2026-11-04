@@ -2,7 +2,11 @@ package com.ogneliss.dialer.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import com.ogneliss.dialer.R
+import com.ogneliss.dialer.settings.UiFont
 import androidx.compose.ui.unit.sp
 
 /**
@@ -123,3 +127,63 @@ val OgnelissTypography = Typography(
  */
 val Typography.listName: TextStyle
     get() = titleMedium.copy(fontSize = 15.sp, lineHeight = 21.sp, letterSpacing = 0.1.sp)
+
+/**
+ * ШРИФТ ИНТЕРФЕЙСА НА ВЫБОР (1.9.0, как «Шрифт интерфейса» Ogneliss Mail).
+ *
+ * • «Системный» — шрифт телефона, прежний вид (по умолчанию): у Samsung,
+ *   Xiaomi и других — свой, у Pixel — Roboto.
+ * • «Roboto» — из пакета приложения (res/font, Roboto 2.138, Apache 2.0 —
+ *   та же лицензия, что у приложения; те же файлы, что в почте): одинаков
+ *   на любом телефоне, как почта по умолчанию.
+ * • «Noto Serif», «Roboto Condensed» — шрифты системы по их общим именам
+ *   («serif», «sans-serif-condensed»): есть на всех телефонах, у оболочек
+ *   производителей — их замена. Приложение их не распространяет.
+ *
+ * Размеры, начертания и интервалы — те же (OgnelissTypography), меняется
+ * только семейство.
+ */
+fun uiFontFamily(font: UiFont): FontFamily? = when (font) {
+    UiFont.SYSTEM -> null
+    UiFont.ROBOTO -> RobotoFamily
+    UiFont.SERIF -> FontFamily.Serif
+    UiFont.CONDENSED -> condensedFamily
+}
+
+/** Типографика со шрифтом [font]; «Системный» — прежняя, тот же объект. */
+fun typographyFor(font: UiFont): Typography {
+    val family = uiFontFamily(font) ?: return OgnelissTypography
+    return typographies.getOrPut(font) { OgnelissTypography.withFamily(family) }
+}
+
+private val RobotoFamily = FontFamily(
+    Font(R.font.roboto_regular, FontWeight.Normal),
+    Font(R.font.roboto_medium, FontWeight.Medium),
+    Font(R.font.roboto_bold, FontWeight.Bold)
+)
+
+// Создаётся при первом выборе: системный шрифт по имени, начертания
+// (обычное, Medium, полужирное) подбирает система
+private val condensedFamily: FontFamily by lazy {
+    FontFamily(android.graphics.Typeface.create("sans-serif-condensed", android.graphics.Typeface.NORMAL))
+}
+
+private val typographies = java.util.concurrent.ConcurrentHashMap<UiFont, Typography>()
+
+private fun Typography.withFamily(f: FontFamily) = copy(
+    displayLarge = displayLarge.copy(fontFamily = f),
+    displayMedium = displayMedium.copy(fontFamily = f),
+    displaySmall = displaySmall.copy(fontFamily = f),
+    headlineLarge = headlineLarge.copy(fontFamily = f),
+    headlineMedium = headlineMedium.copy(fontFamily = f),
+    headlineSmall = headlineSmall.copy(fontFamily = f),
+    titleLarge = titleLarge.copy(fontFamily = f),
+    titleMedium = titleMedium.copy(fontFamily = f),
+    titleSmall = titleSmall.copy(fontFamily = f),
+    bodyLarge = bodyLarge.copy(fontFamily = f),
+    bodyMedium = bodyMedium.copy(fontFamily = f),
+    bodySmall = bodySmall.copy(fontFamily = f),
+    labelLarge = labelLarge.copy(fontFamily = f),
+    labelMedium = labelMedium.copy(fontFamily = f),
+    labelSmall = labelSmall.copy(fontFamily = f)
+)

@@ -162,8 +162,24 @@ internal object ThemePresetMath {
     }
 
     /** Производные акцента: тон темы, насыщенность не выше [maxSat], яркость [light]. */
-    fun accentTone(spec: Spec, maxSat: Double, light: Double): Int {
-        val base = toHsl(spec.accent)
+    fun accentTone(spec: Spec, maxSat: Double, light: Double): Int = accentToneOf(spec.accent, maxSat, light)
+
+    /** Производные акцента [accent] (свой акцент, 1.9.0) — так же, как у темы. */
+    fun accentToneOf(accent: Int, maxSat: Double, light: Double): Int {
+        val base = toHsl(accent)
         return hsl(base.h, min(base.s, maxSat), light)
     }
+
+    /**
+     * Двенадцать готовых акцентов (1.9.0) — accentSwatches почты, в том же
+     * порядке: синий «Классики», голубой, бирюзовый, зелёный, оливковый,
+     * янтарный, оранжевый, красный, малиновый, фиолетовый, индиго,
+     * сине-серый. Исходные цвета: яркость под тему подбирают
+     * [accentLight] / [accentDark].
+     */
+    val ACCENTS: IntArray = intArrayOf(
+        0xFF1D4F91.toInt(), 0xFF1C76C9.toInt(), 0xFF00838F.toInt(), 0xFF2E7D32.toInt(),
+        0xFF6B8E23.toInt(), 0xFFB7791F.toInt(), 0xFFD2691E.toInt(), 0xFFC62828.toInt(),
+        0xFFC2185B.toInt(), 0xFF8E3FB5.toInt(), 0xFF4A4FC4.toInt(), 0xFF546E7A.toInt()
+    )
 }

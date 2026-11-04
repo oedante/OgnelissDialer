@@ -25,6 +25,7 @@ import com.ogneliss.dialer.settings.UiScale
 import androidx.core.view.WindowCompat
 import com.ogneliss.dialer.settings.ThemeMode
 import com.ogneliss.dialer.settings.ThemePreset
+import com.ogneliss.dialer.settings.ThemeLook
 
 /**
  * ТЕМА ПРИЛОЖЕНИЯ.
@@ -316,10 +317,15 @@ fun OgnelissDialerTheme(
     dynamicColor: Boolean = false,
     /** Масштаб интерфейса (1.5.6): разбор в UiScale.kt. */
     uiScale: UiScale = UiScale.DEFAULT,
-    /** Цветовая тема, как в Ogneliss Mail (1.8.4): разбор в ThemePresetMath. */
-    themePreset: ThemePreset = ThemePreset.CLASSIC,
+    /**
+     * Цветовая тема, свой акцент, скругление и шрифт — как «Оформление»
+     * Ogneliss Mail (1.8.4 — тема, 1.9.0 — остальное). По умолчанию —
+     * прежний вид диалера.
+     */
+    look: ThemeLook = ThemeLook(),
     content: @Composable () -> Unit
 ) {
+    val themePreset = look.preset
     val systemDark = isSystemInDarkTheme()
 
     val darkTheme = when (themeMode) {
@@ -350,7 +356,9 @@ fun OgnelissDialerTheme(
      * контраст и цвета из обоев — свои, как в почте. «Полночь» в тёмной
      * теме — чистый чёрный (палитра AMOLED).
      */
-    val presetApplies = themePreset != ThemePreset.CLASSIC &&
+    // Свой акцент (1.9.0) — там же, где тема: не при высоком контрасте
+    // и не при цветах из обоев
+    val presetApplies = (themePreset != ThemePreset.CLASSIC || look.accent != null) &&
         themeMode != ThemeMode.HIGH_CONTRAST &&
         !(dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
     val midnightBlack = presetApplies && darkTheme && ThemePresets.blackDark(themePreset)
@@ -367,9 +375,9 @@ fun OgnelissDialerTheme(
         themeMode == ThemeMode.HIGH_CONTRAST ->
             if (darkTheme) HighContrastDark else HighContrastLight
         themeMode == ThemeMode.BLACK_AMOLED || midnightBlack ->
-            presetScheme(AmoledColors, themePreset, presetApplies, dark = true)
-        darkTheme -> presetScheme(DarkColors, themePreset, presetApplies, dark = true)
-        else -> presetScheme(LightColors, themePreset, presetApplies, dark = false)
+            presetScheme(AmoledColors, themePreset, look.accent, presetApplies, dark = true)
+        darkTheme -> presetScheme(DarkColors, themePreset, look.accent, presetApplies, dark = true)
+        else -> presetScheme(LightColors, themePreset, look.accent, presetApplies, dark = false)
     }
 
     // Иконки системных панелей должны быть контрастны фону под ними,
@@ -392,9 +400,9 @@ fun OgnelissDialerTheme(
         themeMode == ThemeMode.HIGH_CONTRAST ->
             if (darkTheme) HighContrastDarkSurfaces else HighContrastLightSurfaces
         themeMode == ThemeMode.BLACK_AMOLED || midnightBlack ->
-            if (presetApplies) ThemePresets.surfaces(AmoledSurfaces, themePreset, scheme) else AmoledSurfaces
-        darkTheme -> if (presetApplies) ThemePresets.surfaces(DarkSurfaces, themePreset, scheme) else DarkSurfaces
-        else -> if (presetApplies) ThemePresets.surfaces(LightSurfaces, themePreset, scheme) else LightSurfaces
+            if (presetApplies) ThemePresets.surfaces(AmoledSurfaces, themePreset, scheme, look.accent != null) else AmoledSurfaces
+        darkTheme -> if (presetApplies) ThemePresets.surfaces(DarkSurfaces, themePreset, scheme, look.accent != null) else DarkSurfaces
+        else -> if (presetApplies) ThemePresets.surfaces(LightSurfaces, themePreset, scheme, look.accent != null) else LightSurfaces
     }
 
     /*
@@ -415,10 +423,17 @@ fun OgnelissDialerTheme(
         LocalUiScaleFactor provides scaleFactor,
         LocalOgnelissSurfaces provides surfaces
     ) {
+    /*
+     * Скругление и шрифт (1.9.0): формы темы и типографика — по выбору;
+     * токены карточек и полос читают множитель сами (CornerScale) — он
+     * ставится после сборки кадра, и экраны с токенами перерисовываются.
+     */
+    val cornerFactor = look.corners.factor
+    SideEffect { CornerScale.factor = cornerFactor }
     MaterialTheme(
         colorScheme = scheme,
-        typography = OgnelissTypography,
-        shapes = OgnelissShapes
+        typography = remember(look.font) { typographyFor(look.font) },
+        shapes = remember(cornerFactor) { shapesFor(cornerFactor) }
     ) {
         /*
          * ФОН РИСУЕТ COMPOSE, А НЕ ОКНО.
@@ -458,8 +473,16 @@ fun OgnelissDialerTheme(
  * а тема собирается заново при каждой смене настроек и на каждом экране
  * вызова (1.8.4).
  */
-private val presetSchemes = java.util.concurrent.ConcurrentHashMap<Triple<ColorScheme, ThemePreset, Boolean>, ColorScheme>()
+private data class SchemeKey(val base: ColorScheme, val preset: ThemePreset, val accent: Int?, val dark: Boolean)
 
-private fun presetScheme(base: ColorScheme, preset: ThemePreset, applies: Boolean, dark: Boolean): ColorScheme =
+private val presetSchemes = java.util.concurrent.ConcurrentHashMap<SchemeKey, ColorScheme>()
+
+private fun presetScheme(
+    base: ColorScheme,
+    preset: ThemePreset,
+    accent: Int?,
+    applies: Boolean,
+    dark: Boolean
+): ColorScheme =
     if (!applies) base
-    else presetSchemes.getOrPut(Triple(base, preset, dark)) { ThemePresets.scheme(base, preset, dark) }
+    else presetSchemes.getOrPut(SchemeKey(base, preset, accent, dark)) { ThemePresets.scheme(base, preset, dark, accent) }

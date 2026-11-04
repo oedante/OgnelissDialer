@@ -17,7 +17,13 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 - **1.3.1** (versionCode 29) — выпуск без обоев: подтверждение
   необратимых действий, закреплённые при пустом журнале, имя на обложке
   (`docs/RELEASE_NOTES_1.3.1.md`). Внутренний тест → рабочая версия.
-- **1.8.4** (versionCode 52, база 8) — к тесту (`docs/RELEASE_NOTES_1.8.4.md`): автор сравнил экраны
+- **1.9.0** (versionCode 53, база 8) — к выпуску (`docs/RELEASE_NOTES_1.9.0.md`): «Оформление» как в Ogneliss Mail —
+  **свой акцент** (12 готовых и свой цвет, в окне «Цветовой темы» — `ColorThemeDialog`, хранится вместе с темой
+  строкой «ТЕМА|#AARRGGBB»), **шрифт** (системный / Roboto из `res/font` / Noto Serif / Roboto Condensed —
+  `typographyFor`), **скругление** (× 0,5 / 1 / 1,4 — `CornerScale`, `shapesFor`), **плотность** журнала
+  и контактов (`LocalAppearance.rowPadding`, `avatarSize`). Тема строится из `ThemeLook` (`Prefs.themeLook`).
+  1.8.4 отдельно не выпускалась — всё ниже входит в 1.9.0.
+- **1.8.4** (versionCode 52, база 8) — не выпускалась, вошла в 1.9.0 (`docs/RELEASE_NOTES_1.8.4.md`): автор сравнил экраны
   с Ogneliss Mail — почта стояла на теме «Графит». **Цветовые темы как в почте** (Классика, Небо, Океан,
   Лес, Закат, Графит, Полночь; Оформление → «Цветовая тема»; расчёт `ThemePresetMath` — перенос
   `theme_palette.dart`/`AccentFit`, применение `ThemePresets`; «Классика» — прежние цвета).
@@ -257,6 +263,7 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 | Цветовые темы (как в почте), плотность строк | `ui/theme/ThemePresetMath.kt`, `ThemePresets.kt`, `ui/components/OgnelissListRow.kt` (`OgnelissRowLayout`) (1.8.4) |
 | Цвета снимка: тон под именем на обложке, тоны живого фона | `ui/theme/PhotoPalette.kt`, `ui/components/PhotoColors.kt` (1.8.4) |
 | Фото на весь экран | `ui/components/PhotoViewer.kt` (1.8.4) |
+| Оформление: акцент, шрифт, скругление, плотность | `settings/Prefs.kt` (`ThemeLook`, `CornerSize`, `ListDensity`, `UiFont`), `ui/screens/ColorThemeDialog.kt`, `ui/theme/Shape.kt` (`CornerScale`), `Type.kt` (`typographyFor`), `LocalAppearance.kt` (1.9.0) |
 | Авто-громкая связь | `call/SmartSpeakerController.kt` |
 | Пропущенные + счётчик на значке | `call/MissedCallsNotifier.kt` |
 | Диагностика вызовов в журнал | `log/CallDiagnostics.kt` |

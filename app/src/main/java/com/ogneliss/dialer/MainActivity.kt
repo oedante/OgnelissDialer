@@ -171,8 +171,9 @@ class MainActivity : ComponentActivity() {
             // Масштаб интерфейса под экран (1.5.6): разбор в ui/theme/UiScale.kt
             val uiScale by vm.prefs.uiScale.collectAsStateWithLifecycle(com.ogneliss.dialer.settings.UiScale.DEFAULT)
 
-            val themePreset by vm.prefs.themePreset.collectAsStateWithLifecycle(com.ogneliss.dialer.settings.ThemePreset.CLASSIC)
-            OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic, uiScale = uiScale, themePreset = themePreset) {
+            // Тема, акцент, скругление, шрифт (1.8.4–1.9.0)
+            val themeLook by vm.prefs.themeLook.collectAsStateWithLifecycle(com.ogneliss.dialer.settings.ThemeLook())
+            OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic, uiScale = uiScale, look = themeLook) {
                 // Раскладка окна: телефон, лёжа, раскладушка, планшет.
                 // Разбор — в ui/adaptive/WindowLayout.kt
                 ProvideWindowLayout(this@MainActivity) {

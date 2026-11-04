@@ -2,6 +2,8 @@ package com.ogneliss.dialer.ui.theme
 
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.ogneliss.dialer.settings.ListDensity
 
 /**
  * НАСТРОЙКИ ОФОРМЛЕНИЯ, ДОСТУПНЫЕ ЛЮБОМУ ЭКРАНУ.
@@ -44,7 +46,14 @@ data class Appearance(
      * Не касается кнопок, где текст — сама кнопка («Завершить»,
      * «Ответить»): без текста там осталась бы пустая таблетка.
      */
-    val buttonLabels: Boolean = true
+    val buttonLabels: Boolean = true,
+    /**
+     * ПЛОТНОСТЬ ЖУРНАЛА И КОНТАКТОВ (1.9.0, как «Плотность ленты» Ogneliss
+     * Mail): поле строки сверху и снизу и аватар — как DensitySpec почты.
+     * Компактная — 2 dp и 36 dp (строка не ниже 48 dp), обычная — 10 и 48
+     * (прежний вид), просторная — 14 и 52.
+     */
+    val listDensity: ListDensity = ListDensity.NORMAL
 ) {
     /** Высота клавиши с учётом режима крупных кнопок. */
     val dialKeyHeight: Dp
@@ -53,8 +62,28 @@ data class Appearance(
     val callButtonHeight: Dp
         get() = if (largeButtons) Dimens.callButtonHeightLarge else Dimens.callButtonHeight
 
+    /** Аватар в строке списка: крупные кнопки — крупный, иначе по плотности. */
     val avatarSize: Dp
-        get() = if (largeButtons) Dimens.avatarSizeLarge else Dimens.avatarSize
+        get() = when {
+            largeButtons -> Dimens.avatarSizeLarge
+            listDensity == ListDensity.COMPACT -> 36.dp
+            listDensity == ListDensity.COMFORTABLE -> 52.dp
+            else -> Dimens.avatarSize
+        }
+
+    /**
+     * Поле строки журнала и контактов сверху и снизу. [outlined] —
+     * высококонтрастная тема: там строки делит линия, и поле на 4 dp
+     * меньше (как было: 6 вместо 10), но не меньше 2.
+     */
+    fun rowPadding(outlined: Boolean): Dp {
+        val base = when (listDensity) {
+            ListDensity.COMPACT -> 2.dp
+            ListDensity.NORMAL -> 10.dp
+            ListDensity.COMFORTABLE -> 14.dp
+        }
+        return if (outlined) (base - 4.dp).coerceAtLeast(2.dp) else base
+    }
 }
 
 /**

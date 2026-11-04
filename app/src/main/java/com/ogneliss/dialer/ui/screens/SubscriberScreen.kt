@@ -1436,15 +1436,18 @@ fun SubscriberScreen(
                             BoxWithConstraints(
                                 Modifier
                                     /*
-                                     * Следующий раздел начинается на COVER_SHEET_PULL
-                                     * выше низа обложки — уже на листе: иначе между
+                                     * Следующий раздел начинается на 20 dp (лист
+                                     * минус COVER_SHEET_EDGE) выше низа обложки — уже на листе: иначе между
                                      * краем листа и «Номерами» было бы 28 dp листа
                                      * и ещё 16 dp поля подписи. Обложка рисуется
                                      * целиком, а место занимает на эти 20 dp меньше.
                                      */
                                     .layout { measurable, constraints ->
                                         val placeable = measurable.measure(constraints)
-                                        val pull = COVER_SHEET_PULL.roundToPx().coerceAtMost(placeable.height)
+                                        // Лист выше или ниже по скруглению (1.9.0) —
+                                        // раздел всё равно на 24 dp ниже его края
+                                        val pull = (com.ogneliss.dialer.ui.theme.sheetRadius(COVER_SHEET) - COVER_SHEET_EDGE)
+                                            .roundToPx().coerceIn(0, placeable.height)
                                         layout(placeable.width, placeable.height - pull) {
                                             placeable.place(0, 0)
                                         }
@@ -1468,8 +1471,9 @@ fun SubscriberScreen(
                                     .onGloballyPositioned { coverHeightPx = it.size.height }
                                     .clipToBounds()
                             ) {
-                                // Лист — не выше трети обложки (плоская лёжа — 120 dp)
-                                val sheet = minOf(COVER_SHEET, maxHeight / 3)
+                                // Лист — не выше трети обложки (плоская лёжа — 120 dp);
+                                // скругление — из настроек, как у шторок (1.9.0)
+                                val sheet = minOf(com.ogneliss.dialer.ui.theme.sheetRadius(COVER_SHEET), maxHeight / 3)
                                 // Доля высоты, где начинается лист: там затемнение
                                 // под именем уже набрало силу
                                 val sheetTop = if (maxHeight > 0.dp) {
@@ -2670,8 +2674,12 @@ fun SubscriberScreen(
  * и скругление его верхних углов, как у шторок и нижних панелей.
  */
 private val COVER_SHEET = 28.dp
-/** Следующий раздел начинается выше низа обложки — уже на листе. */
-private val COVER_SHEET_PULL = 20.dp
+/**
+ * Следующий раздел начинается выше низа обложки — уже на листе, на этом
+ * расстоянии ниже края листа (при среднем скруглении — на 20 dp выше низа
+ * обложки; с полем подписи 16 dp «Номера» на 24 dp ниже края листа).
+ */
+private val COVER_SHEET_EDGE = 8.dp
 /** Низ имени — над краем листа. */
 private val COVER_NAME_GAP = 14.dp
 /** Фото при прокрутке уезжает с этой долей скорости листа. */
