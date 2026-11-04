@@ -43,11 +43,16 @@ fun rememberNumberInfoLabels(): CallLogRowMapper.Labels {
     // Имя от оператора (1.8.0): чья подпись в заголовке
     val networkLine = stringResource(R.string.cnap_source_line)
     val networkNamedFormat = stringResource(R.string.cnap_source_named)
+    // Сообщения в журнале (1.10.0)
+    val youFormat = stringResource(R.string.sms_you)
+    val picture = stringResource(R.string.sms_picture)
+    val mms = stringResource(R.string.sms_mms)
+    val messageWord = stringResource(R.string.sms_message)
 
     return remember(
         premium, tollFree, shortCode, international,
         incoming, outgoing, missed, rejected, blocked, today, yesterday,
-        networkLine, networkNamedFormat
+        networkLine, networkNamedFormat, youFormat, picture, mms, messageWord
     ) {
         object : CallLogRowMapper.Labels {
 
@@ -61,8 +66,22 @@ fun rememberNumberInfoLabels(): CallLogRowMapper.Labels {
             override val fingerprint: Int = listOf(
                 premium, tollFree, shortCode, international,
                 incoming, outgoing, missed, rejected, blocked, today, yesterday,
-                networkLine, networkNamedFormat, java.util.Locale.getDefault().toLanguageTag()
+                networkLine, networkNamedFormat, youFormat, picture, mms, messageWord,
+                java.util.Locale.getDefault().toLanguageTag()
             ).hashCode().let { if (it == 0) 1 else it }
+
+            override fun messageLine(
+                message: com.ogneliss.dialer.sms.JournalMessage,
+                outgoing: Boolean
+            ): String {
+                val text = message.text.replace('\n', ' ').trim().ifEmpty {
+                    if (message.hasAttachment) picture else mms
+                }
+                return if (outgoing) String.format(java.util.Locale.getDefault(), youFormat, text) else text
+            }
+
+            override fun messageAccessibility(title: String, line: String, date: String): String =
+                "$title, $messageWord, $line, $date"
 
             override fun infoSummary(info: NumberInfo?): String? {
                 if (info == null) return null

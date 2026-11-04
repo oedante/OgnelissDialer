@@ -8,8 +8,9 @@ import com.ogneliss.dialer.R
 
 /**
  * Открытие внешних приложений по номеру/адресу.
- * Приложение НИЧЕГО не отправляет само — только передаёт намерение системе,
- * пользователь завершает действие в приложении по умолчанию.
+ * Приложение передаёт намерение системе, пользователь завершает действие
+ * в приложении по умолчанию. Исключение — SMS (1.10.0): по выбору человека
+ * переписка открывается в самом диалере (см. [sms]).
  */
 object ExternalApps {
 
@@ -22,19 +23,38 @@ object ExternalApps {
         context.packageManager.getPackageInfo(pkg, 0); true
     }.getOrDefault(false)
 
-    /** Системное SMS-приложение по умолчанию. Роль SMS-handler не нужна. */
+    /**
+     * «НАПИСАТЬ» (1.10.0): переписка в диалере или приложение сообщений.
+     *
+     * Было: только намерение системе — SMS писало приложение сообщений.
+     * Стало: выбор человека (Настройки → Журнал → Сообщения). Диалер —
+     * приложение SMS или телефон по умолчанию с «Писать SMS в диалере» —
+     * намерение адресовано себе (setPackage): открывается своя переписка,
+     * без окна «Открыть с помощью». Иначе — приложению SMS по умолчанию,
+     * тоже без окна выбора.
+     */
     fun sms(context: Context, number: String, body: String? = null) = launch(
         context,
-        Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:$number")).apply {
+        smsIntent(context, number).apply {
             body?.let { putExtra("sms_body", it) }
         }
     )
 
+    /** Намерение «написать на [number]» — себе или приложению SMS по умолчанию. */
+    fun smsIntent(context: Context, number: String): Intent =
+        Intent(Intent.ACTION_SENDTO, Uri.fromParts("smsto", number, null)).apply {
+            val target = if (com.ogneliss.dialer.sms.SmsSettings.composeHere(context)) context.packageName
+            else android.provider.Telephony.Sms.getDefaultSmsPackage(context)
+            target?.let { setPackage(it) }
+        }
+
     /**
      * SMS С ВЫБРАННОЙ SIM (1.7.0) — ПОДСКАЗКОЙ, А НЕ ПРИКАЗОМ.
      *
-     * Отправляет сообщение приложение SMS, а не мы: роли SMS у нас нет
-     * и не будет (без доступа к сети и переписке). Общего способа сказать
+     * 1.10.0: переписка в диалере понимает номер подписки сама
+     * (MainActivity → «conversation»), карта выбирается точно.
+     *
+     * Для приложения сообщений — по-прежнему подсказка. Общего способа сказать
      * ему «с этой карты» Android не даёт. Кладём в намерение подсказки,
      * которые понимают разные приложения сообщений: номер подписки
      * (subscription, android.telephony.extra.SUBSCRIPTION_INDEX) и слот.
@@ -43,7 +63,7 @@ object ExternalApps {
      */
     fun smsFromSim(context: Context, number: String, subscriptionId: Int, slotIndex: Int) = launch(
         context,
-        Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:$number")).apply {
+        smsIntent(context, number).apply {
             putExtra("subscription", subscriptionId)
             putExtra("subscription_id", subscriptionId)
             putExtra("android.telephony.extra.SUBSCRIPTION_INDEX", subscriptionId)

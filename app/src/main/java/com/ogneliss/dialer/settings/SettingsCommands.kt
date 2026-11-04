@@ -109,6 +109,9 @@ class SettingsCommands @Inject constructor(
             "block_unknown" -> prefs.setBlockNotInContacts(value)
             "block_tagged" -> prefs.setBlockTaggedSpam(value)
             "scam_memo" -> prefs.setScamMemo(value)
+            "sms_in_app" -> prefs.setSmsInApp(value)
+            "sms_in_journal" -> prefs.setSmsInJournal(value)
+            "sms_delivery_reports" -> prefs.setSmsDeliveryReports(value)
             "file_logging" -> {
                 prefs.setFileLogging(value)
                 Logger.setFileLogging(value)
@@ -544,7 +547,9 @@ class SettingsCommands @Inject constructor(
             "block_hidden", "block_unknown", "block_tagged", "file_logging",
             "dialpad_open_at_start",
             // 1.8.0
-            "scam_memo"
+            "scam_memo",
+            // 1.10.0
+            "sms_in_app", "sms_in_journal", "sms_delivery_reports"
         )
 
         /** Ключи, которые обрабатывает setChoice. */

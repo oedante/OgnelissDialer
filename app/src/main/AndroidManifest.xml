@@ -61,6 +61,18 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <!--
+      SMS и MMS (1.10.0, разбор — sms/SmsRole.kt). По правилам Google Play
+      SEND_SMS доступно приложению для звонков по умолчанию — отправка SMS
+      из диалера. Остальные — только приложению SMS по умолчанию: журнал
+      и переписка, приём SMS и MMS. Их выдаёт сама роль SMS, когда человек
+      её выбирает; без роли приложение их не просит и не читает SMS.
+    -->
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_MMS" />
+
+    <!--
       РАЗРЕШЕНИЕ INTERNET НАМЕРЕННО ОТСУТСТВУЕТ.
       Все данные (журнал, контакты, блок-лист, определение номера)
       обрабатываются исключительно на устройстве. Без этого разрешения
@@ -143,6 +155,21 @@
             <intent-filter>
                 <action android:name="android.intent.action.CALL_BUTTON" />
                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <!--
+              Написать SMS (1.10.0): кнопки «Написать» других приложений
+              и самого диалера открывают переписку здесь. Обязательно для
+              приложения SMS по умолчанию.
+            -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SENDTO" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="sms" />
+                <data android:scheme="smsto" />
+                <data android:scheme="mms" />
+                <data android:scheme="mmsto" />
             </intent-filter>
         </activity>
 
@@ -331,6 +358,48 @@
                 android:value="androidx.startup"
                 tools:node="remove" />
         </provider>
+
+        <!--
+          SMS и MMS (1.10.0) — части приложения SMS по умолчанию: без них
+          система не даст выбрать диалер приложением SMS. Рассылки
+          SMS_DELIVER и WAP_PUSH_DELIVER защищены разрешениями системы —
+          подделать входящее SMS другое приложение не может.
+        -->
+        <receiver
+            android:name=".sms.SmsDeliverReceiver"
+            android:exported="true"
+            android:permission="android.permission.BROADCAST_SMS">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_DELIVER" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".sms.MmsTransport$PushReceiver"
+            android:exported="true"
+            android:permission="android.permission.BROADCAST_WAP_PUSH">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.WAP_PUSH_DELIVER" />
+                <data android:mimeType="application/vnd.wap.mms-message" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name=".sms.RespondViaMessageService"
+            android:exported="true"
+            android:permission="android.permission.SEND_RESPOND_VIA_MESSAGE">
+            <intent-filter>
+                <action android:name="android.intent.action.RESPOND_VIA_MESSAGE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="sms" />
+                <data android:scheme="smsto" />
+                <data android:scheme="mms" />
+                <data android:scheme="mmsto" />
+            </intent-filter>
+        </service>
+        <!-- Ответы сети на отправку, скачанные MMS, кнопки уведомления — только от нас -->
+        <receiver android:name=".sms.SmsSender$StatusReceiver" android:exported="false" />
+        <receiver android:name=".sms.MmsTransport$DownloadedReceiver" android:exported="false" />
+        <receiver android:name=".sms.MmsTransport$SentReceiver" android:exported="false" />
+        <receiver android:name=".sms.MessageNotifications$ActionReceiver" android:exported="false" />
 
         <receiver android:name=".background.BootReceiver" android:exported="false">
             <intent-filter>

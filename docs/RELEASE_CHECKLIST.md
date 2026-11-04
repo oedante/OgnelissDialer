@@ -81,13 +81,14 @@ aapt dump permissions app/build/outputs/apk/release/app-release.apk
 aapt dump permissions app/build/outputs/apk/release/app-release.apk | grep INTERNET
 ```
 
-Ожидаемый список разрешений (20 штук):
+Ожидаемый список разрешений (24 штуки):
 `CALL_PHONE`, `READ_PHONE_STATE`, `READ_PHONE_NUMBERS`, `ANSWER_PHONE_CALLS`,
 `READ_CALL_LOG`, `WRITE_CALL_LOG`, `READ_CONTACTS`, `WRITE_CONTACTS`,
 `MANAGE_OWN_CALLS`, `POST_NOTIFICATIONS`, `VIBRATE`, `MODIFY_AUDIO_SETTINGS`,
 `BLUETOOTH_CONNECT`, `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_PHONE_CALL`,
 `SYSTEM_ALERT_WINDOW`, `SCHEDULE_EXACT_ALARM`, `RECEIVE_BOOT_COMPLETED`,
-`USE_FULL_SCREEN_INTENT`, `WAKE_LOCK` (с 1.8.1 объявлен явно; его же добавляет WorkManager).
+`USE_FULL_SCREEN_INTENT`, `WAKE_LOCK` (с 1.8.1 объявлен явно; его же добавляет WorkManager),
+`SEND_SMS`, `READ_SMS`, `RECEIVE_SMS`, `RECEIVE_MMS` (с 1.10.0: сообщения; см. PLAY_COMPLIANCE.md, раздел 1а).
 
 **Ничего сверх этого списка быть не должно.** Лишнее разрешение —
 повод для вопросов на ревью и падения конверсии установок.

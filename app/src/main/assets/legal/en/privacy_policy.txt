@@ -1,7 +1,7 @@
 Privacy Policy
 
 Ogneliss Dialer
-Last updated: 22 October 2026
+Last updated: 5 November 2026
 
 THE SHORT VERSION
 
@@ -33,6 +33,8 @@ Contacts — to match names and photos to numbers, T9 search. No.
 SIM card state — to detect active cards and choose one for a call. No.
 Notes and tags you create — stored in the app database. No.
 Block and allow lists — call filtering. No.
+SMS and MMS* — conversations and messages in the call log, sending your
+messages, copying codes. No**.
 
 None of this data is transmitted anywhere. There is no server, no
 analytics, no advertising identifiers, no crash reporting service.
@@ -46,6 +48,18 @@ rules, settings — is stored in the application's private storage, which
 is not accessible to other applications.
 
 Uninstalling the Application deletes all of this data.
+
+* SMS and MMS. The Application reads messages only if you have made it
+your default SMS app, and stops as soon as you choose another one. It can
+send SMS without that role — when you tap "Send". Verification codes and
+phone numbers in message text are recognised on the device and reach the
+clipboard only when you tap "Copy"; a code is marked as sensitive for the
+system.
+
+** A message you send is, by the nature of SMS and MMS, delivered to your
+carrier and to the recipient. The transfer is performed by the Android
+system, not by the Application, which still has no network access.
+Messages are not passed anywhere else.
 
 
 4. The only case where data may leave the device

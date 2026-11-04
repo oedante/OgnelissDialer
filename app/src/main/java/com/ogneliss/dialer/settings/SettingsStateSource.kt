@@ -159,6 +159,15 @@ class SettingsStateSource @Inject constructor(
         CallHelp(mode, pace, memo)
     }
 
+    /** Сообщения (1.10.0). */
+    private val sms: Flow<Sms> = combine(
+        prefs.smsInApp,
+        prefs.smsInJournal,
+        prefs.smsDeliveryReports
+    ) { inApp, inJournal, reports ->
+        Sms(inApp, inJournal, reports)
+    }
+
     /**
      * Итоговый снимок.
      *
@@ -170,8 +179,9 @@ class SettingsStateSource @Inject constructor(
         gestures, calls,
         // Шестая группа — парой со «после звонка»: у combine предел пять
         combine(postCall, callHelp) { p, h -> p to h },
-        spam
-    ) { (a, n), g, c, (p, h), s ->
+        // Сообщения (1.10.0) — парой с фильтрацией по той же причине
+        combine(spam, sms) { s, m -> s to m }
+    ) { (a, n), g, c, (p, h), (s, m) ->
         SettingsState(
             theme = a.theme,
             dynamicColor = a.dynamicColor,
@@ -227,6 +237,10 @@ class SettingsStateSource @Inject constructor(
             autoRedialMode = h.autoRedialMode,
             autoRedialPace = h.autoRedialPace,
             scamMemo = h.scamMemo,
+
+            smsInApp = m.inApp,
+            smsInJournal = m.inJournal,
+            smsDeliveryReports = m.deliveryReports,
 
             fileLogging = true
         )
@@ -297,6 +311,12 @@ class SettingsStateSource @Inject constructor(
         val blockNotInContacts: Boolean,
         val blockTaggedSpam: Boolean,
         val quietHours: QuietHours
+    )
+
+    private data class Sms(
+        val inApp: Boolean,
+        val inJournal: Boolean,
+        val deliveryReports: Boolean
     )
 
     private data class CallHelp(

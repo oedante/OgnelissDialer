@@ -515,6 +515,10 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val AUTO_REDIAL_PACE = stringPreferencesKey("auto_redial_pace")
         /** Памятка о мошенниках в долгом разговоре с незнакомым (1.8.0). */
         val SCAM_MEMO = booleanPreferencesKey("scam_memo")
+        /** Сообщения (1.10.0): разбор в sms/SmsRole.kt (SmsSettings). */
+        val SMS_IN_APP = booleanPreferencesKey("sms_in_app")
+        val SMS_IN_JOURNAL = booleanPreferencesKey("sms_in_journal")
+        val SMS_DELIVERY_REPORTS = booleanPreferencesKey("sms_delivery_reports")
         val NOTES_RETENTION = stringPreferencesKey("notes_retention")
         val NOTES_RETENTION_SCOPE = stringPreferencesKey("notes_retention_scope")
         // Экран после звонка
@@ -840,6 +844,15 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      */
     val scamMemo: Flow<Boolean> = data.map { it[Keys.SCAM_MEMO] ?: true }
 
+    /*
+     * Сообщения (1.10.0). Умолчания — те же, что у SmsSettings: писать
+     * в диалере — да, SMS в журнале — да, отчёт о доставке — нет (часть
+     * операторов берёт за него плату).
+     */
+    val smsInApp: Flow<Boolean> = data.map { it[Keys.SMS_IN_APP] ?: true }
+    val smsInJournal: Flow<Boolean> = data.map { it[Keys.SMS_IN_JOURNAL] ?: true }
+    val smsDeliveryReports: Flow<Boolean> = data.map { it[Keys.SMS_DELIVERY_REPORTS] ?: false }
+
     /**
      * Открывать клавиатуру сразу при запуске.
      *
@@ -1089,6 +1102,25 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setAutoRedialPace(v: RedialPace) =
         edit("auto_redial_pace", v.name) { it[Keys.AUTO_REDIAL_PACE] = v.name }
     suspend fun setScamMemo(v: Boolean) = edit("scam_memo", v) { it[Keys.SCAM_MEMO] = v }
+
+    /*
+     * Настройки сообщений повторяются в SmsSettings (SharedPreferences):
+     * приёмник SMS и кнопки «Написать» решают сразу, без чтения DataStore.
+     */
+    suspend fun setSmsInApp(v: Boolean) {
+        edit("sms_in_app", v) { it[Keys.SMS_IN_APP] = v }
+        com.ogneliss.dialer.sms.SmsSettings.put(context, com.ogneliss.dialer.sms.SmsSettings.KEY_IN_APP, v)
+    }
+
+    suspend fun setSmsInJournal(v: Boolean) {
+        edit("sms_in_journal", v) { it[Keys.SMS_IN_JOURNAL] = v }
+        com.ogneliss.dialer.sms.SmsSettings.put(context, com.ogneliss.dialer.sms.SmsSettings.KEY_IN_JOURNAL, v)
+    }
+
+    suspend fun setSmsDeliveryReports(v: Boolean) {
+        edit("sms_delivery_reports", v) { it[Keys.SMS_DELIVERY_REPORTS] = v }
+        com.ogneliss.dialer.sms.SmsSettings.put(context, com.ogneliss.dialer.sms.SmsSettings.KEY_DELIVERY_REPORTS, v)
+    }
     suspend fun setQuietHours(v: QuietHours) =
         edit("quiet_hours", v.name) { it[Keys.QUIET_HOURS] = v.name }
     suspend fun setNotesRetention(v: NotesRetention.Period) =

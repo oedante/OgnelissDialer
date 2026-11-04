@@ -185,6 +185,8 @@ object CallLogGrouper {
         // На случай, если вызывающий код передал записи не по порядку
         val sorted = entries.sortedByDescending { it.date }
         val latest = sorted.first()
+        // Счётчики и длительность — только по вызовам: SMS (1.10.0) — не звонки
+        val calls = sorted.filter { !it.isMessage }
 
         return CallLogGroup(
             key = cardKey(latest, contactIdByNumber),
@@ -200,13 +202,13 @@ object CallLogGrouper {
             lastDate = latest.date,
             durationSec = latest.durationSec,
             count = sorted.size,
-            incomingCount = sorted.count { it.type == CallType.INCOMING },
-            outgoingCount = sorted.count { it.type == CallType.OUTGOING },
-            missedCount = sorted.count { it.type == CallType.MISSED },
-            rejectedCount = sorted.count {
+            incomingCount = calls.count { it.type == CallType.INCOMING },
+            outgoingCount = calls.count { it.type == CallType.OUTGOING },
+            missedCount = calls.count { it.type == CallType.MISSED },
+            rejectedCount = calls.count {
                 it.type == CallType.REJECTED || it.type == CallType.BLOCKED
             },
-            totalDurationSec = sorted.sumOf { it.durationSec },
+            totalDurationSec = calls.sumOf { it.durationSec },
             /*
              * ОДИН НОМЕР — ОДНА СТРОКА.
              *
@@ -229,7 +231,9 @@ object CallLogGrouper {
                 .distinctBy { PhoneFormatter.toE164(it).ifBlank { it } },
             subscriptionId = latest.phoneAccountId,
             subscriptionLabel = simLabelResolver(latest.phoneAccountId),
-            entries = sorted
+            entries = sorted,
+            lastMessage = latest.message,
+            unreadMessages = sorted.count { it.message?.unread == true }
         )
     }
 }

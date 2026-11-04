@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.theme.OgnelissTheme
 import androidx.compose.ui.graphics.compositeOver
@@ -339,11 +340,17 @@ fun CallLogCard(
                         )
                     } else Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            typeIcon(row.lastType),
+                            // Сообщение (1.10.0) — облачко вместо стрелки вызова
+                            if (row.messageLine != null) OgnelissIcons.Textsms else typeIcon(row.lastType),
                             contentDescription = null,
                             modifier = Modifier.size(FlowUi.iconSizeSmall),
-                            tint = if (row.hasMissed) MaterialTheme.colorScheme.error
-                            else MaterialTheme.colorScheme.outline
+                            tint = when {
+                                row.messageLine != null && row.messageFailed -> MaterialTheme.colorScheme.error
+                                row.messageLine != null && row.messageUnread -> MaterialTheme.colorScheme.primary
+                                row.messageLine != null -> MaterialTheme.colorScheme.outline
+                                row.hasMissed -> MaterialTheme.colorScheme.error
+                                else -> MaterialTheme.colorScheme.outline
+                            }
                         )
                         // Бейдж показывает НОМЕР СЛОТА, а не номер абонента:
                         // раньше сюда попадал ноль независимо от карты,
@@ -389,6 +396,26 @@ fun CallLogCard(
                      * прокрутки; раскрытие показывает, что это следствие
                      * нажатия.
                      */
+                    /*
+                     * ТЕКСТ СООБЩЕНИЯ (1.10.0) — третьей строкой, одной, как
+                     * превью письма в Ogneliss Mail: непрочитанное — темнее
+                     * и Medium, не отправленное — красным.
+                     */
+                    row.messageLine?.let { line ->
+                        Text(
+                            line,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = if (row.messageUnread) FontWeight.Medium else FontWeight.Normal,
+                            color = when {
+                                row.messageFailed -> MaterialTheme.colorScheme.error
+                                row.messageUnread -> MaterialTheme.colorScheme.onSurface
+                                else -> MaterialTheme.colorScheme.onSurfaceVariant
+                            },
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(top = Space.xxs)
+                        )
+                    }
                     AnimatedVisibility(
                         visible = row.blockedLabel != null,
                         enter = expandVertically() + fadeIn(),

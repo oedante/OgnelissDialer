@@ -265,8 +265,18 @@ class CallLogRepository @Inject constructor(
      * несколько номеров, и удаление по номеру снесло бы не то.
      */
     override suspend fun deleteGroup(group: CallLogGroup): Boolean = withContext(io) {
-        if (!PermissionGuard.canWriteCallLog(context)) return@withContext false
-        val ids = group.entries.map { it.id }.ifEmpty { listOf(group.lastCallId) }
+        /*
+         * Сообщения группы (1.10.0, отрицательные id — Message.journalId)
+         * удаляются из хранилища SMS, вызовы — из журнала. Группа из одних
+         * сообщений журнал вызовов не трогает вовсе.
+         */
+        val messageKeys = group.entries.mapNotNull { it.message?.key }
+        val messagesDeleted = if (messageKeys.isEmpty()) 0
+        else com.ogneliss.dialer.sms.MessageStore.delete(context, messageKeys)
+        val ids = group.entries.filter { !it.isMessage }.map { it.id }
+            .ifEmpty { if (messageKeys.isEmpty()) listOf(group.lastCallId) else emptyList() }
+        if (ids.isEmpty()) return@withContext messagesDeleted > 0
+        if (!PermissionGuard.canWriteCallLog(context)) return@withContext messagesDeleted > 0
         runCatching {
             val placeholders = ids.joinToString(",") { "?" }
             val deleted = context.contentResolver.delete(

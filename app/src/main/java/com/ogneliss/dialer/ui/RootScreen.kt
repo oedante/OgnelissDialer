@@ -144,7 +144,9 @@ fun RootScreen(
      */
     openCardForNumber: String? = null,
     /** Открыть списки блокировки сразу после запуска: из уведомления. */
-    openBlockLists: Boolean = false
+    openBlockLists: Boolean = false,
+    /** Открыть переписку (1.10.0): «Написать», ссылка sms:, уведомление. */
+    openConversation: com.ogneliss.dialer.ui.conversation.ConversationRequest? = null
 ) {
     val nav = rememberNavController()
 
@@ -331,6 +333,21 @@ fun RootScreen(
     LaunchedEffect(openCardForNumber) {
         openCardForNumber?.let { number ->
             nav.navigate("subscriber/" + android.net.Uri.encode("number:$number"))
+        }
+    }
+
+    /*
+     * Переписка (1.10.0). Ключ — и запрос, и счётчик намерений: второе
+     * «Написать» тому же человеку после «Назад» — то же намерение,
+     * и без счётчика экран бы не открылся. Та же переписка уже открыта —
+     * она заменяется, а не копится в стеке.
+     */
+    LaunchedEffect(openConversation, prefillToken) {
+        openConversation?.let { request ->
+            nav.navigate(request.route()) {
+                popUpTo(com.ogneliss.dialer.ui.conversation.ConversationRequest.ROUTE) { inclusive = true }
+                launchSingleTop = true
+            }
         }
     }
 
@@ -949,6 +966,27 @@ fun RootScreen(
                     )
                 }
 
+                /*
+                 * Переписка SMS (1.10.0): из журнала, карточки, уведомления
+                 * и ссылок sms: других приложений.
+                 */
+                composable(
+                    com.ogneliss.dialer.ui.conversation.ConversationRequest.ROUTE,
+                    arguments = listOf(
+                        navArgument(com.ogneliss.dialer.ui.conversation.ConversationRequest.ARG_ADDRESS) { defaultValue = ""; type = NavType.StringType },
+                        navArgument(com.ogneliss.dialer.ui.conversation.ConversationRequest.ARG_BODY) { defaultValue = ""; type = NavType.StringType },
+                        navArgument(com.ogneliss.dialer.ui.conversation.ConversationRequest.ARG_SUB) { defaultValue = -1; type = NavType.IntType }
+                    )
+                ) {
+                    com.ogneliss.dialer.ui.conversation.ConversationScreen(
+                        onBack = { nav.popBackStack() },
+                        onOpenCard = { number ->
+                            nav.navigate("subscriber/" + android.net.Uri.encode("number:$number"))
+                        },
+                        onCall = { number -> vm.call(number) }
+                    )
+                }
+
                 composable("swipe_tuning") {
                     SwipeTuningScreen(vm = vm, onBack = { nav.popBackStack() })
                 }
@@ -1318,6 +1356,22 @@ private fun runSettingAction(
 
         "log_save" -> saveToFile?.invoke({ vm.buildLogText() }, "ogneliss.log")
         "stats" -> nav.navigate("stats")
+        /*
+         * Приложение SMS по умолчанию (1.10.0). Уже по умолчанию — системный
+         * выбор приложений: отказаться от роли можно только там.
+         */
+        "sms_default_app" -> {
+            val activity = context as? android.app.Activity
+            val request = com.ogneliss.dialer.sms.SmsRole.request(context)
+            when {
+                activity == null -> Unit
+                request != null -> runCatching {
+                    @Suppress("DEPRECATION")
+                    activity.startActivityForResult(request, com.ogneliss.dialer.sms.SmsRole.REQUEST_CODE)
+                }
+                else -> com.ogneliss.dialer.util.DefaultDialer.openSystemDefaultApps(activity)
+            }
+        }
         "swipe_tuning" -> nav.navigate("swipe_tuning")
         "pinned" -> nav.navigate("pinned")
         /*

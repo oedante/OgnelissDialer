@@ -116,7 +116,11 @@ data class SettingsState(
     /** Памятка о мошенниках в долгом разговоре с незнакомым (1.8.0). */
     val scamMemo: Boolean = true,
     /** Тихие часы для незнакомых (1.8.0): разбор в call/QuietHours.kt. */
-    val quietHours: QuietHours = QuietHours.DEFAULT
+    val quietHours: QuietHours = QuietHours.DEFAULT,
+    /** Сообщения (1.10.0): разбор в sms/SmsRole.kt. */
+    val smsInApp: Boolean = true,
+    val smsInJournal: Boolean = true,
+    val smsDeliveryReports: Boolean = false
 ) {
 
     /** Значение переключателя по ключу из реестра настроек. */
@@ -145,6 +149,9 @@ data class SettingsState(
         "block_tagged" -> blockTaggedSpam
         "file_logging" -> fileLogging
         "scam_memo" -> scamMemo
+        "sms_in_app" -> smsInApp
+        "sms_in_journal" -> smsInJournal
+        "sms_delivery_reports" -> smsDeliveryReports
         else -> false
     }
 
@@ -163,7 +170,9 @@ data class SettingsState(
             "messengers_any_number",
             "call_animation",
             // 1.8.0
-            "scam_memo"
+            "scam_memo",
+            // 1.10.0
+            "sms_in_app", "sms_in_journal", "sms_delivery_reports"
         )
     }
 }

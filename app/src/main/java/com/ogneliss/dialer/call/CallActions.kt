@@ -51,9 +51,9 @@ class CallActions(
         runCatching { tm.placeCall(uri, extras) }
     }
 
-    /** Открывает системное SMS-приложение — своих SMS-прав приложению не требуется. */
+    /** «Написать»: переписка в диалере или приложение SMS (см. ExternalApps.sms). */
     fun openSms(number: String, body: String? = null) = start(
-        Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:$number")).apply {
+        ExternalApps.smsIntent(context, number).apply {
             if (body != null) putExtra("sms_body", body)
         }
     )

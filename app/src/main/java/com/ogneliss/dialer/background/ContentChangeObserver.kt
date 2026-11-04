@@ -77,6 +77,19 @@ class ContentChangeObserver @Inject constructor(
         }
     }
 
+    /*
+     * Сообщения (1.10.0): журнал показывает SMS одной лентой с вызовами,
+     * поэтому изменение переписки — тоже изменение журнала. Подписка —
+     * только у приложения SMS по умолчанию (без роли читать нельзя).
+     */
+    private val messagesObserver = object : ContentObserver(handler) {
+        override fun onChange(selfChange: Boolean, uri: Uri?) {
+            if (selfChange) return
+            Logger.d(TAG, "Сообщения изменились")
+            _callLogChanges.tryEmit(Unit)
+        }
+    }
+
     private val contactsObserver = object : ContentObserver(handler) {
         override fun onChange(selfChange: Boolean, uri: Uri?) {
             if (selfChange) return
@@ -103,6 +116,7 @@ class ContentChangeObserver @Inject constructor(
      */
     private var callLogRegistered = false
     private var contactsRegistered = false
+    private var messagesRegistered = false
 
     fun register() {
         /*
@@ -136,6 +150,14 @@ class ContentChangeObserver @Inject constructor(
             }
         }
 
+        if (!messagesRegistered && com.ogneliss.dialer.sms.SmsRole.canRead(context)) {
+            runCatching {
+                cr.registerContentObserver(android.provider.Telephony.MmsSms.CONTENT_URI, true, messagesObserver)
+                messagesRegistered = true
+                added = true
+            }.onFailure { Logger.w(TAG, "Не удалось подписаться на сообщения", it) }
+        }
+
         if (!contactsRegistered) {
             if (PermissionGuard.canReadContacts(context)) {
                 runCatching {
@@ -159,7 +181,9 @@ class ContentChangeObserver @Inject constructor(
     fun unregister() {
         runCatching { context.contentResolver.unregisterContentObserver(callLogObserver) }
         runCatching { context.contentResolver.unregisterContentObserver(contactsObserver) }
+        runCatching { context.contentResolver.unregisterContentObserver(messagesObserver) }
         callLogRegistered = false
         contactsRegistered = false
+        messagesRegistered = false
     }
 }

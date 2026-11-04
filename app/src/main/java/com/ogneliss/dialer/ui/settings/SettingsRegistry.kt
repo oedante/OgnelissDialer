@@ -433,6 +433,38 @@ object SettingsRegistry {
             SettingKind.Action("stats"),
             groupRes = R.string.settings_group_search_stats
         ),
+        /*
+         * Сообщения (1.10.0): SMS в журнале и переписка в диалере.
+         * «Приложение SMS» — действие: роль выдаёт система своим окном.
+         */
+        SettingEntry(
+            "sms_default_app", SettingsCategory.CALL_LOG,
+            R.string.settings_sms_default_app, R.string.settings_sms_default_app_text,
+            SettingKind.Action("sms_default_app"),
+            keywordsRes = R.string.keywords_sms,
+            groupRes = R.string.settings_group_messages
+        ),
+        SettingEntry(
+            "sms_in_app", SettingsCategory.CALL_LOG,
+            R.string.settings_sms_in_app, R.string.settings_sms_in_app_text,
+            SettingKind.Switch("sms_in_app"),
+            keywordsRes = R.string.keywords_sms,
+            groupRes = R.string.settings_group_messages
+        ),
+        SettingEntry(
+            "sms_in_journal", SettingsCategory.CALL_LOG,
+            R.string.settings_sms_in_journal, R.string.settings_sms_in_journal_text,
+            SettingKind.Switch("sms_in_journal"),
+            keywordsRes = R.string.keywords_sms,
+            groupRes = R.string.settings_group_messages
+        ),
+        SettingEntry(
+            "sms_delivery_reports", SettingsCategory.CALL_LOG,
+            R.string.settings_sms_delivery_reports, R.string.settings_sms_delivery_reports_text,
+            SettingKind.Switch("sms_delivery_reports"),
+            keywordsRes = R.string.keywords_sms,
+            groupRes = R.string.settings_group_messages
+        ),
         SettingEntry(
             "notes_retention", SettingsCategory.CALL_LOG,
             R.string.settings_notes_retention, R.string.settings_notes_retention_text,

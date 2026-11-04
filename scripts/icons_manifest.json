@@ -9,6 +9,11 @@
   "filled": false,
   "autoMirror": false
  },
+ "AddPhotoAlternate": {
+  "symbol": "add_photo_alternate",
+  "filled": false,
+  "autoMirror": false
+ },
  "AddToHomeScreen": {
   "symbol": "add_to_home_screen",
   "filled": false,
@@ -244,6 +249,11 @@
   "filled": false,
   "autoMirror": false
  },
+ "Image": {
+  "symbol": "image",
+  "filled": false,
+  "autoMirror": false
+ },
  "Info": {
   "symbol": "info",
   "filled": false,
@@ -278,6 +288,11 @@
   "symbol": "lock",
   "filled": false,
   "autoMirror": false
+ },
+ "MarkChatRead": {
+  "symbol": "mark_chat_read",
+  "filled": false,
+  "autoMirror": true
  },
  "MergeType": {
   "symbol": "merge_type",
