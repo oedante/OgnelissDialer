@@ -77,6 +77,11 @@ import com.ogneliss.dialer.sms.Message
 import com.ogneliss.dialer.sms.OtpDetector
 import com.ogneliss.dialer.sms.SmsClipboard
 import com.ogneliss.dialer.sms.SmsRole
+import com.ogneliss.dialer.sms.SmsSettings
+import com.ogneliss.dialer.ui.components.RoleHelpDialog
+import com.ogneliss.dialer.ui.components.rememberSmsRoleRequest
+import com.ogneliss.dialer.util.AutoStart
+import com.ogneliss.dialer.util.RoleAccess
 import com.ogneliss.dialer.ui.components.OgnelissDialog
 import com.ogneliss.dialer.ui.components.PhotoViewerDialog
 import com.ogneliss.dialer.ui.components.ScreenScaffold
@@ -140,13 +145,22 @@ fun ConversationScreen(
      * • выбор картинок — системный (Photo Picker): без доступа ко всей
      *   галерее, только к выбранным снимкам.
      */
-    val roleLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+    // Роль или разрешение SMS не выданы — что случилось и куда нажать (RoleAccess)
+    var roleHelp by remember { mutableStateOf<RoleAccess.Help?>(null) }
+    val requestSmsRole = rememberSmsRoleRequest { help ->
         vm.refresh()
+        roleHelp = help
     }
     val sendPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         vm.refresh()
         if (granted && sendAfterGrant) vm.send()
+        // Android 15 не выдаёт SMS приложению, установленному из файла, — без окна
+        if (!granted && RoleAccess.isRestrictedSource(context)) roleHelp = RoleAccess.Help.RESTRICTED
         sendAfterGrant = false
+    }
+    // Автозапуск на прошивках, где без него закрытое приложение не получает SMS
+    var autostartHint by remember {
+        mutableStateOf(AutoStart.isSupported() && !SmsSettings.autostartHintDone(context))
     }
     val pickImages = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(3)) { uris ->
         vm.addImages(uris)
@@ -198,9 +212,19 @@ fun ConversationScreen(
     ) { pad ->
         Column(Modifier.fillMaxSize().padding(pad)) {
             if (!state.isDefaultSms && !state.loading) {
-                DefaultSmsBanner(onMakeDefault = {
-                    SmsRole.request(context)?.let { roleLauncher.launch(it) }
-                })
+                DefaultSmsBanner(onMakeDefault = requestSmsRole)
+            } else if (state.isDefaultSms && autostartHint) {
+                AutostartBanner(
+                    onOpen = {
+                        SmsSettings.markAutostartHintDone(context)
+                        autostartHint = false
+                        AutoStart.open(context)
+                    },
+                    onDismiss = {
+                        SmsSettings.markAutostartHintDone(context)
+                        autostartHint = false
+                    }
+                )
             }
             if (state.messages.isEmpty() && !state.loading) {
                 Box(Modifier.weight(1f).fillMaxWidth().padding(Space.xl), contentAlignment = Alignment.Center) {
@@ -254,6 +278,8 @@ fun ConversationScreen(
     viewing?.let { uri ->
         PhotoViewerDialog(uri = uri, title = state.title, onDismiss = { viewing = null })
     }
+
+    roleHelp?.let { help -> RoleHelpDialog(help) { roleHelp = null } }
 }
 
 // ── Список ───────────────────────────────────────────────────────────────────
@@ -567,6 +593,36 @@ private fun DefaultSmsBanner(onMakeDefault: () -> Unit) {
             )
             TextButton(onClick = onMakeDefault) {
                 Text(stringResource(R.string.sms_default_action), fontWeight = FontWeight.Medium)
+            }
+        }
+    }
+}
+
+/**
+ * Подсказка об автозапуске — один раз после того, как диалер стал
+ * приложением SMS, и только на прошивках, где автозапуск сторонним
+ * приложениям закрыт (AutoStart.isSupported). Кнопка ведёт прямо на экран
+ * прошивки; крестик — больше не показывать.
+ */
+@Composable
+private fun AutostartBanner(onOpen: () -> Unit, onDismiss: () -> Unit) {
+    Surface(
+        color = MaterialTheme.colorScheme.tertiaryContainer,
+        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        shape = MaterialTheme.shapes.large,
+        modifier = Modifier.fillMaxWidth().padding(horizontal = FlowUi.screenPadding, vertical = Space.s)
+    ) {
+        Row(Modifier.padding(start = Space.l, end = Space.xs, top = Space.s, bottom = Space.s), verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                stringResource(R.string.sms_autostart_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(1f)
+            )
+            TextButton(onClick = onOpen) {
+                Text(stringResource(R.string.sms_autostart_action), fontWeight = FontWeight.Medium)
+            }
+            IconButton(onClick = onDismiss) {
+                Icon(OgnelissIcons.Close, contentDescription = stringResource(R.string.nav_close))
             }
         }
     }

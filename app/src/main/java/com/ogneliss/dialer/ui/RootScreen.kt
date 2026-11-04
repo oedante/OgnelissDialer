@@ -1366,6 +1366,8 @@ private fun runSettingAction(
             when {
                 activity == null -> Unit
                 request != null -> runCatching {
+                    // Ответ и разбор отказа — MainActivity.onActivityResult (RoleAccess)
+                    com.ogneliss.dialer.util.RoleAccess.markRequested()
                     @Suppress("DEPRECATION")
                     activity.startActivityForResult(request, com.ogneliss.dialer.sms.SmsRole.REQUEST_CODE)
                 }

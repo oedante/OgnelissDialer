@@ -183,6 +183,11 @@ class MainActivity : ComponentActivity() {
                 }
                 var onboardingDone by remember { mutableStateOf(false) }
 
+                // Роль телефона или SMS не выдана после окна — подсказка поверх любого экрана (2.0.0)
+                roleHelp?.let { help ->
+                    com.ogneliss.dialer.ui.components.RoleHelpDialog(help) { roleHelp = null }
+                }
+
                 /*
                  * СОГЛАСИЕ С ДОКУМЕНТАМИ.
                  *
@@ -379,6 +384,9 @@ class MainActivity : ComponentActivity() {
      * Поэтому объект не private: константы читает CallbackReminder.
      */
     companion object {
+        /** Запрос уведомлений после выдачи роли SMS (2.0.0). */
+        private const val NOTIFICATIONS_REQUEST = 4203
+
         /** Открыть карточку абонента: намерение из уведомления. */
         const val ACTION_OPEN_CARD = "com.ogneliss.dialer.OPEN_CARD"
         const val EXTRA_CARD_NUMBER = "card_number"
@@ -399,6 +407,37 @@ class MainActivity : ComponentActivity() {
          * а не смотреть журнал.
          */
         const val EXTRA_OPEN_DIALPAD = "open_dialpad"
+    }
+
+    /**
+     * Что подсказать после окна роли «Телефон» или «SMS» (2.0.0): Android 15
+     * ограничил настройку для установленного из файла или окно не показалось.
+     * Разбор — util/RoleAccess.kt.
+     */
+    private var roleHelp by mutableStateOf<com.ogneliss.dialer.util.RoleAccess.Help?>(null)
+
+    /*
+     * Окна ролей запускаются через startActivityForResult из разных мест
+     * (мастер, «Разрешения», полоса в журнале, настройки сообщений) —
+     * ответ приходит сюда, и разбор отказа один на всех.
+     */
+    @Deprecated("Окна ролей запускаются startActivityForResult — ответ здесь")
+    @Suppress("DEPRECATION")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val granted = when (requestCode) {
+            DefaultDialer.REQUEST_CODE -> DefaultDialer.isDefault(this)
+            com.ogneliss.dialer.sms.SmsRole.REQUEST_CODE -> com.ogneliss.dialer.sms.SmsRole.isDefault(this)
+            else -> return
+        }
+        if (!granted) {
+            roleHelp = com.ogneliss.dialer.util.RoleAccess.helpAfterDenied(this)
+        } else if (requestCode == com.ogneliss.dialer.sms.SmsRole.REQUEST_CODE &&
+            com.ogneliss.dialer.sms.SmsRole.needsNotificationPermission(this)
+        ) {
+            // Приложение SMS без уведомлений — входящие пришли бы молча
+            requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), NOTIFICATIONS_REQUEST)
+        }
     }
 
     private fun numberFromIntent(intent: Intent?): String? =

@@ -51,6 +51,14 @@ object SmsRole {
     fun canRead(context: Context): Boolean =
         isDefault(context) && PermissionGuard.has(context, Manifest.permission.READ_SMS)
 
+    /**
+     * Приложение SMS без разрешения на уведомления (Android 13+): входящие
+     * пришли бы молча. Спрашивается сразу после выдачи роли.
+     */
+    fun needsNotificationPermission(context: Context): Boolean =
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            !PermissionGuard.has(context, Manifest.permission.POST_NOTIFICATIONS)
+
     /** Можно отправлять SMS из приложения. */
     fun canSend(context: Context): Boolean =
         PermissionGuard.has(context, Manifest.permission.SEND_SMS)
@@ -95,6 +103,17 @@ object SmsSettings {
 
     /** Просить отчёт о доставке (по умолчанию — нет: часть операторов берёт плату). */
     fun deliveryReports(context: Context): Boolean = prefs(context).getBoolean(KEY_DELIVERY_REPORTS, false)
+
+    /*
+     * Подсказка «разрешите автозапуск» в переписке — один раз: на Xiaomi,
+     * Huawei, OPPO, vivo и других закрытое приложение без автозапуска
+     * не получает входящие SMS, а проверить автозапуск прошивки не дают.
+     */
+    private const val KEY_AUTOSTART_HINT = "sms_autostart_hint_done"
+
+    fun autostartHintDone(context: Context): Boolean = prefs(context).getBoolean(KEY_AUTOSTART_HINT, false)
+
+    fun markAutostartHintDone(context: Context) = put(context, KEY_AUTOSTART_HINT, true)
 
     fun put(context: Context, key: String, value: Boolean) {
         prefs(context).edit().putBoolean(key, value).apply()

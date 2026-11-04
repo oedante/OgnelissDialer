@@ -110,7 +110,11 @@ class ConversationViewModel @Inject constructor(
         viewModelScope.launch {
             val slots = runCatching { sims.slotsAsync() }.getOrDefault(emptyList())
             val requested = savedState.get<Int>(ConversationRequest.ARG_SUB)?.takeIf { it >= 0 }
-            _state.update { it.copy(sims = slots, subId = it.subId ?: requested) }
+            _state.update {
+                // Переписка ещё читается — карту последнего сообщения выберет refresh()
+                val fallback = if (!it.loading && slots.size > 1) SmsSender.resolveSubId(app, null) else null
+                it.copy(sims = slots, subId = it.subId ?: requested ?: fallback)
+            }
         }
         refresh()
         observe()
@@ -142,8 +146,10 @@ class ConversationViewModel @Inject constructor(
                 loading = false,
                 isDefaultSms = isDefault,
                 canSend = canSend,
-                // Карта по умолчанию — карта последнего сообщения переписки
+                // Карта по умолчанию — карта последнего сообщения переписки, иначе
+                // карта SMS из настроек Android (при двух SIM — видно в строке ввода)
                 subId = s.subId ?: messages.lastOrNull { it.subId != null }?.subId
+                    ?: if (s.sims.size > 1) SmsSender.resolveSubId(app, null) else null
             )
         }
     }

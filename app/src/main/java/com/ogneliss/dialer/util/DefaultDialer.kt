@@ -61,6 +61,8 @@ object DefaultDialer {
 
                 if (!rm.isRoleAvailable(RoleManager.ROLE_DIALER)) return@runCatching false
 
+                // Время запроса — чтобы отличить «окно не показалось» от отказа (RoleAccess)
+                RoleAccess.markRequested()
                 activity.startActivityForResult(
                     rm.createRequestRoleIntent(RoleManager.ROLE_DIALER), REQUEST_CODE
                 )
@@ -78,6 +80,7 @@ object DefaultDialer {
                 if (intent.resolveActivity(activity.packageManager) == null) {
                     return@runCatching false
                 }
+                RoleAccess.markRequested()
                 activity.startActivityForResult(intent, REQUEST_CODE)
                 true
             }

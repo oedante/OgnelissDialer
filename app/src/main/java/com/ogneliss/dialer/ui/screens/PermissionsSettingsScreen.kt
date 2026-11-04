@@ -99,6 +99,21 @@ fun PermissionsSettingsScreen(
      */
     var roleBlocked by remember { mutableStateOf(false) }
 
+    /*
+     * Роль SMS (2.0.0) — по желанию: строка показывает состояние и ведёт
+     * в системное окно; отказ разбирает RoleAccess (ограниченные настройки
+     * Android 15 для установленного из файла, окно не показалось).
+     */
+    var smsRoleHelp by remember { mutableStateOf<com.ogneliss.dialer.util.RoleAccess.Help?>(null) }
+    val requestSmsRole = com.ogneliss.dialer.ui.components.rememberSmsRoleRequest { help ->
+        refreshTrigger++
+        smsRoleHelp = help
+    }
+    smsRoleHelp?.let { help ->
+        com.ogneliss.dialer.ui.components.RoleHelpDialog(help) { smsRoleHelp = null }
+    }
+    val isDefaultSms = remember(refreshTrigger) { com.ogneliss.dialer.sms.SmsRole.isDefault(context) }
+
     if (roleBlocked) {
         // Общий контейнер приложения вместо AlertDialog
         OgnelissDialog(
@@ -188,6 +203,19 @@ fun PermissionsSettingsScreen(
                             }
                         )
                     }
+                }
+            }
+
+            item(key = "sms_role") {
+                Spacer(Modifier.height(Space.l))
+                GroupedRow(GroupPosition.SINGLE) {
+                    PermissionRow(
+                        title = stringResource(R.string.settings_sms_default_app),
+                        description = stringResource(R.string.perm_sms_role_text),
+                        granted = isDefaultSms,
+                        required = false,
+                        onClick = { if (!isDefaultSms) requestSmsRole() }
+                    )
                 }
             }
 

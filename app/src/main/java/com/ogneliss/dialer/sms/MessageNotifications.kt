@@ -145,6 +145,8 @@ object MessageNotifications {
             )
             NotificationCompat.Action.Builder(0, context.getString(R.string.sms_copy_code_action, it), copyPending)
                 .setShowsUserInterface(false)
+                // Код с заблокированного экрана — только после разблокировки (Android 12+)
+                .setAuthenticationRequired(true)
                 .build()
         }
         val notification = NotificationCompat.Builder(context, CHANNEL)
@@ -157,6 +159,19 @@ object MessageNotifications {
             .setContentIntent(open)
             .setAutoCancel(true)
             .setNumber(unread.size)
+            /*
+             * Экран блокировки: если человек скрыл там содержимое уведомлений,
+             * видно только «Новое сообщение» — без имени, текста и кода.
+             */
+            .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+            .setPublicVersion(
+                NotificationCompat.Builder(context, CHANNEL)
+                    .setSmallIcon(R.drawable.ic_stat_message)
+                    .setContentTitle(context.getString(R.string.sms_new_message))
+                    .setCategory(Notification.CATEGORY_MESSAGE)
+                    .setNumber(unread.size)
+                    .build()
+            )
             .apply { if (copy != null) addAction(copy) }
             .addAction(reply)
             .addAction(read)

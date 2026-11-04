@@ -824,7 +824,7 @@
     <string name="faq_section_calls">Anrufe</string>
     <string name="faq_section_about">Über die App</string>
     <string name="faq_q_default">Wie mache ich Ogneliss Dialer zur Standard-Telefon-App?</string>
-    <string name="faq_a_default">Beim ersten Start bietet die App an, Standard-Telefon-App zu werden. Wenn Sie abgelehnt haben, öffnen Sie %1$s und wählen Sie Ogneliss Dialer unter „Telefon“ — je nach Gerät heißt der Punkt etwas anders. Anrufliste und Kontakte bleiben, wie sie sind: Sie werden von Android gespeichert, nicht von der App, und auch beim Wechsel zurück geht nichts verloren.</string>
+    <string name="faq_a_default">Beim ersten Start bietet die App an, Standard-Telefon-App zu werden. Wenn Sie abgelehnt haben, öffnen Sie %1$s und wählen Sie Ogneliss Dialer unter „Telefon“ — je nach Gerät heißt der Punkt etwas anders. Anrufliste und Kontakte bleiben, wie sie sind: Sie werden von Android gespeichert, nicht von der App, und auch beim Wechsel zurück geht nichts verloren. Wurde die App aus einer APK-Datei installiert und meldet Android „Eingeschränkte Einstellung“, öffnen Sie zuerst App-Info → ⋮ → „Eingeschränkte Einstellungen zulassen“.</string>
     <string name="faq_q_internet">Warum hat die App keinen Internetzugang?</string>
     <string name="faq_a_internet">Damit Ihre Daten das Telefon nicht verlassen können. Ohne Internetberechtigung kann die App nichts senden — weder die Anrufliste noch Kontakte oder Notizen; das sehen Sie in den Details der installierten App. Anbieter und Region einer unbekannten Nummer stammen aus einem Verzeichnis in der App, und ob sie angezeigt werden, entscheiden Sie: %1$s.</string>
     <string name="faq_q_transfer">Wie übertrage ich Notizen und Listen auf ein neues Telefon?</string>
@@ -1053,4 +1053,13 @@
     <string name="faq_a_sms">Ja, wenn Sie möchten. Schreiben: Die „Nachricht“-Tasten öffnen die Unterhaltung direkt hier (%1$s) – dafür muss der Dialer Ihre Standard-Telefon-App sein. Empfangen, Verlauf und Bilder (MMS) gibt es, wenn der Dialer Ihre Standard-SMS-App ist (%2$s). Dann stehen Nachrichten in der Anrufliste neben den Anrufen, und der Filter zeigt nur Anrufe oder nur Nachrichten. Zurück geht es jederzeit, indem Sie eine andere SMS-App wählen – der Dialer liest dann sofort keine Nachrichten mehr. RCS-Chats sind für Drittanbieter-Apps nicht verfügbar.</string>
     <string name="faq_q_codes">Wie füge ich einen Code aus einer SMS ein?</string>
     <string name="faq_a_codes">Enthält eine Nachricht einen Bestätigungscode, zeigt die Benachrichtigung die Taste „123456 kopieren“, und in der Unterhaltung steht dieselbe Taste unter der Nachricht. Der Code landet als vertraulich markiert in der Zwischenablage, und Ihre Tastatur bietet ihn mit einem Tippen zum Einfügen an. Das automatische Ausfüllen in anderen Apps übernimmt Ihre Tastatur oder Ihr Autofill-Dienst (etwa Gboard oder Autofill mit Google) – das funktioniert mit dem Dialer als SMS-App weiter. Der Code wird auf dem Telefon erkannt: Der Dialer hat keinen Internetzugriff. Langes Drücken auf eine Nachricht kopiert den ganzen Text, eine Nummer daraus oder einen markierten Teil.</string>
+
+    <!-- Роли и проверка на прошивках (2.0.0) -->
+    <string name="role_restricted_title">Android hat diese Einstellung eingeschränkt</string>
+    <string name="role_restricted_text">Die App wurde aus einer APK-Datei statt aus einem Store installiert. Für solche Apps sperrt Android 15+ die Rollen Telefon und SMS sowie die SMS-Berechtigungen, bis Sie sie erlauben. Öffnen Sie „App-Info“, tippen Sie oben rechts auf ⋮ → „Eingeschränkte Einstellungen zulassen“, bestätigen Sie, kehren Sie zurück und versuchen Sie es erneut. Bei Installation aus Google Play entfällt dieser Schritt.</string>
+    <string name="role_restricted_open">App-Info öffnen</string>
+    <string name="sms_new_message">Neue Nachricht</string>
+    <string name="sms_autostart_hint">Damit SMS auch bei geschlossenem Dialer ankommen, erlauben Sie den Autostart – auf diesem Telefon ist er für Drittanbieter-Apps ausgeschaltet.</string>
+    <string name="sms_autostart_action">Öffnen</string>
+    <string name="perm_sms_role_text">Unterhaltungen, eingehende SMS und MMS. Optional – SMS senden geht auch ohne.</string>
 </resources>

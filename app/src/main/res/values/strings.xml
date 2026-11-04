@@ -853,7 +853,7 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="faq_section_calls">Calls</string>
     <string name="faq_section_about">About the app</string>
     <string name="faq_q_default">How do I make Ogneliss Dialer my default phone app?</string>
-    <string name="faq_a_default">On first launch the app offers to become the default phone app. If you declined, open %1$s and choose Ogneliss Dialer under “Phone” — the name varies slightly between phones. Your call log and contacts stay as they are: Android keeps them, not the app, so nothing is lost if you switch back.</string>
+    <string name="faq_a_default">On first launch the app offers to become the default phone app. If you declined, open %1$s and choose Ogneliss Dialer under “Phone” — the name varies slightly between phones. Your call log and contacts stay as they are: Android keeps them, not the app, so nothing is lost if you switch back. If the app was installed from an APK file and Android says “Restricted setting”, open App info → ⋮ → “Allow restricted settings” first.</string>
     <string name="faq_q_internet">Why doesn’t the app have internet access?</string>
     <string name="faq_a_internet">So that your data cannot leave the phone. Without the internet permission the app cannot send anything — not the call log, not contacts, not notes; you can see this in the installed app details. The operator and region of an unknown number come from a directory inside the app, and whether to show them is up to you: %1$s.</string>
     <string name="faq_q_transfer">How do I move notes and lists to a new phone?</string>
@@ -1082,4 +1082,13 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="faq_a_sms">Yes, if you choose to. Sending: the “Message” buttons open the conversation right here (%1$s) — the dialer must be your default phone app for that. Receiving, the conversation history and pictures (MMS) need the dialer to be your default SMS app (%2$s). Then messages appear in the call log alongside calls, and the call log filter can show only calls or only messages. To stop, choose another SMS app at any time — the dialer stops reading messages right away. RCS chat is not available to third-party apps.</string>
     <string name="faq_q_codes">How do I paste a code from an SMS?</string>
     <string name="faq_a_codes">When a message contains a verification code, the notification gets a “Copy 123456” button, and the conversation shows the same button under the message. The code goes to the clipboard marked as sensitive, and your keyboard offers to paste it with one tap. Filling the code into another app automatically is done by your keyboard or autofill service (for example, Gboard or Autofill with Google) — that keeps working with the dialer as your SMS app. The code is found on the phone: the dialer has no internet access. Long-press a message to copy the whole text, a phone number from it, or select any part.</string>
+
+    <!-- Роли и проверка на прошивках (2.0.0) -->
+    <string name="role_restricted_title">Android restricted this setting</string>
+    <string name="role_restricted_text">The app was installed from an APK file rather than from a store, and Android 15+ keeps the phone and SMS roles and SMS permissions closed for such apps until you allow them. Open “App info”, tap ⋮ in the top-right corner → “Allow restricted settings”, confirm, then come back and try again. Installs from Google Play don’t need this step.</string>
+    <string name="role_restricted_open">Open App info</string>
+    <string name="sms_new_message">New message</string>
+    <string name="sms_autostart_hint">For SMS to arrive while the dialer is closed, allow it to autostart — on this phone autostart is off for third-party apps.</string>
+    <string name="sms_autostart_action">Open</string>
+    <string name="perm_sms_role_text">Conversations, incoming SMS and MMS. Optional — you can send SMS without it.</string>
 </resources>

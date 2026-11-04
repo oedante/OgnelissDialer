@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.telephony.SmsManager
 import android.telephony.SmsMessage
+import android.telephony.SubscriptionManager
 import com.ogneliss.dialer.log.Logger
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -37,16 +38,37 @@ object SmsSender {
     private const val EXTRA_PARTS = "parts"
     private val requestCodes = AtomicInteger((System.currentTimeMillis() % 100_000).toInt())
 
-    /** SmsManager карты [subId]; null — карта по умолчанию. */
+    /** SmsManager карты [subId]; null — карта SMS по умолчанию (см. [resolveSubId]). */
     @Suppress("DEPRECATION")
-    fun managerFor(context: Context, subId: Int?): SmsManager =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+    fun managerFor(context: Context, subId: Int?): SmsManager {
+        val sub = resolveSubId(context, subId)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val base = context.getSystemService(SmsManager::class.java)
-            if (subId != null && subId >= 0) base.createForSubscriptionId(subId) else base
+            if (sub != null) base.createForSubscriptionId(sub) else base
         } else {
-            if (subId != null && subId >= 0) SmsManager.getSmsManagerForSubscriptionId(subId)
-            else SmsManager.getDefault()
+            if (sub != null) SmsManager.getSmsManagerForSubscriptionId(sub) else SmsManager.getDefault()
         }
+    }
+
+    /**
+     * КАРТА ДЛЯ ОТПРАВКИ.
+     *
+     * Карта выбрана — она. Нет — карта SMS по умолчанию из настроек
+     * Android. При двух SIM и «Спрашивать каждый раз» карты по умолчанию
+     * нет, и часть прошивок без неё SMS не отправляет вовсе (ошибка
+     * без объяснения) — тогда первая активная карта. Переписка показывает
+     * выбранную карту явно, её можно сменить до отправки.
+     */
+    @android.annotation.SuppressLint("MissingPermission")
+    fun resolveSubId(context: Context, subId: Int?): Int? {
+        if (subId != null && subId >= 0) return subId
+        val default = SubscriptionManager.getDefaultSmsSubscriptionId()
+        if (default != SubscriptionManager.INVALID_SUBSCRIPTION_ID) return default
+        return runCatching {
+            context.getSystemService(SubscriptionManager::class.java)
+                ?.activeSubscriptionInfoList?.firstOrNull()?.subscriptionId
+        }.getOrNull()
+    }
 
     /**
      * Отправить [text] на [address]. Возвращает, ушло ли сообщение в сеть
