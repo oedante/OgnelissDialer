@@ -4,8 +4,10 @@
 # Бандлы я буду собирать у себя».
 #
 # Запуск:
-#   • меткой версии — git tag v1.8.2 && git push origin v1.8.2:
-#     APK собирается и выкладывается в Releases с описанием;
+#   • меткой версии — git tag v1.9.0 && git push origin v1.9.0 — или
+#     кнопкой «Draft a new release» на сайте GitHub с новой меткой v1.9.0:
+#     APK собирается и выкладывается в Releases с описанием (выпуск,
+#     созданный на сайте, дополняется — шаг «Выпуск на GitHub»);
 #   • вручную (Actions → «Выпуск APK на GitHub» → Run workflow): пробная
 #     сборка — APK только артефактом запуска, без выпуска.
 #
@@ -40,16 +42,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
 
       - name: Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
 
       # Платформа compileSdk 37 может ещё не стоять на машине GitHub.
       # Не поставилась — Android Gradle Plugin докачает сам
@@ -195,22 +197,39 @@ jobs:
           PY
           cat release-notes.md
 
+      # Выпуск создаётся двумя путями — оба рабочие (04.11.2026):
+      #   • меткой из командной строки (git push origin v1.9.0) — выпуска
+      #     ещё нет, создаём его;
+      #   • кнопкой «Draft a new release» на сайте GitHub — выпуск уже есть
+      #     (сайт сам ставит метку, она и запускает сборку), но без APK
+      #     и с описанием «Full Changelog». Прикладываем к нему APK
+      #     и подменяем заголовок и описание.
+      # Было (1.8.2): только create — выпуск, созданный на сайте, ронял сборку
+      # на последнем шаге: «a release with the same tag name already exists».
       - name: Выпуск на GitHub
         if: github.ref_type == 'tag'
         env:
           GH_TOKEN: ${{ github.token }}
           VER: ${{ steps.version.outputs.name }}
         run: |
-          gh release create "$GITHUB_REF_NAME" \
-            "dist/OgnelissDialer-$VER.apk" "dist/OgnelissDialer-$VER.apk.sha256" \
-            --title "Ogneliss Dialer $VER" \
-            --notes-file release-notes.md \
-            --verify-tag
+          APK="dist/OgnelissDialer-$VER.apk"
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            echo "Выпуск $GITHUB_REF_NAME уже создан на сайте — прикладываю APK и описание"
+            gh release upload "$GITHUB_REF_NAME" "$APK" "$APK.sha256" --clobber
+            gh release edit "$GITHUB_REF_NAME" \
+              --title "Ogneliss Dialer $VER" \
+              --notes-file release-notes.md
+          else
+            gh release create "$GITHUB_REF_NAME" "$APK" "$APK.sha256" \
+              --title "Ogneliss Dialer $VER" \
+              --notes-file release-notes.md \
+              --verify-tag
+          fi
 
       # Пробный запуск вручную — APK только артефактом, без выпуска
       - name: Артефакт пробной сборки
         if: github.ref_type != 'tag'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ogneliss-dialer-${{ steps.version.outputs.name }}-apk
           path: |

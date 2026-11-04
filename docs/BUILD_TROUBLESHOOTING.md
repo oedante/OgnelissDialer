@@ -206,3 +206,24 @@ Existing package com.ogneliss.dialer signatures do not match newer version
 В `benchmark/build.gradle.kts` стоит `useConnectedDevices = false`, но
 плагин Baseline Profile 1.3.3 проверен только до AGP 9.0-alpha01 —
 похоже, с AGP 9.3 он эту настройку соблюдает не полностью.
+
+## GitHub, «Выпуск APK на GitHub»: «a release with the same tag name already exists»
+
+04.11.2026, метка `v1.8.2`. Сборка, подпись и описание прошли, упал
+последний шаг — `gh release create`.
+
+**Причина.** Выпуск `v1.8.2` был создан на сайте («Draft a new release»,
+12:08): сайт сам поставил метку, метка запустила сборку, а сборка
+пыталась создать выпуск, который уже есть. В выпуске на сайте осталось
+только «Full Changelog», без APK.
+
+**Исправлено** (`.github/workflows/release.yml`, шаг «Выпуск на GitHub»):
+если выпуск с этой меткой уже есть, сборка прикладывает к нему APK
+и `.sha256` (`gh release upload --clobber`) и подменяет заголовок
+и описание (`gh release edit`); нет — создаёт, как раньше. Выпускать
+можно и меткой из командной строки, и кнопкой на сайте.
+
+Перезапуск старой сборки `v1.8.2` («Re-run») не поможет: он берёт
+workflow из той метки, где исправления ещё нет. Пустой выпуск `v1.8.2`
+можно удалить на сайте (Releases → v1.8.2 → Delete; метка останется) —
+его заменит `v1.9.0`.
