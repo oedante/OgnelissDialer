@@ -434,7 +434,7 @@ object SettingsRegistry {
             groupRes = R.string.settings_group_search_stats
         ),
         /*
-         * Сообщения (1.10.0): SMS в журнале и переписка в диалере.
+         * Сообщения (2.0.0): SMS в журнале и переписка в диалере.
          * «Приложение SMS» — действие: роль выдаёт система своим окном.
          */
         SettingEntry(

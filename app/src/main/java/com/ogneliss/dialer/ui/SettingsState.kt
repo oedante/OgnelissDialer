@@ -117,7 +117,7 @@ data class SettingsState(
     val scamMemo: Boolean = true,
     /** Тихие часы для незнакомых (1.8.0): разбор в call/QuietHours.kt. */
     val quietHours: QuietHours = QuietHours.DEFAULT,
-    /** Сообщения (1.10.0): разбор в sms/SmsRole.kt. */
+    /** Сообщения (2.0.0): разбор в sms/SmsRole.kt. */
     val smsInApp: Boolean = true,
     val smsInJournal: Boolean = true,
     val smsDeliveryReports: Boolean = false
@@ -171,7 +171,7 @@ data class SettingsState(
             "call_animation",
             // 1.8.0
             "scam_memo",
-            // 1.10.0
+            // 2.0.0
             "sms_in_app", "sms_in_journal", "sms_delivery_reports"
         )
     }

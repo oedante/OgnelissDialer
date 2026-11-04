@@ -515,7 +515,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val AUTO_REDIAL_PACE = stringPreferencesKey("auto_redial_pace")
         /** Памятка о мошенниках в долгом разговоре с незнакомым (1.8.0). */
         val SCAM_MEMO = booleanPreferencesKey("scam_memo")
-        /** Сообщения (1.10.0): разбор в sms/SmsRole.kt (SmsSettings). */
+        /** Сообщения (2.0.0): разбор в sms/SmsRole.kt (SmsSettings). */
         val SMS_IN_APP = booleanPreferencesKey("sms_in_app")
         val SMS_IN_JOURNAL = booleanPreferencesKey("sms_in_journal")
         val SMS_DELIVERY_REPORTS = booleanPreferencesKey("sms_delivery_reports")
@@ -845,7 +845,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     val scamMemo: Flow<Boolean> = data.map { it[Keys.SCAM_MEMO] ?: true }
 
     /*
-     * Сообщения (1.10.0). Умолчания — те же, что у SmsSettings: писать
+     * Сообщения (2.0.0). Умолчания — те же, что у SmsSettings: писать
      * в диалере — да, SMS в журнале — да, отчёт о доставке — нет (часть
      * операторов берёт за него плату).
      */

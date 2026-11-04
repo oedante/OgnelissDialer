@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
 /**
- * ХРАНИЛИЩЕ СООБЩЕНИЙ ТЕЛЕФОНА (1.10.0): чтение и запись SMS и MMS.
+ * ХРАНИЛИЩЕ СООБЩЕНИЙ ТЕЛЕФОНА (2.0.0): чтение и запись SMS и MMS.
  *
  * Всё — через провайдер Telephony (content://sms, content://mms): он общий
  * для всех приложений сообщений. Читать можно, только пока диалер —

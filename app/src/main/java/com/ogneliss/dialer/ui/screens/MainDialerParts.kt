@@ -435,7 +435,7 @@ internal fun CallLogRow(
                     Logger.i("Journal", "Нажатие: закрыта раскрытая строка")
                     swipeController.close()
                 }
-                // Последнее событие — сообщение (1.10.0): открывается переписка
+                // Последнее событие — сообщение (2.0.0): открывается переписка
                 group.lastMessage != null -> {
                     Logger.i("Journal", "Нажатие: переписка ${Logger.maskKey(row.key)}")
                     vm.openSms(group.number)

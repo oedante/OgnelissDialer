@@ -11,7 +11,7 @@ import com.ogneliss.dialer.R
 import com.ogneliss.dialer.log.Logger
 
 /**
- * КОПИРОВАНИЕ ИЗ SMS В БУФЕР ОБМЕНА (1.10.0) — только на устройстве.
+ * КОПИРОВАНИЕ ИЗ SMS В БУФЕР ОБМЕНА (2.0.0) — только на устройстве.
  *
  * • Код подтверждения кладётся с пометкой «секретно»
  *   (ClipDescription.EXTRA_IS_SENSITIVE, Android 13+): система не покажет

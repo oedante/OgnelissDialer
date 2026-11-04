@@ -185,7 +185,7 @@ object CallLogGrouper {
         // На случай, если вызывающий код передал записи не по порядку
         val sorted = entries.sortedByDescending { it.date }
         val latest = sorted.first()
-        // Счётчики и длительность — только по вызовам: SMS (1.10.0) — не звонки
+        // Счётчики и длительность — только по вызовам: SMS (2.0.0) — не звонки
         val calls = sorted.filter { !it.isMessage }
 
         return CallLogGroup(

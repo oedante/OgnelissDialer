@@ -551,7 +551,7 @@ object CallLogRowMapper {
                 )
             } ?: labels.accessibility(display.title, group.lastType, dateLabel),
             signature = signature,
-            // Сообщение (1.10.0): его текст — третьей строкой
+            // Сообщение (2.0.0): его текст — третьей строкой
             messageLine = group.lastMessage?.let { labels.messageLine(it, group.lastType == CallType.OUTGOING) },
             messageUnread = group.unreadMessages > 0,
             messageFailed = group.lastMessage?.failed == true,
@@ -585,7 +585,7 @@ object CallLogRowMapper {
         fun networkNamed(name: String): String = name
 
         /**
-         * Строка сообщения в журнале (1.10.0): текст, у исходящего — «Вы: …»,
+         * Строка сообщения в журнале (2.0.0): текст, у исходящего — «Вы: …»,
          * у MMS без текста — «Фото»/«MMS». Без ресурсов — текст как есть.
          */
         fun messageLine(message: com.ogneliss.dialer.sms.JournalMessage, outgoing: Boolean): String = message.text

@@ -88,7 +88,7 @@ aapt dump permissions app/build/outputs/apk/release/app-release.apk | grep INTER
 `BLUETOOTH_CONNECT`, `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_PHONE_CALL`,
 `SYSTEM_ALERT_WINDOW`, `SCHEDULE_EXACT_ALARM`, `RECEIVE_BOOT_COMPLETED`,
 `USE_FULL_SCREEN_INTENT`, `WAKE_LOCK` (с 1.8.1 объявлен явно; его же добавляет WorkManager),
-`SEND_SMS`, `READ_SMS`, `RECEIVE_SMS`, `RECEIVE_MMS` (с 1.10.0: сообщения; см. PLAY_COMPLIANCE.md, раздел 1а).
+`SEND_SMS`, `READ_SMS`, `RECEIVE_SMS`, `RECEIVE_MMS` (с 2.0.0: сообщения; см. PLAY_COMPLIANCE.md, раздел 1а).
 
 **Ничего сверх этого списка быть не должно.** Лишнее разрешение —
 повод для вопросов на ревью и падения конверсии установок.

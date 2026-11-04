@@ -42,7 +42,7 @@ abstract class DataSourceModule {
 
     @Binds
     @Singleton
-    // Журнал — вызовы и сообщения одной лентой (1.10.0); без роли SMS — только вызовы
+    // Журнал — вызовы и сообщения одной лентой (2.0.0); без роли SMS — только вызовы
     abstract fun bindCallLogSource(impl: com.ogneliss.dialer.data.JournalSource): CallLogSource
 
     @Binds

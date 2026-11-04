@@ -266,7 +266,7 @@ class CallLogRepository @Inject constructor(
      */
     override suspend fun deleteGroup(group: CallLogGroup): Boolean = withContext(io) {
         /*
-         * Сообщения группы (1.10.0, отрицательные id — Message.journalId)
+         * Сообщения группы (2.0.0, отрицательные id — Message.journalId)
          * удаляются из хранилища SMS, вызовы — из журнала. Группа из одних
          * сообщений журнал вызовов не трогает вовсе.
          */

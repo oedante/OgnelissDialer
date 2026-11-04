@@ -314,7 +314,7 @@ class MainActivity : ComponentActivity() {
                         // Списки блокировки из уведомления о заблокированном
                         openBlockLists = currentIntent
                             ?.getBooleanExtra(EXTRA_OPEN_BLOCK_LISTS, false) == true,
-                        // «Написать» и ссылки sms: — переписка в диалере (1.10.0)
+                        // «Написать» и ссылки sms: — переписка в диалере (2.0.0)
                         openConversation = com.ogneliss.dialer.ui.conversation.ConversationRequest.from(currentIntent)
                     ) }
                 }

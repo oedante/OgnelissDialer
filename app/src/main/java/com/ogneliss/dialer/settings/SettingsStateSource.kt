@@ -159,7 +159,7 @@ class SettingsStateSource @Inject constructor(
         CallHelp(mode, pace, memo)
     }
 
-    /** Сообщения (1.10.0). */
+    /** Сообщения (2.0.0). */
     private val sms: Flow<Sms> = combine(
         prefs.smsInApp,
         prefs.smsInJournal,
@@ -179,7 +179,7 @@ class SettingsStateSource @Inject constructor(
         gestures, calls,
         // Шестая группа — парой со «после звонка»: у combine предел пять
         combine(postCall, callHelp) { p, h -> p to h },
-        // Сообщения (1.10.0) — парой с фильтрацией по той же причине
+        // Сообщения (2.0.0) — парой с фильтрацией по той же причине
         combine(spam, sms) { s, m -> s to m }
     ) { (a, n), g, c, (p, h), (s, m) ->
         SettingsState(

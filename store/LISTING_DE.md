@@ -32,6 +32,11 @@ ANRUFLISTE
 • Leeren und Löschen fragen nach Bestätigung
 • Export der Anrufliste als CSV-Tabelle
 
+NACHRICHTEN
+• SMS direkt im Dialer – oder als Standard-SMS-App: Unterhaltungen, eingehende SMS und MMS, Antworten aus der Benachrichtigung
+• SMS in der Anrufliste, mit Anrufen in einer Zeitleiste, Filter Anrufe / Nachrichten
+• Codes aus SMS per „Kopieren“, erkannt auf dem Telefon
+
 WISCHGESTEN
 • Bis zu drei Aktionen pro Wisch — die Zeile verschiebt sich und zeigt Schaltflächen, wie in E-Mail-Apps
 • 14 Aktionen zur Auswahl: Anruf, SMS, Messenger, Erinnerung, Notiz, Sperren…

@@ -43,7 +43,7 @@ fun rememberNumberInfoLabels(): CallLogRowMapper.Labels {
     // Имя от оператора (1.8.0): чья подпись в заголовке
     val networkLine = stringResource(R.string.cnap_source_line)
     val networkNamedFormat = stringResource(R.string.cnap_source_named)
-    // Сообщения в журнале (1.10.0)
+    // Сообщения в журнале (2.0.0)
     val youFormat = stringResource(R.string.sms_you)
     val picture = stringResource(R.string.sms_picture)
     val mms = stringResource(R.string.sms_mms)

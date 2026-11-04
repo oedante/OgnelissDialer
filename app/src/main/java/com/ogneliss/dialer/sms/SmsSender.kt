@@ -13,7 +13,7 @@ import com.ogneliss.dialer.log.Logger
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * ОТПРАВКА SMS (1.10.0).
+ * ОТПРАВКА SMS (2.0.0).
  *
  * • С нужной карты: SmsManager для подписки ([subId]); null — карта
  *   по умолчанию для SMS.

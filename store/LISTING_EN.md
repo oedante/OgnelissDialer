@@ -27,6 +27,11 @@ CALL LOG
 • Clearing and deleting ask for confirmation
 • Export the call log as a CSV table
 
+MESSAGES
+• SMS right in the dialer — or make it your default SMS app: conversations, incoming SMS and MMS, replies from the notification
+• SMS in the call log, one timeline with calls, with a Calls / Messages filter
+• Codes from SMS with one “Copy” tap, recognised on the phone
+
 SWIPES
 • Up to three actions per swipe — the row slides and reveals buttons, like in email apps
 • 14 actions to choose from: call, SMS, messenger, reminder, note, block…

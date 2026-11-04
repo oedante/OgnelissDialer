@@ -147,7 +147,7 @@ fun SimChoiceOverlay(
                         close()
                     }
                 }
-                // Переписка в диалере (1.10.0) выбирает карту точно — подсказка не нужна
+                // Переписка в диалере (2.0.0) выбирает карту точно — подсказка не нужна
                 val smsHere = com.ogneliss.dialer.sms.SmsSettings.composeHere(androidx.compose.ui.platform.LocalContext.current)
                 val notes = buildList {
                     if (isCall && request.remembers) add(R.string.sim_choice_remember_note)

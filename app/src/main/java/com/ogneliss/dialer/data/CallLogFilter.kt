@@ -64,7 +64,7 @@ data class CallLogFilter(
      */
     val awaitingCallbackOnly: Boolean = false,
     /**
-     * Что показывать (1.10.0): всё, только вызовы или только сообщения.
+     * Что показывать (2.0.0): всё, только вызовы или только сообщения.
      * Карточка подходит, если в ней есть хоть одно событие этого вида.
      */
     val kind: Kind = Kind.ALL
@@ -154,7 +154,7 @@ data class CallLogFilter(
                  * пропустили.
                  */
                 val awaitingMatches = !filter.awaitingCallbackOnly || run {
-                    // Только вызовы: исходящее SMS (1.10.0) — не «перезвонил»
+                    // Только вызовы: исходящее SMS (2.0.0) — не «перезвонил»
                     val lastMissed = group.entries
                         .filter { it.type == CallType.MISSED && !it.isMessage }
                         .maxOfOrNull { it.date }

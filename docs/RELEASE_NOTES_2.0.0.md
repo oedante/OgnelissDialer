@@ -1,7 +1,7 @@
-# Ogneliss Dialer 1.10.0 — сообщения
+# Ogneliss Dialer 2.0.0 (54) — сообщения
 
-> Ветка `sms`, не выпущена. versionCode/versionName на ветке не подняты
-> (поднимаются по решению автора перед выпуском).
+> Номер поднят автором до 2.0.0 (05.11.2026): диалер стал ещё и приложением
+> сообщений. Текст для Google Play — `store/whats_new_2.0.0.txt` (27 языков).
 
 ## Что нового
 
@@ -70,6 +70,9 @@
 | `ui/conversation/` | ConversationScreen, ConversationViewModel, ConversationRequest (намерения sms:/smsto:/mms:/mmsto:) |
 | Манифест | 4 разрешения SMS; приёмники SMS_DELIVER и WAP_PUSH_DELIVER, служба RESPOND_VIA_MESSAGE, SEND/SENDTO у MainActivity |
 | Иконки | AddPhotoAlternate, Image, MarkChatRead (scripts/icons_manifest.json) |
+| Справка | раздел «Сообщения»: вопросы `sms` и `codes` (Faq.kt, 4 языка; сайт — `docs/www/faq.html`) |
+| Google Play | `store/whats_new_2.0.0.txt` (27 языков, ≤ 476 знаков); раздел «Сообщения» в LISTING_RU/EN/DE/FR (все ≤ 4000) |
+| Сайт | `index.html` — пункт «Сообщения (2.0)» на 4 языках; `privacy.html` — политика 1.2 |
 
 ## Проверить на устройстве
 

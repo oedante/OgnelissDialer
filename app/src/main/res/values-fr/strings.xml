@@ -994,7 +994,7 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="faq_q_scam">Qu’est-ce que le rappel anti-arnaque pendant un appel ?</string>
     <string name="faq_a_scam">Si un appel avec un numéro inconnu dure plus de deux minutes, l’écran d’appel rappelle une fois : ne communiquez jamais de codes SMS, de données de carte ni de mots de passe. L’application n’écoute pas l’appel et ne sait pas qui est au bout du fil — la règle vaut pour tout appel. Pour le désactiver : %1$s.</string>
 
-    <!-- Сообщения (1.10.0) -->
+    <!-- Сообщения (2.0.0) -->
     <string name="filter_group_kind">Afficher</string>
     <string name="filter_kind_all">Appels et messages</string>
     <string name="filter_kind_calls">Appels</string>
@@ -1045,4 +1045,11 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="settings_sms_delivery_reports">Accusés de réception</string>
     <string name="settings_sms_delivery_reports_text">Demander au réseau de confirmer la distribution. Certains opérateurs la facturent</string>
     <string name="keywords_sms">sms mms message texte conversation chat code mot de passe défaut</string>
+
+    <!-- Вопросы о сообщениях (2.0.0) -->
+    <string name="faq_section_messages">Messages</string>
+    <string name="faq_q_sms">Puis-je envoyer et recevoir des SMS dans le composeur ?</string>
+    <string name="faq_a_sms">Oui, si vous le souhaitez. Pour écrire : les boutons « Message » ouvrent la conversation ici même (%1$s) — le composeur doit alors être votre appli Téléphone par défaut. Pour recevoir, voir l\'historique et envoyer des images (MMS), le composeur doit être votre appli SMS par défaut (%2$s). Les messages apparaissent alors dans le journal avec les appels, et le filtre du journal affiche seulement les appels ou seulement les messages. Pour revenir en arrière, choisissez une autre appli SMS à tout moment : le composeur cesse aussitôt de lire les messages. Les discussions RCS ne sont pas accessibles aux applis tierces.</string>
+    <string name="faq_q_codes">Comment coller un code reçu par SMS ?</string>
+    <string name="faq_a_codes">Quand un message contient un code de vérification, la notification affiche un bouton « Copier 123456 », et la conversation montre le même bouton sous le message. Le code est placé dans le presse-papiers en tant que donnée sensible, et votre clavier propose de le coller d\'une touche. Le remplissage automatique dans une autre appli est assuré par votre clavier ou votre service de saisie automatique (par exemple Gboard ou la saisie automatique Google) — cela continue de fonctionner avec le composeur comme appli SMS. Le code est détecté sur le téléphone : le composeur n\'a pas accès à Internet. Un appui long sur un message permet de copier tout le texte, un numéro qu\'il contient ou d\'en sélectionner une partie.</string>
 </resources>

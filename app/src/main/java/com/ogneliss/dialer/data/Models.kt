@@ -49,7 +49,7 @@ data class CallLogEntry(
     val phoneAccountId: String?,
     val contactId: Long?,
     /**
-     * SMS или MMS вместо вызова (1.10.0): журнал показывает сообщения
+     * SMS или MMS вместо вызова (2.0.0): журнал показывает сообщения
      * одной лентой с вызовами. У вызовов — null; type у сообщения —
      * направление (INCOMING / OUTGOING), длительность — 0, номер записи
      * отрицательный (Message.journalId). Счётчики вызовов карточки
@@ -110,7 +110,7 @@ data class CallLogGroup(
     /** Все записи группы — нужны для экрана истории по абоненту. */
     val entries: List<CallLogEntry> = emptyList(),
     /**
-     * Последнее событие группы — сообщение (1.10.0): строка показывает его
+     * Последнее событие группы — сообщение (2.0.0): строка показывает его
      * текст, нажатие открывает переписку. null — последнее событие — вызов.
      */
     val lastMessage: com.ogneliss.dialer.sms.JournalMessage? = null,

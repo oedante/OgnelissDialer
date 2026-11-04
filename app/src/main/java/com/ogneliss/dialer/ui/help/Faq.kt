@@ -155,6 +155,17 @@ object Faq {
                 FaqItem("recording", R.string.faq_q_recording, R.string.faq_a_recording)
             )
         ),
+        // 2.0.0: SMS и MMS в диалере, коды из SMS
+        FaqSection(
+            R.string.faq_section_messages,
+            listOf(
+                FaqItem(
+                    "sms", R.string.faq_q_sms, R.string.faq_a_sms,
+                    listOf(FaqLink.Setting("sms_in_app"), FaqLink.Setting("sms_default_app"))
+                ),
+                FaqItem("codes", R.string.faq_q_codes, R.string.faq_a_codes)
+            )
+        ),
         FaqSection(
             R.string.faq_section_about,
             listOf(

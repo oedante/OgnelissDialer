@@ -86,7 +86,7 @@ import com.ogneliss.dialer.ui.theme.Space
 import com.ogneliss.dialer.ui.components.listSheetContainerColor
 
 /**
- * ЭКРАН ПЕРЕПИСКИ SMS (1.10.0).
+ * ЭКРАН ПЕРЕПИСКИ SMS (2.0.0).
  *
  * ── Вид ─────────────────────────────────────────────────────────────────────
  * Как переписка в Ogneliss Mail и принятые правила UI диалера:

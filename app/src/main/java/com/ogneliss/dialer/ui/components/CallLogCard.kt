@@ -340,7 +340,7 @@ fun CallLogCard(
                         )
                     } else Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            // Сообщение (1.10.0) — облачко вместо стрелки вызова
+                            // Сообщение (2.0.0) — облачко вместо стрелки вызова
                             if (row.messageLine != null) OgnelissIcons.Textsms else typeIcon(row.lastType),
                             contentDescription = null,
                             modifier = Modifier.size(FlowUi.iconSizeSmall),
@@ -397,7 +397,7 @@ fun CallLogCard(
                      * нажатия.
                      */
                     /*
-                     * ТЕКСТ СООБЩЕНИЯ (1.10.0) — третьей строкой, одной, как
+                     * ТЕКСТ СООБЩЕНИЯ (2.0.0) — третьей строкой, одной, как
                      * превью письма в Ogneliss Mail: непрочитанное — темнее
                      * и Medium, не отправленное — красным.
                      */

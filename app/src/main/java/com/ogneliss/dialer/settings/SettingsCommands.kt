@@ -548,7 +548,7 @@ class SettingsCommands @Inject constructor(
             "dialpad_open_at_start",
             // 1.8.0
             "scam_memo",
-            // 1.10.0
+            // 2.0.0
             "sms_in_app", "sms_in_journal", "sms_delivery_reports"
         )
 

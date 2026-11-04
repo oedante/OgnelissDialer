@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 
 /**
- * MMS: ПРИЁМ И ОТПРАВКА (1.10.0).
+ * MMS: ПРИЁМ И ОТПРАВКА (2.0.0).
  *
  * ══════════════════════════════════════════════════════════════════════════
  * КАК ПРИХОДИТ MMS

@@ -31,6 +31,11 @@ JOURNAL D'APPELS
 • Effacer et supprimer demandent une confirmation
 • Export du journal en tableau CSV
 
+MESSAGES
+• SMS dans le composeur — ou appli SMS par défaut : conversations, SMS et MMS reçus, réponse depuis la notification
+• SMS dans le journal, avec les appels, filtre Appels / Messages
+• Codes reçus par SMS : « Copier », reconnus sur le téléphone
+
 BALAYAGES
 • Jusqu'à trois actions par balayage — la ligne glisse et affiche des boutons, comme dans les applications de messagerie
 • 14 actions au choix : appel, SMS, messagerie, rappel, note, blocage…
@@ -58,7 +63,7 @@ PROTECTION ANTI-SPAM
 • Étiquettes de numéros : spam, arnaque
 • Notification discrète avec « Débloquer » pour chaque appel bloqué
 • Avertissement avant d'appeler un numéro surtaxé ou international
-• Numéros d'urgence — sans avertissement inutile ; après un appel d'urgence, le filtre laisse passer tous les appels entrants pendant deux heures, pour ne jamais bloquer un rappel
+• Numéros d'urgence : après un appel d'urgence, tous les appels entrants passent pendant deux heures
 
 FAUX APPEL
 Le téléphone « sonne » — un prétexte pour s'éloigner d'une conversation gênante. Aucun appel réel : rien n'est envoyé, rien n'apparaît dans le journal.
@@ -69,7 +74,6 @@ DOUBLE SIM
 • Vos propres noms pour les emplacements : « Travail », « Personnel »
 
 ÉCRAN D'APPEL
-• Réponse rapide par SMS à un appel entrant
 • Son vers un casque Bluetooth
 • L'extinction de l'écran près de l'oreille peut être désactivée
 
@@ -89,7 +93,7 @@ VOS DONNÉES
 Le journal d'appels et les contacts sont lus depuis les fournisseurs système d'Android et restent sur l'appareil. L'application ne crée pas sa propre copie : si vous revenez à l'application Téléphone d'origine, vous ne perdez rien.
 
 CODE SOURCE OUVERT
-Le code source est ouvert sous licence Apache 2.0 : tout ce qui est dit sur vos données peut être vérifié dans le code — github.com/oedante/OgnelissDialer. Vous pouvez utiliser l'application à toute fin, y compris professionnelle.
+Le code source est ouvert sous licence Apache 2.0 : tout ce qui est dit sur vos données peut être vérifié dans le code — github.com/oedante/OgnelissDialer.
 
 ## Catégorie
 Outils → Communication

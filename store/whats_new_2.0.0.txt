@@ -1,0 +1,162 @@
+<ru-RU>
+• Сообщения в диалере: пишите SMS прямо отсюда, а если сделать диалер приложением SMS — переписка, приём SMS и MMS, ответ из уведомления.
+• SMS в журнале одной лентой со звонками, фильтр «Вызовы / Сообщения».
+• Код из SMS — кнопкой «Копировать» в уведомлении и в переписке; всё на телефоне, без интернета.
+• Долгое нажатие на сообщение: копировать текст, номер или часть текста.
+</ru-RU>
+<ar>
+• الرسائل في تطبيق الاتصال: اكتب الرسائل القصيرة من هنا مباشرة؛ واجعله تطبيق الرسائل الافتراضي للمحادثات واستقبال SMS وMMS والرد من الإشعار.
+• الرسائل القصيرة في سجل المكالمات ضمن خط زمني واحد مع المكالمات، مع فلتر المكالمات / الرسائل.
+• رموز التحقق من الرسائل: زر «نسخ» في الإشعار والمحادثة — كل ذلك على الهاتف، دون إنترنت.
+• اضغط مطولاً على رسالة لنسخ النص أو رقم أو جزء منه.
+</ar>
+<cs-CZ>
+• Zprávy v aplikaci: pište SMS přímo zde; nastavte ji jako výchozí aplikaci SMS pro konverzace, příchozí SMS a MMS a odpovědi z oznámení.
+• SMS v historii hovorů na jedné časové ose s hovory, s filtrem Hovory / Zprávy.
+• Kódy z SMS: tlačítko „Kopírovat“ v oznámení i v konverzaci — vše v telefonu, bez internetu.
+• Podržením zprávy zkopírujete text, číslo nebo jeho část.
+</cs-CZ>
+<da-DK>
+• Beskeder i opkaldsappen: skriv sms direkte herfra; gør den til din standard-sms-app for samtaler, indgående sms og mms og svar fra notifikationen.
+• Sms i opkaldsloggen på én tidslinje med opkald, med filteret Opkald / Beskeder.
+• Koder fra sms: knappen "Kopiér" i notifikationen og samtalen – alt sker på telefonen, uden internet.
+• Hold fingeren på en besked for at kopiere teksten, et nummer eller en del af den.
+</da-DK>
+<de-DE>
+• Nachrichten im Dialer: SMS direkt hier schreiben; als Standard-SMS-App auch Unterhaltungen, eingehende SMS und MMS und Antworten aus der Benachrichtigung.
+• SMS in der Anrufliste, in einer Zeitleiste mit Anrufen, Filter Anrufe / Nachrichten.
+• Codes aus SMS: Taste „Kopieren“ in Benachrichtigung und Unterhaltung – alles auf dem Telefon, ohne Internet.
+• Lange auf eine Nachricht tippen: Text, Nummer oder einen Teil kopieren.
+</de-DE>
+<en-US>
+• Messages in the dialer: write SMS right here; make the dialer your default SMS app for conversations, incoming SMS and MMS, and replies from the notification.
+• SMS in the call log, one timeline with calls, with a Calls / Messages filter.
+• Codes from SMS: a "Copy" button in the notification and the conversation — all on the phone, no internet.
+• Long-press a message to copy the text, a number or any part of it.
+</en-US>
+<es-ES>
+• Mensajes en el marcador: escribe SMS desde aquí; hazlo tu app de SMS predeterminada para conversaciones, SMS y MMS entrantes y respuestas desde la notificación.
+• SMS en el registro, junto a las llamadas, con filtro Llamadas / Mensajes.
+• Códigos de SMS: botón «Copiar» en la notificación y en la conversación; todo en el teléfono, sin internet.
+• Mantén pulsado un mensaje para copiar el texto, un número o una parte.
+</es-ES>
+<fi-FI>
+• Viestit soittajasovelluksessa: kirjoita tekstiviestit suoraan täällä; oletustekstiviestisovelluksena myös keskustelut, saapuvat tekstiviestit ja MMS-viestit sekä vastaukset ilmoituksesta.
+• Tekstiviestit puhelulokissa samalla aikajanalla puheluiden kanssa, suodattimena Puhelut / Viestit.
+• Koodit tekstiviesteistä: Kopioi-painike ilmoituksessa ja keskustelussa – kaikki puhelimessa, ilman internetiä.
+• Pidä viestiä painettuna kopioidaksesi tekstin, numeron tai osan siitä.
+</fi-FI>
+<fr-FR>
+• Messages dans le composeur : écrivez vos SMS ici ; définissez-le comme appli SMS par défaut pour les conversations, les SMS et MMS reçus et les réponses depuis la notification.
+• Les SMS dans le journal, avec les appels, et un filtre Appels / Messages.
+• Codes reçus par SMS : bouton « Copier » dans la notification et la conversation — tout sur le téléphone, sans Internet.
+• Appui long sur un message : copier le texte, un numéro ou une partie.
+</fr-FR>
+<hi-IN>
+• डायलर में संदेश: SMS सीधे यहीं से लिखें; इसे डिफ़ॉल्ट SMS ऐप बनाएं और पाएं बातचीत, आने वाले SMS और MMS, और सूचना से जवाब।
+• कॉल लॉग में SMS, कॉल के साथ एक ही टाइमलाइन में, कॉल / संदेश फ़िल्टर के साथ।
+• SMS से कोड: सूचना और बातचीत में "कॉपी करें" बटन — सब कुछ फ़ोन पर, बिना इंटरनेट।
+• टेक्स्ट, नंबर या उसका कोई हिस्सा कॉपी करने के लिए संदेश को देर तक दबाएं।
+</hi-IN>
+<hu-HU>
+• Üzenetek a tárcsázóban: írjon SMS-t közvetlenül innen; alapértelmezett SMS-alkalmazásként beszélgetések, bejövő SMS és MMS, valamint válasz az értesítésből.
+• SMS-ek a hívásnaplóban, egy idővonalon a hívásokkal, Hívások / Üzenetek szűrővel.
+• Kódok SMS-ből: „Másolás” gomb az értesítésben és a beszélgetésben – minden a telefonon, internet nélkül.
+• Nyomja hosszan az üzenetet a szöveg, egy szám vagy egy rész másolásához.
+</hu-HU>
+<id>
+• Pesan di aplikasi telepon: tulis SMS langsung dari sini; jadikan aplikasi SMS default untuk percakapan, SMS dan MMS masuk, serta balasan dari notifikasi.
+• SMS di log panggilan, dalam satu linimasa dengan panggilan, dengan filter Panggilan / Pesan.
+• Kode dari SMS: tombol "Salin" di notifikasi dan percakapan — semua di ponsel, tanpa internet.
+• Tekan lama pesan untuk menyalin teks, nomor, atau sebagiannya.
+</id>
+<it-IT>
+• Messaggi nel dialer: scrivi SMS direttamente qui; impostalo come app SMS predefinita per conversazioni, SMS e MMS in arrivo e risposte dalla notifica.
+• SMS nel registro chiamate, in un'unica sequenza con le chiamate, con filtro Chiamate / Messaggi.
+• Codici dagli SMS: pulsante «Copia» nella notifica e nella conversazione, tutto sul telefono, senza internet.
+• Tieni premuto un messaggio per copiare il testo, un numero o una parte.
+</it-IT>
+<iw-IL>
+• הודעות בחייגן: כתבו SMS ישירות מכאן; הגדירו אותו כאפליקציית ה-SMS המוגדרת כברירת מחדל לשיחות, ל-SMS ול-MMS נכנסים ולתשובה מההתראה.
+• SMS ביומן השיחות, בציר זמן אחד עם השיחות, עם מסנן שיחות / הודעות.
+• קודים מ-SMS: לחצן "העתקה" בהתראה ובשיחה — הכול בטלפון, בלי אינטרנט.
+• לחיצה ארוכה על הודעה מעתיקה את הטקסט, מספר או חלק ממנו.
+</iw-IL>
+<ja-JP>
+• ダイヤラーでメッセージ：SMS をここから直接作成。既定の SMS アプリにすると、会話、SMS・MMS の受信、通知からの返信も使えます。
+• 通話履歴に SMS を通話と同じタイムラインで表示。「通話 / メッセージ」フィルター付き。
+• SMS の確認コード：通知と会話に「コピー」ボタン。処理はすべて端末内、インターネット不要。
+• メッセージを長押しで、本文・電話番号・一部をコピー。
+</ja-JP>
+<ko-KR>
+• 다이얼러에서 메시지: 여기서 바로 SMS를 작성하세요. 기본 SMS 앱으로 설정하면 대화, SMS·MMS 수신, 알림에서 답장까지 가능합니다.
+• 통화 기록에 SMS를 통화와 한 타임라인으로 표시, 통화 / 메시지 필터 제공.
+• SMS 인증 코드: 알림과 대화에 '복사' 버튼 — 모두 휴대전화에서, 인터넷 없이.
+• 메시지를 길게 눌러 텍스트, 번호 또는 일부를 복사하세요.
+</ko-KR>
+<nl-NL>
+• Berichten in de kiezer: stuur sms'jes direct vanaf hier; als standaard-sms-app ook gesprekken, inkomende sms en mms en antwoorden vanuit de melding.
+• Sms in de oproeplijst, in één tijdlijn met oproepen, met filter Oproepen / Berichten.
+• Codes uit sms: knop 'Kopiëren' in de melding en het gesprek — alles op de telefoon, zonder internet.
+• Houd een bericht ingedrukt om de tekst, een nummer of een deel te kopiëren.
+</nl-NL>
+<no-NO>
+• Meldinger i ringeappen: skriv SMS rett herfra; gjør den til standard SMS-app for samtaler, innkommende SMS og MMS og svar fra varselet.
+• SMS i anropsloggen, på én tidslinje med anrop, med filteret Anrop / Meldinger.
+• Koder fra SMS: knappen «Kopier» i varselet og samtalen – alt skjer på telefonen, uten internett.
+• Trykk lenge på en melding for å kopiere teksten, et nummer eller en del av den.
+</no-NO>
+<pl-PL>
+• Wiadomości w aplikacji: pisz SMS-y bezpośrednio tutaj; jako domyślna aplikacja SMS — także rozmowy, przychodzące SMS i MMS oraz odpowiedzi z powiadomienia.
+• SMS-y w rejestrze połączeń, na jednej osi czasu z połączeniami, z filtrem Połączenia / Wiadomości.
+• Kody z SMS: przycisk „Kopiuj” w powiadomieniu i w rozmowie — wszystko na telefonie, bez internetu.
+• Przytrzymaj wiadomość, aby skopiować tekst, numer lub jego fragment.
+</pl-PL>
+<pt-BR>
+• Mensagens no discador: escreva SMS aqui mesmo; defina-o como app de SMS padrão para conversas, SMS e MMS recebidos e respostas pela notificação.
+• SMS no registro de chamadas, na mesma linha do tempo, com filtro Chamadas / Mensagens.
+• Códigos de SMS: botão "Copiar" na notificação e na conversa — tudo no celular, sem internet.
+• Toque e segure uma mensagem para copiar o texto, um número ou parte dele.
+</pt-BR>
+<ro>
+• Mesaje în aplicația de apelare: scrieți SMS-uri direct de aici; ca aplicație SMS implicită — conversații, SMS și MMS primite și răspunsuri din notificare.
+• SMS-urile în jurnalul de apeluri, pe aceeași cronologie cu apelurile, cu filtrul Apeluri / Mesaje.
+• Coduri din SMS: butonul „Copiați” în notificare și în conversație — totul pe telefon, fără internet.
+• Atingeți lung un mesaj pentru a copia textul, un număr sau o parte din el.
+</ro>
+<sk>
+• Správy v aplikácii: píšte SMS priamo tu; nastavte ju ako predvolenú aplikáciu SMS pre konverzácie, prichádzajúce SMS a MMS a odpovede z upozornenia.
+• SMS v histórii hovorov na jednej časovej osi s hovormi, s filtrom Hovory / Správy.
+• Kódy z SMS: tlačidlo „Kopírovať“ v upozornení aj v konverzácii — všetko v telefóne, bez internetu.
+• Podržaním správy skopírujete text, číslo alebo jeho časť.
+</sk>
+<sv-SE>
+• Meddelanden i telefonappen: skriv sms direkt härifrån; som standardapp för sms även konversationer, inkommande sms och mms och svar från aviseringen.
+• Sms i samtalsloggen, på en tidslinje med samtal, med filtret Samtal / Meddelanden.
+• Koder från sms: knappen "Kopiera" i aviseringen och konversationen – allt sker på telefonen, utan internet.
+• Tryck länge på ett meddelande för att kopiera texten, ett nummer eller en del av den.
+</sv-SE>
+<th>
+• ข้อความในแอปโทร: เขียน SMS ได้จากที่นี่โดยตรง ตั้งเป็นแอป SMS เริ่มต้นเพื่อดูบทสนทนา รับ SMS และ MMS และตอบกลับจากการแจ้งเตือน
+• SMS ในประวัติการโทร อยู่ในไทม์ไลน์เดียวกับการโทร พร้อมตัวกรอง การโทร / ข้อความ
+• รหัสจาก SMS: ปุ่ม "คัดลอก" ในการแจ้งเตือนและบทสนทนา ทุกอย่างทำบนโทรศัพท์ ไม่ใช้อินเทอร์เน็ต
+• กดค้างที่ข้อความเพื่อคัดลอกข้อความ หมายเลข หรือบางส่วน
+</th>
+<tr-TR>
+• Arama uygulamasında mesajlar: SMS'leri doğrudan buradan yazın; konuşmalar, gelen SMS ve MMS'ler ve bildirimden yanıt için varsayılan SMS uygulaması yapın.
+• SMS'ler arama kaydında, aramalarla tek zaman çizelgesinde; Aramalar / Mesajlar filtresiyle.
+• SMS'teki kodlar: bildirimde ve konuşmada "Kopyala" düğmesi — her şey telefonda, internetsiz.
+• Metni, bir numarayı veya bir bölümü kopyalamak için mesaja uzun basın.
+</tr-TR>
+<vi>
+• Tin nhắn trong ứng dụng gọi điện: soạn SMS ngay tại đây; đặt làm ứng dụng SMS mặc định để có hội thoại, nhận SMS và MMS, trả lời từ thông báo.
+• SMS trong nhật ký cuộc gọi, chung một dòng thời gian với cuộc gọi, có bộ lọc Cuộc gọi / Tin nhắn.
+• Mã từ SMS: nút "Sao chép" trong thông báo và hội thoại — mọi thứ trên điện thoại, không cần internet.
+• Nhấn giữ tin nhắn để sao chép văn bản, số điện thoại hoặc một phần.
+</vi>
+<zh-CN>
+• 拨号应用内收发短信：直接在这里写短信；设为默认短信应用后，还能查看会话、接收短信和彩信、在通知中回复。
+• 短信与通话显示在同一条通话记录时间线中，并有“通话 / 信息”筛选。
+• 短信验证码：通知和会话中都有“复制”按钮——全部在手机上完成，无需联网。
+• 长按信息可复制全文、号码或其中一部分。
+</zh-CN>

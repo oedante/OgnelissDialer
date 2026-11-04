@@ -32,7 +32,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
- * ПЕРЕПИСКА (1.10.0) — состояние экрана ConversationScreen.
+ * ПЕРЕПИСКА (2.0.0) — состояние экрана ConversationScreen.
  *
  * ── Два режима ──────────────────────────────────────────────────────────────
  * • Диалер — приложение SMS по умолчанию: вся история из хранилища,
