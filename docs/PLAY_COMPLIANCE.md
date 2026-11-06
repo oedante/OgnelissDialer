@@ -17,6 +17,8 @@
 
 ### 1а. SMS и MMS (с 2.0.0) ❗
 
+> Готовые тексты для формы, сценарий видео и Data safety — `store/PLAY_DECLARATION_2.0.0.md`.
+
 Группа разрешений SMS — из самых строгих в Play (политика «SMS and Call Log
 permissions»). Как у нас:
 
