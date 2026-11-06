@@ -178,37 +178,35 @@ Google просит короткое видео (обычно до 2 минут)
 **Где:** Policy and programs → App content → **Доступ к контактам**
 (Contacts permissions) → отправить декларацию.
 
-### Шаг 1. Функции, которым нужен доступ
+### Шаг 1. «Функции, доступные пользователям»
 
-Отметить:
+Отметить четыре пункта:
 
-- [x] **Contact management** — вкладка «Контакты», избранное, быстрый
-  набор, карточка, создание и правка контакта
-- [x] **Dialing or SMS sending** — поиск по всей книге при наборе
-  на клавиатуре, имена в переписке SMS
-- [x] **Call history** — имена и фото у каждого вызова в журнале
-  и на экране входящего
-- [x] **Call screening** — незнакомые номера отличаются от контактов:
-  предупреждение о спаме, «тихие часы для незнакомых», карточка
-  после звонка, фильтр журнала «только незнакомые»
+- [x] **Управление контактами** (Contact management) — вкладка «Контакты»,
+  избранное, карточка, создание и правка
+- [x] **Звонки или отправка SMS** (Dialing or SMS sending) — поиск
+  по имени при наборе, имена в переписке SMS
+- [x] **Журнал звонков** (Call history) — имена и фото у каждого вызова
+- [x] **Управление входящими вызовами** (Call screening) — экран
+  входящего с именем, незнакомые номера отдельно (спам, тихие часы)
 
-### Шаг 2. Почему окна выбора недостаточно — вставить в форму
+Не отмечать: «Автозамена и автозаполнение» (это для клавиатур),
+«Выбор контакта на устройстве, инициированный пользователем» (это как
+раз то, что покрывает окно выбора).
+
+### Шаг 2. «Укажите причину, по которой вашему приложению требуется разрешение» (до 500)
 
 ```text
-Ogneliss Dialer is a phone app (default Phone handler) and optional default SMS app. It needs the whole address book, not picked contacts: it shows caller names and photos for every call in the call log and on the incoming-call screen, searches all contacts as the user types on the dialpad, shows the Contacts tab with favorites, names SMS conversations and treats unknown numbers differently (spam warnings, quiet hours). Contacts never leave the device: the app has no INTERNET permission.
+Ogneliss Dialer is a phone app (default Phone handler) and optional default SMS app. Contacts are its core data: the Contacts tab with search, favorites and contact cards; caller names and photos in the call log and on the incoming-call screen; search by name while dialing; names in SMS conversations and notifications; separate handling of unknown numbers (spam warnings, quiet hours). All on the device: the app has no INTERNET permission.
 ```
-(492 знака)
+(442 знаков)
 
-По-русски, для себя:
-> Ogneliss Dialer — приложение «Телефон» (обработчик по умолчанию)
-> и по желанию приложение SMS. Ему нужна вся книга, а не выбранные
-> контакты: имена и фото у каждого вызова в журнале и на экране
-> входящего, поиск по всем контактам при наборе номера, вкладка
-> «Контакты» с избранным, имена в переписке SMS, разное поведение
-> для незнакомых номеров (предупреждение о спаме, тихие часы). Окно
-> выбора отдаёт только то, что человек выбрал вручную, — ничего из
-> этого с ним не работает. Контакты не покидают телефон: разрешения
-> INTERNET нет.
+### Шаг 3. «Почему инструмента выбора контактов Android недостаточно» (до 500)
+
+```text
+The Contact Picker returns only contacts the user selects one at a time. A dialer must match every incoming and logged call against the whole address book automatically, without user action: to show who is calling before answering, to name each call log entry, to find contacts while the user types digits on the dialpad and to tell known callers from unknown ones for spam protection. None of this works with manually picked contacts.
+```
+(435 знаков)
 
 **Чего не писать** (Google прямо называет неподходящими основаниями):
 «у нас своё окно выбора контактов», «пригласить друга», «поделиться».
