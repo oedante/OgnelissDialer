@@ -1,0 +1,162 @@
+<ru-RU>
+• Сообщения в диалере: пишите SMS прямо отсюда, а если сделать диалер приложением SMS — переписка, приём SMS и MMS, ответ из уведомления.
+• Новая нижняя панель: Журнал, SMS, клавиатура, Контакты; поиск и фильтры — в «Ещё».
+• SMS в журнале одной лентой со звонками, фильтр «Вызовы / Сообщения».
+• Код из SMS — кнопкой «Копировать» в уведомлении и в переписке; всё на телефоне, без интернета.
+</ru-RU>
+<ar>
+• الرسائل في تطبيق الاتصال: اكتب الرسائل القصيرة من هنا مباشرة؛ واجعله تطبيق الرسائل الافتراضي للمحادثات واستقبال SMS وMMS والرد من الإشعار.
+• شريط سفلي جديد: السجل، الرسائل، لوحة الاتصال، جهات الاتصال؛ البحث والفلاتر في «المزيد».
+• الرسائل القصيرة في سجل المكالمات ضمن خط زمني واحد مع المكالمات، مع فلتر المكالمات / الرسائل.
+• رموز التحقق من الرسائل: زر «نسخ» في الإشعار والمحادثة — كل ذلك على الهاتف، دون إنترنت.
+</ar>
+<cs-CZ>
+• Zprávy v aplikaci: pište SMS přímo zde; nastavte ji jako výchozí aplikaci SMS pro konverzace, příchozí SMS a MMS a odpovědi z oznámení.
+• Nový spodní panel: Historie, SMS, klávesnice, Kontakty; vyhledávání a filtry jsou v nabídce Více.
+• SMS v historii hovorů na jedné časové ose s hovory, s filtrem Hovory / Zprávy.
+• Kódy z SMS: tlačítko „Kopírovat“ v oznámení i v konverzaci — vše v telefonu, bez internetu.
+</cs-CZ>
+<da-DK>
+• Beskeder i opkaldsappen: skriv sms direkte herfra; gør den til din standard-sms-app for samtaler, indgående sms og mms og svar fra notifikationen.
+• Ny nederste bjælke: Opkaldslog, SMS, tastatur, Kontakter; søgning og filtre ligger under Mere.
+• Sms i opkaldsloggen på én tidslinje med opkald, med filteret Opkald / Beskeder.
+• Koder fra sms: knappen "Kopiér" i notifikationen og samtalen – alt sker på telefonen, uden internet.
+</da-DK>
+<de-DE>
+• Nachrichten im Dialer: SMS direkt hier schreiben; als Standard-SMS-App auch Unterhaltungen, eingehende SMS und MMS und Antworten aus der Benachrichtigung.
+• Neue untere Leiste: Anrufliste, SMS, Wähltastatur, Kontakte; Suche und Filter unter „Mehr“.
+• SMS in der Anrufliste, in einer Zeitleiste mit Anrufen, Filter Anrufe / Nachrichten.
+• Codes aus SMS: Taste „Kopieren“ in Benachrichtigung und Unterhaltung – alles auf dem Telefon, ohne Internet.
+</de-DE>
+<en-US>
+• Messages in the dialer: write SMS right here; make the dialer your default SMS app for conversations, incoming SMS and MMS, and replies from the notification.
+• New bottom bar: Call log, SMS, keypad, Contacts; search and filters are under More.
+• SMS in the call log, one timeline with calls, with a Calls / Messages filter.
+• Codes from SMS: a "Copy" button in the notification and the conversation — all on the phone, no internet.
+</en-US>
+<es-ES>
+• Mensajes en el marcador: escribe SMS desde aquí; hazlo tu app de SMS predeterminada para conversaciones, SMS y MMS entrantes y respuestas desde la notificación.
+• Nueva barra inferior: Registro, SMS, teclado, Contactos; la búsqueda y los filtros están en «Más».
+• SMS en el registro, junto a las llamadas, con filtro Llamadas / Mensajes.
+• Códigos de SMS: botón «Copiar» en la notificación y en la conversación; todo en el teléfono, sin internet.
+</es-ES>
+<fi-FI>
+• Viestit soittajasovelluksessa: kirjoita tekstiviestit suoraan täällä; oletustekstiviestisovelluksena myös keskustelut, saapuvat tekstiviestit ja MMS-viestit sekä vastaukset ilmoituksesta.
+• Uusi alapalkki: Loki, viestit, näppäimistö, yhteystiedot; haku ja suodattimet: Lisää.
+• Tekstiviestit puhelulokissa samalla aikajanalla puheluiden kanssa, suodattimena Puhelut / Viestit.
+• Koodit tekstiviesteistä: Kopioi-painike ilmoituksessa ja keskustelussa – kaikki puhelimessa, ilman internetiä.
+</fi-FI>
+<fr-FR>
+• Messages dans le composeur : écrivez vos SMS ici ; définissez-le comme appli SMS par défaut pour les conversations, les SMS et MMS reçus et les réponses depuis la notification.
+• Nouvelle barre du bas : Journal, SMS, clavier, Contacts ; recherche et filtres dans « Plus ».
+• Les SMS dans le journal, avec les appels, et un filtre Appels / Messages.
+• Codes reçus par SMS : bouton « Copier » dans la notification et la conversation — tout sur le téléphone, sans Internet.
+</fr-FR>
+<hi-IN>
+• डायलर में संदेश: SMS सीधे यहीं से लिखें; इसे डिफ़ॉल्ट SMS ऐप बनाएं और पाएं बातचीत, आने वाले SMS और MMS, और सूचना से जवाब।
+• नया निचला बार: कॉल लॉग, SMS, कीपैड, संपर्क; खोज और फ़िल्टर "और" में।
+• कॉल लॉग में SMS, कॉल के साथ एक ही टाइमलाइन में, कॉल / संदेश फ़िल्टर के साथ।
+• SMS से कोड: सूचना और बातचीत में "कॉपी करें" बटन — सब कुछ फ़ोन पर, बिना इंटरनेट।
+</hi-IN>
+<hu-HU>
+• Üzenetek a tárcsázóban: írjon SMS-t közvetlenül innen; alapértelmezett SMS-alkalmazásként beszélgetések, bejövő SMS és MMS, valamint válasz az értesítésből.
+• Új alsó sáv: Hívásnapló, SMS, billentyűzet, Névjegyek; a keresés és a szűrők a Továbbiak menüben.
+• SMS-ek a hívásnaplóban, egy idővonalon a hívásokkal, Hívások / Üzenetek szűrővel.
+• Kódok SMS-ből: „Másolás” gomb az értesítésben és a beszélgetésben – minden a telefonon, internet nélkül.
+</hu-HU>
+<id>
+• Pesan di aplikasi telepon: tulis SMS langsung dari sini; jadikan aplikasi SMS default untuk percakapan, SMS dan MMS masuk, serta balasan dari notifikasi.
+• Bilah bawah baru: Log panggilan, SMS, keypad, Kontak; pencarian dan filter ada di Lainnya.
+• SMS di log panggilan, dalam satu linimasa dengan panggilan, dengan filter Panggilan / Pesan.
+• Kode dari SMS: tombol "Salin" di notifikasi dan percakapan — semua di ponsel, tanpa internet.
+</id>
+<it-IT>
+• Messaggi nel dialer: scrivi SMS direttamente qui; impostalo come app SMS predefinita per conversazioni, SMS e MMS in arrivo e risposte dalla notifica.
+• Nuova barra in basso: Registro, SMS, tastierino, Contatti; ricerca e filtri sono in «Altro».
+• SMS nel registro chiamate, in un'unica sequenza con le chiamate, con filtro Chiamate / Messaggi.
+• Codici dagli SMS: pulsante «Copia» nella notifica e nella conversazione, tutto sul telefono, senza internet.
+</it-IT>
+<iw-IL>
+• הודעות בחייגן: כתבו SMS ישירות מכאן; הגדירו אותו כאפליקציית ה-SMS המוגדרת כברירת מחדל לשיחות, ל-SMS ול-MMS נכנסים ולתשובה מההתראה.
+• סרגל תחתון חדש: יומן שיחות, SMS, מקלדת, אנשי קשר; חיפוש ומסננים נמצאים ב"עוד".
+• SMS ביומן השיחות, בציר זמן אחד עם השיחות, עם מסנן שיחות / הודעות.
+• קודים מ-SMS: לחצן "העתקה" בהתראה ובשיחה — הכול בטלפון, בלי אינטרנט.
+</iw-IL>
+<ja-JP>
+• ダイヤラーでメッセージ：SMS をここから直接作成。既定の SMS アプリにすると、会話、SMS・MMS の受信、通知からの返信も使えます。
+• 新しい下部バー：通話履歴、SMS、キーパッド、連絡先。検索とフィルタは「その他」へ。
+• 通話履歴に SMS を通話と同じタイムラインで表示。「通話 / メッセージ」フィルター付き。
+• SMS の確認コード：通知と会話に「コピー」ボタン。処理はすべて端末内、インターネット不要。
+</ja-JP>
+<ko-KR>
+• 다이얼러에서 메시지: 여기서 바로 SMS를 작성하세요. 기본 SMS 앱으로 설정하면 대화, SMS·MMS 수신, 알림에서 답장까지 가능합니다.
+• 새로운 하단 바: 통화 기록, SMS, 키패드, 연락처. 검색과 필터는 '더보기'에 있습니다.
+• 통화 기록에 SMS를 통화와 한 타임라인으로 표시, 통화 / 메시지 필터 제공.
+• SMS 인증 코드: 알림과 대화에 '복사' 버튼 — 모두 휴대전화에서, 인터넷 없이.
+</ko-KR>
+<nl-NL>
+• Berichten in de kiezer: stuur sms'jes direct vanaf hier; als standaard-sms-app ook gesprekken, inkomende sms en mms en antwoorden vanuit de melding.
+• Nieuwe onderbalk: Oproeplijst, sms, toetsenblok, Contacten; zoeken en filters staan onder Meer.
+• Sms in de oproeplijst, in één tijdlijn met oproepen, met filter Oproepen / Berichten.
+• Codes uit sms: knop 'Kopiëren' in de melding en het gesprek — alles op de telefoon, zonder internet.
+</nl-NL>
+<no-NO>
+• Meldinger i ringeappen: skriv SMS rett herfra; gjør den til standard SMS-app for samtaler, innkommende SMS og MMS og svar fra varselet.
+• Ny nedre linje: Anropslogg, SMS, tastatur, Kontakter; søk og filtre ligger under Mer.
+• SMS i anropsloggen, på én tidslinje med anrop, med filteret Anrop / Meldinger.
+• Koder fra SMS: knappen «Kopier» i varselet og samtalen – alt skjer på telefonen, uten internett.
+</no-NO>
+<pl-PL>
+• Wiadomości w aplikacji: pisz SMS-y bezpośrednio tutaj; jako domyślna aplikacja SMS — także rozmowy, przychodzące SMS i MMS oraz odpowiedzi z powiadomienia.
+• Nowy dolny pasek: Rejestr, SMS, klawiatura, Kontakty; wyszukiwanie i filtry są w menu Więcej.
+• SMS-y w rejestrze połączeń, na jednej osi czasu z połączeniami, z filtrem Połączenia / Wiadomości.
+• Kody z SMS: przycisk „Kopiuj” w powiadomieniu i w rozmowie — wszystko na telefonie, bez internetu.
+</pl-PL>
+<pt-BR>
+• Mensagens no discador: escreva SMS aqui mesmo; defina-o como app de SMS padrão para conversas, SMS e MMS recebidos e respostas pela notificação.
+• Nova barra inferior: Registro, SMS, teclado, Contatos; busca e filtros ficam em "Mais".
+• SMS no registro de chamadas, na mesma linha do tempo, com filtro Chamadas / Mensagens.
+• Códigos de SMS: botão "Copiar" na notificação e na conversa — tudo no celular, sem internet.
+</pt-BR>
+<ro>
+• Mesaje în aplicația de apelare: scrieți SMS-uri direct de aici; ca aplicație SMS implicită — conversații, SMS și MMS primite și răspunsuri din notificare.
+• Bară de jos nouă: Jurnal, SMS, tastatură, Contacte; căutarea și filtrele sunt în „Mai multe”.
+• SMS-urile în jurnalul de apeluri, pe aceeași cronologie cu apelurile, cu filtrul Apeluri / Mesaje.
+• Coduri din SMS: butonul „Copiați” în notificare și în conversație — totul pe telefon, fără internet.
+</ro>
+<sk>
+• Správy v aplikácii: píšte SMS priamo tu; nastavte ju ako predvolenú aplikáciu SMS pre konverzácie, prichádzajúce SMS a MMS a odpovede z upozornenia.
+• Nový spodný panel: História, SMS, klávesnica, Kontakty; vyhľadávanie a filtre sú v ponuke Viac.
+• SMS v histórii hovorov na jednej časovej osi s hovormi, s filtrom Hovory / Správy.
+• Kódy z SMS: tlačidlo „Kopírovať“ v upozornení aj v konverzácii — všetko v telefóne, bez internetu.
+</sk>
+<sv-SE>
+• Meddelanden i telefonappen: skriv sms direkt härifrån; som standardapp för sms även konversationer, inkommande sms och mms och svar från aviseringen.
+• Ny nedre list: Samtalslogg, sms, knappsats, Kontakter; sök och filter finns under Mer.
+• Sms i samtalsloggen, på en tidslinje med samtal, med filtret Samtal / Meddelanden.
+• Koder från sms: knappen "Kopiera" i aviseringen och konversationen – allt sker på telefonen, utan internet.
+</sv-SE>
+<th>
+• ข้อความในแอปโทร: เขียน SMS ได้จากที่นี่โดยตรง ตั้งเป็นแอป SMS เริ่มต้นเพื่อดูบทสนทนา รับ SMS และ MMS และตอบกลับจากการแจ้งเตือน
+• แถบด้านล่างใหม่: ประวัติการโทร, SMS, แป้นกด, รายชื่อ ส่วนการค้นหาและตัวกรองอยู่ใน "เพิ่มเติม"
+• SMS ในประวัติการโทร อยู่ในไทม์ไลน์เดียวกับการโทร พร้อมตัวกรอง การโทร / ข้อความ
+• รหัสจาก SMS: ปุ่ม "คัดลอก" ในการแจ้งเตือนและบทสนทนา ทุกอย่างทำบนโทรศัพท์ ไม่ใช้อินเทอร์เน็ต
+</th>
+<tr-TR>
+• Arama uygulamasında mesajlar: SMS'leri doğrudan buradan yazın; konuşmalar, gelen SMS ve MMS'ler ve bildirimden yanıt için varsayılan SMS uygulaması yapın.
+• Yeni alt çubuk: Arama kaydı, SMS, tuş takımı, Kişiler; arama ve filtreler "Diğer" menüsünde.
+• SMS'ler arama kaydında, aramalarla tek zaman çizelgesinde; Aramalar / Mesajlar filtresiyle.
+• SMS'teki kodlar: bildirimde ve konuşmada "Kopyala" düğmesi — her şey telefonda, internetsiz.
+</tr-TR>
+<vi>
+• Tin nhắn trong ứng dụng gọi điện: soạn SMS ngay tại đây; đặt làm ứng dụng SMS mặc định để có hội thoại, nhận SMS và MMS, trả lời từ thông báo.
+• Thanh dưới mới: Nhật ký, SMS, bàn phím, Danh bạ; tìm kiếm và bộ lọc nằm trong "Thêm".
+• SMS trong nhật ký cuộc gọi, chung một dòng thời gian với cuộc gọi, có bộ lọc Cuộc gọi / Tin nhắn.
+• Mã từ SMS: nút "Sao chép" trong thông báo và hội thoại — mọi thứ trên điện thoại, không cần internet.
+</vi>
+<zh-CN>
+• 拨号应用内收发短信：直接在这里写短信；设为默认短信应用后，还能查看会话、接收短信和彩信、在通知中回复。
+• 全新底部栏：通话记录、短信、拨号键盘、联系人；搜索和筛选移至“更多”。
+• 短信与通话显示在同一条通话记录时间线中，并有“通话 / 信息”筛选。
+• 短信验证码：通知和会话中都有“复制”按钮——全部在手机上完成，无需联网。
+</zh-CN>
