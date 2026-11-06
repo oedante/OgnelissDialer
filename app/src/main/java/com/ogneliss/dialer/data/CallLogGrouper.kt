@@ -218,9 +218,12 @@ object CallLogGrouper {
             // старые записи журнала могут хранить устаревшее кэшированное имя
             displayName = sorted.firstNotNullOfOrNull { it.cachedName },
             photoUri = sorted.firstNotNullOfOrNull { it.photoUri },
-            // Контакт — по книге (как и ключ группы), а не только из кэша журнала:
-            // по нему закреплённые находят свою строку (2.0.0)
-            contactId = contactOf(latest, contactIdByNumber),
+            /*
+             * Контакт из кэша журнала — его выбрала система при звонке, и он
+             * точнее, когда номер записан в нескольких контактах (полный
+             * и дубли). Нет его — контакт по книге, как ключ группы (2.0.1).
+             */
+            contactId = latest.contactId ?: contactOf(latest, contactIdByNumber),
             lastType = latest.type,
             lastDate = latest.date,
             durationSec = latest.durationSec,

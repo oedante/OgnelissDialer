@@ -1323,16 +1323,29 @@ fun MainDialerScreen(
     }
 
     /*
-     * Свой контакт в меню (2.0.0): фото из книги и карточка контакта,
-     * а не карточка одного номера — у человека бывает два номера.
+     * ФОТО СВОЕГО КОНТАКТА В МЕНЮ (2.0.1).
+     *
+     * Свой номер часто записан в нескольких контактах: полный (два номера,
+     * почта, фото) и короткие дубли — с SIM-карты, из мессенджера, «Мой
+     * номер». В 2.0.0 брался первый попавшийся, и «Мой контакт» открывал
+     * дубль с одним номером. Теперь фото берётся у самого полного из них
+     * (больше номеров и почты, с фото — выше), а карточка открывается
+     * по номеру, как раньше: она сама собирает всё, что есть в книге.
      */
-    val ownContact = remember(ownNumber, state.contacts) {
+    val ownPhotoUri = remember(ownNumber, state.contacts) {
         if (ownNumber.isBlank()) null else {
             val e164 = PhoneFormatter.toE164(ownNumber)
             val tail = com.ogneliss.dialer.data.CallLogGrouper.tailKey(e164)
-            state.contacts.firstOrNull { c ->
-                c.numbers.any { it.e164 == e164 || (tail != null && com.ogneliss.dialer.data.CallLogGrouper.tailKey(it.e164) == tail) }
-            }
+            state.contacts
+                .filter { c ->
+                    c.numbers.any { it.e164 == e164 || (tail != null && com.ogneliss.dialer.data.CallLogGrouper.tailKey(it.e164) == tail) }
+                }
+                .sortedWith(
+                    compareByDescending<com.ogneliss.dialer.data.Contact> { !it.photoUri.isNullOrBlank() }
+                        .thenByDescending { it.numbers.size + it.emails.size }
+                )
+                .firstOrNull()
+                ?.photoUri
         }
     }
 
@@ -1439,7 +1452,7 @@ fun MainDialerScreen(
                     // чтобы было видно, готово ли приложение делиться
                     // карточкой
                     ownNumber = ownNumber,
-                    ownPhotoUri = ownContact?.photoUri,
+                    ownPhotoUri = ownPhotoUri,
                     onSearch = { menuOpen = false; startSearch() },
                     onFilters = { menuOpen = false; filtersOpen = true },
                     filterBadge = activeFilter.activeCount.toString().takeIf { activeFilter.isActive },
@@ -1471,7 +1484,7 @@ fun MainDialerScreen(
                         if (ownNumber.isBlank()) {
                             showOwnNumber = true
                         } else {
-                            onOpenSubscriber(ownContact?.let { "contact:${it.id}" } ?: "number:$ownNumber")
+                            onOpenSubscriber("number:$ownNumber")
                         }
                     },
                     onThemeToggle = {
