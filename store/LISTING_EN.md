@@ -6,7 +6,7 @@ Current as of 1.4.0 (draft 04.10.2026: everything from 1.2.3–1.3.4).
 Ogneliss Dialer
 
 ## Short description (80 chars)
-Phone app with no internet: T9 search, notes for numbers, spam protection
+Calls and SMS, no internet: T9 search, notes for numbers, spam protection
 
 ## Full description (up to 4000)
 

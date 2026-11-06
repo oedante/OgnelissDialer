@@ -10,7 +10,7 @@ corrige qu’avec la mise à jour suivante de la fiche.
 Ogneliss Dialer
 
 ## Description courte (80 caractères)
-Téléphone sans Internet : recherche T9, notes sur les numéros, anti-spam
+Appels et SMS sans Internet : recherche T9, notes sur les numéros, anti-spam
 
 ## Description complète (jusqu’à 4000)
 

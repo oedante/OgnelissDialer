@@ -11,7 +11,7 @@ nächsten Update des Eintrags.
 Ogneliss Dialer
 
 ## Kurzbeschreibung (80 Zeichen)
-Telefon-App ohne Internet: T9-Suche, Notizen zu Nummern, Spamschutz
+Anrufe und SMS ohne Internet: T9-Suche, Notizen zu Nummern, Spamschutz
 
 ## Vollständige Beschreibung (bis 4000)
 
