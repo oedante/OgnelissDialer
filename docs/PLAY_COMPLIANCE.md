@@ -15,6 +15,21 @@
 | Объяснение каждого разрешения ДО системного диалога | ✅ экран онбординга |
 | Приложение работает при отказе от необязательных разрешений | ✅ |
 
+### 1б. Контакты (READ_CONTACTS, WRITE_CONTACTS) ❗
+
+- **READ_CONTACTS** (targetSdk 37+): нужна декларация в Play Console
+  до **27.01.2027** — иначе нельзя выпускать обновления.
+  - Категории: Contact management, Dialing or SMS sending, Call history,
+    Call screening.
+  - Готовый текст — `store/PLAY_DECLARATION_2.0.0.md`, раздел 9.
+- **WRITE_CONTACTS / MANAGE_CONTACTS** (targetSdk 38+, Google Play —
+  с августа 2027): запись контактов через `WRITE_CONTACTS` перестанет
+  работать.
+  - Перед подъёмом targetSdk до 38 перевести создание и правку
+    на `ACTION_INSERT` / `ACTION_EDIT` или задекларировать
+    `MANAGE_CONTACTS` (основная функция — управление контактами).
+  - Своё окно редактора основанием не считается.
+
 ### 1а. SMS и MMS (с 2.0.0) ❗
 
 > Готовые тексты для формы, сценарий видео и Data safety — `store/PLAY_DECLARATION_2.0.0.md`.
