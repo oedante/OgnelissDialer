@@ -1071,4 +1071,18 @@
     <string name="sms_autostart_hint">Чтобы SMS приходили, даже когда диалер закрыт, разрешите ему автозапуск — на этом телефоне он выключен для сторонних приложений.</string>
     <string name="sms_autostart_action">Открыть</string>
     <string name="perm_sms_role_text">Переписка, входящие SMS и MMS. По желанию — отправлять SMS можно и без этого.</string>
+
+    <!-- Раздел SMS и меню «Ещё» (2.0.0) -->
+    <string name="nav_messages">SMS</string>
+    <string name="messages_title">Сообщения</string>
+    <string name="messages_empty">Сообщений пока нет</string>
+    <string name="messages_not_default">Чтобы видеть переписку и получать SMS здесь, сделайте диалер приложением SMS по умолчанию. Написать можно и без этого.</string>
+    <string name="messages_new">Новое сообщение</string>
+    <string name="messages_new_hint">Номер или имя</string>
+    <string name="messages_write">Написать</string>
+    <string name="messages_search_hint">Поиск по сообщениям</string>
+    <string name="messages_delete_thread_title">Удалить переписку?</string>
+    <string name="messages_delete_thread_text">Все сообщения с %1$s будут удалены с телефона.</string>
+    <string name="menu_section_list">Список</string>
+    <string name="menu_filters_active">Включено условий: %1$s</string>
 </resources>

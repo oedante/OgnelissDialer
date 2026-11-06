@@ -1091,4 +1091,18 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="sms_autostart_hint">For SMS to arrive while the dialer is closed, allow it to autostart — on this phone autostart is off for third-party apps.</string>
     <string name="sms_autostart_action">Open</string>
     <string name="perm_sms_role_text">Conversations, incoming SMS and MMS. Optional — you can send SMS without it.</string>
+
+    <!-- Раздел SMS и меню «Ещё» (2.0.0) -->
+    <string name="nav_messages">SMS</string>
+    <string name="messages_title">Messages</string>
+    <string name="messages_empty">No messages yet</string>
+    <string name="messages_not_default">To see conversations and receive SMS here, make the dialer your default SMS app. You can send messages without it.</string>
+    <string name="messages_new">New message</string>
+    <string name="messages_new_hint">Number or name</string>
+    <string name="messages_write">Write</string>
+    <string name="messages_search_hint">Search messages</string>
+    <string name="messages_delete_thread_title">Delete conversation?</string>
+    <string name="messages_delete_thread_text">All messages with %1$s will be deleted from the phone.</string>
+    <string name="menu_section_list">List</string>
+    <string name="menu_filters_active">Active conditions: %1$s</string>
 </resources>

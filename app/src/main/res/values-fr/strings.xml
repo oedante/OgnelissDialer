@@ -1061,4 +1061,18 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="sms_autostart_hint">Pour recevoir les SMS même composeur fermé, autorisez son démarrage automatique — sur ce téléphone, il est désactivé pour les applis tierces.</string>
     <string name="sms_autostart_action">Ouvrir</string>
     <string name="perm_sms_role_text">Conversations, SMS et MMS reçus. Facultatif — vous pouvez envoyer des SMS sans cela.</string>
+
+    <!-- Раздел SMS и меню «Ещё» (2.0.0) -->
+    <string name="nav_messages">SMS</string>
+    <string name="messages_title">Messages</string>
+    <string name="messages_empty">Aucun message</string>
+    <string name="messages_not_default">Pour voir les conversations et recevoir les SMS ici, définissez le composeur comme appli SMS par défaut. Vous pouvez écrire sans cela.</string>
+    <string name="messages_new">Nouveau message</string>
+    <string name="messages_new_hint">Numéro ou nom</string>
+    <string name="messages_write">Écrire</string>
+    <string name="messages_search_hint">Rechercher dans les messages</string>
+    <string name="messages_delete_thread_title">Supprimer la conversation ?</string>
+    <string name="messages_delete_thread_text">Tous les messages avec %1$s seront supprimés du téléphone.</string>
+    <string name="menu_section_list">Liste</string>
+    <string name="menu_filters_active">Conditions actives : %1$s</string>
 </resources>

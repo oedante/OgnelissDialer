@@ -1062,4 +1062,18 @@
     <string name="sms_autostart_hint">Damit SMS auch bei geschlossenem Dialer ankommen, erlauben Sie den Autostart – auf diesem Telefon ist er für Drittanbieter-Apps ausgeschaltet.</string>
     <string name="sms_autostart_action">Öffnen</string>
     <string name="perm_sms_role_text">Unterhaltungen, eingehende SMS und MMS. Optional – SMS senden geht auch ohne.</string>
+
+    <!-- Раздел SMS и меню «Ещё» (2.0.0) -->
+    <string name="nav_messages">SMS</string>
+    <string name="messages_title">Nachrichten</string>
+    <string name="messages_empty">Noch keine Nachrichten</string>
+    <string name="messages_not_default">Um Unterhaltungen zu sehen und SMS hier zu empfangen, legen Sie den Dialer als Standard-SMS-App fest. Schreiben geht auch ohne.</string>
+    <string name="messages_new">Neue Nachricht</string>
+    <string name="messages_new_hint">Nummer oder Name</string>
+    <string name="messages_write">Schreiben</string>
+    <string name="messages_search_hint">Nachrichten durchsuchen</string>
+    <string name="messages_delete_thread_title">Unterhaltung löschen?</string>
+    <string name="messages_delete_thread_text">Alle Nachrichten mit %1$s werden vom Telefon gelöscht.</string>
+    <string name="menu_section_list">Liste</string>
+    <string name="menu_filters_active">Aktive Bedingungen: %1$s</string>
 </resources>

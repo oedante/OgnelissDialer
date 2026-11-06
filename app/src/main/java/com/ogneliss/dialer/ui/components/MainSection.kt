@@ -18,6 +18,8 @@ import com.ogneliss.dialer.ui.theme.OgnelissIcons
  */
 enum class MainSection(val route: String, @StringRes val labelRes: Int) {
     JOURNAL("dialer", R.string.nav_journal),
+    /** Переписка SMS (2.0.0): список разговоров. */
+    MESSAGES("messages", R.string.nav_messages),
     CONTACTS("contacts", R.string.nav_contacts),
     NOTES("notes", R.string.nav_notes),
     REMINDERS("reminders", R.string.nav_reminders);
@@ -26,6 +28,7 @@ enum class MainSection(val route: String, @StringRes val labelRes: Int) {
     val icon: ImageVector
         get() = when (this) {
             JOURNAL -> OgnelissIcons.History
+            MESSAGES -> OgnelissIcons.Textsms
             CONTACTS -> OgnelissIcons.Person
             NOTES -> OgnelissIcons.StickyNote2
             REMINDERS -> OgnelissIcons.Alarm

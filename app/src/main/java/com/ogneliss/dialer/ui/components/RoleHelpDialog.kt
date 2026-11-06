@@ -52,8 +52,10 @@ fun rememberSmsRoleRequest(onResult: (RoleAccess.Help?) -> Unit): () -> Unit {
     val context = LocalContext.current
     // Уведомления (Android 13+) — без них входящие SMS приходили бы молча
     val notifications = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        val granted = SmsRole.isDefault(context)
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        // RESULT_OK — система подтвердила роль (в том числе если она уже была у нас)
+        val granted = result.resultCode == android.app.Activity.RESULT_OK || SmsRole.isDefault(context)
+        com.ogneliss.dialer.log.Logger.i("SmsRole", SmsRole.diagnostics(context))
         if (granted && SmsRole.needsNotificationPermission(context)) {
             notifications.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         }

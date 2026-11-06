@@ -39,13 +39,11 @@ import com.ogneliss.dialer.ui.theme.PanelReachesNavBar
 @Composable
 internal fun ListPanel(
     section: MainSection,
-    onSwitchList: () -> Unit,
     onOpenSection: (MainSection) -> Unit,
+    /** Работает фильтр — метка на «Ещё»; сами фильтры и поиск — в меню (2.0.0). */
     filterActive: Boolean,
-    onFilters: () -> Unit,
     /** Клавиатура набора — в журнале. */
     onDialpad: () -> Unit,
-    onSearch: () -> Unit,
     searching: Boolean,
     searchQuery: String,
     searchHint: String,
@@ -88,13 +86,8 @@ internal fun ListPanel(
                     section = section,
                     expanded = false,
                     filterActive = filterActive,
-                    // Фильтр контактов всегда один — метка точкой, без числа
-                    filterBadge = null,
                     onToggleExpanded = onDialpad,
-                    onSwitchList = onSwitchList,
                     onOpenSection = onOpenSection,
-                    onFilters = onFilters,
-                    onSearch = onSearch,
                     onMenu = onMenu,
                     menuContent = menuContent
                 )

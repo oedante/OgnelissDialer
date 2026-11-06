@@ -366,4 +366,27 @@ class CallLogGrouperTest {
 
         assertEquals("Разные номера без карты — разные карточки", 2, groups.size)
     }
+
+    // ── 2.0.0: контакт по последним 10 цифрам ──────────────────────────────
+
+    @Test
+    fun `номер записан в книге иначе — контакт находится по последним 10 цифрам`() {
+        /*
+         * В книге номер без кода страны: точный ключ E.164 не совпадает,
+         * и раньше звонок становился «номером», а закреплённый контакт —
+         * строкой без звонков. Номера — вымышленные.
+         */
+        val entries = listOf(entry(number = "+79000000001", date = 1_000))
+        val map = mapOf(CallLogGrouper.tailKey("89000000001")!! to 7L)
+
+        val group = CallLogGrouper.group(entries, CallLogGrouper.Mode.BY_CONTACT, contactIdByNumber = map).single()
+
+        assertEquals("contact:7", group.key.substringBefore('#'))
+        assertEquals(7L, group.contactId)
+    }
+
+    @Test
+    fun `короткий номер не сравнивается по хвосту`() {
+        assertEquals(null, CallLogGrouper.tailKey("12345"))
+    }
 }

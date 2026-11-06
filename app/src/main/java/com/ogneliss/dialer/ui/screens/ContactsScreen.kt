@@ -668,12 +668,9 @@ fun ContactsScreen(
                 val toJournal: () -> Unit = { onOpenSection(MainSection.JOURNAL) }
                 ListPanel(
                     section = MainSection.CONTACTS,
-                    onSwitchList = toJournal,
                     onOpenSection = onOpenSection,
                     filterActive = contactFilter != ContactFilter.ALL,
-                    onFilters = { contactFiltersOpen = true },
                     onDialpad = onOpenDialpad,
-                    onSearch = { searching = true },
                     searching = searching,
                     searchQuery = search,
                     searchHint = stringResource(R.string.contacts_search_hint),
@@ -692,6 +689,10 @@ fun ContactsScreen(
                             // Своего номера, очистки журнала и выбора нескольких
                             // у контактов нет — пункты журнала
                             onOwnNumber = null,
+                            // Поиск и фильтры контактов — здесь (2.0.0)
+                            onSearch = { menuOpen = false; searching = true },
+                            onFilters = { menuOpen = false; contactFiltersOpen = true },
+                            filterBadge = "1".takeIf { contactFilter != ContactFilter.ALL },
                             onThemeToggle = {
                                 vm.setChoice(
                                     "theme",

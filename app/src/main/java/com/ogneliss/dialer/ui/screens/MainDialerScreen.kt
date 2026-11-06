@@ -713,11 +713,29 @@ fun MainDialerScreen(
     val lookupById = remember(state.contacts) {
         state.contacts.associate { it.id to it.lookupKey }
     }
-    fun pinIndexOf(row: CallLogRowState): Int? =
-        PinnedContacts.indexOf(pins, row.e164, row.group.contactId?.let { lookupById[it] })
-            .takeIf { it >= 0 }
+    /*
+     * Номер → контакт по книге на экране (2.0.0): закреплённый человек
+     * с двумя номерами находит строку звонка на любой из них, даже если
+     * журнал сгруппирован до того, как книга дочиталась.
+     */
+    val lookupByNumber = remember(state.contacts) {
+        buildMap {
+            state.contacts.forEach { contact ->
+                contact.numbers.forEach { n ->
+                    putIfAbsent(n.e164, contact.lookupKey)
+                    com.ogneliss.dialer.data.CallLogGrouper.tailKey(n.e164)?.let { putIfAbsent(it, contact.lookupKey) }
+                }
+            }
+        }
+    }
+    fun pinIndexOf(row: CallLogRowState): Int? {
+        val lookup = row.group.contactId?.let { lookupById[it] }
+            ?: lookupByNumber[row.e164]
+            ?: com.ogneliss.dialer.data.CallLogGrouper.tailKey(row.e164)?.let { lookupByNumber[it] }
+        return PinnedContacts.indexOf(pins, row.e164, lookup).takeIf { it >= 0 }
+    }
 
-    val pinnedRows = remember(rows, pins, lookupById, state.query) {
+    val pinnedRows = remember(rows, pins, lookupById, lookupByNumber, state.query) {
         if (pins.isEmpty() || state.query.isNotEmpty()) emptyList()
         else {
             // Строки идут от новых к старым: у контакта остаётся последний звонок
@@ -1293,6 +1311,31 @@ fun MainDialerScreen(
     val landscapeRail = windowLayout.mode == com.ogneliss.dialer.ui.adaptive.LayoutMode.PHONE_LANDSCAPE &&
         !com.ogneliss.dialer.ui.adaptive.LocalNavigationRailShown.current
 
+    /*
+     * Поиск журнала — из «Ещё» (2.0.0): на нижней панели теперь разделы.
+     * Тот же путь, что прежняя кнопка: клавиатура прячется, поле — на месте
+     * строки кнопок.
+     */
+    val startSearch: () -> Unit = {
+        dialpadExpanded = false
+        vm.onQueryChange("")
+        searching = true
+    }
+
+    /*
+     * Свой контакт в меню (2.0.0): фото из книги и карточка контакта,
+     * а не карточка одного номера — у человека бывает два номера.
+     */
+    val ownContact = remember(ownNumber, state.contacts) {
+        if (ownNumber.isBlank()) null else {
+            val e164 = PhoneFormatter.toE164(ownNumber)
+            val tail = com.ogneliss.dialer.data.CallLogGrouper.tailKey(e164)
+            state.contacts.firstOrNull { c ->
+                c.numbers.any { it.e164 == e164 || (tail != null && com.ogneliss.dialer.data.CallLogGrouper.tailKey(it.e164) == tail) }
+            }
+        }
+    }
+
     val controlPanel: @Composable (Modifier, Boolean, Dp?, Boolean) -> Unit = { panelModifier, side, keyHeight, rail ->
         BottomControlPanel(
             modifier = panelModifier,
@@ -1380,11 +1423,7 @@ fun MainDialerScreen(
              * «Поиск» — на месте «Напоминаний» (1.6.0, вариант «Б»):
              * сегодняшние напоминания — полосой над журналом, все — в меню.
              */
-            onSearch = {
-                dialpadExpanded = false
-                vm.onQueryChange("")
-                searching = true
-            },
+            onSearch = startSearch,
             searching = searching,
             searchHint = stringResource(R.string.journal_search_hint),
             onSearchChange = { vm.onQueryChange(it) },
@@ -1400,6 +1439,10 @@ fun MainDialerScreen(
                     // чтобы было видно, готово ли приложение делиться
                     // карточкой
                     ownNumber = ownNumber,
+                    ownPhotoUri = ownContact?.photoUri,
+                    onSearch = { menuOpen = false; startSearch() },
+                    onFilters = { menuOpen = false; filtersOpen = true },
+                    filterBadge = activeFilter.activeCount.toString().takeIf { activeFilter.isActive },
                     onOwnNumber = {
                         menuOpen = false
 
@@ -1428,7 +1471,7 @@ fun MainDialerScreen(
                         if (ownNumber.isBlank()) {
                             showOwnNumber = true
                         } else {
-                            onOpenSubscriber("number:$ownNumber")
+                            onOpenSubscriber(ownContact?.let { "contact:${it.id}" } ?: "number:$ownNumber")
                         }
                     },
                     onThemeToggle = {

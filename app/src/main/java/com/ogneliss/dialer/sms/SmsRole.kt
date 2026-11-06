@@ -42,10 +42,40 @@ object SmsRole {
     /** Код запроса роли из настроек (у роли телефона — 4201). */
     const val REQUEST_CODE = 4202
 
-    /** Диалер — приложение SMS по умолчанию. */
-    fun isDefault(context: Context): Boolean =
-        runCatching { Telephony.Sms.getDefaultSmsPackage(context) == context.packageName }
+    /**
+     * Диалер — приложение SMS по умолчанию.
+     *
+     * Android 10+: роль SMS у нас (RoleManager) — это и показывают
+     * «Приложения по умолчанию». Telephony.getDefaultSmsPackage на части
+     * прошивок (замечено: nubia, Android 15) отвечает иначе, хотя роль
+     * выдана, — по нему одному приложение считало себя не SMS и показывало
+     * «сделайте приложением SMS» человеку, который уже сделал. Поэтому
+     * роль — главный признак, ответ телефонии — запасной (Android 8–9).
+     */
+    fun isDefault(context: Context): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val held = runCatching {
+                context.getSystemService(RoleManager::class.java)?.isRoleHeld(RoleManager.ROLE_SMS) == true
+            }.getOrDefault(false)
+            if (held) return true
+        }
+        return runCatching { Telephony.Sms.getDefaultSmsPackage(context) == context.packageName }
             .getOrDefault(false)
+    }
+
+    /**
+     * Для журнала: роль и ответ телефонии расходятся — так видно в логе,
+     * почему SMS не приходят (телефония отдаёт их другому приложению).
+     */
+    fun diagnostics(context: Context): String {
+        val held = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) runCatching {
+            context.getSystemService(RoleManager::class.java)?.isRoleHeld(RoleManager.ROLE_SMS)
+        }.getOrNull() else null
+        val telephony = runCatching { Telephony.Sms.getDefaultSmsPackage(context) }.getOrNull()
+        val same = telephony == context.packageName
+        return "роль SMS: ${held ?: "—"}, телефония: ${if (same) "мы" else telephony ?: "нет"}, " +
+            "READ_SMS: ${PermissionGuard.has(context, Manifest.permission.READ_SMS)}"
+    }
 
     /** Можно читать переписку: роль и разрешение (роль выдаёт его сама). */
     fun canRead(context: Context): Boolean =
@@ -110,6 +140,13 @@ object SmsSettings {
      * не получает входящие SMS, а проверить автозапуск прошивки не дают.
      */
     private const val KEY_AUTOSTART_HINT = "sms_autostart_hint_done"
+
+    /** Окно роли SMS после роли телефона — один раз (MainActivity.requestSmsRoleOnce). */
+    private const val KEY_ROLE_PROMPT = "sms_role_prompt_done"
+
+    fun rolePromptDone(context: Context): Boolean = prefs(context).getBoolean(KEY_ROLE_PROMPT, false)
+
+    fun markRolePromptDone(context: Context) = put(context, KEY_ROLE_PROMPT, true)
 
     fun autostartHintDone(context: Context): Boolean = prefs(context).getBoolean(KEY_AUTOSTART_HINT, false)
 

@@ -1207,6 +1207,9 @@ class DialerViewModel @Inject constructor(
                             // putIfAbsent: первый по алфавиту побеждает,
                             // остальные не затирают его
                             putIfAbsent(number.e164, contact.id)
+                            // И по последним 10 цифрам — разбор в CallLogGrouper.contactOf
+                            com.ogneliss.dialer.data.CallLogGrouper.tailKey(number.e164)
+                                ?.let { putIfAbsent(it, contact.id) }
                         }
                     }
             }

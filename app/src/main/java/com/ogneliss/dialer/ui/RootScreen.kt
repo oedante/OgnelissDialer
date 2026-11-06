@@ -967,6 +967,33 @@ fun RootScreen(
                 }
 
                 /*
+                 * Раздел «SMS» (2.0.0): список переписок — кнопкой на нижней
+                 * панели рядом с журналом, как соседний раздел.
+                 */
+                composable(
+                    MainSection.MESSAGES.route,
+                    enterTransition = { Motion.enterSibling(this) },
+                    popExitTransition = { Motion.exitSibling(this) }
+                ) {
+                    com.ogneliss.dialer.ui.conversation.MessagesScreen(
+                        vm = vm,
+                        onOpenConversation = { number ->
+                            nav.navigate(com.ogneliss.dialer.ui.conversation.ConversationRequest(number, null, null).route())
+                        },
+                        onOpenSection = openSection,
+                        onOpenDialpad = {
+                            vm.requestDialpad()
+                            openSection(MainSection.JOURNAL)
+                        },
+                        onOpenSettings = { nav.navigate("settings") },
+                        onOpenNotes = { openSection(MainSection.NOTES) },
+                        onOpenReminders = { openSection(MainSection.REMINDERS) },
+                        onOpenHelp = { nav.navigate("faq") },
+                        onFakeCall = { FakeCall.ringNow(context) }
+                    )
+                }
+
+                /*
                  * Переписка SMS (2.0.0): из журнала, карточки, уведомления
                  * и ссылок sms: других приложений.
                  */

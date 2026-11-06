@@ -58,6 +58,16 @@ internal fun OverflowMenu(
     ownNumber: String = "",
     /** Свой контакт; null — пункта нет (меню контактов, 1.6.0). */
     onOwnNumber: (() -> Unit)? = {},
+    /** Фото своего контакта из книги (2.0.0); null — значок. */
+    ownPhotoUri: String? = null,
+    /**
+     * Поиск и фильтры списка (2.0.0): переехали с нижней панели, где
+     * теперь разделы. null — пункта нет.
+     */
+    onSearch: (() -> Unit)? = null,
+    onFilters: (() -> Unit)? = null,
+    /** Число включённых условий фильтра; null — фильтр выключен. */
+    filterBadge: String? = null,
     onDismiss: () -> Unit,
     /**
      * Фильтры журнала.
@@ -155,6 +165,24 @@ internal fun OverflowMenu(
         contentWindowInsets = { WindowInsets.navigationBars }
     ) {
         Column(Modifier.padding(bottom = Space.l)) {
+            // Поиск и фильтры списка — первыми: за ними приходят в меню чаще всего (2.0.0)
+            if (onSearch != null || onFilters != null) {
+                SheetGroup(title = stringResource(R.string.menu_section_list), first = true) {
+                    if (onSearch != null) {
+                        SheetRow(OgnelissIcons.Search, stringResource(R.string.nav_search), onClick = onSearch)
+                    }
+                    if (onSearch != null && onFilters != null) SheetDivider()
+                    if (onFilters != null) {
+                        SheetRow(
+                            OgnelissIcons.FilterList,
+                            stringResource(R.string.filter_title),
+                            supporting = filterBadge?.let { stringResource(R.string.menu_filters_active, it) },
+                            iconTint = if (filterBadge != null) MaterialTheme.colorScheme.primary else null,
+                            onClick = onFilters
+                        )
+                    }
+                }
+            }
             /*
              * Как настройки (1.6.1): над группой — полоса с подписью,
              * строки — в белой карточке, линии между ними от начала текста;
@@ -162,7 +190,7 @@ internal fun OverflowMenu(
              */
             if (onAddContact != null) {
                 // Контакты (1.6.0): создание — первым, это их главное действие из меню
-                SheetGroup(title = stringResource(R.string.nav_contacts), first = true) {
+                SheetGroup(title = stringResource(R.string.nav_contacts), first = onSearch == null && onFilters == null) {
                     SheetRow(
                         OgnelissIcons.PersonAdd,
                         stringResource(R.string.action_create_contact),
@@ -170,7 +198,10 @@ internal fun OverflowMenu(
                     )
                 }
             }
-            SheetGroup(title = stringResource(R.string.settings_section_calls), first = onAddContact == null) {
+            SheetGroup(
+                title = stringResource(R.string.settings_section_calls),
+                first = onAddContact == null && onSearch == null && onFilters == null
+            ) {
                 SheetRow(OgnelissIcons.PhoneCallback, fakeCallLabel, onClick = onFakeCall)
                 if (onOwnNumber != null) {
                     SheetDivider()
@@ -181,6 +212,8 @@ internal fun OverflowMenu(
                         supporting = ownNumber.takeIf { it.isNotBlank() }?.let { PhoneFormatter.format(it) },
                         // Приглушённый, пока номера нет: не требует внимания, но и не прячется
                         iconTint = if (ownNumber.isBlank()) MaterialTheme.colorScheme.outline else null,
+                        // Своё фото из книги вместо значка (2.0.0)
+                        photoUri = ownPhotoUri,
                         onClick = onOwnNumber
                     )
                 }

@@ -131,16 +131,26 @@ fun SheetRow(
     standalone: Boolean = false,
     /** Долгое нажатие (1.8.0): у SMS в «Написать» — выбор SIM; null — только касание. */
     onLongClick: (() -> Unit)? = null,
-    onLongClickLabel: String? = null
+    onLongClickLabel: String? = null,
+    /** Фото вместо значка (свой контакт в меню, 2.0.0); null — значок. */
+    photoUri: String? = null
 ) {
     val textColor = color ?: MaterialTheme.colorScheme.onSurface
     ListItem(
         leadingContent = {
-            Icon(icon, contentDescription = null, tint = iconTint ?: color ?: MaterialTheme.colorScheme.onSurfaceVariant)
+            if (!photoUri.isNullOrBlank()) {
+                RowAvatar(photoUri, size = SHEET_PHOTO)
+            } else {
+                Icon(icon, contentDescription = null, tint = iconTint ?: color ?: MaterialTheme.colorScheme.onSurfaceVariant)
+            }
         },
-        headlineContent = { Text(label, color = textColor) },
+        /*
+         * Размер текста — как строки журнала и контактов (2.0.0): было
+         * bodyLarge (17 sp), и меню выглядело крупнее экрана под ним.
+         */
+        headlineContent = { Text(label, color = textColor, style = MaterialTheme.typography.bodyMedium) },
         supportingContent = supporting?.let {
-            { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+            { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall) }
         },
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         modifier = Modifier
@@ -219,3 +229,6 @@ fun SheetChoiceRow(selected: Boolean, label: String, onClick: () -> Unit) {
             .clickable(onClick = onClick)
     )
 }
+
+/** Фото в строке шторки — размером со значок с запасом. */
+private val SHEET_PHOTO = 28.dp

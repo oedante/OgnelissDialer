@@ -105,8 +105,29 @@ object CallLogGrouper {
         entry: CallLogEntry,
         contactIdByNumber: Map<String, Long>
     ): String {
-        val resolved = contactIdByNumber[entry.e164] ?: entry.contactId
+        val resolved = contactOf(entry, contactIdByNumber)
         return resolved?.let { "contact:$it" } ?: "number:${entry.e164}"
+    }
+
+    /**
+     * Контакт записи (2.0.0): точное совпадение E.164, затем последние
+     * 10 цифр, затем контакт из кэша журнала.
+     *
+     * Последние 10 цифр — запас на номера, записанные в книге не так,
+     * как их пишет журнал (с «8», без кода страны, с добавочными
+     * символами): точное сравнение их не находило, звонки человеку
+     * с двумя номерами делились на «контакт» и «номер», а закреплённый
+     * контакт показывался без звонков.
+     */
+    fun contactOf(entry: CallLogEntry, contactIdByNumber: Map<String, Long>): Long? =
+        contactIdByNumber[entry.e164]
+            ?: tailKey(entry.e164)?.let { contactIdByNumber[it] }
+            ?: entry.contactId
+
+    /** Ключ «последние 10 цифр» для карты номеров; null — номер короче. */
+    fun tailKey(number: String): String? {
+        val digits = number.filter { it.isDigit() }
+        return if (digits.length >= 10) "tail:" + digits.takeLast(10) else null
     }
 
     /**
@@ -197,7 +218,9 @@ object CallLogGrouper {
             // старые записи журнала могут хранить устаревшее кэшированное имя
             displayName = sorted.firstNotNullOfOrNull { it.cachedName },
             photoUri = sorted.firstNotNullOfOrNull { it.photoUri },
-            contactId = latest.contactId,
+            // Контакт — по книге (как и ключ группы), а не только из кэша журнала:
+            // по нему закреплённые находят свою строку (2.0.0)
+            contactId = contactOf(latest, contactIdByNumber),
             lastType = latest.type,
             lastDate = latest.date,
             durationSec = latest.durationSec,

@@ -225,6 +225,12 @@ class MainActivity : ComponentActivity() {
                     val obs = LifecycleEventObserver { _, event ->
                         if (event == Lifecycle.Event.ON_RESUME) {
                             isDefault = DefaultDialer.isDefault(this@MainActivity)
+                            // Обновившимся до 2.0.0: телефон уже наш — один раз предложить SMS
+                            if (isDefault && consentVersion > 0 &&
+                                AppPermissions.missing(this@MainActivity).none { it.required }
+                            ) {
+                                requestSmsRoleOnce()
+                            }
                             val wasOk = permsOk
                             permsOk = AppPermissions.missing(this@MainActivity)
                                 .none { it.required }
@@ -425,18 +431,48 @@ class MainActivity : ComponentActivity() {
     @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val granted = when (requestCode) {
+        // RESULT_OK — система подтвердила роль, даже если её проверка отстаёт
+        val granted = resultCode == RESULT_OK || when (requestCode) {
             DefaultDialer.REQUEST_CODE -> DefaultDialer.isDefault(this)
             com.ogneliss.dialer.sms.SmsRole.REQUEST_CODE -> com.ogneliss.dialer.sms.SmsRole.isDefault(this)
             else -> return
         }
-        if (!granted) {
+        if (requestCode == com.ogneliss.dialer.sms.SmsRole.REQUEST_CODE) {
+            com.ogneliss.dialer.log.Logger.i("SmsRole", com.ogneliss.dialer.sms.SmsRole.diagnostics(this))
+        }
+        if (granted && requestCode == DefaultDialer.REQUEST_CODE) {
+            // Сразу за ролью телефона — роль SMS (решение автора, 2.0.0)
+            requestSmsRoleOnce()
+        } else if (!granted) {
             roleHelp = com.ogneliss.dialer.util.RoleAccess.helpAfterDenied(this)
         } else if (requestCode == com.ogneliss.dialer.sms.SmsRole.REQUEST_CODE &&
             com.ogneliss.dialer.sms.SmsRole.needsNotificationPermission(this)
         ) {
             // Приложение SMS без уведомлений — входящие пришли бы молча
             requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), NOTIFICATIONS_REQUEST)
+        }
+    }
+
+    /**
+     * РОЛЬ SMS СРАЗУ ПОСЛЕ РОЛИ ТЕЛЕФОНА (2.0.0).
+     *
+     * Решение автора: человек, сделавший диалер телефоном, тут же видит
+     * системное окно «сделать приложением SMS». Отказ уважается: окно
+     * показывается один раз (SmsSettings.rolePromptDone), дальше роль —
+     * в «Разрешениях», настройках сообщений и в переписке.
+     *
+     * Тот же вызов — при первом запуске 2.0.0 у тех, кто стал телефоном
+     * по умолчанию ещё в прежних версиях.
+     */
+    private fun requestSmsRoleOnce() {
+        if (com.ogneliss.dialer.sms.SmsRole.isDefault(this)) return
+        if (com.ogneliss.dialer.sms.SmsSettings.rolePromptDone(this)) return
+        val request = com.ogneliss.dialer.sms.SmsRole.request(this) ?: return
+        com.ogneliss.dialer.sms.SmsSettings.markRolePromptDone(this)
+        runCatching {
+            com.ogneliss.dialer.util.RoleAccess.markRequested()
+            @Suppress("DEPRECATION")
+            startActivityForResult(request, com.ogneliss.dialer.sms.SmsRole.REQUEST_CODE)
         }
     }
 

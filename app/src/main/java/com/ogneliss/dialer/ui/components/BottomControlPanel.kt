@@ -153,10 +153,8 @@ fun BottomControlPanel(
                 onToggleExpanded = onToggleExpanded,
                 onSwitchList = onSwitchList,
                 onOpenSection = onOpenSection,
-                onFilters = onFilters,
                 onStartSelection = onStartSelection,
                 selectionActive = selectionActive,
-                onSearch = onSearch,
                 onMenu = onMenu,
                 menuContent = menuContent
             )
@@ -533,15 +531,11 @@ fun BottomControlPanel(
                 section = MainSection.JOURNAL,
                 expanded = expanded,
                 filterActive = filter.isActive,
-                filterBadge = filter.activeCount.toString(),
                 menuBadge = filter.activeCount.toString().takeIf { filter.isActive },
                 onToggleExpanded = onToggleExpanded,
-                onSwitchList = onSwitchList,
                 onOpenSection = onOpenSection,
-                onFilters = onFilters,
                 onStartSelection = onStartSelection,
                 selectionActive = selectionActive,
-                onSearch = onSearch,
                 onMenu = onMenu,
                 menuContent = menuContent
             )
@@ -571,147 +565,57 @@ private val RoundedCornerShapeTop =
  */
 @Composable
 internal fun ActionRow(
-    /** Какой список открыт: от него — переключатель (ListSwitchButton). */
+    /** Какой раздел открыт — его кнопка подсвечена. */
     section: MainSection,
     expanded: Boolean,
-    /** Работает фильтр: подложка у кнопки и метка. */
+    /** Работает фильтр списка — точка на «Ещё» (фильтры теперь там). */
     filterActive: Boolean,
-    /** Текст метки фильтра: число условий; null — точка (фильтр контактов один). */
-    filterBadge: String?,
-    /** Метка на «Меню»: число условий фильтра журнала; null — без метки. */
+    /** Метка на «Ещё»: число условий фильтра журнала; null — без числа. */
     menuBadge: String? = null,
     onToggleExpanded: () -> Unit,
-    onSwitchList: () -> Unit,
     onOpenSection: (MainSection) -> Unit,
-    onFilters: () -> Unit,
     /**
-     * Включение режима множественного выбора.
-     *
-     * null — кнопки нет: в контактах выбирать нечего.
+     * Включение режима множественного выбора; кнопка нужна только для
+     * выхода из него — включают его из «Ещё» и долгим нажатием.
      */
     onStartSelection: (() -> Unit)? = null,
-    /** Режим выбора включён: кнопка тогда показывает выход. */
+    /** Режим выбора включён: на месте «Контактов» — «Выйти». */
     selectionActive: Boolean = false,
-    /** Поиск буквами (1.6.0); null — кнопки нет. */
-    onSearch: (() -> Unit)? = null,
     onMenu: () -> Unit,
     menuContent: @Composable () -> Unit
 ) {
-    // Полоса навигации слева от всего экрана — признак из RootScreen.
-    // Не по раскладке: в режиме «список — подробности» раскладка у журнала
-    // своя, по ширине панели, и по ней полосу не увидеть
+    /*
+     * НИЖНЯЯ ПАНЕЛЬ 2.0.0: ЖУРНАЛ · SMS · [КЛАВИАТУРА] · КОНТАКТЫ · ЕЩЁ.
+     *
+     * Решение автора: разделы — прямыми кнопками, как в приложениях
+     * «Телефон» и «Сообщения»; поиск и фильтры — в «Ещё» (ими пользуются
+     * реже, чем переходят между разделами). Признак включённого фильтра
+     * остаётся на виду — меткой на «Ещё»: журнал наполовину пуст, и видно
+     * почему, не открывая меню.
+     *
+     * Полоса разделов слева (планшет, LocalNavigationRailShown) уже
+     * показывает разделы — тогда здесь только клавиатура и «Ещё».
+     */
     val railShown = com.ogneliss.dialer.ui.adaptive.LocalNavigationRailShown.current
     Row(
         Modifier
             .fillMaxWidth()
-            // Высота задана явно и тем же значением, что у панели
-            // контактов: раньше обе набирали её из содержимого
-            // и не совпадали
+            // Высота та же, что у панели контактов (FlowUi.panelRowHeight)
             .height(FlowUi.panelRowHeight())
             .padding(horizontal = Space.s),
-        /*
-         * Подписи — на одной линии: с 1.2.0 все кнопки ряда одной высоты
-         * (таблетки по 40 dp), поэтому достаточно выравнивания по центру.
-         * В 1.1.3 кнопка клавиатуры была выше соседей, и её подпись
-         * садилась ниже остальных.
-         */
         verticalAlignment = Alignment.CenterVertically
     ) {
-        /*
-         * ГЛАВНАЯ КНОПКА ЦЕНТРИРУЕТСЯ ПО ПОСТРОЕНИЮ.
-         *
-         * ── Почему не SpaceEvenly ──────────────────────────────────────────
-         * Он распределяет промежутки поровну, но кнопка клавиатуры шире
-         * значков (72 dp против 56). Пока по бокам поровну элементов,
-         * центр совпадает случайно — стоит добавить или убрать один,
-         * и кнопка уезжает.
-         *
-         * Две группы с равным весом держат её по центру независимо
-         * от того, сколько значков в каждой: половина ширины слева,
-         * половина справа, кнопка ровно на границе.
-         */
         Row(
             Modifier.weight(1f),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            /*
-             * На широком окне (планшет, раскладушка лёжа) слева есть
-             * боковая полоса навигации с журналом, контактами, заметками
-             * и напоминаниями — переключатель дублировал бы её. Место
-             * не пропадает: Spacer того же размера держит кнопку
-             * клавиатуры по центру.
-             *
-             * 1.6.0: на месте кнопки «Контакты» — переключатель «журнал |
-             * контакты» (разбор в ListSwitchButton).
-             */
             if (!railShown) {
-                ListSwitchButton(
-                    current = section,
-                    onSwitch = onSwitchList,
-                    onOpenSection = onOpenSection
-                )
-            } else {
-                Spacer(Modifier.size(width = PILL_WIDTH, height = PILL_HEIGHT))
-            }
-
-
-            /*
-             * ЗНАЧОК ФИЛЬТРОВ В ПАНЕЛИ.
-             *
-             * ── Почему здесь, а не в меню ──────────────────────────────────
-             * Я убирал его в меню как редкое действие и вернул: фильтры
-             * не настолько редки. Их включают, чтобы найти пропущенные
-             * за день или посмотреть звонки с одной SIM — это часть
-             * обычной работы с журналом, а не разовая настройка.
-             *
-             * В меню до них было два нажатия вместо одного, и включённый
-             * отбор переставал бросаться в глаза.
-             */
-            Box {
-                LabeledIconButton(
-                    OgnelissIcons.FilterList, R.string.filter_title, onFilters,
-                    // Работающий фильтр — голубая подложка, как активный раздел Mail
-                    selected = filterActive
-                )
-
-                // Без метки работающий фильтр невидим: список наполовину
-                // пуст, и это выглядит как потеря данных
-                if (filterActive) {
-                    if (filterBadge != null) {
-                        Badge(Modifier.align(Alignment.TopEnd)) { Text(filterBadge) }
-                    } else {
-                        Badge(Modifier.align(Alignment.TopEnd))
-                    }
-                }
+                SectionButton(MainSection.JOURNAL, section, onOpenSection)
+                SectionButton(MainSection.MESSAGES, section, onOpenSection)
             }
         }
 
-
-        /*
-         * Главная кнопка: крупнее и цветная.
-         *
-         * Свайп вверх раскрывает клавиатуру, вниз — скрывает.
-         * Направление повторяет то, что происходит на экране: панель
-         * выезжает снизу.
-         *
-         * Нажатие продолжает работать: Compose различает тап
-         * и перетаскивание по порогу сдвига.
-         */
-        /*
-         * Клавиатура: кнопка с подписью, как и соседи.
-         *
-         * Подпись здесь нужна меньше всего — значок клавиш узнаваем, —
-         * но без неё кнопка оказалась бы единственной неподписанной
-         * в ряду, и ряд читался бы кривым.
-         */
-        /*
-         * 1.5.6 — КАК ЦЕНТРАЛЬНАЯ КНОПКА OGNELISS MAIL: голубая
-         * (primaryContainer) плашка 64 × 56 с тенью, приподнятая над
-         * панелью, без подписи — её узнают по месту и значку. Было
-         * (1.2.0–1.5.5): синяя таблетка 72 × 40 с подписью «Клавиатура».
-         * Описание для TalkBack — прежнее.
-         */
         FloatingActionButton(
             onClick = onToggleExpanded,
             shape = OgnelissShapeTokens.callButton,
@@ -726,9 +630,6 @@ internal fun ActionRow(
             modifier = Modifier
                 .size(width = FAB_WIDTH, height = FAB_HEIGHT)
                 .verticalSwipeGesture(
-                    // Вверх раскрывает только если ещё закрыта, вниз —
-                    // только если открыта: жест в сторону текущего
-                    // состояния не должен ничего менять
                     onSwipeUp = if (!expanded) onToggleExpanded else null,
                     onSwipeDown = if (expanded) onToggleExpanded else null
                 )
@@ -741,93 +642,28 @@ internal fun ActionRow(
             )
         }
 
-
-        /*
-         * ГОЛОСОВОЙ ВВОД УБРАН.
-         *
-         * SpeechRecognizer.isRecognitionAvailable отвечает утвердительно,
-         * но фактическое распознавание зависит от приложения Google:
-         * без сети и офлайн-модели языка оно показывает «Голосовой поиск
-         * недоступен». Проверить это заранее нельзя — состояние чужого
-         * приложения нам не видно.
-         *
-         * Кнопка, ведущая в тупик, хуже отсутствующей: человек нажимает,
-         * получает чужое окно с ошибкой и не понимает, что сломалось.
-         *
-         * VoiceInput и VoiceQueryParser оставлены: если появится надёжный
-         * способ проверки, вернуть кнопку — вопрос одной строки.
-         */
-        // Правая группа: тот же вес, что у левой
         Row(
             Modifier.weight(1f),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            /*
-             * ══════════════════════════════════════════════════════════════
-             * НАПОМИНАНИЯ ВМЕСТО ВЫБОРА НЕСКОЛЬКИХ
-             * ══════════════════════════════════════════════════════════════
-             * Здесь стоял режим выбора записей. Он попал сюда не потому,
-             * что часто нужен, а потому что освободилось место после
-             * голосового ввода: «пусть хоть так попадётся на глаза».
-             *
-             * Оказалось, что попадается он чаще, чем требуется. Выбрать
-             * несколько записей нужно, чтобы стереть пачку старых звонков —
-             * дело редкое. Напоминания смотрят чаще: «кому я обещал
-             * перезвонить сегодня».
-             *
-             * Место на панели одно, и достаётся оно тому, за чем приходят
-             * чаще. Выбор нескольких остаётся в меню под тремя точками
-             * и по долгому нажатию на запись.
-             *
-             * ⚠️ Пока режим выбора включён, кнопка остаётся выходом из него:
-             * человек, включивший его случайно, ищет выход там, где нажал.
-             * Крестик в шапке тоже работает, но он дальше от пальца.
-             */
-            /*
-             * 1.6.0: «Поиск» вместо «Напоминаний» (вариант «Б» обзора).
-             * Напоминания на сегодня видны полосой над журналом, все —
-             * в меню и в списке разделов (долгое нажатие на переключатель).
-             */
+            // Режим выбора: выход там, где палец (крестик в шапке дальше)
             if (selectionActive && onStartSelection != null) {
                 LabeledIconButton(
                     icon = OgnelissIcons.Close,
-                    // «Выйти», а не «Выйти из выбора»: под значком
-                    // помещается одно слово
                     labelRes = R.string.bar_exit,
                     onClick = onStartSelection,
                     tint = MaterialTheme.colorScheme.primary,
                     selected = true
                 )
-            } else if (onSearch != null) {
-                LabeledIconButton(OgnelissIcons.Search, R.string.nav_search, onSearch)
-            } else {
-                // Размером с кнопку-таблетку: пустое место не короче соседей
-                Spacer(Modifier.size(width = PILL_WIDTH, height = PILL_HEIGHT))
+            } else if (!railShown) {
+                SectionButton(MainSection.CONTACTS, section, onOpenSection)
             }
-
-
             Box {
-                /*
-                 * Признак включённого фильтра — на значке меню.
-                 *
-                 * Фильтры переехали внутрь меню, и без метки получилось
-                 * бы хуже прежнего: журнал наполовину пуст, а понять
-                 * почему нельзя, не открыв меню.
-                 *
-                 * Число, а не точка: видно, сколько условий действует,
-                 * и стоит ли разбираться или проще сбросить.
-                 */
-                Box {
-                    // Подпись короткая: «Открыть меню» под значком
-                    // не поместилось бы, а рядом с ним стоят «Фильтры»
-                    // и «Поиск» такой же длины
-                    LabeledIconButton(OgnelissIcons.MoreVert, R.string.bar_menu, onMenu)
-                    if (menuBadge != null) {
-                        Badge(Modifier.align(Alignment.TopEnd)) {
-                            Text(menuBadge)
-                        }
-                    }
+                LabeledIconButton(OgnelissIcons.MoreVert, R.string.bar_menu, onMenu)
+                when {
+                    menuBadge != null -> Badge(Modifier.align(Alignment.TopEnd)) { Text(menuBadge) }
+                    filterActive -> Badge(Modifier.align(Alignment.TopEnd))
                 }
                 menuContent()
             }
@@ -835,25 +671,23 @@ internal fun ActionRow(
     }
 }
 
+/** Кнопка раздела на нижней панели: открытый раздел подсвечен. */
+@Composable
+private fun SectionButton(
+    target: MainSection,
+    current: MainSection,
+    onOpenSection: (MainSection) -> Unit
+) {
+    LabeledIconButton(
+        icon = target.icon,
+        labelRes = target.labelRes,
+        onClick = { onOpenSection(target) },
+        selected = current == target,
+        fitLabel = true
+    )
+}
 
-/**
- * ══════════════════════════════════════════════════════════════════════════
- * ПАНЕЛЬ ЖУРНАЛА СПРАВА — ТЕЛЕФОН ЛЁЖА
- * ══════════════════════════════════════════════════════════════════════════
- * Телефон лёжа держат двумя руками, большие пальцы — по бокам. Нижняя
- * панель при этом под пальцами не оказывается, а по высоте её место
- * дорого: экран и так низкий. Справа, вертикальной полосой, кнопки
- * ложатся под правый большой палец, а журнал получает всю высоту.
- *
- * Кнопки те же и в том же порядке, что на нижней панели, сверху вниз:
- * переключатель «журнал | контакты», фильтры, клавиатура, поиск, «Ещё»
- * (1.6.0; было: контакты и напоминания). Без подписей — лёжа их и на
- * нижней панели не было.
- *
- * Перелистывание экранов — свайпом снизу вверх по полосе
- * (panelVerticalSwipeNavigation). У кнопки клавиатуры вертикального
- * жеста здесь нет: он спорил бы с перелистыванием.
- */
+
 @Composable
 private fun ActionRail(
     expanded: Boolean,
@@ -861,10 +695,8 @@ private fun ActionRail(
     onToggleExpanded: () -> Unit,
     onSwitchList: () -> Unit,
     onOpenSection: (MainSection) -> Unit,
-    onFilters: () -> Unit,
     onStartSelection: (() -> Unit)?,
     selectionActive: Boolean,
-    onSearch: (() -> Unit)?,
     onMenu: () -> Unit,
     menuContent: @Composable () -> Unit
 ) {
@@ -901,12 +733,6 @@ private fun ActionRail(
             compact = true,
             showLabel = labels
         )
-        Box {
-            LabeledIconButton(OgnelissIcons.FilterList, R.string.filter_title, onFilters, showLabel = labels, fitLabel = true, selected = filter.isActive)
-            if (filter.isActive) {
-                Badge(Modifier.align(Alignment.TopEnd)) { Text(filter.activeCount.toString()) }
-            }
-        }
         // Как центральная кнопка нижней панели (1.5.6): голубая, с тенью
         FloatingActionButton(
             onClick = onToggleExpanded,
@@ -939,11 +765,13 @@ private fun ActionRail(
                 fitLabel = true,
                 selected = true
             )
-        } else if (onSearch != null) {
-            LabeledIconButton(OgnelissIcons.Search, R.string.nav_search, onSearch, showLabel = labels, fitLabel = true)
         }
+        // Поиск и фильтры — в «Ещё» (2.0.0); включённый фильтр — меткой здесь
         Box {
             LabeledIconButton(OgnelissIcons.MoreVert, R.string.bar_menu, onMenu, showLabel = labels, fitLabel = true)
+            if (filter.isActive) {
+                Badge(Modifier.align(Alignment.TopEnd)) { Text(filter.activeCount.toString()) }
+            }
             menuContent()
         }
     }

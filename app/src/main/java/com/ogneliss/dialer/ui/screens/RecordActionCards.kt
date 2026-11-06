@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.listName
 import com.ogneliss.dialer.ui.components.ActionIconButton
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -518,8 +519,8 @@ private fun ColumnScope.RecordPreview(
         Column(Modifier.weight(1f)) {
             Text(
                 title,
-                // Обычной толщины, как имя в журнале (1.7.0)
-                style = MaterialTheme.typography.titleMedium,
+                // Как имя в журнале и контактах (2.0.0: было titleMedium, 17 sp)
+                style = MaterialTheme.typography.listName,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -607,9 +608,10 @@ private fun NumberLine(
         Column(Modifier.weight(1f)) {
             Text(
                 formatted,
-                style = MaterialTheme.typography.bodyLarge,
+                // Как номер в строке журнала (2.0.0: было bodyLarge, 17 sp)
+                style = MaterialTheme.typography.listName,
                 // Номер этой записи — жирнее: видно, с какого был звонок
-                fontWeight = if (current) FontWeight.SemiBold else null,
+                fontWeight = if (current) FontWeight.SemiBold else FontWeight.Normal,
                 maxLines = 1
             )
             number.label.takeIf { it.isNotBlank() }?.let {
