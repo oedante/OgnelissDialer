@@ -64,6 +64,7 @@ object MmsTransport {
     private const val EXTRA_TX = "transaction"
     private const val EXTRA_SUB = "sub"
     private const val EXTRA_URI = "message_uri"
+    private const val EXTRA_FAILED_ADDRESS = "failed_address"
     private const val EXTRA_NOTIFY_RESP = "notify_resp"
     private val requestCodes = AtomicInteger((System.currentTimeMillis() % 100_000).toInt() + 50_000)
 
@@ -227,6 +228,8 @@ object MmsTransport {
             grant(context, uri)
             val intent = Intent(context, SentReceiver::class.java).setAction(ACTION_SENT)
                 .putExtra(EXTRA_FILE, file.absolutePath)
+                // Адрес — чтобы уведомление о неотправленном открыло переписку (2.1.0)
+                .putExtra(EXTRA_FAILED_ADDRESS, address)
                 .apply { stored?.let { putExtra(EXTRA_URI, it.toString()) } }
             val pi = PendingIntent.getBroadcast(context, requestCodes.incrementAndGet(), intent, mutableFlags())
             managerFor(context, subId).sendMultimediaMessage(context, uri, null, null, pi)
@@ -409,7 +412,7 @@ object MmsTransport {
             }.onFailure { Logger.w(TAG, "Не удалось обновить исходящее MMS", it) }
             if (!accepted) {
                 Logger.w(TAG, "MMS не отправлено: код $resultCode, ответ ${conf?.responseStatus}")
-                MessageNotifications.sendFailed(context)
+                MessageNotifications.sendFailed(context, intent.getStringExtra(EXTRA_FAILED_ADDRESS))
             }
         }
     }

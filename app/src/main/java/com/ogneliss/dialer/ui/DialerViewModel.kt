@@ -1707,6 +1707,11 @@ class DialerViewModel @Inject constructor(
      */
     fun callFromDialpad(query: String, slotIndex: Int) {
         if (query.isBlank()) return
+        // 2.1.0: *#06# и *#*#код#*#* — не вызов, а сервисный код (CallActions.handleSecretCode)
+        if (actions.handleSecretCode(query)) {
+            onQueryChange("")
+            return
+        }
         call(query, slotIndex)
 
         /*

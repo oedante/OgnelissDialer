@@ -1091,4 +1091,8 @@
     <string name="history_sms_in">Входящее SMS</string>
     <string name="history_sms_out">Отправленное SMS</string>
     <string name="sms_open_conversation">Открыть переписку</string>
+    <string name="incall_postdial_title">Отправить остаток номера?</string>
+    <string name="incall_postdial_send">Отправить %1$s</string>
+    <string name="missed_call_back">Перезвонить</string>
+    <string name="incall_notif_mic">Микрофон</string>
 </resources>

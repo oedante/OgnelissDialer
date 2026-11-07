@@ -162,8 +162,8 @@ object CallNotifications {
         return builder.build()
     }
 
-    fun ongoing(context: Context, callerName: String, startedAt: Long): Notification =
-        NotificationCompat.Builder(context, CHANNEL_ONGOING)
+    fun ongoing(context: Context, callerName: String, startedAt: Long): Notification {
+        val builder = NotificationCompat.Builder(context, CHANNEL_ONGOING)
             .setSmallIcon(R.drawable.ic_call)
             .setContentTitle(callerName)
             .setContentText(context.getString(R.string.incall_ongoing))
@@ -176,8 +176,31 @@ object CallNotifications {
             // звук каналу включили в настройках (1.8.3)
             .setOnlyAlertOnce(true)
             .setContentIntent(pending(context, InCallActivity::class.java, 1))
-            .addAction(0, context.getString(R.string.incall_hangup), actionIntent(context, CallControlReceiver.ACTION_HANGUP))
-            .build()
+        val hangup = actionIntent(context, CallControlReceiver.ACTION_HANGUP)
+        /*
+         * «ДИНАМИК» И «МИКРОФОН» В ШТОРКЕ (2.1.0).
+         *
+         * Было: в уведомлении разговора одна кнопка «Завершить» — чтобы
+         * включить громкую связь или выключить микрофон, приходилось
+         * возвращаться на экран вызова. Стало: обе кнопки-переключателя
+         * рядом (CallControlReceiver). С Android 12 — CallStyle разговора,
+         * как у входящего: система рисует «Завершить» красной кнопкой
+         * и не урезает уведомление.
+         */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            builder.setStyle(
+                NotificationCompat.CallStyle.forOngoingCall(
+                    androidx.core.app.Person.Builder().setName(callerName).build(),
+                    hangup
+                )
+            )
+        } else {
+            builder.addAction(0, context.getString(R.string.incall_hangup), hangup)
+        }
+        builder.addAction(0, context.getString(R.string.incall_speaker), actionIntent(context, CallControlReceiver.ACTION_SPEAKER))
+        builder.addAction(0, context.getString(R.string.incall_notif_mic), actionIntent(context, CallControlReceiver.ACTION_MUTE))
+        return builder.build()
+    }
 
     private fun pending(context: Context, cls: Class<*>, req: Int): PendingIntent =
         PendingIntent.getActivity(

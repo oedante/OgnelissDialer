@@ -188,7 +188,9 @@ class OgnelissInCallService : InCallService() {
                         getString(com.ogneliss.dialer.R.string.call_unknown_number)
                     )
                     CallForegroundService.start(
-                        this@OgnelissInCallService, label, incoming = false
+                        this@OgnelissInCallService, label, incoming = false,
+                        // 2.1.0: таймер — от соединения, а не от показа уведомления
+                        connectedAt = c.details?.connectTimeMillis ?: 0L
                     )
 
                     runCatching {
@@ -564,7 +566,38 @@ class OgnelissInCallService : InCallService() {
         if (CallManager.calls.value.isEmpty()) {
             CallManager.service = null
             CallForegroundService.stop(this)
+        } else {
+            refreshNotificationFor(CallManager.primary)
         }
+    }
+
+    /*
+     * УВЕДОМЛЕНИЕ ПОСЛЕ УХОДА ОДНОГО ИЗ ВЫЗОВОВ (2.1.0).
+     *
+     * Было: уведомление переднего сервиса пересобиралось только при
+     * появлении вызова и при ответе. Отклонили второй входящий или
+     * вышел участник конференции — в шторке оставались чужое имя или
+     * кнопки «Ответить/Отклонить» от уже ушедшего звонка. Стало: после
+     * удаления вызова уведомление строится заново по оставшемуся
+     * текущему вызову; таймер — от его соединения, а не с нуля.
+     */
+    @Suppress("DEPRECATION")
+    private fun refreshNotificationFor(call: Call?) {
+        call ?: return
+        // У конференции своего номера нет — подпись по числу участников
+        val label = if (call.children.isNotEmpty()) {
+            getString(com.ogneliss.dialer.R.string.incall_conference_title, call.children.size)
+        } else CallDetailsCompat.displayLabel(
+            call.details,
+            getString(com.ogneliss.dialer.R.string.call_unknown_number)
+        )
+        runCatching {
+            CallForegroundService.start(
+                this, label,
+                incoming = call.state == Call.STATE_RINGING,
+                connectedAt = call.details?.connectTimeMillis ?: 0L
+            )
+        }.onFailure { Logger.w(TAG, "Не удалось обновить уведомление вызова", it) }
     }
 
     /*

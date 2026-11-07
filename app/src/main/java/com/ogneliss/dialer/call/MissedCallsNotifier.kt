@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.telecom.TelecomManager
 import androidx.core.app.NotificationCompat
 import com.ogneliss.dialer.MainActivity
@@ -108,6 +109,37 @@ object MissedCallsNotifier {
         val text = number?.takeIf { it.isNotBlank() }?.let {
             context.getString(R.string.missed_calls_last, PhoneFormatter.format(it))
         }
+        /*
+         * «ПЕРЕЗВОНИТЬ», «НАПИСАТЬ» И СМАХИВАНИЕ (2.1.0).
+         *
+         * Было: только касание — открыть приложение; смахнутое уведомление
+         * оставляло счётчик на значке и непрочитанные в системе до следующего
+         * запуска. Стало: две кнопки по последнему номеру (вызов через
+         * Telecom — исходящий сам сбросит счётчик; «Написать» — своя
+         * переписка или приложение SMS, ExternalApps.smsIntent) и сброс
+         * счётчика при смахивании (CallControlReceiver → clear).
+         */
+        val last = number?.takeIf { it.isNotBlank() }
+        val callBack = last?.let {
+            PendingIntent.getActivity(
+                context, ID + 1,
+                Intent(Intent.ACTION_CALL, Uri.fromParts("tel", it, null))
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+        }
+        val write = last?.let {
+            PendingIntent.getActivity(
+                context, ID + 2,
+                ExternalApps.smsIntent(context, it).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+        }
+        val dismissed = PendingIntent.getBroadcast(
+            context, ID,
+            Intent(context, CallControlReceiver::class.java).setAction(CallControlReceiver.ACTION_CLEAR_MISSED),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
         val notification = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_stat_missed)  // 1.3.4: свой значок у каждого типа уведомления
             .setContentTitle(title)
@@ -116,6 +148,11 @@ object MissedCallsNotifier {
             .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
             .setCategory(Notification.CATEGORY_MISSED_CALL)
             .setContentIntent(open)
+            .setDeleteIntent(dismissed)
+            .apply {
+                callBack?.let { addAction(0, context.getString(R.string.missed_call_back), it) }
+                write?.let { addAction(0, context.getString(R.string.action_write), it) }
+            }
             .setAutoCancel(true)
             .setOnlyAlertOnce(true)
             .setSilent(silent)

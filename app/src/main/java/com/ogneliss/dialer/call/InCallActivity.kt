@@ -127,6 +127,9 @@ class InCallActivity : ComponentActivity() {
      */
     @Inject lateinit var numberingPlan: com.ogneliss.dialer.data.NumberingPlan
 
+    /** Подписи SIM для выбора карты у исходящего без SIM (2.1.0, SimSelectDialog). */
+    @Inject lateinit var simRepo: com.ogneliss.dialer.data.SimRepository
+
     /**
      * Область приложения для сохранения заметки.
      *
@@ -356,6 +359,16 @@ class InCallActivity : ComponentActivity() {
                     // до конца разговора
                     onManualAudioChange = { smartSpeaker?.notifyManualToggle() }
                 )
+
+                /*
+                 * Вопросы Telecom поверх экрана (2.1.0): выбор SIM у исходящего
+                 * и остаток номера после «;». Без ответа вызов стоял бы
+                 * бесконечно — разбор в CallPrompts.kt.
+                 */
+                val awaitingAccount = remember(revision, calls) { CallManager.awaitingAccount }
+                awaitingAccount?.let { SimSelectDialog(it, simRepo) }
+                val postDial by CallManager.postDialWait.collectAsStateWithLifecycle()
+                postDial?.let { PostDialDialog(it) }
             }
             }
                 }
@@ -858,7 +871,10 @@ private fun InCallScreen(
             onSend = { message ->
                 // Если отклонение с текстом не сработало, вызов всё равно
                 // нужно сбросить: пользователь этого и хотел
-                if (!QuickReply.rejectWith(message)) CallManager.reject()
+                // 2.1.0: при втором входящем сбрасываем его, а не идущий разговор
+                if (!QuickReply.rejectWith(message)) {
+                    if (CallManager.waiting != null) CallManager.rejectWaiting() else CallManager.reject()
+                }
                 showQuickReply = false
             },
             onDismiss = { showQuickReply = false }
@@ -1380,7 +1396,7 @@ private fun InCallScreen(
 
                     val waitingCall = remember(revision) { CallManager.waiting }
                     waitingCall?.let { incoming ->
-                        WaitingCallBanner(incoming, contactsRepo)
+                        WaitingCallBanner(incoming, contactsRepo, onReplyWithText = { showQuickReply = true })
                         Spacer(Modifier.height(Space.m))
                     }
 
@@ -1853,8 +1869,15 @@ private fun ControlsRow(
             }
             ToggleTile(speaker, OgnelissIcons.VolumeUp, stringResource(R.string.incall_speaker)) {
                 onManualAudioChange()
+                /*
+                 * 2.1.0: было ROUTE_EARPIECE — стало ROUTE_WIRED_OR_EARPIECE.
+                 * С проводной гарнитурой выключение громкой связи просило
+                 * «разговорный динамик», и звук уходил в трубку мимо
+                 * подключённых наушников. «Проводная или трубка» — Telecom
+                 * сам выберет гарнитуру, если она вставлена.
+                 */
                 CallManager.setAudioRoute(
-                    if (speaker) CallAudioState.ROUTE_EARPIECE else CallAudioState.ROUTE_SPEAKER
+                    if (speaker) CallAudioState.ROUTE_WIRED_OR_EARPIECE else CallAudioState.ROUTE_SPEAKER
                 )
             }
             ToggleTile(false, OgnelissIcons.Dialpad, stringResource(R.string.incall_keypad), onDialpad)
@@ -1878,7 +1901,8 @@ private fun ControlsRow(
                 ToggleTile(btActive, OgnelissIcons.Bluetooth, stringResource(R.string.incall_bluetooth)) {
                     onManualAudioChange()
                     CallManager.setAudioRoute(
-                        if (btActive) CallAudioState.ROUTE_EARPIECE
+                        // 2.1.0: так же, как у громкой связи, — гарнитура, если есть
+                        if (btActive) CallAudioState.ROUTE_WIRED_OR_EARPIECE
                         else CallAudioState.ROUTE_BLUETOOTH
                     )
                 }
@@ -2565,7 +2589,8 @@ private fun rememberCallerLabel(
 @Composable
 private fun WaitingCallBanner(
     call: Call,
-    contactsRepo: com.ogneliss.dialer.data.ContactsRepository
+    contactsRepo: com.ogneliss.dialer.data.ContactsRepository,
+    onReplyWithText: () -> Unit
 ) {
     val label = rememberCallerLabel(call, contactsRepo)
 
@@ -2624,6 +2649,17 @@ private fun WaitingCallBanner(
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = DeclineRed),
                     modifier = Modifier.weight(1f)
                 ) { Text(stringResource(R.string.incall_decline)) }
+            }
+            /*
+             * 2.1.0: отклонить второй входящий с текстом. Было: кнопка
+             * «Отклонить с сообщением» показывалась только у единственного
+             * звонящего вызова. Стало: и здесь, а QuickReply отвечает
+             * именно второму входящему (QuickReply.target).
+             */
+            if (QuickReply.isAvailable()) {
+                TextButton(onClick = onReplyWithText, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.quick_reply_action))
+                }
             }
         }
     }

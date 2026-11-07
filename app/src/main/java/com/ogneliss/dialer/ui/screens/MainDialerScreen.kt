@@ -2414,6 +2414,8 @@ private suspend fun handleLongDigit(
         digit == '0' -> vm.onQueryChange(query + "+")
         digit == '*' -> vm.onQueryChange(query + DialString.PAUSE)
         digit == '#' -> vm.onQueryChange(query + DialString.WAIT)
+        // 2.1.0: долгое «1» на пустом поле — голосовая почта (было: ничего)
+        query.isEmpty() && digit == '1' -> vm.actions.placeVoicemail()
         query.isEmpty() && digit in '2'..'9' -> {
             val dialed = vm.dialSpeedDial(digit.digitToInt())
             if (!dialed) onAssignSpeedDial(digit.digitToInt())
