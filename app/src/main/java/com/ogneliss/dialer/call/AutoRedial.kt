@@ -202,7 +202,8 @@ object AutoRedial {
                 }
             }
             is Decision.Wait -> {
-                val base = if (ours && s != null) s else {
+                // ours уже значит «сеанс есть» (s != null) — компилятор это знает
+                val base = if (ours) s else {
                     val pace = config.pace
                     Session(
                         number = number.orEmpty(),

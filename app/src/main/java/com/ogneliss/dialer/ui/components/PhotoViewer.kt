@@ -34,8 +34,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
@@ -49,7 +51,7 @@ import com.ogneliss.dialer.ui.theme.Space
  *
  * Нажатие на обложку карточки контакта открывает снимок целиком: на обложке
  * он обрезан до полосы 3 : 2 и уходит под строку заголовка. Пальцами —
- * приблизить до ×6, двойное касание — ×2,5 и обратно, касание или «Назад» —
+ * приблизить до ×6 (вокруг точки между пальцами, 2.0.2), двойное касание — ×2,5 и обратно, касание или «Назад» —
  * закрыть. Фон — чёрный 92 %, появление — растворением с подъёмом
  * от 92 % размера за 200 мс, как в почте.
  */
@@ -72,10 +74,19 @@ internal fun PhotoViewerDialog(
         // снимок опять целиком
         var scale by remember { mutableFloatStateOf(1f) }
         var offset by remember { mutableStateOf(Offset.Zero) }
-        val transform = rememberTransformableState { zoom, pan, _ ->
-            scale = (scale * zoom).coerceIn(1f, MAX_ZOOM)
+        // Размер области снимка: graphicsLayer приближает вокруг её середины,
+        // а пальцы могут стоять где угодно
+        var area by remember { mutableStateOf(IntSize.Zero) }
+        val transform = rememberTransformableState { centroid, zoom, pan, _ ->
+            val next = (scale * zoom).coerceIn(1f, MAX_ZOOM)
             // Без приближения снимок стоит по центру: сдвигать нечего
-            offset = if (scale <= 1f) Offset.Zero else offset + pan
+            offset = if (next <= 1f) Offset.Zero else {
+                // Точка снимка между пальцами остаётся под пальцами: приближение
+                // идёт вокруг них, а не вокруг середины экрана
+                val fromCenter = centroid - Offset(area.width / 2f, area.height / 2f)
+                fromCenter + pan - (fromCenter - offset) * (next / scale)
+            }
+            scale = next
         }
         /*
          * Касания — у подложки, а не у снимка: касание мимо снимка (по чёрным
@@ -106,6 +117,7 @@ internal fun PhotoViewerDialog(
                 modifier = Modifier
                     .fillMaxSize()
                     .windowInsetsPadding(WindowInsets.safeDrawing)
+                    .onSizeChanged { area = it }
                     .transformable(transform)
                     .graphicsLayer {
                         val lift = APPEAR_FROM + (1f - APPEAR_FROM) * appear.value
