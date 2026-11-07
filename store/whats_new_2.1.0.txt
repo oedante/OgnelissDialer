@@ -1,0 +1,189 @@
+<ru-RU>
+• SMS в диалере: пишите отсюда; как приложение SMS — переписка, MMS, ответ из уведомления, «Копировать» для кодов.
+• Раздел SMS как журнал: по дням, закреплённые сверху, свои свайпы «SMS» и «Удалить».
+• Нижняя панель: Журнал, SMS, клавиатура, Контакты — листайте свайпом по панели.
+• У каждой SIM свой цвет; без SIM и в режиме полёта кнопки звонка и SMS серые.
+• Настройки: новый раздел «SMS», разделы сгруппированы заново.
+</ru-RU>
+<ar>
+• الرسائل في تطبيق الاتصال: اكتب من هنا؛ وكتطبيق SMS افتراضي: المحادثات وMMS والرد من الإشعار وزر «نسخ» للرموز.
+• قسم الرسائل مثل السجل: حسب الأيام، المثبّتة في الأعلى، وسحب خاص «SMS» و«حذف».
+• الشريط السفلي: السجل، الرسائل، لوحة الاتصال، جهات الاتصال — اسحب على الشريط للتنقل.
+• لكل شريحة لون خاص؛ بدون شريحة أو في وضع الطيران تصبح أزرار الاتصال والرسائل رمادية.
+• الإعدادات: قسم «SMS» جديد وتنظيم جديد للأقسام.
+</ar>
+<cs-CZ>
+• SMS v aplikaci: pište přímo zde; jako výchozí aplikace SMS — konverzace, MMS, odpověď z oznámení, „Kopírovat“ u kódů.
+• Sekce SMS jako výpis hovorů: podle dnů, připnuté nahoře, vlastní přejetí „SMS“ a „Smazat“.
+• Spodní lišta: Hovory, SMS, klávesnice, Kontakty — přepínejte přejetím po liště.
+• Každá SIM má svou barvu; bez SIM a v režimu letadla jsou tlačítka hovoru a SMS šedá.
+• Nastavení: nová sekce „SMS“, nově seskupené sekce.
+</cs-CZ>
+<da-DK>
+• SMS i opkaldsappen: skriv herfra; som standard-SMS-app — samtaler, MMS, svar fra notifikationen, „Kopiér“ til koder.
+• SMS-sektionen som opkaldsloggen: efter dag, fastgjorte øverst, egne swipes „SMS“ og „Slet“.
+• Bundbjælken: Opkald, SMS, tastatur, Kontakter — swipe på bjælken for at skifte.
+• Hvert SIM har sin egen farve; uden SIM og i flytilstand er opkalds- og SMS-knapper grå.
+• Indstillinger: ny sektion „SMS“, sektionerne er grupperet på ny.
+</da-DK>
+<de-DE>
+• SMS in der Telefon-App: hier schreiben; als Standard-SMS-App — Unterhaltungen, MMS, Antwort aus der Benachrichtigung, „Kopieren“ für Codes.
+• SMS-Bereich wie das Anrufprotokoll: nach Tagen, Angeheftete oben, eigene Wischgesten „SMS“ und „Löschen“.
+• Untere Leiste: Anrufe, SMS, Tastatur, Kontakte — Wischen auf der Leiste wechselt.
+• Jede SIM hat ihre Farbe; ohne SIM und im Flugmodus sind Anruf- und SMS-Tasten grau.
+• Einstellungen: neuer Bereich „SMS“, neu gruppiert.
+</de-DE>
+<en-US>
+• SMS in the dialer: write from here; as the default SMS app — conversations, MMS, reply from the notification, "Copy" for codes.
+• SMS section like the call log: by day, pinned on top, its own swipes "SMS" and "Delete".
+• Bottom bar: Call log, SMS, keypad, Contacts — swipe the bar to switch.
+• Each SIM has its own colour; with no SIM or in airplane mode, call and SMS buttons turn grey.
+• Settings: a new SMS section, sections regrouped.
+</en-US>
+<es-ES>
+• SMS en el marcador: escribe desde aquí; como app de SMS predeterminada — conversaciones, MMS, respuesta desde la notificación, «Copiar» para códigos.
+• Sección SMS como el registro: por días, fijadas arriba, deslizamientos propios «SMS» y «Eliminar».
+• Barra inferior: Registro, SMS, teclado, Contactos — desliza sobre la barra para cambiar.
+• Cada SIM tiene su color; sin SIM o en modo avión, los botones de llamada y SMS se ven grises.
+• Ajustes: nueva sección «SMS», secciones reagrupadas.
+</es-ES>
+<fi-FI>
+• Tekstiviestit puhelinsovelluksessa: kirjoita täältä; oletus-SMS-sovelluksena keskustelut, MMS, vastaus ilmoituksesta, ”Kopioi” koodeille.
+• SMS-osio kuin puheluloki: päivittäin, kiinnitetyt ylhäällä, omat pyyhkäisyt ”SMS” ja ”Poista”.
+• Alapalkki: Puhelut, SMS, näppäimistö, Yhteystiedot — vaihda pyyhkäisemällä palkkia.
+• Jokaisella SIM:llä oma värinsä; ilman SIM:iä ja lentotilassa soitto- ja SMS-painikkeet ovat harmaita.
+• Asetukset: uusi SMS-osio, osiot ryhmitelty uudelleen.
+</fi-FI>
+<fr-FR>
+• SMS dans le composeur : écrivez d’ici ; comme app SMS par défaut — conversations, MMS, réponse depuis la notification, « Copier » pour les codes.
+• Section SMS comme le journal : par jour, épinglées en haut, balayages propres « SMS » et « Supprimer ».
+• Barre du bas : Appels, SMS, clavier, Contacts — balayez la barre pour changer.
+• Chaque SIM a sa couleur ; sans SIM ou en mode avion, les boutons d’appel et de SMS sont gris.
+• Réglages : nouvelle section « SMS », sections regroupées.
+</fr-FR>
+<hi-IN>
+• डायलर में SMS: यहीं से लिखें; डिफ़ॉल्ट SMS ऐप के रूप में — बातचीत, MMS, सूचना से जवाब, कोड के लिए «कॉपी»।
+• SMS अनुभाग कॉल लॉग जैसा: दिन के अनुसार, पिन की गई ऊपर, अपने स्वाइप «SMS» और «हटाएँ»।
+• नीचे की पट्टी: कॉल लॉग, SMS, कीपैड, संपर्क — पट्टी पर स्वाइप करके बदलें।
+• हर SIM का अपना रंग; SIM न होने या फ़्लाइट मोड में कॉल और SMS बटन धूसर हो जाते हैं।
+• सेटिंग्स: नया «SMS» अनुभाग, अनुभाग नए सिरे से समूहित।
+</hi-IN>
+<hu-HU>
+• SMS a tárcsázóban: írjon innen; alapértelmezett SMS-alkalmazásként beszélgetések, MMS, válasz az értesítésből, „Másolás” a kódokhoz.
+• Az SMS-rész olyan, mint a hívásnapló: napok szerint, kitűzöttek felül, saját „SMS” és „Törlés” húzás.
+• Alsó sáv: Hívások, SMS, billentyűzet, Névjegyek — váltás a sáv húzásával.
+• Minden SIM-nek saját színe van; SIM nélkül és repülő módban a hívás- és SMS-gombok szürkék.
+• Beállítások: új „SMS” rész, újracsoportosítva.
+</hu-HU>
+<id>
+• SMS di aplikasi telepon: tulis dari sini; sebagai aplikasi SMS default — percakapan, MMS, balas dari notifikasi, «Salin» untuk kode.
+• Bagian SMS seperti log panggilan: per hari, yang disematkan di atas, geser sendiri «SMS» dan «Hapus».
+• Bilah bawah: Log, SMS, papan tombol, Kontak — geser bilah untuk berpindah.
+• Setiap SIM punya warna sendiri; tanpa SIM atau dalam mode pesawat, tombol panggilan dan SMS berwarna abu-abu.
+• Setelan: bagian «SMS» baru, bagian dikelompokkan ulang.
+</id>
+<it-IT>
+• SMS nel telefono: scrivi da qui; come app SMS predefinita — conversazioni, MMS, risposta dalla notifica, «Copia» per i codici.
+• Sezione SMS come il registro: per giorno, fissate in alto, scorrimenti propri «SMS» ed «Elimina».
+• Barra in basso: Registro, SMS, tastierino, Contatti — scorri sulla barra per cambiare.
+• Ogni SIM ha il suo colore; senza SIM o in modalità aereo i pulsanti di chiamata e SMS sono grigi.
+• Impostazioni: nuova sezione «SMS», sezioni riorganizzate.
+</it-IT>
+<iw-IL>
+• SMS בחייגן: כתבו מכאן; כאפליקציית SMS ברירת מחדל — שיחות, MMS, מענה מההתראה, «העתק» לקודים.
+• מדור SMS כמו יומן השיחות: לפי ימים, נעוצות למעלה, החלקות משלו «SMS» ו«מחיקה».
+• הסרגל התחתון: יומן, SMS, מקלדת, אנשי קשר — החליקו על הסרגל למעבר.
+• לכל SIM צבע משלו; בלי SIM ובמצב טיסה כפתורי השיחה וה-SMS אפורים.
+• הגדרות: מדור «SMS» חדש, המדורים קובצו מחדש.
+</iw-IL>
+<ja-JP>
+• ダイヤラーでSMS：ここから送信。既定のSMSアプリにすると会話、MMS、通知から返信、コードの「コピー」。
+• SMS画面は通話履歴と同じ：日付ごと、固定は上に、専用スワイプ「SMS」と「削除」。
+• 下部バー：履歴、SMS、キーパッド、連絡先 — バーをスワイプして切り替え。
+• SIMごとに色分け。SIMなしや機内モードでは通話とSMSのボタンがグレーに。
+• 設定：新しい「SMS」セクション、セクションを再編成。
+</ja-JP>
+<ko-KR>
+• 전화 앱에서 SMS: 여기서 작성하세요. 기본 SMS 앱으로 설정하면 대화, MMS, 알림에서 답장, 인증번호 「복사」.
+• SMS 섹션은 통화 기록처럼: 날짜별, 고정은 맨 위, 전용 스와이프 「SMS」와 「삭제」.
+• 하단 바: 기록, SMS, 키패드, 연락처 — 바를 스와이프해 전환.
+• SIM마다 고유 색상. SIM이 없거나 비행기 모드에서는 통화·SMS 버튼이 회색.
+• 설정: 새 「SMS」 섹션, 섹션 재구성.
+</ko-KR>
+<nl-NL>
+• Sms in de telefoonapp: schrijf hiervandaan; als standaard-sms-app — gesprekken, mms, antwoorden vanuit de melding, ‘Kopiëren’ voor codes.
+• Sms-sectie zoals de oproeplijst: per dag, vastgezette bovenaan, eigen veegacties ‘Sms’ en ‘Verwijderen’.
+• Onderbalk: Oproepen, Sms, toetsenblok, Contacten — veeg over de balk om te wisselen.
+• Elke simkaart heeft een eigen kleur; zonder sim of in vliegtuigmodus zijn bel- en sms-knoppen grijs.
+• Instellingen: nieuwe sectie ‘Sms’, opnieuw gegroepeerd.
+</nl-NL>
+<no-NO>
+• SMS i telefonappen: skriv herfra; som standard SMS-app — samtaler, MMS, svar fra varselet, «Kopier» for koder.
+• SMS-delen som anropsloggen: per dag, festede øverst, egne sveip «SMS» og «Slett».
+• Bunnlinjen: Logg, SMS, tastatur, Kontakter — sveip på linjen for å bytte.
+• Hvert SIM har sin farge; uten SIM og i flymodus er ring- og SMS-knappene grå.
+• Innstillinger: ny del «SMS», delene er gruppert på nytt.
+</no-NO>
+<pl-PL>
+• SMS w dialerze: pisz stąd; jako domyślna aplikacja SMS — rozmowy, MMS, odpowiedź z powiadomienia, „Kopiuj” dla kodów.
+• Sekcja SMS jak rejestr połączeń: według dni, przypięte na górze, własne przesunięcia „SMS” i „Usuń”.
+• Dolny pasek: Rejestr, SMS, klawiatura, Kontakty — przesuń po pasku, aby przełączyć.
+• Każda karta SIM ma swój kolor; bez SIM i w trybie samolotowym przyciski połączenia i SMS są szare.
+• Ustawienia: nowa sekcja „SMS”, sekcje pogrupowane na nowo.
+</pl-PL>
+<pt-BR>
+• SMS no discador: escreva daqui; como app de SMS padrão — conversas, MMS, resposta pela notificação, «Copiar» para códigos.
+• Seção SMS como o registro: por dia, fixadas no topo, deslizes próprios «SMS» e «Excluir».
+• Barra inferior: Registro, SMS, teclado, Contatos — deslize na barra para trocar.
+• Cada chip tem sua cor; sem chip ou no modo avião, os botões de ligar e SMS ficam cinza.
+• Configurações: nova seção «SMS», seções reagrupadas.
+</pt-BR>
+<ro>
+• SMS în aplicația de apel: scrieți de aici; ca aplicație SMS implicită — conversații, MMS, răspuns din notificare, „Copiază” pentru coduri.
+• Secțiunea SMS ca jurnalul: pe zile, fixate sus, glisări proprii „SMS” și „Șterge”.
+• Bara de jos: Jurnal, SMS, tastatură, Contacte — glisați pe bară pentru a comuta.
+• Fiecare SIM are culoarea sa; fără SIM sau în modul avion, butoanele de apel și SMS sunt gri.
+• Setări: secțiune nouă „SMS”, secțiuni regrupate.
+</ro>
+<sk>
+• SMS v aplikácii: píšte priamo tu; ako predvolená aplikácia SMS — konverzácie, MMS, odpoveď z upozornenia, „Kopírovať“ pri kódoch.
+• Sekcia SMS ako denník hovorov: podľa dní, pripnuté hore, vlastné potiahnutia „SMS“ a „Odstrániť“.
+• Spodná lišta: Hovory, SMS, klávesnica, Kontakty — prepínajte potiahnutím po lište.
+• Každá SIM má svoju farbu; bez SIM a v režime lietadla sú tlačidlá hovoru a SMS sivé.
+• Nastavenia: nová sekcia „SMS“, sekcie nanovo zoskupené.
+</sk>
+<sv-SE>
+• Sms i telefonappen: skriv härifrån; som standardapp för sms — konversationer, mms, svar från aviseringen, ”Kopiera” för koder.
+• Sms-delen som samtalsloggen: per dag, fästa överst, egna svep ”Sms” och ”Radera”.
+• Nedre fältet: Logg, Sms, knappsats, Kontakter — svep på fältet för att byta.
+• Varje SIM har sin färg; utan SIM och i flygläge är samtals- och sms-knapparna grå.
+• Inställningar: ny del ”Sms”, delarna omgrupperade.
+</sv-SE>
+<th>
+• SMS ในแอปโทร: เขียนจากที่นี่ เมื่อเป็นแอป SMS เริ่มต้น — การสนทนา MMS ตอบจากการแจ้งเตือน และ «คัดลอก» สำหรับรหัส
+• ส่วน SMS เหมือนบันทึกการโทร: แยกตามวัน ที่ปักหมุดอยู่บนสุด และปัดเฉพาะ «SMS» กับ «ลบ»
+• แถบล่าง: บันทึก SMS แป้นกด รายชื่อ — ปัดบนแถบเพื่อสลับ
+• แต่ละซิมมีสีของตัวเอง ไม่มีซิมหรือโหมดเครื่องบิน ปุ่มโทรและ SMS จะเป็นสีเทา
+• การตั้งค่า: ส่วน «SMS» ใหม่ และจัดกลุ่มใหม่
+</th>
+<tr-TR>
+• Arama uygulamasında SMS: buradan yazın; varsayılan SMS uygulaması olarak sohbetler, MMS, bildirimden yanıt, kodlar için «Kopyala».
+• SMS bölümü arama kaydı gibi: güne göre, sabitlenenler üstte, kendi kaydırmaları «SMS» ve «Sil».
+• Alt çubuk: Kayıt, SMS, tuş takımı, Kişiler — geçmek için çubukta kaydırın.
+• Her SIM'in kendi rengi var; SIM yoksa veya uçak modunda arama ve SMS düğmeleri gri.
+• Ayarlar: yeni «SMS» bölümü, bölümler yeniden gruplandı.
+</tr-TR>
+<vi>
+• SMS trong ứng dụng gọi: soạn ngay tại đây; khi là ứng dụng SMS mặc định — hội thoại, MMS, trả lời từ thông báo, «Sao chép» mã.
+• Mục SMS như nhật ký cuộc gọi: theo ngày, ghim ở trên cùng, vuốt riêng «SMS» và «Xóa».
+• Thanh dưới: Nhật ký, SMS, bàn phím, Danh bạ — vuốt trên thanh để chuyển.
+• Mỗi SIM có màu riêng; không có SIM hoặc ở chế độ máy bay, nút gọi và SMS chuyển màu xám.
+• Cài đặt: mục «SMS» mới, các mục được nhóm lại.
+</vi>
+<zh-CN>
+• 拨号器中的短信：直接在此编写；设为默认短信应用后可查看会话、收发彩信、从通知回复，验证码可「复制」。
+• 短信页如同通话记录：按天分组，置顶在上，独立的滑动操作「短信」和「删除」。
+• 底部栏：通话记录、短信、拨号盘、联系人——在栏上滑动即可切换。
+• 每张 SIM 卡有自己的颜色；无 SIM 卡或飞行模式时，通话和短信按钮变灰。
+• 设置：新增「短信」分区，分区重新整理。
+</zh-CN>
