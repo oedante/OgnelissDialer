@@ -91,6 +91,7 @@ internal object IncomingScreen {
         quietCalls -= call
         if (ringing() == null) {
             alerting = false
+            bannerOnly = false
             everShown = false
             releaseWake()
         }
@@ -108,6 +109,13 @@ internal object IncomingScreen {
      * Уведомление входящего: [alert] — всплывающее, с полноэкранным показом
      * и кнопками; иначе — тихое уведомление вызова.
      */
+    /**
+     * Входящий показан плашкой по настройке (2.1.0): экран вызова не
+     * открывался намеренно — checkShown не считает это запретом прошивки.
+     */
+    @Volatile
+    var bannerOnly = false
+
     fun notify(context: Context, name: String, alert: Boolean) {
         alerting = alert
         logChannelSound(context)
@@ -216,7 +224,7 @@ internal object IncomingScreen {
      */
     fun checkShown(context: Context) {
         val call = ringing() ?: return
-        if (visible || everShown || call in quietCalls || doNotDisturb(context)) return
+        if (visible || everShown || bannerOnly || call in quietCalls || doNotDisturb(context)) return
         Logger.w(TAG, "Экран вызова не появился за 1,5 с: ${com.ogneliss.dialer.util.IncomingCallAccess.describe(context)}")
         com.ogneliss.dialer.util.IncomingCallAccess.reportBlocked(context)
         // Уже всплывает — не дёргаем; экран погасили кнопкой — не будим

@@ -546,6 +546,18 @@ object SettingsRegistry {
             groupRes = R.string.settings_group_at_hand
         ),
         // 1.5.8, обзор интерфейса (У6): ответ сдвигом — от случайного касания
+        /*
+         * Входящий поверх приложений (2.1.0, вопрос пользователя 07.11.2026):
+         * на весь экран (как было) или плашкой сверху, пока телефон
+         * разблокирован. Разбор — OgnelissInCallService.
+         */
+        SettingEntry(
+            "incoming_banner", SettingsCategory.CALLS,
+            R.string.settings_incoming_banner, R.string.settings_incoming_banner_text,
+            SettingKind.Switch("incoming_banner"),
+            keywordsRes = R.string.keywords_incoming_banner,
+            groupRes = R.string.settings_group_during_call
+        ),
         SettingEntry(
             "answer_mode", SettingsCategory.CALLS,
             R.string.settings_answer_mode, R.string.settings_answer_mode_text,

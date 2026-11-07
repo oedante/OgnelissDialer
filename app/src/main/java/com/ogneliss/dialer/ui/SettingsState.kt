@@ -80,6 +80,8 @@ data class SettingsState(
     val smartSpeaker: Boolean = false,
     val dialpadOpenAtStart: Boolean = false,
     val callbackSuggestion: Boolean = true,
+    /** Входящий плашкой сверху, когда телефоном пользуются (2.1.0). */
+    val incomingBanner: Boolean = false,
     val simLabels: Map<Int, String> = emptyMap(),
     /** Экран после звонка выключен по умолчанию — см. пояснение в Prefs. */
     val postCallEnabled: Boolean = false,
@@ -144,6 +146,7 @@ data class SettingsState(
         "smart_speaker" -> smartSpeaker
         "dialpad_open_at_start" -> dialpadOpenAtStart
         "callback_suggestion" -> callbackSuggestion
+        "incoming_banner" -> incomingBanner
         "post_call" -> postCallEnabled
         "post_call_unknown" -> postCallUnknownOnly
         "block_hidden" -> blockHidden
@@ -163,7 +166,7 @@ data class SettingsState(
             "fake_call_button",
             "haptic", "key_tones",
             "merge_calls", "remember_sim", "smart_speaker",
-            "callback_suggestion", "dialpad_open_at_start", "post_call", "post_call_unknown",
+            "callback_suggestion", "dialpad_open_at_start", "post_call", "post_call_unknown", "incoming_banner",
             "block_hidden", "block_unknown", "block_tagged", "file_logging",
             // 1.3.3: переключатели обрабатывались (switchValue выше), но в список
             // не попали — SettingsRegistryTest падал ещё с 1.3.0

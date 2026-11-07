@@ -1098,4 +1098,7 @@
     <string name="msg_unarchived">Aus dem Archiv geholt</string>
     <string name="messages_delete_threads_title">Ausgewählte Unterhaltungen löschen?</string>
     <string name="a11y_avatar_select">Auswählen</string>
+    <string name="settings_incoming_banner">Eingehender Anruf als Banner</string>
+    <string name="settings_incoming_banner_text">Während Sie das Telefon benutzen, erscheint ein Anruf oben mit „Annehmen“ und „Ablehnen“ statt im Vollbild. Bei gesperrtem oder dunklem Bildschirm immer im Vollbild</string>
+    <string name="keywords_incoming_banner">Popup kompakt kleines Fenster oben Benachrichtigung Vollbild eingehend</string>
 </resources>

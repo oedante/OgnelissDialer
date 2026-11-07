@@ -154,9 +154,10 @@ class SettingsStateSource @Inject constructor(
     private val callHelp: Flow<CallHelp> = combine(
         prefs.autoRedialMode,
         prefs.autoRedialPace,
-        prefs.scamMemo
-    ) { mode, pace, memo ->
-        CallHelp(mode, pace, memo)
+        prefs.scamMemo,
+        prefs.incomingBanner
+    ) { mode, pace, memo, banner ->
+        CallHelp(mode, pace, memo, banner)
     }
 
     /** Сообщения (2.0.0). */
@@ -238,6 +239,7 @@ class SettingsStateSource @Inject constructor(
             autoRedialMode = h.autoRedialMode,
             autoRedialPace = h.autoRedialPace,
             scamMemo = h.scamMemo,
+            incomingBanner = h.incomingBanner,
 
             smsInApp = m.inApp,
             smsDeliveryReports = m.deliveryReports,
@@ -325,6 +327,7 @@ class SettingsStateSource @Inject constructor(
     private data class CallHelp(
         val autoRedialMode: AutoRedialMode,
         val autoRedialPace: RedialPace,
-        val scamMemo: Boolean
+        val scamMemo: Boolean,
+        val incomingBanner: Boolean
     )
 }

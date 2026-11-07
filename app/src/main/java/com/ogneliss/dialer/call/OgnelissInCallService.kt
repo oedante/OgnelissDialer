@@ -86,6 +86,8 @@ class OgnelissInCallService : InCallService() {
 
     /** Настройка «Предлагать напоминание после сброса» — копия, как у автодозвона. */
     @Volatile private var callbackSuggestionOn = true
+    /** «Входящий плашкой сверху», когда телефоном пользуются (2.1.0, Prefs.incomingBanner). */
+    @Volatile private var incomingBannerOn = false
 
     override fun onCreate() {
         super.onCreate()
@@ -100,6 +102,7 @@ class OgnelissInCallService : InCallService() {
             }.collect { AutoRedial.config = it }
         }
         serviceScope.launch { prefs.callbackSuggestion.collect { callbackSuggestionOn = it } }
+        serviceScope.launch { prefs.incomingBanner.collect { incomingBannerOn = it } }
     }
 
     override fun onDestroy() {
@@ -360,6 +363,24 @@ class OgnelissInCallService : InCallService() {
          * Оно нужно, когда человек ушёл с экрана вызова — свернул
          * или переключился. И оно же держит передний сервис.
          */
+        /*
+         * ВХОДЯЩИЙ ПЛАШКОЙ СВЕРХУ (2.1.0, настройка «Входящий поверх
+         * приложений»). Пользователь, 07.11.2026: «а такое — компактное окно
+         * сверху с „Ответить“ и „Отклонить“ — вы специально не делали?».
+         * Было: входящий всегда открывал экран вызова на весь экран (прямой
+         * запуск — разбор ниже). Стало по выбору: телефон разблокирован
+         * и экран горит — только уведомление-плашка с кнопками (CallStyle,
+         * всплывает сверху), экран вызова — касанием по плашке. Погасший или
+         * заблокированный экран — как раньше, во весь экран: иначе ответить
+         * нечем.
+         */
+        if (ringing && incomingBannerOn && !screenOff && !locked) {
+            Logger.i(TAG, "Входящий: плашкой сверху (настройка)")
+            IncomingScreen.bannerOnly = true
+            IncomingScreen.notify(this, name, alert = true)
+            return
+        }
+        IncomingScreen.bannerOnly = false
         val screenOpened = runCatching {
             startActivity(
                 Intent(this, InCallActivity::class.java)

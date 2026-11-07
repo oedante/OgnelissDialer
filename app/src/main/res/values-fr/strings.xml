@@ -1097,4 +1097,7 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="msg_unarchived">Sorti des archives</string>
     <string name="messages_delete_threads_title">Supprimer les conversations sélectionnées ?</string>
     <string name="a11y_avatar_select">Sélectionner</string>
+    <string name="settings_incoming_banner">Appel entrant en bannière</string>
+    <string name="settings_incoming_banner_text">Pendant l’utilisation du téléphone, l’appel s’affiche en haut avec « Répondre » et « Refuser » au lieu du plein écran. Écran verrouillé ou éteint : toujours en plein écran</string>
+    <string name="keywords_incoming_banner">fenêtre compacte petite en haut notification plein écran entrant</string>
 </resources>

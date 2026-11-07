@@ -520,6 +520,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val SMART_SPEAKER = booleanPreferencesKey("smart_speaker")
         val DIALPAD_OPEN_AT_START = booleanPreferencesKey("dialpad_open_at_start")
         val CALLBACK_SUGGESTION = booleanPreferencesKey("callback_suggestion")
+        // 2.1.0: входящий плашкой сверху, когда телефоном пользуются
+        val INCOMING_BANNER = booleanPreferencesKey("incoming_banner")
         /** Автодозвон (1.8.0): выключен, предлагать, сразу — разбор в RedialPolicy. */
         val AUTO_REDIAL = stringPreferencesKey("auto_redial")
         /** Сколько раз и как часто (1.8.0): готовые сочетания RedialPace. */
@@ -931,6 +933,16 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      */
     val dialpadOpenAtStart: Flow<Boolean> =
         data.map { it[Keys.DIALPAD_OPEN_AT_START] ?: false }
+
+    /**
+     * ВХОДЯЩИЙ ПЛАШКОЙ СВЕРХУ (2.1.0). Выключено — как было: входящий
+     * открывает экран вызова на весь экран. Включено — пока телефон
+     * разблокирован и экран горит, входящий — плашкой с «Ответить» и
+     * «Отклонить» поверх того, чем человек занят (OgnelissInCallService).
+     */
+    val incomingBanner: Flow<Boolean> = data.map { it[Keys.INCOMING_BANNER] ?: false }
+
+    suspend fun setIncomingBanner(v: Boolean) = edit("incoming_banner", v) { it[Keys.INCOMING_BANNER] = v }
 
     /** Предлагать напоминание после сброшенного вызова. */
     val callbackSuggestion: Flow<Boolean> =
