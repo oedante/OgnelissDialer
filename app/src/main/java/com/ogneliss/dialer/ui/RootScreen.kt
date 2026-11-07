@@ -353,6 +353,40 @@ fun RootScreen(
 
     val pendingPostCall by vm.pendingPostCall.collectAsStateWithLifecycle()
 
+    /*
+     * ОКНО ПОСЛЕ ЗВОНКА НЕ ПЕРЕЖИВАЕТ УХОД ИЗ ПРИЛОЖЕНИЯ (2.0.2).
+     *
+     * Жалоба (07.11.2026): поговорил, окно после звонка открылось, человек
+     * вышел на рабочий стол, не закрыв его. Потом «Позвонить» на номере
+     * в браузере открывал диалер — а вместо набора стояло то самое окно
+     * от прошлого звонка.
+     *
+     * • Окно показано, приложение ушло в фон (ON_STOP) — окно закрыто:
+     *   человек решил, что заметка не нужна.
+     * • Пришло новое намерение (номер из браузера, «Написать», уведомление
+     *   о пропущенном) — человек пришёл за другим, окно закрывается.
+     * • Возвращение в приложение — событие старше срока годности (2 мин)
+     *   сбрасывается сразу, а не ждёт пересчёта.
+     */
+    val postCallLifecycle = LocalLifecycleOwner.current.lifecycle
+    DisposableEffect(postCallLifecycle, pendingPostCall != null) {
+        val shown = pendingPostCall != null
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_STOP -> if (shown) vm.dismissPostCall()
+                Lifecycle.Event.ON_START -> vm.dropExpiredPostCall()
+                else -> Unit
+            }
+        }
+        postCallLifecycle.addObserver(observer)
+        onDispose { postCallLifecycle.removeObserver(observer) }
+    }
+    LaunchedEffect(prefillToken, prefilledNumber, openConversation, openCardForNumber) {
+        if (prefillToken > 0 || prefilledNumber != null || openConversation != null || openCardForNumber != null) {
+            vm.dismissPostCall()
+        }
+    }
+
     // Удаление записи свайпом — после подтверждения (разбор в handleSwipe)
     val deleteRequest by vm.deleteRequest.collectAsStateWithLifecycle()
     deleteRequest?.let { group ->

@@ -2252,6 +2252,11 @@ class DialerViewModel @Inject constructor(
 
     fun dismissPostCall() = postCallCoordinator.consume()
 
+    /** Событие после звонка старше срока годности — сбросить (возврат в приложение). */
+    fun dropExpiredPostCall() {
+        if (postCallCoordinator.pending.value?.isExpired == true) postCallCoordinator.consume()
+    }
+
     /** Сохранение заметки с экрана после звонка. */
     fun savePostCallNote(number: String, note: String, tags: List<String>) {
         val e164 = PhoneFormatter.toE164(number)
