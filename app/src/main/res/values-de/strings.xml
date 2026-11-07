@@ -1069,4 +1069,5 @@
     <string name="messages_delete_thread_text">Alle Nachrichten mit %1$s werden vom Telefon gelöscht.</string>
     <string name="menu_section_list">Liste</string>
     <string name="menu_filters_active">Aktive Bedingungen: %1$s</string>
+    <string name="messages_delete_thread_action">Unterhaltung löschen</string>
 </resources>

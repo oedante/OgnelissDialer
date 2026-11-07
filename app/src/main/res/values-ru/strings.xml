@@ -1078,4 +1078,5 @@
     <string name="messages_delete_thread_text">Все сообщения с %1$s будут удалены с телефона.</string>
     <string name="menu_section_list">Список</string>
     <string name="menu_filters_active">Включено условий: %1$s</string>
+    <string name="messages_delete_thread_action">Удалить переписку</string>
 </resources>

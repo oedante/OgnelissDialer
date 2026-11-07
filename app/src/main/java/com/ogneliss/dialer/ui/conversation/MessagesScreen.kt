@@ -65,6 +65,10 @@ import com.ogneliss.dialer.ui.components.RoleHelpDialog
 import com.ogneliss.dialer.ui.components.RowAvatar
 import com.ogneliss.dialer.ui.components.ScreenScaffold
 import com.ogneliss.dialer.ui.components.rememberSmsRoleRequest
+import com.ogneliss.dialer.ui.components.rememberTouchAnchor
+import com.ogneliss.dialer.ui.components.trackTouch
+import com.ogneliss.dialer.ui.screens.CardsOrigin
+import com.ogneliss.dialer.ui.screens.RecordActionCards
 import com.ogneliss.dialer.ui.components.swipe.SwipeRevealRow
 import com.ogneliss.dialer.ui.components.swipe.rememberSwipeRevealController
 import com.ogneliss.dialer.ui.screens.OverflowMenu
@@ -103,6 +107,9 @@ fun MessagesScreen(
     onOpenReminders: () -> Unit,
     onOpenHelp: () -> Unit,
     onFakeCall: () -> Unit,
+    /** Карточка абонента по ключу (contact:… / number:…) — из карточек действий. */
+    onOpenCard: (String) -> Unit,
+    onOpenBlockLists: () -> Unit,
     messagesVm: MessagesViewModel = hiltViewModel()
 ) {
     // Переписки — свой ViewModel; книга и настройки — общие с журналом
@@ -123,6 +130,14 @@ fun MessagesScreen(
     var composeNew by rememberSaveable { mutableStateOf(false) }
     // Удаление переписки — только с подтверждением: необратимо
     var confirmDelete by remember { mutableStateOf<MessagesViewModel.Thread?>(null) }
+    /*
+     * Долгое нажатие — те же карточки действий, что в журнале (2.0.2):
+     * номера с вызовом и SMS, «Позвонить», «Напомнить», «Блок», «Ещё».
+     * Карточки встают у места касания (TouchAnchor).
+     */
+    var cardsFor by remember { mutableStateOf<MessagesViewModel.Thread?>(null) }
+    var cardsAnchorY by remember { mutableStateOf<Float?>(null) }
+    val touchAnchor = rememberTouchAnchor()
     var roleHelp by remember { mutableStateOf<RoleAccess.Help?>(null) }
     val requestRole = rememberSmsRoleRequest { help ->
         messagesVm.refresh()
@@ -267,7 +282,7 @@ fun MessagesScreen(
                     )
                 }
             } else {
-                LazyColumn(Modifier.fillMaxSize(), state = listState) {
+                LazyColumn(Modifier.fillMaxSize().trackTouch(touchAnchor), state = listState) {
                     items(shown, key = { "${it.threadId}:${it.address}" }) { thread ->
                         val contact = contactOf(thread.address)
                         val rowKey = "thread:${thread.threadId}:${thread.address}"
@@ -309,8 +324,12 @@ fun MessagesScreen(
                                             if (swipeController.isOpen(rowKey)) swipeController.close()
                                             else onOpenConversation(thread.address)
                                         },
-                                        onLongClick = { confirmDelete = thread },
-                                        onLongClickLabel = stringResource(R.string.sms_delete)
+                                        onLongClick = {
+                                            swipeController.close()
+                                            cardsAnchorY = touchAnchor.screenY
+                                            cardsFor = thread
+                                        },
+                                        onLongClickLabel = stringResource(R.string.sms_message_actions)
                                     )
                             )
                         }
@@ -346,6 +365,23 @@ fun MessagesScreen(
             dismissButton = {
                 TextButton(onClick = { confirmDelete = null }) { Text(stringResource(R.string.nav_close)) }
             }
+        )
+    }
+
+    cardsFor?.let { thread ->
+        val contact = contactOf(thread.address)
+        RecordActionCards(
+            group = remember(thread.address, contact) { threadAsGroup(thread.address, contact) },
+            vm = vm,
+            anchorY = cardsAnchorY,
+            origin = CardsOrigin.MESSAGES,
+            onOpenCard = {
+                cardsFor = null
+                onOpenCard(contact?.let { "contact:${it.id}" } ?: "number:${thread.address}")
+            },
+            onOpenBlockLists = { cardsFor = null; onOpenBlockLists() },
+            onDeleteThread = { confirmDelete = thread },
+            onDismiss = { cardsFor = null }
         )
     }
 

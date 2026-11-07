@@ -1068,4 +1068,5 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="messages_delete_thread_text">Tous les messages avec %1$s seront supprimés du téléphone.</string>
     <string name="menu_section_list">Liste</string>
     <string name="menu_filters_active">Conditions actives : %1$s</string>
+    <string name="messages_delete_thread_action">Supprimer la conversation</string>
 </resources>

@@ -989,7 +989,9 @@ fun RootScreen(
                         onOpenNotes = { openSection(MainSection.NOTES) },
                         onOpenReminders = { openSection(MainSection.REMINDERS) },
                         onOpenHelp = { nav.navigate("faq") },
-                        onFakeCall = { FakeCall.ringNow(context) }
+                        onFakeCall = { FakeCall.ringNow(context) },
+                        onOpenCard = { key -> nav.navigate("subscriber/" + android.net.Uri.encode(key)) },
+                        onOpenBlockLists = { nav.navigate("blocklists") }
                     )
                 }
 

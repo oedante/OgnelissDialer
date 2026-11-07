@@ -1098,4 +1098,5 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="messages_delete_thread_text">All messages with %1$s will be deleted from the phone.</string>
     <string name="menu_section_list">List</string>
     <string name="menu_filters_active">Active conditions: %1$s</string>
+    <string name="messages_delete_thread_action">Delete conversation</string>
 </resources>

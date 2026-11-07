@@ -67,7 +67,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /** Откуда открыты карточки: от этого зависят быстрые действия. */
-enum class CardsOrigin { LOG, CONTACTS }
+/**
+ * Откуда открыты карточки: журнал, контакты или раздел SMS (2.0.2).
+ * В SMS — набор как в журнале, но «Удалить» удаляет переписку.
+ */
+enum class CardsOrigin { LOG, CONTACTS, MESSAGES }
 
 /**
  * ДЕЙСТВИЯ С ЗАПИСЬЮ ПО ДОЛГОМУ НАЖАТИЮ — КАРТОЧКАМИ (1.5.7).
@@ -108,6 +112,8 @@ fun RecordActionCards(
     onOpenCard: () -> Unit,
     /** Переход в чёрный список: туда ведёт разбор блокировки по маске. */
     onOpenBlockLists: () -> Unit,
+    /** Раздел SMS: «Удалить переписку» (подтверждение — на экране списка). */
+    onDeleteThread: (() -> Unit)? = null,
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
@@ -314,7 +320,7 @@ fun RecordActionCards(
     }
 
     val quick = when (origin) {
-        CardsOrigin.LOG -> listOf(call, sms, remind, block)
+        CardsOrigin.LOG, CardsOrigin.MESSAGES -> listOf(call, sms, remind, block)
         CardsOrigin.CONTACTS -> listOfNotNull(call, sms, favourite, remind)
     }
 
@@ -395,7 +401,7 @@ fun RecordActionCards(
                 keepOpen = true
             )
         )
-        if (origin == CardsOrigin.LOG && favourite != null) add(favourite)
+        if (origin != CardsOrigin.CONTACTS && favourite != null) add(favourite)
     }
 
     val numberSection = buildList {
@@ -428,6 +434,15 @@ fun RecordActionCards(
     }
 
     val deleteSection = buildList {
+        if (origin == CardsOrigin.MESSAGES && onDeleteThread != null) {
+            add(
+                CardAction(
+                    OgnelissIcons.Delete, stringResource(R.string.messages_delete_thread_action),
+                    onClick = { haptics(); onDeleteThread() },
+                    tint = BlockRed, danger = true
+                )
+            )
+        }
         if (origin == CardsOrigin.LOG) {
             add(
                 CardAction(
