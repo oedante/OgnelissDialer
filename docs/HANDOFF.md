@@ -284,7 +284,11 @@ MessageNotifications, OtpDetector), `ui/conversation/`, `ui/RootScreen.kt` (ма
   `terms`, `privacy`, `licenses`) обновлены здесь под лицензию Apache 2.0;
   их нужно перенести в многоязычные исходники сборщика Mail. До переноса
   на сервер выкладываются готовые страницы `ogneliss-site-dialer-1.5.7.zip`.
-- Интерфейс — по `docs/DESIGN_SYSTEM.md`; отступы — `Space.*`, не числами.
+- Интерфейс — по общей дизайн-системе Dialer и Mail `docs/OGNELISS_DESIGN_SYSTEM.md`
+  (одинаковый файл в обоих репозиториях, правка — в обоих; перед упаковкой
+  `python3 scripts/design_tokens_check.py --other ../OgnelissMail`) и подробностям
+  `docs/DESIGN_SYSTEM.md`; отступы — `Space.*`, не числами. Открытые решения Д1–Д12 —
+  раздел 8 общего документа.
 - Верх экрана (1.5.8): корень отступает только по бокам и снизу — каждый экран
   сам учитывает строку состояния (`ScreenScaffold` или `Scaffold` с
   `contentWindowInsets = WindowInsets.safeDrawing`). Новый экран без Scaffold
