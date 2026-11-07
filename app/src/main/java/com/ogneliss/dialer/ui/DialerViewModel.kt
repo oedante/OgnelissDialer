@@ -244,7 +244,12 @@ class DialerViewModel @Inject constructor(
         primary: SwipeAction,
         extra: List<SwipeAction>,
         group: CallLogGroup,
-        sims: List<SimSlot>
+        sims: List<SimSlot>,
+        /**
+         * Своё выполнение кнопки (раздел SMS, 2.0.2): там «Удалить» удаляет
+         * переписку, а не запись журнала. null — performSwipe, как в журнале.
+         */
+        onAction: ((SwipeAction) -> Unit)? = null
     ): List<RevealAction> {
         // Свайп выключен — выключен целиком, вместе с дополнительными
         // действиями: иначе панель раскрывалась бы с одними «дополнительными»
@@ -276,7 +281,7 @@ class DialerViewModel @Inject constructor(
                     description = label,
                     color = visual?.second ?: MessageBlue,
                     icon = visual?.first,
-                    onClick = { performSwipe(action, group) }
+                    onClick = { if (onAction != null) onAction(action) else performSwipe(action, group) }
                 )
             }
     }

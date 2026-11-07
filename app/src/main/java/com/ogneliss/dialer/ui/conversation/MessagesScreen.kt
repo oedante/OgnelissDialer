@@ -152,10 +152,17 @@ fun MessagesScreen(
      * Действие выполняет DialerViewModel.performSwipe — выбор SIM и номера
      * работает так же. «Удалить из журнала» здесь удаляет переписку
      * (с подтверждением): журнала у сообщений нет, а смысл жеста тот же.
-     * Панели из нескольких кнопок здесь нет — только прямое действие.
+     *
+     * Несколько действий на сторону (настройки жестов) — панель кнопок,
+     * как в журнале (2.0.2): строка сдвигается и ждёт нажатия, мгновенного
+     * действия в эту сторону нет. Кнопки выполняет тот же swipe().
      */
     val swipeController = rememberSwipeRevealController()
     val swipeTuning by vm.swipeTuning.collectAsStateWithLifecycle()
+    val rightExtra by vm.swipeRightExtra.collectAsStateWithLifecycle()
+    val leftExtra by vm.swipeLeftExtra.collectAsStateWithLifecycle()
+    val rightMulti = settings.swipeRight != SwipeAction.NONE && rightExtra.isNotEmpty()
+    val leftMulti = settings.swipeLeft != SwipeAction.NONE && leftExtra.isNotEmpty()
     val startHint = remember(settings.swipeRight) { vm.directActionAppearance(settings.swipeRight) }
     val endHint = remember(settings.swipeLeft) { vm.directActionAppearance(settings.swipeLeft) }
     val closeSwipesToken by vm.closeSwipes.collectAsStateWithLifecycle()
@@ -264,15 +271,25 @@ fun MessagesScreen(
                     items(shown, key = { "${it.threadId}:${it.address}" }) { thread ->
                         val contact = contactOf(thread.address)
                         val rowKey = "thread:${thread.threadId}:${thread.address}"
+                        // Номер переписки как запись журнала — для кнопок панели
+                        val group = remember(thread.address, contact) { threadAsGroup(thread.address, contact) }
                         SwipeRevealRow(
                             key = rowKey,
                             controller = swipeController,
-                            startActions = emptyList(),
-                            endActions = emptyList(),
-                            // «Нет действия» — направление не тянется вовсе (как в журнале)
-                            onDirectStart = if (settings.swipeRight == SwipeAction.NONE) null
+                            startActions = if (rightMulti) {
+                                remember(rowKey, settings.swipeRight, rightExtra, dialer.sims, group) {
+                                    vm.revealActionsFor(settings.swipeRight, rightExtra, group, dialer.sims) { swipe(it, thread) }
+                                }
+                            } else emptyList(),
+                            endActions = if (leftMulti) {
+                                remember(rowKey, settings.swipeLeft, leftExtra, dialer.sims, group) {
+                                    vm.revealActionsFor(settings.swipeLeft, leftExtra, group, dialer.sims) { swipe(it, thread) }
+                                }
+                            } else emptyList(),
+                            // «Нет действия» или панель — прямого действия в эту сторону нет
+                            onDirectStart = if (settings.swipeRight == SwipeAction.NONE || rightMulti) null
                             else { { swipe(settings.swipeRight, thread) } },
-                            onDirectEnd = if (settings.swipeLeft == SwipeAction.NONE) null
+                            onDirectEnd = if (settings.swipeLeft == SwipeAction.NONE || leftMulti) null
                             else { { swipe(settings.swipeLeft, thread) } },
                             directStartAction = startHint,
                             directEndAction = endHint,
