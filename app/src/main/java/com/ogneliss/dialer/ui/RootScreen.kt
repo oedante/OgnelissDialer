@@ -756,7 +756,8 @@ fun RootScreen(
                             onOpenBlockLists = { nav.navigate("blocklists") },
                             onOpenFakeCallPicker = { nav.navigate("contacts?pick=fake") },
                             onOpenNotes = { nav.navigate("notes") },
-                            onOpenReminders = { nav.navigate("reminders") }
+                            onOpenReminders = { nav.navigate("reminders") },
+                            onOpenArchive = { nav.navigate("call_archive") }
                         )
                     }
                 }
@@ -1069,6 +1070,14 @@ fun RootScreen(
                         },
                         onCall = { number -> vm.call(number) }
                     )
+                }
+
+                /*
+                 * Архив журнала (2.1.0): «Ещё» → «Архив». Архив SMS — внутри
+                 * раздела SMS (MessagesScreen), своим видом списка.
+                 */
+                composable("call_archive") {
+                    com.ogneliss.dialer.ui.screens.CallArchiveScreen(vm = vm, onBack = { nav.popBackStack() })
                 }
 
                 composable("swipe_tuning") {

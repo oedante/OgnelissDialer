@@ -1106,4 +1106,16 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="settings_section_messages_summary">SMS app, swipes, messengers</string>
     <string name="settings_home_group_protection">Protection</string>
     <string name="action_delete_thread">Delete</string>
+    <!-- 2.1.0: архив и выбор по портрету в журнале и SMS -->
+    <string name="action_archive">Archive</string>
+    <string name="action_unarchive">Unarchive</string>
+    <string name="archive_title">Archive</string>
+    <string name="archive_row">Archive · %1$d</string>
+    <string name="archive_empty">The archive is empty</string>
+    <string name="archive_calls_note">A new call from the same person brings the entry back to the call log.</string>
+    <string name="archive_sms_note">A new message brings the conversation back to the list.</string>
+    <string name="msg_archived_many">Moved to archive: %1$s</string>
+    <string name="msg_unarchived">Returned from archive</string>
+    <string name="messages_delete_threads_title">Delete the selected conversations?</string>
+    <string name="a11y_avatar_select">Select</string>
 </resources>

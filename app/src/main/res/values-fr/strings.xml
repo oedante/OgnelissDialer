@@ -1076,4 +1076,16 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="settings_section_messages_summary">Application SMS, balayages, messageries</string>
     <string name="settings_home_group_protection">Protection</string>
     <string name="action_delete_thread">Supprimer</string>
+    <!-- 2.1.0: архив и выбор по портрету в журнале и SMS -->
+    <string name="action_archive">Archiver</string>
+    <string name="action_unarchive">Désarchiver</string>
+    <string name="archive_title">Archives</string>
+    <string name="archive_row">Archives · %1$d</string>
+    <string name="archive_empty">Les archives sont vides</string>
+    <string name="archive_calls_note">Un nouvel appel de la même personne ramène l’entrée dans le journal.</string>
+    <string name="archive_sms_note">Un nouveau message ramène la conversation dans la liste.</string>
+    <string name="msg_archived_many">Déplacé dans les archives : %1$s</string>
+    <string name="msg_unarchived">Sorti des archives</string>
+    <string name="messages_delete_threads_title">Supprimer les conversations sélectionnées ?</string>
+    <string name="a11y_avatar_select">Sélectionner</string>
 </resources>

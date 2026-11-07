@@ -106,4 +106,22 @@ class MessagesViewModel @Inject constructor(
         onDone(ok)
         refresh()
     }
+
+    /**
+     * Удалить несколько переписок (режим выбора, 2.1.0) — по очереди,
+     * одним перечитыванием в конце. onDone получает удалённые: их
+     * закрепление и место в архиве снимаются одной записью.
+     */
+    fun deleteThreads(threads: Collection<Thread>, onDone: (List<Thread>) -> Unit = {}) = viewModelScope.launch {
+        val deleted = withContext(io) {
+            threads.filter { thread ->
+                val ok = thread.threadId > 0 && MessageStore.deleteThread(app, thread.threadId)
+                if (ok) MessageNotifications.cancel(app, thread.threadId)
+                ok
+            }
+        }
+        Logger.i(TAG, "Удалено переписок: ${deleted.size} из ${threads.size}")
+        onDone(deleted)
+        refresh()
+    }
 }

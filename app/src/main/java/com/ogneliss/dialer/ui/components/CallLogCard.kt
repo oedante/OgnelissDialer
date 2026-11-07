@@ -13,6 +13,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.*
 import com.ogneliss.dialer.ui.theme.CallGreen
 import androidx.compose.material3.*
@@ -103,6 +104,14 @@ fun CallLogCard(
     onDirectEnd: (() -> Unit)?,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
+    /**
+     * Долгое нажатие на портрет — режим выбора с этой строкой (2.1.0).
+     * Было: портрет — часть строки, долгое нажатие везде открывало
+     * карточки действий. Стало (просьба автора, 07.11.2026): портрет —
+     * вход в выбор («удалить и архивировать»), тело строки — карточки,
+     * как раньше. null — портрет не отдельная цель.
+     */
+    onAvatarLongClick: (() -> Unit)? = null,
     /**
      * Место строки в группе — для вида журнала «Группы по дням».
      * SINGLE — отдельная карточка, как было всегда. Разбор — в JournalStyle.
@@ -217,7 +226,17 @@ fun CallLogCard(
                         else MaterialTheme.colorScheme.outline,
                         modifier = Modifier.size(LocalAppearance.current.avatarSize)
                     )
-                } else {
+                } else Box(
+                    // Портрет — своя цель касания (2.1.0): короткое — как строка,
+                    // долгое — режим выбора. Без onAvatarLongClick — как было
+                    if (onAvatarLongClick != null) Modifier
+                        .clip(CircleShape)
+                        .combinedClickableCompat(
+                            onClick, onAvatarLongClick,
+                            onLongClickLabel = stringResource(R.string.a11y_avatar_select)
+                        )
+                    else Modifier
+                ) {
                     /*
                      * ЗНАЧОК ЗАМЕТКИ ВМЕСТО СИЛУЭТА.
                      *

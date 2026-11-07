@@ -1077,4 +1077,16 @@
     <string name="settings_section_messages_summary">SMS-App, Wischgesten, Messenger</string>
     <string name="settings_home_group_protection">Schutz</string>
     <string name="action_delete_thread">Löschen</string>
+    <!-- 2.1.0: архив и выбор по портрету в журнале и SMS -->
+    <string name="action_archive">Archivieren</string>
+    <string name="action_unarchive">Aus dem Archiv holen</string>
+    <string name="archive_title">Archiv</string>
+    <string name="archive_row">Archiv · %1$d</string>
+    <string name="archive_empty">Das Archiv ist leer</string>
+    <string name="archive_calls_note">Ein neuer Anruf derselben Person holt den Eintrag zurück in die Anrufliste.</string>
+    <string name="archive_sms_note">Eine neue Nachricht holt die Unterhaltung zurück in die Liste.</string>
+    <string name="msg_archived_many">Ins Archiv verschoben: %1$s</string>
+    <string name="msg_unarchived">Aus dem Archiv geholt</string>
+    <string name="messages_delete_threads_title">Ausgewählte Unterhaltungen löschen?</string>
+    <string name="a11y_avatar_select">Auswählen</string>
 </resources>

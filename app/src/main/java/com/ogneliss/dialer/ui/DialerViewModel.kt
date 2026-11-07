@@ -245,6 +245,88 @@ class DialerViewModel @Inject constructor(
     }
 
     /*
+     * ══════════════════════════════════════════════════════════════════════
+     * АРХИВ ЖУРНАЛА И SMS (2.1.0) — одним блоком
+     * ══════════════════════════════════════════════════════════════════════
+     * Автор, 07.11.2026: долгое нажатие на портрет — режим выбора
+     * с «Удалить» и «В архив». Было — только удаление (необратимое),
+     * стало — архив: запись уходит из списка, но не стирается; новый
+     * звонок или сообщение возвращает её сами. Правила — ArchiveRules.
+     * «Отменить» — тем же сообщением с кольцом, что у удаления.
+     */
+    val smsArchived = prefs.smsArchived
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
+
+    val callArchivedIds = prefs.callArchived
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptySet())
+
+    /** Переписки в архив: адрес → дата последнего сообщения. */
+    fun archiveSms(threads: Map<String, Long>) {
+        if (threads.isEmpty()) return
+        val now = System.currentTimeMillis()
+        val added = threads.entries.associate { (address, last) ->
+            smsPinKey(address) to ArchiveRules.smsArchiveTime(now, last)
+        }
+        viewModelScope.launch { prefs.updateSmsArchived { it + added } }
+        notify(
+            textRes = R.string.msg_archived_many,
+            arg = added.size.toString()
+        ) {
+            viewModelScope.launch { prefs.updateSmsArchived { it - added.keys } }
+        }
+    }
+
+    /** Вернуть переписки из архива. */
+    fun unarchiveSms(addresses: Collection<String>) {
+        if (addresses.isEmpty()) return
+        val keys = addresses.mapTo(HashSet()) { smsPinKey(it) }
+        viewModelScope.launch { prefs.updateSmsArchived { it - keys } }
+        notify(R.string.msg_unarchived)
+    }
+
+    /*
+     * Удалённые переписки — забыть разом: снять закрепление и убрать
+     * из архива. Одной записью, а не unpinSms на каждую: при удалении
+     * нескольких сразу каждая читала бы прежний список и затирала
+     * соседнюю.
+     */
+    fun forgetSmsThreads(addresses: Collection<String>) {
+        if (addresses.isEmpty()) return
+        val keys = addresses.mapTo(HashSet()) { smsPinKey(it) }
+        viewModelScope.launch {
+            if (smsPinned.value.any { it in keys }) prefs.setSmsPinned(smsPinned.value - keys)
+            if (smsArchived.value.keys.any { it in keys }) prefs.updateSmsArchived { it - keys }
+        }
+    }
+
+    /** Карточки журнала в архив — все их записи; «Отменить» снимает только добавленное. */
+    fun archiveGroups(groups: Collection<CallLogGroup>) {
+        if (groups.isEmpty()) return
+        val ids = groups.flatMapTo(HashSet()) { ArchiveRules.callIds(it) }
+        val added = ids - callArchivedIds.value
+        viewModelScope.launch { prefs.updateCallArchived { it + ids } }
+        notify(
+            textRes = R.string.msg_archived_many,
+            arg = groups.size.toString()
+        ) {
+            viewModelScope.launch { prefs.updateCallArchived { it - added } }
+        }
+    }
+
+    /*
+     * Вернуть карточки из архива. Удаление из архива — обычное
+     * deleteGroupsWithUndo: id остаются в записи, и «Отменить» возвращает
+     * запись в архив, а не в журнал. Id удалённых вызовов больше не
+     * встретятся — лишняя строка цифр в настройке, вреда нет.
+     */
+    fun unarchiveGroups(groups: Collection<CallLogGroup>) {
+        if (groups.isEmpty()) return
+        val ids = groups.flatMapTo(HashSet()) { ArchiveRules.callIds(it) }
+        viewModelScope.launch { prefs.updateCallArchived { it - ids } }
+        notify(R.string.msg_unarchived)
+    }
+
+    /*
      * КЛАВИАТУРА ИЗ КОНТАКТОВ (1.6.0, вариант «Б»).
      *
      * У контактов та же панель, что у журнала, и кнопка клавиатуры на ней

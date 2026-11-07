@@ -1086,4 +1086,16 @@
     <string name="settings_section_messages_summary">Приложение SMS, свайпы, мессенджеры</string>
     <string name="settings_home_group_protection">Защита</string>
     <string name="action_delete_thread">Удалить</string>
+    <!-- 2.1.0: архив и выбор по портрету в журнале и SMS -->
+    <string name="action_archive">В архив</string>
+    <string name="action_unarchive">Вернуть из архива</string>
+    <string name="archive_title">Архив</string>
+    <string name="archive_row">Архив · %1$d</string>
+    <string name="archive_empty">В архиве пусто</string>
+    <string name="archive_calls_note">Новый звонок того же абонента вернёт запись в журнал.</string>
+    <string name="archive_sms_note">Новое сообщение вернёт переписку в общий список.</string>
+    <string name="msg_archived_many">Перенесено в архив: %1$s</string>
+    <string name="msg_unarchived">Возвращено из архива</string>
+    <string name="messages_delete_threads_title">Удалить выбранные переписки?</string>
+    <string name="a11y_avatar_select">Выбрать</string>
 </resources>
