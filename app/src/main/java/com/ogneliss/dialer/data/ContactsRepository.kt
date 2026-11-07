@@ -132,6 +132,78 @@ class ContactsRepository @Inject constructor(
         }
     }
 
+    /**
+     * ПРОФИЛЬ «Я» СИСТЕМНЫХ КОНТАКТОВ (2.1.0).
+     *
+     * Свой контакт, заведённый в «Контактах» как «Я», живёт в отдельной
+     * таблице ContactsContract.Profile и в общую выборку книги не входит —
+     * диалер его не видел вовсе. Читается по READ_CONTACTS (с Android 6
+     * READ_PROFILE не нужен; minSdk 26). Нет профиля или разрешения — null.
+     */
+    suspend fun loadProfile(): Contact? = withContext(io) {
+        if (!PermissionGuard.canReadContacts(context)) return@withContext null
+        runCatching {
+            var id = -1L
+            var lookupKey = ""
+            var name = ""
+            var photo: String? = null
+            context.contentResolver.query(
+                ContactsContract.Profile.CONTENT_URI,
+                arrayOf(
+                    ContactsContract.Profile._ID,
+                    ContactsContract.Profile.LOOKUP_KEY,
+                    ContactsContract.Profile.DISPLAY_NAME_PRIMARY,
+                    ContactsContract.Profile.PHOTO_URI
+                ),
+                null, null, null
+            )?.use { c ->
+                if (!c.moveToFirst()) return@runCatching null
+                id = c.getLong(0)
+                lookupKey = c.getString(1).orEmpty()
+                name = c.getString(2).orEmpty()
+                photo = c.getString(3)
+            } ?: return@runCatching null
+
+            val numbers = mutableListOf<PhoneNumber>()
+            val emails = mutableListOf<String>()
+            context.contentResolver.query(
+                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI, ContactsContract.Contacts.Data.CONTENT_DIRECTORY),
+                arrayOf(
+                    ContactsContract.Data.MIMETYPE,
+                    ContactsContract.Data.DATA1,
+                    ContactsContract.Data.DATA2,
+                    ContactsContract.Data.DATA3
+                ),
+                null, null, null
+            )?.use { c ->
+                while (c.moveToNext()) {
+                    val value = c.getString(1).orEmpty()
+                    if (value.isBlank()) continue
+                    when (c.getString(0)) {
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE -> {
+                            val label = ContactsContract.CommonDataKinds.Phone
+                                .getTypeLabel(context.resources, c.getInt(2), c.getString(3)).toString()
+                            numbers += PhoneNumber(value, label, PhoneFormatter.toE164(value))
+                        }
+                        ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE -> emails += value
+                    }
+                }
+            }
+            Contact(
+                id = id,
+                lookupKey = lookupKey,
+                displayName = name,
+                photoUri = photo,
+                starred = false,
+                numbers = numbers.distinctBy { it.e164 },
+                emails = emails.distinct()
+            )
+        }.getOrElse {
+            Logger.w("Contacts", "Не удалось прочитать профиль «Я»", it)
+            null
+        }
+    }
+
     private fun loadEmails(): Map<Long, List<String>> {
         val out = HashMap<Long, MutableList<String>>()
         context.contentResolver.query(

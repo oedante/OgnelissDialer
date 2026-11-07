@@ -803,6 +803,19 @@ class DialerViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, "")
 
     /**
+     * Профиль «Я» системных контактов (2.1.0) — для «Моего контакта».
+     * Читается по просьбе карточки (refreshOwnProfile): нужен редко,
+     * а держать его в общем чтении книги — лишний запрос при каждом
+     * обновлении контактов.
+     */
+    private val _ownProfile = MutableStateFlow<com.ogneliss.dialer.data.Contact?>(null)
+    val ownProfile: StateFlow<com.ogneliss.dialer.data.Contact?> = _ownProfile
+
+    fun refreshOwnProfile() = viewModelScope.launch {
+        _ownProfile.value = suspendRunCatching { contactsRepo.loadProfile() }.getOrNull()
+    }
+
+    /**
      * Попытка определить номер у системы.
      *
      * @return false, если система его не знает — тогда интерфейс просит

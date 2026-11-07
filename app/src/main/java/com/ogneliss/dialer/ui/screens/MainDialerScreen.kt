@@ -1329,8 +1329,9 @@ fun MainDialerScreen(
      * почта, фото) и короткие дубли — с SIM-карты, из мессенджера, «Мой
      * номер». В 2.0.0 брался первый попавшийся, и «Мой контакт» открывал
      * дубль с одним номером. Теперь фото берётся у самого полного из них
-     * (больше номеров и почты, с фото — выше), а карточка открывается
-     * по номеру, как раньше: она сама собирает всё, что есть в книге.
+     * (больше номеров и почты, с фото — выше). Карточка — по ключу
+     * OWN_CARD_KEY (2.1.0): по номеру она собирала только один контакт,
+     * а не всё, что есть в книге (было ошибочно написано обратное).
      */
     val ownPhotoUri = remember(ownNumber, state.contacts) {
         if (ownNumber.isBlank()) null else {
@@ -1486,7 +1487,8 @@ fun MainDialerScreen(
                         if (ownNumber.isBlank()) {
                             showOwnNumber = true
                         } else {
-                            onOpenSubscriber("number:$ownNumber")
+                            // 2.1.0: своя карточка — все номера, почта, профиль «Я»
+                            onOpenSubscriber(com.ogneliss.dialer.ui.screens.OWN_CARD_KEY)
                         }
                     },
                     onThemeToggle = {

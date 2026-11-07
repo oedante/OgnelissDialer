@@ -144,8 +144,8 @@ private fun groupFromNumber(
 
     // Записи журнала могло не быть в загруженной странице, но контакт
     // с таким номером даст хотя бы имя
-    state.contacts
-        .firstOrNull { contact -> contact.numbers.any { it.e164 == e164 } }
+    // 2.1.0: самый полный из совпавших, совпадение и по последним 10 цифрам
+    com.ogneliss.dialer.data.ContactMatch.bestFor(state.contacts, e164)
         ?.let { return groupFromContact(it) }
 
     return CallLogGroup(
@@ -180,7 +180,8 @@ private fun groupFromContact(contact: com.ogneliss.dialer.data.Contact): CallLog
         e164 = primary?.e164.orEmpty(),
         displayName = contact.displayName,
         photoUri = contact.photoUri,
-        contactId = contact.id,
+        // -1 — «Мой контакт» без записи в книге (только профиль и SIM)
+        contactId = contact.id.takeIf { it >= 0 },
         lastType = CallType.INCOMING,
         lastDate = 0,
         durationSec = 0,
@@ -213,6 +214,24 @@ fun SubscriberScreen(
     showBack: Boolean = true
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
+    /*
+     * «МОЙ КОНТАКТ» (2.1.0): ключ OWN_CARD_KEY. Собирается из профиля «Я»,
+     * всех контактов со своими номерами и номеров SIM (ContactMatch.ownContact).
+     */
+    val isOwnCard = groupKey == OWN_CARD_KEY
+    val ownNumberPref by vm.ownNumber.collectAsStateWithLifecycle()
+    val ownProfile by vm.ownProfile.collectAsStateWithLifecycle()
+    if (isOwnCard) LaunchedEffect(Unit) { vm.refreshOwnProfile() }
+    val ownContact = remember(isOwnCard, state.contacts, ownProfile, ownNumberPref, state.sims) {
+        if (!isOwnCard) null
+        else com.ogneliss.dialer.data.ContactMatch.ownContact(
+            contacts = state.contacts,
+            profile = ownProfile,
+            ownNumbers = (listOf(ownNumberPref) + state.sims.mapNotNull { it.number })
+                .filter { it.isNotBlank() }
+                .map { PhoneFormatter.toE164(it) }
+        )
+    }
     /**
      * Карточка открывается двумя путями: из журнала (есть готовая группа)
      * и из списка контактов (звонков может не быть вовсе).
@@ -237,8 +256,9 @@ fun SubscriberScreen(
      *    из одного номера — показать её всё равно лучше, чем закрыть
      *    экран сразу после нажатия на уведомление.
      */
-    val group = remember(groupKey, state.callLog, state.contacts) {
-        state.callLog.firstOrNull { it.key == groupKey }
+    val group = remember(groupKey, state.callLog, state.contacts, ownContact) {
+        ownContact?.let { groupFromContact(it) }
+            ?: state.callLog.firstOrNull { it.key == groupKey }
             /*
              * Запасной путь: тот же абонент, другая последняя запись.
              *
@@ -401,8 +421,8 @@ fun SubscriberScreen(
              * карточки, а окно QR-кода живёт выше. Поиск по номеру
              * дешёвый и выполняется один раз при открытии окна.
              */
-            emails = state.contacts
-                .firstOrNull { c -> c.numbers.any { it.e164 == group.e164 } }
+            emails = (ownContact ?: state.contacts.firstOrNull { it.id == group.contactId }
+                ?: com.ogneliss.dialer.data.ContactMatch.bestFor(state.contacts, group.e164))
                 ?.emails.orEmpty(),
             onDismiss = { showQr = false }
         )
@@ -523,12 +543,15 @@ fun SubscriberScreen(
      * Проверка по загруженному списку контактов надёжна: номер
      * в формате E.164 есть у каждой записи.
      */
-    val knownContactId = remember(state.contacts, group.e164) {
-        // Первый по алфавиту — тот же порядок, что у имени и фотографии
-        state.contacts
-            .filter { contact -> contact.numbers.any { it.e164 == group.e164 } }
-            .minByOrNull { it.displayName.lowercase() }
-            ?.id ?: group.contactId
+    val knownContactId = remember(state.contacts, group.e164, group.contactId) {
+        /*
+         * 2.1.0: сначала контакт самой карточки (открыта из контактов —
+         * он и есть), иначе самый полный с этим номером. Было: первый по
+         * алфавиту — номера, почта и фото приходили из разных дублей.
+         */
+        group.contactId?.takeIf { id -> state.contacts.any { it.id == id } }
+            ?: com.ogneliss.dialer.data.ContactMatch.bestFor(state.contacts, group.e164)?.id
+            ?: group.contactId
     }
 
     // Мессенджеры контакта для кнопки «Написать» — из телефонной книги
@@ -553,8 +576,8 @@ fun SubscriberScreen(
     var writeSheetOpen by remember { mutableStateOf(false) }
     if (writeSheetOpen) {
         WriteSheet(
-            numbers = remember(state.contacts, knownContactId, group.number) {
-                state.contacts.firstOrNull { it.id == knownContactId }
+            numbers = remember(state.contacts, knownContactId, group.number, ownContact) {
+                (ownContact ?: state.contacts.firstOrNull { it.id == knownContactId })
                     ?.numbers?.map { it.value }?.distinct()
                     ?.ifEmpty { null } ?: listOf(group.number)
             },
@@ -579,8 +602,9 @@ fun SubscriberScreen(
     }
 
     /** Контакт карточки: из него берутся почта и даты. */
-    val cardContact = remember(state.contacts, knownContactId) {
-        state.contacts.firstOrNull { it.id == knownContactId }
+    val cardContact = remember(state.contacts, knownContactId, ownContact) {
+        // «Мой контакт» — собранный из всех источников (почта, даты — тоже)
+        ownContact ?: state.contacts.firstOrNull { it.id == knownContactId }
     }
 
     /*
@@ -2730,3 +2754,6 @@ private fun coverScrim(tone: Color, from: Float, to: Float): Brush {
  * высоты снимка, остальное — снизу.
  */
 private val COVER_FOCUS = androidx.compose.ui.BiasAlignment(0f, -0.7f)
+
+/** Ключ карточки «Мой контакт» (2.1.0): разбор у SubscriberScreen. */
+const val OWN_CARD_KEY = "own"

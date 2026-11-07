@@ -56,6 +56,9 @@ object MessageNotifications {
     const val ACTION_REPLY = "com.ogneliss.dialer.sms.REPLY"
     const val ACTION_READ = "com.ogneliss.dialer.sms.READ"
     const val ACTION_COPY_CODE = "com.ogneliss.dialer.sms.COPY_CODE"
+    /** «Удалить» из шторки (2.1.0): удаляет показанные сообщения. */
+    const val ACTION_DELETE = "com.ogneliss.dialer.sms.DELETE"
+    private const val EXTRA_KEYS = "keys"
     const val EXTRA_CODE = "code"
     const val EXTRA_ADDRESS = "address"
     const val EXTRA_THREAD = "thread"
@@ -136,6 +139,23 @@ object MessageNotifications {
             .setSemanticAction(NotificationCompat.Action.SEMANTIC_ACTION_MARK_AS_READ)
             .setShowsUserInterface(false)
             .build()
+        /*
+         * «УДАЛИТЬ» (2.1.0, автор: «в оповещении о SMS должно быть ещё
+         * „Удалить“»). Как в стандартном приложении сообщений: удаляются
+         * сообщения, показанные в уведомлении, а не вся переписка. Без
+         * подтверждения — с экрана блокировки только после разблокировки,
+         * чтобы чужая рука не стёрла сообщение.
+         */
+        val deletePending = PendingIntent.getBroadcast(
+            context, id + 3 * ID_RANGE,
+            actionIntent(ACTION_DELETE).putExtra(EXTRA_KEYS, unread.map { it.key }.toTypedArray()),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val delete = NotificationCompat.Action.Builder(0, context.getString(R.string.sms_delete), deletePending)
+            .setSemanticAction(NotificationCompat.Action.SEMANTIC_ACTION_DELETE)
+            .setShowsUserInterface(false)
+            .setAuthenticationRequired(true)
+            .build()
         val code = unread.lastOrNull()?.body?.let(OtpDetector::code)
         val copy = code?.let {
             val copyPending = PendingIntent.getBroadcast(
@@ -174,7 +194,13 @@ object MessageNotifications {
             )
             .apply { if (copy != null) addAction(copy) }
             .addAction(reply)
-            .addAction(read)
+            /*
+             * Видно не больше трёх кнопок. С кодом — «Копировать код»,
+             * «Ответить», «Удалить»: «Прочитано» уступает место (смахнуть
+             * уведомление — то же «прочитано» для глаза). Без кода — все три.
+             */
+            .apply { if (copy == null) addAction(read) }
+            .addAction(delete)
             .build()
         NotificationPermission.notify(context, id, notification, "новое сообщение")
     }
@@ -233,6 +259,12 @@ object MessageNotifications {
                                 SmsClipboard.copy(context, code, SmsClipboard.Kind.CODE)
                             }
                         }
+                    }
+                    if (intent.action == ACTION_DELETE) {
+                        val keys = intent.getStringArrayExtra(EXTRA_KEYS).orEmpty().toList()
+                        if (keys.isNotEmpty()) MessageStore.delete(context, keys)
+                        cancel(context, thread)
+                        return@launch
                     }
                     if (intent.action == ACTION_REPLY && !text.isNullOrBlank()) {
                         if (!SmsSender.send(context, address, text, subId)) sendFailed(context)
