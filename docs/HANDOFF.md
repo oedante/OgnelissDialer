@@ -14,7 +14,7 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 
 ## Состояние
 
-- **2.0.1** (versionCode 55) — к выпуску (`docs/RELEASE_NOTES_2.0.1.md`); 2.0.0 (54) ушла в тестирование 06.11.2026 (`docs/RELEASE_NOTES_2.0.0.md`), ветка `sms` влита в `master`. SMS и MMS по выбору человека: «Писать SMS в диалере»
+- **2.0.2** (versionCode 56) — к выпуску (`docs/RELEASE_NOTES_2.0.2.md`); 2.0.1 (55) ушла в тестирование 07.11.2026, 2.0.0 (54) — 06.11.2026 (`docs/RELEASE_NOTES_2.0.0.md`), ветка `sms` влита в `master`. SMS и MMS по выбору человека: «Писать SMS в диалере»
   (нужна роль телефона, `SmsSettings.composeHere`), роль SMS по умолчанию — история, приём, MMS,
   уведомления с ответом, «ответить сообщением». Журнал — `JournalSource` (вызовы + сообщения,
   слияние страниц), фильтр `CallLogFilter.Kind`. Переписка — `ui/conversation/`, маршрут
