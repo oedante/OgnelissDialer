@@ -1099,4 +1099,8 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="menu_section_list">List</string>
     <string name="menu_filters_active">Active conditions: %1$s</string>
     <string name="messages_delete_thread_action">Delete conversation</string>
+    <string name="incall_postdial_title">Send the rest of the number?</string>
+    <string name="incall_postdial_send">Send %1$s</string>
+    <string name="missed_call_back">Call back</string>
+    <string name="incall_notif_mic">Microphone</string>
 </resources>

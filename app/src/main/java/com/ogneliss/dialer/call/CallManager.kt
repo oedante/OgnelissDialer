@@ -55,6 +55,73 @@ object CallManager {
         }
 
         override fun onParentChanged(call: Call, parent: Call?) { _revision.value++ }
+
+        /*
+         * ПАУЗА НАБОРА «;» (2.1.0).
+         *
+         * Было: колбэка не было, и номер вида «+7 900 000-00-00;123»
+         * после соединения молча ждал вечно — добавочный не уходил,
+         * а на экране не было ничего, чем его отправить. Стало: запоминаем
+         * вызов и остаток, экран вызова показывает кнопку «Отправить …»
+         * (postDialContinue). Пауза «,» система проходит сама — сюда она
+         * не приходит.
+         */
+        override fun onPostDialWait(call: Call, remainingPostDialSequence: String?) {
+            _postDialWait.value = PostDialWait(call, remainingPostDialSequence.orEmpty())
+            _revision.value++
+        }
+    }
+
+    /** Вызов ждёт подтверждения остатка номера после «;». */
+    data class PostDialWait(val call: Call, val remaining: String)
+
+    private val _postDialWait = MutableStateFlow<PostDialWait?>(null)
+    val postDialWait: StateFlow<PostDialWait?> = _postDialWait
+
+    /**
+     * Отправить (send = true) или отбросить остаток номера после «;».
+     * Повторная «;» в остатке снова придёт в onPostDialWait.
+     */
+    fun continuePostDial(send: Boolean) {
+        val wait = _postDialWait.value ?: return
+        _postDialWait.value = null
+        runCatching { wait.call.postDialContinue(send) }
+            .onFailure { Logger.w("Call", "postDialContinue не выполнен", it) }
+        _revision.value++
+    }
+
+    /*
+     * ВЫБОР SIM ДЛЯ ИСХОДЯЩЕГО (2.1.0).
+     *
+     * Было: вызов в состоянии SELECT_PHONE_ACCOUNT («спрашивать каждый
+     * раз», звонок из другого приложения или по ссылке tel:) висел
+     * без конца — Telecom ждёт, что экран вызова спросит SIM и сообщит
+     * выбор через phoneAccountSelected, а мы этого не делали. Стало:
+     * экран вызова показывает выбор (SimSelectDialog), отмена кладёт трубку.
+     */
+    @Suppress("DEPRECATION")
+    val awaitingAccount: Call?
+        get() = topLevel.firstOrNull { it.state == Call.STATE_SELECT_PHONE_ACCOUNT }
+
+    /** Аккаунты, которые Telecom предложил для выбора; пусто — взять все свои. */
+    fun suggestedAccounts(call: Call): List<android.telecom.PhoneAccountHandle> {
+        val extras = call.details?.intentExtras ?: return emptyList()
+        return runCatching {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                extras.getParcelableArrayList(
+                    Call.AVAILABLE_PHONE_ACCOUNTS, android.telecom.PhoneAccountHandle::class.java
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                extras.getParcelableArrayList<android.telecom.PhoneAccountHandle>(Call.AVAILABLE_PHONE_ACCOUNTS)
+            }
+        }.getOrNull().orEmpty()
+    }
+
+    fun selectAccount(call: Call, handle: android.telecom.PhoneAccountHandle) {
+        Logger.i("Call", "SIM выбрана на экране вызова")
+        runCatching { call.phoneAccountSelected(handle, false) }
+            .onFailure { Logger.w("Call", "phoneAccountSelected не выполнен", it) }
     }
 
     internal fun add(call: Call) {
@@ -65,6 +132,8 @@ object CallManager {
 
     internal fun remove(call: Call) {
         call.unregisterCallback(callback)
+        // Вызов ушёл, не дождавшись «Отправить», — кнопку снимаем (2.1.0)
+        if (_postDialWait.value?.call == call) _postDialWait.value = null
         _calls.value = _calls.value - call
         _revision.value++
     }

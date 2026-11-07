@@ -29,12 +29,20 @@ class CallForegroundService : Service() {
             callerName: String,
             incoming: Boolean = false,
             /** Тихий входящий (1.8.0, тихие часы): без всплытия и полноэкранного показа. */
-            quiet: Boolean = false
+            quiet: Boolean = false,
+            /**
+             * Начало разговора — Call.Details.connectTimeMillis (2.1.0); 0 — «сейчас».
+             * Было: таймер уведомления всегда шёл от момента показа, и после
+             * пересборки (сняли второй входящий, ушёл участник конференции)
+             * обнулялся посреди разговора.
+             */
+            connectedAt: Long = 0L
         ) {
             val i = Intent(context, CallForegroundService::class.java)
                 .putExtra("name", callerName)
                 .putExtra(EXTRA_INCOMING, incoming)
                 .putExtra(EXTRA_QUIET, quiet)
+                .putExtra(EXTRA_CONNECTED_AT, connectedAt)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(i)
             } else context.startService(i)
@@ -45,6 +53,9 @@ class CallForegroundService : Service() {
 
         /** Тихий входящий: уведомление без звука и без показа поверх экрана. */
         const val EXTRA_QUIET = "quiet"
+
+        /** Время соединения для таймера уведомления (2.1.0). */
+        const val EXTRA_CONNECTED_AT = "connectedAt"
 
         fun stop(context: Context) {
             context.stopService(Intent(context, CallForegroundService::class.java))
@@ -91,7 +102,11 @@ class CallForegroundService : Service() {
         } else if (incoming) {
             CallNotifications.incoming(this, name)
         } else {
-            CallNotifications.ongoing(this, name, System.currentTimeMillis())
+            val connectedAt = intent?.getLongExtra(EXTRA_CONNECTED_AT, 0L) ?: 0L
+            CallNotifications.ongoing(
+                this, name,
+                connectedAt.takeIf { it > 0L } ?: System.currentTimeMillis()
+            )
         }
 
         ServiceCompat.startForeground(

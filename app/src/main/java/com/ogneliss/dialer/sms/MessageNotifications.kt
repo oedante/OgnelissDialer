@@ -183,17 +183,26 @@ object MessageNotifications {
         runCatching { NotificationManagerCompat.from(context).cancel(idFor(threadId)) }
     }
 
-    /** Сообщение не ушло — человек мог уже закрыть переписку. */
-    fun sendFailed(context: Context) = simple(context, ID_SEND_FAILED, R.string.sms_send_failed, "не отправлено")
+    /**
+     * Сообщение не ушло — человек мог уже закрыть переписку.
+     *
+     * 2.1.0: было — касание открывало главный экран, и переписку с неотправленным
+     * приходилось искать. Стало: если адрес известен ([address]), открывается
+     * сразу она (openIntent); без адреса — как раньше, главный экран.
+     */
+    fun sendFailed(context: Context, address: String? = null) =
+        simple(context, ID_SEND_FAILED, R.string.sms_send_failed, "не отправлено", address)
 
     /** MMS не скачалось — центр MMS пришлёт его снова или его нужно запросить у отправителя. */
     fun downloadFailed(context: Context) = simple(context, ID_DOWNLOAD_FAILED, R.string.sms_download_failed, "MMS не скачано")
 
-    private fun simple(context: Context, id: Int, textRes: Int, what: String) {
+    private fun simple(context: Context, id: Int, textRes: Int, what: String, address: String? = null) {
         ensureChannel(context)
+        val target = address?.takeIf { it.isNotBlank() }?.let { openIntent(context, it) }
+            ?: Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         val open = PendingIntent.getActivity(
             context, id,
-            Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+            target,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         val n = NotificationCompat.Builder(context, CHANNEL)
@@ -235,7 +244,7 @@ object MessageNotifications {
                         }
                     }
                     if (intent.action == ACTION_REPLY && !text.isNullOrBlank()) {
-                        if (!SmsSender.send(context, address, text, subId)) sendFailed(context)
+                        if (!SmsSender.send(context, address, text, subId)) sendFailed(context, address)
                     }
                     if (thread >= 0) {
                         MessageStore.markRead(context, thread)
@@ -267,8 +276,15 @@ class RespondViaMessageService : Service() {
             stopSelf(startId)
             return START_NOT_STICKY
         }
+        /*
+         * 2.1.0: было — карта null (SIM по умолчанию для SMS). При двух SIM
+         * ответ на звонок, пришедший на вторую карту, уходил с первой — с
+         * другого номера. Стало: подписка из намерения (Telecom кладёт её
+         * в «subscription»/SUBSCRIPTION_INDEX), иначе — по умолчанию.
+         */
+        val subId = SmsDeliverReceiver.subscriptionOf(intent)
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
-            val sent = SmsSender.send(applicationContext, number, text, null)
+            val sent = SmsSender.send(applicationContext, number, text, subId)
             Logger.i("SmsRespond", if (sent) "Ответ на вызов отправлен" else "Ответ на вызов не отправлен")
             stopSelf(startId)
         }

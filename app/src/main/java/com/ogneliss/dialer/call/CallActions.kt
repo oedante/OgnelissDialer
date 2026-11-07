@@ -8,7 +8,10 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.annotation.SuppressLint
 import android.telecom.TelecomManager
+import android.telephony.TelephonyManager
+import com.ogneliss.dialer.log.Logger
 import androidx.core.content.ContextCompat
 import com.ogneliss.dialer.data.SimRepository
 
@@ -49,6 +52,70 @@ class CallActions(
             }
         }
         runCatching { tm.placeCall(uri, extras) }
+    }
+
+    /*
+     * ГОЛОСОВАЯ ПОЧТА — ДОЛГОЕ НАЖАТИЕ «1» (2.1.0).
+     *
+     * Было: долгое «1» ничего не делало, хотя подсказка быстрого набора
+     * говорит, что цифра 1 занята под почту. Стало: вызов адреса
+     * «voicemail:» — Telecom сам подставит номер почты выбранной SIM
+     * (без номера в настройках оператора система покажет своё окно).
+     */
+    fun placeVoicemail() {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE)
+            != PackageManager.PERMISSION_GRANTED
+        ) return
+        val tm = context.getSystemService(TelecomManager::class.java) ?: return
+        runCatching { tm.placeCall(Uri.fromParts("voicemail", "", null), Bundle()) }
+            .onFailure { Logger.w("Call", "Не удалось позвонить на голосовую почту", it) }
+    }
+
+    /*
+     * СЕКРЕТНЫЕ КОДЫ НАБОРА (2.1.0).
+     *
+     * Было: «*#06#» и «*#*#…#*#*» уходили обычным вызовом. Стало:
+     * • *#*#код#*#* — TelephonyManager.sendDialerSpecificSecretCode: система
+     *   рассылает код приложениям, которые его ждут (сервисные меню и т. п.).
+     *   Разрешено только телефону по умолчанию — мы им и являемся.
+     * • *#06# (IMEI/MEID) — прочитать IMEI сами мы не можем: с Android 10
+     *   он доступен только привилегированным приложениям. Передаём код
+     *   системе (TelecomManager.handleMmi — телефону по умолчанию разрешено).
+     *
+     * @return true — код обработан, обычный вызов не нужен
+     */
+    @SuppressLint("MissingPermission")
+    fun handleSecretCode(query: String): Boolean {
+        val code = query.trim()
+        SECRET_CODE.matchEntire(code)?.let { match ->
+            val tm = context.getSystemService(TelephonyManager::class.java) ?: return false
+            /*
+             * Через отражение: метод открыт с API 26, но из заглушек
+             * compileSdk 37 его убрали (в android.jar его нет) — прямой
+             * вызов не компилируется. На устройствах он есть. Не нашёлся —
+             * false, и код уйдёт обычным вызовом, как раньше.
+             */
+            return runCatching {
+                TelephonyManager::class.java
+                    .getMethod("sendDialerSpecificSecretCode", String::class.java)
+                    .invoke(tm, match.groupValues[1])
+                true
+            }
+                .onFailure { Logger.w("Call", "Секретный код не передан", it) }
+                .getOrDefault(false)
+        }
+        if (code == IMEI_CODE) {
+            val tm = context.getSystemService(TelecomManager::class.java) ?: return false
+            return runCatching { tm.handleMmi(code) }
+                .onFailure { Logger.w("Call", "Код IMEI не обработан системой", it) }
+                .getOrDefault(false)
+        }
+        return false
+    }
+
+    private companion object {
+        val SECRET_CODE = Regex("""\*#\*#(\d+)#\*#\*""")
+        const val IMEI_CODE = "*#06#"
     }
 
     /** «Написать»: переписка в диалере или приложение SMS (см. ExternalApps.sms). */

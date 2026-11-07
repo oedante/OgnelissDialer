@@ -1069,4 +1069,8 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="menu_section_list">Liste</string>
     <string name="menu_filters_active">Conditions actives : %1$s</string>
     <string name="messages_delete_thread_action">Supprimer la conversation</string>
+    <string name="incall_postdial_title">Envoyer la suite du numéro ?</string>
+    <string name="incall_postdial_send">Envoyer %1$s</string>
+    <string name="missed_call_back">Rappeler</string>
+    <string name="incall_notif_mic">Micro</string>
 </resources>

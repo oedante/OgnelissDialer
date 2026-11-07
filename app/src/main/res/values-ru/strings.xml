@@ -1079,4 +1079,8 @@
     <string name="menu_section_list">Список</string>
     <string name="menu_filters_active">Включено условий: %1$s</string>
     <string name="messages_delete_thread_action">Удалить переписку</string>
+    <string name="incall_postdial_title">Отправить остаток номера?</string>
+    <string name="incall_postdial_send">Отправить %1$s</string>
+    <string name="missed_call_back">Перезвонить</string>
+    <string name="incall_notif_mic">Микрофон</string>
 </resources>

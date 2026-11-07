@@ -55,7 +55,7 @@ object QuickReply {
      *         должен отклонить звонок обычным способом
      */
     fun rejectWith(message: String): Boolean {
-        val call = CallManager.primary ?: return false
+        val call = target() ?: return false
         return runCatching {
             call.reject(true, message)
             true
@@ -67,8 +67,18 @@ object QuickReply {
      * Проверяется по возможностям вызова, а не предполагается.
      */
     fun isAvailable(): Boolean {
-        val call = CallManager.primary ?: return false
+        val call = target() ?: return false
         val capabilities = call.details?.callCapabilities ?: return false
         return capabilities and android.telecom.Call.Details.CAPABILITY_RESPOND_VIA_TEXT != 0
     }
+
+    /*
+     * КОМУ ОТВЕЧАЕМ (2.1.0).
+     *
+     * Было: всегда CallManager.primary. Во время разговора primary — идущий
+     * вызов, а звонит второй (waiting): отклонение с текстом ушло бы
+     * собеседнику, с которым говорим, а не тому, кто звонит. Стало: сначала
+     * второй входящий, и только если его нет — текущий.
+     */
+    private fun target(): android.telecom.Call? = CallManager.waiting ?: CallManager.primary
 }
