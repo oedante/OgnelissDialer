@@ -6,6 +6,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.ogneliss.dialer.call.AutoRedialMode
 import com.ogneliss.dialer.call.QuietHours
 import com.ogneliss.dialer.call.RedialPace
+import com.ogneliss.dialer.data.ArchiveRules
 import com.ogneliss.dialer.data.GroupingSettings
 import com.ogneliss.dialer.data.NotesRetention
 import com.ogneliss.dialer.data.PinnedContacts
@@ -427,6 +428,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val SMS_SWIPE_LEFT_EXTRA = stringPreferencesKey("sms_swipe_left_extra")
         // 2.1.0: закреплённые переписки — свои, отдельно от журнала
         val SMS_PINNED = stringPreferencesKey("sms_pinned")
+        // 2.1.0: архив — переписки («ключ|время» строками) и записи журнала (id через запятую)
+        val SMS_ARCHIVED = stringPreferencesKey("sms_archived")
+        val CALL_ARCHIVED = stringPreferencesKey("call_archived")
         // Оформление
         val THEME = stringPreferencesKey("theme")
         val THEME_PRESET = stringPreferencesKey("theme_preset")
@@ -622,6 +626,26 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     suspend fun setSmsPinned(addresses: List<String>) =
         edit("sms_pinned", addresses.size) { it[Keys.SMS_PINNED] = addresses.joinToString("\n") }
+
+    /*
+     * АРХИВ (2.1.0) — правила в ArchiveRules. Было: только удалить; стало —
+     * «В архив» из режима выбора журнала и SMS. Изменение — одним edit
+     * (прочитать и записать внутри него): два быстрых нажатия «В архив»
+     * подряд не должны терять первое, как при записи готового списка.
+     */
+    val smsArchived: Flow<Map<String, Long>> = data.map { ArchiveRules.parseSms(it[Keys.SMS_ARCHIVED]) }
+
+    suspend fun updateSmsArchived(transform: (Map<String, Long>) -> Map<String, Long>) =
+        edit("sms_archived", null) {
+            it[Keys.SMS_ARCHIVED] = ArchiveRules.formatSms(transform(ArchiveRules.parseSms(it[Keys.SMS_ARCHIVED])))
+        }
+
+    val callArchived: Flow<Set<Long>> = data.map { ArchiveRules.parseCallIds(it[Keys.CALL_ARCHIVED]) }
+
+    suspend fun updateCallArchived(transform: (Set<Long>) -> Set<Long>) =
+        edit("call_archived", null) {
+            it[Keys.CALL_ARCHIVED] = ArchiveRules.formatCallIds(transform(ArchiveRules.parseCallIds(it[Keys.CALL_ARCHIVED])))
+        }
 
     private fun parseActions(raw: String?): List<SwipeAction> =
         raw?.split(',')

@@ -127,7 +127,9 @@ fun MainDialerScreen(
     onOpenReminders: () -> Unit,
     onOpenSubscriber: (String) -> Unit,
     /** Чёрный и белый списки: туда ведёт разбор блокировки по маске. */
-    onOpenBlockLists: () -> Unit
+    onOpenBlockLists: () -> Unit,
+    /** Архив журнала — «Ещё» → «Архив» (2.1.0). */
+    onOpenArchive: () -> Unit = {}
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     val settings by vm.settingsState.collectAsStateWithLifecycle()
@@ -384,8 +386,18 @@ fun MainDialerScreen(
      * уходят, когда сообщение погаснет: разбор в deleteGroupsWithUndo.
      */
     val pendingDeletion by vm.pendingDeletion.collectAsStateWithLifecycle()
-    val list = remember(baseList, pendingDeletion) {
-        if (pendingDeletion.isEmpty()) baseList else baseList.filterNot { it.key in pendingDeletion }
+    /*
+     * АРХИВ (2.1.0): карточки, все записи которых в архиве, в журнал
+     * не попадают — было: только удаление, стало ещё «В архив» в режиме
+     * выбора. Скрываются тем же путём, что удалённые с «Отменить»: ключом
+     * в общем наборе — и для `list`, и для `rows` ниже.
+     */
+    val archivedIds by vm.callArchivedIds.collectAsStateWithLifecycle()
+    val hiddenKeys = remember(baseList, pendingDeletion, archivedIds) {
+        pendingDeletion + com.ogneliss.dialer.data.ArchiveRules.archivedGroupKeys(baseList, archivedIds)
+    }
+    val list = remember(baseList, hiddenKeys) {
+        if (hiddenKeys.isEmpty()) baseList else baseList.filterNot { it.key in hiddenKeys }
     }
 
     /*
@@ -544,14 +556,14 @@ fun MainDialerScreen(
      * другим сразу, и ветка «фильтра нет» отдаёт полный список,
      * не дожидаясь потока.
      */
-    val rows = remember(allRows, list, activeFilter, state.query, pendingDeletion) {
+    val rows = remember(allRows, list, activeFilter, state.query, hiddenKeys) {
         val shown = if (!activeFilter.isActive && state.query.isEmpty()) {
             allRows
         } else {
             val visible = list.mapTo(HashSet()) { it.key }
             allRows.filter { it.key in visible }
         }
-        if (pendingDeletion.isEmpty()) shown else shown.filterNot { it.key in pendingDeletion }
+        if (hiddenKeys.isEmpty()) shown else shown.filterNot { it.key in hiddenKeys }
     }
 
     /*
@@ -1512,7 +1524,8 @@ fun MainDialerScreen(
                         else selection.startEmpty()
                     },
                     selectionActive = selection.isActive,
-                    onHelp = { menuOpen = false; onOpenHelp() }
+                    onHelp = { menuOpen = false; onOpenHelp() },
+                    onArchive = { menuOpen = false; onOpenArchive() }
                 )
             }
         )
@@ -1581,6 +1594,11 @@ fun MainDialerScreen(
                     onSelectAll = { selection.selectAll(list.map { it.key }) },
                     onBlock = {
                         vm.blockGroups(list.filter { it.key in selection.selected })
+                        selection.clear()
+                    },
+                    // 2.1.0: «В архив» — убрать из журнала, не стирая
+                    onArchive = {
+                        vm.archiveGroups(list.filter { it.key in selection.selected })
                         selection.clear()
                     },
                     onDelete = { confirmBulkDelete = true }
@@ -1717,6 +1735,7 @@ fun MainDialerScreen(
                                 scope = scope,
                                 listScrolling = listScrolling,
                                 swipeKeyPrefix = "found_",
+                                avatarSelects = false,
                                 onOpenSubscriber = onOpenSubscriber,
                                 onLongPress = {
                                     selectedAnchorY = touchAnchor.screenY

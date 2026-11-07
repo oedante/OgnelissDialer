@@ -1069,7 +1069,6 @@
     <string name="menu_section_list">Liste</string>
     <string name="menu_filters_active">Aktive Bedingungen: %1$s</string>
     <string name="messages_delete_thread_action">Unterhaltung löschen</string>
-<<<<<<< HEAD
     <string name="settings_sms_swipe_right">Unterhaltung nach rechts wischen</string>
     <string name="settings_sms_swipe_left">Unterhaltung nach links wischen</string>
     <string name="settings_sms_swipe_text">Im Bereich „SMS“, getrennt vom Anrufprotokoll</string>
@@ -1083,10 +1082,20 @@
     <string name="history_sms_in">Eingehende SMS</string>
     <string name="history_sms_out">Gesendete SMS</string>
     <string name="sms_open_conversation">Unterhaltung öffnen</string>
-=======
     <string name="incall_postdial_title">Restliche Ziffern senden?</string>
     <string name="incall_postdial_send">%1$s senden</string>
     <string name="missed_call_back">Zurückrufen</string>
     <string name="incall_notif_mic">Mikrofon</string>
->>>>>>> worktree-agent-a924b85f70d1dc1c9
+    <!-- 2.1.0: архив и выбор по портрету в журнале и SMS -->
+    <string name="action_archive">Archivieren</string>
+    <string name="action_unarchive">Aus dem Archiv holen</string>
+    <string name="archive_title">Archiv</string>
+    <string name="archive_row">Archiv · %1$d</string>
+    <string name="archive_empty">Das Archiv ist leer</string>
+    <string name="archive_calls_note">Ein neuer Anruf derselben Person holt den Eintrag zurück in die Anrufliste.</string>
+    <string name="archive_sms_note">Eine neue Nachricht holt die Unterhaltung zurück in die Liste.</string>
+    <string name="msg_archived_many">Ins Archiv verschoben: %1$s</string>
+    <string name="msg_unarchived">Aus dem Archiv geholt</string>
+    <string name="messages_delete_threads_title">Ausgewählte Unterhaltungen löschen?</string>
+    <string name="a11y_avatar_select">Auswählen</string>
 </resources>

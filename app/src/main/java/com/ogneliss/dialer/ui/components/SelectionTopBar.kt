@@ -30,6 +30,13 @@ fun SelectionTopBar(
     onClose: () -> Unit,
     onSelectAll: () -> Unit,
     onBlock: (() -> Unit)? = null,
+    /*
+     * 2.1.0 (автор: выбор по портрету — «удалить и архивировать»).
+     * Было: «Блок» и «Удалить»; стало — ещё «В архив» в списках
+     * и «Вернуть из архива» в самом архиве. null — кнопки нет.
+     */
+    onArchive: (() -> Unit)? = null,
+    onUnarchive: (() -> Unit)? = null,
     onDelete: () -> Unit
 ) {
     TopAppBar(
@@ -55,6 +62,16 @@ fun SelectionTopBar(
                         OgnelissIcons.Block,
                         contentDescription = stringResource(R.string.action_block)
                     )
+                }
+            }
+            if (onArchive != null) {
+                IconButton(onClick = onArchive) {
+                    Icon(OgnelissIcons.Archive, contentDescription = stringResource(R.string.action_archive))
+                }
+            }
+            if (onUnarchive != null) {
+                IconButton(onClick = onUnarchive) {
+                    Icon(OgnelissIcons.Unarchive, contentDescription = stringResource(R.string.action_unarchive))
                 }
             }
             // Удаление последним и справа: случайное касание при закрытии

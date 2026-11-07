@@ -99,7 +99,12 @@ internal fun OverflowMenu(
      * «Вопросы и ответы» (1.6.0) — после «Настроек»: с вопросом идут
      * в меню, и ответ должен быть там же, а не на сайте.
      */
-    onHelp: (() -> Unit)? = null
+    onHelp: (() -> Unit)? = null,
+    /**
+     * «Архив» (2.1.0): записи, убранные из журнала или SMS режимом выбора.
+     * null — пункта нет.
+     */
+    onArchive: (() -> Unit)? = null
 ) {
     /*
      * ПОРЯДОК ПУНКТОВ МЕНЮ.
@@ -227,6 +232,14 @@ internal fun OverflowMenu(
                 )
                 SheetDivider()
                 SheetRow(OgnelissIcons.Alarm, remindersLabel, onClick = onReminders)
+                if (onArchive != null) {
+                    SheetDivider()
+                    SheetRow(
+                        OgnelissIcons.Archive,
+                        stringResource(R.string.archive_title),
+                        onClick = onArchive
+                    )
+                }
                 if (onStartSelection != null) {
                     SheetDivider()
                     SheetRow(
@@ -361,7 +374,12 @@ internal fun CallLogRow(
     onOpenSubscriber: (String) -> Unit,
     onLongPress: (CallLogGroup) -> Unit,
     onNeedNumberPicker: (CallLogGroup, List<NumberOption>) -> Unit,
-    groupPosition: GroupPosition = GroupPosition.SINGLE
+    groupPosition: GroupPosition = GroupPosition.SINGLE,
+    /**
+     * Долгое нажатие на портрет включает выбор (2.1.0). Нет — у найденных
+     * контактов: это не записи журнала, удалять и архивировать в них нечего.
+     */
+    avatarSelects: Boolean = true
 ) {
     val group = row.group
     // Несколько действий на сторону — панель кнопок вместо мгновенного действия
@@ -477,7 +495,14 @@ internal fun CallLogRow(
         onLongClick = {
             if (selection.isActive) selection.toggle(row.key)
             else onLongPress(group)
-        }
+        },
+        // Портрет — вход в выбор сразу с этой строкой (2.1.0); тело — карточки, как было
+        onAvatarLongClick = if (avatarSelects) {
+            {
+                swipeController.close()
+                selection.start(row.key)
+            }
+        } else null
     )
 }
 
