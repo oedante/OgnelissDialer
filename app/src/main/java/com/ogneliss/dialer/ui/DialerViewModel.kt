@@ -239,6 +239,11 @@ class DialerViewModel @Inject constructor(
         prefs.setSmsPinned(if (key in now) now - key else now + key)
     }
 
+    /** Открепить (после удаления переписки): именно снять, а не переключить. */
+    fun unpinSms(address: String) = viewModelScope.launch {
+        prefs.setSmsPinned(smsPinned.value - smsPinKey(address))
+    }
+
     /*
      * КЛАВИАТУРА ИЗ КОНТАКТОВ (1.6.0, вариант «Б»).
      *

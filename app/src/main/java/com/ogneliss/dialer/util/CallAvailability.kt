@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.provider.Settings
+import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -18,7 +19,6 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
-import com.ogneliss.dialer.data.SimSlot
 
 /**
  * МОЖНО ЛИ СЕЙЧАС ЗВОНИТЬ И ПИСАТЬ SMS (2.1.0).
@@ -31,9 +31,12 @@ import com.ogneliss.dialer.data.SimSlot
  *  • устройство без голосовой связи (планшет с данными) — звонки;
  *  • нет разрешения на звонки — звонки;
  *  • режим полёта — звонки и SMS;
- *  • ни одной активной SIM — звонки и SMS. Список карт читается только
- *    с разрешением «Телефон»: без него карт «нет», но это незнание, а не
- *    отсутствие, — тогда не гасим.
+ *  • ни одной активной SIM — звонки и SMS. Карты считаем сами, по всем
+ *    активным подпискам системы (SubscriptionManager), а не по списку
+ *    диалера: в том только голосовые карты (SIM лишь для SMS и интернета
+ *    гасила бы SMS зря), он приходит не сразу (при запуске кнопки мигали
+ *    серым) и держит кэш прошлого запуска (вынутая карта оставляла зелёный).
+ *    Без разрешения «Телефон» число карт неизвестно — тогда не гасим.
  *
  * ⚠️ Серый — только вид, касание остаётся: экстренный номер набирается
  * и без SIM, и в режиме полёта (система выключит его сама), а при
@@ -58,33 +61,55 @@ val LocalCallAvailability = staticCompositionLocalOf { CallAvailability() }
 
 /** Следит за режимом полёта и картами; пересчёт — при каждом изменении. */
 @Composable
-fun rememberCallAvailability(sims: List<SimSlot>): CallAvailability {
+fun rememberCallAvailability(): CallAvailability {
     val context = LocalContext.current
     var airplane by remember { mutableStateOf(isAirplane(context)) }
+    // null — неизвестно (нет разрешения или система не ответила): не гасим
+    var simCount by remember { mutableStateOf(activeSimCount(context)) }
     DisposableEffect(context) {
         val receiver = object : BroadcastReceiver() {
-            override fun onReceive(c: Context, i: Intent) { airplane = isAirplane(c) }
+            override fun onReceive(c: Context, i: Intent) {
+                airplane = isAirplane(c)
+                simCount = activeSimCount(c)
+            }
         }
+        // Карту вставили, вынули, выключили в настройках — пересчитать
+        val sm = context.getSystemService(SubscriptionManager::class.java)
+        @Suppress("DEPRECATION")
+        val listener = object : SubscriptionManager.OnSubscriptionsChangedListener() {
+            override fun onSubscriptionsChanged() { simCount = activeSimCount(context) }
+        }
+        runCatching { sm?.addOnSubscriptionsChangedListener(listener) }
         runCatching {
             ContextCompat.registerReceiver(
                 context, receiver, IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED),
                 ContextCompat.RECEIVER_NOT_EXPORTED
             )
         }
-        onDispose { runCatching { context.unregisterReceiver(receiver) } }
+        onDispose {
+            runCatching { context.unregisterReceiver(receiver) }
+            runCatching { sm?.removeOnSubscriptionsChangedListener(listener) }
+        }
     }
     val voice = remember(context) {
         context.getSystemService(TelephonyManager::class.java)?.isVoiceCapable ?: true
     }
     val callPermission = PermissionGuard.canCall(context)
-    // Без разрешения «Телефон» список карт пуст всегда — это не «карт нет»
-    val noSim = sims.isEmpty() && PermissionGuard.canReadPhoneState(context)
+    val noSim = simCount == 0
     return remember(airplane, voice, callPermission, noSim) {
         CallAvailability(
             canCall = voice && callPermission && !airplane && !noSim,
             canSms = !airplane && !noSim
         )
     }
+}
+
+@android.annotation.SuppressLint("MissingPermission")
+private fun activeSimCount(context: Context): Int? {
+    if (!PermissionGuard.canReadPhoneState(context)) return null
+    return runCatching {
+        context.getSystemService(SubscriptionManager::class.java)?.activeSubscriptionInfoCount
+    }.getOrNull()
 }
 
 private fun isAirplane(context: Context): Boolean =

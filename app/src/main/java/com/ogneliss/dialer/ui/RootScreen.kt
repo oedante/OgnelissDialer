@@ -516,7 +516,7 @@ fun RootScreen(
     // Любое окно карточек (действия, SIM, номер, напоминание, заметка) размывает весь экран
     val cardsBlur = remember { CardsBlurState() }
     // 2.1.0: звонить и писать сейчас можно? Нельзя — кнопки серые (CallAvailability)
-    val callAvailability = com.ogneliss.dialer.util.rememberCallAvailability(uiState.sims)
+    val callAvailability = com.ogneliss.dialer.util.rememberCallAvailability()
     CompositionLocalProvider(
         LocalNavBarStrip provides navBarStrip,
         LocalTouchAnchor provides rootAnchor,
@@ -712,11 +712,12 @@ fun RootScreen(
                     "dialer",
                     // Журнал и контакты — соседи (1.6.0): между ними —
                     // растворение, без сдвига (разбор у Motion.enterSibling)
+                    // 2.1.0: соседи — и SMS (isSectionList)
                     exitTransition = {
-                        if (isContactsList(targetState)) Motion.exitSibling(this) else Motion.exitForward(this)
+                        if (isSectionList(targetState)) Motion.exitSibling(this) else Motion.exitForward(this)
                     },
                     popEnterTransition = {
-                        if (isContactsList(initialState)) Motion.enterSibling(this) else Motion.enterBackward(this)
+                        if (isSectionList(initialState)) Motion.enterSibling(this) else Motion.enterBackward(this)
                     }
                 ) {
                     /*
@@ -781,6 +782,16 @@ fun RootScreen(
                         } else {
                             Motion.exitBackward(this)
                         }
+                    },
+                    // 2.1.0: из контактов в SMS (свайп по панели) — тоже растворением:
+                    // уходящий экран не должен ехать против жеста
+                    exitTransition = {
+                        if (isContactsList(initialState) && isSectionList(targetState)) Motion.exitSibling(this)
+                        else Motion.exitForward(this)
+                    },
+                    popEnterTransition = {
+                        if (isContactsList(targetState) && isSectionList(initialState)) Motion.enterSibling(this)
+                        else Motion.enterBackward(this)
                     }
                 ) { entry ->
                     /*
@@ -1010,7 +1021,14 @@ fun RootScreen(
                 composable(
                     MainSection.MESSAGES.route,
                     enterTransition = { Motion.enterSibling(this) },
-                    popExitTransition = { Motion.exitSibling(this) }
+                    popExitTransition = { Motion.exitSibling(this) },
+                    // 2.1.0: к соседям (журнал, контакты) — растворением; в переписку — сдвигом
+                    exitTransition = {
+                        if (isSectionList(targetState)) Motion.exitSibling(this) else Motion.exitForward(this)
+                    },
+                    popEnterTransition = {
+                        if (isSectionList(initialState)) Motion.enterSibling(this) else Motion.enterBackward(this)
+                    }
                 ) {
                     com.ogneliss.dialer.ui.conversation.MessagesScreen(
                         vm = vm,
@@ -1660,3 +1678,7 @@ private fun contactEditRoute(id: Long = -1L, number: String = "", name: String? 
 
 /** Соседи контактов в карусели (2.1.0): переход растворением, а не сдвигом. */
 private val SIBLING_ROUTES = setOf(MainSection.JOURNAL.route, MainSection.MESSAGES.route)
+
+/** Разделы-соседи карусели: журнал, SMS, список контактов (2.1.0). */
+private fun isSectionList(entry: androidx.navigation.NavBackStackEntry): Boolean =
+    entry.destination.route in SIBLING_ROUTES || isContactsList(entry)

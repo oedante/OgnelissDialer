@@ -96,12 +96,14 @@ class MessagesViewModel @Inject constructor(
     }
 
     /** Удалить переписку целиком (после подтверждения на экране). */
-    fun deleteThread(thread: Thread) = viewModelScope.launch {
-        withContext(io) {
+    fun deleteThread(thread: Thread, onDone: (Boolean) -> Unit = {}) = viewModelScope.launch {
+        val ok = withContext(io) {
             val ok = thread.threadId > 0 && MessageStore.deleteThread(app, thread.threadId)
             if (ok) MessageNotifications.cancel(app, thread.threadId)
             Logger.i(TAG, if (ok) "Переписка удалена" else "Переписку удалить не удалось")
+            ok
         }
+        onDone(ok)
         refresh()
     }
 }

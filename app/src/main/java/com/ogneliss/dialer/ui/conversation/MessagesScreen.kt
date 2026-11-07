@@ -239,9 +239,15 @@ fun MessagesScreen(
         }
     }
     // Закреплённые — в порядке закрепления; остальные — по дням
+    /*
+     * Все переписки закреплённого номера, а не одна: «8 912…» и «+7 912…»
+     * хранилище может держать двумя разговорами, а ключ закрепления у них
+     * один. associateBy оставлял последний, и второй пропадал отовсюду.
+     */
     val pinnedThreads = remember(shown, pinnedKeys) {
-        val byKey = shown.associateBy { smsPinKey(it.address) }
-        pinnedKeys.mapNotNull { byKey[it] }
+        val order = pinnedKeys.withIndex().associate { (i, k) -> k to i }
+        shown.filter { smsPinKey(it.address) in order }
+            .sortedBy { order.getValue(smsPinKey(it.address)) }
     }
     val pinnedSet = remember(pinnedKeys) { pinnedKeys.toSet() }
     val days = remember(shown, pinnedSet) {
@@ -481,9 +487,12 @@ fun MessagesScreen(
             confirmButton = {
                 TextButton(onClick = {
                     confirmDelete = null
-                    // Удалённая переписка не остаётся закреплённой пустым местом
-                    if (smsPinKey(thread.address) in pinnedSet) vm.toggleSmsPin(thread.address)
-                    messagesVm.deleteThread(thread)
+                    // Удалённая переписка не остаётся закреплённой пустым местом —
+                    // но только если удаление удалось: иначе закрепление терялось бы зря
+                    val wasPinned = smsPinKey(thread.address) in pinnedSet
+                    messagesVm.deleteThread(thread) { ok ->
+                        if (ok && wasPinned) vm.unpinSms(thread.address)
+                    }
                 }) { Text(stringResource(R.string.sms_delete), color = MaterialTheme.colorScheme.error) }
             },
             dismissButton = {
