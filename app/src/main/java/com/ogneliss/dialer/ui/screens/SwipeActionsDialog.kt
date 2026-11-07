@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
@@ -56,7 +57,8 @@ import com.ogneliss.dialer.ui.theme.Dimens
 @Composable
 fun SwipeActionsDialog(
     vm: DialerViewModel,
-    isRight: Boolean,
+    /** Ключ настройки: swipe_right / swipe_left / sms_swipe_right / sms_swipe_left (2.1.0). */
+    settingKey: String,
     primary: SwipeAction,
     extra: List<SwipeAction>,
     onDismiss: () -> Unit
@@ -71,7 +73,7 @@ fun SwipeActionsDialog(
 
     OgnelissDialog(
         onDismissRequest = onDismiss,
-        title = stringResource(if (isRight) R.string.settings_swipe_right else R.string.settings_swipe_left),
+        title = vm.choiceTitle(LocalContext.current, settingKey),
         content = {
             Column {
                 Text(
@@ -87,6 +89,7 @@ fun SwipeActionsDialog(
                         val full = chosen.size >= MAX
                         ActionRow(
                             action = action,
+                            forSms = settingKey.startsWith("sms_"),
                             order = order,
                             // Уже три — остальные недоступны, пока не снять одно
                             enabled = selected || !full,
@@ -101,11 +104,8 @@ fun SwipeActionsDialog(
         },
         confirmButton = {
             TextButton(onClick = {
-                vm.setChoice(
-                    if (isRight) "swipe_right" else "swipe_left",
-                    (chosen.firstOrNull() ?: SwipeAction.NONE).key
-                )
-                vm.setSwipeExtra(isRight, chosen.drop(1))
+                vm.setChoice(settingKey, (chosen.firstOrNull() ?: SwipeAction.NONE).key)
+                vm.setSwipeExtraFor(settingKey, chosen.drop(1))
                 onDismiss()
             }) { Text(stringResource(R.string.action_save)) }
         },
@@ -121,6 +121,7 @@ private const val MAX = 3
 @Composable
 private fun ActionRow(
     action: SwipeAction,
+    forSms: Boolean,
     order: Int,
     enabled: Boolean,
     onToggle: () -> Unit
@@ -161,7 +162,7 @@ private fun ActionRow(
             Spacer(Modifier.width(Space.m))
         }
         Text(
-            stringResource(SettingsCommands.swipeActionLabelRes(action)),
+            stringResource(SettingsCommands.swipeActionLabelRes(action, forSms)),
             style = MaterialTheme.typography.bodyLarge,
             color = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.outline
         )

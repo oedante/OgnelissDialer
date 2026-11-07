@@ -217,10 +217,15 @@ private fun SimChoiceRow(
             Modifier
                 .size(SLOT)
                 .clip(RoundedCornerShape(SLOT_RADIUS))
-                .background(surfaces.navIndicator.copy(alpha = SLOT_ALPHA).compositeOver(surfaces.card)),
+                // 2.1.0: цвет карты (SimColors), как плашка SIM в журнале
+                .background(com.ogneliss.dialer.ui.theme.SimColors.container(sim.slotIndex).compositeOver(surfaces.card)),
             contentAlignment = Alignment.Center
         ) {
-            Text("${sim.slotIndex + 1}", style = MaterialTheme.typography.titleSmall)
+            Text(
+                "${sim.slotIndex + 1}",
+                style = MaterialTheme.typography.titleSmall,
+                color = com.ogneliss.dialer.ui.theme.SimColors.of(sim.slotIndex)
+            )
         }
         Spacer(Modifier.width(Space.m))
         Column(Modifier.weight(1f)) {

@@ -17,13 +17,11 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Badge
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -50,6 +48,27 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.platform.LocalConfiguration
+import com.ogneliss.dialer.data.JournalDays
+import com.ogneliss.dialer.sms.smsPinKey
+import com.ogneliss.dialer.ui.components.FloatingDatePill
+import com.ogneliss.dialer.ui.components.GroupPosition
+import com.ogneliss.dialer.ui.components.RowDivider
+import com.ogneliss.dialer.ui.components.SectionBand
+import com.ogneliss.dialer.ui.components.SimBadge
+import com.ogneliss.dialer.ui.components.swipe.RevealAction
+import com.ogneliss.dialer.ui.screens.FAB_CLEARANCE
+import com.ogneliss.dialer.ui.screens.LetterHeader
+import com.ogneliss.dialer.ui.screens.spokenDayLabel
+import com.ogneliss.dialer.ui.theme.LocalAppearance
+import java.util.Locale
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.data.CallLogGroup
 import com.ogneliss.dialer.data.CallLogGrouper
@@ -63,7 +82,6 @@ import com.ogneliss.dialer.ui.components.MainSection
 import com.ogneliss.dialer.ui.components.OgnelissDialog
 import com.ogneliss.dialer.ui.components.RoleHelpDialog
 import com.ogneliss.dialer.ui.components.RowAvatar
-import com.ogneliss.dialer.ui.components.ScreenScaffold
 import com.ogneliss.dialer.ui.components.rememberSmsRoleRequest
 import com.ogneliss.dialer.ui.components.rememberTouchAnchor
 import com.ogneliss.dialer.ui.components.trackTouch
@@ -72,7 +90,6 @@ import com.ogneliss.dialer.ui.screens.RecordActionCards
 import com.ogneliss.dialer.ui.components.swipe.SwipeRevealRow
 import com.ogneliss.dialer.ui.components.swipe.rememberSwipeRevealController
 import com.ogneliss.dialer.ui.screens.OverflowMenu
-import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import com.ogneliss.dialer.ui.theme.OgnelissTheme
 import com.ogneliss.dialer.ui.theme.Space
@@ -83,15 +100,18 @@ import com.ogneliss.dialer.util.RoleAccess
 /**
  * РАЗДЕЛ «SMS» (2.0.0) — список переписок.
  *
- * ── Вид ─────────────────────────────────────────────────────────────────────
- * Как журнал и контакты: строка — фото или буквы, имя (listName, 15 sp),
- * последнее сообщение одной строкой («Вы: …» для своего), время справа,
- * число непрочитанных меткой. Непрочитанная переписка — имя и текст темнее.
- * Снизу — та же панель, что у журнала и контактов (ListPanel): разделы,
- * клавиатура, «Ещё» с поиском.
- *
- * «Написать» в шапке — новое сообщение: номер или имя из книги.
- * Долгое нажатие на переписку — удалить её (с подтверждением).
+ * ── 2.1.0: как журнал (автор, 07.11.2026: «окно SMS не доделано») ──────────
+ * • Каркас журнала и контактов: без верхней строки с заголовком — было
+ *   «Сообщения» крупно и карандаш сверху, единственный такой раздел;
+ *   «Написать» — круглой кнопкой справа внизу, как «Написать» в почте.
+ * • По дням: «СЕГОДНЯ», «ВЧЕРА», «29 октября · ЧЕТВЕРГ» и плавающая дата
+ *   при прокрутке (JournalDays, FloatingDatePill) — как журнал.
+ * • Закреплённые переписки — сверху, своим списком (Prefs.smsPinned),
+ *   отдельно от закреплённых журнала. Закрепить — карточки долгого нажатия.
+ * • Свайпы — свои (Настройки → SMS): по умолчанию вправо «SMS» (открыть
+ *   переписку), влево «Удалить» (с подтверждением).
+ * • Перелистывание по нижней панели: вправо — журнал, влево — контакты.
+ * • Строка — как строка журнала: те же поля, фон, линии внутри дня.
  *
  * Без роли SMS — объяснение и кнопка «Сделать»; написать можно и так.
  */
@@ -116,8 +136,8 @@ fun MessagesScreen(
     val state by messagesVm.state.collectAsStateWithLifecycle()
     val dialer by vm.state.collectAsStateWithLifecycle()
     val settings by vm.settingsState.collectAsStateWithLifecycle()
+    val pinnedKeys by vm.smsPinned.collectAsStateWithLifecycle()
 
-    // «Ещё»: поиск, разделы, настройки — как у журнала и контактов
     var menuOpen by remember { mutableStateOf(false) }
     /*
      * Поиск — полем на месте строки кнопок панели (ListPanel), как
@@ -132,7 +152,7 @@ fun MessagesScreen(
     var confirmDelete by remember { mutableStateOf<MessagesViewModel.Thread?>(null) }
     /*
      * Долгое нажатие — те же карточки действий, что в журнале (2.0.2):
-     * номера с вызовом и SMS, «Позвонить», «Напомнить», «Блок», «Ещё».
+     * номера с вызовом и SMS, «Позвонить», «Закрепить», «Блок», «Ещё».
      * Карточки встают у места касания (TouchAnchor).
      */
     var cardsFor by remember { mutableStateOf<MessagesViewModel.Thread?>(null) }
@@ -162,24 +182,29 @@ fun MessagesScreen(
     }
 
     /*
-     * СВАЙПЫ (2.0.1) — те же, что в журнале и контактах: действия
-     * из настроек жестов, подсказка-иконка под строкой, тот же порог.
-     * Действие выполняет DialerViewModel.performSwipe — выбор SIM и номера
-     * работает так же. «Удалить из журнала» здесь удаляет переписку
-     * (с подтверждением): журнала у сообщений нет, а смысл жеста тот же.
+     * СВАЙПЫ (2.1.0) — свои, из «Настройки → SMS»: smsSwipeRight /
+     * smsSwipeLeft и их дополнительные действия (до трёх — панель кнопок,
+     * как в журнале). Порог, подсказка-иконка и выбор SIM — общие.
      *
-     * Несколько действий на сторону (настройки жестов) — панель кнопок,
-     * как в журнале (2.0.2): строка сдвигается и ждёт нажатия, мгновенного
-     * действия в эту сторону нет. Кнопки выполняет тот же swipe().
+     * «SMS» здесь открывает переписку сразу, не через выбор номера:
+     * номер у переписки один. «Удалить» удаляет переписку
+     * с подтверждением: журнала у сообщений нет, а смысл жеста тот же.
      */
     val swipeController = rememberSwipeRevealController()
     val swipeTuning by vm.swipeTuning.collectAsStateWithLifecycle()
-    val rightExtra by vm.swipeRightExtra.collectAsStateWithLifecycle()
-    val leftExtra by vm.swipeLeftExtra.collectAsStateWithLifecycle()
-    val rightMulti = settings.swipeRight != SwipeAction.NONE && rightExtra.isNotEmpty()
-    val leftMulti = settings.swipeLeft != SwipeAction.NONE && leftExtra.isNotEmpty()
-    val startHint = remember(settings.swipeRight) { vm.directActionAppearance(settings.swipeRight) }
-    val endHint = remember(settings.swipeLeft) { vm.directActionAppearance(settings.swipeLeft) }
+    val rightExtra by vm.smsSwipeRightExtra.collectAsStateWithLifecycle()
+    val leftExtra by vm.smsSwipeLeftExtra.collectAsStateWithLifecycle()
+    val swipeRight = settings.smsSwipeRight
+    val swipeLeft = settings.smsSwipeLeft
+    val rightMulti = swipeRight != SwipeAction.NONE && rightExtra.isNotEmpty()
+    val leftMulti = swipeLeft != SwipeAction.NONE && leftExtra.isNotEmpty()
+    val deleteLabel = stringResource(R.string.action_delete_thread)
+    // Подпись «Удалить» вместо «Удалить из журнала» — у подсказки и кнопок панели
+    val relabel: (RevealAction) -> RevealAction = { a ->
+        if (a.icon == OgnelissIcons.Delete) a.copy(label = deleteLabel, description = deleteLabel) else a
+    }
+    val startHint = remember(swipeRight, deleteLabel) { vm.directActionAppearance(swipeRight)?.let(relabel) }
+    val endHint = remember(swipeLeft, deleteLabel) { vm.directActionAppearance(swipeLeft)?.let(relabel) }
     val closeSwipesToken by vm.closeSwipes.collectAsStateWithLifecycle()
     LaunchedEffect(closeSwipesToken) { if (closeSwipesToken > 0) swipeController.closeAll() }
     val listState = rememberLazyListState()
@@ -191,6 +216,11 @@ fun MessagesScreen(
             action == SwipeAction.DELETE_FROM_LOG -> {
                 swipeController.close()
                 confirmDelete = thread
+            }
+            // «SMS» по переписке — она сама; у буквенного отправителя тоже
+            action == SwipeAction.SMS -> {
+                swipeController.close()
+                onOpenConversation(thread.address)
             }
             // Буквенный отправитель («Bank»): звонить и писать в мессенджер некуда
             !dialable -> swipeController.close()
@@ -208,15 +238,61 @@ fun MessagesScreen(
             name.lowercase().contains(q) || t.address.contains(q) || t.last.body.lowercase().contains(q)
         }
     }
+    // Закреплённые — в порядке закрепления; остальные — по дням
+    val pinnedThreads = remember(shown, pinnedKeys) {
+        val byKey = shown.associateBy { smsPinKey(it.address) }
+        pinnedKeys.mapNotNull { byKey[it] }
+    }
+    val pinnedSet = remember(pinnedKeys) { pinnedKeys.toSet() }
+    val days = remember(shown, pinnedSet) {
+        val now = System.currentTimeMillis()
+        shown.filterNot { smsPinKey(it.address) in pinnedSet }
+            .groupBy { JournalDays.dayStart(it.last.date, now) }
+            .toList()
+            .sortedByDescending { it.first }
+    }
+    // Подписи дней — на языке приложения, как в журнале
+    val dayLocale = LocalConfiguration.current.locales[0] ?: Locale.getDefault()
+    val todayText = stringResource(R.string.date_group_today)
+    val yesterdayText = stringResource(R.string.date_group_yesterday)
+    val dayLabels = remember(days, dayLocale, todayText, yesterdayText) {
+        val now = System.currentTimeMillis()
+        val dayMonth = android.text.format.DateFormat.getBestDateTimePattern(dayLocale, "dMMMM")
+        val dayMonthYear = android.text.format.DateFormat.getBestDateTimePattern(dayLocale, "dMMMMy")
+        days.associate { (day, _) ->
+            day to JournalDays.label(day, now, dayLocale, todayText, yesterdayText, dayMonth, dayMonthYear)
+        }
+    }
+    val pinnedHeader = stringResource(R.string.pinned_header)
+    val dayOfKey = remember(days) {
+        buildMap { days.forEach { (day, list) -> list.forEach { put(threadKey(it), day) } } }
+    }
+    val labelForKey: (Any) -> String? = remember(dayOfKey, dayLabels, pinnedHeader) {
+        { key ->
+            val k = key as? String
+            when {
+                k == null -> null
+                k.startsWith("pin_") -> pinnedHeader
+                else -> dayOfKey[k]?.let { dayLabels[it] }
+            }
+        }
+    }
 
-    ScreenScaffold(
-        title = stringResource(R.string.messages_title),
-        onBack = { onOpenSection(MainSection.JOURNAL) },
-        showBack = false,
-        pinnedTopBar = true,
-        actions = {
-            IconButton(onClick = { composeNew = true }) {
-                Icon(OgnelissIcons.Edit, contentDescription = stringResource(R.string.messages_new))
+    // Перелистывание по панели (настройка): вправо — журнал, влево — контакты
+    val swipeNav = settings.panelSwipeNav
+
+    Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing,
+        floatingActionButton = {
+            // «Написать» — как в почте: круглая кнопка справа внизу, у большого пальца
+            if (!searching) {
+                FloatingActionButton(
+                    onClick = { composeNew = true },
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ) {
+                    Icon(OgnelissIcons.Edit, contentDescription = stringResource(R.string.messages_new))
+                }
             }
         },
         /*
@@ -236,8 +312,10 @@ fun MessagesScreen(
                 onSearchChange = { query = it },
                 onCloseSearch = { searching = false; query = "" },
                 onMenu = { menuOpen = true },
+                onSwipeRight = if (swipeNav) { { onOpenSection(MainSection.JOURNAL) } } else null,
+                onSwipeLeft = if (swipeNav) { { onOpenSection(MainSection.CONTACTS) } } else null,
                 menuContent = {
-                    // Своего номера, очистки журнала и выбора нескольких здесь нет
+                    // Пункты — как у журнала и контактов, тем же окном (OverflowMenu)
                     OverflowMenu(
                         expanded = menuOpen,
                         onDismiss = { menuOpen = false },
@@ -263,7 +341,7 @@ fun MessagesScreen(
             )
         }
     ) { pad ->
-        Column(Modifier.fillMaxSize().padding(pad)) {
+        Box(Modifier.fillMaxSize().padding(pad)) {
             /*
              * Три состояния: нет роли SMS — объяснение и кнопка; роль есть,
              * переписок нет (или поиск ничего не нашёл) — строка по центру;
@@ -282,30 +360,39 @@ fun MessagesScreen(
                     )
                 }
             } else {
-                LazyColumn(Modifier.fillMaxSize().trackTouch(touchAnchor), state = listState) {
-                    items(shown, key = { "${it.threadId}:${it.address}" }) { thread ->
-                        val contact = contactOf(thread.address)
-                        val rowKey = "thread:${thread.threadId}:${thread.address}"
-                        // Номер переписки как запись журнала — для кнопок панели
-                        val group = remember(thread.address, contact) { threadAsGroup(thread.address, contact) }
+                @Composable
+                fun ThreadItem(thread: MessagesViewModel.Thread, rowKey: String, position: GroupPosition) {
+                    val contact = contactOf(thread.address)
+                    val pinned = smsPinKey(thread.address) in pinnedSet
+                    // Номер переписки как запись журнала — для кнопок панели
+                    val group = remember(thread.address, contact) { threadAsGroup(thread.address, contact) }
+                    val slot = thread.last.subId?.let { id -> dialer.sims.firstOrNull { it.subscriptionId == id }?.slotIndex }
+                    Column {
+                        if (position == GroupPosition.MIDDLE || position == GroupPosition.LAST) {
+                            Box(Modifier.background(MaterialTheme.colorScheme.surfaceContainerLow)) {
+                                RowDivider(Modifier.padding(start = Space.l + LocalAppearance.current.avatarSize + Space.m))
+                            }
+                        }
                         SwipeRevealRow(
                             key = rowKey,
                             controller = swipeController,
                             startActions = if (rightMulti) {
-                                remember(rowKey, settings.swipeRight, rightExtra, dialer.sims, group) {
-                                    vm.revealActionsFor(settings.swipeRight, rightExtra, group, dialer.sims) { swipe(it, thread) }
+                                remember(rowKey, swipeRight, rightExtra, dialer.sims, group, deleteLabel) {
+                                    vm.revealActionsFor(swipeRight, rightExtra, group, dialer.sims) { swipe(it, thread) }
+                                        .map(relabel)
                                 }
                             } else emptyList(),
                             endActions = if (leftMulti) {
-                                remember(rowKey, settings.swipeLeft, leftExtra, dialer.sims, group) {
-                                    vm.revealActionsFor(settings.swipeLeft, leftExtra, group, dialer.sims) { swipe(it, thread) }
+                                remember(rowKey, swipeLeft, leftExtra, dialer.sims, group, deleteLabel) {
+                                    vm.revealActionsFor(swipeLeft, leftExtra, group, dialer.sims) { swipe(it, thread) }
+                                        .map(relabel)
                                 }
                             } else emptyList(),
                             // «Нет действия» или панель — прямого действия в эту сторону нет
-                            onDirectStart = if (settings.swipeRight == SwipeAction.NONE || rightMulti) null
-                            else { { swipe(settings.swipeRight, thread) } },
-                            onDirectEnd = if (settings.swipeLeft == SwipeAction.NONE || leftMulti) null
-                            else { { swipe(settings.swipeLeft, thread) } },
+                            onDirectStart = if (swipeRight == SwipeAction.NONE || rightMulti) null
+                            else { { swipe(swipeRight, thread) } },
+                            onDirectEnd = if (swipeLeft == SwipeAction.NONE || leftMulti) null
+                            else { { swipe(swipeLeft, thread) } },
                             directStartAction = startHint,
                             directEndAction = endHint,
                             tuning = swipeTuning,
@@ -316,9 +403,12 @@ fun MessagesScreen(
                                 title = contact?.displayName ?: PhoneFormatter.format(thread.address),
                                 photoUri = contact?.photoUri,
                                 initialsFrom = contact?.displayName,
-                                // Касание — переписка (раскрытая строка — закрыть); долгое — удалить
+                                pinned = pinned,
+                                // Карта — только при двух и больше: с одной выбирать не из чего
+                                simSlot = slot.takeIf { dialer.sims.size > 1 },
+                                // Касание — переписка (раскрытая строка — закрыть); долгое — карточки
                                 modifier = Modifier
-                                    .background(OgnelissTheme.pageColor())
+                                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
                                     .combinedClickable(
                                         onClick = {
                                             if (swipeController.isOpen(rowKey)) swipeController.close()
@@ -335,6 +425,38 @@ fun MessagesScreen(
                         }
                     }
                 }
+
+                LazyColumn(
+                    Modifier.fillMaxSize().trackTouch(touchAnchor),
+                    state = listState,
+                    // Под кнопкой «Написать» — запас: она висит над правым краем
+                    contentPadding = PaddingValues(top = Space.xs, bottom = FAB_CLEARANCE + Space.l)
+                ) {
+                    if (pinnedThreads.isNotEmpty()) {
+                        item(key = "pinned_header", contentType = "date_header") {
+                            LetterHeader(pinnedHeader)
+                        }
+                        itemsIndexed(pinnedThreads, key = { _, t -> "pin_" + threadKey(t) }, contentType = { _, _ -> "thread" }) { i, t ->
+                            ThreadItem(t, "pin_" + threadKey(t), GroupPosition.of(i, pinnedThreads.size))
+                        }
+                    }
+                    days.forEach { (day, list) ->
+                        item(key = "day_$day", contentType = "date_header") {
+                            val dayText = dayLabels[day].orEmpty()
+                            SectionBand(dayText, description = spokenDayLabel(dayText, dayLocale))
+                        }
+                        itemsIndexed(list, key = { _, t -> threadKey(t) }, contentType = { _, _ -> "thread" }) { i, t ->
+                            ThreadItem(t, threadKey(t), GroupPosition.of(i, list.size))
+                        }
+                    }
+                }
+
+                // Плавающая дата — как в журнале: день верхней строки при прокрутке
+                FloatingDatePill(
+                    listState = listState,
+                    labelForKey = labelForKey,
+                    modifier = Modifier.align(Alignment.TopCenter).padding(top = Space.s)
+                )
             }
         }
     }
@@ -359,6 +481,8 @@ fun MessagesScreen(
             confirmButton = {
                 TextButton(onClick = {
                     confirmDelete = null
+                    // Удалённая переписка не остаётся закреплённой пустым местом
+                    if (smsPinKey(thread.address) in pinnedSet) vm.toggleSmsPin(thread.address)
                     messagesVm.deleteThread(thread)
                 }) { Text(stringResource(R.string.sms_delete), color = MaterialTheme.colorScheme.error) }
             },
@@ -381,6 +505,8 @@ fun MessagesScreen(
             },
             onOpenBlockLists = { cardsFor = null; onOpenBlockLists() },
             onDeleteThread = { confirmDelete = thread },
+            smsPinned = smsPinKey(thread.address) in pinnedSet,
+            onToggleSmsPin = { vm.toggleSmsPin(thread.address) },
             onDismiss = { cardsFor = null }
         )
     }
@@ -388,13 +514,22 @@ fun MessagesScreen(
     roleHelp?.let { help -> RoleHelpDialog(help) { roleHelp = null } }
 }
 
-/** Строка переписки — по размерам как строка журнала. */
+/** Ключ строки ленты: разговор и адрес (у старых прошивок разговора может не быть). */
+private fun threadKey(t: MessagesViewModel.Thread): String = "thread:${t.threadId}:${t.address}"
+
+/**
+ * Строка переписки — как строка журнала (2.1.0): те же поля по плотности
+ * списков, фон строки и размеры. Было: своя высота 72 dp и поля экрана —
+ * строки SMS выглядели крупнее и «другими» рядом с журналом.
+ */
 @Composable
 private fun ThreadRow(
     thread: MessagesViewModel.Thread,
     title: String,
     photoUri: String?,
     initialsFrom: String?,
+    pinned: Boolean,
+    simSlot: Int?,
     modifier: Modifier
 ) {
     val context = LocalContext.current
@@ -413,8 +548,10 @@ private fun ThreadRow(
     Row(
         modifier
             .fillMaxWidth()
-            .heightIn(min = 72.dp)
-            .padding(horizontal = FlowUi.screenPadding, vertical = Space.s),
+            .padding(
+                horizontal = Space.l,
+                vertical = LocalAppearance.current.rowPadding(OgnelissTheme.surfaces.outlined)
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         RowAvatar(photoUri, name = initialsFrom)
@@ -427,18 +564,33 @@ private fun ThreadRow(
                     fontWeight = if (unread) FontWeight.SemiBold else null,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f, fill = false)
                 )
+                if (pinned) {
+                    Spacer(Modifier.width(Space.xs))
+                    Icon(
+                        OgnelissIcons.PushPin,
+                        contentDescription = stringResource(R.string.pinned_header),
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(14.dp)
+                    )
+                }
+                Spacer(Modifier.weight(1f))
+                if (simSlot != null) {
+                    SimBadge(simSlot)
+                    Spacer(Modifier.width(Space.xs))
+                }
                 Text(
                     time,
                     style = MaterialTheme.typography.bodySmall,
                     color = if (unread) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+            Spacer(Modifier.height(Space.xxs))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     line,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = if (unread) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

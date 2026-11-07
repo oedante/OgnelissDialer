@@ -138,11 +138,11 @@ fun SettingsChoiceDialog(
             "BY_CONTACT" to stringResource(R.string.grouping_by_contact),
             "NONE" to stringResource(R.string.grouping_none)
         )
-        "swipe_right", "swipe_left" ->
+        "swipe_right", "swipe_left", "sms_swipe_right", "sms_swipe_left" ->
             // Подписи берутся из единого места: у настроек и панели свайпа
             // они обязаны совпадать
             SwipeAction.entries.map {
-                it.key to stringResource(SettingsCommands.swipeActionLabelRes(it))
+                it.key to stringResource(SettingsCommands.swipeActionLabelRes(it, settingKey.startsWith("sms_")))
             }
         else -> emptyList()
     }
@@ -159,12 +159,12 @@ fun SettingsChoiceDialog(
     val current = remember(settingsSnapshot, settingKey) { vm.choiceValue(settingKey) }
 
     // Свайпы — своё окно: до трёх действий на сторону (разбор там)
-    if (settingKey == "swipe_right" || settingKey == "swipe_left") {
-        val isRight = settingKey == "swipe_right"
-        val extra by (if (isRight) vm.swipeRightExtra else vm.swipeLeftExtra).collectAsStateWithLifecycle()
+    // 2.1.0: и свайпы раздела «SMS» — тем же окном, со своими ключами
+    if (settingKey in SWIPE_KEYS) {
+        val extra by vm.swipeExtraOf(settingKey).collectAsStateWithLifecycle()
         SwipeActionsDialog(
             vm = vm,
-            isRight = isRight,
+            settingKey = settingKey,
             primary = SwipeAction.from(current),
             extra = extra,
             onDismiss = onDismiss
@@ -217,7 +217,7 @@ fun SettingsChoiceDialog(
                  * быстрее читается, и выбранное действие потом узнаётся
                  * в журнале с первого взгляда.
                  */
-                val swipeIcons = settingKey == "swipe_right" || settingKey == "swipe_left"
+                val swipeIcons = settingKey in SWIPE_KEYS
                 options.forEach { (value, label) ->
                     val visual = if (swipeIcons) {
                         SwipeAction.entries.firstOrNull { it.key == value }
@@ -316,3 +316,6 @@ private fun choiceHint(key: String, value: String): String? = when (key) {
     }
     else -> null
 }
+
+/** Настройки свайпа — журнал и раздел «SMS» (2.1.0). */
+internal val SWIPE_KEYS = setOf("swipe_right", "swipe_left", "sms_swipe_right", "sms_swipe_left")

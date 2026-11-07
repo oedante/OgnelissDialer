@@ -420,6 +420,13 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val SWIPE_RIGHT_EXTRA = stringPreferencesKey("swipe_right_extra")
         val SWIPE_LEFT_EXTRA = stringPreferencesKey("swipe_left_extra")
         val SWIPE_LEFT = stringPreferencesKey("swipe_left")
+        // 2.1.0: свайпы раздела «SMS» — свои, отдельно от журнала
+        val SMS_SWIPE_RIGHT = stringPreferencesKey("sms_swipe_right")
+        val SMS_SWIPE_LEFT = stringPreferencesKey("sms_swipe_left")
+        val SMS_SWIPE_RIGHT_EXTRA = stringPreferencesKey("sms_swipe_right_extra")
+        val SMS_SWIPE_LEFT_EXTRA = stringPreferencesKey("sms_swipe_left_extra")
+        // 2.1.0: закреплённые переписки — свои, отдельно от журнала
+        val SMS_PINNED = stringPreferencesKey("sms_pinned")
         // Оформление
         val THEME = stringPreferencesKey("theme")
         val THEME_PRESET = stringPreferencesKey("theme_preset")
@@ -575,6 +582,46 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     val swipeLeftExtra: Flow<List<SwipeAction>> = data.map { p ->
         parseActions(p[Keys.SWIPE_LEFT_EXTRA])
     }
+
+    /*
+     * СВАЙПЫ РАЗДЕЛА «SMS» (2.1.0).
+     *
+     * Было: переписки брали свайпы журнала — вправо «Позвонить», влево
+     * «SMS», и «SMS» по переписке открывал ту же переписку. Автор,
+     * 07.11.2026: «свайпы должны быть „SMS“ и „удалить“, настраиваться
+     * отдельно от журнала звонков». Стало: свои ключи, по умолчанию
+     * вправо — «SMS» (открыть переписку), влево — «Удалить».
+     */
+    val smsSwipeRight: Flow<SwipeAction> =
+        data.map { SwipeAction.from(it[Keys.SMS_SWIPE_RIGHT] ?: SwipeAction.SMS.key) }
+    val smsSwipeLeft: Flow<SwipeAction> =
+        data.map { SwipeAction.from(it[Keys.SMS_SWIPE_LEFT] ?: SwipeAction.DELETE_FROM_LOG.key) }
+    val smsSwipeRightExtra: Flow<List<SwipeAction>> = data.map { parseActions(it[Keys.SMS_SWIPE_RIGHT_EXTRA]) }
+    val smsSwipeLeftExtra: Flow<List<SwipeAction>> = data.map { parseActions(it[Keys.SMS_SWIPE_LEFT_EXTRA]) }
+
+    suspend fun setSmsSwipeRight(v: SwipeAction) = edit("sms_swipe_right", v.key) { it[Keys.SMS_SWIPE_RIGHT] = v.key }
+    suspend fun setSmsSwipeLeft(v: SwipeAction) = edit("sms_swipe_left", v.key) { it[Keys.SMS_SWIPE_LEFT] = v.key }
+    suspend fun setSmsSwipeRightExtra(actions: List<SwipeAction>) =
+        edit("sms_swipe_right_extra", actions.size) {
+            it[Keys.SMS_SWIPE_RIGHT_EXTRA] = actions.joinToString(",") { a -> a.key }
+        }
+    suspend fun setSmsSwipeLeftExtra(actions: List<SwipeAction>) =
+        edit("sms_swipe_left_extra", actions.size) {
+            it[Keys.SMS_SWIPE_LEFT_EXTRA] = actions.joinToString(",") { a -> a.key }
+        }
+
+    /*
+     * ЗАКРЕПЛЁННЫЕ ПЕРЕПИСКИ (2.1.0) — отдельно от закреплённых журнала
+     * (автор: «нужна возможность закрепления в SMS, отдельное от журнала
+     * звонков»). Храним адрес переписки в E.164 (или как есть у буквенных
+     * отправителей, «Bank»), порядок — порядок закрепления.
+     */
+    val smsPinned: Flow<List<String>> = data.map { p ->
+        p[Keys.SMS_PINNED]?.split('\n')?.map { it.trim() }?.filter { it.isNotEmpty() }?.distinct().orEmpty()
+    }
+
+    suspend fun setSmsPinned(addresses: List<String>) =
+        edit("sms_pinned", addresses.size) { it[Keys.SMS_PINNED] = addresses.joinToString("\n") }
 
     private fun parseActions(raw: String?): List<SwipeAction> =
         raw?.split(',')

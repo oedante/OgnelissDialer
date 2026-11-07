@@ -12,6 +12,22 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## Сделано 07.11.2026, вторая сессия (черновик 2.1.0, версия не поднята)
+
+По списку автора: SMS — свои свайпы («SMS» / «Удалить»), дни, закреплённые переписки,
+перелистывание журнал ⇄ SMS ⇄ контакты, каркас без верхней строки и «Написать» кнопкой;
+SIM порядковым номером в переписке; цвета SIM (`ui/theme/SimColors.kt`); серые кнопки
+звонка и SMS, когда нельзя (`util/CallAvailability.kt`); раздел настроек «SMS» и новые
+группы главного экрана. Разбор — `docs/RELEASE_NOTES_2.1.0.md`; сравнение с почтой
+и предложения — `docs/MAIL_COMPARISON.md`.
+
+Сборка в облаке: окружение «Ogneliss» (dl.google.com, downloads.gradle.org) — SDK
+ставится `sdkmanager "platforms;android-37.0" "build-tools;37.0.0"`; демону Gradle нужен
+JDK 17 (`apt-get install openjdk-17-jdk-headless`, в `~/.gradle/gradle.properties`
+`org.gradle.java.installations.paths`), а строку `toolchainVendor` в
+`gradle/gradle-daemon-jvm.properties` убирать только локально (foojay закрыт).
+Тесты — с `LANG=C.UTF-8` и `-Dsun.jnu.encoding=UTF-8` (кириллица в именах тестов).
+
 ## Следующая сессия (список от 07.11.2026)
 
 **Прочитать сначала:** этот файл → `docs/PROGRESS.md` (раздел 2.0.0–2.0.2) →
@@ -310,6 +326,9 @@ MessageNotifications, OtpDetector), `ui/conversation/`, `ui/RootScreen.kt` (ма
 | Свой редактор контактов | `ui/contactedit/*`, `data/ContactEditRepository.kt`, `data/ContactEditModel.kt`, `data/ContactPhotos.kt` |
 | Подпись раздела, линия между строками, карточка группы | `ui/components/OgnelissPanel.kt` (`SectionBand`, `RowDivider`, `OgnelissCard`) |
 | Свайпы: строка, панели, действия | `ui/components/swipe/*`, `DialerViewModel.handleSwipe / revealActionsFor` |
+| Свайпы и закреплённые раздела SMS (свои) | `Prefs.smsSwipe*`, `Prefs.smsPinned`, `sms/SmsPins.kt`, `ui/conversation/MessagesScreen.kt` (2.1.0) |
+| Цвета SIM | `ui/theme/SimColors.kt`, `SimBadge` (`NumberPickerSheet.kt`) (2.1.0) |
+| Можно ли звонить и писать (серые кнопки) | `util/CallAvailability.kt`, `LocalCallAvailability` в `RootScreen` (2.1.0) |
 | Выбор действий свайпа (до 3) | `ui/screens/SwipeActionsDialog.kt` |
 | Мессенджеры контакта (по книге) | `data/ContactMessengers.kt` |
 | Экран вызова | `call/InCallActivity.kt`, `call/CallManager.kt` |

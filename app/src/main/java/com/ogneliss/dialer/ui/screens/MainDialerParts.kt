@@ -558,7 +558,7 @@ internal fun PinnedOnlyCard(
             ActionIconButton(
                 icon = OgnelissIcons.Call,
                 contentDescription = stringResource(R.string.action_call),
-                tint = CallGreen,
+                tint = com.ogneliss.dialer.util.LocalCallAvailability.current.callTint(com.ogneliss.dialer.ui.theme.CallGreen),
                 onClick = onCall,
                 onLongClick = onCallLongPress,
                 onLongClickLabel = stringResource(R.string.a11y_choose_sim)

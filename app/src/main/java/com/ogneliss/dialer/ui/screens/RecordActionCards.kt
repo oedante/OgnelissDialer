@@ -114,6 +114,12 @@ fun RecordActionCards(
     onOpenBlockLists: () -> Unit,
     /** Раздел SMS: «Удалить переписку» (подтверждение — на экране списка). */
     onDeleteThread: (() -> Unit)? = null,
+    /**
+     * Раздел SMS (2.1.0): закрепление переписки — своё, отдельно от журнала.
+     * null — «Закрепить» закрепляет номер в журнале, как раньше.
+     */
+    smsPinned: Boolean = false,
+    onToggleSmsPin: (() -> Unit)? = null,
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
@@ -270,13 +276,15 @@ fun RecordActionCards(
     val call = CardAction(
         OgnelissIcons.Call, stringResource(R.string.action_call),
         onClick = { vm.call(group.number) },
-        tint = Color.White, container = CallGreen,
+        tint = Color.White, container = com.ogneliss.dialer.util.LocalCallAvailability.current.callTint(com.ogneliss.dialer.ui.theme.CallGreen),
         onLongClick = if (multiSim) { { vm.chooseSim(group.number, DialerViewModel.SimAction.CALL, who) } } else null,
         longClickLabel = stringResource(R.string.a11y_choose_sim)
     )
     val sms = CardAction(
         OgnelissIcons.Message, stringResource(R.string.action_sms),
         onClick = { vm.openSms(group.number) },
+        // 2.1.0: писать нельзя — значок серый (CallAvailability)
+        tint = if (com.ogneliss.dialer.util.LocalCallAvailability.current.canSms) null else scheme.outline,
         onLongClick = if (multiSim) { { vm.chooseSim(group.number, DialerViewModel.SimAction.SMS, who) } } else null,
         longClickLabel = stringResource(R.string.a11y_choose_sim_sms)
     )
@@ -377,7 +385,14 @@ fun RecordActionCards(
                 )
             )
         }
-        add(
+        if (onToggleSmsPin != null) add(
+            CardAction(
+                OgnelissIcons.PushPin,
+                stringResource(if (smsPinned) R.string.action_unpin else R.string.action_pin),
+                onClick = onToggleSmsPin,
+                tint = if (smsPinned) scheme.primary else null
+            )
+        ) else add(
             CardAction(
                 OgnelissIcons.PushPin,
                 stringResource(if (pinned) R.string.action_unpin else R.string.action_pin),
@@ -641,7 +656,7 @@ private fun NumberLine(
         ActionIconButton(
             icon = OgnelissIcons.Call,
             contentDescription = stringResource(R.string.a11y_call_number, formatted),
-            tint = CallGreen,
+            tint = com.ogneliss.dialer.util.LocalCallAvailability.current.callTint(com.ogneliss.dialer.ui.theme.CallGreen),
             onClick = { onCall(number.value) },
             onLongClick = onChooseSim?.let { choose -> { choose(number.value, DialerViewModel.SimAction.CALL) } },
             onLongClickLabel = stringResource(R.string.a11y_choose_sim)
@@ -649,7 +664,7 @@ private fun NumberLine(
         ActionIconButton(
             icon = OgnelissIcons.Message,
             contentDescription = stringResource(R.string.action_sms) + " " + formatted,
-            tint = scheme.onSurfaceVariant,
+            tint = com.ogneliss.dialer.util.LocalCallAvailability.current.smsTint(scheme.onSurfaceVariant),
             onClick = { onSms(number.value) },
             onLongClick = onChooseSim?.let { choose -> { choose(number.value, DialerViewModel.SimAction.SMS) } },
             onLongClickLabel = stringResource(R.string.a11y_choose_sim_sms)

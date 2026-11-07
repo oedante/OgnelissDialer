@@ -107,7 +107,7 @@ internal fun NumberActionCards(
         CardAction(
             OgnelissIcons.Call, stringResource(R.string.action_call),
             onClick = { vm.call(number) },
-            tint = Color.White, container = CallGreen,
+            tint = Color.White, container = com.ogneliss.dialer.util.LocalCallAvailability.current.callTint(com.ogneliss.dialer.ui.theme.CallGreen),
             onLongClick = if (multiSim) { { vm.chooseSim(number, DialerViewModel.SimAction.CALL) } } else null,
             longClickLabel = stringResource(R.string.a11y_choose_sim)
         ),

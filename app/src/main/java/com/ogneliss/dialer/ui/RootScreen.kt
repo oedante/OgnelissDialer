@@ -515,10 +515,13 @@ fun RootScreen(
     val rootAnchor = rememberTouchAnchor()
     // Любое окно карточек (действия, SIM, номер, напоминание, заметка) размывает весь экран
     val cardsBlur = remember { CardsBlurState() }
+    // 2.1.0: звонить и писать сейчас можно? Нельзя — кнопки серые (CallAvailability)
+    val callAvailability = com.ogneliss.dialer.util.rememberCallAvailability(uiState.sims)
     CompositionLocalProvider(
         LocalNavBarStrip provides navBarStrip,
         LocalTouchAnchor provides rootAnchor,
-        LocalCardsBlur provides cardsBlur
+        LocalCardsBlur provides cardsBlur,
+        com.ogneliss.dialer.util.LocalCallAvailability provides callAvailability
     ) {
     Box(
         Modifier
@@ -766,14 +769,14 @@ fun RootScreen(
                     // Из журнала и обратно — растворением, как соседи (1.6.0);
                     // выбор контакта из настроек — прежним сдвигом
                     enterTransition = {
-                        if (initialState.destination.route == MainSection.JOURNAL.route && isContactsList(targetState)) {
+                        if (initialState.destination.route in SIBLING_ROUTES && isContactsList(targetState)) {
                             Motion.enterSibling(this)
                         } else {
                             Motion.enterForward(this)
                         }
                     },
                     popExitTransition = {
-                        if (targetState.destination.route == MainSection.JOURNAL.route && isContactsList(initialState)) {
+                        if (targetState.destination.route in SIBLING_ROUTES && isContactsList(initialState)) {
                             Motion.exitSibling(this)
                         } else {
                             Motion.exitBackward(this)
@@ -1654,3 +1657,6 @@ private fun isContactsList(entry: androidx.navigation.NavBackStackEntry): Boolea
 private fun contactEditRoute(id: Long = -1L, number: String = "", name: String? = null): String =
     "contact_edit?id=$id&number=" + android.net.Uri.encode(number) +
         "&name=" + android.net.Uri.encode(name.orEmpty())
+
+/** Соседи контактов в карусели (2.1.0): переход растворением, а не сдвигом. */
+private val SIBLING_ROUTES = setOf(MainSection.JOURNAL.route, MainSection.MESSAGES.route)

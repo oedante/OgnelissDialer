@@ -1259,7 +1259,7 @@ fun SubscriberScreen(
                 QuickAction(
                     OgnelissIcons.Call,
                     R.string.action_call,
-                    container = CallGreen,
+                    container = com.ogneliss.dialer.util.LocalCallAvailability.current.callTint(com.ogneliss.dialer.ui.theme.CallGreen),
                     tint = Color.White,
                     onLongClick = if (multiSim) { { vm.chooseSim(group.number, DialerViewModel.SimAction.CALL, title) } } else null,
                     onLongClickLabel = stringResource(R.string.a11y_choose_sim),

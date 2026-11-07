@@ -502,7 +502,7 @@ fun CallLogCard(
                     ActionIconButton(
                         icon = OgnelissIcons.Call,
                         contentDescription = stringResource(R.string.a11y_call_number, row.title),
-                        tint = CallGreen,
+                        tint = com.ogneliss.dialer.util.LocalCallAvailability.current.callTint(com.ogneliss.dialer.ui.theme.CallGreen),
                         onClick = { onCall(row) },
                         onLongClick = onCallLongPress?.let { long -> { long(row) } },
                         onLongClickLabel = stringResource(R.string.a11y_choose_sim)

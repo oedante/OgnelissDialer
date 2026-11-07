@@ -441,7 +441,7 @@ internal fun NumberRow(
         Icon(
             OgnelissIcons.Call,
             contentDescription = null,
-            tint = CallGreen
+            tint = com.ogneliss.dialer.util.LocalCallAvailability.current.callTint(com.ogneliss.dialer.ui.theme.CallGreen)
         )
         Spacer(Modifier.width(Space.m))
         Column(Modifier.weight(1f)) {
@@ -458,7 +458,8 @@ internal fun NumberRow(
         ActionIconButton(
             icon = OgnelissIcons.Message,
             contentDescription = stringResource(R.string.action_sms),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            // 2.1.0: писать нельзя (нет SIM, режим полёта) — бледнее
+            tint = com.ogneliss.dialer.util.LocalCallAvailability.current.smsTint(MaterialTheme.colorScheme.onSurfaceVariant),
             onClick = onSms,
             onLongClick = onSmsLongPress,
             onLongClickLabel = stringResource(R.string.a11y_choose_sim_sms)

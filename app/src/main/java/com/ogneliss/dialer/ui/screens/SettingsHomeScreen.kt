@@ -278,15 +278,25 @@ fun SettingsHomeScreen(
  * SettingsRegistryTest («каждый раздел — в одной группе главного экрана»).
  */
 internal val HOME_GROUPS: List<Pair<Int, List<SettingsCategory>>> = listOf(
+    /*
+     * 2.1.0: группы пересобраны под SMS. SIM — в «Основном»: карты
+     * общие для звонков и сообщений. SMS — своей группой, как раздел
+     * нижней панели; «Спам» — «Защитой», как «Безопасность» в Ogneliss Mail.
+     */
     R.string.settings_home_group_main to listOf(
         SettingsCategory.APPEARANCE,
-        SettingsCategory.GESTURES
+        SettingsCategory.GESTURES,
+        SettingsCategory.SIM
     ),
     R.string.settings_section_calls to listOf(
         SettingsCategory.CALLS,
         SettingsCategory.CALL_LOG,
-        SettingsCategory.SIM,
-        SettingsCategory.QUICK_ACCESS,
+        SettingsCategory.QUICK_ACCESS
+    ),
+    R.string.nav_messages to listOf(
+        SettingsCategory.MESSAGES
+    ),
+    R.string.settings_home_group_protection to listOf(
         SettingsCategory.SPAM
     ),
     R.string.menu_section_app to listOf(

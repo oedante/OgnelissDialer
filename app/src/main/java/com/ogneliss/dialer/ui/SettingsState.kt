@@ -119,7 +119,10 @@ data class SettingsState(
     val quietHours: QuietHours = QuietHours.DEFAULT,
     /** Сообщения (2.0.0): разбор в sms/SmsRole.kt. */
     val smsInApp: Boolean = true,
-    val smsDeliveryReports: Boolean = false
+    val smsDeliveryReports: Boolean = false,
+    /** Свайпы раздела «SMS» (2.1.0): свои, по умолчанию «SMS» и «Удалить». */
+    val smsSwipeRight: SwipeAction = SwipeAction.SMS,
+    val smsSwipeLeft: SwipeAction = SwipeAction.DELETE_FROM_LOG
 ) {
 
     /** Значение переключателя по ключу из реестра настроек. */

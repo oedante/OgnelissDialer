@@ -665,7 +665,8 @@ fun ContactsScreen(
                 )
             } else {
                 // Та же панель, что у журнала (1.6.0): разбор в ListPanel
-                val toJournal: () -> Unit = { onOpenSection(MainSection.JOURNAL) }
+                // 2.1.0: вправо — соседний раздел «SMS» (карусель журнал → SMS → контакты)
+                val toJournal: () -> Unit = { onOpenSection(MainSection.MESSAGES) }
                 ListPanel(
                     section = MainSection.CONTACTS,
                     onOpenSection = onOpenSection,
@@ -677,7 +678,7 @@ fun ContactsScreen(
                     onSearchChange = { search = it },
                     onCloseSearch = closeSearch,
                     onMenu = { menuOpen = true },
-                    // Перелистывание по панели (настройка): вправо — журнал,
+                    // Перелистывание по панели (настройка): вправо — SMS (2.1.0),
                     // влево — заметки, как раньше
                     onSwipeRight = if (settings.panelSwipeNav) toJournal else null,
                     onSwipeLeft = if (settings.panelSwipeNav) onOpenNotes else null,
@@ -1348,7 +1349,7 @@ private fun ContactRow(
                 ActionIconButton(
                     icon = OgnelissIcons.Call,
                     contentDescription = stringResource(R.string.a11y_call_number, contact.displayName),
-                    tint = CallGreen,
+                    tint = com.ogneliss.dialer.util.LocalCallAvailability.current.callTint(com.ogneliss.dialer.ui.theme.CallGreen),
                     onClick = onCall,
                     onLongClick = onCallLongPress,
                     onLongClickLabel = stringResource(R.string.a11y_choose_sim)

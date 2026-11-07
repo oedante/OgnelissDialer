@@ -50,7 +50,7 @@ internal fun ListPanel(
     onSearchChange: (String) -> Unit,
     onCloseSearch: () -> Unit,
     onMenu: () -> Unit,
-    /** Перелистывание свайпом по панели: вправо — журнал, влево — заметки. */
+    /** Перелистывание свайпом по панели — к соседним разделам (журнал · SMS · контакты · заметки). */
     onSwipeRight: (() -> Unit)? = null,
     onSwipeLeft: (() -> Unit)? = null,
     menuContent: @Composable () -> Unit

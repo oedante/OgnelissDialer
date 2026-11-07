@@ -67,6 +67,7 @@ import com.ogneliss.dialer.log.Logger
 import com.ogneliss.dialer.log.Stage
 import com.ogneliss.dialer.util.DialDigits
 import com.ogneliss.dialer.util.PhoneFormatter
+import com.ogneliss.dialer.sms.smsPinKey
 import com.ogneliss.dialer.concurrency.debounceContentChanges
 import android.content.Context
 import kotlinx.coroutines.flow.combine
@@ -199,6 +200,43 @@ class DialerViewModel @Inject constructor(
 
     fun setSwipeExtra(isRight: Boolean, actions: List<SwipeAction>) = viewModelScope.launch {
         if (isRight) prefs.setSwipeRightExtra(actions) else prefs.setSwipeLeftExtra(actions)
+    }
+
+    /*
+     * СВАЙПЫ РАЗДЕЛА «SMS» (2.1.0) — свои, отдельно от журнала (разбор
+     * в Prefs.smsSwipeRight). Основное действие — в SettingsState
+     * (smsSwipeRight / smsSwipeLeft), дополнительные — здесь.
+     */
+    val smsSwipeRightExtra = prefs.smsSwipeRightExtra
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    val smsSwipeLeftExtra = prefs.smsSwipeLeftExtra
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    /** Дополнительные действия свайпа по ключу настройки: журнал или SMS. */
+    fun swipeExtraOf(settingKey: String): StateFlow<List<SwipeAction>> = when (settingKey) {
+        "swipe_right" -> swipeRightExtra
+        "swipe_left" -> swipeLeftExtra
+        "sms_swipe_right" -> smsSwipeRightExtra
+        else -> smsSwipeLeftExtra
+    }
+
+    fun setSwipeExtraFor(settingKey: String, actions: List<SwipeAction>) = viewModelScope.launch {
+        when (settingKey) {
+            "swipe_right" -> prefs.setSwipeRightExtra(actions)
+            "swipe_left" -> prefs.setSwipeLeftExtra(actions)
+            "sms_swipe_right" -> prefs.setSmsSwipeRightExtra(actions)
+            "sms_swipe_left" -> prefs.setSmsSwipeLeftExtra(actions)
+        }
+    }
+
+    /** Закреплённые переписки (2.1.0) — отдельно от закреплённых журнала. */
+    val smsPinned = prefs.smsPinned
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    fun toggleSmsPin(address: String) = viewModelScope.launch {
+        val key = smsPinKey(address)
+        val now = smsPinned.value
+        prefs.setSmsPinned(if (key in now) now - key else now + key)
     }
 
     /*
@@ -1962,6 +2000,7 @@ class DialerViewModel @Inject constructor(
         when (key) {
             "swipe_right" -> setSwipeExtra(isRight = true, actions = emptyList())
             "swipe_left" -> setSwipeExtra(isRight = false, actions = emptyList())
+            "sms_swipe_right", "sms_swipe_left" -> setSwipeExtraFor(key, emptyList())
         }
     }
 
@@ -1970,11 +2009,14 @@ class DialerViewModel @Inject constructor(
         val extra = when (key) {
             "swipe_right" -> swipeRightExtra.value
             "swipe_left" -> swipeLeftExtra.value
+            "sms_swipe_right" -> smsSwipeRightExtra.value
+            "sms_swipe_left" -> smsSwipeLeftExtra.value
             else -> emptyList()
         }
         val base = settingsCommands.choiceLabel(context, key, settingsState.value)
         if (extra.isEmpty()) return base
-        return (listOf(base) + extra.map { context.getString(SettingsCommands.swipeActionLabelRes(it)) })
+        val forSms = key.startsWith("sms_")
+        return (listOf(base) + extra.map { context.getString(SettingsCommands.swipeActionLabelRes(it, forSms)) })
             .joinToString(", ")
     }
 

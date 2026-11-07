@@ -162,9 +162,11 @@ class SettingsStateSource @Inject constructor(
     /** Сообщения (2.0.0). */
     private val sms: Flow<Sms> = combine(
         prefs.smsInApp,
-        prefs.smsDeliveryReports
-    ) { inApp, reports ->
-        Sms(inApp, reports)
+        prefs.smsDeliveryReports,
+        prefs.smsSwipeRight,
+        prefs.smsSwipeLeft
+    ) { inApp, reports, right, left ->
+        Sms(inApp, reports, right, left)
     }
 
     /**
@@ -239,6 +241,8 @@ class SettingsStateSource @Inject constructor(
 
             smsInApp = m.inApp,
             smsDeliveryReports = m.deliveryReports,
+            smsSwipeRight = m.swipeRight,
+            smsSwipeLeft = m.swipeLeft,
 
             fileLogging = true
         )
@@ -313,7 +317,9 @@ class SettingsStateSource @Inject constructor(
 
     private data class Sms(
         val inApp: Boolean,
-        val deliveryReports: Boolean
+        val deliveryReports: Boolean,
+        val swipeRight: SwipeAction,
+        val swipeLeft: SwipeAction
     )
 
     private data class CallHelp(

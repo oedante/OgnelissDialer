@@ -118,13 +118,17 @@ fun SettingsCategoryScreen(
     // Дополнительные действия свайпа: исходно их нет — есть, значит, изменено
     val rightExtra by vm.swipeRightExtra.collectAsStateWithLifecycle()
     val leftExtra by vm.swipeLeftExtra.collectAsStateWithLifecycle()
+    val smsRightExtra by vm.smsSwipeRightExtra.collectAsStateWithLifecycle()
+    val smsLeftExtra by vm.smsSwipeLeftExtra.collectAsStateWithLifecycle()
     val isChanged: (SettingEntry) -> Boolean = { entry ->
         when (val k = entry.kind) {
             is SettingKind.Switch -> state.switchValue(k.key) != defaults.switchValue(k.key)
             is SettingKind.Choice -> k.key !in NOT_RESETTABLE && (
                 vm.choiceValueOf(k.key, state) != vm.choiceValueOf(k.key, defaults) ||
                     (k.key == "swipe_right" && rightExtra.isNotEmpty()) ||
-                    (k.key == "swipe_left" && leftExtra.isNotEmpty())
+                    (k.key == "swipe_left" && leftExtra.isNotEmpty()) ||
+                    (k.key == "sms_swipe_right" && smsRightExtra.isNotEmpty()) ||
+                    (k.key == "sms_swipe_left" && smsLeftExtra.isNotEmpty())
                 )
             else -> false
         }

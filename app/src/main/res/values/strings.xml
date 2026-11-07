@@ -608,7 +608,7 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="block_reason_hidden">withheld number</string>
     <string name="block_reason_not_in_contacts">not in contacts</string>
     <string name="settings_panel_swipe_nav">Swipe the bottom bar to switch</string>
-    <string name="settings_panel_swipe_nav_text">Swipe left on the bottom bar to open contacts, right to go back to calls</string>
+    <string name="settings_panel_swipe_nav_text">Swipe the bottom bar to move between neighbouring sections: call log, SMS, contacts, notes</string>
     <string name="gesture_hint_title">Two gestures worth knowing</string>
     <string name="gesture_hint_subtitle">They are not visible on screen, but they are what makes this app quick.</string>
     <string name="gesture_hint_swipe_right">Swipe a row right — call</string>
@@ -1060,7 +1060,7 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="sms_status_not_downloaded">Not downloaded</string>
     <string name="sms_status_sending">Sending…</string>
     <string name="sms_you">You: %1$s</string>
-    <string name="settings_group_messages">Messages</string>
+    <string name="settings_group_messages">SMS app</string>
     <string name="settings_sms_default_app">Default SMS app</string>
     <string name="settings_sms_default_app_text">Conversations, incoming SMS and MMS in the dialer’s SMS section</string>
     <string name="settings_sms_in_app">Write SMS in the dialer</string>
@@ -1087,7 +1087,6 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
 
     <!-- Раздел SMS и меню «Ещё» (2.0.0) -->
     <string name="nav_messages">SMS</string>
-    <string name="messages_title">Messages</string>
     <string name="messages_empty">No messages yet</string>
     <string name="messages_not_default">To see conversations and receive SMS here, make the dialer your default SMS app. You can send messages without it.</string>
     <string name="messages_new">New message</string>
@@ -1099,4 +1098,12 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="menu_section_list">List</string>
     <string name="menu_filters_active">Active conditions: %1$s</string>
     <string name="messages_delete_thread_action">Delete conversation</string>
+    <string name="settings_sms_swipe_right">Swipe right on a conversation</string>
+    <string name="settings_sms_swipe_left">Swipe left on a conversation</string>
+    <string name="settings_sms_swipe_text">In the SMS section, separate from the call log</string>
+    <string name="settings_group_sms_swipe">Swipe on a conversation</string>
+    <string name="settings_group_messengers">Messengers</string>
+    <string name="settings_section_messages_summary">SMS app, swipes, messengers</string>
+    <string name="settings_home_group_protection">Protection</string>
+    <string name="action_delete_thread">Delete</string>
 </resources>

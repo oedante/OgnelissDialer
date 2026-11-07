@@ -78,6 +78,12 @@ enum class SettingsCategory(
      * Заметки переехали в «Журнал»: срок хранения относится к тому,
      * что человек записал, а записывает он в журнале и карточке.
      */
+    SIM(
+        "settings/sim",
+        R.string.settings_section_sim,
+        R.string.settings_section_sim_summary,
+        OgnelissIcons.SimCard
+    ),
     CALLS(
         "settings/calls",
         R.string.settings_section_calls,
@@ -90,17 +96,23 @@ enum class SettingsCategory(
         R.string.settings_section_log_summary,
         OgnelissIcons.List
     ),
-    SIM(
-        "settings/sim",
-        R.string.settings_section_sim,
-        R.string.settings_section_sim_summary,
-        OgnelissIcons.SimCard
-    ),
     QUICK_ACCESS(
         "settings/quick",
         R.string.settings_section_quick,
         R.string.settings_section_quick_summary,
         OgnelissIcons.Bolt
+    ),
+    /*
+     * «SMS» (2.1.0). Было: настройки сообщений жили подгруппой в «Журнале
+     * вызовов», хотя журнал с 2.0.2 — только звонки, а у SMS свой раздел
+     * на нижней панели. Стало: свой раздел — приложение SMS, свайпы
+     * переписок, мессенджеры.
+     */
+    MESSAGES(
+        "settings/messages",
+        R.string.nav_messages,
+        R.string.settings_section_messages_summary,
+        OgnelissIcons.Textsms
     ),
     SPAM(
         "settings/spam",
@@ -422,6 +434,13 @@ object SettingsRegistry {
             groupRes = R.string.settings_group_log_view
         ),
         SettingEntry(
+            "dialpad_open_at_start", SettingsCategory.CALL_LOG,
+            R.string.settings_dialpad_open, R.string.settings_dialpad_open_text,
+            SettingKind.Switch("dialpad_open_at_start"),
+            // 2.1.0: из «Оформления» — это поведение журнала при запуске
+            groupRes = R.string.settings_group_log_view
+        ),
+        SettingEntry(
             "sort_order", SettingsCategory.CALL_LOG,
             R.string.settings_sort_order, R.string.settings_sort_order_text,
             SettingKind.Choice("sort_order"),
@@ -438,25 +457,50 @@ object SettingsRegistry {
          * «Приложение SMS» — действие: роль выдаёт система своим окном.
          */
         SettingEntry(
-            "sms_default_app", SettingsCategory.CALL_LOG,
+            "sms_default_app", SettingsCategory.MESSAGES,
             R.string.settings_sms_default_app, R.string.settings_sms_default_app_text,
             SettingKind.Action("sms_default_app"),
             keywordsRes = R.string.keywords_sms,
             groupRes = R.string.settings_group_messages
         ),
         SettingEntry(
-            "sms_in_app", SettingsCategory.CALL_LOG,
+            "sms_in_app", SettingsCategory.MESSAGES,
             R.string.settings_sms_in_app, R.string.settings_sms_in_app_text,
             SettingKind.Switch("sms_in_app"),
             keywordsRes = R.string.keywords_sms,
             groupRes = R.string.settings_group_messages
         ),
         SettingEntry(
-            "sms_delivery_reports", SettingsCategory.CALL_LOG,
+            "sms_delivery_reports", SettingsCategory.MESSAGES,
             R.string.settings_sms_delivery_reports, R.string.settings_sms_delivery_reports_text,
             SettingKind.Switch("sms_delivery_reports"),
             keywordsRes = R.string.keywords_sms,
             groupRes = R.string.settings_group_messages
+        ),
+        /*
+         * Свайпы раздела «SMS» (2.1.0) — свои, отдельно от журнала
+         * (автор, 07.11.2026). По умолчанию вправо «SMS», влево «Удалить».
+         */
+        SettingEntry(
+            "sms_swipe_right", SettingsCategory.MESSAGES,
+            R.string.settings_sms_swipe_right, R.string.settings_sms_swipe_text,
+            SettingKind.Choice("sms_swipe_right"),
+            keywordsRes = R.string.keywords_sms,
+            groupRes = R.string.settings_group_sms_swipe
+        ),
+        SettingEntry(
+            "sms_swipe_left", SettingsCategory.MESSAGES,
+            R.string.settings_sms_swipe_left, R.string.settings_sms_swipe_text,
+            SettingKind.Choice("sms_swipe_left"),
+            keywordsRes = R.string.keywords_sms,
+            groupRes = R.string.settings_group_sms_swipe
+        ),
+        SettingEntry(
+            "messengers_any_number", SettingsCategory.MESSAGES,
+            R.string.settings_messengers_any_number, R.string.settings_messengers_any_number_text,
+            SettingKind.Switch("messengers_any_number"),
+            // 2.1.0: из «Вызовов» — это о том, куда писать
+            groupRes = R.string.settings_group_messengers
         ),
         SettingEntry(
             "notes_retention", SettingsCategory.CALL_LOG,
@@ -500,11 +544,6 @@ object SettingsRegistry {
             R.string.speed_dial_title, R.string.speed_dial_summary,
             SettingKind.Action("speed_dial"),
             groupRes = R.string.settings_group_at_hand
-        ),
-        SettingEntry(
-            "dialpad_open_at_start", SettingsCategory.APPEARANCE,
-            R.string.settings_dialpad_open, R.string.settings_dialpad_open_text,
-            SettingKind.Switch("dialpad_open_at_start")
         ),
         // 1.5.8, обзор интерфейса (У6): ответ сдвигом — от случайного касания
         SettingEntry(
@@ -600,11 +639,6 @@ object SettingsRegistry {
             groupRes = R.string.settings_group_after_call
         ),
         // 1.3.5: отзыв в Google Play — «Написать в WhatsApp тем, кого нет в контактах»
-        SettingEntry(
-            "messengers_any_number", SettingsCategory.CALLS,
-            R.string.settings_messengers_any_number, R.string.settings_messengers_any_number_text,
-            SettingKind.Switch("messengers_any_number")
-        ),
         SettingEntry(
             "sys_dnd", SettingsCategory.SYSTEM,
             R.string.settings_dnd, null, SettingKind.SystemLink("dnd")

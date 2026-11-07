@@ -152,6 +152,9 @@ class SettingsCommands @Inject constructor(
             )
             "swipe_right" -> prefs.setSwipeRight(SwipeAction.from(value))
             "swipe_left" -> prefs.setSwipeLeft(SwipeAction.from(value))
+            // 2.1.0: свайпы раздела «SMS» — свои
+            "sms_swipe_right" -> prefs.setSmsSwipeRight(SwipeAction.from(value))
+            "sms_swipe_left" -> prefs.setSmsSwipeLeft(SwipeAction.from(value))
             "grouping" -> prefs.setGroupingMode(
                 runCatching { GroupingMode.valueOf(value) }
                     .getOrDefault(GroupingMode.BY_CONTACT)
@@ -212,6 +215,8 @@ class SettingsCommands @Inject constructor(
         "theme" -> state.theme.name
         "swipe_right" -> state.swipeRight.key
         "swipe_left" -> state.swipeLeft.key
+        "sms_swipe_right" -> state.smsSwipeRight.key
+        "sms_swipe_left" -> state.smsSwipeLeft.key
         "grouping" -> state.groupingMode.name
         "sort_order" -> state.sortOrder.name
         "swipe_sim" -> state.swipeSimMode.name
@@ -269,6 +274,8 @@ class SettingsCommands @Inject constructor(
 
         "swipe_right" -> context.getString(swipeActionLabelRes(state.swipeRight))
         "swipe_left" -> context.getString(swipeActionLabelRes(state.swipeLeft))
+        "sms_swipe_right" -> context.getString(swipeActionLabelRes(state.smsSwipeRight, forSms = true))
+        "sms_swipe_left" -> context.getString(swipeActionLabelRes(state.smsSwipeLeft, forSms = true))
 
         "grouping" -> context.getString(
             when (state.groupingMode) {
@@ -362,6 +369,8 @@ class SettingsCommands @Inject constructor(
             "ui_font" -> R.string.settings_ui_font
             "swipe_right" -> R.string.settings_swipe_right
             "swipe_left" -> R.string.settings_swipe_left
+            "sms_swipe_right" -> R.string.settings_sms_swipe_right
+            "sms_swipe_left" -> R.string.settings_sms_swipe_left
             "grouping" -> R.string.settings_grouping
             "sort_order" -> R.string.settings_sort_order
             "swipe_sim" -> R.string.settings_swipe_sim
@@ -513,6 +522,11 @@ class SettingsCommands @Inject constructor(
          * Единственное место сопоставления действия свайпа с подписью.
          * Публично, потому что то же соответствие нужно панели свайпа.
          */
+        fun swipeActionLabelRes(action: SwipeAction, forSms: Boolean): Int =
+            // В разделе «SMS» журнала нет: «Удалить» там удаляет переписку (2.1.0)
+            if (forSms && action == SwipeAction.DELETE_FROM_LOG) R.string.action_delete_thread
+            else swipeActionLabelRes(action)
+
         fun swipeActionLabelRes(action: SwipeAction): Int = when (action) {
             SwipeAction.NONE -> R.string.action_none
             SwipeAction.CALL -> R.string.action_call
@@ -554,6 +568,8 @@ class SettingsCommands @Inject constructor(
         /** Ключи, которые обрабатывает setChoice. */
         val CHOICE_KEYS = setOf(
             "language", "theme", "swipe_right", "swipe_left", "grouping", "sort_order",
+            // 2.1.0
+            "sms_swipe_right", "sms_swipe_left",
             "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info",
             "call_photo_style", "call_photo_size", "answer_mode", "ui_scale",
             "contact_name_format", "contact_sort",

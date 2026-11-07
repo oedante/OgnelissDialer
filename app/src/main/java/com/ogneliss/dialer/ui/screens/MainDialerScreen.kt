@@ -1442,7 +1442,9 @@ fun MainDialerScreen(
             onSearchChange = { vm.onQueryChange(it) },
             onCloseSearch = closeSearch,
             onMenu = { menuOpen = true },
-            onSwipeToContacts = if (settings.panelSwipeNav) onOpenContacts else null,
+            // 2.1.0: влево — соседний раздел «SMS», а не контакты через голову
+            // (карусель журнал → SMS → контакты → заметки → напоминания)
+            onSwipeToContacts = if (settings.panelSwipeNav) { { onOpenSection(MainSection.MESSAGES) } } else null,
             menuContent = {
                 OverflowMenu(
                     expanded = menuOpen,

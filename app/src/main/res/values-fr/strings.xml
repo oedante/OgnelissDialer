@@ -578,7 +578,7 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="block_reason_hidden">numéro masqué</string>
     <string name="block_reason_not_in_contacts">absent des contacts</string>
     <string name="settings_panel_swipe_nav">Balayer la barre du bas pour changer d’écran</string>
-    <string name="settings_panel_swipe_nav_text">Balayez la barre vers la gauche pour les contacts, vers la droite pour revenir aux appels</string>
+    <string name="settings_panel_swipe_nav_text">Balayez la barre du bas pour passer à la section voisine : appels, SMS, contacts, notes</string>
     <string name="gesture_hint_title">Deux gestes à connaître</string>
     <string name="gesture_hint_subtitle">Ils ne se voient pas à l’écran, mais ce sont eux qui rendent l’application rapide.</string>
     <string name="gesture_hint_swipe_right">Balayez une ligne vers la droite — appeler</string>
@@ -1030,7 +1030,7 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="sms_status_not_downloaded">Non téléchargé</string>
     <string name="sms_status_sending">Envoi…</string>
     <string name="sms_you">Vous : %1$s</string>
-    <string name="settings_group_messages">Messages</string>
+    <string name="settings_group_messages">Application SMS</string>
     <string name="settings_sms_default_app">Appli SMS par défaut</string>
     <string name="settings_sms_default_app_text">Conversations, SMS et MMS reçus dans la section SMS du composeur</string>
     <string name="settings_sms_in_app">Écrire les SMS dans le composeur</string>
@@ -1057,7 +1057,6 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
 
     <!-- Раздел SMS и меню «Ещё» (2.0.0) -->
     <string name="nav_messages">SMS</string>
-    <string name="messages_title">Messages</string>
     <string name="messages_empty">Aucun message</string>
     <string name="messages_not_default">Pour voir les conversations et recevoir les SMS ici, définissez le composeur comme appli SMS par défaut. Vous pouvez écrire sans cela.</string>
     <string name="messages_new">Nouveau message</string>
@@ -1069,4 +1068,12 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="menu_section_list">Liste</string>
     <string name="menu_filters_active">Conditions actives : %1$s</string>
     <string name="messages_delete_thread_action">Supprimer la conversation</string>
+    <string name="settings_sms_swipe_right">Balayage vers la droite sur une conversation</string>
+    <string name="settings_sms_swipe_left">Balayage vers la gauche sur une conversation</string>
+    <string name="settings_sms_swipe_text">Dans la section « SMS », indépendamment du journal d’appels</string>
+    <string name="settings_group_sms_swipe">Balayage sur une conversation</string>
+    <string name="settings_group_messengers">Messageries</string>
+    <string name="settings_section_messages_summary">Application SMS, balayages, messageries</string>
+    <string name="settings_home_group_protection">Protection</string>
+    <string name="action_delete_thread">Supprimer</string>
 </resources>

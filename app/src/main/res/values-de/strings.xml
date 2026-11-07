@@ -580,7 +580,7 @@
     <string name="block_reason_hidden">unterdrückte Nummer</string>
     <string name="block_reason_not_in_contacts">nicht in den Kontakten</string>
     <string name="settings_panel_swipe_nav">Wischen auf der unteren Leiste</string>
-    <string name="settings_panel_swipe_nav_text">Nach links wischen öffnet die Kontakte, nach rechts zurück zu den Anrufen</string>
+    <string name="settings_panel_swipe_nav_text">Wischen auf der unteren Leiste wechselt zum benachbarten Bereich: Anrufe, SMS, Kontakte, Notizen</string>
     <string name="gesture_hint_title">Zwei Gesten, die man kennen sollte</string>
     <string name="gesture_hint_subtitle">Sie sind nicht sichtbar, machen die App aber erst schnell.</string>
     <string name="gesture_hint_swipe_right">Zeile nach rechts wischen — anrufen</string>
@@ -1031,7 +1031,7 @@
     <string name="sms_status_not_downloaded">Nicht heruntergeladen</string>
     <string name="sms_status_sending">Wird gesendet…</string>
     <string name="sms_you">Sie: %1$s</string>
-    <string name="settings_group_messages">Nachrichten</string>
+    <string name="settings_group_messages">SMS-App</string>
     <string name="settings_sms_default_app">Standard-SMS-App</string>
     <string name="settings_sms_default_app_text">Unterhaltungen, eingehende SMS und MMS im SMS-Bereich des Dialers</string>
     <string name="settings_sms_in_app">SMS im Dialer schreiben</string>
@@ -1058,7 +1058,6 @@
 
     <!-- Раздел SMS и меню «Ещё» (2.0.0) -->
     <string name="nav_messages">SMS</string>
-    <string name="messages_title">Nachrichten</string>
     <string name="messages_empty">Noch keine Nachrichten</string>
     <string name="messages_not_default">Um Unterhaltungen zu sehen und SMS hier zu empfangen, legen Sie den Dialer als Standard-SMS-App fest. Schreiben geht auch ohne.</string>
     <string name="messages_new">Neue Nachricht</string>
@@ -1070,4 +1069,12 @@
     <string name="menu_section_list">Liste</string>
     <string name="menu_filters_active">Aktive Bedingungen: %1$s</string>
     <string name="messages_delete_thread_action">Unterhaltung löschen</string>
+    <string name="settings_sms_swipe_right">Unterhaltung nach rechts wischen</string>
+    <string name="settings_sms_swipe_left">Unterhaltung nach links wischen</string>
+    <string name="settings_sms_swipe_text">Im Bereich „SMS“, getrennt vom Anrufprotokoll</string>
+    <string name="settings_group_sms_swipe">Wischen über eine Unterhaltung</string>
+    <string name="settings_group_messengers">Messenger</string>
+    <string name="settings_section_messages_summary">SMS-App, Wischgesten, Messenger</string>
+    <string name="settings_home_group_protection">Schutz</string>
+    <string name="action_delete_thread">Löschen</string>
 </resources>

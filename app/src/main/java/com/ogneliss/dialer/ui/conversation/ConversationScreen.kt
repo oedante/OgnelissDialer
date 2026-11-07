@@ -37,6 +37,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -190,7 +191,13 @@ fun ConversationScreen(
         actions = {
             if (state.dialable) {
                 IconButton(onClick = { onCall(vm.address) }) {
-                    Icon(OgnelissIcons.Call, contentDescription = stringResource(R.string.action_call))
+                    // Зелёная трубка, как везде; звонить нельзя — серая (2.1.0)
+                    Icon(
+                        OgnelissIcons.Call,
+                        contentDescription = stringResource(R.string.action_call),
+                        tint = com.ogneliss.dialer.util.LocalCallAvailability.current
+                            .callTint(com.ogneliss.dialer.ui.theme.CallGreen)
+                    )
                 }
                 IconButton(onClick = { onOpenCard(vm.address) }) {
                     Icon(OgnelissIcons.Person, contentDescription = stringResource(R.string.sms_open_card))
@@ -530,9 +537,16 @@ private fun ComposeBar(
                     modifier = Modifier.weight(1f).heightIn(min = 48.dp)
                 )
                 if (state.sims.size > 1) SimPicker(state, onSelectSim)
+                // 2.1.0: отправить нельзя (нет SIM, режим полёта) — кнопка серая
+                val canSms = com.ogneliss.dialer.util.LocalCallAvailability.current.canSms
                 FilledIconButton(
                     onClick = onSend,
                     enabled = canSendNow,
+                    colors = if (canSms) IconButtonDefaults.filledIconButtonColors()
+                    else IconButtonDefaults.filledIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        contentColor = MaterialTheme.colorScheme.outline
+                    ),
                     modifier = Modifier.padding(start = Space.xs)
                 ) {
                     Icon(OgnelissIcons.Send, contentDescription = stringResource(R.string.sms_send))
@@ -542,27 +556,52 @@ private fun ComposeBar(
     }
 }
 
-/** Карта отправки: «SIM 1» / «SIM 2» по касанию — меню карт. */
+/**
+ * Карта отправки по касанию — меню карт.
+ *
+ * 2.1.0: подпись — порядковый номер слота «SIM 1» / «SIM 2», как в окне
+ * выбора SIM при звонке (SimChoiceCards). Было: sim.label — имя карты
+ * в системе, а оно на части прошивок техническое («Карта 3», номер
+ * подписки), и по нему не понять, какая это карта (автор, 07.11.2026).
+ * Имя, заданное человеком, или оператор — второй строкой в меню.
+ */
 @Composable
 private fun SimPicker(state: ConversationViewModel.UiState, onSelectSim: (Int) -> Unit) {
     var open by remember { mutableStateOf(false) }
     val current = state.sims.firstOrNull { it.subscriptionId == state.subId }
     Box {
         TextButton(onClick = { open = true }) {
-            Icon(OgnelissIcons.SimCard, contentDescription = null, modifier = Modifier.size(FlowUi.iconSizeInline))
+            if (current != null) {
+                com.ogneliss.dialer.ui.components.SimBadge(current.slotIndex)
+            } else {
+                Icon(OgnelissIcons.SimCard, contentDescription = null, modifier = Modifier.size(FlowUi.iconSizeInline))
+            }
             Text(
-                current?.label ?: stringResource(R.string.sms_sim_default),
+                current?.let { simOrdinalName(it) } ?: stringResource(R.string.sms_sim_default),
                 modifier = Modifier.padding(start = Space.xs),
                 style = MaterialTheme.typography.labelLarge
             )
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             state.sims.forEach { sim ->
+                val second = simSecondLine(sim)
                 DropdownMenuItem(
-                    text = { Text(sim.label) },
+                    text = {
+                        Column {
+                            Text(simOrdinalName(sim))
+                            if (second != null) {
+                                Text(
+                                    second,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    },
                     onClick = { onSelectSim(sim.subscriptionId); open = false },
                     modifier = Modifier.heightIn(min = FlowUi.menuItemHeight),
-                    leadingIcon = if (sim.subscriptionId == state.subId) {
+                    leadingIcon = { com.ogneliss.dialer.ui.components.SimBadge(sim.slotIndex) },
+                    trailingIcon = if (sim.subscriptionId == state.subId) {
                         { Icon(OgnelissIcons.Check, contentDescription = null) }
                     } else null
                 )
@@ -570,6 +609,13 @@ private fun SimPicker(state: ConversationViewModel.UiState, onSelectSim: (Int) -
         }
     }
 }
+
+/** «SIM 1» — порядковый номер слота, как в настройках Android. */
+private fun simOrdinalName(sim: com.ogneliss.dialer.data.SimSlot): String = "SIM ${sim.slotIndex + 1}"
+
+/** Вторая строка: имя карты, если оно не «SIM n», иначе оператор. */
+private fun simSecondLine(sim: com.ogneliss.dialer.data.SimSlot): String? =
+    sim.label.takeIf { it.isNotBlank() && it != simOrdinalName(sim) } ?: sim.carrier?.takeIf { it.isNotBlank() }
 
 // ── Плашка роли SMS ──────────────────────────────────────────────────────────
 
