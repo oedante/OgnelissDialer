@@ -548,11 +548,18 @@ private fun ThreadRow(
         stringResource(if (thread.last.attachments.isNotEmpty()) R.string.sms_picture else R.string.sms_mms)
     }
     val line = if (thread.last.outgoing) stringResource(R.string.sms_you, body) else body
-    // Сегодня — время, раньше — дата: как в списках почты
-    val time = remember(thread.last.date) {
+    /*
+     * Время справа (2.1.0): в группе дня — только время, как в журнале:
+     * день уже в заголовке, и «7 нояб. 2026 г.» под «СЕГОДНЯ» повторял его.
+     * У закреплённых заголовка дня нет — сегодня время, раньше дата.
+     */
+    val time = remember(thread.last.date, pinned) {
         val date = thread.last.date
-        if (DateUtils.isToday(date)) DateUtils.formatDateTime(context, date, DateUtils.FORMAT_SHOW_TIME)
-        else DateUtils.formatDateTime(context, date, DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_ABBREV_MONTH)
+        if (!pinned || DateUtils.isToday(date)) DateUtils.formatDateTime(context, date, DateUtils.FORMAT_SHOW_TIME)
+        else DateUtils.formatDateTime(
+            context, date,
+            DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_ABBREV_MONTH or DateUtils.FORMAT_NO_YEAR
+        )
     }
     Row(
         modifier
@@ -567,24 +574,28 @@ private fun ThreadRow(
         Spacer(Modifier.width(Space.m))
         Column(Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    title,
-                    style = MaterialTheme.typography.listName,
-                    fontWeight = if (unread) FontWeight.SemiBold else null,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f, fill = false)
-                )
-                if (pinned) {
-                    Spacer(Modifier.width(Space.xs))
-                    Icon(
-                        OgnelissIcons.PushPin,
-                        contentDescription = stringResource(R.string.pinned_header),
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(14.dp)
+                // Имя и булавка — во всю свободную ширину; время и SIM — справа.
+                // Было: два weight делили строку пополам — имя обрезалось на середине
+                Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        title,
+                        style = MaterialTheme.typography.listName,
+                        fontWeight = if (unread) FontWeight.SemiBold else null,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
                     )
+                    if (pinned) {
+                        Spacer(Modifier.width(Space.xs))
+                        Icon(
+                            OgnelissIcons.PushPin,
+                            contentDescription = stringResource(R.string.pinned_header),
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
                 }
-                Spacer(Modifier.weight(1f))
+                Spacer(Modifier.width(Space.s))
                 if (simSlot != null) {
                     SimBadge(simSlot)
                     Spacer(Modifier.width(Space.xs))
