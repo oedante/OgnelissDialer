@@ -108,6 +108,24 @@ object MessageStore {
     }
 
     /**
+     * Сообщения с любым из [numbers] — для истории карточки (2.1.0).
+     *
+     * Не через threadIdOf: тот создаёт нить, если её нет, и карточка
+     * человека, с которым не переписывались, плодила бы пустые переписки.
+     * Берутся последние [window] сообщений и отбираются по номеру
+     * (E.164 и последние десять цифр — «8 912…» и «+7 912…» одно и то же).
+     */
+    fun withNumbers(context: Context, numbers: Collection<String>, window: Int = 3000): List<Message> {
+        if (!SmsRole.canRead(context) || numbers.isEmpty()) return emptyList()
+        fun key(n: String): String {
+            val e164 = com.ogneliss.dialer.util.PhoneFormatter.toE164(n)
+            return com.ogneliss.dialer.data.CallLogGrouper.tailKey(e164) ?: e164.ifBlank { n.trim() }
+        }
+        val keys = numbers.map(::key).filter { it.isNotBlank() }.toSet()
+        return latest(context, window).filter { key(it.address) in keys }
+    }
+
+    /**
      * Нить переписки с номером: существующая или новая. Создаёт строку нити
      * в хранилище — только для приложения SMS по умолчанию.
      */

@@ -407,7 +407,7 @@
     <string name="stats_top_contacts">Les plus fréquents</string>
     <string name="stats_total_calls">Total</string>
     <string name="stats_total_time">Temps passé à parler</string>
-    <string name="subscriber_history">Historique des appels</string>
+    <string name="subscriber_history">Historique</string>
     <string name="subscriber_note">Note et étiquettes</string>
     <string name="subscriber_numbers">Numéros</string>
     <string name="subscriber_details">Informations</string>
@@ -1076,4 +1076,9 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="settings_section_messages_summary">Application SMS, balayages, messageries</string>
     <string name="settings_home_group_protection">Protection</string>
     <string name="action_delete_thread">Supprimer</string>
+    <string name="history_filter_all">Tout</string>
+    <string name="history_filter_calls">Appels</string>
+    <string name="history_sms_in">SMS reçu</string>
+    <string name="history_sms_out">SMS envoyé</string>
+    <string name="sms_open_conversation">Ouvrir la conversation</string>
 </resources>

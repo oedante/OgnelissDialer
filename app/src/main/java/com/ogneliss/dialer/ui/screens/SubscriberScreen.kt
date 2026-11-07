@@ -302,31 +302,41 @@ fun SubscriberScreen(
      * могла не дойти до звонков этому человеку. Тогда запрашиваем
      * отдельно, запросом с условием по номеру.
      */
-    val history by produceState(initialValue = group.entries, group.key, group.numbers) {
-        value = when {
-            group.entries.isNotEmpty() -> group.entries
-
-            /*
-             * История по ВСЕМ номерам абонента.
-             *
-             * ── Зачем ──────────────────────────────────────────────────────
-             * Запрос по одному номеру показывал только часть звонков:
-             * человек звонил и на рабочий, и на личный, а в истории
-             * была половина.
-             *
-             * Собираем по каждому номеру и объединяем, сортируя
-             * по времени: получается лента общения с человеком,
-             * а не с одной его симкой.
-             */
-            group.numbers.size > 1 -> group.numbers
-                .flatMap { number ->
-                    suspendRunCatching { vm.historyFor(number) }.getOrDefault(emptyList())
-                }
-                .distinctBy { it.id }
-                .sortedByDescending { it.date }
-
-            else -> suspendRunCatching { vm.historyFor(group.number) }.getOrDefault(emptyList())
+    /*
+     * 2.1.0: история — по ВСЕМ номерам контакта карточки, а не только
+     * по номерам группы журнала. Было: из журнала карточка брала записи
+     * своей группы — при группировке «подряд» это лишь последняя серия
+     * звонков, и звонки на второй номер не попадали. Теперь журнал
+     * запрашивается по каждому номеру контакта всегда.
+     */
+    val historyNumbers = remember(group.numbers, group.contactId, group.e164, state.contacts, ownContact) {
+        val contact = ownContact ?: state.contacts.firstOrNull { it.id == group.contactId }
+            ?: com.ogneliss.dialer.data.ContactMatch.bestFor(state.contacts, group.e164)
+        (contact?.numbers?.map { it.value }.orEmpty() + group.numbers)
+            .filter { it.isNotBlank() }
+            .distinctBy { com.ogneliss.dialer.data.CallLogGrouper.tailKey(PhoneFormatter.toE164(it)) ?: it }
+    }
+    val history by produceState(initialValue = group.entries, group.key, historyNumbers) {
+        value = historyNumbers
+            .flatMap { number -> suspendRunCatching { vm.historyFor(number) }.getOrDefault(emptyList()) }
+            .distinctBy { it.id }
+            .sortedByDescending { it.date }
+            .ifEmpty { group.entries }
+    }
+    // SMS с этими номерами — в ту же ленту (только с ролью SMS: без неё читать нельзя)
+    val historyContext = LocalContext.current.applicationContext
+    val smsHistory by produceState(initialValue = emptyList<com.ogneliss.dialer.sms.Message>(), historyNumbers) {
+        value = withContext(Dispatchers.IO) {
+            suspendRunCatching {
+                com.ogneliss.dialer.sms.MessageStore.withNumbers(historyContext, historyNumbers)
+            }.getOrDefault(emptyList())
         }
+    }
+    var historyFilter by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(HistoryFilter.ALL) }
+    val timeline = remember(history, smsHistory, historyFilter) {
+        val calls = if (historyFilter == HistoryFilter.SMS) emptyList() else history.map { HistoryItem.Call(it) }
+        val sms = if (historyFilter == HistoryFilter.CALLS) emptyList() else smsHistory.map { HistoryItem.Sms(it) }
+        (calls + sms).sortedByDescending { it.date }
     }
 
     /*
@@ -574,6 +584,26 @@ fun SubscriberScreen(
         }
     }
     var writeSheetOpen by remember { mutableStateOf(false) }
+    var callPickerOpen by remember { mutableStateOf(false) }
+    val callNumberOptions = remember(historyNumbers, state.contacts, ownContact, knownContactId) {
+        val labels = (ownContact ?: state.contacts.firstOrNull { it.id == knownContactId })
+            ?.numbers.orEmpty().associate { it.value to it.label }
+        historyNumbers.map { com.ogneliss.dialer.ui.components.NumberOption(it, labels[it]?.takeIf { l -> l.isNotBlank() }) }
+    }
+    if (callPickerOpen) {
+        com.ogneliss.dialer.ui.components.NumberPickerSheet(
+            title = group.displayName ?: PhoneFormatter.format(group.number),
+            numbers = callNumberOptions,
+            sims = state.sims,
+            onCall = { number, slot -> callPickerOpen = false; vm.call(number, slot) },
+            onSms = { number -> callPickerOpen = false; vm.openSms(number) },
+            onMessenger = { callPickerOpen = false; writeSheetOpen = true },
+            onChooseSmsSim = if (state.sims.size > 1) {
+                { number -> callPickerOpen = false; vm.chooseSim(number, DialerViewModel.SimAction.SMS) }
+            } else null,
+            onDismiss = { callPickerOpen = false }
+        )
+    }
     if (writeSheetOpen) {
         WriteSheet(
             numbers = remember(state.contacts, knownContactId, group.number, ownContact) {
@@ -1289,7 +1319,15 @@ fun SubscriberScreen(
                     onLongClickLabel = stringResource(R.string.a11y_choose_sim),
                     prominent = true
                 ) {
-                    vm.call(group.number)
+                    /*
+                     * 2.1.0: номеров несколько — выбор номера (как в журнале,
+                     * NumberPickerSheet: звонок и SMS на каждый). Было: звонок
+                     * всегда на первый номер, второй был доступен только строкой
+                     * в «Номерах» (автор: «всё должно относиться ко всем номерам
+                     * карточки»).
+                     */
+                    if (callNumberOptions.size > 1) callPickerOpen = true
+                    else vm.call(group.number)
                 }
 
                 /*
@@ -2471,6 +2509,12 @@ fun SubscriberScreen(
                  * но LazyColumn переиспользует строки как обычно.
                  */
                 item { SectionPanelHeader(stringResource(R.string.subscriber_history)) }
+                // Фильтр — только когда есть и звонки, и SMS: иначе выбирать не из чего
+                if (history.isNotEmpty() && smsHistory.isNotEmpty()) {
+                    item(key = "history_filter") {
+                        HistoryFilterRow(historyFilter) { historyFilter = it }
+                    }
+                }
                 /*
                  * ИСТОРИЯ ПОКАЗЫВАЕТСЯ ЧАСТИЧНО.
                  *
@@ -2483,8 +2527,8 @@ fun SubscriberScreen(
                  * Четырёх последних хватает, чтобы понять, когда общались
                  * в последний раз. Остальное раскрывается по нажатию.
                  */
-                val visibleHistory = if (historyExpanded) history
-                else history.take(FlowUi.COLLAPSED_HISTORY)
+                val visibleHistory = if (historyExpanded) timeline
+                else timeline.take(FlowUi.COLLAPSED_HISTORY)
 
                 /*
                  * Группы по датам, как в журнале (1.3.4, 05.10.2026): заголовок
@@ -2496,7 +2540,7 @@ fun SubscriberScreen(
                         // Ступенью ниже раздела (1.8.4): разбор у HistoryDateCaption
                         HistoryDateCaption(stringResource(dateGroupLabel(bucket)))
                     }
-                    itemsIndexed(entriesInBucket, key = { _, entry -> entry.id }) { index, entry ->
+                    itemsIndexed(entriesInBucket, key = { _, item -> item.key }) { index, item ->
                         /*
                          * История — та же решётка из похожих строк: значок,
                          * дата, длительность. Линии между ними нужны по той же
@@ -2536,11 +2580,20 @@ fun SubscriberScreen(
                             GroupPosition.of(index, entriesInBucket.size),
                             dividerStart = Space.l
                         ) {
-                            CallHistoryRow(
-                                entry,
-                                showNumber = group.numbers.size > 1,
-                                timeOnly = bucket == CallLogDateGroup.TODAY || bucket == CallLogDateGroup.YESTERDAY
-                            )
+                            val timeOnly = bucket == CallLogDateGroup.TODAY || bucket == CallLogDateGroup.YESTERDAY
+                            when (item) {
+                                is HistoryItem.Call -> CallHistoryRow(
+                                    item.entry,
+                                    showNumber = historyNumbers.size > 1,
+                                    timeOnly = timeOnly
+                                )
+                                is HistoryItem.Sms -> SmsHistoryRow(
+                                    item.message,
+                                    showNumber = historyNumbers.size > 1,
+                                    timeOnly = timeOnly,
+                                    onOpen = { vm.openSms(item.message.address) }
+                                )
+                            }
                         }
                     }
                 }
@@ -2555,7 +2608,7 @@ fun SubscriberScreen(
                  * и стоит ли разворачивать — при трёх записях это одно
                  * решение, при двухстах другое.
                  */
-                if (history.size > FlowUi.COLLAPSED_HISTORY) {
+                if (timeline.size > FlowUi.COLLAPSED_HISTORY) {
                     item {
                         /*
                          * Кнопка, а не ссылка.
@@ -2595,7 +2648,7 @@ fun SubscriberScreen(
                                 } else {
                                     stringResource(
                                         R.string.history_expand,
-                                        history.size - FlowUi.COLLAPSED_HISTORY
+                                        timeline.size - FlowUi.COLLAPSED_HISTORY
                                     )
                                 }
                             )
@@ -2757,3 +2810,24 @@ private val COVER_FOCUS = androidx.compose.ui.BiasAlignment(0f, -0.7f)
 
 /** Ключ карточки «Мой контакт» (2.1.0): разбор у SubscriberScreen. */
 const val OWN_CARD_KEY = "own"
+
+/** «Все · Звонки · SMS» над историей карточки (2.1.0). */
+@Composable
+private fun HistoryFilterRow(current: HistoryFilter, onSelect: (HistoryFilter) -> Unit) {
+    Row(
+        Modifier.fillMaxWidth().padding(horizontal = FlowUi.screenPadding, vertical = Space.xs),
+        horizontalArrangement = Arrangement.spacedBy(Space.s)
+    ) {
+        listOf(
+            HistoryFilter.ALL to R.string.history_filter_all,
+            HistoryFilter.CALLS to R.string.history_filter_calls,
+            HistoryFilter.SMS to R.string.nav_messages
+        ).forEach { (filter, label) ->
+            FilterChip(
+                selected = current == filter,
+                onClick = { onSelect(filter) },
+                label = { Text(stringResource(label)) }
+            )
+        }
+    }
+}

@@ -409,7 +409,7 @@
     <string name="stats_top_contacts">Am häufigsten</string>
     <string name="stats_total_calls">Gesamt</string>
     <string name="stats_total_time">Gesprächszeit</string>
-    <string name="subscriber_history">Anrufverlauf</string>
+    <string name="subscriber_history">Verlauf</string>
     <string name="subscriber_note">Notiz und Markierungen</string>
     <string name="subscriber_numbers">Nummern</string>
     <string name="subscriber_details">Details</string>
@@ -1077,4 +1077,9 @@
     <string name="settings_section_messages_summary">SMS-App, Wischgesten, Messenger</string>
     <string name="settings_home_group_protection">Schutz</string>
     <string name="action_delete_thread">Löschen</string>
+    <string name="history_filter_all">Alle</string>
+    <string name="history_filter_calls">Anrufe</string>
+    <string name="history_sms_in">Eingehende SMS</string>
+    <string name="history_sms_out">Gesendete SMS</string>
+    <string name="sms_open_conversation">Unterhaltung öffnen</string>
 </resources>

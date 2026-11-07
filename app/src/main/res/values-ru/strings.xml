@@ -397,7 +397,7 @@
     <string name="stats_top_contacts">Чаще всего</string>
     <string name="stats_total_calls">Всего</string>
     <string name="stats_total_time">Время в разговорах</string>
-    <string name="subscriber_history">История вызовов</string>
+    <string name="subscriber_history">История</string>
     <string name="subscriber_note">Заметка и метки</string>
     <string name="subscriber_numbers">Номера</string>
     <string name="subscriber_details">Сведения</string>
@@ -1086,4 +1086,9 @@
     <string name="settings_section_messages_summary">Приложение SMS, свайпы, мессенджеры</string>
     <string name="settings_home_group_protection">Защита</string>
     <string name="action_delete_thread">Удалить</string>
+    <string name="history_filter_all">Все</string>
+    <string name="history_filter_calls">Звонки</string>
+    <string name="history_sms_in">Входящее SMS</string>
+    <string name="history_sms_out">Отправленное SMS</string>
+    <string name="sms_open_conversation">Открыть переписку</string>
 </resources>

@@ -425,7 +425,7 @@
     <string name="stats_top_contacts">Most frequent</string>
     <string name="stats_total_calls">Total</string>
     <string name="stats_total_time">Time spent talking</string>
-    <string name="subscriber_history">Call history</string>
+    <string name="subscriber_history">History</string>
     <string name="subscriber_note">Note and tags</string>
     <string name="subscriber_numbers">Numbers</string>
     <string name="subscriber_details">Details</string>
@@ -1106,4 +1106,9 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="settings_section_messages_summary">SMS app, swipes, messengers</string>
     <string name="settings_home_group_protection">Protection</string>
     <string name="action_delete_thread">Delete</string>
+    <string name="history_filter_all">All</string>
+    <string name="history_filter_calls">Calls</string>
+    <string name="history_sms_in">Incoming SMS</string>
+    <string name="history_sms_out">Sent SMS</string>
+    <string name="sms_open_conversation">Open conversation</string>
 </resources>
