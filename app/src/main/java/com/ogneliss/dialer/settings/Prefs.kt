@@ -517,7 +517,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val SCAM_MEMO = booleanPreferencesKey("scam_memo")
         /** Сообщения (2.0.0): разбор в sms/SmsRole.kt (SmsSettings). */
         val SMS_IN_APP = booleanPreferencesKey("sms_in_app")
-        val SMS_IN_JOURNAL = booleanPreferencesKey("sms_in_journal")
         val SMS_DELIVERY_REPORTS = booleanPreferencesKey("sms_delivery_reports")
         val NOTES_RETENTION = stringPreferencesKey("notes_retention")
         val NOTES_RETENTION_SCOPE = stringPreferencesKey("notes_retention_scope")
@@ -850,7 +849,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      * операторов берёт за него плату).
      */
     val smsInApp: Flow<Boolean> = data.map { it[Keys.SMS_IN_APP] ?: true }
-    val smsInJournal: Flow<Boolean> = data.map { it[Keys.SMS_IN_JOURNAL] ?: true }
     val smsDeliveryReports: Flow<Boolean> = data.map { it[Keys.SMS_DELIVERY_REPORTS] ?: false }
 
     /**
@@ -1110,11 +1108,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setSmsInApp(v: Boolean) {
         edit("sms_in_app", v) { it[Keys.SMS_IN_APP] = v }
         com.ogneliss.dialer.sms.SmsSettings.put(context, com.ogneliss.dialer.sms.SmsSettings.KEY_IN_APP, v)
-    }
-
-    suspend fun setSmsInJournal(v: Boolean) {
-        edit("sms_in_journal", v) { it[Keys.SMS_IN_JOURNAL] = v }
-        com.ogneliss.dialer.sms.SmsSettings.put(context, com.ogneliss.dialer.sms.SmsSettings.KEY_IN_JOURNAL, v)
     }
 
     suspend fun setSmsDeliveryReports(v: Boolean) {

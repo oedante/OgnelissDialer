@@ -110,7 +110,6 @@ class SettingsCommands @Inject constructor(
             "block_tagged" -> prefs.setBlockTaggedSpam(value)
             "scam_memo" -> prefs.setScamMemo(value)
             "sms_in_app" -> prefs.setSmsInApp(value)
-            "sms_in_journal" -> prefs.setSmsInJournal(value)
             "sms_delivery_reports" -> prefs.setSmsDeliveryReports(value)
             "file_logging" -> {
                 prefs.setFileLogging(value)
@@ -549,7 +548,7 @@ class SettingsCommands @Inject constructor(
             // 1.8.0
             "scam_memo",
             // 2.0.0
-            "sms_in_app", "sms_in_journal", "sms_delivery_reports"
+            "sms_in_app", "sms_delivery_reports"
         )
 
         /** Ключи, которые обрабатывает setChoice. */

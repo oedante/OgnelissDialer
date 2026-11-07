@@ -41,34 +41,5 @@ data class Message(
     companion object {
         fun keyOf(isMms: Boolean, id: Long) = (if (isMms) "mms:" else "sms:") + id
 
-        /**
-         * Номер записи журнала для сообщения — отрицательный: не пересекается
-         * с номерами вызовов (они положительные), а MMS — с SMS.
-         */
-        fun journalId(isMms: Boolean, id: Long): Long = -(if (isMms) MMS_ID_OFFSET + id else id)
-
-        /** Обратно: (MMS ли, номер в хранилище) по номеру записи журнала. */
-        fun fromJournalId(journalId: Long): Pair<Boolean, Long>? {
-            if (journalId >= 0) return null
-            val v = -journalId
-            return if (v >= MMS_ID_OFFSET) true to (v - MMS_ID_OFFSET) else false to v
-        }
-
-        private const val MMS_ID_OFFSET = 1_000_000_000_000L
     }
 }
-
-/**
- * Сообщение в записи журнала (CallLogEntry.message): что показать в строке
- * вместо типа вызова.
- */
-@Immutable
-data class JournalMessage(
-    val key: String,
-    val text: String,
-    val unread: Boolean,
-    val isMms: Boolean,
-    val hasAttachment: Boolean,
-    val failed: Boolean,
-    val threadId: Long
-)

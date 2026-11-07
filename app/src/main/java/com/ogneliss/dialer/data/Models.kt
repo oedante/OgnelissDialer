@@ -47,18 +47,8 @@ data class CallLogEntry(
     val date: Long,
     val durationSec: Long,
     val phoneAccountId: String?,
-    val contactId: Long?,
-    /**
-     * SMS или MMS вместо вызова (2.0.0): журнал показывает сообщения
-     * одной лентой с вызовами. У вызовов — null; type у сообщения —
-     * направление (INCOMING / OUTGOING), длительность — 0, номер записи
-     * отрицательный (Message.journalId). Счётчики вызовов карточки
-     * сообщения не считают.
-     */
-    val message: com.ogneliss.dialer.sms.JournalMessage? = null
-) {
-    val isMessage: Boolean get() = message != null
-}
+    val contactId: Long?
+)
 
 /**
  * КАРТОЧКА ЖУРНАЛА — несколько вызовов одного абонента, объединённые вместе.
@@ -108,14 +98,7 @@ data class CallLogGroup(
     val subscriptionLabel: String?,
     val subscriptionId: String?,
     /** Все записи группы — нужны для экрана истории по абоненту. */
-    val entries: List<CallLogEntry> = emptyList(),
-    /**
-     * Последнее событие группы — сообщение (2.0.0): строка показывает его
-     * текст, нажатие открывает переписку. null — последнее событие — вызов.
-     */
-    val lastMessage: com.ogneliss.dialer.sms.JournalMessage? = null,
-    /** Непрочитанных входящих сообщений в группе. */
-    val unreadMessages: Int = 0
+    val entries: List<CallLogEntry> = emptyList()
 ) {
     /** Есть ли непросмотренные пропущенные — карточка подсвечивается. */
     /**

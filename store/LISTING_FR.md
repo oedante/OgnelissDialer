@@ -33,7 +33,7 @@ JOURNAL D'APPELS
 
 MESSAGES
 • SMS dans le composeur — ou appli SMS par défaut : conversations, SMS et MMS reçus, réponse depuis la notification
-• SMS dans le journal, avec les appels, filtre Appels / Messages
+• Section SMS dans la barre du bas : conversations, recherche, balayages comme dans le journal
 • Codes reçus par SMS : « Copier », reconnus sur le téléphone
 
 BALAYAGES

@@ -34,7 +34,7 @@ ANRUFLISTE
 
 NACHRICHTEN
 • SMS direkt im Dialer – oder als Standard-SMS-App: Unterhaltungen, eingehende SMS und MMS, Antworten aus der Benachrichtigung
-• SMS in der Anrufliste, mit Anrufen in einer Zeitleiste, Filter Anrufe / Nachrichten
+• SMS-Bereich in der unteren Leiste: Unterhaltungen, Suche, Wischgesten wie in der Anrufliste
 • Codes aus SMS per „Kopieren“, erkannt auf dem Telefon
 
 WISCHGESTEN

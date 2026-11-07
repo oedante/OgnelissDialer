@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.di
 
+import com.ogneliss.dialer.data.CallLogRepository
 import com.ogneliss.dialer.data.CallLogSource
 import com.ogneliss.dialer.data.GroupingSettings
 import com.ogneliss.dialer.data.SimInfoSource
@@ -42,8 +43,7 @@ abstract class DataSourceModule {
 
     @Binds
     @Singleton
-    // Журнал — вызовы и сообщения одной лентой (2.0.0); без роли SMS — только вызовы
-    abstract fun bindCallLogSource(impl: com.ogneliss.dialer.data.JournalSource): CallLogSource
+    abstract fun bindCallLogSource(impl: CallLogRepository): CallLogSource
 
     @Binds
     @Singleton

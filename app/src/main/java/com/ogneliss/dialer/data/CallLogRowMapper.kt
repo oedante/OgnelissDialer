@@ -545,16 +545,10 @@ object CallLogRowMapper {
             simLabel = group.subscriptionLabel,
             simSlotIndex = inputs.simSlots[group.subscriptionId],
             numbersCount = group.numbers.size,
-            accessibilityLabel = group.lastMessage?.let { m ->
-                labels.messageAccessibility(
-                    display.title, labels.messageLine(m, group.lastType == CallType.OUTGOING), dateLabel
-                )
-            } ?: labels.accessibility(display.title, group.lastType, dateLabel),
+            accessibilityLabel = labels.accessibility(
+                display.title, group.lastType, dateLabel
+            ),
             signature = signature,
-            // Сообщение (2.0.0): его текст — третьей строкой
-            messageLine = group.lastMessage?.let { labels.messageLine(it, group.lastType == CallType.OUTGOING) },
-            messageUnread = group.unreadMessages > 0,
-            messageFailed = group.lastMessage?.failed == true,
             group = group
         )
     }
@@ -583,15 +577,6 @@ object CallLogRowMapper {
 
         /** Имя от оператора, когда заголовок — заметка: «Сбербанк — по данным оператора». */
         fun networkNamed(name: String): String = name
-
-        /**
-         * Строка сообщения в журнале (2.0.0): текст, у исходящего — «Вы: …»,
-         * у MMS без текста — «Фото»/«MMS». Без ресурсов — текст как есть.
-         */
-        fun messageLine(message: com.ogneliss.dialer.sms.JournalMessage, outgoing: Boolean): String = message.text
-
-        /** Подпись для TalkBack у сообщения: «Имя, сообщение, текст, дата». */
-        fun messageAccessibility(title: String, line: String, date: String): String = "$title, $line, $date"
 
         /**
          * Отпечаток подписей (1.8.0): те же тексты — то же число.

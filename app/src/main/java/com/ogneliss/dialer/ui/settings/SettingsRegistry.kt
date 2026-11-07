@@ -452,13 +452,6 @@ object SettingsRegistry {
             groupRes = R.string.settings_group_messages
         ),
         SettingEntry(
-            "sms_in_journal", SettingsCategory.CALL_LOG,
-            R.string.settings_sms_in_journal, R.string.settings_sms_in_journal_text,
-            SettingKind.Switch("sms_in_journal"),
-            keywordsRes = R.string.keywords_sms,
-            groupRes = R.string.settings_group_messages
-        ),
-        SettingEntry(
             "sms_delivery_reports", SettingsCategory.CALL_LOG,
             R.string.settings_sms_delivery_reports, R.string.settings_sms_delivery_reports_text,
             SettingKind.Switch("sms_delivery_reports"),

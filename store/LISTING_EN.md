@@ -29,7 +29,7 @@ CALL LOG
 
 MESSAGES
 • SMS right in the dialer — or make it your default SMS app: conversations, incoming SMS and MMS, replies from the notification
-• SMS in the call log, one timeline with calls, with a Calls / Messages filter
+• SMS section on the bottom bar: conversations, search, swipes as in the call log
 • Codes from SMS with one “Copy” tap, recognised on the phone
 
 SWIPES

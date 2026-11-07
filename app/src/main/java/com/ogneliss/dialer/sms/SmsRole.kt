@@ -120,16 +120,12 @@ object SmsRole {
 object SmsSettings {
     private const val FILE = "sms_settings"
     const val KEY_IN_APP = "sms_in_app"
-    const val KEY_IN_JOURNAL = "sms_in_journal"
     const val KEY_DELIVERY_REPORTS = "sms_delivery_reports"
 
     private fun prefs(context: Context) = context.getSharedPreferences(FILE, Context.MODE_PRIVATE)
 
     /** Писать SMS в диалере, а не в приложении сообщений (по умолчанию — да). */
     fun inApp(context: Context): Boolean = prefs(context).getBoolean(KEY_IN_APP, true)
-
-    /** Показывать SMS в журнале (когда диалер — приложение SMS по умолчанию). */
-    fun inJournal(context: Context): Boolean = prefs(context).getBoolean(KEY_IN_JOURNAL, true)
 
     /** Просить отчёт о доставке (по умолчанию — нет: часть операторов берёт плату). */
     fun deliveryReports(context: Context): Boolean = prefs(context).getBoolean(KEY_DELIVERY_REPORTS, false)

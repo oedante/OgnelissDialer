@@ -119,7 +119,6 @@ data class SettingsState(
     val quietHours: QuietHours = QuietHours.DEFAULT,
     /** Сообщения (2.0.0): разбор в sms/SmsRole.kt. */
     val smsInApp: Boolean = true,
-    val smsInJournal: Boolean = true,
     val smsDeliveryReports: Boolean = false
 ) {
 
@@ -150,7 +149,6 @@ data class SettingsState(
         "file_logging" -> fileLogging
         "scam_memo" -> scamMemo
         "sms_in_app" -> smsInApp
-        "sms_in_journal" -> smsInJournal
         "sms_delivery_reports" -> smsDeliveryReports
         else -> false
     }
@@ -172,7 +170,7 @@ data class SettingsState(
             // 1.8.0
             "scam_memo",
             // 2.0.0
-            "sms_in_app", "sms_in_journal", "sms_delivery_reports"
+            "sms_in_app", "sms_delivery_reports"
         )
     }
 }

@@ -996,10 +996,6 @@
     <string name="faq_a_scam">Dauert ein Gespräch mit einer unbekannten Nummer länger als zwei Minuten, erinnert der Anrufbildschirm einmal daran: SMS-Codes, Kartendaten und Passwörter gibt man niemandem. Die App hört nicht mit und weiß nicht, wer am Apparat ist — die Regel gilt für jeden Anruf. Abschalten: %1$s.</string>
 
     <!-- Сообщения (2.0.0) -->
-    <string name="filter_group_kind">Anzeigen</string>
-    <string name="filter_kind_all">Anrufe und Nachrichten</string>
-    <string name="filter_kind_calls">Anrufe</string>
-    <string name="filter_kind_messages">Nachrichten</string>
     <string name="sms_attach_picture">Bild hinzufügen</string>
     <string name="sms_channel">Nachrichten</string>
     <string name="sms_channel_text">Neue SMS und MMS</string>
@@ -1018,7 +1014,6 @@
     <string name="sms_empty_send_only">Schreiben Sie die erste Nachricht. Der Verlauf erscheint, wenn der Dialer Ihre Standard-SMS-App ist.</string>
     <string name="sms_mark_read">Als gelesen markieren</string>
     <string name="sms_me">Sie</string>
-    <string name="sms_message">Nachricht</string>
     <string name="sms_message_actions">Aktionen für Nachricht</string>
     <string name="sms_mms">MMS</string>
     <string name="sms_open_card">Kontaktkarte öffnen</string>
@@ -1038,11 +1033,9 @@
     <string name="sms_you">Sie: %1$s</string>
     <string name="settings_group_messages">Nachrichten</string>
     <string name="settings_sms_default_app">Standard-SMS-App</string>
-    <string name="settings_sms_default_app_text">Unterhaltungen, eingehende SMS und MMS im Dialer; Nachrichten in der Anrufliste</string>
+    <string name="settings_sms_default_app_text">Unterhaltungen, eingehende SMS und MMS im SMS-Bereich des Dialers</string>
     <string name="settings_sms_in_app">SMS im Dialer schreiben</string>
     <string name="settings_sms_in_app_text">„Nachricht“-Tasten öffnen die Unterhaltung hier statt in der Nachrichten-App (der Dialer muss Standard-Telefon-App sein)</string>
-    <string name="settings_sms_in_journal">Nachrichten in der Anrufliste</string>
-    <string name="settings_sms_in_journal_text">SMS und MMS in einer Zeitleiste mit Anrufen, mit Filter Anrufe/Nachrichten</string>
     <string name="settings_sms_delivery_reports">Zustellberichte</string>
     <string name="settings_sms_delivery_reports_text">Das Netz um Zustellbestätigung bitten. Manche Anbieter berechnen dafür Gebühren</string>
     <string name="keywords_sms">sms mms nachricht text unterhaltung chat code passwort standard</string>
@@ -1050,7 +1043,7 @@
     <!-- Вопросы о сообщениях (2.0.0) -->
     <string name="faq_section_messages">Nachrichten</string>
     <string name="faq_q_sms">Kann ich im Dialer SMS schreiben und empfangen?</string>
-    <string name="faq_a_sms">Ja, wenn Sie möchten. Schreiben: Die „Nachricht“-Tasten öffnen die Unterhaltung direkt hier (%1$s) – dafür muss der Dialer Ihre Standard-Telefon-App sein. Empfangen, Verlauf und Bilder (MMS) gibt es, wenn der Dialer Ihre Standard-SMS-App ist (%2$s). Dann stehen Nachrichten in der Anrufliste neben den Anrufen, und der Filter zeigt nur Anrufe oder nur Nachrichten. Zurück geht es jederzeit, indem Sie eine andere SMS-App wählen – der Dialer liest dann sofort keine Nachrichten mehr. RCS-Chats sind für Drittanbieter-Apps nicht verfügbar.</string>
+    <string name="faq_a_sms">Ja, wenn Sie möchten. Schreiben: Die „Nachricht“-Tasten öffnen die Unterhaltung direkt hier (%1$s) – dafür muss der Dialer Ihre Standard-Telefon-App sein. Empfangen, Verlauf und Bilder (MMS) gibt es, wenn der Dialer Ihre Standard-SMS-App ist (%2$s). Die Unterhaltungen stehen im Bereich „SMS“ der unteren Leiste, mit denselben Wischgesten wie in der Anrufliste; die Anrufliste zeigt weiterhin nur Anrufe. Zurück geht es jederzeit, indem Sie eine andere SMS-App wählen – der Dialer liest dann sofort keine Nachrichten mehr. RCS-Chats sind für Drittanbieter-Apps nicht verfügbar.</string>
     <string name="faq_q_codes">Wie füge ich einen Code aus einer SMS ein?</string>
     <string name="faq_a_codes">Enthält eine Nachricht einen Bestätigungscode, zeigt die Benachrichtigung die Taste „123456 kopieren“, und in der Unterhaltung steht dieselbe Taste unter der Nachricht. Der Code landet als vertraulich markiert in der Zwischenablage, und Ihre Tastatur bietet ihn mit einem Tippen zum Einfügen an. Das automatische Ausfüllen in anderen Apps übernimmt Ihre Tastatur oder Ihr Autofill-Dienst (etwa Gboard oder Autofill mit Google) – das funktioniert mit dem Dialer als SMS-App weiter. Der Code wird auf dem Telefon erkannt: Der Dialer hat keinen Internetzugriff. Langes Drücken auf eine Nachricht kopiert den ganzen Text, eine Nummer daraus oder einen markierten Teil.</string>
 

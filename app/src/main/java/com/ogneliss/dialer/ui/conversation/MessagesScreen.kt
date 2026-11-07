@@ -2,6 +2,7 @@ package com.ogneliss.dialer.ui.conversation
 
 import android.text.format.DateUtils
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Badge
 import androidx.compose.material3.FilledTonalButton
@@ -28,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,8 +51,11 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ogneliss.dialer.R
+import com.ogneliss.dialer.data.CallLogGroup
 import com.ogneliss.dialer.data.CallLogGrouper
+import com.ogneliss.dialer.data.CallType
 import com.ogneliss.dialer.data.Contact
+import com.ogneliss.dialer.settings.SwipeAction
 import com.ogneliss.dialer.settings.ThemeMode
 import com.ogneliss.dialer.ui.DialerViewModel
 import com.ogneliss.dialer.ui.components.ListPanel
@@ -59,9 +65,12 @@ import com.ogneliss.dialer.ui.components.RoleHelpDialog
 import com.ogneliss.dialer.ui.components.RowAvatar
 import com.ogneliss.dialer.ui.components.ScreenScaffold
 import com.ogneliss.dialer.ui.components.rememberSmsRoleRequest
+import com.ogneliss.dialer.ui.components.swipe.SwipeRevealRow
+import com.ogneliss.dialer.ui.components.swipe.rememberSwipeRevealController
 import com.ogneliss.dialer.ui.screens.OverflowMenu
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
+import com.ogneliss.dialer.ui.theme.OgnelissTheme
 import com.ogneliss.dialer.ui.theme.Space
 import com.ogneliss.dialer.ui.theme.listName
 import com.ogneliss.dialer.util.PhoneFormatter
@@ -135,6 +144,38 @@ fun MessagesScreen(
     fun contactOf(address: String): Contact? {
         val e164 = PhoneFormatter.toE164(address)
         return byNumber[e164] ?: CallLogGrouper.tailKey(e164)?.let { byNumber[it] }
+    }
+
+    /*
+     * СВАЙПЫ (2.0.1) — те же, что в журнале и контактах: действия
+     * из настроек жестов, подсказка-иконка под строкой, тот же порог.
+     * Действие выполняет DialerViewModel.performSwipe — выбор SIM и номера
+     * работает так же. «Удалить из журнала» здесь удаляет переписку
+     * (с подтверждением): журнала у сообщений нет, а смысл жеста тот же.
+     * Панели из нескольких кнопок здесь нет — только прямое действие.
+     */
+    val swipeController = rememberSwipeRevealController()
+    val swipeTuning by vm.swipeTuning.collectAsStateWithLifecycle()
+    val startHint = remember(settings.swipeRight) { vm.directActionAppearance(settings.swipeRight) }
+    val endHint = remember(settings.swipeLeft) { vm.directActionAppearance(settings.swipeLeft) }
+    val closeSwipesToken by vm.closeSwipes.collectAsStateWithLifecycle()
+    LaunchedEffect(closeSwipesToken) { if (closeSwipesToken > 0) swipeController.closeAll() }
+    val listState = rememberLazyListState()
+
+    fun swipe(action: SwipeAction, thread: MessagesViewModel.Thread) {
+        val dialable = thread.address.any { it.isDigit() } && thread.address.none { it.isLetter() }
+        when {
+            action == SwipeAction.NONE -> Unit
+            action == SwipeAction.DELETE_FROM_LOG -> {
+                swipeController.close()
+                confirmDelete = thread
+            }
+            // Буквенный отправитель («Bank»): звонить и писать в мессенджер некуда
+            !dialable -> swipeController.close()
+            else -> vm.performSwipe(action, threadAsGroup(thread.address, contactOf(thread.address))) {
+                swipeController.close()
+            }
+        }
     }
 
     val shown = remember(state.threads, query, byNumber) {
@@ -219,21 +260,43 @@ fun MessagesScreen(
                     )
                 }
             } else {
-                LazyColumn(Modifier.fillMaxSize()) {
+                LazyColumn(Modifier.fillMaxSize(), state = listState) {
                     items(shown, key = { "${it.threadId}:${it.address}" }) { thread ->
                         val contact = contactOf(thread.address)
-                        ThreadRow(
-                            thread = thread,
-                            title = contact?.displayName ?: PhoneFormatter.format(thread.address),
-                            photoUri = contact?.photoUri,
-                            initialsFrom = contact?.displayName,
-                            // Касание — переписка; долгое — удалить её
-                            modifier = Modifier.combinedClickable(
-                                onClick = { onOpenConversation(thread.address) },
-                                onLongClick = { confirmDelete = thread },
-                                onLongClickLabel = stringResource(R.string.sms_delete)
+                        val rowKey = "thread:${thread.threadId}:${thread.address}"
+                        SwipeRevealRow(
+                            key = rowKey,
+                            controller = swipeController,
+                            startActions = emptyList(),
+                            endActions = emptyList(),
+                            // «Нет действия» — направление не тянется вовсе (как в журнале)
+                            onDirectStart = if (settings.swipeRight == SwipeAction.NONE) null
+                            else { { swipe(settings.swipeRight, thread) } },
+                            onDirectEnd = if (settings.swipeLeft == SwipeAction.NONE) null
+                            else { { swipe(settings.swipeLeft, thread) } },
+                            directStartAction = startHint,
+                            directEndAction = endHint,
+                            tuning = swipeTuning,
+                            listScrolling = listState.isScrollInProgress
+                        ) {
+                            ThreadRow(
+                                thread = thread,
+                                title = contact?.displayName ?: PhoneFormatter.format(thread.address),
+                                photoUri = contact?.photoUri,
+                                initialsFrom = contact?.displayName,
+                                // Касание — переписка (раскрытая строка — закрыть); долгое — удалить
+                                modifier = Modifier
+                                    .background(OgnelissTheme.pageColor())
+                                    .combinedClickable(
+                                        onClick = {
+                                            if (swipeController.isOpen(rowKey)) swipeController.close()
+                                            else onOpenConversation(thread.address)
+                                        },
+                                        onLongClick = { confirmDelete = thread },
+                                        onLongClickLabel = stringResource(R.string.sms_delete)
+                                    )
                             )
-                        )
+                        }
                     }
                 }
             }
@@ -429,6 +492,30 @@ private fun NewMessageDialog(
         dismissButton = {
             TextButton(onClick = onDismiss) { Text(stringResource(R.string.nav_close)) }
         }
+    )
+}
+
+/**
+ * Переписка как запись журнала — для действий свайпа (performSwipe),
+ * как contactAsGroup в контактах. Номер один — номер переписки: звонок
+ * и мессенджер идут на него, без выбора среди номеров контакта.
+ */
+private fun threadAsGroup(address: String, contact: Contact?): CallLogGroup {
+    val e164 = PhoneFormatter.toE164(address).ifBlank { address }
+    return CallLogGroup(
+        key = contact?.let { "contact:${it.id}" } ?: "number:$e164",
+        lastCallId = -1,
+        number = address,
+        e164 = e164,
+        displayName = contact?.displayName,
+        photoUri = contact?.photoUri,
+        contactId = contact?.id,
+        lastType = CallType.INCOMING,
+        lastDate = 0, durationSec = 0, count = 0,
+        incomingCount = 0, outgoingCount = 0, missedCount = 0, rejectedCount = 0,
+        totalDurationSec = 0,
+        numbers = listOf(address),
+        subscriptionLabel = null, subscriptionId = null
     )
 }
 

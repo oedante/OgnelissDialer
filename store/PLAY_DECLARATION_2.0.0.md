@@ -53,7 +53,7 @@
 **Поле: «Describe your app's core functionality» / «Explain how your app uses the permissions»**
 
 ```text
-Ogneliss Dialer is a phone app (dialer, call log, contacts, in-call screen) that can also be the default SMS app. When the user sets it as the default SMS handler, it shows SMS/MMS conversations, receives SMS and MMS, sends messages and shows the user's messages in the call log alongside calls. All processing is on the device; the app has no INTERNET permission and sends no data to any server.
+Ogneliss Dialer is a phone app (dialer, call log, contacts, in-call screen) that can also be the default SMS app. When the user sets it as the default SMS handler, it shows SMS/MMS conversations in its SMS section, receives SMS and MMS and sends messages. All processing is on the device; the app has no INTERNET permission and sends no data to any server.
 ```
 (396 знаков)
 
@@ -68,7 +68,7 @@ Sends an SMS only when the user taps Send in a conversation, replies from a mess
 
 **READ_SMS**
 ```text
-Shows the user's SMS/MMS conversations and recent messages in the call log. Used only while the app is the default SMS handler; when the user picks another SMS app, the app stops reading messages immediately.
+Shows the user's SMS/MMS conversations in the app's SMS section. Used only while the app is the default SMS handler; when the user picks another SMS app, the app stops reading messages immediately.
 ```
 
 **RECEIVE_SMS**
@@ -106,16 +106,16 @@ Google просит короткое видео (обычно до 2 минут)
 3. **0:30** — входящее SMS → уведомление → «Ответить» из шторки.
 4. **0:45** — касание уведомления → переписка: история, отправка SMS,
    отправка картинки (MMS).
-5. **1:05** — журнал: SMS одной лентой со звонками, фильтр «Сообщения».
+5. **1:05** — раздел «SMS» на нижней панели: список переписок, свайп.
 6. **1:15** — SMS с кодом → «Копировать …» в уведомлении.
 7. **1:25** — входящий вызов → «Ответить сообщением» (`SEND_SMS`).
 8. **1:35** — Настройки Android → Приложения по умолчанию → SMS →
-   другое приложение. Вернуться в журнал: SMS исчезли (чтение
-   прекращено без роли).
+   другое приложение. Вернуться в раздел «SMS»: переписок нет, только
+   «Сделать приложением SMS» (чтение прекращено без роли).
 
 Подпись к видео в форме:
 ```text
-0:00 main phone features; 0:15 user sets the app as default SMS handler via the system dialog; 0:30 incoming SMS and reply from notification; 0:45 conversation, sending SMS and MMS; 1:05 messages in the call log; 1:15 copying a verification code; 1:25 reply with message on an incoming call; 1:35 user switches to another SMS app and the app stops showing messages.
+0:00 main phone features; 0:15 user sets the app as default SMS handler via the system dialog; 0:30 incoming SMS and reply from notification; 0:45 conversation, sending SMS and MMS; 1:05 the SMS section with conversations; 1:15 copying a verification code; 1:25 reply with message on an incoming call; 1:35 user switches to another SMS app and the app stops showing messages.
 ```
 
 ---

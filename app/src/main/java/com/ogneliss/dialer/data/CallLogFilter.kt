@@ -62,23 +62,16 @@ data class CallLogFilter(
      * ⚠️ Отклонённые сюда не входят. Звонок, который человек сбросил
      * сам, — это не забытое дело, а решение.
      */
-    val awaitingCallbackOnly: Boolean = false,
-    /**
-     * Что показывать (2.0.0): всё, только вызовы или только сообщения.
-     * Карточка подходит, если в ней есть хоть одно событие этого вида.
-     */
-    val kind: Kind = Kind.ALL
+    val awaitingCallbackOnly: Boolean = false
 ) {
 
     enum class Period { ALL, TODAY, WEEK, MONTH }
-
-    enum class Kind { ALL, CALLS, MESSAGES }
 
     /** Активен ли хоть один фильтр — от этого зависит вид кнопки сброса. */
     val isActive: Boolean
         get() = types.isNotEmpty() || simSlot != null ||
             period != Period.ALL || spamOnly || unknownOnly ||
-            withNoteOnly || withReminderOnly || awaitingCallbackOnly || kind != Kind.ALL
+            withNoteOnly || withReminderOnly || awaitingCallbackOnly
 
     /** Сколько условий выбрано — показывается на значке фильтра. */
     val activeCount: Int
@@ -90,8 +83,7 @@ data class CallLogFilter(
             unknownOnly,
             withNoteOnly,
             withReminderOnly,
-            awaitingCallbackOnly,
-            kind != Kind.ALL
+            awaitingCallbackOnly
         ).count { it }
 
     companion object {
@@ -154,12 +146,11 @@ data class CallLogFilter(
                  * пропустили.
                  */
                 val awaitingMatches = !filter.awaitingCallbackOnly || run {
-                    // Только вызовы: исходящее SMS (2.0.0) — не «перезвонил»
                     val lastMissed = group.entries
-                        .filter { it.type == CallType.MISSED && !it.isMessage }
+                        .filter { it.type == CallType.MISSED }
                         .maxOfOrNull { it.date }
                     val lastOutgoing = group.entries
-                        .filter { it.type == CallType.OUTGOING && !it.isMessage }
+                        .filter { it.type == CallType.OUTGOING }
                         .maxOfOrNull { it.date } ?: 0L
 
                     lastMissed != null && lastMissed > lastOutgoing
@@ -169,14 +160,8 @@ data class CallLogFilter(
                 val reminderMatches = !filter.withReminderOnly ||
                     group.e164 in remindedNumbers
 
-                val kindMatches = when (filter.kind) {
-                    Kind.ALL -> true
-                    Kind.CALLS -> group.entries.isEmpty() || group.entries.any { !it.isMessage }
-                    Kind.MESSAGES -> group.entries.any { it.isMessage }
-                }
-
                 typeMatches && simMatches && periodMatches && spamMatches &&
-                    unknownMatches && noteMatches && reminderMatches && awaitingMatches && kindMatches
+                    unknownMatches && noteMatches && reminderMatches && awaitingMatches
             }
         }
 

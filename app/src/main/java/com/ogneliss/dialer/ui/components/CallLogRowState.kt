@@ -129,16 +129,6 @@ data class CallLogRowState(
      */
     val signature: Int,
 
-    /**
-     * Последнее событие — сообщение (2.0.0): его текст под датой
-     * («Вы: …» у исходящего, «Фото» у MMS без текста). null — вызов.
-     */
-    val messageLine: String? = null,
-    /** Есть непрочитанные входящие — текст жирнее и темнее. */
-    val messageUnread: Boolean = false,
-    /** Сообщение не ушло — подпись красным. */
-    val messageFailed: Boolean = false,
-
     /** Исходная группа — нужна обработчикам действий. */
     val group: CallLogGroup
 )

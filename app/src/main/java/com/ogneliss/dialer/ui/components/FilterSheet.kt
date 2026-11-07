@@ -48,8 +48,6 @@ fun FilterSheet(
     onFilterChange: (CallLogFilter) -> Unit,
     /** Сколько записей проходит текущий отбор. */
     matchCount: Int = 0,
-    /** Показывать выбор «Вызовы / Сообщения» (2.0.0): SMS есть в журнале. */
-    showKind: Boolean = false,
     onDismiss: () -> Unit
 ) {
     /*
@@ -94,33 +92,6 @@ fun FilterSheet(
              * как в журнале»): скруглённая полоса с подписью, как «СЕГОДНЯ»
              * над записями, фишки — под ней на белой странице.
              */
-            /*
-             * Вызовы или сообщения (2.0.0) — только когда сообщения есть
-             * в журнале: без роли SMS переключатель был бы мёртвым.
-             */
-            if (showKind) {
-                FilterGroup(stringResource(R.string.filter_group_kind)) {
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
-                        CallLogFilter.Kind.entries.forEach { kind ->
-                            FilterChip(
-                                selected = filter.kind == kind,
-                                onClick = { onFilterChange(filter.copy(kind = kind)) },
-                                label = { Text(stringResource(kindLabel(kind))) },
-                                leadingIcon = if (filter.kind == kind) {
-                                    {
-                                        Icon(
-                                            OgnelissIcons.Check,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(FlowUi.iconSizeInline)
-                                        )
-                                    }
-                                } else null
-                            )
-                        }
-                    }
-                }
-            }
-
             FilterGroup(stringResource(R.string.filter_group_type)) {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
                     TypeChip(filter, CallType.MISSED, R.string.call_missed, onFilterChange)
@@ -394,12 +365,6 @@ private fun TypeChip(
         },
         label = { Text(stringResource(labelRes)) }
     )
-}
-
-private fun kindLabel(kind: CallLogFilter.Kind): Int = when (kind) {
-    CallLogFilter.Kind.ALL -> R.string.filter_kind_all
-    CallLogFilter.Kind.CALLS -> R.string.filter_kind_calls
-    CallLogFilter.Kind.MESSAGES -> R.string.filter_kind_messages
 }
 
 private fun periodLabel(period: CallLogFilter.Period): Int = when (period) {

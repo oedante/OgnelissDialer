@@ -995,10 +995,6 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="faq_a_scam">Si un appel avec un numéro inconnu dure plus de deux minutes, l’écran d’appel rappelle une fois : ne communiquez jamais de codes SMS, de données de carte ni de mots de passe. L’application n’écoute pas l’appel et ne sait pas qui est au bout du fil — la règle vaut pour tout appel. Pour le désactiver : %1$s.</string>
 
     <!-- Сообщения (2.0.0) -->
-    <string name="filter_group_kind">Afficher</string>
-    <string name="filter_kind_all">Appels et messages</string>
-    <string name="filter_kind_calls">Appels</string>
-    <string name="filter_kind_messages">Messages</string>
     <string name="sms_attach_picture">Ajouter une image</string>
     <string name="sms_channel">Messages</string>
     <string name="sms_channel_text">Nouveaux SMS et MMS</string>
@@ -1017,7 +1013,6 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="sms_empty_send_only">Écrivez le premier message. L\'historique apparaît lorsque le composeur est votre appli SMS par défaut.</string>
     <string name="sms_mark_read">Marquer comme lu</string>
     <string name="sms_me">Vous</string>
-    <string name="sms_message">message</string>
     <string name="sms_message_actions">Actions sur le message</string>
     <string name="sms_mms">MMS</string>
     <string name="sms_open_card">Ouvrir la fiche</string>
@@ -1037,11 +1032,9 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="sms_you">Vous : %1$s</string>
     <string name="settings_group_messages">Messages</string>
     <string name="settings_sms_default_app">Appli SMS par défaut</string>
-    <string name="settings_sms_default_app_text">Conversations, SMS et MMS reçus dans le composeur ; messages dans le journal</string>
+    <string name="settings_sms_default_app_text">Conversations, SMS et MMS reçus dans la section SMS du composeur</string>
     <string name="settings_sms_in_app">Écrire les SMS dans le composeur</string>
     <string name="settings_sms_in_app_text">Les boutons « Message » ouvrent la conversation ici plutôt que dans l\'appli de messagerie (le composeur doit être l\'appli Téléphone par défaut)</string>
-    <string name="settings_sms_in_journal">Messages dans le journal</string>
-    <string name="settings_sms_in_journal_text">SMS et MMS dans le même fil que les appels, avec un filtre appels/messages</string>
     <string name="settings_sms_delivery_reports">Accusés de réception</string>
     <string name="settings_sms_delivery_reports_text">Demander au réseau de confirmer la distribution. Certains opérateurs la facturent</string>
     <string name="keywords_sms">sms mms message texte conversation chat code mot de passe défaut</string>
@@ -1049,7 +1042,7 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <!-- Вопросы о сообщениях (2.0.0) -->
     <string name="faq_section_messages">Messages</string>
     <string name="faq_q_sms">Puis-je envoyer et recevoir des SMS dans le composeur ?</string>
-    <string name="faq_a_sms">Oui, si vous le souhaitez. Pour écrire : les boutons « Message » ouvrent la conversation ici même (%1$s) — le composeur doit alors être votre appli Téléphone par défaut. Pour recevoir, voir l\'historique et envoyer des images (MMS), le composeur doit être votre appli SMS par défaut (%2$s). Les messages apparaissent alors dans le journal avec les appels, et le filtre du journal affiche seulement les appels ou seulement les messages. Pour revenir en arrière, choisissez une autre appli SMS à tout moment : le composeur cesse aussitôt de lire les messages. Les discussions RCS ne sont pas accessibles aux applis tierces.</string>
+    <string name="faq_a_sms">Oui, si vous le souhaitez. Pour écrire : les boutons « Message » ouvrent la conversation ici même (%1$s) — le composeur doit alors être votre appli Téléphone par défaut. Pour recevoir, voir l\'historique et envoyer des images (MMS), le composeur doit être votre appli SMS par défaut (%2$s). Les conversations se trouvent dans la section « SMS » de la barre du bas, avec les mêmes balayages que dans le journal ; le journal reste réservé aux appels. Pour revenir en arrière, choisissez une autre appli SMS à tout moment : le composeur cesse aussitôt de lire les messages. Les discussions RCS ne sont pas accessibles aux applis tierces.</string>
     <string name="faq_q_codes">Comment coller un code reçu par SMS ?</string>
     <string name="faq_a_codes">Quand un message contient un code de vérification, la notification affiche un bouton « Copier 123456 », et la conversation montre le même bouton sous le message. Le code est placé dans le presse-papiers en tant que donnée sensible, et votre clavier propose de le coller d\'une touche. Le remplissage automatique dans une autre appli est assuré par votre clavier ou votre service de saisie automatique (par exemple Gboard ou la saisie automatique Google) — cela continue de fonctionner avec le composeur comme appli SMS. Le code est détecté sur le téléphone : le composeur n\'a pas accès à Internet. Un appui long sur un message permet de copier tout le texte, un numéro qu\'il contient ou d\'en sélectionner une partie.</string>
 

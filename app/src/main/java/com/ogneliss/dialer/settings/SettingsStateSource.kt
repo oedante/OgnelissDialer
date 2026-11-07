@@ -162,10 +162,9 @@ class SettingsStateSource @Inject constructor(
     /** Сообщения (2.0.0). */
     private val sms: Flow<Sms> = combine(
         prefs.smsInApp,
-        prefs.smsInJournal,
         prefs.smsDeliveryReports
-    ) { inApp, inJournal, reports ->
-        Sms(inApp, inJournal, reports)
+    ) { inApp, reports ->
+        Sms(inApp, reports)
     }
 
     /**
@@ -239,7 +238,6 @@ class SettingsStateSource @Inject constructor(
             scamMemo = h.scamMemo,
 
             smsInApp = m.inApp,
-            smsInJournal = m.inJournal,
             smsDeliveryReports = m.deliveryReports,
 
             fileLogging = true
@@ -315,7 +313,6 @@ class SettingsStateSource @Inject constructor(
 
     private data class Sms(
         val inApp: Boolean,
-        val inJournal: Boolean,
         val deliveryReports: Boolean
     )
 

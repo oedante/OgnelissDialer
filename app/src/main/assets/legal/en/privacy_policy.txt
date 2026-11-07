@@ -33,8 +33,8 @@ Contacts — to match names and photos to numbers, T9 search. No.
 SIM card state — to detect active cards and choose one for a call. No.
 Notes and tags you create — stored in the app database. No.
 Block and allow lists — call filtering. No.
-SMS and MMS* — conversations and messages in the call log, sending your
-messages, copying codes. No**.
+SMS and MMS* — conversations in the SMS section, sending your messages,
+copying codes. No**.
 
 None of this data is transmitted anywhere. There is no server, no
 analytics, no advertising identifiers, no crash reporting service.

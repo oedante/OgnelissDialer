@@ -2254,8 +2254,6 @@ fun MainDialerScreen(
              */
             matchCount = list.size,
             simCount = state.sims.size,
-            showKind = state.callLog.any { it.lastMessage != null } ||
-                activeFilter.kind != com.ogneliss.dialer.data.CallLogFilter.Kind.ALL,
             onFilterChange = { vm.setFilter(it) },
             onDismiss = { filtersOpen = false }
         )
