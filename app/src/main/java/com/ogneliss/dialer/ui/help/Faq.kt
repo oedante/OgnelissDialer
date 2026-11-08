@@ -159,9 +159,9 @@ object Faq {
         FaqSection(
             R.string.faq_section_messages,
             listOf(
+                // 2.1.0: «Писать SMS в диалере» убран — одна ссылка, на роль SMS
                 FaqItem(
                     "sms", R.string.faq_q_sms, R.string.faq_a_sms,
-                    // 2.1.0: «Писать SMS в диалере» убран — одна ссылка, на роль SMS
                     listOf(FaqLink.Setting("sms_default_app"))
                 ),
                 FaqItem("codes", R.string.faq_q_codes, R.string.faq_a_codes)

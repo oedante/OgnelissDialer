@@ -455,8 +455,9 @@ class MainActivity : ComponentActivity() {
                 com.ogneliss.dialer.log.Logger.i("SmsRole", "Роль SMS без просьбы человека не выдана — пропущено")
             !granted -> roleHelp = com.ogneliss.dialer.util.RoleAccess.helpAfterDenied(this)
             smsRequest -> {
-                // Канал «Сообщения» — сразу, до первого SMS (SmsHealth)
-                com.ogneliss.dialer.sms.SmsHealth.onRoleGranted(this)
+                // Канал «Сообщения» — сразу, до первого SMS (SmsHealth). Проверка роли:
+                // код 4202 занят ещё и окном роли определителя (call/ScreeningRoleInfo)
+                if (com.ogneliss.dialer.sms.SmsRole.isDefault(this)) com.ogneliss.dialer.sms.SmsHealth.onRoleGranted(this)
                 // Приложение SMS без уведомлений — входящие пришли бы молча
                 if (com.ogneliss.dialer.sms.SmsRole.needsNotificationPermission(this)) {
                     requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), NOTIFICATIONS_REQUEST)

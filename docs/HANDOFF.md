@@ -339,6 +339,9 @@ MessageNotifications, OtpDetector), `ui/conversation/`, `ui/RootScreen.kt` (ма
 | Подпись раздела, линия между строками, карточка группы | `ui/components/OgnelissPanel.kt` (`SectionBand`, `RowDivider`, `OgnelissCard`) |
 | Свайпы: строка, панели, действия | `ui/components/swipe/*`, `DialerViewModel.handleSwipe / revealActionsFor` |
 | Свайпы и закреплённые раздела SMS (свои) | `Prefs.smsSwipe*`, `Prefs.smsPinned`, `sms/SmsPins.kt`, `ui/conversation/MessagesScreen.kt` (2.1.0) |
+| Роль SMS сама (не при RCS), «Написать» без роли — в приложение SMS | `SmsRole.autoOfferAllowed`, `composeTarget`, `handOff` (2.1.0) |
+| Доходят ли SMS: уведомления, автозапуск MIUI — полоса | `sms/SmsHealth.kt` (`problem`, `fix`), `ui/conversation/MessagesParts.kt` (2.1.0) |
+| MMS: не скачалось — повторы и «Загрузить» | `sms/MmsDownloads.kt`, `MmsRetryJob` (2.1.0) |
 | Цвета SIM | `ui/theme/SimColors.kt`, `SimBadge` (`NumberPickerSheet.kt`) (2.1.0) |
 | Можно ли звонить и писать (серые кнопки) | `util/CallAvailability.kt`, `LocalCallAvailability` в `RootScreen` (2.1.0) |
 | Выбор действий свайпа (до 3) | `ui/screens/SwipeActionsDialog.kt` |
