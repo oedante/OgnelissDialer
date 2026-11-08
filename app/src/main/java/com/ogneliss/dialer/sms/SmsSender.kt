@@ -138,8 +138,14 @@ object SmsSender {
                     if (!ok) Logger.w(TAG, "SMS не отправлено: код $resultCode, часть ${part + 1} из $parts")
                     if (uri == null) return
                     if (!ok) {
+                        /*
+                         * Одно уведомление на сообщение (2.1.0): было — на каждую
+                         * неотправленную часть, у длинного SMS — по три подряд.
+                         * Уже «не отправлено» — значит, о нём сказала прежняя часть.
+                         */
+                        val already = MessageStore.smsType(context, uri) == MessageStore.SMS_FAILED
                         MessageStore.updateSms(context, uri, type = MessageStore.SMS_FAILED, errorCode = resultCode)
-                        MessageNotifications.sendFailed(context, intent.getStringExtra(EXTRA_ADDRESS))
+                        if (!already) MessageNotifications.sendFailed(context, intent.getStringExtra(EXTRA_ADDRESS))
                     } else if (part == parts - 1 && MessageStore.smsType(context, uri) != MessageStore.SMS_FAILED) {
                         MessageStore.updateSms(context, uri, type = MessageStore.SMS_SENT)
                     }
