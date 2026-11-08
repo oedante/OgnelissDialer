@@ -72,14 +72,6 @@ internal object IncomingScreen {
     private const val SCREEN_ON_RECHECK_MS = 700L
 
     /**
-     * Плашка входящего (настройка «Входящий поверх приложений») без ответа
-     * так долго — открываем экран вызова целиком (2.1.0): плашку на части
-     * прошивок убирает в шторку через несколько секунд, и ответить быстро
-     * становится нечем.
-     */
-    const val BANNER_TIMEOUT_MS = 7_000L
-
-    /**
      * Ушли с экрана вызова так недавно — приложение, открывшееся следом,
      * экран вызова не возвращает: человек ушёл сам («Назад»). Вернуться —
      * полосой «Вернуться к вызову».
@@ -247,20 +239,11 @@ internal object IncomingScreen {
             notificationsEnabled = NotificationManagerCompat.from(context).areNotificationsEnabled(),
             channelImportance = importance,
             interruptionFilterAll = nm.currentInterruptionFilter == NotificationManager.INTERRUPTION_FILTER_ALL,
-            headsUpOn = headsUp
+            headsUpOn = headsUp,
+            fullScreenAllowed = IncomingCallAccess.fullScreenAllowed(context)
         )
         if (!allowed) Logger.i(TAG, "Плашка входящего здесь может не всплыть (важность $importance, всплытие $headsUp) — экран вызова целиком")
         return allowed
-    }
-
-    /**
-     * Плашка звонит [BANNER_TIMEOUT_MS] без ответа: пора открыть экран
-     * вызова. true — открыть; режим плашки на этом заканчивается.
-     */
-    fun bannerExpired(call: Call): Boolean {
-        if (!bannerOnly || ringing() != call || visible) return false
-        bannerOnly = false
-        return true
     }
 
     /**
@@ -422,7 +405,30 @@ internal object IncomingScreen {
      */
     private fun onScreenOn(context: Context) {
         val call = ringing() ?: return
-        if (visible || bannerOnly || call in quietCalls) return
+        if (visible || call in quietCalls) return
+        /*
+         * ПЛАШКА ПЕРЕЖИЛА ПОГАСШИЙ ЭКРАН (2.1.0).
+         *
+         * Плашка держится, пока звонит, — но пока телефоном пользуются.
+         * Экран погас (кнопкой — она и глушит звонок, или сам) — плашка ушла
+         * в шторку, а при включении система её не возвращает. Включили, пока
+         * звонит, — экран вызова целиком, как на блокировке: ответить можно
+         * сразу. Было: 7 с без ответа — экран вызова, даже когда человек
+         * видел плашку и сознательно не отвечал.
+         */
+        if (bannerOnly) {
+            bannerOnly = false
+            Logger.i(TAG, "Экран включили, пока звонит плашка, — экран вызова целиком")
+            val opened = runCatching {
+                context.startActivity(
+                    Intent(context, InCallActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                )
+            }.onFailure { Logger.w(TAG, "Экран вызова не открылся", it) }.isSuccess
+            if (opened) main.postDelayed({ checkShown(context) }, SHOW_TIMEOUT_MS)
+            else checkShown(context)
+            return
+        }
         if (!everShown) checkShown(context)
         else if (!alerting) notify(context, call, alert = true)
     }

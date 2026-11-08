@@ -12,7 +12,10 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import com.ogneliss.dialer.util.PhoneFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -39,6 +42,8 @@ class OgnelissInCallService : InCallService() {
     /** Метка для лога при неудачном показе уведомления. Не интерфейсная строка. */
     private companion object {
         const val TAG = "InCallService"
+        /** Дольше настройку плашки при первом вызове не ждём (incomingBannerWanted). */
+        const val BANNER_PREF_WAIT_MS = 250L
         const val WHAT_INCOMING = "показ уведомления о входящем"
 
         /**
@@ -87,7 +92,9 @@ class OgnelissInCallService : InCallService() {
     /** Настройка «Предлагать напоминание после сброса» — копия, как у автодозвона. */
     @Volatile private var callbackSuggestionOn = true
     /** «Входящий плашкой сверху», когда телефоном пользуются (2.1.0, Prefs.incomingBanner). */
-    @Volatile private var incomingBannerOn = false
+    @Volatile private var incomingBannerOn = true
+    /** Значение плашки уже пришло из настроек — до того решает [incomingBannerWanted]. */
+    @Volatile private var incomingBannerKnown = false
 
     override fun onCreate() {
         super.onCreate()
@@ -102,7 +109,12 @@ class OgnelissInCallService : InCallService() {
             }.collect { AutoRedial.config = it }
         }
         serviceScope.launch { prefs.callbackSuggestion.collect { callbackSuggestionOn = it } }
-        serviceScope.launch { prefs.incomingBanner.collect { incomingBannerOn = it } }
+        serviceScope.launch {
+            prefs.incomingBanner.collect {
+                incomingBannerOn = it
+                incomingBannerKnown = true
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -303,20 +315,15 @@ class OgnelissInCallService : InCallService() {
          * нечем.
          *
          * Безопасно само (2.1.0): плашка — только где она наверняка всплывёт
-         * (IncomingScreen.bannerSafe), а не ответили за 7 с — открывается
-         * экран вызова целиком.
+         * и продержится, пока звонит (IncomingScreen.bannerSafe). Включена
+         * по умолчанию (автор, 08.11.2026): так ведут себя стандартные
+         * звонилки. Экран погас и его включили, пока звонит, — экран вызова
+         * целиком (IncomingScreen.onScreenOn).
          */
-        if (incomingBannerOn && !screenOff && !locked && IncomingScreen.bannerSafe(this)) {
+        if (!screenOff && !locked && incomingBannerWanted() && IncomingScreen.bannerSafe(this)) {
             Logger.i(TAG, "Входящий: плашкой сверху (настройка)")
             IncomingScreen.bannerOnly = true
             IncomingScreen.notify(this, call, alert = true)
-            serviceScope.launch {
-                delay(IncomingScreen.BANNER_TIMEOUT_MS)
-                if (IncomingScreen.bannerExpired(call)) {
-                    Logger.i(TAG, "Плашка без ответа 7 с — открываю экран вызова")
-                    if (openCallScreen()) watchCallScreen()
-                }
-            }
             return
         }
         IncomingScreen.bannerOnly = false
@@ -360,6 +367,23 @@ class OgnelissInCallService : InCallService() {
     }
 
     /** Открыть экран вызова; false — запуск бросил ошибку (она в журнале). */
+    /*
+     * НАСТРОЙКА ПЛАШКИ — ВЫБОР ЧЕЛОВЕКА, А НЕ НАЧАЛЬНАЯ КОПИЯ (2.1.0).
+     *
+     * Система создаёт службу вызовов вместе с первым вызовом, и onCallAdded
+     * приходит раньше, чем DataStore отдаёт значение: решала бы начальная
+     * копия, и выключенная плашка нет-нет да появлялась бы. Пока значения
+     * нет — ждём его, но не дольше BANNER_PREF_WAIT_MS (обычно это единицы
+     * миллисекунд); не дождались — значение по умолчанию.
+     */
+    private fun incomingBannerWanted(): Boolean {
+        if (incomingBannerKnown) return incomingBannerOn
+        return runCatching {
+            runBlocking { withTimeoutOrNull(BANNER_PREF_WAIT_MS) { prefs.incomingBanner.first() } }
+        }.onFailure { Logger.w(TAG, "Настройка плашки не прочиталась", it) }
+            .getOrNull() ?: incomingBannerOn
+    }
+
     private fun openCallScreen(): Boolean = runCatching {
         startActivity(
             Intent(this, InCallActivity::class.java)

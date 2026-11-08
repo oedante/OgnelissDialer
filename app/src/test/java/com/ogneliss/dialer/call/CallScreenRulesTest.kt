@@ -66,6 +66,8 @@ class CallScreenRulesTest {
         assertFalse(CallScreenRules.incomingBannerAllowed(false, true, android.app.NotificationManager.IMPORTANCE_DEFAULT, true, true))
         assertFalse(CallScreenRules.incomingBannerAllowed(false, true, high, false, true))
         assertFalse(CallScreenRules.incomingBannerAllowed(false, true, high, true, false))
+        // Полноэкранные отняты (Android 14+): плашка не держится — экран вызова целиком
+        assertFalse(CallScreenRules.incomingBannerAllowed(false, true, high, true, true, fullScreenAllowed = false))
     }
 
     @Test

@@ -17,8 +17,13 @@
     произвольную разметку Splash Screen API не принимает.
 -->
 <resources>
-    <style name="Theme.Ogneliss.Splash" parent="Theme.SplashScreen">
+    <!--
+      Theme.SplashScreen.IconBackground (2.1.0): подложка под значком —
+      светлый круг в тёмной теме (values-night/splash_colors.xml).
+    -->
+    <style name="Theme.Ogneliss.Splash" parent="Theme.SplashScreen.IconBackground">
         <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenIconBackgroundColor">@color/splash_icon_background</item>
         <!--
           Растровый логотип вместо вектора.
 

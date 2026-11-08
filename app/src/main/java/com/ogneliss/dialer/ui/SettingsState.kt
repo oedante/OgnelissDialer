@@ -81,7 +81,7 @@ data class SettingsState(
     val dialpadOpenAtStart: Boolean = false,
     val callbackSuggestion: Boolean = true,
     /** Входящий плашкой сверху, когда телефоном пользуются (2.1.0). */
-    val incomingBanner: Boolean = false,
+    val incomingBanner: Boolean = true,
     val simLabels: Map<Int, String> = emptyMap(),
     /** Экран после звонка выключен по умолчанию — см. пояснение в Prefs. */
     val postCallEnabled: Boolean = false,

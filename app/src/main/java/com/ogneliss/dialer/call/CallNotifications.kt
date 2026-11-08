@@ -135,14 +135,18 @@ object CallNotifications {
         callerName: String,
         number: String?,
         alert: Boolean,
-        text: String = context.getString(R.string.incall_incoming)
+        text: String = context.getString(R.string.incall_incoming),
+        /** Фото и тип номера из книги (2.1.0, CallerCard); null — ещё не загружены или нет. */
+        card: CallerCard.Info? = null
     ): Notification {
         val open = pending(context, InCallActivity::class.java, 0)
-        val person = caller(callerName, number)
+        val person = caller(callerName, number, card)
         val builder = NotificationCompat.Builder(context, if (alert) CHANNEL_INCOMING else CHANNEL_ONGOING)
             .setSmallIcon(R.drawable.ic_call)
             .setContentTitle(callerName)
-            .setContentText(text)
+            // «Мобильный · Входящий вызов» — тип номера, как в стандартных звонилках (2.1.0)
+            .setContentText(listOfNotNull(card?.typeLabel, text).joinToString(" · "))
+            .apply { card?.photo?.let { setLargeIcon(it) } }
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setOngoing(true)
             // Повторная постановка того же уведомления (пересборка, второй
@@ -183,8 +187,8 @@ object CallNotifications {
      * защищают. Кнопки «Ответить» и «Отклонить» остаются: кто не спит
      * и смотрит в телефон, ответит из шторки.
      */
-    fun quietIncoming(context: Context, callerName: String, number: String?): Notification =
-        incoming(context, callerName, number, alert = false, text = context.getString(R.string.quiet_call_notification))
+    fun quietIncoming(context: Context, callerName: String, number: String?, card: CallerCard.Info? = null): Notification =
+        incoming(context, callerName, number, alert = false, text = context.getString(R.string.quiet_call_notification), card = card)
 
     /*
      * ЗВОНЯЩИЙ В УВЕДОМЛЕНИИ — С НОМЕРОМ (2.1.0).
@@ -195,21 +199,31 @@ object CallNotifications {
      * без него наш входящий скрывался даже для разрешённых. Стало: адрес
      * tel: в E.164, «важный» и addPerson — как у системного диалера.
      */
-    private fun caller(callerName: String, number: String?): androidx.core.app.Person {
+    private fun caller(callerName: String, number: String?, card: CallerCard.Info? = null): androidx.core.app.Person {
         val e164 = number?.let { com.ogneliss.dialer.util.PhoneFormatter.toE164(it) }?.takeIf { it.isNotBlank() }
         return androidx.core.app.Person.Builder()
             .setName(callerName)
+            // Фото контакта (2.1.0): CallStyle рисует его кругом на плашке и в шторке
+            .apply { card?.photo?.let { setIcon(androidx.core.graphics.drawable.IconCompat.createWithBitmap(it)) } }
             .apply { if (e164 != null) setUri(android.net.Uri.fromParts("tel", e164, null).toString()) }
             .setImportant(true)
             .build()
     }
 
-    fun ongoing(context: Context, callerName: String, number: String?, startedAt: Long): Notification {
-        val person = caller(callerName, number)
+    fun ongoing(
+        context: Context,
+        callerName: String,
+        number: String?,
+        startedAt: Long,
+        card: CallerCard.Info? = null
+    ): Notification {
+        val person = caller(callerName, number, card)
         val builder = NotificationCompat.Builder(context, CHANNEL_ONGOING)
             .setSmallIcon(R.drawable.ic_call)
             .setContentTitle(callerName)
             .setContentText(context.getString(R.string.incall_ongoing))
+            // Фото звонящего (2.1.0): до Android 12 — справа; с 12 — кругом CallStyle
+            .apply { card?.photo?.let { setLargeIcon(it) } }
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setOngoing(true)
             .setUsesChronometer(true)

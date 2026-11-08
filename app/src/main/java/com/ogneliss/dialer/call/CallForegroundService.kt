@@ -169,19 +169,46 @@ class CallForegroundService : Service() {
          * состоянию: пока звонит — входящее с кнопками (всплывающее или
          * тихое, 2.1.0), при разговоре — обычное.
          */
+        lastIntent = intent
+        val (id, notification) = build(intent, name, number, CallerCard.cached(number))
+        showForeground(id, notification)
+        /*
+         * Фото и тип номера (2.1.0, CallerCard): уведомление уже на экране,
+         * фото подставляется, когда загрузится, — тем же номером уведомления
+         * и только если служба всё ещё ведёт этот же звонок.
+         */
+        if (CallerCard.cached(number) == null) {
+            CallerCard.load(this, number) { card ->
+                val current = lastIntent
+                if (!alive || current?.getStringExtra(EXTRA_NUMBER) != number) return@load
+                val currentName = current?.getStringExtra("name") ?: name
+                val (id2, updated) = build(current, currentName, number, card)
+                showForeground(id2, updated)
+            }
+        }
+        return START_NOT_STICKY
+    }
+
+    /** Последняя команда — по ней уведомление пересобирается, когда загрузится фото (2.1.0). */
+    @Volatile private var lastIntent: Intent? = null
+    @Volatile private var alive = true
+
+    /** Уведомление по команде [intent] и номер, под которым его показать. */
+    private fun build(intent: Intent?, name: String, number: String?, card: CallerCard.Info?): Pair<Int, Notification> {
         val incoming = intent?.getBooleanExtra(EXTRA_INCOMING, false) == true
         val alert = intent?.getBooleanExtra(EXTRA_ALERT, false) == true
         val quiet = intent?.getBooleanExtra(EXTRA_QUIET, false) == true
 
         val notification = runCatching {
             when {
-                incoming && quiet -> CallNotifications.quietIncoming(this, name, number)
-                incoming -> CallNotifications.incoming(this, name, number, alert)
+                incoming && quiet -> CallNotifications.quietIncoming(this, name, number, card)
+                incoming -> CallNotifications.incoming(this, name, number, alert, card = card)
                 else -> {
                     val connectedAt = intent?.getLongExtra(EXTRA_CONNECTED_AT, 0L) ?: 0L
                     CallNotifications.ongoing(
                         this, name, number,
-                        connectedAt.takeIf { it > 0L } ?: System.currentTimeMillis()
+                        connectedAt.takeIf { it > 0L } ?: System.currentTimeMillis(),
+                        card
                     )
                 }
             }
@@ -192,8 +219,7 @@ class CallForegroundService : Service() {
         // Всплывающее входящее — под своим номером: система видит новое
         // уведомление и запускает полноэкранный показ (CallNotifications.ID_INCOMING)
         val id = if (incoming && alert && !quiet) CallNotifications.ID_INCOMING else CallNotifications.ID_ONGOING
-        showForeground(id, notification)
-        return START_NOT_STICKY
+        return id to notification
     }
 
     /*
@@ -223,6 +249,8 @@ class CallForegroundService : Service() {
      * через startForegroundService, даже если её тут же останавливают.
      */
     private fun stopNow(startId: Int) {
+        // Фото, загрузившееся после остановки, уведомление не возвращает
+        lastIntent = null
         if (!inForeground) {
             showForeground(CallNotifications.ID_ONGOING, fallbackNotification(getString(com.ogneliss.dialer.R.string.incall_ongoing)))
         }
@@ -243,6 +271,7 @@ class CallForegroundService : Service() {
             .build()
 
     override fun onDestroy() {
+        alive = false
         requested = false
         inForeground = false
         super.onDestroy()

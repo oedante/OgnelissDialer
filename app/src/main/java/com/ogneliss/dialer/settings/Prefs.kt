@@ -935,12 +935,17 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         data.map { it[Keys.DIALPAD_OPEN_AT_START] ?: false }
 
     /**
-     * ВХОДЯЩИЙ ПЛАШКОЙ СВЕРХУ (2.1.0). Выключено — как было: входящий
-     * открывает экран вызова на весь экран. Включено — пока телефон
-     * разблокирован и экран горит, входящий — плашкой с «Ответить» и
-     * «Отклонить» поверх того, чем человек занят (OgnelissInCallService).
+     * ВХОДЯЩИЙ ПЛАШКОЙ СВЕРХУ (2.1.0). Включено — пока телефон
+     * разблокирован и экран горит, входящий — плашкой с фото, «Ответить»
+     * и «Отклонить» поверх того, чем человек занят (OgnelissInCallService).
+     * Выключено — входящий всегда открывает экран вызова на весь экран.
+     *
+     * По умолчанию ВКЛЮЧЕНО (автор, 08.11.2026, после вопроса тестировщика):
+     * так ведут себя стандартные звонилки. Где плашка может не всплыть или
+     * не продержаться (IncomingScreen.bannerSafe) — экран вызова целиком
+     * и при включённой настройке.
      */
-    val incomingBanner: Flow<Boolean> = data.map { it[Keys.INCOMING_BANNER] ?: false }
+    val incomingBanner: Flow<Boolean> = data.map { it[Keys.INCOMING_BANNER] ?: true }
 
     suspend fun setIncomingBanner(v: Boolean) = edit("incoming_banner", v) { it[Keys.INCOMING_BANNER] = v }
 

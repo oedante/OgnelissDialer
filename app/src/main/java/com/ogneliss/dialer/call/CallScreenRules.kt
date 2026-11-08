@@ -72,16 +72,21 @@ internal object CallScreenRules {
      * @param channelImportance важность канала входящих (NotificationManager.IMPORTANCE_*)
      * @param interruptionFilterAll «Не беспокоить» выключен
      * @param headsUpOn всплывающие уведомления не отключены в системе
+     * @param fullScreenAllowed полноэкранные уведомления разрешены (Android 14+
+     *        их можно отнять). Плашка вызова с полноэкранной частью держится,
+     *        пока звонит; без неё система убирает плашку в шторку через
+     *        несколько секунд — и ответить быстро нечем.
      */
     fun incomingBannerAllowed(
         restrictiveShell: Boolean,
         notificationsEnabled: Boolean,
         channelImportance: Int,
         interruptionFilterAll: Boolean,
-        headsUpOn: Boolean
+        headsUpOn: Boolean,
+        fullScreenAllowed: Boolean = true
     ): Boolean = !restrictiveShell && notificationsEnabled &&
         channelImportance >= android.app.NotificationManager.IMPORTANCE_HIGH &&
-        interruptionFilterAll && headsUpOn
+        interruptionFilterAll && headsUpOn && fullScreenAllowed
 
     /**
      * ИСХОДЯЩИЙ ПО СОСТОЯНИЮ — ANDROID 8–9 (2.1.0).
