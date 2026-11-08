@@ -38,8 +38,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -118,7 +116,6 @@ fun ContactEditScreen(
     val state by vm.state.collectAsStateWithLifecycle()
     val cropSource by vm.cropSource.collectAsStateWithLifecycle()
     val familyFirst by vm.familyFirst.collectAsStateWithLifecycle()
-    val snackbar = remember { SnackbarHostState() }
 
     var confirmDiscard by rememberSaveable { mutableStateOf(false) }
     var menuOpen by rememberSaveable { mutableStateOf(false) }
@@ -127,19 +124,36 @@ fun ContactEditScreen(
     // Выбор типа: ключ строки и вид — телефон или почта
     var typeSheet by remember { mutableStateOf<Pair<Long, Boolean>?>(null) }
 
-    val messages = mapOf(
-        ContactEditViewModel.Event.Failed to stringResource(R.string.contact_edit_failed),
-        ContactEditViewModel.Event.Empty to stringResource(R.string.contact_edit_empty),
-        ContactEditViewModel.Event.NoPermission to stringResource(R.string.contact_edit_no_permission),
-        ContactEditViewModel.Event.PhotoUnreadable to stringResource(R.string.contact_edit_photo_failed)
-    )
+    /*
+     * 2.1.0 (правило автора 07.11.2026): сообщений внизу экрана нет.
+     * Нет разрешения на запись — системный запрос; отказ — черновик
+     * уходит в системные «Контакты» (разбор у ContactEditViewModel.Event).
+     */
+    val askWrite = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        vm.writePermissionResult(granted)
+    }
     LaunchedEffect(Unit) {
         vm.events.collect { event ->
             when (event) {
                 is ContactEditViewModel.Event.Saved -> onSaved(event.contactId)
                 ContactEditViewModel.Event.OpenedInSystem -> onClose()
-                else -> messages[event]?.let { snackbar.showSnackbar(it) }
+                ContactEditViewModel.Event.AskWritePermission ->
+                    askWrite.launch(android.Manifest.permission.WRITE_CONTACTS)
             }
+        }
+    }
+
+    /*
+     * Контакта нет (удалили, пока открывался) — редактор закрывается сам;
+     * менять здесь нечего (только мессенджеры или SIM) — сразу системные
+     * «Контакты» с этим контактом. Было (1.7.0–2.0.x): текст «Контакт
+     * не найден» и «Хранится в …, измените там» с кнопкой.
+     */
+    val readOnly = state.loaded?.editable == false
+    LaunchedEffect(state.notFound, readOnly) {
+        when {
+            state.notFound -> onClose()
+            readOnly -> vm.openInSystem()
         }
     }
 
@@ -155,14 +169,16 @@ fun ContactEditScreen(
         onBack = tryClose,
         tone = PageTone.TINTED,
         pinnedTopBar = true,
-        snackbarHost = { SnackbarHost(snackbar) },
         actions = {
             val editable = vm.isNew || state.loaded?.editable == true
             if (editable && !state.loading) {
                 if (state.saving) {
                     CircularProgressIndicator(Modifier.padding(horizontal = Space.l).size(24.dp), strokeWidth = 2.dp)
                 } else {
-                    TextButton(onClick = vm::save) { Text(stringResource(R.string.contact_edit_save)) }
+                    // Пусто — неактивна (2.1.0): разбор у UiState.canSave
+                    TextButton(onClick = vm::save, enabled = state.canSave) {
+                        Text(stringResource(R.string.contact_edit_save))
+                    }
                 }
             }
             if (!vm.isNew && !state.notFound) {
@@ -176,10 +192,8 @@ fun ContactEditScreen(
             state.loading -> Box(Modifier.padding(pad).fillMaxWidth().padding(Space.xxl), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
-            state.notFound -> Text(
-                stringResource(R.string.contact_edit_not_found),
-                modifier = Modifier.padding(pad).padding(FlowUi.groupInset + Space.l)
-            )
+            // Закрывается или уходит в системные «Контакты» — разбор выше
+            state.notFound || readOnly -> Unit
             else -> Column(
                 Modifier
                     .padding(pad)
@@ -197,30 +211,11 @@ fun ContactEditScreen(
                     AccountGroup(state.account, onClick = { accountSheet = true })
                 }
 
-                val loaded = state.loaded
-                if (loaded != null && !loaded.editable) {
-                    // Только мессенджеры или SIM — менять здесь нечего
-                    SettingsGroup {
-                        Text(
-                            stringResource(R.string.contact_edit_not_editable, loaded.readOnlySources.joinToString(", ")),
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(Space.l)
-                        )
-                        TextButton(onClick = vm::openInSystem, modifier = Modifier.padding(start = Space.s, bottom = Space.s)) {
-                            Text(stringResource(R.string.contact_edit_open_system))
-                        }
-                    }
-                    return@Column
-                }
-                if (loaded != null && loaded.readOnlySources.isNotEmpty()) {
-                    Text(
-                        stringResource(R.string.contact_edit_readonly, loaded.readOnlySources.joinToString(", ")),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = FlowUi.groupInset + Space.l, vertical = Space.s)
-                    )
-                }
-
+                /*
+                 * Строки «Часть сведений — из WhatsApp, они меняются там»
+                 * больше нет (2.1.0): пояснений не показываем; такие сведения
+                 * редактор и так не трогает (ContactEditModel.kt).
+                 */
                 NameGroup(state.draft, familyFirst) { change -> vm.edit(change) }
                 ValuesGroup(
                     title = stringResource(R.string.contact_edit_group_phones),
@@ -264,7 +259,7 @@ fun ContactEditScreen(
                     OutlinedTextField(
                         value = state.draft.note,
                         onValueChange = { v -> vm.edit { it.copy(note = v) } },
-                        placeholder = { Text(stringResource(R.string.contact_edit_note_hint)) },
+                        // Подсказки «Хранится в книге — её видят и другие приложения» нет с 2.1.0
                         shape = MaterialTheme.shapes.large,
                         minLines = 3,
                         keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
@@ -439,9 +434,10 @@ private fun PhotoBlock(state: ContactEditViewModel.UiState, onPick: () -> Unit, 
  * не берётся (это удаление и создание заново — с потерей истории
  * в других приложениях).
  *
- * Под названием аккаунта — чем выбор обернётся: синхронизация и переезд
- * на новый телефон или «только здесь». Это главное, что нужно знать,
- * выбирая между Google и «Телефоном».
+ * 2.1.0: под названием аккаунта больше нет пояснения «синхронизируется
+ * и переедет на новый телефон» / «только на этом телефоне» — правило
+ * автора 07.11.2026, без пояснений; значок (облако-контакты или телефон)
+ * остался.
  */
 @Composable
 private fun AccountGroup(account: ContactAccount?, onClick: () -> Unit) {
@@ -460,17 +456,11 @@ private fun AccountGroup(account: ContactAccount?, onClick: () -> Unit) {
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(Modifier.width(Space.l))
-            Column(Modifier.weight(1f)) {
-                Text(account?.let { accountLabel(it) }.orEmpty(), style = MaterialTheme.typography.bodyLarge)
-                Text(
-                    stringResource(
-                        if (account?.kind == ContactAccount.Kind.DEVICE) R.string.contact_edit_account_device_hint
-                        else R.string.contact_edit_account_sync_hint
-                    ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+            Text(
+                account?.let { accountLabel(it) }.orEmpty(),
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f)
+            )
             Icon(OgnelissIcons.ExpandMore, contentDescription = null)
         }
     }

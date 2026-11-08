@@ -164,6 +164,17 @@ class SettingsRegistryTest {
     }
 
     @Test
+    fun `без Google Play нет пункта «Оценить», а «Версия» остаётся`() {
+        // 2.1.0: ссылка в магазин без магазина — мёртвая; «Версия»
+        // при этом ведёт в «О приложении» и пропасть не должна
+        val about = SettingsRegistry.byCategory(SettingsCategory.ABOUT)
+        val withoutPlay = SettingsRegistry.shown(about, fromGooglePlay = false).map { it.id }
+        assertTrue("rate_app" !in withoutPlay)
+        assertTrue("version" in withoutPlay)
+        assertEquals(about, SettingsRegistry.shown(about, fromGooglePlay = true))
+    }
+
+    @Test
     fun `опасные настройки имеют объяснение`() {
         val dangerous = SettingsRegistry.entries.filter { it.dangerous }
         assertTrue("Опасные настройки должны быть помечены", dangerous.isNotEmpty())

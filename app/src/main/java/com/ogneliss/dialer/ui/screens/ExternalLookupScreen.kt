@@ -16,7 +16,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.ogneliss.dialer.ui.components.OgnelissPanel
 import com.ogneliss.dialer.ui.components.OgnelissListRow
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.R
@@ -33,7 +32,7 @@ import com.ogneliss.dialer.ui.DialerViewModel
  * публикуют себя как удалённые директории через `ContactsContract.Directory`.
  * Диалер может запросить у них имя по номеру штатным способом.
  *
- * ── Почему это отдельный экран с предупреждением ───────────────────────────
+ * ── Почему это отдельный экран ─────────────────────────────────────────────
  * Здесь единственное место во всём приложении, где данные могут покинуть
  * устройство. Не через нас — у нас нет разрешения на сеть, — а через
  * стороннее приложение, которому мы передадим номер.
@@ -43,8 +42,9 @@ import com.ogneliss.dialer.ui.DialerViewModel
  *
  *  • по умолчанию выключено для каждого провайдера;
  *  • включается поимённо, а не одним общим переключателем;
- *  • предупреждение показывается прямо на экране, а не в мелком тексте;
- *  • называется приложение, которому уйдёт номер, а не «сторонний сервис».
+ *  • при включении называется приложение, которому уйдёт номер, а не
+ *    «сторонний сервис» (до 2.1.0 ещё и панель-предупреждение сверху
+ *    и окно перед входом на экран — сняты: правило автора 07.11.2026).
  *
  * ── Почему функция вообще есть ─────────────────────────────────────────────
  * Корпоративные справочники — реальный сценарий: сотрудник хочет видеть
@@ -74,20 +74,13 @@ fun ExternalLookupScreen(
     ) { pad ->
         LazyColumn(Modifier.padding(pad).fillMaxSize()) {
 
-            // Предупреждение крупно и сверху, а не мелким шрифтом внизу:
-            // это единственное место, где данные могут уйти с устройства
-            item {
-                OgnelissPanel(color = MaterialTheme.colorScheme.errorContainer) {
-                    Row(Modifier.padding(FlowUi.contentPadding), verticalAlignment = Alignment.Top) {
-                        Icon(OgnelissIcons.Warning, null)
-                        Spacer(Modifier.width(Space.m))
-                        Text(
-                            stringResource(R.string.external_lookup_warning),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-            }
+            /*
+             * Красной панели «Единственное место, где номер может уйти
+             * с устройства…» сверху нет с 2.1.0 (правило автора 07.11.2026,
+             * пояснений не показываем). Согласие на отправку номера
+             * осталось там, где оно что-то решает, — в окне включения
+             * справочника, с названием приложения.
+             */
 
             if (providers.isEmpty()) {
                 item {
@@ -115,15 +108,8 @@ fun ExternalLookupScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
+                        // 2.1.0: без пояснения про роль определителя — сразу кнопка
                         Spacer(Modifier.height(Space.l))
-
-                        Text(
-                            stringResource(R.string.external_lookup_system_hint),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-
-                        Spacer(Modifier.height(Space.m))
 
                         FilledTonalButton(
                             onClick = { openCallerIdSettings(context) },

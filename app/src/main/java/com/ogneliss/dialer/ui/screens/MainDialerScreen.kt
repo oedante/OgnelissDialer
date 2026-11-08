@@ -35,7 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.os.ConfigurationCompat
@@ -52,7 +51,6 @@ import com.ogneliss.dialer.data.JournalDays
 import com.ogneliss.dialer.data.CallLogGroup
 import com.ogneliss.dialer.data.CallLogRowMapper
 import com.ogneliss.dialer.data.CallType
-import com.ogneliss.dialer.data.NumberCategory
 import com.ogneliss.dialer.settings.SwipeAction
 import com.ogneliss.dialer.ui.DialerViewModel
 import com.ogneliss.dialer.ui.components.OwnNumberDialog
@@ -126,10 +124,12 @@ fun MainDialerScreen(
     /** Экран напоминаний. */
     onOpenReminders: () -> Unit,
     onOpenSubscriber: (String) -> Unit,
-    /** Чёрный и белый списки: туда ведёт разбор блокировки по маске. */
+    /** Чёрный и белый списки — передаются карточкам по удержанию. */
     onOpenBlockLists: () -> Unit,
     /** Архив журнала — «Ещё» → «Архив» (2.1.0). */
-    onOpenArchive: () -> Unit = {}
+    onOpenArchive: () -> Unit = {},
+    /** «Закреплённые» — при полном списке закреплённых (2.1.0, RecordActionCards). */
+    onOpenPinned: () -> Unit = {}
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     val settings by vm.settingsState.collectAsStateWithLifecycle()
@@ -284,7 +284,16 @@ fun MainDialerScreen(
     var assigningSpeedDial by remember { mutableStateOf<Int?>(null) }
     var pendingCall by remember { mutableStateOf<Pair<String, Int>?>(null) }
     var pendingWarning by remember { mutableStateOf<PreDialWarning.Warning?>(null) }
-    var confirmBulkDelete by remember { mutableStateOf(false) }
+
+    /*
+     * «Разрешить» в пустом журнале (2.1.0, ошибка): было — переход
+     * в настройки приложения (сам раздел «Настройки» Ogneliss), где
+     * доступа к журналу не выдать. Стало — системный запрос READ_CALL_LOG;
+     * окна уже нет — системные настройки приложения (rememberPermissionRequest).
+     */
+    val requestCallLog = rememberPermissionRequest(android.Manifest.permission.READ_CALL_LOG) {
+        vm.onPermissionsChanged()
+    }
 
 
     /*
@@ -1601,7 +1610,15 @@ fun MainDialerScreen(
                         vm.archiveGroups(list.filter { it.key in selection.selected })
                         selection.clear()
                     },
-                    onDelete = { confirmBulkDelete = true }
+                    /*
+                     * 2.1.0: без окна «Удалить N записей?» — правило автора
+                     * 07.11.2026: где есть «Отменить», не спрашиваем
+                     * (deleteGroupsWithUndo, как свайп и меню записи).
+                     */
+                    onDelete = {
+                        vm.deleteGroupsWithUndo(list.filter { it.key in selection.selected })
+                        selection.clear()
+                    }
                 )
             }
             /*
@@ -1795,10 +1812,8 @@ fun MainDialerScreen(
                                         EmptyReason.NoCallLogPermission
                                     else -> EmptyReason.NoCalls
                                 },
-                                onAction = {
-                                    if (state.query.isNotEmpty()) vm.onQueryChange("")
-                                    else onOpenSettings()
-                                }
+                                // Кнопка есть только у «нет доступа» (разбор у requestCallLog)
+                                onAction = requestCallLog
                             )
                         }
                     }
@@ -2086,11 +2101,8 @@ fun MainDialerScreen(
             onDismissRequest = { fakeCallOpen = false },
             title = stringResource(R.string.fake_call_title),
             content = {
-                Text(
-                    stringResource(R.string.settings_fake_call_hint),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                // 2.1.0: без пояснения «экран как у входящего, но вызова нет» —
+                // правило автора 07.11.2026, пояснений не показываем
 
                 /*
                  * СОСТОЯНИЕ: НАЗНАЧЕН ЛИ И НА КОГДА.
@@ -2308,6 +2320,7 @@ fun MainDialerScreen(
             origin = CardsOrigin.LOG,
             onOpenCard = { onOpenSubscriber(group.key) },
             onOpenBlockLists = onOpenBlockLists,
+            onOpenPinned = onOpenPinned,
             onDismiss = { selectedGroup = null }
         )
     }
@@ -2326,60 +2339,12 @@ fun MainDialerScreen(
     }
 
 
-    if (confirmBulkDelete) {
+    if (pendingWarning != null) {
         /*
-         * Общий контейнер приложения.
-         *
-         * Удаление записей журнала необратимо, поэтому треугольник
-         * предупреждения сохранён — он переехал из шапки в текст:
-         * места под значок у OgnelissDialog нет.
-         */
-        OgnelissDialog(
-            onDismissRequest = { confirmBulkDelete = false },
-            title = stringResource(R.string.selection_delete_title),
-            content = {
-                Row(verticalAlignment = Alignment.Top) {
-                    Icon(
-                        OgnelissIcons.Warning,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                    Spacer(Modifier.width(Space.m))
-                    Text(
-                        pluralStringResource(
-                            R.plurals.selection_delete_text, selection.count, selection.count
-                        )
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    // С «Отменить», как в Telegram: подтверждение и отмена
-                    // вместе (1.5.7)
-                    vm.deleteGroupsWithUndo(list.filter { it.key in selection.selected })
-                    selection.clear()
-                    confirmBulkDelete = false
-                }) {
-                    Text(
-                        stringResource(R.string.selection_delete),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { confirmBulkDelete = false }) {
-                    Text(stringResource(R.string.nav_cancel))
-                }
-            }
-        )
-    }
-
-
-    pendingWarning?.let { warning ->
-        /*
-         * Предупреждение перед звонком на платный или международный
-         * номер. Значок остаётся: цена ошибки здесь — деньги со счёта,
-         * и предупреждение должно опознаваться раньше, чем прочитано.
+         * Предупреждение перед звонком на платный номер. Значок остаётся:
+         * цена ошибки здесь — деньги со счёта, и предупреждение должно
+         * опознаваться раньше, чем прочитано. 2.1.0: только платные —
+         * о международном больше не спрашиваем (PreDialWarning).
          */
         OgnelissDialog(
             onDismissRequest = { pendingWarning = null; pendingCall = null },
@@ -2392,15 +2357,7 @@ fun MainDialerScreen(
                         tint = MaterialTheme.colorScheme.error
                     )
                     Spacer(Modifier.width(Space.m))
-                    Text(
-                        stringResource(
-                            when (warning.category) {
-                                NumberCategory.PREMIUM -> R.string.predial_premium
-                                NumberCategory.INTERNATIONAL -> R.string.predial_international
-                                else -> R.string.predial_generic
-                            }
-                        )
-                    )
+                    Text(stringResource(R.string.predial_premium))
                 }
             },
             confirmButton = {

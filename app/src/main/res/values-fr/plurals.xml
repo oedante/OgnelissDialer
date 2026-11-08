@@ -29,10 +29,6 @@
         <item quantity="one">%d sélectionné</item>
         <item quantity="other">%d sélectionnés</item>
     </plurals>
-    <plurals name="selection_delete_text">
-        <item quantity="one">%d entrée sera supprimée de l\'historique des appels. Cette action est irréversible.</item>
-        <item quantity="other">%d entrées seront supprimées de l\'historique des appels. Cette action est irréversible.</item>
-    </plurals>
     <plurals name="filter_match_count">
         <item quantity="one">%1$d appel correspond</item>
         <item quantity="other">%1$d appels correspondent</item>

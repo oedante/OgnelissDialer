@@ -2,13 +2,10 @@ package com.ogneliss.dialer.ui.screens
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -22,7 +19,6 @@ import com.ogneliss.dialer.ui.DialerViewModel
 import com.ogneliss.dialer.ui.components.ActionCardsOverlay
 import com.ogneliss.dialer.ui.components.CardAction
 import com.ogneliss.dialer.ui.components.CardActionSection
-import com.ogneliss.dialer.ui.components.OgnelissDialog
 import com.ogneliss.dialer.ui.components.rememberActionHaptics
 import com.ogneliss.dialer.ui.components.rememberNumberInfoLabels
 import com.ogneliss.dialer.ui.theme.BlockRed
@@ -57,8 +53,7 @@ internal fun NumberActionCards(
     vm: DialerViewModel,
     /** Место нажатия — TouchAnchor.screenY. */
     anchorY: Float?,
-    /** Переход в чёрный список: туда ведёт разбор блокировки по маске. */
-    onOpenBlockLists: () -> Unit,
+    // Перехода в чёрный список нет с 2.1.0: номер под маской разблокируется сразу
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
@@ -73,32 +68,10 @@ internal fun NumberActionCards(
     val formatted = remember(number) { PhoneFormatter.format(number) }
     val mark = state.spamMarks[e164]
     val exactRule = rules.firstOrNull { it.isBlock && it.pattern == e164 }
-    val maskRule = rules.firstOrNull {
+    // В белом списке — маска на номер не действует (белый список сильнее)
+    val allowed = rules.any { it.isAllow && RulePattern.matches(it.pattern, e164) }
+    val maskRule = if (allowed) null else rules.firstOrNull {
         it.isBlock && it.isMask && RulePattern.matches(it.pattern, e164)
-    }
-
-    /** Маска, под которую попал номер, — показывается в предупреждении. */
-    var maskWarning by remember { mutableStateOf<String?>(null) }
-    maskWarning?.let { pattern ->
-        OgnelissDialog(
-            onDismissRequest = { maskWarning = null },
-            title = stringResource(R.string.block_by_mask_title),
-            content = { Text(stringResource(R.string.block_by_mask_text, pattern)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    maskWarning = null
-                    onDismiss()
-                    onOpenBlockLists()
-                }) {
-                    Text(stringResource(R.string.block_by_mask_open))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { maskWarning = null }) {
-                    Text(stringResource(R.string.nav_close))
-                }
-            }
-        )
     }
 
     // Долгое нажатие на «Позвонить» и «SMS» — выбор SIM (1.8.0); одна карта — нет
@@ -119,7 +92,8 @@ internal fun NumberActionCards(
         ),
         CardAction(
             OgnelissIcons.ContentCopy, stringResource(R.string.action_copy),
-            onClick = { vm.copyNumber(number) }
+            // Отклик — вибрацией, без сообщения (2.1.0, разбор у copyNumber)
+            onClick = { haptics(); vm.copyNumber(number) }
         ),
         CardAction(
             OgnelissIcons.Share, stringResource(R.string.action_share),
@@ -127,27 +101,26 @@ internal fun NumberActionCards(
         )
     )
 
-    // Блок — с тремя состояниями, как в карточках журнала: снять точное
-    // правило; объяснить маску (снять отсюда нельзя — снялась бы вся
-    // маска); заблокировать
+    /*
+     * Блок — с тремя состояниями, как в карточках журнала: снять точное
+     * правило; номер под маской — в белый список (маску отсюда не снять —
+     * разблокировался бы весь диапазон); заблокировать. 2.1.0: было —
+     * окно с объяснением маски; стало — «Разблокировать» сразу,
+     * с «Отменить» (vm.allowNumber), и «Блок» — тоже с «Отменить».
+     */
+    val unblock = exactRule != null || maskRule != null
     val block = CardAction(
         OgnelissIcons.Block,
-        stringResource(
-            when {
-                exactRule != null -> R.string.action_unblock_short
-                maskRule != null -> R.string.action_blocked_by_mask
-                else -> R.string.action_block_short
-            }
-        ),
+        stringResource(if (unblock) R.string.action_unblock_short else R.string.action_block_short),
         onClick = {
+            haptics()
             when {
-                exactRule != null -> { haptics(); vm.removeRule(e164) }
-                maskRule != null -> maskWarning = maskRule.pattern
-                else -> { haptics(); vm.blockNumber(e164) }
+                exactRule != null -> vm.removeRule(e164)
+                maskRule != null -> vm.allowNumber(e164)
+                else -> vm.blockNumber(e164)
             }
         },
-        tint = if (exactRule != null) scheme.primary else BlockRed,
-        keepOpen = exactRule == null && maskRule != null
+        tint = if (unblock) scheme.primary else BlockRed
     )
     // Отметка «спам»: ставит, если нет; снимает любую, если есть
     val spam = CardAction(

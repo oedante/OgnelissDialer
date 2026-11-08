@@ -24,16 +24,10 @@
     <string name="a11y_setting_on">Ein</string>
     <string name="about_licenses_hint">In der App verwendete Open-Source-Komponenten</string>
     <string name="about_no_internet">Ogneliss hat keine Internetberechtigung. Das können Sie in den Details der installierten App selbst nachprüfen — Ihre Anrufliste, Kontakte und Notizen bleiben auf diesem Gerät.</string>
-    <string name="about_recording_hint">Warum dieser Dialer keine Anrufe aufzeichnet</string>
     <string name="action_add_contact">Zu Kontakten</string>
     <string name="action_block">Nummer sperren</string>
     <string name="action_unblock">Nummer entsperren</string>
-    <string name="blocked_notice_title">Anruf gesperrt</string>
     <string name="blocked_notice_channel">Gesperrte Anrufe</string>
-    <string name="block_by_mask_title">Durch eine Regel gesperrt</string>
-    <string name="block_by_mask_text">Die Nummer fällt unter die Maske %1$s und hat keine eigene Regel. Ein Entsperren hier würde die Maske und damit den gesamten Bereich entsperren. Entscheiden Sie in der Sperrliste.</string>
-    <string name="block_by_mask_open">Sperrliste öffnen</string>
-    <string name="action_blocked_by_mask">Per Maske</string>
     <string name="action_call">Anrufen</string>
     <string name="action_copy_number">Nummer kopieren</string>
     <string name="action_delete_contact">Kontakt löschen</string>
@@ -48,13 +42,6 @@
     <string name="action_share_number">Nummer teilen</string>
     <string name="action_sms">SMS</string>
     <string name="action_view_contact">Kontakt öffnen</string>
-    <string name="allow_list_empty">Noch nichts ausdrücklich erlaubt</string>
-    <string name="allow_list_priority_note">Diese Nummern kommen immer durch, unabhängig von anderen Regeln. Tragen Sie Praxis, Schule und Kurier hier ein, bevor Sie strenge Sperren aktivieren.</string>
-    <string name="backup_contents">Die Datei enthält Notizen, Markierungen, Sperr- und Freigabelisten sowie Kurzwahl. Anrufliste und Kontakte sind nicht enthalten — die überträgt Android selbst.</string>
-    <string name="backup_done">Sicherung gespeichert</string>
-    <string name="backup_failed">Sicherung konnte nicht gespeichert werden</string>
-    <string name="backup_why">Cloud-Sicherung ist bewusst deaktiviert: Ihre Daten verlassen das Gerät nicht. Die Kehrseite ist, dass ein neues Telefon leer startet. Der Export bewahrt Notizen, Markierungen und Sperrlisten.</string>
-    <string name="block_list_empty">Noch nichts gesperrt</string>
     <string name="call_blocked">Gesperrt</string>
     <string name="call_incoming">Eingehend</string>
     <string name="call_missed">Verpasst</string>
@@ -71,10 +58,7 @@
     <string name="confirm_delete_contact_text">Der Kontakt wird aus allen Konten entfernt, in denen er gespeichert ist, auch aus Google. Vom Telefon aus lässt sich das nicht rückgängig machen.</string>
     <string name="confirm_delete_contact_title">Diesen Kontakt löschen?</string>
     <string name="confirm_delete_contact_pinned">Dieser Kontakt ist oben in der Anrufliste angeheftet – er wird auch dort entfernt.</string>
-    <string name="msg_contact_deleted">Kontakt gelöscht</string>
-    <string name="msg_contact_delete_failed">Kontakt konnte nicht gelöscht werden</string>
     <string name="confirm_enable">Aktivieren</string>
-    <string name="confirm_external_lookup">Die eingehende Nummer wird an die gewählte App übergeben, die sie an ihre eigenen Server senden kann.</string>
     <string name="confirm_reset">Alle Einstellungen kehren zu den Standardwerten zurück. Notizen, Markierungen und Listen bleiben erhalten.</string>
     <string name="confirm_title">Sind Sie sicher?</string>
     <string name="contact_pin_shortcut">Verknüpfung auf dem Startbildschirm</string>
@@ -88,15 +72,10 @@
     <string name="dial_wait">auf Sie warten</string>
     <string name="empty_clear_search">Suche löschen</string>
     <string name="empty_no_calllog_permission">Anrufliste nicht verfügbar</string>
-    <string name="empty_no_calllog_permission_hint">Ogneliss benötigt Zugriff auf die Anrufliste, um Ihren Verlauf anzuzeigen. Er bleibt auf dem Gerät.</string>
     <string name="empty_no_calls">Noch keine Anrufe</string>
-    <string name="empty_no_calls_hint">Hier erscheinen Anrufe, die Sie tätigen oder annehmen.</string>
     <string name="empty_no_contacts">Keine Kontakte</string>
-    <string name="empty_no_contacts_hint">Fügen Sie jemanden zu Ihrem Telefonbuch hinzu, dann erscheint er hier.</string>
     <string name="empty_no_contacts_permission">Kontakte nicht verfügbar</string>
-    <string name="empty_no_contacts_permission_hint">Ohne Zugriff auf Kontakte erscheinen Anrufe als nackte Nummern, und die T9-Suche findet niemanden über den Namen.</string>
     <string name="empty_no_favourites">Keine Favoriten</string>
-    <string name="empty_no_favourites_hint">Tippen Sie auf den Stern neben einem Kontakt, um ihn griffbereit zu halten.</string>
     <string name="nav_journal">Anrufliste</string>
     <string name="nav_notes">Notizen</string>
     <string name="reminders_filter_today">Heute</string>
@@ -105,16 +84,12 @@
     <string name="reminders_search_hint">Name oder Nummer</string>
     <string name="nav_reminders">Erinnerungen</string>
     <string name="empty_no_notes">Noch keine Notizen</string>
-    <string name="empty_no_notes_hint">Eine Notiz lässt sich in der Kontaktkarte oder während des Gesprächs hinzufügen. Sie bleibt auf diesem Telefon.</string>
     <string name="empty_no_reminders">Keine Erinnerungen</string>
-    <string name="empty_no_reminders_hint">Erinnerungen lassen sich in der Kontaktkarte oder per langem Tippen im Protokoll setzen.</string>
     <string name="reminders_today">Heute</string>
     <string name="reminders_tomorrow">Morgen</string>
     <string name="empty_no_results">Nichts gefunden</string>
-    <string name="empty_no_results_hint">Versuchen Sie weniger Ziffern oder suchen Sie nach den ersten Buchstaben eines Namens.</string>
     <string name="external_lookup_confirm">Eingehende Nummern werden an %1$s übergeben. Was diese App damit tut, regelt ihre eigene Datenschutzerklärung.</string>
     <string name="external_lookup_none">Auf diesem Gerät sind keine Anrufer-ID-Verzeichnisse installiert.</string>
-    <string name="external_lookup_warning">Dies ist die einzige Stelle, an der eine Nummer Ihr Gerät verlassen kann. Nicht über Ogneliss — die App hat keinen Netzzugriff —, sondern über die App, die Sie hier aktivieren und die die Nummer an ihre eigenen Server senden kann.</string>
     <string name="filter_period_all">Gesamter Zeitraum</string>
     <string name="filter_period_month">Monat</string>
     <string name="filter_period_today">Heute</string>
@@ -160,7 +135,6 @@
     <string name="keywords_language">locale übersetzung sprache deutsch englisch russisch</string>
     <string name="keywords_spam">spam betrug werbung sperren unerwünscht</string>
     <string name="keywords_theme">dunkel nacht schwarz farbe amoled kontrast akzent schrift ecken rundung dichte kompakt</string>
-    <string name="legal_load_failed">Das Dokument konnte nicht geladen werden.</string>
     <string name="log_clear_all">Anrufliste leeren</string>
     <string name="log_share_subject">Ogneliss Dialer Protokoll</string>
     <string name="log_share_title">Protokolldatei senden</string>
@@ -170,7 +144,6 @@
     <string name="nav_contacts">Kontakte</string>
     <string name="nav_save">Speichern</string>
     <string name="nav_settings">Einstellungen</string>
-    <string name="note_spam_tag_warning">Bei aktivierter Spamsperre klingelt diese Nummer nicht mehr.</string>
     <string name="onboarding_default_text">Ohne diese Rolle übergibt Android der App nicht die Steuerung der Anrufe.</string>
     <string name="onboarding_default_title">Standard-Telefon-App</string>
     <string name="onboarding_optional">(optional)</string>
@@ -189,8 +162,6 @@
     <string name="postcall_remind_30">In 30 Min erinnern</string>
     <string name="postcall_remind_tomorrow">Morgen</string>
     <string name="predial_call_anyway">Trotzdem anrufen</string>
-    <string name="predial_generic">Dies ist eine Servicenummer. Sie kann kostenpflichtig sein.</string>
-    <string name="predial_international">Dies ist eine Auslandsnummer. Der Anruf wird zu internationalen Tarifen abgerechnet.</string>
     <string name="predial_premium">Dies ist eine Sondernummer mit erhöhtem Tarif. Eine Minute kann mehrere Euro kosten. Ein verpasster Anruf von einer solchen Nummer ist eine verbreitete Masche — man rechnet damit, dass Sie zurückrufen.</string>
     <string name="predial_title">Nummer prüfen</string>
     <string name="quick_reply_action">Mit Nachricht ablehnen</string>
@@ -199,16 +170,11 @@
     <string name="quick_reply_driving">Fahre gerade, kann nicht sprechen</string>
     <string name="quick_reply_meeting">Bin in einer Besprechung</string>
     <string name="reminder_title">Zurückrufen: %1$s</string>
-    <string name="restore_done">Sicherung wiederhergestellt</string>
-    <string name="restore_failed">Sicherungsdatei konnte nicht gelesen werden</string>
     <string name="rule_add">Hinzufügen</string>
     <string name="rule_add_allow">Immer durchlassen</string>
     <string name="rule_add_block">Immer sperren</string>
     <string name="rule_comment">Notiz (optional)</string>
     <string name="rule_comment_hint">Kaltakquise, Kurier, Praxis…</string>
-    <string name="rule_error_characters">Diese Zeichen dürfen in einer Nummer nicht vorkommen: %1$s</string>
-    <string name="rule_error_too_broad">Zu weit gefasst — das würde fast jeden Anruf erfassen. Fügen Sie mehr Ziffern hinzu.</string>
-    <string name="rule_mask_hint">Das Zeichen * ersetzt eine beliebige Endung: +49 800 * sperrt alle gebührenfreien Nummern.</string>
     <string name="rule_number_or_mask">Nummer oder Muster</string>
     <string name="rule_preview_mask">Gilt für alle Nummern, die mit %1$s beginnen</string>
     <string name="rule_preview_number">Gilt für %1$s</string>
@@ -253,8 +219,6 @@
     <string name="settings_calllog_export_text">Das gesamte Protokoll als CSV-Tabelle: Datum, Nummer, Name, Typ, Dauer. Öffnet sich in Excel und LibreOffice.</string>
     <string name="settings_log_save">Protokoll in eine Datei speichern</string>
     <string name="settings_log_save_text">Dasselbe technische Protokoll wie bei „Teilen“, nur in eine Datei Ihrer Wahl geschrieben.</string>
-    <string name="export_done">Gespeichert</string>
-    <string name="export_failed">Datei konnte nicht gespeichert werden</string>
     <string name="settings_merge_calls">Anrufe derselben Nummer gruppieren</string>
     <string name="settings_merge_calls_text">Aufeinanderfolgende Anrufe erscheinen als ein Eintrag mit Zähler.</string>
     <string name="settings_notifications">App-Benachrichtigungen</string>
@@ -263,8 +227,6 @@
     <string name="settings_post_call_unknown">Nur bei unbekannten Nummern</string>
     <string name="settings_post_call_unknown_text">Empfohlen: ein Fenster nach jedem Anruf bei Angehörigen wird schnell lästig.</string>
     <string name="settings_privacy_policy">Datenschutzerklärung</string>
-    <string name="settings_recording_text">Ab Android 10 verwehrt das System Dritt-Apps den Zugriff auf den Gesprächston, und eine Umgehung verstößt gegen die Google-Play-Richtlinien. Zeichnet Ihr Telefon Anrufe auf, ist diese Funktion vom Hersteller eingebaut und arbeitet unabhängig vom gewählten Dialer.</string>
-    <string name="settings_recording_title">Warum es keine Anrufaufzeichnung gibt</string>
     <string name="settings_remember_sim">SIM je Nummer merken</string>
     <string name="settings_remember_sim_text">Die für eine Nummer gewählte SIM wird beim nächsten Mal vorgeschlagen.</string>
     <string name="settings_reset">Einstellungen zurücksetzen</string>
@@ -297,7 +259,6 @@
     <string name="settings_messengers_any_number_text">«Schreiben» bietet installierte WhatsApp, Telegram, Viber und Max an, auch wenn die Nummer nicht in den Kontakten ist. Telegram öffnet den Chat nur, wenn die Person die Suche nach Nummer erlaubt</string>
     <string name="settings_sim">SIM-Karten und Netze</string>
     <string name="settings_sim_labels">Namen der SIM-Karten</string>
-    <string name="settings_sim_labels_hint">Zwei Karten desselben Anbieters erhalten denselben Systemnamen. Vergeben Sie eigene Namen — Arbeit, Privat.</string>
     <string name="settings_sim_labels_text">Benennen Sie die Steckplätze, um sie zu unterscheiden</string>
     <string name="settings_sim_none">Keine aktiven SIM-Karten erkannt</string>
     <string name="settings_sim_slot">Steckplatz %1$d</string>
@@ -350,8 +311,6 @@
     <string name="accent_custom_named">eigene, %1$s</string>
     <string name="accent_hue">Farbton</string>
     <string name="accent_saturation">Sättigung</string>
-    <string name="accent_note_dynamic">Die Farben kommen gerade vom Hintergrundbild: Ein Schema oder ein Akzent schaltet das aus.</string>
-    <string name="accent_note_contrast">Hoher Kontrast hat eigene Farben: Schema und Akzent gelten dort nicht.</string>
     <string name="accent_blue">Blau</string>
     <string name="accent_sky">Himmelblau</string>
     <string name="accent_teal">Petrol</string>
@@ -376,7 +335,6 @@
     <string name="settings_version_title">Version</string>
     <string name="settings_rate">App bewerten</string>
     <string name="settings_rate_text">Öffnet die App-Seite bei Google Play</string>
-    <string name="settings_rate_no_store">Google Play ist auf diesem Gerät nicht verfügbar</string>
     <string name="shortcut_call_label">%1$s anrufen</string>
     <string name="sort_alphabet">Alphabetisch</string>
     <string name="sort_frequency">Am häufigsten angerufen</string>
@@ -395,15 +353,12 @@
     <string name="speed_dial_assign">Der Ziffer %1$d zuordnen</string>
     <string name="speed_dial_clear">Löschen</string>
     <string name="speed_dial_empty">Nicht zugeordnet</string>
-    <string name="speed_dial_hint">Halten Sie eine Ziffer auf dem Tastenfeld gedrückt, um die zugeordnete Nummer anzurufen.</string>
     <string name="speed_dial_no_contacts">Keine Kontakte gefunden</string>
     <string name="speed_dial_search">Kontakte durchsuchen</string>
     <string name="speed_dial_summary">Kontakte den Ziffern 2–9 zuordnen</string>
     <string name="speed_dial_title">Kurzwahl</string>
     <string name="speed_dial_voicemail">Mailbox</string>
-    <string name="speed_dial_voicemail_hint">Die Ziffer 1 ist traditionell belegt</string>
     <string name="stats_coverage">Berechnet über die letzten %1$d Tage — so weit reicht die System-Anrufliste zurück.</string>
-    <string name="stats_empty">Noch zu wenige Anrufe</string>
     <string name="stats_summary">Übersicht und häufigste Gesprächspartner</string>
     <string name="stats_title">Anrufstatistik</string>
     <string name="stats_top_contacts">Am häufigsten</string>
@@ -429,7 +384,6 @@
     <string name="selection_start">Mehrere auswählen</string>
     <string name="selection_select_all">Alle auswählen</string>
     <string name="selection_delete">Löschen</string>
-    <string name="selection_delete_title">Ausgewählte Einträge löschen?</string>
     <string name="wizard_step_of">Schritt %1$d von %2$d</string>
     <string name="wizard_grant">Berechtigung erteilen</string>
     <string name="wizard_next">Weiter</string>
@@ -483,7 +437,6 @@
     <string name="contacts_filter_frequent">Häufig</string>
     <string name="contacts_filter_half_year">Über 6 Monate</string>
     <string name="contacts_filter_year">Über ein Jahr</string>
-    <string name="contacts_stale_hint">Keine Anrufe bedeutet nicht kein Kontakt — mit diesen Personen schreiben Sie vielleicht täglich.</string>
     <string name="incall_note_add">Notiz schreiben</string>
     <string name="incall_note_hide">Notiz ausblenden</string>
     <string name="incall_note_hint">Lieferung am Dienstag nach vier…</string>
@@ -520,17 +473,11 @@
     <string name="pinned_header">Angeheftet</string>
     <string name="action_pin">Oben anheften</string>
     <string name="action_unpin">Lösen</string>
-    <string name="pin_limit_title">Keine weiteren Anheftungen möglich</string>
-    <string name="pin_limit_text">Es lassen sich bis zu %1$d Nummern anheften. Angeheftete Einträge belegen den oberen Bildschirmrand — bei mehr würde die Anrufliste unterhalb des sichtbaren Bereichs beginnen.</string>
     <string name="subscriber_export">Anrufverlauf exportieren</string>
     <string name="subscriber_export_progress">Wird vorbereitet…</string>
-    <string name="subscriber_export_failed">Export konnte nicht vorbereitet werden</string>
-    <string name="subscriber_export_failed_hint">Die Anrufliste konnte nicht gelesen werden. Prüfen Sie, ob der Zugriff darauf in den Einstellungen erteilt ist.</string>
     <string name="settings_pinned">Oben angeheftet</string>
     <string name="settings_pinned_text">Welche Nummern über der Anrufliste bleiben</string>
-    <string name="pinned_explain">Angeheftete Nummern bleiben oben in der Anrufliste, unabhängig davon, wann Sie zuletzt gesprochen haben. Nützlich, solange Sie mit einem Kurier, einer Reparatur oder einem einmaligen Kunden zu tun haben — Leuten, die man nicht zu den Favoriten hinzufügt.</string>
     <string name="pinned_empty">Noch nichts angeheftet</string>
-    <string name="pinned_empty_hint">Eine Nummer lässt sich auch durch langes Drücken in der Anrufliste anheften.</string>
     <string name="pinned_add">Kontakt anheften</string>
     <string name="pinned_slots_left">Freie Plätze: %1$d</string>
     <string name="pinned_limit_reached">Alle %1$d Plätze belegt — lösen Sie zuerst einen</string>
@@ -549,8 +496,6 @@
     <string name="reminder_2hours">In zwei Stunden</string>
     <string name="reminder_custom">Zeit wählen…</string>
     <string name="reminder_tomorrow">Morgen früh</string>
-    <string name="reminder_in_past">Dieser Zeitpunkt ist bereits vorbei</string>
-    <string name="msg_reminder_set">Erinnerung gesetzt: %1$s</string>
     <string name="sim_chooser_title">Mit welcher SIM anrufen?</string>
     <string name="settings_swipe_sim">SIM für Wischgesten</string>
     <string name="settings_swipe_sim_text">Welche Karte bei einem Anruf per Wischgeste genutzt wird</string>
@@ -563,8 +508,6 @@
     <string name="menu_theme_light">Helles Design</string>
     <string name="menu_theme_dark">Dunkles Design</string>
     <string name="selection_exit">Auswahl beenden</string>
-    <string name="msg_reminder_set_inexact">Erinnerung gesetzt: %1$s — kann sich verzögern</string>
-    <string name="msg_reminder_exact_fix">Einrichten</string>
     <string name="dialer_role_blocked_title">Auswahlfenster ließ sich nicht öffnen</string>
     <string name="dialer_role_blocked_text">Das passiert, wenn die Auswahl schon einmal abgelehnt wurde (dann fragt das System nicht mehr) oder die Hersteller-Oberfläche das Fenster ersetzt hat.
 
@@ -593,29 +536,23 @@
     <string name="history_collapse">Einklappen</string>
     <string name="subscriber_note_section">Notiz</string>
     <string name="subscriber_note_add">Notiz hinzufügen</string>
-    <string name="external_lookup_system_hint">Welche App Anrufer erkennt und Spam filtert, legen Sie in den Systemeinstellungen fest — diese Rolle vergibt Android, nicht diese App.</string>
     <string name="external_lookup_open_system">Systemeinstellungen öffnen</string>
     <string name="gesture_hint_keyboard">Nach oben über der Tastenfeld-Taste öffnet sie, nach unten über der Nummernzeile schließt sie</string>
     <string name="gesture_handle_hint">Leiste seitwärts wischen — wechseln, nach oben — Tastenfeld</string>
     <string name="filter_no_matches">Keine Anrufe passen zu diesen Filtern</string>
     <string name="action_unblock_short">Freigeben</string>
     <string name="subscriber_qr">Per QR-Code teilen</string>
-    <string name="qr_hint">Kamera auf den Code richten, um den Kontakt zu speichern</string>
     <string name="qr_content_description">QR-Code mit Kontaktdaten</string>
     <string name="menu_my_number_unknown">Nummer nicht angegeben</string>
     <string name="my_number_title">Meine Telefonnummer</string>
-    <string name="my_number_text">Nötig, um die eigene Karte zu teilen. Das Telefon kennt sie oft nicht: Anbieter schreiben sie selten auf die SIM.</string>
     <string name="my_number_detect">Automatisch ermitteln</string>
-    <string name="my_number_not_detected">Nicht ermittelbar — bitte manuell eingeben</string>
     <string name="action_save">Speichern</string>
     <string name="action_share">Teilen</string>
     <string name="action_favourite">Favorit</string>
     <string name="msg_unblocked">Sperre aufgehoben</string>
-    <string name="msg_block_failed">Nummer konnte nicht gesperrt werden</string>
     <string name="action_copy">Kopieren</string>
     <string name="action_paste_number">Nummer einfügen</string>
     <string name="dialpad_number_hint">Nummer</string>
-    <string name="msg_number_copied">Nummer kopiert</string>
     <string name="a11y_call_number">%1$s anrufen</string>
     <string name="action_more">Mehr</string>
     <string name="action_clear">Löschen</string>
@@ -634,7 +571,6 @@
     <string name="incoming_blocked_action">Erlauben</string>
     <string name="menu_my_contact">Mein Kontakt</string>
     <string name="settings_own_number_text">Nötig, um die eigene Karte zu teilen. Zum Ändern oder Löschen tippen</string>
-    <string name="note_tags_hint">Diese Tags aktivieren die automatische Sperre, wenn sie in den Einstellungen aktiv ist</string>
     <string name="blocked_by_rule">Gesperrt</string>
     <plurals name="reminder_in_minutes">
         <item quantity="one">in %1$d Minute</item>
@@ -661,7 +597,6 @@
     <string name="settings_fake_call_button">Schaltfläche für fingierten Anruf</string>
     <string name="settings_fake_call_button_text">Eine kleine runde Schaltfläche im Protokoll und in den Kontakten. Ausschalten, wenn Menü, Verknüpfung oder Kachel genügen.</string>
     <string name="settings_fake_call_number_text">Eine Nummer aus Ihren Kontakten. Bleibt sie leer, wird ein zufälliger Kontakt verwendet.</string>
-    <string name="settings_fake_call_hint">Der Bildschirm sieht aus wie ein eingehender Anruf, es wird jedoch nicht angerufen: nichts wird gesendet, und im Anrufprotokoll erscheint nichts. Das ist ein Grund, ein Gespräch zu verlassen, kein Sicherheitswerkzeug.</string>
     <!-- Подзаголовки внутри разделов настроек: разбор в SettingEntry.groupRes -->
     <string name="settings_group_row_swipe">Wischen über eine Zeile</string>
     <string name="settings_group_screen_swipe">Zwischen Bildschirmen wechseln</string>
@@ -696,7 +631,6 @@
     <string name="journal_style_cards">Karten</string>
     <string name="journal_style_groups">Gruppen nach Tagen</string>
     <string name="action_mark_spam">Als Spam markieren</string>
-    <string name="detail_placeholder">Wählen Sie einen Anruf aus – die Kontaktkarte erscheint hier</string>
     <string name="sim_kind_physical">SIM-Karte</string>
     <string name="settings_button_labels">Beschriftungen unter Tasten</string>
     <string name="settings_button_labels_text">Text unter den Symbolen in den unteren Leisten, der Kontaktkarte und im Anrufbildschirm. Abschaltbar, sobald die Symbole vertraut sind</string>
@@ -729,16 +663,11 @@
         <item quantity="other">%d verpasste Anrufe</item>
     </plurals>
     <string name="action_write">Schreiben</string>
-    <string name="swipe_actions_hint">Eine Aktion wird sofort ausgeführt. Bei zwei oder drei gleitet die Zeile auf und wartet auf einen Tipp. Höchstens drei.</string>
     <string name="log_clear_confirm_title">Anrufliste leeren?</string>
     <string name="log_clear_confirm_text">Alle Einträge der Anrufliste werden gelöscht, hier und in der Systemanrufliste des Telefons. Das lässt sich nicht rückgängig machen. Notizen, angeheftete Nummern, Erinnerungen und Sperrlisten bleiben erhalten.</string>
     <string name="log_clear_confirm_action">Leeren</string>
-    <string name="delete_entry_confirm_title">Aus dem Verlauf löschen?</string>
-    <string name="delete_entry_confirm_text">Anrufe mit %1$s werden gelöscht, hier und in der Systemanrufliste des Telefons. Einige Sekunden lang lässt sich das noch rückgängig machen.</string>
     <string name="action_write_email">E-Mail schreiben</string>
     <string name="action_copy_email">Adresse kopieren</string>
-    <string name="msg_email_copied">Adresse kopiert</string>
-    <string name="msg_no_email_app">Keine E-Mail-App gefunden</string>
     <!-- Подписи разделов меню «Ещё» (строгий стиль, 1.5.1) -->
     <string name="menu_section_lists">Bereiche</string>
     <string name="menu_section_app">App</string>
@@ -891,18 +820,13 @@
     <string name="contact_edit_no_year">Ohne Jahr</string>
     <string name="contact_edit_pick">Fertig</string>
     <string name="contact_edit_group_note">Notiz</string>
-    <string name="contact_edit_note_hint">Wird im Telefonbuch gespeichert – auch andere Apps sehen sie</string>
     <string name="contact_edit_group_account">Speichern in</string>
     <string name="contact_edit_account_title">Wo der Kontakt gespeichert wird</string>
     <string name="contact_edit_account_google">Google · %1$s</string>
-    <string name="contact_edit_account_sync_hint">Wird mit dem Konto synchronisiert und zieht auf ein neues Telefon mit</string>
-    <string name="contact_edit_account_device_hint">Nur auf diesem Telefon, ohne Synchronisierung</string>
     <string name="contact_account_device">Telefon</string>
     <string name="contact_edit_photo_pick">Foto hinzufügen</string>
     <string name="contact_edit_photo_change">Foto ändern</string>
     <string name="contact_edit_photo_remove">Foto entfernen</string>
-    <string name="contact_edit_photo_failed">Das Bild ließ sich nicht öffnen</string>
-    <string name="contact_edit_crop_hint">Bild im Rahmen verschieben und zoomen</string>
     <string name="contact_edit_crop_done">Fertig</string>
     <string name="contact_edit_phone_type">Nummerntyp</string>
     <string name="contact_edit_email_type">Adresstyp</string>
@@ -914,28 +838,18 @@
     <string name="email_type_home">Privat</string>
     <string name="email_type_work">Geschäftlich</string>
     <string name="email_type_other">Andere</string>
-    <string name="contact_edit_readonly">Einige Angaben stammen aus %1$s – sie werden dort geändert.</string>
-    <string name="contact_edit_not_editable">Dieser Kontakt ist in %1$s gespeichert. Ändern Sie ihn dort oder in der System-App „Kontakte“.</string>
     <string name="contact_edit_open_system">In System-„Kontakte“ öffnen</string>
     <string name="contact_edit_open_system_text">Für Adressen, Gruppen und andere Felder</string>
     <string name="contact_edit_discard_title">Änderungen verwerfen?</string>
     <string name="contact_edit_discard_text">Der Kontakt bleibt unverändert.</string>
     <string name="contact_edit_discard">Verwerfen</string>
     <string name="contact_edit_keep_editing">Weiter bearbeiten</string>
-    <string name="contact_edit_saved">Kontakt gespeichert</string>
-    <string name="contact_edit_failed">Kontakt konnte nicht gespeichert werden</string>
-    <string name="contact_edit_empty">Name, Nummer oder E-Mail eingeben</string>
-    <string name="contact_edit_no_permission">Keine Berechtigung, Kontakte zu ändern – in den App-Einstellungen erlauben</string>
-    <string name="contact_edit_not_found">Kontakt nicht gefunden – vielleicht wurde er gelöscht.</string>
     <string name="contacts_pick_attach_title">Zu welchem Kontakt die Nummer hinzufügen?</string>
     <string name="sim_chooser_title_sms">Mit welcher SIM schreiben?</string>
     <string name="a11y_choose_sim">SIM wählen</string>
     <string name="a11y_choose_sim_sms">SMS von anderer SIM</string>
     <!-- 1.8.0: выбор SIM карточками -->
     <string name="sim_choice_same_operator">gleicher Anbieter</string>
-    <string name="sim_choice_remember_note">Die Wahl wird für diese Nummer gespeichert (Einstellungen → SIM).</string>
-    <string name="sim_choice_sms_note">Die SIM wird der Nachrichten-App als Hinweis übergeben — manche Apps fragen erneut.</string>
-    <string name="sim_choice_operator_note">Anbieter laut Nummernplan: Die Nummer kann zu einem anderen Anbieter gewechselt sein.</string>
     <!-- 1.8.0: выбор номера карточками -->
     <string name="number_picker_hint">Welche Nummer?</string>
     <!-- Автодозвон (1.8.0): настройка и экран вызова -->
@@ -1093,9 +1007,7 @@
     <string name="archive_title">Archiv</string>
     <string name="archive_row">Archiv · %1$d</string>
     <string name="archive_empty">Das Archiv ist leer</string>
-    <string name="archive_calls_note">Ein neuer Anruf derselben Person holt den Eintrag zurück in die Anrufliste.</string>
     <string name="msg_archived_many">Ins Archiv verschoben: %1$s</string>
-    <string name="msg_unarchived">Aus dem Archiv geholt</string>
     <string name="a11y_avatar_select">Auswählen</string>
     <string name="settings_incoming_banner">Eingehender Anruf als Banner</string>
     <string name="settings_incoming_banner_text">Während Sie das Telefon benutzen, erscheint ein Anruf oben mit „Annehmen“ und „Ablehnen“ statt im Vollbild. Bei gesperrtem oder dunklem Bildschirm immer im Vollbild</string>

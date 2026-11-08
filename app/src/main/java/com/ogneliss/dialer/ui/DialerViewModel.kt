@@ -7,7 +7,6 @@ import com.ogneliss.dialer.data.PinnedController
 import com.ogneliss.dialer.data.PinnedEntry
 import com.ogneliss.dialer.concurrency.suspendRunCatching
 
-import android.os.Build
 import androidx.compose.runtime.Immutable
 
 import android.app.Application
@@ -51,7 +50,6 @@ import com.ogneliss.dialer.ui.components.swipe.RevealAction
 import com.ogneliss.dialer.ui.components.swipe.RevealActionFactory
 import com.ogneliss.dialer.ui.components.swipe.AndroidRevealStrings
 import com.ogneliss.dialer.data.SimSlot
-import android.content.Intent
 import com.ogneliss.dialer.util.SystemLinks
 import com.ogneliss.dialer.data.BlockingController
 import com.ogneliss.dialer.data.PinnedContacts
@@ -276,12 +274,15 @@ class DialerViewModel @Inject constructor(
         }
     }
 
-    /** Вернуть переписки из архива. */
+    /*
+     * Вернуть переписки из архива. 2.1.0: было — «Возвращено из архива»
+     * внизу, стало — молча (правило автора 07.11.2026: успех не
+     * подтверждается — переписка и так появилась в списке).
+     */
     fun unarchiveSms(addresses: Collection<String>) {
         if (addresses.isEmpty()) return
         val keys = addresses.mapTo(HashSet()) { smsPinKey(it) }
         viewModelScope.launch { prefs.updateSmsArchived { it - keys } }
-        notify(R.string.msg_unarchived)
     }
 
     /*
@@ -318,12 +319,13 @@ class DialerViewModel @Inject constructor(
      * deleteGroupsWithUndo: id остаются в записи, и «Отменить» возвращает
      * запись в архив, а не в журнал. Id удалённых вызовов больше не
      * встретятся — лишняя строка цифр в настройке, вреда нет.
+     *
+     * 2.1.0: без сообщения «Возвращено из архива» — как у переписок выше.
      */
     fun unarchiveGroups(groups: Collection<CallLogGroup>) {
         if (groups.isEmpty()) return
         val ids = groups.flatMapTo(HashSet()) { ArchiveRules.callIds(it) }
         viewModelScope.launch { prefs.updateCallArchived { it - ids } }
-        notify(R.string.msg_unarchived)
     }
 
     /*
@@ -918,24 +920,12 @@ class DialerViewModel @Inject constructor(
         prefs.setGestureHintShown(true)
     }
 
-    /**
-     * Системный экран разрешения на точные будильники.
-     *
-     * Открывается по кнопке в сообщении о неточном напоминании:
-     * искать этот экран в настройках самостоятельно почти невозможно —
-     * он спрятан в разделе особых разрешений приложения.
+    /*
+     * Системный экран точных будильников открывался кнопкой «Настроить»
+     * в сообщении о неточном напоминании. 2.1.0: сообщения нет (разбор
+     * у scheduleReminderAt), а экран остаётся в «Разрешениях» настроек —
+     * отдельная функция здесь не нужна.
      */
-    fun openExactAlarmSettings() {
-        runCatching {
-            val intent = android.content.Intent(
-                android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
-                android.net.Uri.fromParts("package", app.packageName, null)
-            ).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-            app.startActivity(intent)
-        }.onFailure {
-            Logger.w(TAG, "Не удалось открыть настройки точных будильников", it)
-        }
-    }
 
     /**
      * ПОВТОРНОЕ ЧТЕНИЕ КОНТАКТОВ.
@@ -1895,17 +1885,15 @@ class DialerViewModel @Inject constructor(
             SwipeAction.EDIT_BEFORE_CALL -> actions.editBeforeCall(group.number)
             SwipeAction.VIEW_CONTACT -> group.contactId?.let { actions.viewContact(it) }
             /*
-             * Удаление свайпом — после подтверждения (1.3.0). Свайп легко
-             * сделать случайно, а запись удаляется из системного журнала,
-             * и восстановить её невозможно. Окно — в RootScreen (deleteRequest).
-             * Удаление из меню записи — явный выбор красного пункта после
-             * долгого нажатия, там вопроса нет.
+             * Удаление свайпом. 1.3.0 — после окна «Удалить из журнала?»:
+             * свайп легко сделать случайно, а из системного журнала запись
+             * не вернуть. 1.5.7 — ещё и «Отменить»: из системного журнала
+             * запись уходит, когда сообщение погаснет (deleteGroupsWithUndo).
              *
-             * 1.5.7: и там, и там — «Отменить» после удаления: из системного
-             * журнала запись уходит, когда сообщение погаснет
-             * (deleteGroupsWithUndo).
+             * 2.1.0: окна больше нет — правило автора 07.11.2026 «выполнить,
+             * а не спрашивать»; от случайного свайпа защищает «Отменить».
              */
-            SwipeAction.DELETE_FROM_LOG -> _deleteRequest.value = group
+            SwipeAction.DELETE_FROM_LOG -> deleteGroupsWithUndo(listOf(group))
             /*
              * Блокировка идёт в общие правила, а не в отдельное хранилище.
              *
@@ -2009,25 +1997,65 @@ class DialerViewModel @Inject constructor(
         })
     }
 
+    /*
+     * «Блок» из карточки, карточек по удержанию и окна после звонка.
+     *
+     * Было: «Номер заблокирован» без отмены, а при неудаче (пустой номер
+     * скрытого вызова) — «Не удалось заблокировать». Стало (2.1.0, правило
+     * автора 07.11.2026): как у свайпа «Заблокировать» — «Номер
+     * заблокирован · Отменить»; неудача — только в журнал разработчика:
+     * исправить её человек всё равно не может.
+     *
+     * «Отменить» возвращает прежнее правило номера: у номера из белого
+     * списка оно не снимается, а снова становится разрешением (правило
+     * у шаблона одно — новое заменило старое).
+     */
     fun blockNumber(e164: String, comment: String? = null) =
         viewModelScope.launch {
-            /*
-             * Отклик обязателен.
-             *
-             * Кнопка блокировки меняет вид по потоку правил, но если
-             * правило не добавилось — а block() возвращает false
-             * на пустом номере, — не происходит вообще ничего.
-             * Человек нажимает второй раз и решает, что сломано.
-             */
+            val before = suspendRunCatching {
+                blocking.allRules.first().firstOrNull { it.pattern == e164 }
+            }.getOrNull()
             val ok = blocking.block(e164, comment)
 
             Logger.i("Block", "Блокировка ${Logger.mask(e164)}: ${if (ok) "ок" else "не удалась"}")
-            notify(if (ok) R.string.msg_blocked else R.string.msg_block_failed)
 
             // Пометка о блокировке появляется в журнале сразу,
             // а не после следующего звонка с этого номера
             refresh()
+            if (!ok) return@launch
+
+            notify(R.string.msg_blocked) {
+                viewModelScope.launch {
+                    blockedCallLog.forget(e164)
+                    if (before?.isAllow == true) blocking.allow(e164, before.comment)
+                    else blocking.removeRule(e164)
+                    refresh()
+                }
+            }
         }
+
+    /*
+     * НОМЕР ПОД МАСКОЙ — «РАЗБЛОКИРОВАТЬ» СРАЗУ (2.1.0).
+     *
+     * Было: своего правила у номера нет, он попал под маску вида «8800*»,
+     * и кнопка открывала окно «Заблокирован правилом… Откройте список
+     * блокировки». Стало (правило автора 07.11.2026 «не объяснять —
+     * выполнить»): номер уходит в белый список — тот сильнее маски
+     * (RulesRepository.decide), а сама маска и остальной диапазон
+     * не трогаются. Снизу — «Номер разблокирован · Отменить».
+     */
+    fun allowNumber(e164: String) = viewModelScope.launch {
+        if (e164.isBlank()) return@launch
+        blocking.allow(e164)
+        Logger.i("Block", "Разрешён поверх маски: ${Logger.mask(e164)}")
+        refresh()
+        notify(R.string.msg_unblocked) {
+            viewModelScope.launch {
+                blocking.removeRule(e164)
+                refresh()
+            }
+        }
+    }
 
     // ── Настройки для декларативных экранов ────────────────────────────────
 
@@ -2154,12 +2182,13 @@ class DialerViewModel @Inject constructor(
                  * Без него система усыпляет процесс, и наблюдатель
                  * за журналом не просыпается: пропущенный звонок
                  * не появится, пока человек сам не откроет приложение.
+                 *
+                 * 2.1.0: было — при выданном исключении сообщение «Уже
+                 * разрешено» вместо перехода. Стало: «Уже разрешено»
+                 * написано в самой строке (SettingsCategoryScreen), а нажатие
+                 * всегда открывает системный экран — там его и отзывают.
                  */
-                if (AppPermissions.isIgnoringBatteryOptimizations(app)) {
-                    notify(R.string.settings_battery_already)
-                } else {
-                    AppPermissions.requestIgnoreBatteryOptimizations(app)
-                }
+                AppPermissions.requestIgnoreBatteryOptimizations(app)
             }
             // Экран входящего на прошивках (1.8.1): нужный экран телефона
             key == "incoming_screen" -> {
@@ -2868,6 +2897,12 @@ class DialerViewModel @Inject constructor(
 
     // ── Напоминание перезвонить ────────────────────────────────────────────
 
+    /*
+     * Здесь жил запрос подтверждения удаления свайпом (deleteRequest,
+     * окно в RootScreen). 2.1.0: свайп удаляет сразу, с «Отменить» —
+     * разбор у handleSwipe.
+     */
+
     /**
      * Запрос напоминания.
      *
@@ -2876,19 +2911,6 @@ class DialerViewModel @Inject constructor(
      * от дела — «освободится через пять минут» и «позвонить в банк
      * завтра» требуют разного.
      */
-    /** Запись, которую свайп просит удалить, — ждёт подтверждения. */
-    private val _deleteRequest = MutableStateFlow<CallLogGroup?>(null)
-    val deleteRequest: StateFlow<CallLogGroup?> = _deleteRequest
-
-    fun confirmDeleteRequest() {
-        val group = _deleteRequest.value ?: return
-        _deleteRequest.value = null
-        // С «Отменить» (1.5.7): подтверждение и отмена вместе, как в Telegram
-        deleteGroupsWithUndo(listOf(group))
-    }
-
-    fun dismissDeleteRequest() { _deleteRequest.value = null }
-
     private val _reminderRequest = MutableStateFlow<CallLogGroup?>(null)
     val reminderRequest: StateFlow<CallLogGroup?> = _reminderRequest
 
@@ -2909,27 +2931,19 @@ class DialerViewModel @Inject constructor(
         _reminderRequest.value = null
 
         /*
-         * Подтверждение обязательно: напоминание сработает через час,
-         * и без отклика человек не узнает, поставилось ли оно вообще.
+         * Было: подтверждение «Напоминание: Имя», а без разрешения на точные
+         * будильники (Android 12+) — десятисекундное «…может прийти позже»
+         * с кнопкой «Настроить».
          *
-         * ── Про точность ───────────────────────────────────────────────────
-         * Начиная с Android 12 точные будильники требуют отдельного
-         * разрешения. Без него система вправе сдвинуть срабатывание
-         * ради экономии батареи — иногда на десятки минут.
-         *
-         * Приложение при этом работает: напоминание придёт, просто
-         * позже. Но человек, поставивший «через 5 минут» и получивший
-         * через сорок, решит, что функция сломана. Поэтому предупреждаем
-         * сразу и подсказываем, где включить точность.
+         * Стало (2.1.0, правило автора 07.11.2026: успех не подтверждается,
+         * о некритичном не сообщаем): напоминание просто ставится. Значок
+         * появляется в журнале и карточке; неточное придёт позже, но придёт.
+         * Включить точность можно в «Разрешениях» настроек; здесь — только
+         * строка в журнал разработчика.
          */
-        val exact = CallbackReminder.canScheduleExact(app)
-        notify(
-            if (exact) R.string.msg_reminder_set else R.string.msg_reminder_set_inexact,
-            displayName ?: PhoneFormatter.format(number),
-            undo = if (exact) null else {
-                { openExactAlarmSettings() }
-            }
-        )
+        if (!CallbackReminder.canScheduleExact(app)) {
+            Logger.i(TAG, "Напоминание без точных будильников: система может сдвинуть срок")
+        }
     }
 
     // ── Сообщения пользователю ─────────────────────────────────────────────
@@ -2952,6 +2966,13 @@ class DialerViewModel @Inject constructor(
      * через пять минут.
      *
      * Channel отдаёт значение единственному получателю и забывает его.
+     *
+     * ── Только «Отменить» (2.1.0) ──────────────────────────────────────────
+     * Правило автора 07.11.2026: ошибки, пояснения и подтверждения успеха
+     * не показываются — действие выполняется или молча пропускается,
+     * причина уходит в журнал разработчика. Сообщение здесь — только
+     * носитель «Отменить» после удаления, архива, блокировки и отметки.
+     * Новое сообщение без undo сюда не добавлять.
      */
     private val _messages = Channel<UserMessage>(Channel.BUFFERED)
     val messages = _messages.receiveAsFlow()
@@ -2972,8 +2993,11 @@ class DialerViewModel @Inject constructor(
         val onTimeout: (() -> Unit)? = null
     )
 
-    /** Магазина на устройстве нет — сказать об этом, а не молчать. */
-    fun notifyNoStore() = notify(R.string.settings_rate_no_store)
+    /*
+     * notifyNoStore («Google Play на устройстве нет») снят в 2.1.0:
+     * «Оценить» показывается только у установленного из Google Play
+     * (InstallSource), а «Версия» без магазина ведёт в «О приложении».
+     */
 
     private fun notify(
         textRes: Int,
@@ -3178,6 +3202,9 @@ class DialerViewModel @Inject constructor(
 
     suspend fun writeTextToUri(uri: android.net.Uri, text: String): Boolean = exporter.writeText(uri, text)
 
+    /** Выгрузка не удалась — убрать пустой файл, созданный окном выбора (2.1.0). */
+    suspend fun discardExport(uri: android.net.Uri) = exporter.discard(uri)
+
     suspend fun buildLogText(): String? = exporter.logText()
 
     suspend fun importBackup(uri: android.net.Uri): Boolean {
@@ -3218,17 +3245,24 @@ class DialerViewModel @Inject constructor(
      *
      * ── Про отклик ─────────────────────────────────────────────────────────
      * С Android 13 система сама показывает, что скопировано, и своё
-     * сообщение стало бы вторым. На старых версиях показываем своё:
-     * иначе непонятно, сработало ли.
+     * сообщение стало бы вторым. До 2.1.0 на старых версиях показывалось
+     * своё; теперь — только вибрация у кнопки (разбор у copyNumber).
      */
     /**
      * Написать на адрес из карточки.
      *
      * Тот же путь, что у свайпа «письмо»: один метод на обе точки входа,
      * чтобы поведение не разошлось при правках.
+     *
+     * 2.1.0: почтового приложения нет — было «Почтовое приложение
+     * не найдено», стало — адрес молча копируется (запасной путь по правилу
+     * автора 07.11.2026): его можно вставить туда, откуда человек пишет.
      */
     fun openEmail(address: String) {
-        if (!actions.openEmail(address)) notify(R.string.msg_no_email_app)
+        if (!actions.openEmail(address)) {
+            Logger.i(TAG, "Почтового приложения нет — адрес скопирован")
+            copyEmail(address)
+        }
     }
 
     /**
@@ -3320,6 +3354,12 @@ class DialerViewModel @Inject constructor(
 
     fun forgetFakeCall() = viewModelScope.launch { prefs.setFakeCallAt(0L) }
 
+    /*
+     * 2.1.0: до Android 13 было своё «Номер скопирован» (на 13+ его
+     * показывает сама система). Стало: сообщения нет нигде — откликом
+     * служит вибрация у кнопки (карточки, карточка абонента), а на 13+
+     * по-прежнему системная плашка.
+     */
     fun copyNumber(number: String) {
         runCatching {
             val clipboard = app.getSystemService(android.content.ClipboardManager::class.java)
@@ -3329,17 +3369,12 @@ class DialerViewModel @Inject constructor(
                     number
                 )
             )
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                notify(R.string.msg_number_copied)
-            }
         }.onFailure { Logger.w(TAG, "Не удалось скопировать номер", it) }
     }
 
     /**
      * Копирование адреса почты из карточки (1.3.2, 01.10.2026) —
-     * так же, как номера: на Android 13+ система сама показывает,
-     * что скопировано, поэтому своё сообщение — только до 13.
+     * так же, как номера: без своего сообщения (2.1.0, разбор у copyNumber).
      */
     fun copyEmail(address: String) {
         runCatching {
@@ -3350,20 +3385,21 @@ class DialerViewModel @Inject constructor(
                     address
                 )
             )
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                notify(R.string.msg_email_copied)
-            }
         }.onFailure { Logger.w(TAG, "Не удалось скопировать адрес", it) }
     }
 
+    /*
+     * Снятие правила. 2.1.0: без «Номер разблокирован» — кнопка
+     * и строка списка меняются сами. Было ещё хуже: то же сообщение
+     * выходило и при удалении номера из БЕЛОГО списка (BlockListScreen) —
+     * «разблокирован» про номер, который как раз перестал быть разрешённым.
+     */
     fun removeRule(pattern: String) = viewModelScope.launch {
         // Пометка в журнале снимается вместе с правилом
         blockedCallLog.forget(pattern)
         blocking.removeRule(pattern)
 
-        Logger.i("Block", "Блокировка снята: ${Logger.mask(pattern)}")
-        notify(R.string.msg_unblocked)
+        Logger.i("Block", "Правило снято: ${Logger.mask(pattern)}")
 
         refresh()
     }
@@ -3402,8 +3438,13 @@ class DialerViewModel @Inject constructor(
      * Было: контакт удалялся из книги, а закрепление оставалось — в журнале
      * висел закреплённый «по запасному номеру» без имени и фото.
      * Стало: сначала удаление; только если оно прошло — снимаются все
-     * закрепления контакта (по ключу и по каждому номеру); сообщение
-     * об итоге — удаление необратимо, человек должен знать, получилось ли.
+     * закрепления контакта (по ключу и по каждому номеру).
+     *
+     * 2.1.0: сообщений «Контакт удалён» и «Не удалось удалить контакт»
+     * больше нет (правило автора 07.11.2026). Удаление и так видно —
+     * контакт пропал из списка; неудача остаётся видна тем же списком,
+     * а причина — в журнале разработчика. Подтверждение перед удалением
+     * (DeleteContactDialog) осталось: удаление необратимо.
      */
     fun deleteContact(contactId: Long) = viewModelScope.launch {
         deleteContactNow(contactId)
@@ -3413,13 +3454,12 @@ class DialerViewModel @Inject constructor(
     private suspend fun deleteContactNow(contactId: Long): Boolean {
         val contact = state.value.contacts.firstOrNull { it.id == contactId }
         if (!contactActions.delete(contactId)) {
-            notify(R.string.msg_contact_delete_failed)
+            Logger.w(TAG, "Контакт не удалён")
             return false
         }
         if (contact != null && pinned.unpinContact(pinnedNumbers.value, contact)) {
             Logger.i(TAG, "Удалённый контакт снят с закреплённых")
         }
-        notify(R.string.msg_contact_deleted)
         return true
     }
 
@@ -3465,10 +3505,13 @@ class DialerViewModel @Inject constructor(
         _contactEditRequests.tryEmit(ContactEditRequest.Edit(contactId))
     }
 
-    /** Редактор сохранил контакт: перечитать книгу и сказать об этом. */
+    /*
+     * Редактор сохранил контакт: перечитать книгу. 2.1.0: без «Контакт
+     * сохранён» — редактор закрылся, изменения видны в карточке
+     * (правило автора 07.11.2026: успех не подтверждается).
+     */
     fun contactSaved() {
         reloadContacts()
-        notify(R.string.contact_edit_saved)
     }
 
     fun pinContactShortcut(name: String, number: String, e164: String): Boolean =

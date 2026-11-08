@@ -54,7 +54,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.ui.text.style.TextAlign
 import com.ogneliss.dialer.ui.adaptive.ProvidePaneLayout
 import com.ogneliss.dialer.ui.adaptive.LocalNavigationRailShown
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -387,35 +386,11 @@ fun RootScreen(
         }
     }
 
-    // Удаление записи свайпом — после подтверждения (разбор в handleSwipe)
-    val deleteRequest by vm.deleteRequest.collectAsStateWithLifecycle()
-    deleteRequest?.let { group ->
-        com.ogneliss.dialer.ui.components.OgnelissDialog(
-            onDismissRequest = { vm.dismissDeleteRequest() },
-            title = androidx.compose.ui.res.stringResource(R.string.delete_entry_confirm_title),
-            content = {
-                androidx.compose.material3.Text(
-                    androidx.compose.ui.res.stringResource(
-                        R.string.delete_entry_confirm_text,
-                        group.displayName ?: com.ogneliss.dialer.util.PhoneFormatter.format(group.number)
-                    )
-                )
-            },
-            confirmButton = {
-                androidx.compose.material3.TextButton(onClick = { vm.confirmDeleteRequest() }) {
-                    androidx.compose.material3.Text(
-                        androidx.compose.ui.res.stringResource(R.string.action_delete),
-                        color = androidx.compose.material3.MaterialTheme.colorScheme.error
-                    )
-                }
-            },
-            dismissButton = {
-                androidx.compose.material3.TextButton(onClick = { vm.dismissDeleteRequest() }) {
-                    androidx.compose.material3.Text(androidx.compose.ui.res.stringResource(R.string.nav_cancel))
-                }
-            }
-        )
-    }
+    /*
+     * Здесь было окно «Удалить из журнала?» для удаления свайпом.
+     * 2.1.0: свайп удаляет сразу, с «Отменить» (правило автора 07.11.2026:
+     * не спрашивать там, где есть отмена) — разбор в handleSwipe.
+     */
 
     // Нужно окну после звонка: показать уже поставленную отметку
 
@@ -620,20 +595,12 @@ fun RootScreen(
                     ?.let { context.getString(message.textRes, it) }
                     ?: context.getString(message.textRes)
 
-                val actionText = when (message.textRes) {
-                    R.string.msg_reminder_set_inexact ->
-                        context.getString(R.string.msg_reminder_exact_fix)
-                    else -> context.getString(R.string.msg_undo)
-                }
-
+                // 2.1.0: сообщения — только с «Отменить» (разбор у vm.messages);
+                // долгого «напоминание может прийти позже» с «Настроить» больше нет
                 val result = appSnackbar.showSnackbar(
                     message = text,
-                    actionLabel = message.undo?.let { actionText },
-                    duration = if (message.textRes == R.string.msg_reminder_set_inexact) {
-                        SnackbarDuration.Long
-                    } else {
-                        SnackbarDuration.Short
-                    }
+                    actionLabel = message.undo?.let { context.getString(R.string.msg_undo) },
+                    duration = SnackbarDuration.Short
                 )
 
                 // Погасло без «Отменить» — отложенное действие выполняется
@@ -757,7 +724,9 @@ fun RootScreen(
                             onOpenFakeCallPicker = { nav.navigate("contacts?pick=fake") },
                             onOpenNotes = { nav.navigate("notes") },
                             onOpenReminders = { nav.navigate("reminders") },
-                            onOpenArchive = { nav.navigate("call_archive") }
+                            onOpenArchive = { nav.navigate("call_archive") },
+                            // Полный список закреплённых — экран «Закреплённые» (2.1.0)
+                            onOpenPinned = { nav.navigate("pinned") }
                         )
                     }
                 }
@@ -855,7 +824,9 @@ fun RootScreen(
                         },
                         onOpenSettings = { nav.navigate("settings") },
                         onOpenReminders = { openSection(MainSection.REMINDERS) },
-                        onOpenHelp = { nav.navigate("faq") }
+                        onOpenHelp = { nav.navigate("faq") },
+                        // Полный список закреплённых — экран «Закреплённые» (2.1.0)
+                        onOpenPinned = { nav.navigate("pinned") }
                     )
                     }
                 }
@@ -1378,11 +1349,14 @@ private fun SettingsCategoryHost(
         mutableStateOf<(suspend () -> String?)?>(null)
     }
 
-    val settingsSnackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val exportDoneText = stringResource(R.string.export_done)
-    val exportFailedText = stringResource(R.string.export_failed)
 
+    /*
+     * 2.1.0: без «Сохранено» и «Не удалось сохранить файл» (правило автора
+     * 07.11.2026: успех не подтверждается, о некритичной неудаче
+     * не сообщаем). Неудача — пустой файл, который окно выбора уже
+     * создало, удаляется; причина — в журнале разработчика.
+     */
     val saveLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("text/*")
     ) { uri ->
@@ -1394,9 +1368,7 @@ private fun SettingsCategoryHost(
         scope.launch {
             val text = build()
             val ok = text != null && vm.writeTextToUri(uri, text)
-            settingsSnackbar.showSnackbar(
-                if (ok) exportDoneText else exportFailedText
-            )
+            if (!ok) vm.discardExport(uri)
         }
     }
 
@@ -1404,7 +1376,6 @@ private fun SettingsCategoryHost(
         category = category,
         vm = vm,
         onBack = onBack,
-        snackbar = settingsSnackbar,
         showBack = showBack,
         // Просьба — только разделу найденной настройки
         reveal = reveal?.takeIf { r -> SettingsRegistry.byCategory(category).any { it.id == r.entryId } },
@@ -1542,21 +1513,29 @@ private fun runSettingAction(
          */
         "fake_call_number" -> nav.navigate("contacts?pick=fake")
 
+        /*
+         * 2.1.0: магазин — только у установленного из Google Play
+         * (InstallSource). «Оценить» без него не показывается вовсе
+         * (SettingsRegistry.shown); было — сообщение «Google Play
+         * недоступен». «Версия» без магазина — сразу «О приложении».
+         */
         "rate_app" -> openDocument(
             context,
             "https://play.google.com/store/apps/details" +
                 "?id=com.ogneliss.dialer"
-        ) {
-            // Магазина на устройстве может не быть:
-            // тогда сообщаем, а не молчим
-            vm.notifyNoStore()
-        }
-
-        "version" -> openDocument(
-            context,
-            "https://play.google.com/store/apps/details" +
-                "?id=com.ogneliss.dialer"
         ) { nav.navigate("about") }
+
+        "version" -> {
+            if (com.ogneliss.dialer.util.InstallSource.isGooglePlay(context)) {
+                openDocument(
+                    context,
+                    "https://play.google.com/store/apps/details" +
+                        "?id=com.ogneliss.dialer"
+                ) { nav.navigate("about") }
+            } else {
+                nav.navigate("about")
+            }
+        }
 
         else -> vm.handleSettingsAction(key)
     }
@@ -1571,8 +1550,11 @@ private val ACTIONS_OF_SETTINGS_SCREEN = setOf("sim_labels", "calllog_export", "
 
 
 /**
- * Правая половина, пока запись не выбрана: подсказка, что сюда встанет
- * карточка. Пустая панель выглядела бы недогруженным экраном.
+ * Правая половина, пока запись не выбрана: значок на месте будущей
+ * карточки. Пустая панель выглядела бы недогруженным экраном.
+ *
+ * 2.1.0: без подписи «Выберите вызов, чтобы увидеть здесь карточку» —
+ * правило автора 07.11.2026, пояснений не показываем; значок остался.
  */
 @Composable
 private fun DetailPlaceholder() {
@@ -1586,13 +1568,6 @@ private fun DetailPlaceholder() {
             contentDescription = null,
             tint = MaterialTheme.colorScheme.outline,
             modifier = Modifier.size(48.dp)
-        )
-        Spacer(Modifier.height(Space.m))
-        Text(
-            stringResource(R.string.detail_placeholder),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
         )
     }
 }

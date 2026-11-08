@@ -55,13 +55,8 @@ fun SimLabelsDialog(
         },
         content = {
             Column {
-                Text(
-                    stringResource(R.string.settings_sim_labels_hint),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline
-                )
-                Spacer(Modifier.height(Space.m))
-
+                // 2.1.0: без пояснения «у двух карт одного оператора одно
+                // системное имя…» — правило автора 07.11.2026
                 if (sims.isEmpty()) {
                     Text(stringResource(R.string.settings_sim_none))
                 }

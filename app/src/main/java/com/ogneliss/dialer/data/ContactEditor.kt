@@ -173,16 +173,55 @@ class ContactEditor @Inject constructor(
     }
 
     /** Добавление номера к существующему контакту — выбор делает пользователь. */
-    override fun addNumberToExisting(number: String) = launch(
-        Intent(Intent.ACTION_INSERT_OR_EDIT).apply {
-            type = ContactsContract.Contacts.CONTENT_ITEM_TYPE
-            putExtra(ContactsContract.Intents.Insert.PHONE, number)
-        },
-        "добавление номера к контакту"
-    )
+    override fun addNumberToExisting(number: String) {
+        launch(
+            Intent(Intent.ACTION_INSERT_OR_EDIT).apply {
+                type = ContactsContract.Contacts.CONTENT_ITEM_TYPE
+                putExtra(ContactsContract.Intents.Insert.PHONE, number)
+            },
+            "добавление номера к контакту"
+        )
+    }
 
     /** Полное редактирование контакта в системном приложении. */
-    override fun edit(contactId: Long) = launch(editIntent(contactId), "редактирование контакта")
+    override fun edit(contactId: Long) {
+        launch(editIntent(contactId), "редактирование контакта")
+    }
+
+    /*
+     * ЧЕРНОВИК СВОЕГО РЕДАКТОРА — В СИСТЕМНУЮ ФОРМУ (2.1.0).
+     *
+     * Было: свой редактор не сохранил контакт — внизу «Не удалось
+     * сохранить контакт», черновик оставался на экране, и что делать
+     * дальше, человек не знал. Стало (правило автора 07.11.2026
+     * «выполнить запасной путь, а не объяснять»): та же форма открывается
+     * в системных «Контактах» с уже набранным — строки целиком, через
+     * Insert.DATA (имя по частям, все номера и адреса, работа, день
+     * рождения, примечание). Новый контакт — ACTION_INSERT; правка —
+     * ACTION_EDIT этого контакта, а в DATA — только новые строки:
+     * изменение прежних строк Insert-данными не передать.
+     *
+     * Фото не передаётся: большой снимок не пролезает в намерение
+     * (предел Binder — около мегабайта).
+     */
+    override fun openDraft(contactId: Long?, rows: List<RowValue>): Boolean {
+        val data = ArrayList(rows.map { rowValues(it, insert = true) })
+        val fill: Intent.() -> Unit = {
+            putParcelableArrayListExtra(ContactsContract.Intents.Insert.DATA, data)
+            putExtra(EXTRA_FINISH_ON_SAVE, true)
+        }
+        return if (contactId == null) {
+            launchFirst(
+                "черновик нового контакта",
+                Intent(ContactsContract.Intents.Insert.ACTION)
+                    .setType(ContactsContract.RawContacts.CONTENT_TYPE).apply(fill),
+                Intent(ContactsContract.Intents.Insert.ACTION, ContactsContract.Contacts.CONTENT_URI)
+                    .apply(fill)
+            )
+        } else {
+            launchFirst("черновик правки контакта", editIntent(contactId).apply(fill))
+        }
+    }
 
     private fun editIntent(contactId: Long) = Intent(Intent.ACTION_EDIT).apply {
         setDataAndType(
@@ -202,7 +241,7 @@ class ContactEditor @Inject constructor(
         "просмотр контакта"
     )
 
-    private fun launch(intent: Intent, what: String) = launchFirst(what, intent)
+    private fun launch(intent: Intent, what: String): Boolean = launchFirst(what, intent)
 
     /**
      * Первое намерение, которое удалось запустить.
@@ -211,7 +250,7 @@ class ContactEditor @Inject constructor(
      * чужие приложения видны нам только по списку <queries>, и проверка
      * могла бы сказать «некому», когда приложение есть.
      */
-    private fun launchFirst(what: String, vararg intents: Intent) {
+    private fun launchFirst(what: String, vararg intents: Intent): Boolean {
         // Редактор заперт в «Телефоне» — сначала те же формы в «Google Контактах»
         val preferred = preferredPackage()
         val attempts = if (preferred != null) {
@@ -222,7 +261,7 @@ class ContactEditor @Inject constructor(
         for (intent in attempts) {
             try {
                 context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-                return
+                return true
             } catch (e: ActivityNotFoundException) {
                 Logger.i(TAG, "$what: ${intent.action} ${intent.type ?: intent.data} — некому, пробую дальше")
             } catch (e: SecurityException) {
@@ -232,6 +271,7 @@ class ContactEditor @Inject constructor(
             }
         }
         Logger.w(TAG, "Не удалось открыть системное приложение: $what")
+        return false
     }
 
     /** Есть ли на устройстве приложение, способное редактировать контакты. */

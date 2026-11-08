@@ -125,4 +125,20 @@ class RulePatternTest {
     fun `описание шаблона читаемо`() {
         assertEquals("+7800…", RulePattern.describe("+7800*"))
     }
+
+    // ── Ввод без недопустимых символов (2.1.0) ─────────────────────────────
+
+    @Test
+    fun `недопустимые символы отбрасываются при вводе`() {
+        // Поле правила не объясняет ошибку, а не пускает лишнее:
+        // после очистки шаблон должен разбираться как годный
+        val cleaned = RulePattern.sanitize("8 (800) abc-12*")
+        assertEquals("8 (800) -12*", cleaned)
+        assertTrue(RulePattern.parse(cleaned) is RulePattern.Result.Valid)
+    }
+
+    @Test
+    fun `очистка не трогает допустимый ввод`() {
+        assertEquals("+7 900 123-45-6?", RulePattern.sanitize("+7 900 123-45-6?"))
+    }
 }

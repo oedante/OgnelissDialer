@@ -10,9 +10,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ogneliss.dialer.data.ContactAccount
 import com.ogneliss.dialer.data.ContactDraft
+import com.ogneliss.dialer.data.ContactEditPlan
 import com.ogneliss.dialer.data.ContactEditRepository
 import com.ogneliss.dialer.data.ContactEditorLauncher
 import com.ogneliss.dialer.data.ContactPhotos
+import com.ogneliss.dialer.data.EditOp
 import com.ogneliss.dialer.data.EditableValue
 import com.ogneliss.dialer.data.LoadedContact
 import com.ogneliss.dialer.data.PhotoChange
@@ -23,10 +25,11 @@ import com.ogneliss.dialer.util.PermissionGuard
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -82,18 +85,34 @@ class ContactEditViewModel @Inject constructor(
         val dirty: Boolean
             get() = draft != original || newPhoto != null || photoRemoved
 
+        /**
+         * Есть что сохранить (2.1.0): без имени, номера, почты, организации
+         * и фото «Сохранить» неактивна. Было — сообщение «Введите имя,
+         * номер или почту» после нажатия.
+         */
+        val canSave: Boolean
+            get() = !draft.isEmpty || newPhoto != null
+
         /** Есть ли что показать в круге: новое фото или прежнее, если не убрано. */
         val hasPhoto: Boolean
             get() = newPhoto != null || (!photoRemoved && !photoUri.isNullOrBlank())
     }
 
+    /*
+     * События экрану. 2.1.0 (правило автора 07.11.2026 «не объяснять —
+     * выполнить или пропустить»): событий-сообщений больше нет. Было:
+     * Failed, Empty, NoPermission, PhotoUnreadable — каждое со своей
+     * строкой внизу экрана. Стало: не сохранилось — та же форма
+     * в системных «Контактах» (openDraftInSystem); пусто — «Сохранить»
+     * неактивна (UiState.canSave); нет разрешения — системный запрос
+     * (AskWritePermission), отказ — снова системные «Контакты»; снимок
+     * не прочитался — остаётся прежнее фото, причина — в журнал.
+     */
     sealed interface Event {
         data class Saved(val contactId: Long?) : Event
-        data object Failed : Event
-        data object Empty : Event
-        data object NoPermission : Event
-        data object PhotoUnreadable : Event
         data object OpenedInSystem : Event
+        /** Нет WRITE_CONTACTS — экран спрашивает систему (ответ — writePermissionResult). */
+        data object AskWritePermission : Event
     }
 
     private val _state = MutableStateFlow(UiState())
@@ -104,8 +123,14 @@ class ContactEditViewModel @Inject constructor(
         .map { it == ContactNameFormat.FAMILY_FIRST }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
-    private val _events = MutableSharedFlow<Event>(extraBufferCapacity = 4)
-    val events: SharedFlow<Event> = _events
+    /*
+     * Channel, а не SharedFlow (2.1.0): «открыть в системных «Контактах»»
+     * для контакта только из мессенджеров или SIM решается сразу после
+     * загрузки, и событие не должно пропасть, если экран ещё не начал
+     * слушать. Каждое событие — одному получателю, один раз.
+     */
+    private val _events = Channel<Event>(Channel.BUFFERED)
+    val events: Flow<Event> = _events.receiveAsFlow()
 
     /** Снимок на экране обрезки; null — экрана нет. */
     private val _cropSource = MutableStateFlow<Bitmap?>(null)
@@ -144,6 +169,8 @@ class ContactEditViewModel @Inject constructor(
     private suspend fun startEdit(attachNumber: String) {
         val loaded = repo.load(contactId)
         if (loaded == null) {
+            // 2.1.0: экран закрывается сам, без «Контакт не найден» (ContactEditScreen)
+            Logger.i(TAG, "Контакт для правки не найден — редактор закрывается")
             _state.value = UiState(loading = false, notFound = true)
             return
         }
@@ -185,8 +212,8 @@ class ContactEditViewModel @Inject constructor(
     fun photoPicked(uri: Uri) = viewModelScope.launch {
         val bitmap = withContext(Dispatchers.IO) { ContactPhotos.load(app, uri) }
         if (bitmap == null) {
-            Logger.w(TAG, "Снимок не прочитался")
-            _events.tryEmit(Event.PhotoUnreadable)
+            // 2.1.0: без сообщения «Не удалось открыть снимок» — остаётся прежнее фото
+            Logger.w(TAG, "Снимок не прочитался — фото не меняется")
         } else {
             _cropSource.value = bitmap
         }
@@ -211,12 +238,13 @@ class ContactEditViewModel @Inject constructor(
     fun save() {
         val s = _state.value
         if (s.saving || s.loading) return
-        if (!PermissionGuard.canWriteContacts(app)) {
-            _events.tryEmit(Event.NoPermission)
+        if (!s.canSave) {
+            // Кнопка в этом случае неактивна — сюда попадает только гонка нажатий
+            Logger.d(TAG, "Сохранять нечего")
             return
         }
-        if (s.draft.isEmpty && s.newPhoto == null) {
-            _events.tryEmit(Event.Empty)
+        if (!PermissionGuard.canWriteContacts(app)) {
+            _events.trySend(Event.AskWritePermission)
             return
         }
         val photo = when {
@@ -233,14 +261,50 @@ class ContactEditViewModel @Inject constructor(
                     prefs.setContactAccount(account.key)
                     Event.Saved(id)
                 } else {
-                    Event.Failed
+                    null
                 }
             } else {
                 val loaded = s.loaded
-                if (loaded != null && repo.saveEdit(loaded, s.draft, photo)) Event.Saved(contactId) else Event.Failed
+                if (loaded != null && repo.saveEdit(loaded, s.draft, photo)) Event.Saved(contactId) else null
             }
             _state.update { it.copy(saving = false) }
-            _events.tryEmit(event)
+            if (event != null) _events.trySend(event) else openDraftInSystem()
+        }
+    }
+
+    /**
+     * Ответ системы на запрос WRITE_CONTACTS (2.1.0): выдано — сохранить
+     * своим редактором; отказ — та же форма в системных «Контактах»,
+     * у них своё разрешение. Было: сообщение «Нет разрешения… разрешите
+     * в настройках приложения».
+     */
+    fun writePermissionResult(granted: Boolean) {
+        if (granted) save() else {
+            Logger.i(TAG, "Запись контактов не разрешена — черновик уходит в системные «Контакты»")
+            openDraftInSystem()
+        }
+    }
+
+    /*
+     * Свой редактор не сохранил — запасной путь вместо сообщения
+     * «Не удалось сохранить контакт» (2.1.0): системная форма с набранным
+     * (ContactEditorLauncher.openDraft). Новый контакт — все строки;
+     * правка — только новые (вставки из плана правки). Открыть некому —
+     * черновик остаётся на экране, причина — в журнале.
+     */
+    private fun openDraftInSystem() {
+        val s = _state.value
+        val loaded = s.loaded
+        val plan = when {
+            isNew -> ContactEditPlan.forNew(s.draft)
+            loaded != null -> ContactEditPlan.forEdit(loaded, s.draft)
+            else -> emptyList()
+        }
+        val rows = plan.filterIsInstance<EditOp.Insert>().map { it.row }
+        if (systemEditor.openDraft(contactId.takeIf { !isNew }, rows)) {
+            _events.trySend(Event.OpenedInSystem)
+        } else {
+            Logger.w(TAG, "Черновик некуда передать — остаётся в редакторе")
         }
     }
 
@@ -252,7 +316,7 @@ class ContactEditViewModel @Inject constructor(
     fun openInSystem() {
         if (isNew) return
         systemEditor.edit(contactId)
-        _events.tryEmit(Event.OpenedInSystem)
+        _events.trySend(Event.OpenedInSystem)
     }
 }
 

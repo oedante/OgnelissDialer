@@ -81,14 +81,9 @@ fun PinnedContactsScreen(
     ) { padding ->
         LazyColumn(Modifier.padding(padding).fillMaxSize()) {
 
-            item {
-                Text(
-                    stringResource(R.string.pinned_explain),
-                    Modifier.padding(horizontal = Space.xl, vertical = Space.l),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+            // 2.1.0: без абзаца «Закреплённые стоят вверху журнала… курьер,
+            // ремонт» — правило автора 07.11.2026, пояснений не показываем
+            item { Spacer(Modifier.height(Space.l)) }
 
             if (entries.isEmpty()) {
                 item {
@@ -103,18 +98,11 @@ fun PinnedContactsScreen(
                             tint = MaterialTheme.colorScheme.outline
                         )
                         Spacer(Modifier.height(Space.l))
+                        // Значок и заголовок (2.1.0): подсказки «можно закрепить
+                        // и долгим нажатием в журнале» нет — пояснений не показываем
                         Text(
                             stringResource(R.string.pinned_empty),
                             style = MaterialTheme.typography.titleMedium,
-                            textAlign = TextAlign.Center
-                        )
-                        Spacer(Modifier.height(Space.s))
-                        // Подсказка о втором способе: чаще закрепляют
-                        // из журнала, и человек должен знать, что так можно
-                        Text(
-                            stringResource(R.string.pinned_empty_hint),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
                         )
                     }

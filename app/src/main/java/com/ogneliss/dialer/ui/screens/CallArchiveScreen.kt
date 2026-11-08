@@ -24,17 +24,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,7 +39,6 @@ import com.ogneliss.dialer.R
 import com.ogneliss.dialer.data.ArchiveRules
 import com.ogneliss.dialer.data.CallLogGroup
 import com.ogneliss.dialer.ui.DialerViewModel
-import com.ogneliss.dialer.ui.components.OgnelissDialog
 import com.ogneliss.dialer.ui.components.RowAvatar
 import com.ogneliss.dialer.ui.components.RowDivider
 import com.ogneliss.dialer.ui.components.SelectionTopBar
@@ -81,7 +76,6 @@ fun CallArchiveScreen(vm: DialerViewModel, onBack: () -> Unit) {
         state.callLog.filter { it.key !in pendingDeletion && ArchiveRules.isGroupArchived(it, archivedIds) }
     }
     val selection = rememberSelectionState<String>()
-    var confirmDelete by remember { mutableStateOf(false) }
     fun selectedGroups(): List<CallLogGroup> = archived.filter { it.key in selection.selected }
 
     // «Назад» сперва снимает выбор, потом закрывает экран
@@ -105,7 +99,18 @@ fun CallArchiveScreen(vm: DialerViewModel, onBack: () -> Unit) {
                         vm.unarchiveGroups(selectedGroups())
                         selection.clear()
                     },
-                    onDelete = { if (selection.count > 0) confirmDelete = true }
+                    /*
+                     * 2.1.0: без окна «Удалить N записей?» — то же удаление
+                     * с «Отменить», что в журнале (правило автора 07.11.2026:
+                     * где есть отмена, не спрашиваем). id остаются в архиве,
+                     * и отмена возвращает запись сюда же.
+                     */
+                    onDelete = {
+                        if (selection.count > 0) {
+                            vm.deleteGroupsWithUndo(selectedGroups())
+                            selection.clear()
+                        }
+                    }
                 )
             } else {
                 TopAppBar(
@@ -133,15 +138,8 @@ fun CallArchiveScreen(vm: DialerViewModel, onBack: () -> Unit) {
                 Modifier.fillMaxSize().padding(pad),
                 contentPadding = PaddingValues(bottom = Space.l)
             ) {
-                item(key = "note", contentType = "note") {
-                    // Как вернуть без кнопки: новый звонок сам возвращает запись
-                    Text(
-                        stringResource(R.string.archive_calls_note),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = Space.l, vertical = Space.s)
-                    )
-                }
+                // 2.1.0: без строки «Новый звонок вернёт запись в журнал» —
+                // правило автора 07.11.2026, пояснений не показываем
                 items(archived, key = { it.key }, contentType = { "archived_call" }) { group ->
                     ArchivedCallRow(
                         group = group,
@@ -154,27 +152,6 @@ fun CallArchiveScreen(vm: DialerViewModel, onBack: () -> Unit) {
                 }
             }
         }
-    }
-
-    if (confirmDelete) {
-        val count = selection.count
-        OgnelissDialog(
-            onDismissRequest = { confirmDelete = false },
-            title = stringResource(R.string.selection_delete_title),
-            content = { Text(pluralStringResource(R.plurals.selection_delete_text, count, count)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    // То же удаление с «Отменить», что в журнале: id остаются
-                    // в архиве, и отмена возвращает запись сюда же
-                    vm.deleteGroupsWithUndo(selectedGroups())
-                    selection.clear()
-                    confirmDelete = false
-                }) { Text(stringResource(R.string.selection_delete), color = MaterialTheme.colorScheme.error) }
-            },
-            dismissButton = {
-                TextButton(onClick = { confirmDelete = false }) { Text(stringResource(R.string.nav_cancel)) }
-            }
-        )
     }
 }
 

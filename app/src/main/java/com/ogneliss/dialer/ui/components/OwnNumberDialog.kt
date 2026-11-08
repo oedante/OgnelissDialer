@@ -8,9 +8,13 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.ogneliss.dialer.R
+import com.ogneliss.dialer.concurrency.suspendRunCatching
 import com.ogneliss.dialer.util.PhoneFormatter
 import kotlinx.coroutines.launch
 
@@ -42,41 +46,29 @@ fun OwnNumberDialog(
     onDismiss: () -> Unit
 ) {
     var value by remember(current) { mutableStateOf(PhoneFormatter.format(current)) }
-    var detectFailed by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    /*
+     * 2.1.0 (правило автора 07.11.2026, «выполнить, а не объяснять»):
+     * было — абзац «Нужен, чтобы делиться своей карточкой… операторы
+     * редко записывают его на SIM» и после неудачного определения красное
+     * «Не удалось определить — введите вручную». Стало: пояснений нет,
+     * а не определился номер — курсор сразу встаёт в поле с клавиатурой.
+     */
+    val fieldFocus = remember { FocusRequester() }
+    val keyboard = LocalSoftwareKeyboardController.current
 
     OgnelissDialog(
         onDismissRequest = onDismiss,
         title = stringResource(R.string.my_number_title),
         content = {
-                Text(
-                    stringResource(R.string.my_number_text),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                Spacer(Modifier.height(Space.l))
-
                 OutlinedTextField(
                     value = value,
-                    onValueChange = {
-                        value = it
-                        detectFailed = false
-                    },
+                    onValueChange = { value = it },
                     label = { Text(stringResource(R.string.my_number_title)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth().focusRequester(fieldFocus)
                 )
-
-                if (detectFailed) {
-                    Spacer(Modifier.height(Space.s))
-                    Text(
-                        stringResource(R.string.my_number_not_detected),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
 
                 Spacer(Modifier.height(Space.s))
 
@@ -84,7 +76,13 @@ fun OwnNumberDialog(
                 // она может не сработать, и тогда поле уже под рукой
                 TextButton(
                     onClick = {
-                        scope.launch { detectFailed = !onDetect() }
+                        scope.launch {
+                            if (!onDetect()) {
+                                // Не определился — в поле, вводить руками (разбор выше)
+                                suspendRunCatching { fieldFocus.requestFocus() }
+                                keyboard?.show()
+                            }
+                        }
                     }
                 ) {
                     Text(stringResource(R.string.my_number_detect))

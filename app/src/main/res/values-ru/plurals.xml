@@ -30,12 +30,6 @@
         <item quantity="many">Выбрано %d записей</item>
         <item quantity="other">Выбрано %d записи</item>
     </plurals>
-    <plurals name="selection_delete_text">
-        <item quantity="one">%d запись будет удалена из журнала вызовов. Отменить это нельзя.</item>
-        <item quantity="few">%d записи будут удалены из журнала вызовов. Отменить это нельзя.</item>
-        <item quantity="many">%d записей будут удалены из журнала вызовов. Отменить это нельзя.</item>
-        <item quantity="other">%d записи будут удалены из журнала вызовов. Отменить это нельзя.</item>
-    </plurals>
     <plurals name="filter_match_count">
         <item quantity="one">Подходит %1$d запись</item>
         <item quantity="few">Подходит %1$d записи</item>

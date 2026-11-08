@@ -204,8 +204,12 @@ private fun groupFromContact(contact: com.ogneliss.dialer.data.Contact): CallLog
 fun SubscriberScreen(
     groupKey: String,
     vm: DialerViewModel,
-    /** Чёрный и белый списки: туда ведёт разбор блокировки по маске. */
-    onOpenBlockLists: () -> Unit,
+    /*
+     * Чёрный и белый списки. Сюда вело окно «Заблокирован маской» —
+     * с 2.1.0 его нет (номер под маской разблокируется сразу, разбор
+     * у blockingMask). Параметр остаётся, пока его передаёт RootScreen.
+     */
+    @Suppress("UNUSED_PARAMETER") onOpenBlockLists: () -> Unit,
     onBack: () -> Unit,
     /**
      * Стрелка «назад». Нет — когда карточка стоит правой панелью рядом
@@ -456,42 +460,23 @@ fun SubscriberScreen(
      * ТРЕТЬЕ СОСТОЯНИЕ: НОМЕР ПОД МАСКОЙ.
      *
      * Своего правила у номера нет, но он попадает под маску вида 8800*.
-     * Кнопка в этом случае не блокирует и не разблокирует: первое
-     * бессмысленно (звонки и так не проходят), второе разблокировало бы
-     * весь диапазон.
+     * Снимать маску отсюда нельзя — разблокировался бы весь диапазон.
      *
-     * Поэтому она показывает «По маске» и объясняет, что происходит,
-     * с переходом в чёрный список.
+     * Было: кнопка «По маске» открывала окно с объяснением и переходом
+     * в чёрный список. Стало (2.1.0, правило автора 07.11.2026 «не
+     * объяснять — выполнить»): «Разблокировать» сразу — номер уходит
+     * в белый список, он сильнее маски; снизу «Отменить» (vm.allowNumber).
+     * Номер уже в белом списке — под маской он не заблокирован.
      */
     val blockingMask = remember(blockedNumbers, group.e164) {
-        if (isBlocked) null
+        val allowed = blockedNumbers.any { it.isAllow && RulePattern.matches(it.pattern, group.e164) }
+        if (isBlocked || allowed) null
         else blockedNumbers.firstOrNull {
             it.isBlock && it.isMask && RulePattern.matches(it.pattern, group.e164)
         }?.pattern
     }
 
-    var maskWarning by remember { mutableStateOf<String?>(null) }
-
-    maskWarning?.let { pattern ->
-        OgnelissDialog(
-            onDismissRequest = { maskWarning = null },
-            title = stringResource(R.string.block_by_mask_title),
-            content = { Text(stringResource(R.string.block_by_mask_text, pattern)) },
-            confirmButton = {
-                TextButton(onClick = { maskWarning = null; onOpenBlockLists() }) {
-                    Text(stringResource(R.string.block_by_mask_open))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { maskWarning = null }) {
-                    Text(stringResource(R.string.nav_close))
-                }
-            }
-        )
-    }
-
     var exporting by remember { mutableStateOf(false) }
-    var exportFailed by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     // Пока собирается выгрузка, показываем индикатор: на сотне записей
@@ -515,18 +500,33 @@ fun SubscriberScreen(
         )
     }
 
-    if (exportFailed) {
-        // Общий контейнер приложения вместо AlertDialog
-        OgnelissDialog(
-            onDismissRequest = { exportFailed = false },
-            title = stringResource(R.string.subscriber_export_failed),
-            content = { Text(stringResource(R.string.subscriber_export_failed_hint)) },
-            confirmButton = {
-                TextButton(onClick = { exportFailed = false }) {
-                    Text(stringResource(R.string.nav_close))
+    /*
+     * «Ещё → Выгрузить историю» (2.1.0, ошибка с 1.5.5): пункт ставил
+     * «Готовим…» и больше ничего — выгрузку никто не запускал, и окно
+     * ожидания висело до выхода из карточки, а окно «Не удалось
+     * подготовить выгрузку» не показывалось никогда. Стало: текст
+     * собирается (vm.buildHistoryExport), окно ожидания гаснет, и текст
+     * уходит в системный лист «Поделиться» — сохранить файлом можно
+     * оттуда же (разбор в ExportShare). Не собралось — окно просто
+     * гаснет, причина — в журнале разработчика (ExportController).
+     */
+    val startExport: () -> Unit = {
+        if (!exporting) {
+            exporting = true
+            scope.launch {
+                val text = vm.buildHistoryExport(group)
+                exporting = false
+                if (text != null) {
+                    ExportShare.shareText(
+                        context = context,
+                        text = text,
+                        subject = group.displayName?.takeIf { it.isNotBlank() }
+                            ?: PhoneFormatter.format(group.number),
+                        chooserTitle = shareTitle
+                    )
                 }
             }
-        )
+        }
     }
 
     /*
@@ -761,22 +761,16 @@ fun SubscriberScreen(
     val multiSim = state.sims.size > 1
     // В меню места много — полные подписи, а не «Блок» / «Разблок.»
     val blockLabelRes = when {
-        isBlocked -> R.string.action_unblock
-        blockingMask != null -> R.string.action_blocked_by_mask
+        isBlocked || blockingMask != null -> R.string.action_unblock
         else -> R.string.action_block
     }
     val onBlockAction: () -> Unit = {
+        haptics()
         when {
-            isBlocked -> {
-                haptics()
-                vm.removeRule(group.e164)
-            }
-            // Показ объяснения про маску ничего не меняет — отклика не нужно
-            blockingMask != null -> maskWarning = blockingMask
-            else -> {
-                haptics()
-                vm.blockNumber(group.e164)
-            }
+            isBlocked -> vm.removeRule(group.e164)
+            // Под маской — в белый список с «Отменить» (2.1.0, разбор у blockingMask)
+            blockingMask != null -> vm.allowNumber(group.e164)
+            else -> vm.blockNumber(group.e164)
         }
     }
 
@@ -1009,7 +1003,6 @@ fun SubscriberScreen(
                 target = target,
                 vm = vm,
                 anchorY = numberCardsAnchor,
-                onOpenBlockLists = onOpenBlockLists,
                 onDismiss = { numberCards = null }
             )
         }
@@ -1149,7 +1142,7 @@ fun SubscriberScreen(
                             knownContactId = knownContactId,
                             onStats = { showStats = true },
                             onQr = { showQr = true },
-                            onExport = { exporting = true },
+                            onExport = startExport,
                             onRingtone = {
                                 ringtoneLauncher.launch(
                                     RingtonePicker.createIntent(null, ringtoneTitle)
@@ -1177,7 +1170,7 @@ fun SubscriberScreen(
                             open = moreOpen,
                             onDismiss = { moreOpen = false },
                             blockLabelRes = blockLabelRes,
-                            blockActive = isBlocked,
+                            blockActive = isBlocked || blockingMask != null,
                             onBlock = onBlockAction
                         )
                     }
@@ -2317,14 +2310,8 @@ fun SubscriberScreen(
                             }
                         }
 
-                        if (spamMark != null) {
-                            Spacer(Modifier.height(Space.s))
-                            Text(
-                                stringResource(R.string.note_spam_tag_warning),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
+                        // 2.1.0: без пояснения «при блокировке спама номер перестанет
+                        // звонить» под отметкой — правило автора 07.11.2026
                     }
                 }
 
@@ -2370,6 +2357,8 @@ fun SubscriberScreen(
                                             OgnelissIcons.ContentCopy,
                                             R.string.action_copy_email
                                         ) {
+                                            // Отклик — вибрацией, без сообщения (2.1.0, разбор у copyNumber)
+                                            haptics()
                                             vm.copyEmail(email)
                                         }
                                     }

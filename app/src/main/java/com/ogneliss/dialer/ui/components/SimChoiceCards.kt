@@ -147,21 +147,13 @@ fun SimChoiceOverlay(
                         close()
                     }
                 }
-                // Переписка в диалере (2.0.0) выбирает карту точно — подсказка не нужна
-                val smsHere = com.ogneliss.dialer.sms.SmsSettings.composeHere(androidx.compose.ui.platform.LocalContext.current)
-                val notes = buildList {
-                    if (isCall && request.remembers) add(R.string.sim_choice_remember_note)
-                    if (!isCall && !smsHere) add(R.string.sim_choice_sms_note)
-                    if (sameOperator.isNotEmpty()) add(R.string.sim_choice_operator_note)
-                }
-                notes.forEach { note ->
-                    Text(
-                        stringResource(note),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = Space.l, vertical = Space.xs)
-                    )
-                }
+                /*
+                 * Строк под картами («Выбор запомнится для номера», «Карта
+                 * передаётся приложению SMS как подсказка», «Оператор —
+                 * по плану нумерации») нет с 2.1.0: правило автора
+                 * 07.11.2026, пояснений не показываем. Метка «тот же
+                 * оператор» у карты осталась — это сведения, а не пояснение.
+                 */
             }
         }
     }

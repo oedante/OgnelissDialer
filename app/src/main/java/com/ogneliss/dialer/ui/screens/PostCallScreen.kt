@@ -154,13 +154,8 @@ fun PostCallSheet(
                         )
                     }
                 }
-                // То же объяснение, что в карточке: при включённой блокировке
-                // телефон перестанет принимать вызовы с этого номера
-                Text(
-                    stringResource(R.string.note_tags_hint),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                // 2.1.0: без пояснения «эти метки включают автоблокировку» —
+                // правило автора 07.11.2026, как и в карточке абонента
             }
             // Очищает только текст: отметка ставится и снимается сама, по фишке
             CardButtons(

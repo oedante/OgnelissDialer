@@ -6,7 +6,6 @@ import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -67,7 +66,8 @@ fun ReminderTimeDialog(
 ) {
     val context = LocalContext.current
 
-    var target by remember(initialMillis) { mutableLongStateOf(initialMillis) }
+    // Прошедшее предзаполнение — сразу на завтра (2.1.0, разбор у CardButtons ниже)
+    var target by remember(initialMillis) { mutableLongStateOf(notInPast(initialMillis)) }
 
     val dateFormat = remember { JavaDateFormat.getDateInstance(JavaDateFormat.FULL) }
     val timeFormat = remember { JavaDateFormat.getTimeInstance(JavaDateFormat.SHORT) }
@@ -99,6 +99,8 @@ fun ReminderTimeDialog(
                         DatePickerDialog(
                             context,
                             { _, year, month, day ->
+                                // Без сдвига на завтра: следом обычно выбирают время,
+                                // и «сегодня в 18:00» не должно стать завтрашним
                                 target = Calendar.getInstance().apply {
                                     timeInMillis = target
                                     set(Calendar.YEAR, year)
@@ -126,13 +128,13 @@ fun ReminderTimeDialog(
                         TimePickerDialog(
                             context,
                             { _, hour, minute ->
-                                target = Calendar.getInstance().apply {
+                                target = notInPast(Calendar.getInstance().apply {
                                     timeInMillis = target
                                     set(Calendar.HOUR_OF_DAY, hour)
                                     set(Calendar.MINUTE, minute)
                                     set(Calendar.SECOND, 0)
                                     set(Calendar.MILLISECOND, 0)
-                                }.timeInMillis
+                                }.timeInMillis)
                             },
                             c.get(Calendar.HOUR_OF_DAY),
                             c.get(Calendar.MINUTE),
@@ -142,29 +144,36 @@ fun ReminderTimeDialog(
                 )
 
                 /*
-                 * Предупреждение о прошедшем времени.
+                 * Прошедшее время. Дату в прошлое выбрать нельзя, а время —
+                 * можно: сегодняшнее утро при выборе «сегодня».
                  *
-                 * Дату в прошлое выбрать нельзя, а время — можно: сегодняшнее
-                 * утро при выборе «сегодня». Молча отказать нельзя, молча
-                 * поставить тоже: напоминание не сработает.
+                 * Было: красное «Это время уже прошло» и неактивная
+                 * «Сохранить». Стало (2.1.0, правило автора 07.11.2026
+                 * «выполнить, а не объяснять»): то же время завтра — после
+                 * выбора времени дата в строке выше меняется сама
+                 * (notInPast). Окно могло простоять открытым, пока время
+                 * прошло, а дату могли выбрать после времени, — поэтому
+                 * проверка и при сохранении.
                  */
-                val inPast = target <= System.currentTimeMillis()
-                if (inPast) {
-                    Text(
-                        stringResource(R.string.reminder_in_past),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(horizontal = Space.l, vertical = Space.xs)
-                    )
-                }
                 CardButtons(
                     confirmLabel = stringResource(R.string.action_save),
-                    onConfirm = { onSave(target); close() },
-                    confirmEnabled = !inPast,
+                    onConfirm = { onSave(notInPast(target)); close() },
                     dismissLabel = stringResource(R.string.nav_cancel),
                     onDismiss = close
                 )
             }
         }
     }
+}
+
+/**
+ * Время напоминания не в прошлом (2.1.0): прошедшее — тот же час
+ * и минута на следующий день (через Calendar: переход на летнее время
+ * не сдвигает час).
+ */
+private fun notInPast(millis: Long, now: Long = System.currentTimeMillis()): Long {
+    if (millis > now) return millis
+    val c = Calendar.getInstance().apply { timeInMillis = millis }
+    while (c.timeInMillis <= now) c.add(Calendar.DAY_OF_MONTH, 1)
+    return c.timeInMillis
 }

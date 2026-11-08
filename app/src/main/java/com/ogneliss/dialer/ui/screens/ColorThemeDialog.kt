@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.settings.SettingsCommands
-import com.ogneliss.dialer.settings.ThemeMode
 import com.ogneliss.dialer.settings.ThemePreset
 import com.ogneliss.dialer.ui.DialerViewModel
 import com.ogneliss.dialer.ui.components.OgnelissDialog
@@ -96,7 +95,21 @@ internal fun ColorThemeDialog(
     fun shown(argb: Int) = Color(
         if (dark) ThemePresetMath.accentDark(argb, on) else ThemePresetMath.accentLight(argb, on)
     )
-    fun pick(p: ThemePreset, a: Int?) = vm.setChoice("theme_preset", SettingsCommands.themeChoice(p, a))
+    /*
+     * Выбор темы или акцента (2.1.0). Было: при включённых «Цветах обоев»
+     * (Android 12+) сверху висело «Акцент не действует, пока включены цвета
+     * обоев», а в высоком контрасте — «…в высоком контрасте не действует».
+     * Стало (правило автора 07.11.2026 «выполнить, а не объяснять»): выбор
+     * сам выключает цвета обоев — человек выбрал свой цвет. Высокий
+     * контраст не трогается: это выбор для глаз, а не оформления; акцент
+     * сохраняется и заработает, когда контраст выключат.
+     */
+    fun pick(p: ThemePreset, a: Int?) {
+        if (settings.dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            vm.setSwitch("dynamic_color", false)
+        }
+        vm.setChoice("theme_preset", SettingsCommands.themeChoice(p, a))
+    }
 
     // Свой цвет: тон и насыщенность — от сохранённого или от акцента темы
     val start = ThemePresetMath.toHsl(accent ?: ThemePresets.spec(preset).accent)
@@ -115,22 +128,6 @@ internal fun ColorThemeDialog(
                     .heightIn(max = DIALOG_MAX_HEIGHT)
                     .verticalScroll(rememberScrollState())
             ) {
-                // Почему выбор может не подействовать — сразу, а не потом
-                val note = when {
-                    settings.theme == ThemeMode.HIGH_CONTRAST -> R.string.accent_note_contrast
-                    settings.dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
-                        R.string.accent_note_dynamic
-                    else -> null
-                }
-                note?.let {
-                    Text(
-                        stringResource(it),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(bottom = Space.s)
-                    )
-                }
-
                 SectionCaption(stringResource(R.string.color_theme_section))
                 ThemePreset.entries.forEach { p ->
                     Row(
