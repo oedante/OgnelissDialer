@@ -227,3 +227,31 @@ Existing package com.ogneliss.dialer signatures do not match newer version
 workflow из той метки, где исправления ещё нет. Пустой выпуск `v1.8.2`
 можно удалить на сайте (Releases → v1.8.2 → Delete; метка останется) —
 его заменит `v1.9.0`.
+
+## generateBaselineProfile: «does not specify a testedAbi» и «failed to report testSuiteFinished»
+
+08.11.2026, 2.1.0, AGP 9.4.1. Сборка заканчивается BUILD SUCCESSFUL,
+но в журнале два сообщения.
+
+**«The device "benchmarkDevice" does not specify a "testedAbi"».**
+`testedAbi = "x86_64"` в `benchmark/build.gradle.kts` задан с 1.6.0.
+AGP 9.4.1 не передаёт это значение задаче подготовки устройства
+(`benchmarkDeviceSetup`), а предупреждение печатает именно она.
+Это ошибка AGP (её же описывают в других проектах для 9.4.1
+и 9.5.0-alpha), менять ничего не нужно. Значение в настройках оставить:
+в AGP 10 по умолчанию станет arm64-v8a, и без него замеры упадут.
+
+**`failed to report testSuiteFinished … NullPointerException: Element at
+index 1 is null`, затем «Could not find test-result.pb».** Падает
+не наш код, а слушатель результатов AGP (`AndroidTestResultListener`)
+при записи итогового отчёта: файл с результатами не пишется, сборка
+не останавливается. Учтите: задача на управляемом устройстве может
+пройти и тогда, когда тесты вообще не запустились.
+
+**Как проверить, что профиль собран:** после задачи должны измениться
+`app/src/release/generated/baselineProfiles/baseline-prof.txt`
+и `startup-prof.txt` (`git status`). Изменились — профиль новый,
+закоммитить оба файла. Не изменились — открыть отчёт
+`benchmark/build/reports/androidTests/managedDevice/nonminifiedrelease/allDevices/index.html`
+и посмотреть, выполнился ли `BaselineProfileGenerator.generate`.
+
