@@ -35,16 +35,10 @@
     <string name="a11y_setting_on">On</string>
     <string name="about_licenses_hint">Open source components used in the app</string>
     <string name="about_no_internet">Ogneliss has no internet permission. You can verify this yourself in the installed app details — your call log, contacts and notes stay on this device.</string>
-    <string name="about_recording_hint">Why this dialer cannot record calls</string>
     <string name="action_add_contact">Add to contacts</string>
     <string name="action_block">Block number</string>
     <string name="action_unblock">Unblock number</string>
-    <string name="blocked_notice_title">Call blocked</string>
     <string name="blocked_notice_channel">Blocked calls</string>
-    <string name="block_by_mask_title">Blocked by a rule</string>
-    <string name="block_by_mask_text">This number is covered by the mask %1$s, not by a rule of its own. Unblocking it here would remove the mask and unblock the whole range with it. Open the block list to decide.</string>
-    <string name="block_by_mask_open">Open block list</string>
-    <string name="action_blocked_by_mask">By mask</string>
     <string name="action_call">Call</string>
     <string name="action_copy_number">Copy number</string>
     <string name="action_delete_contact">Delete contact</string>
@@ -62,15 +56,8 @@
     <string name="action_viber" translatable="false">Viber</string>
     <string name="action_view_contact">Open contact</string>
     <string name="action_whatsapp" translatable="false">WhatsApp</string>
-    <string name="allow_list_empty">Nothing allowed explicitly yet</string>
-    <string name="allow_list_priority_note">Numbers here always get through, whatever the other rules say. Add your clinic, school and courier here before turning on strict blocking.</string>
     <string name="app_name" translatable="false">Ogneliss Dialer</string>
     <string name="app_short_name" translatable="false">Ogneliss</string>
-    <string name="backup_contents">The file contains notes, tags, block and allow lists and speed dial. Call history and contacts are not included — Android transfers those itself.</string>
-    <string name="backup_done">Backup saved</string>
-    <string name="backup_failed">Could not save backup</string>
-    <string name="backup_why">Cloud backup is disabled on purpose: your data does not leave the device. The flip side is that a new phone starts empty. Export keeps your notes, tags and block lists.</string>
-    <string name="block_list_empty">Nothing blocked yet</string>
     <string name="call_blocked">Blocked</string>
     <string name="call_incoming">Incoming</string>
     <string name="call_missed">Missed</string>
@@ -87,10 +74,7 @@
     <string name="confirm_delete_contact_text">The contact will be removed from every account it is stored in, including Google. This cannot be undone from the phone.</string>
     <string name="confirm_delete_contact_title">Delete this contact?</string>
     <string name="confirm_delete_contact_pinned">This contact is pinned to the top of the call log — it will be unpinned too.</string>
-    <string name="msg_contact_deleted">Contact deleted</string>
-    <string name="msg_contact_delete_failed">Couldn\'t delete the contact</string>
     <string name="confirm_enable">Enable</string>
-    <string name="confirm_external_lookup">The incoming number will be passed to the app you choose, which may send it to its own servers.</string>
     <string name="confirm_reset">All settings return to their defaults. Notes, tags and lists are kept.</string>
     <string name="confirm_title">Are you sure?</string>
     <string name="contact_pin_shortcut">Add shortcut to home screen</string>
@@ -104,15 +88,10 @@
     <string name="dial_wait">wait for you</string>
     <string name="empty_clear_search">Clear search</string>
     <string name="empty_no_calllog_permission">Call history is not available</string>
-    <string name="empty_no_calllog_permission_hint">Ogneliss needs access to the call log to show your history. It stays on the device.</string>
     <string name="empty_no_calls">No calls yet</string>
-    <string name="empty_no_calls_hint">Calls you make and receive will appear here.</string>
     <string name="empty_no_contacts">No contacts</string>
-    <string name="empty_no_contacts_hint">Add someone to your phone book and they will appear here.</string>
     <string name="empty_no_contacts_permission">Contacts are not available</string>
-    <string name="empty_no_contacts_permission_hint">Without access to contacts, calls show as bare numbers and T9 search cannot find people by name.</string>
     <string name="empty_no_favourites">No favourites</string>
-    <string name="empty_no_favourites_hint">Tap the star next to a contact to keep them at hand.</string>
     <string name="nav_journal">Call log</string>
     <string name="nav_notes">Notes</string>
     <string name="reminders_filter_today">Today</string>
@@ -121,16 +100,12 @@
     <string name="reminders_search_hint">Name or number</string>
     <string name="nav_reminders">Reminders</string>
     <string name="empty_no_notes">No notes yet</string>
-    <string name="empty_no_notes_hint">A note can be added from a contact card or right during a call. It stays on this phone.</string>
     <string name="empty_no_reminders">No reminders</string>
-    <string name="empty_no_reminders_hint">Set one from a contact card or from the long-press menu in the call log.</string>
     <string name="reminders_today">Today</string>
     <string name="reminders_tomorrow">Tomorrow</string>
     <string name="empty_no_results">Nothing found</string>
-    <string name="empty_no_results_hint">Try fewer digits, or search by the first letters of a name.</string>
     <string name="external_lookup_confirm">Incoming numbers will be passed to %1$s. That app decides what to do with them under its own privacy policy.</string>
     <string name="external_lookup_none">No caller ID directories are installed on this device.</string>
-    <string name="external_lookup_warning">This is the only place where a number can leave your device. Not through Ogneliss — it has no network access — but through the app you enable here, which may send the number to its own servers.</string>
     <string name="filter_period_all">Any time</string>
     <string name="filter_period_month">Month</string>
     <string name="filter_period_today">Today</string>
@@ -176,7 +151,6 @@
     <string name="keywords_language">locale translation russian english</string>
     <string name="keywords_spam">spam fraud scam block unwanted</string>
     <string name="keywords_theme">dark night black colour color amoled accent font roboto corners rounding density compact</string>
-    <string name="legal_load_failed">Could not load the document.</string>
     <string name="log_clear_all">Clear call history</string>
     <string name="log_share_subject">Ogneliss Dialer log</string>
     <string name="log_share_title">Share log file</string>
@@ -186,7 +160,6 @@
     <string name="nav_contacts">Contacts</string>
     <string name="nav_save">Save</string>
     <string name="nav_settings">Settings</string>
-    <string name="note_spam_tag_warning">With the spam blocking setting on, this number will stop ringing.</string>
     <string name="onboarding_default_text">Without this role Android will not hand call control to the app.</string>
     <string name="onboarding_default_title">Default phone app</string>
     <string name="onboarding_optional">(optional)</string>
@@ -205,8 +178,6 @@
     <string name="postcall_remind_30">Remind in 30 min</string>
     <string name="postcall_remind_tomorrow">Tomorrow</string>
     <string name="predial_call_anyway">Call anyway</string>
-    <string name="predial_generic">This is a service number. It may be chargeable.</string>
-    <string name="predial_international">This is an international number. The call will be charged at international rates.</string>
     <string name="predial_premium">This is a premium-rate number. A minute can cost hundreds of roubles. A missed call from such a number is a common scam — the caller counts on you dialling back.</string>
     <string name="predial_title">Check the number</string>
     <string name="quick_reply_action">Decline with a message</string>
@@ -215,16 +186,11 @@
     <string name="quick_reply_driving">Driving, cannot talk</string>
     <string name="quick_reply_meeting">In a meeting</string>
     <string name="reminder_title">Call back: %1$s</string>
-    <string name="restore_done">Backup restored</string>
-    <string name="restore_failed">Could not read backup file</string>
     <string name="rule_add">Add</string>
     <string name="rule_add_allow">Always allow</string>
     <string name="rule_add_block">Always block</string>
     <string name="rule_comment">Note (optional)</string>
     <string name="rule_comment_hint">Cold calls, courier, clinic…</string>
-    <string name="rule_error_characters">These characters cannot appear in a number: %1$s</string>
-    <string name="rule_error_too_broad">Too broad — this would catch almost every call. Add more digits.</string>
-    <string name="rule_mask_hint">Use * for any ending: 800 * blocks every number that starts with 800.</string>
     <string name="rule_number_or_mask">Number or pattern</string>
     <string name="rule_preview_mask">Applies to every number starting with %1$s</string>
     <string name="rule_preview_number">Applies to %1$s</string>
@@ -269,8 +235,6 @@
     <string name="settings_calllog_export_text">The whole log as a CSV table: date, number, name, type, duration. Opens in Excel and LibreOffice.</string>
     <string name="settings_log_save">Save the log to a file</string>
     <string name="settings_log_save_text">The same technical log that “Share” sends, but written to a file you choose.</string>
-    <string name="export_done">Saved</string>
-    <string name="export_failed">Could not save the file</string>
     <string name="settings_merge_calls">Group calls from the same number</string>
     <string name="settings_merge_calls_text">Consecutive calls appear as one entry with a counter.</string>
     <string name="settings_notifications">App notifications</string>
@@ -279,8 +243,6 @@
     <string name="settings_post_call_unknown">Only for unknown numbers</string>
     <string name="settings_post_call_unknown_text">Recommended: a popup after every call to family gets annoying fast.</string>
     <string name="settings_privacy_policy">Privacy Policy</string>
-    <string name="settings_recording_text">On Android 10 and later the system blocks third-party apps from accessing call audio, and working around this is against Google Play policy. If your phone records calls, that feature is built in by the manufacturer and works regardless of which dialer you choose.</string>
-    <string name="settings_recording_title">Why there is no call recording</string>
     <string name="settings_remember_sim">Remember SIM per number</string>
     <string name="settings_remember_sim_text">The SIM you pick for a number is reused next time.</string>
     <string name="settings_reset">Reset settings</string>
@@ -313,7 +275,6 @@
     <string name="settings_messengers_any_number_text">«Message» offers the installed WhatsApp, Telegram, Viber and Max even if the number is not in contacts. Telegram opens a chat only if the person allows being found by number</string>
     <string name="settings_sim">SIM cards and networks</string>
     <string name="settings_sim_labels">SIM card names</string>
-    <string name="settings_sim_labels_hint">Two cards from the same operator get the same system name. Give the slots your own names — Work, Personal.</string>
     <string name="settings_sim_labels_text">Name the slots so you can tell them apart</string>
     <string name="settings_sim_none">No active SIM cards detected</string>
     <string name="settings_sim_slot">Slot %1$d</string>
@@ -366,8 +327,6 @@
     <string name="accent_custom_named">custom, %1$s</string>
     <string name="accent_hue">Hue</string>
     <string name="accent_saturation">Saturation</string>
-    <string name="accent_note_dynamic">Colors now come from the wallpaper: choosing a theme or an accent turns that off.</string>
-    <string name="accent_note_contrast">High contrast has its own colors: theme and accent don’t apply.</string>
     <string name="accent_blue">Blue</string>
     <string name="accent_sky">Sky blue</string>
     <string name="accent_teal">Teal</string>
@@ -392,7 +351,6 @@
     <string name="settings_version_title">Version</string>
     <string name="settings_rate">Rate the app</string>
     <string name="settings_rate_text">Opens the app page on Google Play</string>
-    <string name="settings_rate_no_store">Google Play is not available on this device</string>
     <string name="shortcut_call_label">Call %1$s</string>
     <string name="sort_alphabet">Alphabetical</string>
     <string name="sort_frequency">Most called</string>
@@ -411,15 +369,12 @@
     <string name="speed_dial_assign">Assign to digit %1$d</string>
     <string name="speed_dial_clear">Clear</string>
     <string name="speed_dial_empty">Not assigned</string>
-    <string name="speed_dial_hint">Press and hold a digit on the keypad to call the assigned number.</string>
     <string name="speed_dial_no_contacts">No contacts found</string>
     <string name="speed_dial_search">Search contacts</string>
     <string name="speed_dial_summary">Assign contacts to digits 2–9</string>
     <string name="speed_dial_title">Speed dial</string>
     <string name="speed_dial_voicemail">Voicemail</string>
-    <string name="speed_dial_voicemail_hint">Digit 1 is reserved by convention</string>
     <string name="stats_coverage">Counted over the last %1$d days — that is how far the system call log goes back.</string>
-    <string name="stats_empty">Not enough calls yet</string>
     <string name="stats_summary">Totals and who you talk to most</string>
     <string name="stats_title">Call statistics</string>
     <string name="stats_top_contacts">Most frequent</string>
@@ -445,7 +400,6 @@
     <string name="selection_start">Select several</string>
     <string name="selection_select_all">Select all</string>
     <string name="selection_delete">Delete</string>
-    <string name="selection_delete_title">Delete the selected entries?</string>
 
     <!-- Permission wizard -->
     <string name="wizard_step_of">Step %1$d of %2$d</string>
@@ -509,7 +463,6 @@
     <string name="contacts_filter_frequent">Frequent</string>
     <string name="contacts_filter_half_year">6+ months</string>
     <string name="contacts_filter_year">A year or more</string>
-    <string name="contacts_stale_hint">No calls does not mean no contact — you may be messaging these people daily.</string>
     <string name="incall_note_add">Write a note</string>
     <string name="incall_note_hide">Hide note</string>
     <string name="incall_note_hint">Delivery on Tuesday after four…</string>
@@ -548,17 +501,11 @@
     <string name="pinned_header">Pinned</string>
     <string name="action_pin">Pin to top</string>
     <string name="action_unpin">Unpin</string>
-    <string name="pin_limit_title">Pinned list is full</string>
-    <string name="pin_limit_text">You can pin up to %1$d numbers. Pinned entries take the top of the screen — with more of them the call list would start below the visible area.</string>
     <string name="subscriber_export">Export call history</string>
     <string name="subscriber_export_progress">Preparing…</string>
-    <string name="subscriber_export_failed">Could not prepare the export</string>
-    <string name="subscriber_export_failed_hint">The call log could not be read. Check that access to the call log is granted in Settings.</string>
     <string name="settings_pinned">Pinned at the top</string>
     <string name="settings_pinned_text">Which numbers stay above the call list</string>
-    <string name="pinned_explain">Pinned numbers stay at the top of the call list regardless of when you last spoke. Useful while you are dealing with a courier, a repair or a one-off client — people you would not add to favourites.</string>
     <string name="pinned_empty">Nothing pinned yet</string>
-    <string name="pinned_empty_hint">You can also pin a number by holding an entry in the call list.</string>
     <string name="pinned_add">Pin a contact</string>
     <string name="pinned_slots_left">%1$d slots left</string>
     <string name="pinned_limit_reached">All %1$d slots are taken — unpin something first</string>
@@ -577,8 +524,6 @@
     <string name="reminder_2hours">In two hours</string>
     <string name="reminder_custom">Pick a time…</string>
     <string name="reminder_tomorrow">Tomorrow morning</string>
-    <string name="reminder_in_past">That time has already passed</string>
-    <string name="msg_reminder_set">Reminder set: %1$s</string>
     <string name="sim_chooser_title">Which SIM to call from?</string>
     <string name="settings_swipe_sim">SIM for swipe actions</string>
     <string name="settings_swipe_sim_text">Which card to use when a swipe places a call</string>
@@ -591,8 +536,6 @@
     <string name="menu_theme_light">Switch to light theme</string>
     <string name="menu_theme_dark">Switch to dark theme</string>
     <string name="selection_exit">Exit selection</string>
-    <string name="msg_reminder_set_inexact">Reminder set for %1$s — may be delayed</string>
-    <string name="msg_reminder_exact_fix">Set up</string>
     <string name="dialer_role_blocked_title">Could not open the chooser</string>
     <string name="dialer_role_blocked_text">Usually this happens when the request was declined before (the system stops asking) or the phone’s shell replaced the chooser with its own.
 
@@ -621,29 +564,23 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="history_collapse">Collapse</string>
     <string name="subscriber_note_section">Note</string>
     <string name="subscriber_note_add">Add a note</string>
-    <string name="external_lookup_system_hint">To choose which app identifies callers and filters spam, use the system settings — that role is granted by Android, not by this app.</string>
     <string name="external_lookup_open_system">Open system settings</string>
     <string name="gesture_hint_keyboard">Swipe up on the keypad button — open, down on the number row — close</string>
     <string name="gesture_handle_hint">Swipe the bar sideways to switch, up for the keypad</string>
     <string name="filter_no_matches">No calls match these filters</string>
     <string name="action_unblock_short">Unblock</string>
     <string name="subscriber_qr">Share via QR code</string>
-    <string name="qr_hint">Point a camera at the code to save the contact</string>
     <string name="qr_content_description">QR code with contact details</string>
     <string name="menu_my_number_unknown">Number not set</string>
     <string name="my_number_title">My phone number</string>
-    <string name="my_number_text">Needed to share your own card. The phone often does not know it: carriers rarely write it to the SIM.</string>
     <string name="my_number_detect">Try to detect</string>
-    <string name="my_number_not_detected">Could not detect — enter it manually</string>
     <string name="action_save">Save</string>
     <string name="action_share">Share</string>
     <string name="action_favourite">Favourite</string>
     <string name="msg_unblocked">Number unblocked</string>
-    <string name="msg_block_failed">Could not block this number</string>
     <string name="action_copy">Copy</string>
     <string name="action_paste_number">Paste number</string>
     <string name="dialpad_number_hint">Number</string>
-    <string name="msg_number_copied">Number copied</string>
     <string name="a11y_call_number">Call %1$s</string>
     <string name="action_more">More</string>
     <string name="action_clear">Clear</string>
@@ -662,7 +599,6 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="incoming_blocked_action">Allow</string>
     <string name="menu_my_contact">My contact</string>
     <string name="settings_own_number_text">Used to share your own card. Tap to change or clear</string>
-    <string name="note_tags_hint">These tags enable auto-blocking if it is turned on in settings</string>
     <string name="blocked_by_rule">Blocked</string>
     <plurals name="reminder_in_minutes">
         <item quantity="one">in %1$d minute</item>
@@ -689,7 +625,6 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="settings_fake_call_button">Fake call button</string>
     <string name="settings_fake_call_button_text">A small round button on the call log and contacts screens. Turn it off if you only need the menu, the launcher shortcut or the quick settings tile.</string>
     <string name="settings_fake_call_number_text">A number from your contacts. Left empty, a random contact is used.</string>
-    <string name="settings_fake_call_hint">The screen looks like an incoming call, but no call is made: nothing is sent anywhere and it does not appear in the call log. This is a way to step away from a conversation, not a safety tool.</string>
     <!-- Подзаголовки внутри разделов настроек: разбор в SettingEntry.groupRes -->
     <string name="settings_group_row_swipe">Swipe on a log row</string>
     <string name="settings_group_screen_swipe">Switching screens</string>
@@ -724,7 +659,6 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="journal_style_cards">Cards</string>
     <string name="journal_style_groups">Groups by day</string>
     <string name="action_mark_spam">Mark as spam</string>
-    <string name="detail_placeholder">Select a call to see the contact card here</string>
     <string name="sim_kind_esim" translatable="false">eSIM</string>
     <string name="sim_kind_physical">SIM card</string>
     <string name="settings_button_labels">Button labels</string>
@@ -758,16 +692,11 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
         <item quantity="other">%d missed calls</item>
     </plurals>
     <string name="action_write">Message</string>
-    <string name="swipe_actions_hint">One action fires right away. Two or three: the row slides open and waits for a tap. Up to three.</string>
     <string name="log_clear_confirm_title">Clear call history?</string>
     <string name="log_clear_confirm_text">All call history entries will be deleted, here and in the phone system call log. This cannot be undone. Notes, pinned numbers, reminders and block lists are kept.</string>
     <string name="log_clear_confirm_action">Clear</string>
-    <string name="delete_entry_confirm_title">Delete from history?</string>
-    <string name="delete_entry_confirm_text">Calls with %1$s will be deleted, here and in the phone system call log. For a few seconds afterwards you can undo it.</string>
     <string name="action_write_email">Write email</string>
     <string name="action_copy_email">Copy address</string>
-    <string name="msg_email_copied">Address copied</string>
-    <string name="msg_no_email_app">No email app found</string>
     <!-- Подписи разделов меню «Ещё» (строгий стиль, 1.5.1) -->
     <string name="menu_section_lists">Sections</string>
     <string name="menu_section_app">App</string>
@@ -920,18 +849,13 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="contact_edit_no_year">Without year</string>
     <string name="contact_edit_pick">Done</string>
     <string name="contact_edit_group_note">Note</string>
-    <string name="contact_edit_note_hint">Stored in the phone book — other apps see it too</string>
     <string name="contact_edit_group_account">Save to</string>
     <string name="contact_edit_account_title">Where to save the contact</string>
     <string name="contact_edit_account_google">Google · %1$s</string>
-    <string name="contact_edit_account_sync_hint">Syncs with the account and moves to a new phone</string>
-    <string name="contact_edit_account_device_hint">Only on this phone — not synced</string>
     <string name="contact_account_device">Phone</string>
     <string name="contact_edit_photo_pick">Add photo</string>
     <string name="contact_edit_photo_change">Change photo</string>
     <string name="contact_edit_photo_remove">Remove photo</string>
-    <string name="contact_edit_photo_failed">Couldn’t open the picture</string>
-    <string name="contact_edit_crop_hint">Move and zoom the picture to fit the frame</string>
     <string name="contact_edit_crop_done">Done</string>
     <string name="contact_edit_phone_type">Number type</string>
     <string name="contact_edit_email_type">Address type</string>
@@ -943,28 +867,18 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="email_type_home">Personal</string>
     <string name="email_type_work">Work</string>
     <string name="email_type_other">Other</string>
-    <string name="contact_edit_readonly">Some details come from %1$s — they are changed there.</string>
-    <string name="contact_edit_not_editable">This contact is stored in %1$s. Change it there or in the system Contacts app.</string>
     <string name="contact_edit_open_system">Open in system Contacts</string>
     <string name="contact_edit_open_system_text">For addresses, groups and other fields</string>
     <string name="contact_edit_discard_title">Discard changes?</string>
     <string name="contact_edit_discard_text">The contact will stay as it was.</string>
     <string name="contact_edit_discard">Discard</string>
     <string name="contact_edit_keep_editing">Keep editing</string>
-    <string name="contact_edit_saved">Contact saved</string>
-    <string name="contact_edit_failed">Couldn’t save the contact</string>
-    <string name="contact_edit_empty">Enter a name, number or email</string>
-    <string name="contact_edit_no_permission">No permission to change contacts — allow it in the app settings</string>
-    <string name="contact_edit_not_found">Contact not found — it may have been deleted.</string>
     <string name="contacts_pick_attach_title">Add the number to which contact?</string>
     <string name="sim_chooser_title_sms">Which SIM to text from?</string>
     <string name="a11y_choose_sim">Choose SIM</string>
     <string name="a11y_choose_sim_sms">Text from another SIM</string>
     <!-- 1.8.0: выбор SIM карточками -->
     <string name="sim_choice_same_operator">same carrier</string>
-    <string name="sim_choice_remember_note">Your choice will be remembered for this number (Settings → SIM).</string>
-    <string name="sim_choice_sms_note">The SIM is passed to your messaging app as a hint — some apps will ask again.</string>
-    <string name="sim_choice_operator_note">Carrier is from the numbering plan: the number may have moved to another carrier.</string>
     <!-- 1.8.0: выбор номера карточками -->
     <string name="number_picker_hint">Which number?</string>
     <!-- Автодозвон (1.8.0): настройка и экран вызова -->
@@ -1121,10 +1035,8 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="archive_title">Archive</string>
     <string name="archive_row">Archive · %1$d</string>
     <string name="archive_empty">The archive is empty</string>
-    <string name="archive_calls_note">A new call from the same person brings the entry back to the call log.</string>
     <string name="archive_sms_note">A new message brings the conversation back to the list.</string>
     <string name="msg_archived_many">Moved to archive: %1$s</string>
-    <string name="msg_unarchived">Returned from archive</string>
     <string name="messages_delete_threads_title">Delete the selected conversations?</string>
     <string name="a11y_avatar_select">Select</string>
     <string name="settings_incoming_banner">Incoming call as a banner</string>

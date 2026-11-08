@@ -12,16 +12,10 @@
     <string name="a11y_setting_on">Включено</string>
     <string name="about_licenses_hint">Компоненты с открытым исходным кодом</string>
     <string name="about_no_internet">У Ogneliss нет разрешения на доступ в интернет. Это можно проверить самостоятельно в свойствах установленного приложения — журнал вызовов, контакты и заметки остаются на этом устройстве.</string>
-    <string name="about_recording_hint">Почему этот диалер не записывает разговоры</string>
     <string name="action_add_contact">В контакты</string>
     <string name="action_block">Заблокировать номер</string>
     <string name="action_unblock">Разблокировать номер</string>
-    <string name="blocked_notice_title">Звонок заблокирован</string>
     <string name="blocked_notice_channel">Заблокированные вызовы</string>
-    <string name="block_by_mask_title">Заблокирован правилом</string>
-    <string name="block_by_mask_text">Номер попадает под маску %1$s, отдельного правила у него нет. Разблокировка отсюда сняла бы маску, а вместе с ней и весь диапазон. Решение — в списке блокировки.</string>
-    <string name="block_by_mask_open">Открыть чёрный список</string>
-    <string name="action_blocked_by_mask">По маске</string>
     <string name="action_call">Позвонить</string>
     <string name="action_copy_number">Копировать номер</string>
     <string name="action_delete_contact">Удалить контакт</string>
@@ -36,13 +30,6 @@
     <string name="action_share_number">Поделиться номером</string>
     <string name="action_sms">SMS</string>
     <string name="action_view_contact">Открыть контакт</string>
-    <string name="allow_list_empty">Пока никто не разрешён явно</string>
-    <string name="allow_list_priority_note">Номера отсюда проходят всегда, что бы ни говорили другие правила. Добавьте поликлинику, школу и курьера сюда до того, как включать строгую блокировку.</string>
-    <string name="backup_contents">В файл попадают заметки, метки, чёрный и белый списки и быстрый набор. Журнал вызовов и контакты не включаются — их переносит сам Android.</string>
-    <string name="backup_done">Копия сохранена</string>
-    <string name="backup_failed">Не удалось сохранить копию</string>
-    <string name="backup_why">Облачное копирование отключено намеренно: данные не покидают устройство. Обратная сторона — новый телефон начинается с чистого листа. Экспорт сохранит заметки, метки и списки блокировки.</string>
-    <string name="block_list_empty">Пока никто не заблокирован</string>
     <string name="call_blocked">Заблокирован</string>
     <string name="call_incoming">Входящий</string>
     <string name="call_missed">Пропущенный</string>
@@ -59,10 +46,7 @@
     <string name="confirm_delete_contact_text">Контакт будет удалён из всех аккаунтов, где он хранится, включая Google. Отменить это с телефона нельзя.</string>
     <string name="confirm_delete_contact_title">Удалить контакт?</string>
     <string name="confirm_delete_contact_pinned">Контакт закреплён вверху журнала — он будет убран и из закреплённых.</string>
-    <string name="msg_contact_deleted">Контакт удалён</string>
-    <string name="msg_contact_delete_failed">Не удалось удалить контакт</string>
     <string name="confirm_enable">Включить</string>
-    <string name="confirm_external_lookup">Входящий номер будет передан выбранному приложению, которое может отправить его на свои серверы.</string>
     <string name="confirm_reset">Все настройки вернутся к значениям по умолчанию. Заметки, метки и списки сохранятся.</string>
     <string name="confirm_title">Вы уверены?</string>
     <string name="contact_pin_shortcut">Ярлык на рабочий стол</string>
@@ -76,15 +60,10 @@
     <string name="dial_wait">ждать вас</string>
     <string name="empty_clear_search">Очистить поиск</string>
     <string name="empty_no_calllog_permission">Журнал вызовов недоступен</string>
-    <string name="empty_no_calllog_permission_hint">Ogneliss нужен доступ к журналу, чтобы показать историю. Она остаётся на устройстве.</string>
     <string name="empty_no_calls">Звонков пока нет</string>
-    <string name="empty_no_calls_hint">Здесь появятся вызовы, которые вы сделаете или примете.</string>
     <string name="empty_no_contacts">Контактов нет</string>
-    <string name="empty_no_contacts_hint">Добавьте кого-нибудь в телефонную книгу, и он появится здесь.</string>
     <string name="empty_no_contacts_permission">Контакты недоступны</string>
-    <string name="empty_no_contacts_permission_hint">Без доступа к контактам вызовы показываются голыми номерами, а T9-поиск не находит людей по имени.</string>
     <string name="empty_no_favourites">Избранных нет</string>
-    <string name="empty_no_favourites_hint">Нажмите звёздочку рядом с контактом, чтобы держать его под рукой.</string>
     <string name="nav_journal">Журнал</string>
     <string name="nav_notes">Заметки</string>
     <string name="reminders_filter_today">Сегодня</string>
@@ -93,16 +72,12 @@
     <string name="reminders_search_hint">Имя или номер</string>
     <string name="nav_reminders">Напоминания</string>
     <string name="empty_no_notes">Заметок пока нет</string>
-    <string name="empty_no_notes_hint">Заметку можно добавить в карточке контакта или прямо во время разговора. Она остаётся на этом телефоне.</string>
     <string name="empty_no_reminders">Напоминаний нет</string>
-    <string name="empty_no_reminders_hint">Поставить можно в карточке контакта или через долгое нажатие в журнале.</string>
     <string name="reminders_today">Сегодня</string>
     <string name="reminders_tomorrow">Завтра</string>
     <string name="empty_no_results">Ничего не найдено</string>
-    <string name="empty_no_results_hint">Попробуйте меньше цифр или поиск по первым буквам имени.</string>
     <string name="external_lookup_confirm">Входящие номера будут передаваться приложению %1$s. Что оно с ними делает, определяет его собственная политика конфиденциальности.</string>
     <string name="external_lookup_none">Приложения-определители на устройстве не установлены.</string>
-    <string name="external_lookup_warning">Это единственное место, где номер может покинуть устройство. Не через Ogneliss — у него нет доступа к сети, — а через приложение, которое вы здесь включите: оно может отправить номер на свои серверы.</string>
     <string name="filter_period_all">За всё время</string>
     <string name="filter_period_month">Месяц</string>
     <string name="filter_period_today">Сегодня</string>
@@ -148,7 +123,6 @@
     <string name="keywords_language">локаль перевод язык русский английский</string>
     <string name="keywords_spam">спам мошенники обзвон блокировка нежелательные</string>
     <string name="keywords_theme">тёмная темная ночная чёрная цвет амолед акцент шрифт скругление углы плотность компактная</string>
-    <string name="legal_load_failed">Не удалось загрузить документ.</string>
     <string name="log_clear_all">Очистить журнал</string>
     <string name="log_share_subject">Журнал Ogneliss Dialer</string>
     <string name="log_share_title">Отправить файл журнала</string>
@@ -158,7 +132,6 @@
     <string name="nav_contacts">Контакты</string>
     <string name="nav_save">Сохранить</string>
     <string name="nav_settings">Настройки</string>
-    <string name="note_spam_tag_warning">При включённой блокировке спама этот номер перестанет звонить.</string>
     <string name="onboarding_default_text">Без этой роли Android не передаст приложению управление вызовами.</string>
     <string name="onboarding_default_title">Телефон по умолчанию</string>
     <string name="onboarding_optional">(необязательно)</string>
@@ -177,8 +150,6 @@
     <string name="postcall_remind_30">Напомнить через 30 мин</string>
     <string name="postcall_remind_tomorrow">Завтра</string>
     <string name="predial_call_anyway">Всё равно позвонить</string>
-    <string name="predial_generic">Это сервисный номер. Он может быть платным.</string>
-    <string name="predial_international">Это зарубежный номер. Звонок будет тарифицирован по международным расценкам.</string>
     <string name="predial_premium">Это платный номер с повышенной тарификацией. Минута может стоить сотни рублей. Пропущенный звонок с такого номера — распространённая схема мошенничества: расчёт на то, что вы перезвоните.</string>
     <string name="predial_title">Проверьте номер</string>
     <string name="quick_reply_action">Отклонить с сообщением</string>
@@ -187,16 +158,11 @@
     <string name="quick_reply_driving">За рулём, не могу говорить</string>
     <string name="quick_reply_meeting">На совещании</string>
     <string name="reminder_title">Перезвонить: %1$s</string>
-    <string name="restore_done">Копия восстановлена</string>
-    <string name="restore_failed">Не удалось прочитать файл копии</string>
     <string name="rule_add">Добавить</string>
     <string name="rule_add_allow">Всегда пропускать</string>
     <string name="rule_add_block">Всегда блокировать</string>
     <string name="rule_comment">Пометка (необязательно)</string>
     <string name="rule_comment_hint">Холодные обзвоны, курьер, поликлиника…</string>
-    <string name="rule_error_characters">В номере не может быть таких символов: %1$s</string>
-    <string name="rule_error_too_broad">Слишком широкий шаблон — под него попадут почти все звонки. Добавьте цифр.</string>
-    <string name="rule_mask_hint">Символ * заменяет любое окончание: +7 800 * заблокирует все бесплатные линии.</string>
     <string name="rule_number_or_mask">Номер или шаблон</string>
     <string name="rule_preview_mask">Применится ко всем номерам, начинающимся с %1$s</string>
     <string name="rule_preview_number">Применится к %1$s</string>
@@ -241,8 +207,6 @@
     <string name="settings_calllog_export_text">Весь журнал таблицей CSV: дата, номер, имя, тип, длительность. Открывается в Excel и LibreOffice.</string>
     <string name="settings_log_save">Сохранить журнал в файл</string>
     <string name="settings_log_save_text">Тот же технический журнал, что отправляет «Поделиться», но записанный в файл на ваш выбор.</string>
-    <string name="export_done">Сохранено</string>
-    <string name="export_failed">Не удалось сохранить файл</string>
     <string name="settings_merge_calls">Группировать вызовы одного номера</string>
     <string name="settings_merge_calls_text">Подряд идущие звонки показываются одной записью со счётчиком.</string>
     <string name="settings_notifications">Уведомления приложения</string>
@@ -251,8 +215,6 @@
     <string name="settings_post_call_unknown">Только для незнакомых номеров</string>
     <string name="settings_post_call_unknown_text">Рекомендуется: всплывающее окно после каждого звонка родным быстро надоедает.</string>
     <string name="settings_privacy_policy">Политика конфиденциальности</string>
-    <string name="settings_recording_text">На Android 10 и новее система закрыла сторонним приложениям доступ к аудиопотоку разговора, а обход этого ограничения запрещён правилами Google Play. Если ваш телефон записывает звонки — эта функция встроена производителем и работает независимо от выбранного диалера.</string>
-    <string name="settings_recording_title">Почему нет записи разговоров</string>
     <string name="settings_remember_sim">Запоминать SIM для номера</string>
     <string name="settings_remember_sim_text">Выбранная для номера SIM подставится в следующий раз.</string>
     <string name="settings_reset">Сбросить настройки</string>
@@ -285,7 +247,6 @@
     <string name="settings_messengers_any_number_text">«Написать» предлагает установленные WhatsApp, Telegram, Viber и Max, даже если номера нет в контактах. Telegram откроет чат, только если человек разрешил находить себя по номеру</string>
     <string name="settings_sim">SIM-карты и сети</string>
     <string name="settings_sim_labels">Названия SIM-карт</string>
-    <string name="settings_sim_labels_hint">Две карты одного оператора получают одинаковое системное имя. Задайте слотам свои названия — «Рабочая», «Личная».</string>
     <string name="settings_sim_labels_text">Подпишите слоты, чтобы различать карты</string>
     <string name="settings_sim_none">Активные SIM-карты не обнаружены</string>
     <string name="settings_sim_slot">Слот %1$d</string>
@@ -338,8 +299,6 @@
     <string name="accent_custom_named">свой, %1$s</string>
     <string name="accent_hue">Тон</string>
     <string name="accent_saturation">Насыщенность</string>
-    <string name="accent_note_dynamic">Сейчас цвета из обоев: выбор темы или акцента их выключит.</string>
-    <string name="accent_note_contrast">У высокой контрастности свои цвета: тема и акцент не применяются.</string>
     <string name="accent_blue">Синий</string>
     <string name="accent_sky">Голубой</string>
     <string name="accent_teal">Бирюзовый</string>
@@ -364,7 +323,6 @@
     <string name="settings_version_title">Версия</string>
     <string name="settings_rate">Оценить приложение</string>
     <string name="settings_rate_text">Откроется страница приложения в Google Play</string>
-    <string name="settings_rate_no_store">Google Play на этом устройстве недоступен</string>
     <string name="shortcut_call_label">Позвонить %1$s</string>
     <string name="sort_alphabet">По алфавиту</string>
     <string name="sort_frequency">Кому звоните чаще</string>
@@ -383,15 +341,12 @@
     <string name="speed_dial_assign">Назначить на цифру %1$d</string>
     <string name="speed_dial_clear">Очистить</string>
     <string name="speed_dial_empty">Не назначено</string>
-    <string name="speed_dial_hint">Нажмите и удерживайте цифру на клавиатуре, чтобы позвонить назначенному номеру.</string>
     <string name="speed_dial_no_contacts">Контакты не найдены</string>
     <string name="speed_dial_search">Поиск по контактам</string>
     <string name="speed_dial_summary">Назначьте контакты на цифры 2–9</string>
     <string name="speed_dial_title">Быстрый набор</string>
     <string name="speed_dial_voicemail">Голосовая почта</string>
-    <string name="speed_dial_voicemail_hint">Цифра 1 занята по традиции</string>
     <string name="stats_coverage">Посчитано за последние %1$d дн. — на столько назад хватает системного журнала.</string>
-    <string name="stats_empty">Звонков пока недостаточно</string>
     <string name="stats_summary">Итоги и с кем вы общаетесь чаще всего</string>
     <string name="stats_title">Статистика вызовов</string>
     <string name="stats_top_contacts">Чаще всего</string>
@@ -417,7 +372,6 @@
     <string name="selection_start">Выбрать несколько</string>
     <string name="selection_select_all">Выбрать все</string>
     <string name="selection_delete">Удалить</string>
-    <string name="selection_delete_title">Удалить выбранные записи?</string>
 
     <string name="wizard_step_of">Шаг %1$d из %2$d</string>
     <string name="wizard_grant">Дать разрешение</string>
@@ -477,7 +431,6 @@
     <string name="contacts_filter_frequent">Часто</string>
     <string name="contacts_filter_half_year">Более полугода</string>
     <string name="contacts_filter_year">Более года</string>
-    <string name="contacts_stale_hint">Отсутствие звонков не означает отсутствие общения — с этими людьми вы можете ежедневно переписываться.</string>
     <string name="incall_note_add">Записать заметку</string>
     <string name="incall_note_hide">Скрыть заметку</string>
     <string name="incall_note_hint">Привезут во вторник после четырёх…</string>
@@ -515,17 +468,11 @@
     <string name="pinned_header">Закреплённые</string>
     <string name="action_pin">Закрепить вверху</string>
     <string name="action_unpin">Открепить</string>
-    <string name="pin_limit_title">Больше закрепить нельзя</string>
-    <string name="pin_limit_text">Закрепить можно до %1$d номеров. Закреплённые занимают верх экрана — при большем числе журнал начинался бы ниже видимой области.</string>
     <string name="subscriber_export">Выгрузить историю вызовов</string>
     <string name="subscriber_export_progress">Готовим…</string>
-    <string name="subscriber_export_failed">Не удалось подготовить выгрузку</string>
-    <string name="subscriber_export_failed_hint">Журнал вызовов не прочитался. Проверьте, выдан ли доступ к журналу в настройках.</string>
     <string name="settings_pinned">Закреплённые вверху</string>
     <string name="settings_pinned_text">Какие номера держатся над журналом вызовов</string>
-    <string name="pinned_explain">Закреплённые номера остаются вверху журнала независимо от того, когда вы в последний раз общались. Пригодится, пока разбираетесь с курьером, ремонтом или разовым клиентом — с теми, кого не станешь добавлять в избранное.</string>
     <string name="pinned_empty">Пока ничего не закреплено</string>
-    <string name="pinned_empty_hint">Закрепить номер можно и удержанием записи в журнале вызовов.</string>
     <string name="pinned_add">Закрепить контакт</string>
     <string name="pinned_slots_left">Свободно мест: %1$d</string>
     <string name="pinned_limit_reached">Все %1$d мест заняты — сначала открепите что-нибудь</string>
@@ -544,8 +491,6 @@
     <string name="reminder_2hours">Через два часа</string>
     <string name="reminder_custom">Задать время…</string>
     <string name="reminder_tomorrow">Завтра утром</string>
-    <string name="reminder_in_past">Это время уже прошло</string>
-    <string name="msg_reminder_set">Напоминание поставлено: %1$s</string>
     <string name="sim_chooser_title">С какой SIM звонить?</string>
     <string name="settings_swipe_sim">SIM для действий свайпа</string>
     <string name="settings_swipe_sim_text">Какой картой звонить, когда действие вызвано свайпом</string>
@@ -558,8 +503,6 @@
     <string name="menu_theme_light">Светлая тема</string>
     <string name="menu_theme_dark">Тёмная тема</string>
     <string name="selection_exit">Выйти из выбора</string>
-    <string name="msg_reminder_set_inexact">Напоминание поставлено: %1$s — может прийти позже</string>
-    <string name="msg_reminder_exact_fix">Настроить</string>
     <string name="dialer_role_blocked_title">Окно выбора не открылось</string>
     <string name="dialer_role_blocked_text">Так бывает, если выбор уже отклоняли раньше (тогда система больше не спрашивает) или оболочка телефона заменила окно своим.
 
@@ -588,29 +531,23 @@
     <string name="history_collapse">Свернуть</string>
     <string name="subscriber_note_section">Заметка</string>
     <string name="subscriber_note_add">Добавить заметку</string>
-    <string name="external_lookup_system_hint">Выбрать приложение, которое определяет звонящих и фильтрует спам, можно в системных настройках: эту роль выдаёт Android, а не наше приложение.</string>
     <string name="external_lookup_open_system">Открыть системные настройки</string>
     <string name="gesture_hint_keyboard">Свайп вверх с кнопки клавиатуры открывает её, вниз по строке номера — закрывает</string>
     <string name="gesture_handle_hint">Свайп по панели вбок — переход, вверх — клавиатура</string>
     <string name="filter_no_matches">Под эти условия ничего не подходит</string>
     <string name="action_unblock_short">Разблок.</string>
     <string name="subscriber_qr">Поделиться QR-кодом</string>
-    <string name="qr_hint">Наведите камеру на код, чтобы сохранить контакт</string>
     <string name="qr_content_description">QR-код с данными контакта</string>
     <string name="menu_my_number_unknown">Номер не указан</string>
     <string name="my_number_title">Мой номер телефона</string>
-    <string name="my_number_text">Нужен, чтобы делиться своей карточкой. Телефон часто его не знает: операторы редко записывают номер на SIM-карту.</string>
     <string name="my_number_detect">Попробовать определить</string>
-    <string name="my_number_not_detected">Определить не удалось — введите вручную</string>
     <string name="action_save">Сохранить</string>
     <string name="action_share">Поделиться</string>
     <string name="action_favourite">В избранное</string>
     <string name="msg_unblocked">Блокировка снята</string>
-    <string name="msg_block_failed">Не удалось заблокировать номер</string>
     <string name="action_copy">Копировать</string>
     <string name="action_paste_number">Вставить номер</string>
     <string name="dialpad_number_hint">Номер</string>
-    <string name="msg_number_copied">Номер скопирован</string>
     <string name="a11y_call_number">Позвонить: %1$s</string>
     <string name="action_more">Ещё</string>
     <string name="action_clear">Очистить</string>
@@ -629,7 +566,6 @@
     <string name="incoming_blocked_action">Разрешить</string>
     <string name="menu_my_contact">Мой контакт</string>
     <string name="settings_own_number_text">Нужен, чтобы делиться своей карточкой. Нажмите, чтобы изменить или убрать</string>
-    <string name="note_tags_hint">Эти метки включают автоблокировку, если она разрешена в настройках</string>
     <string name="blocked_by_rule">Заблокирован</string>
     <plurals name="reminder_in_minutes">
         <item quantity="one">через %1$d минуту</item>
@@ -662,7 +598,6 @@
     <string name="settings_fake_call_button">Кнопка псевдозвонка</string>
     <string name="settings_fake_call_button_text">Маленькая круглая кнопка на экранах журнала и контактов. Выключите, если хватает меню, ярлыка на значке или плитки в шторке.</string>
     <string name="settings_fake_call_number_text">Номер из ваших контактов. Если не выбран, берётся случайный контакт.</string>
-    <string name="settings_fake_call_hint">Экран выглядит как входящий вызов, но звонка не происходит: никуда ничего не уходит и в журнале он не появляется. Это повод отойти от разговора, а не средство защиты.</string>
     <!-- Подзаголовки внутри разделов настроек: разбор в SettingEntry.groupRes -->
     <string name="settings_group_row_swipe">Свайп по строке журнала</string>
     <string name="settings_group_screen_swipe">Перелистывание экранов</string>
@@ -697,7 +632,6 @@
     <string name="journal_style_cards">Карточки</string>
     <string name="journal_style_groups">Группы по дням</string>
     <string name="action_mark_spam">Отметить как спам</string>
-    <string name="detail_placeholder">Выберите запись в журнале — карточка откроется здесь</string>
     <string name="sim_kind_physical">SIM-карта</string>
     <string name="settings_button_labels">Подписи под кнопками</string>
     <string name="settings_button_labels_text">Текст под значками на нижних панелях, в карточке и на экране вызова. Можно выключить, когда значки уже знакомы</string>
@@ -732,16 +666,11 @@
         <item quantity="other">%d пропущенного вызова</item>
     </plurals>
     <string name="action_write">Написать</string>
-    <string name="swipe_actions_hint">Одно действие срабатывает сразу. Два-три — строка сдвигается и ждёт нажатия. Не больше трёх.</string>
     <string name="log_clear_confirm_title">Очистить журнал?</string>
     <string name="log_clear_confirm_text">Будут удалены все записи журнала вызовов — и здесь, и в системном журнале телефона. Отменить это нельзя. Заметки, закреплённые номера, напоминания и списки блокировки останутся.</string>
     <string name="log_clear_confirm_action">Очистить</string>
-    <string name="delete_entry_confirm_title">Удалить из журнала?</string>
-    <string name="delete_entry_confirm_text">Вызовы с %1$s будут удалены — и здесь, и в системном журнале телефона. Несколько секунд после удаления его можно отменить.</string>
     <string name="action_write_email">Написать письмо</string>
     <string name="action_copy_email">Копировать адрес</string>
-    <string name="msg_email_copied">Адрес скопирован</string>
-    <string name="msg_no_email_app">Не найдено почтовое приложение</string>
     <!-- Подписи разделов меню «Ещё» (строгий стиль, 1.5.1) -->
     <string name="menu_section_lists">Разделы</string>
     <string name="menu_section_app">Приложение</string>
@@ -900,18 +829,13 @@
     <string name="contact_edit_no_year">Без года</string>
     <string name="contact_edit_pick">Готово</string>
     <string name="contact_edit_group_note">Примечание</string>
-    <string name="contact_edit_note_hint">Хранится в телефонной книге — видно и в других приложениях</string>
     <string name="contact_edit_group_account">Где сохранить</string>
     <string name="contact_edit_account_title">Где сохранить контакт</string>
     <string name="contact_edit_account_google">Google · %1$s</string>
-    <string name="contact_edit_account_sync_hint">Синхронизируется с аккаунтом и переедет на новый телефон</string>
-    <string name="contact_edit_account_device_hint">Только на этом телефоне, без синхронизации</string>
     <string name="contact_account_device">Телефон</string>
     <string name="contact_edit_photo_pick">Добавить фото</string>
     <string name="contact_edit_photo_change">Сменить фото</string>
     <string name="contact_edit_photo_remove">Удалить фото</string>
-    <string name="contact_edit_photo_failed">Не удалось открыть снимок</string>
-    <string name="contact_edit_crop_hint">Сдвиньте и приблизьте снимок в рамке</string>
     <string name="contact_edit_crop_done">Готово</string>
     <string name="contact_edit_phone_type">Тип номера</string>
     <string name="contact_edit_email_type">Тип адреса</string>
@@ -923,28 +847,18 @@
     <string name="email_type_home">Личная</string>
     <string name="email_type_work">Рабочая</string>
     <string name="email_type_other">Другая</string>
-    <string name="contact_edit_readonly">Часть сведений — из %1$s: их меняют там.</string>
-    <string name="contact_edit_not_editable">Этот контакт хранится в %1$s. Изменить его можно там или в системных «Контактах».</string>
     <string name="contact_edit_open_system">Открыть в системных «Контактах»</string>
     <string name="contact_edit_open_system_text">Для адресов, групп и других полей</string>
     <string name="contact_edit_discard_title">Не сохранять изменения?</string>
     <string name="contact_edit_discard_text">Контакт останется как был.</string>
     <string name="contact_edit_discard">Не сохранять</string>
     <string name="contact_edit_keep_editing">Продолжить</string>
-    <string name="contact_edit_saved">Контакт сохранён</string>
-    <string name="contact_edit_failed">Не удалось сохранить контакт</string>
-    <string name="contact_edit_empty">Заполните имя, номер или почту</string>
-    <string name="contact_edit_no_permission">Нет доступа к изменению контактов — разрешите его в настройках приложения</string>
-    <string name="contact_edit_not_found">Контакт не найден — возможно, его удалили.</string>
     <string name="contacts_pick_attach_title">К какому контакту добавить номер?</string>
     <string name="sim_chooser_title_sms">С какой SIM написать?</string>
     <string name="a11y_choose_sim">Выбрать SIM</string>
     <string name="a11y_choose_sim_sms">SMS с другой SIM</string>
     <!-- 1.8.0: выбор SIM карточками -->
     <string name="sim_choice_same_operator">тот же оператор</string>
-    <string name="sim_choice_remember_note">Выбор запомнится для этого номера (Настройки → SIM).</string>
-    <string name="sim_choice_sms_note">Карта передаётся приложению сообщений подсказкой — некоторые спросят ещё раз.</string>
-    <string name="sim_choice_operator_note">Оператор — по плану нумерации: номер мог перейти к другому оператору.</string>
     <!-- 1.8.0: выбор номера карточками -->
     <string name="number_picker_hint">Какой номер?</string>
     <!-- Автодозвон (1.8.0): настройка и экран вызова -->
@@ -1101,10 +1015,8 @@
     <string name="archive_title">Архив</string>
     <string name="archive_row">Архив · %1$d</string>
     <string name="archive_empty">В архиве пусто</string>
-    <string name="archive_calls_note">Новый звонок того же абонента вернёт запись в журнал.</string>
     <string name="archive_sms_note">Новое сообщение вернёт переписку в общий список.</string>
     <string name="msg_archived_many">Перенесено в архив: %1$s</string>
-    <string name="msg_unarchived">Возвращено из архива</string>
     <string name="messages_delete_threads_title">Удалить выбранные переписки?</string>
     <string name="a11y_avatar_select">Выбрать</string>
     <string name="settings_incoming_banner">Входящий плашкой сверху</string>

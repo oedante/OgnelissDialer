@@ -118,7 +118,7 @@ fun RecordActionCards(
      * передают экраны разделов (SMS — MessagesScreen).
      */
     @Suppress("UNUSED_PARAMETER") onOpenBlockLists: () -> Unit,
-    /** Экран «Закреплённые» — при полном списке закреплённых (2.1.0). */
+    // Экран «Закреплённые» — при полном списке закреплённых (2.1.0)
     onOpenPinned: () -> Unit = {},
     /** Раздел SMS: «Удалить переписку» (подтверждение — на экране списка). */
     onDeleteThread: (() -> Unit)? = null,

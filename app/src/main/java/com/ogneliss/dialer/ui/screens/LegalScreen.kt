@@ -11,7 +11,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.os.ConfigurationCompat
 import androidx.compose.ui.res.stringResource
 import com.ogneliss.dialer.ui.theme.FlowUi
-import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.components.ScreenScaffold
 import com.ogneliss.dialer.log.Logger
 import kotlinx.coroutines.Dispatchers

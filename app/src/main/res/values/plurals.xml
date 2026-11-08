@@ -26,10 +26,6 @@
         <item quantity="one">%d selected</item>
         <item quantity="other">%d selected</item>
     </plurals>
-    <plurals name="selection_delete_text">
-        <item quantity="one">%d entry will be removed from the call history. This cannot be undone.</item>
-        <item quantity="other">%d entries will be removed from the call history. This cannot be undone.</item>
-    </plurals>
     <plurals name="filter_match_count">
         <item quantity="one">%1$d call matches</item>
         <item quantity="other">%1$d calls match</item>

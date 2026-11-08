@@ -22,16 +22,10 @@
     <string name="a11y_setting_on">Activé</string>
     <string name="about_licenses_hint">Composants open source utilisés dans l’application</string>
     <string name="about_no_internet">Ogneliss n’a pas l’autorisation d’accès à Internet. Vous pouvez le vérifier vous-même dans les détails de l’application installée — votre journal d’appels, vos contacts et vos notes restent sur cet appareil.</string>
-    <string name="about_recording_hint">Pourquoi ce téléphone ne peut pas enregistrer les appels</string>
     <string name="action_add_contact">Ajouter aux contacts</string>
     <string name="action_block">Bloquer le numéro</string>
     <string name="action_unblock">Débloquer le numéro</string>
-    <string name="blocked_notice_title">Appel bloqué</string>
     <string name="blocked_notice_channel">Appels bloqués</string>
-    <string name="block_by_mask_title">Bloqué par une règle</string>
-    <string name="block_by_mask_text">Ce numéro est couvert par le masque %1$s et n’a pas de règle propre. Le débloquer ici supprimerait le masque et débloquerait toute la plage avec lui. Ouvrez la liste de blocage pour décider.</string>
-    <string name="block_by_mask_open">Ouvrir la liste de blocage</string>
-    <string name="action_blocked_by_mask">Par masque</string>
     <string name="action_call">Appeler</string>
     <string name="action_copy_number">Copier le numéro</string>
     <string name="action_delete_contact">Supprimer le contact</string>
@@ -46,13 +40,6 @@
     <string name="action_share_number">Partager le numéro</string>
     <string name="action_sms">SMS</string>
     <string name="action_view_contact">Ouvrir le contact</string>
-    <string name="allow_list_empty">Aucune exception pour l’instant</string>
-    <string name="allow_list_priority_note">Les numéros listés ici passent toujours, quelles que soient les autres règles. Ajoutez votre médecin, l’école et le livreur avant d’activer un blocage strict.</string>
-    <string name="backup_contents">Le fichier contient les notes, les étiquettes, les listes de blocage et d’exceptions ainsi que les numéros abrégés. L’historique des appels et les contacts n’y sont pas : Android les transfère lui-même.</string>
-    <string name="backup_done">Sauvegarde enregistrée</string>
-    <string name="backup_failed">Impossible d’enregistrer la sauvegarde</string>
-    <string name="backup_why">La sauvegarde dans le cloud est volontairement désactivée : vos données ne quittent pas l’appareil. En contrepartie, un nouveau téléphone démarre vide. L’export conserve vos notes, vos étiquettes et vos listes de blocage.</string>
-    <string name="block_list_empty">Aucun numéro bloqué</string>
     <string name="call_blocked">Bloqué</string>
     <string name="call_incoming">Entrant</string>
     <string name="call_missed">Manqué</string>
@@ -69,10 +56,7 @@
     <string name="confirm_delete_contact_text">Le contact sera supprimé de tous les comptes où il est enregistré, y compris Google. Cette action est irréversible depuis le téléphone.</string>
     <string name="confirm_delete_contact_title">Supprimer ce contact ?</string>
     <string name="confirm_delete_contact_pinned">Ce contact est épinglé en haut du journal — il en sera aussi retiré.</string>
-    <string name="msg_contact_deleted">Contact supprimé</string>
-    <string name="msg_contact_delete_failed">Impossible de supprimer le contact</string>
     <string name="confirm_enable">Activer</string>
-    <string name="confirm_external_lookup">Le numéro entrant sera transmis à l’application que vous choisissez, qui peut l’envoyer à ses propres serveurs.</string>
     <string name="confirm_reset">Tous les réglages reviennent à leurs valeurs par défaut. Les notes, les étiquettes et les listes sont conservées.</string>
     <string name="confirm_title">Confirmer ?</string>
     <string name="contact_pin_shortcut">Ajouter un raccourci à l’écran d’accueil</string>
@@ -86,15 +70,10 @@
     <string name="dial_wait">attendre</string>
     <string name="empty_clear_search">Effacer la recherche</string>
     <string name="empty_no_calllog_permission">Historique des appels indisponible</string>
-    <string name="empty_no_calllog_permission_hint">Ogneliss a besoin d’accéder au journal d’appels pour afficher votre historique. Il reste sur l’appareil.</string>
     <string name="empty_no_calls">Aucun appel</string>
-    <string name="empty_no_calls_hint">Les appels passés et reçus apparaîtront ici.</string>
     <string name="empty_no_contacts">Aucun contact</string>
-    <string name="empty_no_contacts_hint">Ajoutez quelqu’un à votre répertoire et il apparaîtra ici.</string>
     <string name="empty_no_contacts_permission">Contacts indisponibles</string>
-    <string name="empty_no_contacts_permission_hint">Sans accès aux contacts, les appels s’affichent en numéros bruts et la recherche T9 ne trouve personne par son nom.</string>
     <string name="empty_no_favourites">Aucun favori</string>
-    <string name="empty_no_favourites_hint">Touchez l’étoile à côté d’un contact pour le garder à portée de main.</string>
     <string name="nav_journal">Journal</string>
     <string name="nav_notes">Notes</string>
     <string name="reminders_filter_today">Aujourd’hui</string>
@@ -103,16 +82,12 @@
     <string name="reminders_search_hint">Nom ou numéro</string>
     <string name="nav_reminders">Rappels</string>
     <string name="empty_no_notes">Aucune note</string>
-    <string name="empty_no_notes_hint">Une note s’ajoute depuis la fiche d’un contact ou pendant l’appel. Elle reste sur ce téléphone.</string>
     <string name="empty_no_reminders">Aucun rappel</string>
-    <string name="empty_no_reminders_hint">Créez-en un depuis la fiche d’un contact ou par appui long dans le journal.</string>
     <string name="reminders_today">Aujourd’hui</string>
     <string name="reminders_tomorrow">Demain</string>
     <string name="empty_no_results">Aucun résultat</string>
-    <string name="empty_no_results_hint">Essayez moins de chiffres ou cherchez par les premières lettres d’un nom.</string>
     <string name="external_lookup_confirm">Les numéros entrants seront transmis à %1$s. Cette application en dispose selon sa propre politique de confidentialité.</string>
     <string name="external_lookup_none">Aucun annuaire d’identification n’est installé sur cet appareil.</string>
-    <string name="external_lookup_warning">C’est le seul endroit où un numéro peut quitter votre appareil. Pas via Ogneliss — elle n’a aucun accès réseau — mais via l’application que vous activez ici, qui peut envoyer le numéro à ses propres serveurs.</string>
     <string name="filter_period_all">N’importe quand</string>
     <string name="filter_period_month">Mois</string>
     <string name="filter_period_today">Aujourd’hui</string>
@@ -158,7 +133,6 @@
     <string name="keywords_language">langue locale traduction français anglais</string>
     <string name="keywords_spam">spam fraude arnaque bloquer indésirable</string>
     <string name="keywords_theme">sombre nuit noir couleur amoled accent police coins arrondi densité compacte</string>
-    <string name="legal_load_failed">Impossible de charger le document.</string>
     <string name="log_clear_all">Effacer l’historique des appels</string>
     <string name="log_share_subject">Journal Ogneliss Dialer</string>
     <string name="log_share_title">Partager le fichier journal</string>
@@ -168,7 +142,6 @@
     <string name="nav_contacts">Contacts</string>
     <string name="nav_save">Enregistrer</string>
     <string name="nav_settings">Réglages</string>
-    <string name="note_spam_tag_warning">Avec le blocage du spam activé, ce numéro cessera de sonner.</string>
     <string name="onboarding_default_text">Sans ce rôle, Android ne confiera pas la gestion des appels à l’application.</string>
     <string name="onboarding_default_title">Application Téléphone par défaut</string>
     <string name="onboarding_optional">(facultatif)</string>
@@ -187,8 +160,6 @@
     <string name="postcall_remind_30">Rappel dans 30 min</string>
     <string name="postcall_remind_tomorrow">Demain</string>
     <string name="predial_call_anyway">Appeler quand même</string>
-    <string name="predial_generic">C’est un numéro de service. Il peut être payant.</string>
-    <string name="predial_international">C’est un numéro international. L’appel sera facturé au tarif international.</string>
     <string name="predial_premium">C’est un numéro surtaxé. Une minute peut coûter plusieurs euros. Un appel manqué depuis un tel numéro est une arnaque courante : l’appelant compte sur votre rappel.</string>
     <string name="predial_title">Vérifiez le numéro</string>
     <string name="quick_reply_action">Refuser avec un message</string>
@@ -197,16 +168,11 @@
     <string name="quick_reply_driving">Au volant, je ne peux pas parler</string>
     <string name="quick_reply_meeting">En réunion</string>
     <string name="reminder_title">Rappeler : %1$s</string>
-    <string name="restore_done">Sauvegarde restaurée</string>
-    <string name="restore_failed">Impossible de lire le fichier de sauvegarde</string>
     <string name="rule_add">Ajouter</string>
     <string name="rule_add_allow">Toujours autoriser</string>
     <string name="rule_add_block">Toujours bloquer</string>
     <string name="rule_comment">Note (facultatif)</string>
     <string name="rule_comment_hint">Démarchage, livreur, cabinet médical…</string>
-    <string name="rule_error_characters">Ces caractères ne peuvent pas figurer dans un numéro : %1$s</string>
-    <string name="rule_error_too_broad">Trop large — cela intercepterait presque tous les appels. Ajoutez des chiffres.</string>
-    <string name="rule_mask_hint">Utilisez * pour toute fin : +33 800 * bloque tous les numéros gratuits.</string>
     <string name="rule_number_or_mask">Numéro ou modèle</string>
     <string name="rule_preview_mask">S’applique à tout numéro commençant par %1$s</string>
     <string name="rule_preview_number">S’applique à %1$s</string>
@@ -251,8 +217,6 @@
     <string name="settings_calllog_export_text">Tout le journal au format CSV : date, numéro, nom, type, durée. S’ouvre dans Excel et LibreOffice.</string>
     <string name="settings_log_save">Enregistrer le journal dans un fichier</string>
     <string name="settings_log_save_text">Le même journal technique que « Partager », écrit dans un fichier de votre choix.</string>
-    <string name="export_done">Enregistré</string>
-    <string name="export_failed">Impossible d’enregistrer le fichier</string>
     <string name="settings_merge_calls">Regrouper les appels d’un même numéro</string>
     <string name="settings_merge_calls_text">Les appels consécutifs apparaissent en une seule entrée avec un compteur.</string>
     <string name="settings_notifications">Notifications de l’application</string>
@@ -261,8 +225,6 @@
     <string name="settings_post_call_unknown">Uniquement pour les numéros inconnus</string>
     <string name="settings_post_call_unknown_text">Recommandé : une fenêtre après chaque appel à vos proches devient vite pénible.</string>
     <string name="settings_privacy_policy">Politique de confidentialité</string>
-    <string name="settings_recording_text">Depuis Android 10, le système empêche les applications tierces d’accéder à l’audio des appels, et le contourner est contraire aux règles de Google Play. Si votre téléphone enregistre les appels, cette fonction est intégrée par le constructeur et fonctionne quel que soit le téléphone choisi.</string>
-    <string name="settings_recording_title">Pourquoi l’enregistrement des appels est absent</string>
     <string name="settings_remember_sim">Mémoriser la SIM par numéro</string>
     <string name="settings_remember_sim_text">La SIM choisie pour un numéro est réutilisée la fois suivante.</string>
     <string name="settings_reset">Réinitialiser les réglages</string>
@@ -295,7 +257,6 @@
     <string name="settings_messengers_any_number_text">«Écrire» propose WhatsApp, Telegram, Viber et Max installés, même si le numéro n\'est pas dans les contacts. Telegram n\'ouvre la discussion que si la personne autorise la recherche par numéro</string>
     <string name="settings_sim">Cartes SIM et réseaux</string>
     <string name="settings_sim_labels">Noms des cartes SIM</string>
-    <string name="settings_sim_labels_hint">Deux cartes du même opérateur portent le même nom système. Donnez vos propres noms aux emplacements — Travail, Perso.</string>
     <string name="settings_sim_labels_text">Nommez les emplacements pour les distinguer</string>
     <string name="settings_sim_none">Aucune carte SIM active détectée</string>
     <string name="settings_sim_slot">Emplacement %1$d</string>
@@ -348,8 +309,6 @@
     <string name="accent_custom_named">personnalisée, %1$s</string>
     <string name="accent_hue">Teinte</string>
     <string name="accent_saturation">Saturation</string>
-    <string name="accent_note_dynamic">Les couleurs viennent du fond d’écran : choisir un thème ou un accent désactive cela.</string>
-    <string name="accent_note_contrast">Le contraste élevé a ses propres couleurs : thème et accent ne s’appliquent pas.</string>
     <string name="accent_blue">Bleu</string>
     <string name="accent_sky">Bleu ciel</string>
     <string name="accent_teal">Sarcelle</string>
@@ -374,7 +333,6 @@
     <string name="settings_version_title">Version</string>
     <string name="settings_rate">Noter l’application</string>
     <string name="settings_rate_text">Ouvre la page de l’application sur Google Play</string>
-    <string name="settings_rate_no_store">Google Play n’est pas disponible sur cet appareil</string>
     <string name="shortcut_call_label">Appeler %1$s</string>
     <string name="sort_alphabet">Alphabétique</string>
     <string name="sort_frequency">Les plus appelés</string>
@@ -393,15 +351,12 @@
     <string name="speed_dial_assign">Attribuer au chiffre %1$d</string>
     <string name="speed_dial_clear">Effacer</string>
     <string name="speed_dial_empty">Non attribué</string>
-    <string name="speed_dial_hint">Maintenez un chiffre du clavier pour appeler le numéro attribué.</string>
     <string name="speed_dial_no_contacts">Aucun contact trouvé</string>
     <string name="speed_dial_search">Rechercher un contact</string>
     <string name="speed_dial_summary">Attribuez des contacts aux chiffres 2 à 9</string>
     <string name="speed_dial_title">Numéros abrégés</string>
     <string name="speed_dial_voicemail">Messagerie vocale</string>
-    <string name="speed_dial_voicemail_hint">Le chiffre 1 est réservé par convention</string>
     <string name="stats_coverage">Calculé sur les %1$d derniers jours — c’est la profondeur du journal système.</string>
-    <string name="stats_empty">Pas encore assez d’appels</string>
     <string name="stats_summary">Totaux et personnes les plus appelées</string>
     <string name="stats_title">Statistiques d’appels</string>
     <string name="stats_top_contacts">Les plus fréquents</string>
@@ -427,7 +382,6 @@
     <string name="selection_start">Sélectionner plusieurs</string>
     <string name="selection_select_all">Tout sélectionner</string>
     <string name="selection_delete">Supprimer</string>
-    <string name="selection_delete_title">Supprimer les entrées sélectionnées ?</string>
     <string name="wizard_step_of">Étape %1$d sur %2$d</string>
     <string name="wizard_grant">Accorder l’autorisation</string>
     <string name="wizard_next">Suivant</string>
@@ -481,7 +435,6 @@
     <string name="contacts_filter_frequent">Fréquents</string>
     <string name="contacts_filter_half_year">6 mois et plus</string>
     <string name="contacts_filter_year">Un an et plus</string>
-    <string name="contacts_stale_hint">Aucun appel ne veut pas dire aucun contact — vous leur écrivez peut-être tous les jours.</string>
     <string name="incall_note_add">Écrire une note</string>
     <string name="incall_note_hide">Masquer la note</string>
     <string name="incall_note_hint">Livraison mardi après seize heures…</string>
@@ -518,17 +471,11 @@
     <string name="pinned_header">Épinglés</string>
     <string name="action_pin">Épingler en haut</string>
     <string name="action_unpin">Détacher</string>
-    <string name="pin_limit_title">La liste des épinglés est pleine</string>
-    <string name="pin_limit_text">Vous pouvez épingler jusqu’à %1$d numéros. Les entrées épinglées occupent le haut de l’écran — au-delà, la liste des appels commencerait hors de la zone visible.</string>
     <string name="subscriber_export">Exporter l’historique des appels</string>
     <string name="subscriber_export_progress">Préparation…</string>
-    <string name="subscriber_export_failed">Impossible de préparer l’export</string>
-    <string name="subscriber_export_failed_hint">Le journal d’appels n’a pas pu être lu. Vérifiez que l’accès au journal est accordé dans les réglages.</string>
     <string name="settings_pinned">Épinglés en haut</string>
     <string name="settings_pinned_text">Quels numéros restent au-dessus de la liste des appels</string>
-    <string name="pinned_explain">Les numéros épinglés restent en haut de la liste, quelle que soit la date du dernier échange. Utile le temps de gérer un livreur, une réparation ou un client ponctuel — des gens que vous ne mettriez pas en favoris.</string>
     <string name="pinned_empty">Rien d’épinglé</string>
-    <string name="pinned_empty_hint">Vous pouvez aussi épingler un numéro en maintenant une entrée dans la liste des appels.</string>
     <string name="pinned_add">Épingler un contact</string>
     <string name="pinned_slots_left">%1$d emplacements restants</string>
     <string name="pinned_limit_reached">Les %1$d emplacements sont pris — détachez-en un d’abord</string>
@@ -547,8 +494,6 @@
     <string name="reminder_2hours">Dans deux heures</string>
     <string name="reminder_custom">Choisir une heure…</string>
     <string name="reminder_tomorrow">Demain matin</string>
-    <string name="reminder_in_past">Ce moment est déjà passé</string>
-    <string name="msg_reminder_set">Rappel programmé : %1$s</string>
     <string name="sim_chooser_title">Depuis quelle SIM appeler ?</string>
     <string name="settings_swipe_sim">SIM pour les balayages</string>
     <string name="settings_swipe_sim_text">Quelle carte utiliser quand un balayage lance un appel</string>
@@ -561,8 +506,6 @@
     <string name="menu_theme_light">Passer au thème clair</string>
     <string name="menu_theme_dark">Passer au thème sombre</string>
     <string name="selection_exit">Quitter la sélection</string>
-    <string name="msg_reminder_set_inexact">Rappel programmé pour %1$s — peut être retardé</string>
-    <string name="msg_reminder_exact_fix">Configurer</string>
     <string name="dialer_role_blocked_title">Impossible d’ouvrir le sélecteur</string>
     <string name="dialer_role_blocked_text">Cela arrive si le choix a déjà été refusé (le système ne demande plus) ou si la surcouche du téléphone a remplacé la fenêtre par la sienne.
 
@@ -591,29 +534,23 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="history_collapse">Réduire</string>
     <string name="subscriber_note_section">Note</string>
     <string name="subscriber_note_add">Ajouter une note</string>
-    <string name="external_lookup_system_hint">Pour choisir l’application qui identifie les appelants et filtre le spam, passez par les réglages du système : ce rôle est accordé par Android, pas par cette application.</string>
     <string name="external_lookup_open_system">Ouvrir les réglages du système</string>
     <string name="gesture_hint_keyboard">Balayez vers le haut sur le bouton du clavier pour l’ouvrir, vers le bas sur la ligne du numéro pour le fermer</string>
     <string name="gesture_handle_hint">Balayez la barre latéralement pour changer d’écran, vers le haut pour le clavier</string>
     <string name="filter_no_matches">Aucun appel ne correspond à ces filtres</string>
     <string name="action_unblock_short">Débloquer</string>
     <string name="subscriber_qr">Partager par QR code</string>
-    <string name="qr_hint">Visez le code avec un appareil photo pour enregistrer le contact</string>
     <string name="qr_content_description">QR code avec les coordonnées du contact</string>
     <string name="menu_my_number_unknown">Numéro non renseigné</string>
     <string name="my_number_title">Mon numéro de téléphone</string>
-    <string name="my_number_text">Nécessaire pour partager votre propre fiche. Le téléphone l’ignore souvent : les opérateurs l’inscrivent rarement sur la SIM.</string>
     <string name="my_number_detect">Essayer de détecter</string>
-    <string name="my_number_not_detected">Détection impossible — saisissez-le manuellement</string>
     <string name="action_save">Enregistrer</string>
     <string name="action_share">Partager</string>
     <string name="action_favourite">Favori</string>
     <string name="msg_unblocked">Numéro débloqué</string>
-    <string name="msg_block_failed">Impossible de bloquer ce numéro</string>
     <string name="action_copy">Copier</string>
     <string name="action_paste_number">Coller le numéro</string>
     <string name="dialpad_number_hint">Numéro</string>
-    <string name="msg_number_copied">Numéro copié</string>
     <string name="a11y_call_number">Appeler %1$s</string>
     <string name="action_more">Plus</string>
     <string name="action_clear">Effacer</string>
@@ -632,7 +569,6 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="incoming_blocked_action">Autoriser</string>
     <string name="menu_my_contact">Ma fiche</string>
     <string name="settings_own_number_text">Sert à partager votre propre fiche. Touchez pour modifier ou effacer</string>
-    <string name="note_tags_hint">Ces étiquettes activent le blocage automatique s’il est activé dans les réglages</string>
     <string name="blocked_by_rule">Bloqué</string>
     <plurals name="reminder_in_minutes">
         <item quantity="one">dans %1$d minute</item>
@@ -659,7 +595,6 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="settings_fake_call_button">Bouton de faux appel</string>
     <string name="settings_fake_call_button_text">Un petit bouton rond sur les écrans du journal et des contacts. Désactivez-le si le menu, le raccourci ou la tuile vous suffisent.</string>
     <string name="settings_fake_call_number_text">Un numéro de vos contacts. S’il reste vide, un contact au hasard est utilisé.</string>
-    <string name="settings_fake_call_hint">L’écran ressemble à un appel entrant, mais aucun appel n’est passé : rien n’est envoyé et rien n’apparaît dans le journal. C’est un prétexte pour quitter une conversation, pas un outil de sécurité.</string>
     <!-- Подзаголовки внутри разделов настроек: разбор в SettingEntry.groupRes -->
     <string name="settings_group_row_swipe">Balayage sur une ligne</string>
     <string name="settings_group_screen_swipe">Changer d’écran</string>
@@ -694,7 +629,6 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="journal_style_cards">Cartes</string>
     <string name="journal_style_groups">Groupes par jour</string>
     <string name="action_mark_spam">Marquer comme spam</string>
-    <string name="detail_placeholder">Sélectionnez un appel — la fiche du contact s’affichera ici</string>
     <string name="sim_kind_physical">Carte SIM</string>
     <string name="settings_button_labels">Libellés sous les boutons</string>
     <string name="settings_button_labels_text">Texte sous les icônes des barres du bas, de la fiche contact et de l’écran d’appel. Désactivable une fois les icônes connues</string>
@@ -728,16 +662,11 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
         <item quantity="other">%d appels manqués</item>
     </plurals>
     <string name="action_write">Écrire</string>
-    <string name="swipe_actions_hint">Une action s’exécute aussitôt. Avec deux ou trois, la ligne s’ouvre et attend un appui. Trois au maximum.</string>
     <string name="log_clear_confirm_title">Effacer le journal ?</string>
     <string name="log_clear_confirm_text">Toutes les entrées du journal d’appels seront supprimées, ici et dans le journal système du téléphone. Impossible d’annuler. Les notes, numéros épinglés, rappels et listes de blocage sont conservés.</string>
     <string name="log_clear_confirm_action">Effacer</string>
-    <string name="delete_entry_confirm_title">Supprimer de l’historique ?</string>
-    <string name="delete_entry_confirm_text">Les appels avec %1$s seront supprimés, ici et dans le journal système du téléphone. Vous pourrez annuler pendant quelques secondes.</string>
     <string name="action_write_email">Écrire un e-mail</string>
     <string name="action_copy_email">Copier l\'adresse</string>
-    <string name="msg_email_copied">Adresse copiée</string>
-    <string name="msg_no_email_app">Aucune application de messagerie trouvée</string>
     <!-- Подписи разделов меню «Ещё» (строгий стиль, 1.5.1) -->
     <string name="menu_section_lists">Rubriques</string>
     <string name="menu_section_app">Application</string>
@@ -890,18 +819,13 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="contact_edit_no_year">Sans l’année</string>
     <string name="contact_edit_pick">OK</string>
     <string name="contact_edit_group_note">Note</string>
-    <string name="contact_edit_note_hint">Enregistrée dans le carnet — les autres applis la voient aussi</string>
     <string name="contact_edit_group_account">Enregistrer dans</string>
     <string name="contact_edit_account_title">Où enregistrer le contact</string>
     <string name="contact_edit_account_google">Google · %1$s</string>
-    <string name="contact_edit_account_sync_hint">Synchronisé avec le compte, il suivra sur un nouveau téléphone</string>
-    <string name="contact_edit_account_device_hint">Seulement sur ce téléphone, sans synchronisation</string>
     <string name="contact_account_device">Téléphone</string>
     <string name="contact_edit_photo_pick">Ajouter une photo</string>
     <string name="contact_edit_photo_change">Changer la photo</string>
     <string name="contact_edit_photo_remove">Supprimer la photo</string>
-    <string name="contact_edit_photo_failed">Impossible d’ouvrir l’image</string>
-    <string name="contact_edit_crop_hint">Déplacez et zoomez l’image dans le cadre</string>
     <string name="contact_edit_crop_done">OK</string>
     <string name="contact_edit_phone_type">Type de numéro</string>
     <string name="contact_edit_email_type">Type d’adresse</string>
@@ -913,28 +837,18 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="email_type_home">Personnelle</string>
     <string name="email_type_work">Professionnelle</string>
     <string name="email_type_other">Autre</string>
-    <string name="contact_edit_readonly">Certaines informations viennent de %1$s : on les modifie là-bas.</string>
-    <string name="contact_edit_not_editable">Ce contact est enregistré dans %1$s. Modifiez-le là-bas ou dans l’app Contacts du système.</string>
     <string name="contact_edit_open_system">Ouvrir dans Contacts du système</string>
     <string name="contact_edit_open_system_text">Pour les adresses, groupes et autres champs</string>
     <string name="contact_edit_discard_title">Abandonner les modifications ?</string>
     <string name="contact_edit_discard_text">Le contact restera tel quel.</string>
     <string name="contact_edit_discard">Abandonner</string>
     <string name="contact_edit_keep_editing">Continuer</string>
-    <string name="contact_edit_saved">Contact enregistré</string>
-    <string name="contact_edit_failed">Impossible d’enregistrer le contact</string>
-    <string name="contact_edit_empty">Saisissez un nom, un numéro ou un e-mail</string>
-    <string name="contact_edit_no_permission">Pas d’autorisation de modifier les contacts — autorisez-la dans les paramètres de l’appli</string>
-    <string name="contact_edit_not_found">Contact introuvable — il a peut-être été supprimé.</string>
     <string name="contacts_pick_attach_title">À quel contact ajouter le numéro ?</string>
     <string name="sim_chooser_title_sms">Depuis quelle SIM écrire ?</string>
     <string name="a11y_choose_sim">Choisir la SIM</string>
     <string name="a11y_choose_sim_sms">SMS depuis une autre SIM</string>
     <!-- 1.8.0: выбор SIM карточками -->
     <string name="sim_choice_same_operator">même opérateur</string>
-    <string name="sim_choice_remember_note">Le choix sera mémorisé pour ce numéro (Paramètres → SIM).</string>
-    <string name="sim_choice_sms_note">La SIM est transmise à l’appli de messages comme indication — certaines redemanderont.</string>
-    <string name="sim_choice_operator_note">Opérateur d’après le plan de numérotation : le numéro a pu changer d’opérateur.</string>
     <!-- 1.8.0: выбор номера карточками -->
     <string name="number_picker_hint">Quel numéro ?</string>
     <!-- Автодозвон (1.8.0): настройка и экран вызова -->
@@ -1091,10 +1005,8 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="archive_title">Archives</string>
     <string name="archive_row">Archives · %1$d</string>
     <string name="archive_empty">Les archives sont vides</string>
-    <string name="archive_calls_note">Un nouvel appel de la même personne ramène l’entrée dans le journal.</string>
     <string name="archive_sms_note">Un nouveau message ramène la conversation dans la liste.</string>
     <string name="msg_archived_many">Déplacé dans les archives : %1$s</string>
-    <string name="msg_unarchived">Sorti des archives</string>
     <string name="messages_delete_threads_title">Supprimer les conversations sélectionnées ?</string>
     <string name="a11y_avatar_select">Sélectionner</string>
     <string name="settings_incoming_banner">Appel entrant en bannière</string>

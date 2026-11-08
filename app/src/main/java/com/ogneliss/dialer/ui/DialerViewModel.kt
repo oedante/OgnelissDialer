@@ -50,7 +50,6 @@ import com.ogneliss.dialer.ui.components.swipe.RevealAction
 import com.ogneliss.dialer.ui.components.swipe.RevealActionFactory
 import com.ogneliss.dialer.ui.components.swipe.AndroidRevealStrings
 import com.ogneliss.dialer.data.SimSlot
-import android.content.Intent
 import com.ogneliss.dialer.util.SystemLinks
 import com.ogneliss.dialer.data.BlockingController
 import com.ogneliss.dialer.data.PinnedContacts
