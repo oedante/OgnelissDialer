@@ -14,6 +14,7 @@ import com.ogneliss.dialer.log.Logger
 import com.ogneliss.dialer.sms.Message
 import com.ogneliss.dialer.sms.MessageNotifications
 import com.ogneliss.dialer.sms.MessageStore
+import com.ogneliss.dialer.sms.MmsDownloads
 import com.ogneliss.dialer.sms.MmsTransport
 import com.ogneliss.dialer.sms.SmsRole
 import com.ogneliss.dialer.sms.SmsSender
@@ -34,13 +35,14 @@ import javax.inject.Inject
 /**
  * ПЕРЕПИСКА (2.0.0) — состояние экрана ConversationScreen.
  *
- * ── Два режима ──────────────────────────────────────────────────────────────
- * • Диалер — приложение SMS по умолчанию: вся история из хранилища,
- *   входящие появляются сами (наблюдение MessageStore.changes), открытая
- *   переписка отмечается прочитанной, можно MMS с картинками.
- * • Не по умолчанию (выбор человека «Писать SMS в диалере»): только
- *   отправка. Историю читать нельзя — на экране видны сообщения,
- *   отправленные отсюда за этот раз, и плашка «сделать приложением SMS».
+ * Диалер — приложение SMS по умолчанию: вся история из хранилища,
+ * входящие появляются сами (наблюдение MessageStore.changes), открытая
+ * переписка отмечается прочитанной, можно MMS с картинками.
+ *
+ * 2.1.0: режима «только отправка» без роли SMS больше нет (было:
+ * «Писать SMS в диалере» — сообщения, отправленные за этот раз, плашка
+ * «сделать приложением SMS», окно SEND_SMS). Без роли экран передаёт
+ * переписку приложению SMS человека и закрывается (ConversationScreen).
  *
  * Черновик переживает поворот (SavedStateHandle). Номер карты: из
  * намерения («Написать с SIM 2»), иначе карта последнего сообщения
@@ -64,6 +66,10 @@ class ConversationViewModel @Inject constructor(
 
     val address: String = savedState.get<String>(ConversationRequest.ARG_ADDRESS).orEmpty()
 
+    /** Текст и карта из намерения — их получит приложение SMS, если роли нет (2.1.0). */
+    val initialBody: String? = savedState.get<String>(ConversationRequest.ARG_BODY)?.takeIf { it.isNotEmpty() }
+    val requestedSubId: Int? = savedState.get<Int>(ConversationRequest.ARG_SUB)?.takeIf { it >= 0 }
+
     data class UiState(
         val title: String,
         /** Номер под именем; null — имени нет, заголовок и есть номер. */
@@ -75,16 +81,15 @@ class ConversationViewModel @Inject constructor(
         val messages: List<Message> = emptyList(),
         val loading: Boolean = true,
         val isDefaultSms: Boolean = false,
-        val canSend: Boolean = false,
+        /** Оператор разрешает MMS на выбранной карте — можно прикрепить картинку (2.1.0). */
+        val mmsEnabled: Boolean = true,
         val sims: List<SimSlot> = emptyList(),
         val subId: Int? = null,
         val draft: String = "",
         val images: List<Uri> = emptyList(),
         val sending: Boolean = false,
         /** «2 SMS · осталось 35» — для длинного текста; null — одна SMS с запасом. */
-        val counter: String? = null,
-        /** Отправить не удалось — показать ошибку один раз. */
-        val sendFailed: Boolean = false
+        val counter: String? = null
     )
 
     private val _state = MutableStateFlow(
@@ -96,8 +101,6 @@ class ConversationViewModel @Inject constructor(
     )
     val state: StateFlow<UiState> = _state
 
-    /** Отправленные отсюда без роли SMS — истории нет, показываем хотя бы их. */
-    private val sentHere = mutableListOf<Message>()
     private var threadId: Long? = null
 
     init {
@@ -128,9 +131,9 @@ class ConversationViewModel @Inject constructor(
     /** Перечитать переписку и права; отметить прочитанным. */
     fun refresh() = viewModelScope.launch {
         val isDefault = SmsRole.isDefault(app)
-        val canSend = SmsRole.canSend(app)
+        val mms = withContext(io) { MmsTransport.isEnabled(app, _state.value.subId) }
         val messages = withContext(io) {
-            if (!SmsRole.canRead(app)) return@withContext sentHere.toList()
+            if (!SmsRole.canRead(app)) return@withContext emptyList()
             val thread = threadId ?: MessageStore.threadIdOf(app, address)?.also { threadId = it }
             val list = thread?.let { MessageStore.thread(app, it) }.orEmpty()
             // Открытая переписка — прочитана; уведомление о ней больше не нужно
@@ -145,7 +148,7 @@ class ConversationViewModel @Inject constructor(
                 messages = messages,
                 loading = false,
                 isDefaultSms = isDefault,
-                canSend = canSend,
+                mmsEnabled = mms,
                 // Карта по умолчанию — карта последнего сообщения переписки, иначе
                 // карта SMS из настроек Android (при двух SIM — видно в строке ввода)
                 subId = s.subId ?: messages.lastOrNull { it.subId != null }?.subId
@@ -166,39 +169,60 @@ class ConversationViewModel @Inject constructor(
 
     fun removeImage(uri: Uri) = _state.update { it.copy(images = it.images - uri) }
 
-    fun selectSim(subId: Int) = _state.update { it.copy(subId = subId) }
+    fun selectSim(subId: Int) {
+        _state.update { it.copy(subId = subId) }
+        // MMS разрешает оператор карты — другая карта, другой ответ
+        viewModelScope.launch {
+            val mms = withContext(io) { MmsTransport.isEnabled(app, subId) }
+            _state.update { it.copy(mmsEnabled = mms) }
+        }
+    }
 
-    fun consumeSendFailed() = _state.update { it.copy(sendFailed = false) }
-
-    /** Отправить черновик: с картинками — MMS (только приложение SMS), иначе SMS. */
+    /**
+     * Отправить черновик: с картинками — MMS (только приложение SMS), иначе SMS.
+     *
+     * 2.1.0: не ушло — без сообщения «Не отправлено» внизу экрана (правило
+     * автора: не показывать ошибок): черновик остаётся в поле, записанное
+     * в хранилище неотправленное — пузырём с повтором. Без роли SMS
+     * не отправляет вовсе: экран передаёт переписку приложению SMS.
+     */
     fun send() {
         val s = _state.value
         val text = s.draft.trim()
         if (s.sending || (text.isEmpty() && s.images.isEmpty())) return
+        if (!SmsRole.isDefault(app)) {
+            Logger.w(TAG, "Отправка без роли SMS пропущена")
+            return
+        }
         _state.update { it.copy(sending = true) }
         viewModelScope.launch {
             val ok = withContext(io) {
-                if (s.images.isNotEmpty() && SmsRole.isDefault(app)) {
+                if (s.images.isNotEmpty() && s.mmsEnabled) {
                     MmsTransport.send(app, address, text, s.images, s.subId)
                 } else {
                     SmsSender.send(app, address, text, s.subId)
                 }
             }
-            Logger.i(TAG, if (ok) "Сообщение отправляется" else "Сообщение не отправлено")
+            Logger.i(TAG, if (ok) "Сообщение отправляется" else "Сообщение не отправлено — черновик оставлен")
             if (ok) {
-                if (!SmsRole.canRead(app)) {
-                    sentHere += Message(
-                        id = -System.nanoTime(), isMms = false, threadId = -1, address = address,
-                        body = text, date = System.currentTimeMillis(), outgoing = true,
-                        status = Message.Status.SENT, read = true, subId = s.subId
-                    )
-                }
                 savedState[KEY_DRAFT] = ""
                 _state.update { it.copy(draft = "", images = emptyList(), counter = null, sending = false) }
             } else {
-                _state.update { it.copy(sending = false, sendFailed = true) }
+                _state.update { it.copy(sending = false) }
             }
             refresh()
+        }
+    }
+
+    /**
+     * «MMS не загружено — нажмите, чтобы загрузить» (2.1.0): скачать сейчас.
+     * Скачается — строка сама сменится сообщением (наблюдение за хранилищем).
+     */
+    fun downloadMms(message: Message) {
+        if (!message.isMms || message.status != Message.Status.NOT_DOWNLOADED || message.id <= 0) return
+        viewModelScope.launch {
+            val started = withContext(io) { MmsDownloads.downloadFromInbox(app, message.id) }
+            Logger.i(TAG, if (started) "MMS скачивается по касанию" else "MMS по касанию не скачать — нет адреса")
         }
     }
 
@@ -211,7 +235,7 @@ class ConversationViewModel @Inject constructor(
                     if (sent && message.id > 0) MessageStore.delete(app, listOf(message.key))
                 }
             }
-            if (!ok) _state.update { it.copy(sendFailed = true) }
+            if (!ok) Logger.w(TAG, "Повтор не ушёл")
             refresh()
         }
     }
@@ -220,7 +244,6 @@ class ConversationViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(io) {
                 if (message.id > 0) MessageStore.delete(app, listOf(message.key))
-                else sentHere.removeAll { it.id == message.id }
             }
             refresh()
         }

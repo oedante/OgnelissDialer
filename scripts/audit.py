@@ -101,6 +101,11 @@ for f in kt_files():
     code = open(f, encoding='utf-8').read()
     used |= set(re.findall(r'R\.string\.(\w+)', code))
     used |= set(re.findall(r'R\.plurals\.(\w+)', code))
+# Ресурсы из XML (2.1.0): описания виджетов в res/xml, подписи в манифесте
+# и разметках — «@string/имя». Раньше смотрелся только код Kotlin
+import glob as _glob
+for f in _glob.glob('app/src/main/res/xml/*.xml') + _glob.glob('app/src/main/res/layout/*.xml') + ['app/src/main/AndroidManifest.xml']:
+    used |= set(re.findall(r'@string/(\w+)', open(f, encoding='utf-8').read()))
 
 unused = sorted(set(en) - used - {'app_name', 'app_short_name'})
 for k in unused:

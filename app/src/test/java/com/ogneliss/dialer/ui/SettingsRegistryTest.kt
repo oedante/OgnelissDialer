@@ -133,12 +133,14 @@ class SettingsRegistryTest {
      * раздела ниже, чем цена переполненного.
      */
     @Test
-    fun `категорий не больше десяти`() {
+    // 2.1.0: одиннадцатый — «SMS». Это раздел нижней панели, а не тема
+    // существующего: в «Журнале вызовов» его настройки читались как звонковые
+    fun `категорий не больше одиннадцати`() {
         assertTrue(
             "Категорий стало ${SettingsCategory.entries.size}. " +
                 "Прежде чем добавлять новую, посмотрите, не тема ли это " +
                 "существующей.",
-            SettingsCategory.entries.size <= 10
+            SettingsCategory.entries.size <= 11
         )
     }
 
@@ -159,6 +161,17 @@ class SettingsRegistryTest {
                 all.size <= 14
             )
         }
+    }
+
+    @Test
+    fun `без Google Play нет пункта «Оценить», а «Версия» остаётся`() {
+        // 2.1.0: ссылка в магазин без магазина — мёртвая; «Версия»
+        // при этом ведёт в «О приложении» и пропасть не должна
+        val about = SettingsRegistry.byCategory(SettingsCategory.ABOUT)
+        val withoutPlay = SettingsRegistry.shown(about, fromGooglePlay = false).map { it.id }
+        assertTrue("rate_app" !in withoutPlay)
+        assertTrue("version" in withoutPlay)
+        assertEquals(about, SettingsRegistry.shown(about, fromGooglePlay = true))
     }
 
     @Test

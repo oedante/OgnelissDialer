@@ -157,6 +157,81 @@ internal fun CallHistoryRow(
 }
 
 /**
+ * ЗАПИСЬ ИСТОРИИ КАРТОЧКИ (2.1.0): звонок или SMS.
+ *
+ * Автор, 07.11.2026: «добавить к звонкам ещё и SMS — всё это должно
+ * относиться ко всем номерам телефонов карточки». История стала общей
+ * лентой общения с человеком: звонки и сообщения по всем его номерам.
+ */
+internal sealed interface HistoryItem {
+    val key: String
+    val date: Long
+    val number: String
+
+    data class Call(val entry: CallLogEntry) : HistoryItem {
+        override val key get() = "call:${entry.id}"
+        override val date get() = entry.date
+        override val number get() = entry.number
+    }
+
+    data class Sms(val message: com.ogneliss.dialer.sms.Message) : HistoryItem {
+        override val key get() = "sms:${message.key}"
+        override val date get() = message.date
+        override val number get() = message.address
+    }
+}
+
+/** Фильтр истории карточки: всё, только звонки, только SMS (2.1.0). */
+internal enum class HistoryFilter { ALL, CALLS, SMS }
+
+/**
+ * Строка SMS в истории карточки — рядом со строками звонков и того же
+ * вида: значок слева (входящее — синий конверт, своё — серая стрелка),
+ * текст одной строкой, время справа. Касание — переписка.
+ */
+@Composable
+internal fun SmsHistoryRow(
+    message: com.ogneliss.dialer.sms.Message,
+    showNumber: Boolean,
+    timeOnly: Boolean,
+    onOpen: () -> Unit
+) {
+    val configuration = LocalConfiguration.current
+    val locale = ConfigurationCompat.getLocales(configuration)[0] ?: java.util.Locale.getDefault()
+    val body = message.body.replace('\n', ' ').trim().ifEmpty {
+        stringResource(if (message.attachments.isNotEmpty()) R.string.sms_picture else R.string.sms_mms)
+    }
+    val text = if (message.outgoing) stringResource(R.string.sms_you, body) else body
+    val time = if (timeOnly) {
+        java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT, locale).format(java.util.Date(message.date))
+    } else relativeDateLabel(message.date, locale)
+    ListItem(
+        colors = ListItemDefaults.colors(containerColor = androidx.compose.ui.graphics.Color.Transparent),
+        modifier = Modifier.clickable(onClickLabel = stringResource(R.string.sms_open_conversation), onClick = onOpen),
+        leadingContent = {
+            Icon(
+                if (message.outgoing) OgnelissIcons.CallMade else OgnelissIcons.Message,
+                contentDescription = stringResource(if (message.outgoing) R.string.history_sms_out else R.string.history_sms_in),
+                tint = if (message.outgoing) MaterialTheme.colorScheme.outline else com.ogneliss.dialer.ui.theme.MessageBlue
+            )
+        },
+        headlineContent = {
+            Text(text, maxLines = 2, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+        },
+        supportingContent = if (showNumber) {
+            {
+                Text(
+                    PhoneFormatter.format(message.address),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.outline
+                )
+            }
+        } else null,
+        trailingContent = { Text(time, style = MaterialTheme.typography.bodySmall) }
+    )
+}
+
+/**
  * Высота строки в разделах карточки.
  *
  * Задаётся здесь, а не в каждом месте: строку номера растягивают кнопки
@@ -441,7 +516,7 @@ internal fun NumberRow(
         Icon(
             OgnelissIcons.Call,
             contentDescription = null,
-            tint = CallGreen
+            tint = com.ogneliss.dialer.util.LocalCallAvailability.current.callTint(com.ogneliss.dialer.ui.theme.CallGreen)
         )
         Spacer(Modifier.width(Space.m))
         Column(Modifier.weight(1f)) {
@@ -458,7 +533,8 @@ internal fun NumberRow(
         ActionIconButton(
             icon = OgnelissIcons.Message,
             contentDescription = stringResource(R.string.action_sms),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            // 2.1.0: писать нельзя (нет SIM, режим полёта) — бледнее
+            tint = com.ogneliss.dialer.util.LocalCallAvailability.current.smsTint(MaterialTheme.colorScheme.onSurfaceVariant),
             onClick = onSms,
             onLongClick = onSmsLongPress,
             onLongClickLabel = stringResource(R.string.a11y_choose_sim_sms)

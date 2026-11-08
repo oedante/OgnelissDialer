@@ -99,7 +99,17 @@ internal fun OverflowMenu(
      * «Вопросы и ответы» (1.6.0) — после «Настроек»: с вопросом идут
      * в меню, и ответ должен быть там же, а не на сайте.
      */
-    onHelp: (() -> Unit)? = null
+    onHelp: (() -> Unit)? = null,
+    /**
+     * «Архив» (2.1.0): записи, убранные из журнала или SMS режимом выбора.
+     * null — пункта нет.
+     */
+    onArchive: (() -> Unit)? = null,
+    /**
+     * «Значок на главный экран» (2.1.0): значок раздела со счётчиком —
+     * widget/SectionWidgets. null — пункта нет (журнал; лаунчер не умеет).
+     */
+    onPinToHome: (() -> Unit)? = null
 ) {
     /*
      * ПОРЯДОК ПУНКТОВ МЕНЮ.
@@ -164,104 +174,125 @@ internal fun OverflowMenu(
         sheetState = sheetState,
         contentWindowInsets = { WindowInsets.navigationBars }
     ) {
-        Column(Modifier.padding(bottom = Space.l)) {
-            // Поиск и фильтры списка — первыми: за ними приходят в меню чаще всего (2.0.0)
-            if (onSearch != null || onFilters != null) {
-                SheetGroup(title = stringResource(R.string.menu_section_list), first = true) {
-                    if (onSearch != null) {
-                        SheetRow(OgnelissIcons.Search, stringResource(R.string.nav_search), onClick = onSearch)
-                    }
-                    if (onSearch != null && onFilters != null) SheetDivider()
-                    if (onFilters != null) {
-                        SheetRow(
-                            OgnelissIcons.FilterList,
-                            stringResource(R.string.filter_title),
-                            supporting = filterBadge?.let { stringResource(R.string.menu_filters_active, it) },
-                            iconTint = if (filterBadge != null) MaterialTheme.colorScheme.primary else null,
-                            onClick = onFilters
-                        )
-                    }
-                }
-            }
-            /*
-             * Как настройки (1.6.1): над группой — полоса с подписью,
-             * строки — в белой карточке, линии между ними от начала текста;
-             * «Очистить журнал» — отдельной карточкой внизу.
-             */
-            if (onAddContact != null) {
-                // Контакты (1.6.0): создание — первым, это их главное действие из меню
-                SheetGroup(title = stringResource(R.string.nav_contacts), first = onSearch == null && onFilters == null) {
-                    SheetRow(
-                        OgnelissIcons.PersonAdd,
-                        stringResource(R.string.action_create_contact),
-                        onClick = onAddContact
-                    )
-                }
-            }
-            SheetGroup(
-                title = stringResource(R.string.settings_section_calls),
-                first = onAddContact == null && onSearch == null && onFilters == null
-            ) {
-                SheetRow(OgnelissIcons.PhoneCallback, fakeCallLabel, onClick = onFakeCall)
-                if (onOwnNumber != null) {
-                    SheetDivider()
-                    SheetRow(
-                        OgnelissIcons.Person,
-                        ownLabel,
-                        // Номер второй строкой: видно, какой задан, без похода в настройки
-                        supporting = ownNumber.takeIf { it.isNotBlank() }?.let { PhoneFormatter.format(it) },
-                        // Приглушённый, пока номера нет: не требует внимания, но и не прячется
-                        iconTint = if (ownNumber.isBlank()) MaterialTheme.colorScheme.outline else null,
-                        // Своё фото из книги вместо значка (2.0.0)
-                        photoUri = ownPhotoUri,
-                        onClick = onOwnNumber
-                    )
-                }
-            }
-            SheetGroup(title = stringResource(R.string.menu_section_lists)) {
-                SheetRow(
-                    OgnelissIcons.StickyNote2,
-                    notesLabel,
-                    // Нейтральная — правило шторок (1.3.5, аудит)
-                    onClick = onNotes
+        /*
+         * «ЕЩЁ» — ПЛИТКАМИ (2.1.0). Автор, 08.11.2026: «меню „Ещё“ сделаем
+         * не списком, а панелями — несколько в одном ряду, а то очень
+         * большое меню». Было: 12 строк по 56 dp в четырёх группах — шторка
+         * во весь экран. Стало: круглые кнопки с подписью, как быстрые
+         * действия карточек долгого нажатия (ActionCircle), по 4 в ряд
+         * (на широком экране — больше), одной карточкой. Порядок — по частоте:
+         * список (поиск, фильтры), свои данные и разделы, приложение.
+         * «Очистить журнал» — по-прежнему отдельной красной строкой внизу:
+         * необратимое не стоит в одном ряду с частым.
+         */
+        val tiles = buildList {
+            // Список: что сделать с этим списком
+            if (onAddContact != null) add(MenuTile(MenuGroup.LIST, OgnelissIcons.PersonAdd, stringResource(R.string.action_create_contact), onAddContact))
+            if (onSearch != null) add(MenuTile(MenuGroup.LIST, OgnelissIcons.Search, stringResource(R.string.nav_search), onSearch))
+            if (onFilters != null) add(
+                MenuTile(
+                    MenuGroup.LIST,
+                    OgnelissIcons.FilterList,
+                    // «Фильтры · 2» — коротко: подпись плитки в две строки
+                    stringResource(R.string.filter_title) + (filterBadge?.let { " · $it" } ?: ""),
+                    onFilters,
+                    selected = filterBadge != null
                 )
-                SheetDivider()
-                SheetRow(OgnelissIcons.Alarm, remindersLabel, onClick = onReminders)
-                if (onStartSelection != null) {
-                    SheetDivider()
-                    SheetRow(
-                        if (selectionActive) OgnelissIcons.Close else OgnelissIcons.Checklist,
-                        selectionLabel,
-                        onClick = onStartSelection
-                    )
-                }
-            }
-            SheetGroup(title = stringResource(R.string.menu_section_app)) {
-                SheetRow(
+            )
+            if (onStartSelection != null) add(
+                MenuTile(MenuGroup.LIST, if (selectionActive) OgnelissIcons.Close else OgnelissIcons.Checklist, selectionLabel, onStartSelection)
+            )
+            if (onArchive != null) add(MenuTile(MenuGroup.LIST, OgnelissIcons.Archive, stringResource(R.string.archive_title), onArchive))
+            // Инструменты: своё и вспомогательные разделы
+            if (onOwnNumber != null) add(MenuTile(MenuGroup.TOOLS, OgnelissIcons.Person, ownLabel, onOwnNumber, photoUri = ownPhotoUri))
+            add(MenuTile(MenuGroup.TOOLS, OgnelissIcons.PhoneCallback, fakeCallLabel, onFakeCall))
+            add(MenuTile(MenuGroup.TOOLS, OgnelissIcons.StickyNote2, notesLabel, onNotes))
+            add(MenuTile(MenuGroup.TOOLS, OgnelissIcons.Alarm, remindersLabel, onReminders))
+            // Приложение
+            add(
+                MenuTile(
+                    MenuGroup.APP,
                     if (settings.theme == ThemeMode.DARK) OgnelissIcons.LightMode else OgnelissIcons.DarkMode,
                     themeLabel,
-                    onClick = onThemeToggle
+                    onThemeToggle
                 )
-                SheetDivider()
-                SheetRow(OgnelissIcons.Settings, settingsLabel, onClick = onSettings)
-                if (onHelp != null) {
-                    SheetDivider()
-                    SheetRow(OgnelissIcons.Help, helpLabel, onClick = onHelp)
+            )
+            add(MenuTile(MenuGroup.APP, OgnelissIcons.Settings, settingsLabel, onSettings))
+            if (onHelp != null) add(MenuTile(MenuGroup.APP, OgnelissIcons.Help, helpLabel, onHelp))
+            if (onPinToHome != null) add(MenuTile(MenuGroup.APP, OgnelissIcons.AddToHomeScreen, stringResource(R.string.menu_pin_home), onPinToHome))
+        }
+        OverflowMenuBody(tiles, clearLabel, onClearLog)
+    }
+}
+
+/** Содержимое «Ещё» (2.1.0): плитки одной карточкой и «Очистить журнал» отдельно. */
+@Composable
+internal fun OverflowMenuBody(tiles: List<MenuTile>, clearLabel: String, onClearLog: (() -> Unit)?) {
+    // Колонок — по ширине: 4 на телефоне, больше на широком окне (плитка ≈ 88 dp)
+    val columns = (androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp / 88).coerceIn(4, 6)
+    Column(Modifier.padding(bottom = Space.l)) {
+        /*
+         * Категории (автор, 08.11.2026: «разбивать по категориям, а внутри
+         * плитки — иначе люди запутаются»). Каждая — подпись и, как правило,
+         * ОДИН ряд из четырёх: колонки совпадают между категориями,
+         * у пункта постоянное место — меню запоминается «по месту».
+         */
+        MenuGroup.entries.forEach { group ->
+            val groupTiles = tiles.filter { it.group == group }
+            if (groupTiles.isEmpty()) return@forEach
+            SheetGroup(title = stringResource(group.titleRes), first = group.ordinal == 0) {
+                Column(Modifier.padding(horizontal = Space.xs, vertical = Space.s)) {
+                    groupTiles.chunked(columns).forEach { row ->
+                        Row(Modifier.fillMaxWidth().padding(vertical = Space.xxs)) {
+                            row.forEach { tile ->
+                                com.ogneliss.dialer.ui.components.ActionCircle(
+                                    com.ogneliss.dialer.ui.components.CardAction(
+                                        tile.icon, tile.label, onClick = tile.onClick,
+                                        tint = if (tile.selected) MaterialTheme.colorScheme.primary else null
+                                    ),
+                                    Modifier.weight(1f),
+                                    selected = tile.selected,
+                                    circleContent = tile.photoUri?.takeIf { it.isNotBlank() }?.let { uri ->
+                                        { RowAvatar(uri, size = 48.dp) }
+                                    },
+                                    onClick = tile.onClick
+                                )
+                            }
+                            repeat(columns - row.size) { Spacer(Modifier.weight(1f)) }
+                        }
+                    }
                 }
             }
-            if (onClearLog != null) {
-                SheetGroup {
-                    SheetRow(
-                        OgnelissIcons.DeleteSweep,
-                        clearLabel,
-                        color = MaterialTheme.colorScheme.error,
-                        onClick = onClearLog
-                    )
-                }
+        }
+        if (onClearLog != null) {
+            SheetGroup {
+                SheetRow(
+                    OgnelissIcons.DeleteSweep,
+                    clearLabel,
+                    color = MaterialTheme.colorScheme.error,
+                    onClick = onClearLog
+                )
             }
         }
     }
 }
+
+/** Категории «Ещё» (2.1.0) — в этом порядке, у каждой своя подпись. */
+internal enum class MenuGroup(@androidx.annotation.StringRes val titleRes: Int) {
+    LIST(R.string.menu_section_list),
+    TOOLS(R.string.menu_section_tools),
+    APP(R.string.menu_section_app)
+}
+
+/** Плитка «Ещё» (2.1.0): категория, значок или фото, подпись, действие. */
+internal class MenuTile(
+    val group: MenuGroup,
+    val icon: androidx.compose.ui.graphics.vector.ImageVector,
+    val label: String,
+    val onClick: () -> Unit,
+    val selected: Boolean = false,
+    val photoUri: String? = null
+)
 
 
 
@@ -361,7 +392,12 @@ internal fun CallLogRow(
     onOpenSubscriber: (String) -> Unit,
     onLongPress: (CallLogGroup) -> Unit,
     onNeedNumberPicker: (CallLogGroup, List<NumberOption>) -> Unit,
-    groupPosition: GroupPosition = GroupPosition.SINGLE
+    groupPosition: GroupPosition = GroupPosition.SINGLE,
+    /**
+     * Долгое нажатие на портрет включает выбор (2.1.0). Нет — у найденных
+     * контактов: это не записи журнала, удалять и архивировать в них нечего.
+     */
+    avatarSelects: Boolean = true
 ) {
     val group = row.group
     // Несколько действий на сторону — панель кнопок вместо мгновенного действия
@@ -477,7 +513,14 @@ internal fun CallLogRow(
         onLongClick = {
             if (selection.isActive) selection.toggle(row.key)
             else onLongPress(group)
-        }
+        },
+        // Портрет — вход в выбор сразу с этой строкой (2.1.0); тело — карточки, как было
+        onAvatarLongClick = if (avatarSelects) {
+            {
+                swipeController.close()
+                selection.start(row.key)
+            }
+        } else null
     )
 }
 
@@ -558,7 +601,7 @@ internal fun PinnedOnlyCard(
             ActionIconButton(
                 icon = OgnelissIcons.Call,
                 contentDescription = stringResource(R.string.action_call),
-                tint = CallGreen,
+                tint = com.ogneliss.dialer.util.LocalCallAvailability.current.callTint(com.ogneliss.dialer.ui.theme.CallGreen),
                 onClick = onCall,
                 onLongClick = onCallLongPress,
                 onLongClickLabel = stringResource(R.string.a11y_choose_sim)

@@ -25,12 +25,12 @@
         <item quantity="one">%d ausgewählt</item>
         <item quantity="other">%d ausgewählt</item>
     </plurals>
-    <plurals name="selection_delete_text">
-        <item quantity="one">%d Eintrag wird aus der Anrufliste entfernt. Das lässt sich nicht rückgängig machen.</item>
-        <item quantity="other">%d Einträge werden aus der Anrufliste entfernt. Das lässt sich nicht rückgängig machen.</item>
-    </plurals>
     <plurals name="filter_match_count">
         <item quantity="one">%1$d Anruf passt</item>
         <item quantity="other">%1$d Anrufe passen</item>
+    </plurals>
+    <plurals name="widget_sms_unread">
+        <item quantity="one">%1$s: %2$d ungelesene Nachricht</item>
+        <item quantity="other">%1$s: %2$d ungelesene Nachrichten</item>
     </plurals>
 </resources>

@@ -71,6 +71,13 @@
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_MMS" />
+    <!--
+      2.1.0: повтор скачивания MMS ждёт сеть (JobScheduler, условие «есть
+      сеть»); с Android 14 такое условие требует этого разрешения. Только
+      знать, есть ли сеть, — не выход в неё: INTERNET по-прежнему нет.
+      (То же разрешение уже приносит WorkManager — здесь оно явно.)
+    -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!--
       РАЗРЕШЕНИЕ INTERNET НАМЕРЕННО ОТСУТСТВУЕТ.
@@ -173,7 +180,10 @@
             </intent-filter>
         </activity>
 
-        <!-- Экран активного вызова -->
+        <!-- Экран активного вызова.
+             2.1.0: showWhenLocked вместо showOnLockScreen — прежний атрибут
+             с Android 6 означает «для всех пользователей», а не «поверх
+             блокировки»; на Android 8.0 то же делает флаг окна в onCreate. -->
                 <!--
             ЭКРАНЫ ВЫЗОВА НЕ ПЕРЕСОЗДАЮТСЯ ПРИ СКЛАДЫВАНИИ И ПОВОРОТЕ.
 
@@ -195,7 +205,7 @@
             android:exported="false"
             android:launchMode="singleInstance"
             android:excludeFromRecents="true"
-            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
             android:turnScreenOn="true"
             android:theme="@style/Theme.OgnelissDialer.InCall"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|density"/>
@@ -309,15 +319,9 @@
         <receiver android:name=".background.CallbackReminder$Receiver" android:exported="false" />
 
         <!--
-            Отмена блокировки из шторки.
-
-            exported="false": намерение формирует само приложение,
-            снаружи вызывать нечего. Открытый приёмник позволил бы
-            любому приложению снимать правила блокировки.
+            Приёмника «Разблокировать» из уведомления о заблокированном
+            вызове нет с 2.1.0: уведомления нет (background/BlockedCallNotice.kt).
         -->
-        <receiver
-            android:name=".background.BlockedCallNotice$Receiver"
-            android:exported="false" />
 
         <!-- Кнопки «напомнить» в предложении после сброшенного вызова -->
         <receiver
@@ -400,12 +404,55 @@
         <receiver android:name=".sms.MmsTransport$DownloadedReceiver" android:exported="false" />
         <receiver android:name=".sms.MmsTransport$SentReceiver" android:exported="false" />
         <receiver android:name=".sms.MessageNotifications$ActionReceiver" android:exported="false" />
+        <!-- 2.1.0: повтор скачивания MMS, когда есть сеть (sms/MmsDownloads.kt) -->
+        <service
+            android:name=".sms.MmsRetryJob"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver android:name=".background.BootReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <!-- 2.1.0: после обновления — приёмник пропущенных и напоминания -->
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
+
+        <!--
+            2.1.0: значки разделов на главном экране — «SMS» с числом
+            непрочитанных и «Контакты» (widget/SectionWidgets.kt). Виджеты
+            1 × 1 рисует приложение само; обновления — от приложения.
+        -->
+        <receiver
+            android:name=".widget.SmsWidgetProvider"
+            android:exported="false"
+            android:label="@string/nav_messages">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_sms_info" />
+        </receiver>
+        <receiver
+            android:name=".widget.ContactsWidgetProvider"
+            android:exported="false"
+            android:label="@string/nav_contacts">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_contacts_info" />
+        </receiver>
+        <!-- Переходник касания по значку раздела: без окна, решает и закрывается -->
+        <activity
+            android:name=".widget.SectionLaunchActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.NoDisplay" />
 
     </application>
 </manifest>

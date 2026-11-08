@@ -45,6 +45,12 @@ import javax.inject.Inject
  *    разбор (MmsPdu), запись в хранилище MMS, уведомление и ответ
  *    центру MMS «получено» (m-notifyresp-ind).
  *
+ * 2.1.0: «получено» — только после записи в хранилище (было — сразу после
+ * разбора: не записалось — центр уже считал сообщение доставленным
+ * и удалял его). Не скачалось — повторы и одно уведомление «Загрузить»
+ * (MmsDownloads); пока идёт скачивание, в переписке — строка
+ * «MMS не загружено» ([storeNotificationInd]).
+ *
  * ── Как уходит ─────────────────────────────────────────────────────────────
  * Сообщение собирается (MmsPdu.composeSendReq) и записывается
  * в «Исходящие»; система отправляет файл (sendMultimediaMessage), ответ —
@@ -64,11 +70,28 @@ object MmsTransport {
     private const val EXTRA_TX = "transaction"
     private const val EXTRA_SUB = "sub"
     private const val EXTRA_URI = "message_uri"
+    private const val EXTRA_FAILED_ADDRESS = "failed_address"
     private const val EXTRA_NOTIFY_RESP = "notify_resp"
+    private const val EXTRA_KEY = "pending_key"
     private val requestCodes = AtomicInteger((System.currentTimeMillis() % 100_000).toInt() + 50_000)
 
-    /** Картинка в MMS — не больше этого: операторы режут сообщения от 300 КБ. */
-    private const val MAX_IMAGE_BYTES = 280 * 1024
+    /*
+     * РАЗМЕР MMS — ПО НАСТРОЙКАМ ОПЕРАТОРА (2.1.0).
+     *
+     * Было: каждая картинка ужималась до 280 КБ, а картинок до трёх — до
+     * 840 КБ в одном MMS при пределе большинства операторов 300 КБ: такое
+     * сообщение центр MMS отклонял. Стало: предел всего сообщения — из
+     * настроек оператора для карты (SmsManager.getCarrierConfigValues,
+     * MMS_CONFIG_MAX_MESSAGE_SIZE; не сказал — 300 КБ, как в AOSP),
+     * картинки делят его поровну за вычетом текста и заголовков.
+     * Оператор выключил MMS (MMS_CONFIG_MMS_ENABLED) — картинку
+     * не прикрепить вовсе ([isEnabled]).
+     */
+    private const val DEFAULT_MAX_MESSAGE = 300 * 1024
+    /** Заголовки, SMIL и заголовки частей — с запасом. */
+    private const val PDU_OVERHEAD = 4 * 1024
+    /** Меньше этого картинку не ужимаем — пусть лучше центр решит сам. */
+    private const val MIN_IMAGE_BYTES = 16 * 1024
     private const val MAX_IMAGE_SIDE = 1280
 
     private fun dir(context: Context) = File(context.cacheDir, "mms").apply { mkdirs() }
@@ -95,27 +118,89 @@ object MmsTransport {
     // ПРИЁМ
     // ═══════════════════════════════════════════════════════════════════════
 
-    /** Скачать MMS по уведомлению. */
-    fun download(context: Context, notification: MmsPdu.Notification, subId: Int?) {
+    /**
+     * Скачать MMS по запомненному уведомлению (MmsDownloads.Pending).
+     * Не началось — сразу неудача: повтор поставит MmsDownloads.
+     */
+    fun download(context: Context, pending: MmsDownloads.Pending) {
         runCatching {
             val file = File(dir(context), "in-${UUID.randomUUID()}.pdu")
             val uri = shareUri(context, file)
             grant(context, uri)
             val intent = Intent(context, DownloadedReceiver::class.java).setAction(ACTION_DOWNLOADED)
                 .putExtra(EXTRA_FILE, file.absolutePath)
-                .putExtra(EXTRA_LOCATION, notification.contentLocation)
-                .putExtra(EXTRA_TX, notification.transactionId)
-                .putExtra(EXTRA_SUB, subId ?: -1)
+                .putExtra(EXTRA_LOCATION, pending.contentLocation)
+                .putExtra(EXTRA_TX, pending.transactionId)
+                .putExtra(EXTRA_SUB, pending.subId ?: -1)
+                .putExtra(EXTRA_KEY, pending.key)
             val pi = PendingIntent.getBroadcast(context, requestCodes.incrementAndGet(), intent, mutableFlags())
-            SmsSender.managerFor(context, subId)
-                .downloadMultimediaMessage(context, notification.contentLocation, uri, null, pi)
-            Logger.i(TAG, "MMS скачивается, размер ${notification.size ?: "?"} Б")
-        }.onFailure { Logger.e(TAG, "Не удалось начать скачивание MMS", it) }
+            SmsSender.managerFor(context, pending.subId)
+                .downloadMultimediaMessage(context, pending.contentLocation, uri, null, pi)
+            Logger.i(TAG, "MMS скачивается, попытка ${pending.attempts + 1}")
+        }.onFailure {
+            Logger.e(TAG, "Не удалось начать скачивание MMS", it)
+            MmsDownloads.onFailed(context, pending.key, "не началось", blocked = false)
+        }
     }
 
-    /** Записать скачанное MMS во «Входящие»; null — не удалось. */
-    fun storeIncoming(context: Context, m: MmsPdu.Message, subId: Int?, read: Boolean): Uri? = runCatching {
-        val from = m.from ?: return null
+    /**
+     * СТРОКА «MMS НЕ ЗАГРУЖЕНО» (2.1.0) — уведомление сети (m-notification-ind)
+     * в хранилище, как у AOSP «Сообщений»: переписка сразу показывает,
+     * что сообщение есть, а касание скачивает его (MmsDownloads.downloadFromInbox).
+     * Прочитанной: пока идут повторы, счётчик непрочитанных не дёргается;
+     * кончились попытки — станет непрочитанной (MmsDownloads.onFailed).
+     * Скачалось — строка удаляется, на её месте — само сообщение.
+     *
+     * @return номер строки; null — отправитель неизвестен или не записалось
+     */
+    fun storeNotificationInd(context: Context, n: MmsPdu.Notification, subId: Int?): Long? = runCatching {
+        val from = n.from?.takeIf { it.isNotBlank() } ?: return null
+        val thread = Telephony.Threads.getOrCreateThreadId(context, from)
+        val values = ContentValues().apply {
+            put("thread_id", thread)
+            put("date", System.currentTimeMillis() / 1000L)
+            put("msg_box", MessageStore.MMS_INBOX)
+            put("read", 1)
+            put("seen", 1)
+            put("m_type", MessageStore.MMS_TYPE_NOTIFICATION)
+            put("ct_l", n.contentLocation)
+            put("tr_id", n.transactionId)
+            n.size?.let { put("m_size", it) }
+            put("m_cls", n.messageClass ?: "personal")
+            put("v", 0x12)
+            n.subject?.takeIf { it.isNotBlank() }?.let { put("sub", it); put("sub_cs", 106) }
+            subId?.let { put("sub_id", it) }
+        }
+        val uri = context.contentResolver.insert(Telephony.Mms.Inbox.CONTENT_URI, values) ?: return null
+        val id = ContentUris.parseId(uri)
+        writeAddress(context, id, from, MessageStore.ADDR_FROM)
+        id
+    }.onFailure { Logger.w(TAG, "Строка «MMS не загружено» не записана", it) }.getOrNull()
+
+    /** Отправитель MMS по строке хранилища. */
+    fun senderOf(context: Context, mmsId: Long): String? = runCatching {
+        context.contentResolver.query(
+            Uri.parse("content://mms/$mmsId/addr"), arrayOf("address"),
+            "type = ?", arrayOf(MessageStore.ADDR_FROM.toString()), null
+        )?.use { c -> if (c.moveToFirst()) c.getString(0)?.takeIf { it.isNotBlank() } else null }
+    }.getOrNull()
+
+    /**
+     * Это MMS уже записано (центр прислал уведомление второй раз, и оно
+     * скачалось дважды) — его строка; иначе null.
+     */
+    private fun storedAlready(context: Context, messageId: String?): Uri? {
+        if (messageId.isNullOrBlank()) return null
+        return runCatching {
+            context.contentResolver.query(
+                MessageStore.MMS_URI, arrayOf("_id"),
+                "m_id = ? AND m_type = ${MessageStore.MMS_TYPE_RETRIEVE_CONF}", arrayOf(messageId), null
+            )?.use { c -> if (c.moveToFirst()) ContentUris.withAppendedId(MessageStore.MMS_URI, c.getLong(0)) else null }
+        }.getOrNull()
+    }
+
+    /** Записать скачанное MMS во «Входящие» от [from]; null — не удалось. */
+    fun storeIncoming(context: Context, m: MmsPdu.Message, from: String, subId: Int?, read: Boolean): Uri? = runCatching {
         val thread = Telephony.Threads.getOrCreateThreadId(context, from)
         val values = ContentValues().apply {
             put("thread_id", thread)
@@ -140,6 +225,8 @@ object MmsTransport {
         writeAddress(context, id, from, MessageStore.ADDR_FROM)
         m.to.forEach { writeAddress(context, id, it, MessageStore.ADDR_TO) }
         m.cc.forEach { writeAddress(context, id, it, MessageStore.ADDR_CC) }
+        // Счётчик на значке «SMS» (2.1.0): пришло MMS
+        com.ogneliss.dialer.widget.SectionWidgets.updateSms(context)
         uri
     }.onFailure { Logger.e(TAG, "Не удалось сохранить MMS", it) }.getOrNull()
 
@@ -203,17 +290,41 @@ object MmsTransport {
     // ОТПРАВКА
     // ═══════════════════════════════════════════════════════════════════════
 
+    /** Настройки MMS оператора карты: разрешены ли и предел сообщения, байт. */
+    private class CarrierMms(val enabled: Boolean, val maxBytes: Int)
+
+    private fun carrierMms(context: Context, subId: Int?): CarrierMms {
+        val config = runCatching { SmsSender.managerFor(context, subId).carrierConfigValues }
+            .onFailure { Logger.w(TAG, "Настройки MMS оператора не прочитаны", it) }
+            .getOrNull()
+        val enabled = config?.getBoolean(SmsManager.MMS_CONFIG_MMS_ENABLED, true) ?: true
+        val max = config?.getInt(SmsManager.MMS_CONFIG_MAX_MESSAGE_SIZE, DEFAULT_MAX_MESSAGE)
+            ?.takeIf { it > 0 } ?: DEFAULT_MAX_MESSAGE
+        return CarrierMms(enabled, max)
+    }
+
+    /** Оператор разрешает MMS на этой карте — иначе картинку не прикрепить (2.1.0). */
+    fun isEnabled(context: Context, subId: Int?): Boolean = carrierMms(context, subId).enabled
+
     /**
      * Отправить MMS: [text] и картинки [images] (адреса content://),
-     * на [address]. Картинки ужимаются до [MAX_IMAGE_BYTES].
+     * на [address]. Картинки делят предел MMS оператора поровну.
      */
     fun send(context: Context, address: String, text: String, images: List<Uri>, subId: Int?): Boolean {
         if (!SmsRole.isDefault(context)) {
             Logger.w(TAG, "MMS отправляет только приложение SMS по умолчанию")
             return false
         }
+        val carrier = carrierMms(context, subId)
+        if (!carrier.enabled) {
+            Logger.w(TAG, "MMS выключено оператором — не отправляется")
+            return false
+        }
         return runCatching {
-            val parts = images.mapIndexedNotNull { i, uri -> imagePart(context, uri, i) }
+            val textBytes = text.toByteArray(Charsets.UTF_8).size
+            val budget = (carrier.maxBytes - PDU_OVERHEAD - textBytes) / images.size.coerceAtLeast(1)
+            val perImage = budget.coerceAtLeast(MIN_IMAGE_BYTES)
+            val parts = images.mapIndexedNotNull { i, uri -> imagePart(context, uri, i, perImage) }
             if (parts.isEmpty() && text.isBlank()) return false
             val tx = "T" + java.lang.Long.toHexString(System.currentTimeMillis())
             val pdu = MmsPdu.composeSendReq(
@@ -227,10 +338,12 @@ object MmsTransport {
             grant(context, uri)
             val intent = Intent(context, SentReceiver::class.java).setAction(ACTION_SENT)
                 .putExtra(EXTRA_FILE, file.absolutePath)
+                // Адрес — чтобы уведомление о неотправленном открыло переписку (2.1.0)
+                .putExtra(EXTRA_FAILED_ADDRESS, address)
                 .apply { stored?.let { putExtra(EXTRA_URI, it.toString()) } }
             val pi = PendingIntent.getBroadcast(context, requestCodes.incrementAndGet(), intent, mutableFlags())
             managerFor(context, subId).sendMultimediaMessage(context, uri, null, null, pi)
-            Logger.i(TAG, "MMS отправляется: картинок ${parts.size}, ${pdu.size} Б")
+            Logger.i(TAG, "MMS отправляется: картинок ${parts.size}, ${pdu.size} Б из ${carrier.maxBytes} Б оператора")
             true
         }.getOrElse {
             Logger.e(TAG, "Не удалось отправить MMS", it)
@@ -282,9 +395,10 @@ object MmsTransport {
 
     /**
      * Картинка для MMS: уменьшить до [MAX_IMAGE_SIDE] по большей стороне,
-     * повернуть по EXIF и сжать в JPEG, пока не уложится в [MAX_IMAGE_BYTES].
+     * повернуть по EXIF и сжать в JPEG, пока не уложится в [maxBytes]
+     * (2.1.0: доля предела оператора, было — 280 КБ на каждую).
      */
-    private fun imagePart(context: Context, uri: Uri, index: Int): MmsPdu.Part? = runCatching {
+    private fun imagePart(context: Context, uri: Uri, index: Int, maxBytes: Int): MmsPdu.Part? = runCatching {
         val resolver = context.contentResolver
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }
@@ -312,17 +426,26 @@ object MmsTransport {
             }
             bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, m, true)
         }
-        var quality = 85
-        var bytes: ByteArray
-        do {
-            bytes = ByteArrayOutputStream().also { bitmap.compress(Bitmap.CompressFormat.JPEG, quality, it) }.toByteArray()
-            quality -= 10
-        } while (bytes.size > MAX_IMAGE_BYTES && quality >= 35)
-        if (bytes.size > MAX_IMAGE_BYTES) {
-            // Всё ещё велико — вдвое меньше по сторонам
-            val half = Bitmap.createScaledBitmap(bitmap, bitmap.width / 2, bitmap.height / 2, true)
-            bytes = ByteArrayOutputStream().also { half.compress(Bitmap.CompressFormat.JPEG, 70, it) }.toByteArray()
+        /*
+         * Сначала качество (85 → 35), потом размер: не уложилось — стороны
+         * ×0,7 и снова. Было: одно уменьшение вдвое при 70 % и отправка
+         * как есть, даже если и это не уложилось.
+         */
+        var bytes = ByteArray(0)
+        var scaled = bitmap
+        for (round in 0 until 6) {
+            var quality = 85
+            while (quality >= 35) {
+                bytes = ByteArrayOutputStream().also { scaled.compress(Bitmap.CompressFormat.JPEG, quality, it) }.toByteArray()
+                if (bytes.size <= maxBytes) break
+                quality -= 10
+            }
+            if (bytes.size <= maxBytes || minOf(scaled.width, scaled.height) < 160) break
+            scaled = Bitmap.createScaledBitmap(
+                scaled, (scaled.width * 0.7f).toInt().coerceAtLeast(1), (scaled.height * 0.7f).toInt().coerceAtLeast(1), true
+            )
         }
+        if (bytes.size > maxBytes) Logger.w(TAG, "Картинка MMS больше доли предела: ${bytes.size} из $maxBytes Б")
         MmsPdu.Part("image/jpeg", bytes, name = "image$index.jpg", contentLocation = "image$index.jpg")
     }.onFailure { Logger.w(TAG, "Не удалось подготовить картинку для MMS", it) }.getOrNull()
 
@@ -339,7 +462,24 @@ object MmsTransport {
                 Logger.w(TAG, "WAP Push — не уведомление MMS")
                 return
             }
-            download(context, notification, SmsDeliverReceiver.subscriptionOf(intent))
+            val subId = SmsDeliverReceiver.subscriptionOf(intent)
+            /*
+             * 2.1.0: запись в хранилище — не в главном потоке (было: скачивание
+             * начиналось прямо здесь), и уведомление сети запоминается до
+             * успешной записи сообщения (MmsDownloads) — повторить есть чем.
+             */
+            val pending = goAsync()
+            CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+                try {
+                    suspendRunCatching {
+                        val inbox = MmsDownloads.knownInboxId(context, notification)
+                            ?: storeNotificationInd(context, notification, subId)
+                        MmsDownloads.start(context, notification, subId, inbox)
+                    }.onFailure { Logger.e(TAG, "Уведомление о MMS не обработано", it) }
+                } finally {
+                    pending.finish()
+                }
+            }
         }
     }
 
@@ -354,6 +494,7 @@ object MmsTransport {
             val path = intent.getStringExtra(EXTRA_FILE) ?: return
             val tx = intent.getStringExtra(EXTRA_TX).orEmpty()
             val subId = intent.getIntExtra(EXTRA_SUB, -1).takeIf { it >= 0 }
+            val key = intent.getStringExtra(EXTRA_KEY)
             // Код — до goAsync: после него приёмник его уже не знает
             val code = resultCode
             val ok = code == Activity.RESULT_OK
@@ -361,30 +502,71 @@ object MmsTransport {
             CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
                 val file = File(path)
                 try {
-                    if (!ok || !file.exists() || file.length() == 0L) {
-                        Logger.w(TAG, "MMS не скачано: код $code")
-                        MessageNotifications.downloadFailed(context)
-                        return@launch
-                    }
-                    val message = MmsPdu.parseMessage(file.readBytes())
-                    if (message == null || message.type != MmsPdu.TYPE_RETRIEVE_CONF) {
-                        Logger.w(TAG, "Скачанное MMS не разобрано")
-                        MessageNotifications.downloadFailed(context)
-                        return@launch
-                    }
-                    val from = message.from.orEmpty()
-                    val blocked = from.isNotBlank() &&
-                        suspendRunCatching { blocking.isBlocked(from) }.getOrDefault(false)
-                    val uri = storeIncoming(context, message, subId, read = blocked)
-                    sendNotifyResp(context, tx.ifBlank { message.transactionId.orEmpty() }, subId)
-                    Logger.i(TAG, "MMS сохранено: частей ${message.parts.size}")
-                    if (uri != null && !blocked && from.isNotBlank()) {
-                        MessageNotifications.showForAddress(context, from)
-                    }
+                    suspendRunCatching { handle(context, file, ok, code, tx, subId, key) }
+                        .onFailure {
+                            Logger.e(TAG, "Скачанное MMS не обработано", it)
+                            key?.let { k -> MmsDownloads.onFailed(context, k, "сбой обработки", blocked = false) }
+                        }
                 } finally {
                     file.delete()
                     pending.finish()
                 }
+            }
+        }
+
+        private suspend fun handle(
+            context: Context,
+            file: File,
+            ok: Boolean,
+            code: Int,
+            tx: String,
+            subId: Int?,
+            key: String?
+        ) {
+            val known = key?.let { MmsDownloads.get(context, it) }
+            val expectedFrom = known?.from.orEmpty()
+            suspend fun blocked(from: String) =
+                from.isNotBlank() && suspendRunCatching { blocking.isBlocked(from) }.getOrDefault(false)
+            fun failed(reason: String, isBlocked: Boolean) {
+                Logger.w(TAG, "MMS не скачано: $reason")
+                key?.let { MmsDownloads.onFailed(context, it, reason, isBlocked) }
+            }
+            if (!ok || !file.exists() || file.length() == 0L) {
+                failed("код $code", blocked(expectedFrom))
+                return
+            }
+            val message = MmsPdu.parseMessage(file.readBytes())
+            if (message == null || message.type != MmsPdu.TYPE_RETRIEVE_CONF) {
+                failed("не разобрано", blocked(expectedFrom))
+                return
+            }
+            // Отправитель неизвестен и сети, и уведомлению — «Неизвестный», как у SMS
+            val from = message.from?.takeIf { it.isNotBlank() } ?: expectedFrom.ifBlank {
+                context.getString(com.ogneliss.dialer.R.string.sms_unknown_sender)
+            }
+            val isBlocked = blocked(from)
+            val uri = storedAlready(context, message.messageId)
+                ?: storeIncoming(context, message, from, subId, read = isBlocked)
+            if (uri == null) {
+                // Не записано — «получено» не говорим: центр MMS сохранит сообщение для повтора
+                failed("не записано", isBlocked)
+                return
+            }
+            sendNotifyResp(context, tx.ifBlank { message.transactionId.orEmpty() }, subId)
+            key?.let { MmsDownloads.onDone(context, it) }
+            Logger.i(TAG, "MMS сохранено: частей ${message.parts.size}")
+            if (!isBlocked) {
+                MessageNotifications.showForAddress(
+                    context, from,
+                    MessageNotifications.Incoming(
+                        body = message.bodyText(),
+                        date = System.currentTimeMillis(),
+                        subId = subId,
+                        key = runCatching { Message.keyOf(true, ContentUris.parseId(uri)) }.getOrNull(),
+                        isMms = true,
+                        hasPicture = message.parts.any { it.isImage }
+                    )
+                )
             }
         }
     }
@@ -409,7 +591,7 @@ object MmsTransport {
             }.onFailure { Logger.w(TAG, "Не удалось обновить исходящее MMS", it) }
             if (!accepted) {
                 Logger.w(TAG, "MMS не отправлено: код $resultCode, ответ ${conf?.responseStatus}")
-                MessageNotifications.sendFailed(context)
+                MessageNotifications.sendFailed(context, intent.getStringExtra(EXTRA_FAILED_ADDRESS))
             }
         }
     }

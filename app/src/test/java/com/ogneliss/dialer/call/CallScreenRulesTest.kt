@@ -54,4 +54,39 @@ class CallScreenRulesTest {
         // Вызова нет — между попытками автодозвона
         assertFalse(CallScreenRules.proximityWanted(null, CallAudioState.ROUTE_EARPIECE))
     }
+
+    @Test
+    fun `плашка входящего — только где она всплывёт`() {
+        val high = android.app.NotificationManager.IMPORTANCE_HIGH
+        assertTrue(CallScreenRules.incomingBannerAllowed(false, true, high, true, true))
+        // MIUI, vivo, ColorOS — свои запреты: экран вызова целиком
+        assertFalse(CallScreenRules.incomingBannerAllowed(true, true, high, true, true))
+        // Уведомления выключены, канал приглушён, «Не беспокоить», всплытие отключено
+        assertFalse(CallScreenRules.incomingBannerAllowed(false, false, high, true, true))
+        assertFalse(CallScreenRules.incomingBannerAllowed(false, true, android.app.NotificationManager.IMPORTANCE_DEFAULT, true, true))
+        assertFalse(CallScreenRules.incomingBannerAllowed(false, true, high, false, true))
+        assertFalse(CallScreenRules.incomingBannerAllowed(false, true, high, true, false))
+        // Полноэкранные отняты (Android 14+): плашка не держится — экран вызова целиком
+        assertFalse(CallScreenRules.incomingBannerAllowed(false, true, high, true, true, fullScreenAllowed = false))
+    }
+
+    @Test
+    fun `на Android 8–9 выбор SIM — исходящий`() {
+        assertTrue(CallScreenRules.outgoingOnAdd(Call.STATE_DIALING))
+        assertTrue(CallScreenRules.outgoingOnAdd(Call.STATE_CONNECTING))
+        assertTrue(CallScreenRules.outgoingOnAdd(Call.STATE_SELECT_PHONE_ACCOUNT))
+        assertFalse(CallScreenRules.outgoingOnAdd(Call.STATE_RINGING))
+    }
+
+    @Test
+    fun `к вызову можно вернуться, пока он не завершён`() {
+        assertTrue(CallScreenRules.returnable(Call.STATE_ACTIVE, false))
+        assertTrue(CallScreenRules.returnable(Call.STATE_HOLDING, false))
+        assertTrue(CallScreenRules.returnable(Call.STATE_DIALING, false))
+        assertTrue(CallScreenRules.returnable(Call.STATE_RINGING, false))
+        assertFalse(CallScreenRules.returnable(Call.STATE_DISCONNECTED, false))
+        assertFalse(CallScreenRules.returnable(Call.STATE_DISCONNECTING, false))
+        // Участник конференции — к ней ведёт сама конференция
+        assertFalse(CallScreenRules.returnable(Call.STATE_ACTIVE, true))
+    }
 }

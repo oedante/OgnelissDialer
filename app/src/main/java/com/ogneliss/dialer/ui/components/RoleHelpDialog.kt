@@ -5,6 +5,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.ogneliss.dialer.R
@@ -12,32 +13,38 @@ import com.ogneliss.dialer.sms.SmsRole
 import com.ogneliss.dialer.util.RoleAccess
 
 /**
- * ПОДСКАЗКА, КОГДА РОЛЬ ИЛИ РАЗРЕШЕНИЕ SMS НЕ ВЫДАНЫ (2.0.0).
+ * РОЛЬ ИЛИ РАЗРЕШЕНИЕ SMS НЕ ВЫДАНЫ ПОСЛЕ ОКНА (2.0.0; 2.1.0 — короче).
  *
- * Человек нажал «Назначить» или «Сделать» — и ничего не получилось.
- * Без объяснения это тупик, поэтому окно говорит, что именно случилось
- * и куда нажать, одной кнопкой туда и ведёт. Разбор причин — RoleAccess.
+ * Было: окно с объяснением в обоих случаях. Правило автора (2.1.0) —
+ * не объяснять, а выполнять:
+ * • окно роли не показалось (ответ быстрее человеческого — выбор уже
+ *   отклоняли или оболочка подменила окно) — сразу «Приложения
+ *   по умолчанию», без слов;
+ * • «Ограниченная настройка» (Android 15+, установка из файла APK) —
+ *   критично и исправить может только человек: одна-две строки и одна
+ *   кнопка в «О приложении». Разбор причин — RoleAccess.
  */
 @Composable
 fun RoleHelpDialog(help: RoleAccess.Help, onDismiss: () -> Unit) {
     val context = LocalContext.current
-    val restricted = help == RoleAccess.Help.RESTRICTED
+    if (help == RoleAccess.Help.NOT_SHOWN) {
+        LaunchedEffect(help) {
+            RoleAccess.openDefaultApps(context)
+            onDismiss()
+        }
+        return
+    }
     OgnelissDialog(
         onDismissRequest = onDismiss,
-        title = stringResource(if (restricted) R.string.role_restricted_title else R.string.dialer_role_blocked_title),
-        content = {
-            Text(stringResource(if (restricted) R.string.role_restricted_text else R.string.dialer_role_blocked_text))
-        },
+        title = stringResource(R.string.role_restricted_title),
+        content = { Text(stringResource(R.string.role_restricted_text)) },
         confirmButton = {
             TextButton(onClick = {
                 onDismiss()
-                if (restricted) RoleAccess.openAppInfo(context) else RoleAccess.openDefaultApps(context)
+                RoleAccess.openAppInfo(context)
             }) {
-                Text(stringResource(if (restricted) R.string.role_restricted_open else R.string.dialer_role_open_settings))
+                Text(stringResource(R.string.role_restricted_open))
             }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.nav_close)) }
         }
     )
 }
@@ -56,6 +63,8 @@ fun rememberSmsRoleRequest(onResult: (RoleAccess.Help?) -> Unit): () -> Unit {
         // RESULT_OK — система подтвердила роль (в том числе если она уже была у нас)
         val granted = result.resultCode == android.app.Activity.RESULT_OK || SmsRole.isDefault(context)
         com.ogneliss.dialer.log.Logger.i("SmsRole", SmsRole.diagnostics(context))
+        // 2.1.0: канал «Сообщения» — сразу при выдаче роли (SmsHealth.onRoleGranted)
+        if (granted) com.ogneliss.dialer.sms.SmsHealth.onRoleGranted(context)
         if (granted && SmsRole.needsNotificationPermission(context)) {
             notifications.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         }

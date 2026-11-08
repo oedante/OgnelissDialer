@@ -739,7 +739,7 @@ private fun ActionCell(
     width: androidx.compose.ui.unit.Dp,
     onClick: () -> Unit
 ) {
-    val tones = revealTones(action.color)
+    val tones = revealTones(availableColor(action.color))
     Box(
         Modifier
             .width(width)
@@ -833,7 +833,7 @@ private fun DirectActionHint(
     alignment: Alignment,
     modifier: Modifier = Modifier
 ) {
-    val tones = revealTones(action.color)
+    val tones = revealTones(availableColor(action.color))
     // Насыщеннее у края экрана, откуда выезжает значок, бледнее — к строке
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val fromLeft = (alignment == Alignment.CenterStart) != rtl
@@ -920,3 +920,23 @@ private fun revealTones(color: Color): RevealTones {
  * начнёт требовать линейки.
  */
 private const val MAX_SWIPE_TANGENT = 0.36f
+
+/*
+ * ЗВОНИТЬ ИЛИ ПИСАТЬ НЕЛЬЗЯ — СЕРЫМ (2.1.0).
+ *
+ * Цвет кнопок задаёт фабрика свайпов в ViewModel — вне Compose, где
+ * CallAvailability не видно. Подменяем здесь, при рисовании: зелёный
+ * звонка и синий SMS становятся серыми, остальное (мессенджеры, удаление)
+ * — как было. Действие по-прежнему срабатывает: разбор в CallAvailability.
+ */
+@Composable
+private fun availableColor(color: androidx.compose.ui.graphics.Color): androidx.compose.ui.graphics.Color {
+    val availability = com.ogneliss.dialer.util.LocalCallAvailability.current
+    return when {
+        color == com.ogneliss.dialer.ui.theme.CallGreen && !availability.canCall ->
+            androidx.compose.material3.MaterialTheme.colorScheme.outline
+        color == com.ogneliss.dialer.ui.theme.MessageBlue && !availability.canSms ->
+            androidx.compose.material3.MaterialTheme.colorScheme.outline
+        else -> color
+    }
+}

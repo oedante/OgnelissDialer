@@ -127,6 +127,9 @@ class InCallActivity : ComponentActivity() {
      */
     @Inject lateinit var numberingPlan: com.ogneliss.dialer.data.NumberingPlan
 
+    /** Подписи SIM для выбора карты у исходящего без SIM (2.1.0, SimSelectDialog). */
+    @Inject lateinit var simRepo: com.ogneliss.dialer.data.SimRepository
+
     /**
      * Область приложения для сохранения заметки.
      *
@@ -139,6 +142,9 @@ class InCallActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Окно создано, пока звонит: медленному телефону дадим ещё время,
+        // прежде чем винить прошивку (2.1.0, IncomingScreen.checkShown)
+        IncomingScreen.onCreated()
 
         /*
          * EDGE-TO-EDGE НУЖЕН И ЗДЕСЬ.
@@ -356,6 +362,16 @@ class InCallActivity : ComponentActivity() {
                     // до конца разговора
                     onManualAudioChange = { smartSpeaker?.notifyManualToggle() }
                 )
+
+                /*
+                 * Вопросы Telecom поверх экрана (2.1.0): выбор SIM у исходящего
+                 * и остаток номера после «;». Без ответа вызов стоял бы
+                 * бесконечно — разбор в CallPrompts.kt.
+                 */
+                val awaitingAccount = remember(revision, calls) { CallManager.awaitingAccount }
+                awaitingAccount?.let { SimSelectDialog(it, simRepo) }
+                val postDial by CallManager.postDialWait.collectAsStateWithLifecycle()
+                postDial?.let { PostDialDialog(it) }
             }
             }
                 }
@@ -370,9 +386,23 @@ class InCallActivity : ComponentActivity() {
      * входящего становится тихим (на экране свои кнопки) или, если ушли
      * с экрана, пока звонит, снова с кнопками. Разбор — IncomingScreen.
      */
+    /*
+     * «ПОКАЗАН» — ЭТО ФОКУС ОКНА, А НЕ onStart (2.1.0).
+     *
+     * Было: экран вызова считался показанным уже в onStart. На MIUI
+     * с запретом «Экран блокировки» окно запускается — и остаётся за экраном
+     * блокировки: onStart пришёл, а человек видит блокировку без кнопок,
+     * и запасное уведомление не всплывало. Стало: показан, когда окно
+     * получило фокус; потеря фокуса (шторка, диалог) — не «ушли».
+     */
     override fun onStart() {
         super.onStart()
-        IncomingScreen.onShown(this)
+        IncomingScreen.onStarted()
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) IncomingScreen.onShown(this)
     }
 
     override fun onStop() {
@@ -858,7 +888,10 @@ private fun InCallScreen(
             onSend = { message ->
                 // Если отклонение с текстом не сработало, вызов всё равно
                 // нужно сбросить: пользователь этого и хотел
-                if (!QuickReply.rejectWith(message)) CallManager.reject()
+                // 2.1.0: при втором входящем сбрасываем его, а не идущий разговор
+                if (!QuickReply.rejectWith(message)) {
+                    if (CallManager.waiting != null) CallManager.rejectWaiting() else CallManager.reject()
+                }
                 showQuickReply = false
             },
             onDismiss = { showQuickReply = false }
@@ -1380,7 +1413,7 @@ private fun InCallScreen(
 
                     val waitingCall = remember(revision) { CallManager.waiting }
                     waitingCall?.let { incoming ->
-                        WaitingCallBanner(incoming, contactsRepo)
+                        WaitingCallBanner(incoming, contactsRepo, onReplyWithText = { showQuickReply = true })
                         Spacer(Modifier.height(Space.m))
                     }
 
@@ -1853,8 +1886,15 @@ private fun ControlsRow(
             }
             ToggleTile(speaker, OgnelissIcons.VolumeUp, stringResource(R.string.incall_speaker)) {
                 onManualAudioChange()
+                /*
+                 * 2.1.0: было ROUTE_EARPIECE — стало ROUTE_WIRED_OR_EARPIECE.
+                 * С проводной гарнитурой выключение громкой связи просило
+                 * «разговорный динамик», и звук уходил в трубку мимо
+                 * подключённых наушников. «Проводная или трубка» — Telecom
+                 * сам выберет гарнитуру, если она вставлена.
+                 */
                 CallManager.setAudioRoute(
-                    if (speaker) CallAudioState.ROUTE_EARPIECE else CallAudioState.ROUTE_SPEAKER
+                    if (speaker) CallAudioState.ROUTE_WIRED_OR_EARPIECE else CallAudioState.ROUTE_SPEAKER
                 )
             }
             ToggleTile(false, OgnelissIcons.Dialpad, stringResource(R.string.incall_keypad), onDialpad)
@@ -1878,7 +1918,8 @@ private fun ControlsRow(
                 ToggleTile(btActive, OgnelissIcons.Bluetooth, stringResource(R.string.incall_bluetooth)) {
                     onManualAudioChange()
                     CallManager.setAudioRoute(
-                        if (btActive) CallAudioState.ROUTE_EARPIECE
+                        // 2.1.0: так же, как у громкой связи, — гарнитура, если есть
+                        if (btActive) CallAudioState.ROUTE_WIRED_OR_EARPIECE
                         else CallAudioState.ROUTE_BLUETOOTH
                     )
                 }
@@ -2103,13 +2144,8 @@ private fun InCallNoteField(
                 )
             }
         }
-
-        Text(
-            stringResource(R.string.incall_note_autosave),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.outline,
-            modifier = Modifier.padding(top = Space.s, start = Space.s)
-        )
+        // 2.1.0: без подписи «Сохраняется автоматически» — заметка и так
+        // сохраняется сама; пояснения на экране вызова не нужны
     }
 }
 
@@ -2565,7 +2601,8 @@ private fun rememberCallerLabel(
 @Composable
 private fun WaitingCallBanner(
     call: Call,
-    contactsRepo: com.ogneliss.dialer.data.ContactsRepository
+    contactsRepo: com.ogneliss.dialer.data.ContactsRepository,
+    onReplyWithText: () -> Unit
 ) {
     val label = rememberCallerLabel(call, contactsRepo)
 
@@ -2624,6 +2661,17 @@ private fun WaitingCallBanner(
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = DeclineRed),
                     modifier = Modifier.weight(1f)
                 ) { Text(stringResource(R.string.incall_decline)) }
+            }
+            /*
+             * 2.1.0: отклонить второй входящий с текстом. Было: кнопка
+             * «Отклонить с сообщением» показывалась только у единственного
+             * звонящего вызова. Стало: и здесь, а QuickReply отвечает
+             * именно второму входящему (QuickReply.target).
+             */
+            if (QuickReply.isAvailable()) {
+                TextButton(onClick = onReplyWithText, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.quick_reply_action))
+                }
             }
         }
     }

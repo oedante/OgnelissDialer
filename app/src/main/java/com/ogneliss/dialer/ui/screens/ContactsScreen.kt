@@ -64,6 +64,7 @@ import com.ogneliss.dialer.util.TextFold
 import androidx.compose.runtime.saveable.rememberSaveable
 import com.ogneliss.dialer.ui.components.EmptyReason
 import com.ogneliss.dialer.ui.components.EmptyState
+import com.ogneliss.dialer.ui.components.rememberPermissionRequest
 import com.ogneliss.dialer.ui.components.HighlightedName
 import com.ogneliss.dialer.ui.theme.LocalAppearance
 import com.ogneliss.dialer.data.RulePattern
@@ -135,9 +136,21 @@ fun ContactsScreen(
     onOpenSettings: () -> Unit = {},
     onOpenReminders: () -> Unit = {},
     /** «Вопросы и ответы» из меню (1.6.0). */
-    onOpenHelp: () -> Unit = {}
+    onOpenHelp: () -> Unit = {},
+    /** «Закреплённые» — при полном списке закреплённых (2.1.0, RecordActionCards). */
+    onOpenPinned: () -> Unit = {}
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
+
+    /*
+     * «Разрешить» в пустых контактах (2.1.0, ошибка): было — кнопка
+     * только сбрасывала поиск, доступа не запрашивал никто. Стало —
+     * системный запрос READ_CONTACTS; окна уже нет — системные настройки
+     * приложения (rememberPermissionRequest).
+     */
+    val requestContacts = rememberPermissionRequest(android.Manifest.permission.READ_CONTACTS) {
+        vm.onPermissionsChanged()
+    }
 
     // Режим выбора: контакт целиком (1.7.0) или его первый номер
     val pickContact: (Contact) -> Unit = { contact ->
@@ -665,7 +678,8 @@ fun ContactsScreen(
                 )
             } else {
                 // Та же панель, что у журнала (1.6.0): разбор в ListPanel
-                val toJournal: () -> Unit = { onOpenSection(MainSection.JOURNAL) }
+                // 2.1.0: вправо — соседний раздел «SMS» (карусель журнал → SMS → контакты)
+                val toJournal: () -> Unit = { onOpenSection(MainSection.MESSAGES) }
                 ListPanel(
                     section = MainSection.CONTACTS,
                     onOpenSection = onOpenSection,
@@ -677,11 +691,15 @@ fun ContactsScreen(
                     onSearchChange = { search = it },
                     onCloseSearch = closeSearch,
                     onMenu = { menuOpen = true },
-                    // Перелистывание по панели (настройка): вправо — журнал,
+                    // Перелистывание по панели (настройка): вправо — SMS (2.1.0),
                     // влево — заметки, как раньше
                     onSwipeRight = if (settings.panelSwipeNav) toJournal else null,
                     onSwipeLeft = if (settings.panelSwipeNav) onOpenNotes else null,
                     menuContent = {
+                        val pinContext = androidx.compose.ui.platform.LocalContext.current
+                        val pinToHome: (() -> Unit)? = if (com.ogneliss.dialer.widget.SectionWidgets.pinSupported(pinContext)) {
+                            { menuOpen = false; com.ogneliss.dialer.widget.SectionWidgets.requestPin(pinContext, com.ogneliss.dialer.ui.components.MainSection.CONTACTS) }
+                        } else null
                         OverflowMenu(
                             expanded = menuOpen,
                             onDismiss = { menuOpen = false },
@@ -708,7 +726,9 @@ fun ContactsScreen(
                             onReminders = { menuOpen = false; onOpenReminders() },
                             onStartSelection = null,
                             onAddContact = { menuOpen = false; vm.createContact("") },
-                            onHelp = { menuOpen = false; onOpenHelp() }
+                            onHelp = { menuOpen = false; onOpenHelp() },
+                            // 2.1.0: значок «Контакты» на главный экран (SectionWidgets)
+                            onPinToHome = pinToHome
                         )
                     }
                 )
@@ -791,29 +811,17 @@ fun ContactsScreen(
                             EmptyReason.NoContactsPermission
                         else -> EmptyReason.NoContacts
                     },
-                    onAction = { search = "" }
+                    // Кнопка есть только у «нет доступа» (разбор у requestContacts)
+                    onAction = requestContacts
                 )
                 return@Column
             }
 
             /*
-             * Оговорка при фильтрах давности.
-             *
-             * Отсутствие ЗВОНКОВ не означает отсутствия общения:
-             * с человеком можно ежедневно переписываться и ни разу
-             * не позвонить. Без этой строки список читался бы как
-             * «ненужные контакты», и кто-то удалил бы лишнее.
+             * Оговорка при фильтрах давности («нет звонков — не значит нет
+             * общения») снята в 2.1.0: правило автора 07.11.2026, пояснений
+             * не показываем. Название фильтра говорит, что отобрано.
              */
-            if (contactFilter == ContactFilter.STALE_HALF_YEAR ||
-                contactFilter == ContactFilter.STALE_YEAR
-            ) {
-                Text(
-                    stringResource(R.string.contacts_stale_hint),
-                    Modifier.padding(horizontal = Space.l, vertical = Space.s),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
 
             Box(Modifier.fillMaxSize().trackTouch(touchAnchor)) {
             LazyColumn(state = listState) {
@@ -1061,6 +1069,7 @@ fun ContactsScreen(
             origin = CardsOrigin.CONTACTS,
             onOpenCard = { onOpenContact(contact.id) },
             onOpenBlockLists = onOpenBlockLists,
+            onOpenPinned = onOpenPinned,
             onDismiss = { selectedContact = null }
         )
     }
@@ -1348,7 +1357,7 @@ private fun ContactRow(
                 ActionIconButton(
                     icon = OgnelissIcons.Call,
                     contentDescription = stringResource(R.string.a11y_call_number, contact.displayName),
-                    tint = CallGreen,
+                    tint = com.ogneliss.dialer.util.LocalCallAvailability.current.callTint(com.ogneliss.dialer.ui.theme.CallGreen),
                     onClick = onCall,
                     onLongClick = onCallLongPress,
                     onLongClickLabel = stringResource(R.string.a11y_choose_sim)

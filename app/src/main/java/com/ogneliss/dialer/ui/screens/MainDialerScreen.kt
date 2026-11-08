@@ -35,7 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.os.ConfigurationCompat
@@ -52,7 +51,6 @@ import com.ogneliss.dialer.data.JournalDays
 import com.ogneliss.dialer.data.CallLogGroup
 import com.ogneliss.dialer.data.CallLogRowMapper
 import com.ogneliss.dialer.data.CallType
-import com.ogneliss.dialer.data.NumberCategory
 import com.ogneliss.dialer.settings.SwipeAction
 import com.ogneliss.dialer.ui.DialerViewModel
 import com.ogneliss.dialer.ui.components.OwnNumberDialog
@@ -126,8 +124,12 @@ fun MainDialerScreen(
     /** Экран напоминаний. */
     onOpenReminders: () -> Unit,
     onOpenSubscriber: (String) -> Unit,
-    /** Чёрный и белый списки: туда ведёт разбор блокировки по маске. */
-    onOpenBlockLists: () -> Unit
+    /** Чёрный и белый списки — передаются карточкам по удержанию. */
+    onOpenBlockLists: () -> Unit,
+    /** Архив журнала — «Ещё» → «Архив» (2.1.0). */
+    onOpenArchive: () -> Unit = {},
+    /** «Закреплённые» — при полном списке закреплённых (2.1.0, RecordActionCards). */
+    onOpenPinned: () -> Unit = {}
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     val settings by vm.settingsState.collectAsStateWithLifecycle()
@@ -282,7 +284,16 @@ fun MainDialerScreen(
     var assigningSpeedDial by remember { mutableStateOf<Int?>(null) }
     var pendingCall by remember { mutableStateOf<Pair<String, Int>?>(null) }
     var pendingWarning by remember { mutableStateOf<PreDialWarning.Warning?>(null) }
-    var confirmBulkDelete by remember { mutableStateOf(false) }
+
+    /*
+     * «Разрешить» в пустом журнале (2.1.0, ошибка): было — переход
+     * в настройки приложения (сам раздел «Настройки» Ogneliss), где
+     * доступа к журналу не выдать. Стало — системный запрос READ_CALL_LOG;
+     * окна уже нет — системные настройки приложения (rememberPermissionRequest).
+     */
+    val requestCallLog = rememberPermissionRequest(android.Manifest.permission.READ_CALL_LOG) {
+        vm.onPermissionsChanged()
+    }
 
 
     /*
@@ -384,8 +395,18 @@ fun MainDialerScreen(
      * уходят, когда сообщение погаснет: разбор в deleteGroupsWithUndo.
      */
     val pendingDeletion by vm.pendingDeletion.collectAsStateWithLifecycle()
-    val list = remember(baseList, pendingDeletion) {
-        if (pendingDeletion.isEmpty()) baseList else baseList.filterNot { it.key in pendingDeletion }
+    /*
+     * АРХИВ (2.1.0): карточки, все записи которых в архиве, в журнал
+     * не попадают — было: только удаление, стало ещё «В архив» в режиме
+     * выбора. Скрываются тем же путём, что удалённые с «Отменить»: ключом
+     * в общем наборе — и для `list`, и для `rows` ниже.
+     */
+    val archivedIds by vm.callArchivedIds.collectAsStateWithLifecycle()
+    val hiddenKeys = remember(baseList, pendingDeletion, archivedIds) {
+        pendingDeletion + com.ogneliss.dialer.data.ArchiveRules.archivedGroupKeys(baseList, archivedIds)
+    }
+    val list = remember(baseList, hiddenKeys) {
+        if (hiddenKeys.isEmpty()) baseList else baseList.filterNot { it.key in hiddenKeys }
     }
 
     /*
@@ -544,14 +565,14 @@ fun MainDialerScreen(
      * другим сразу, и ветка «фильтра нет» отдаёт полный список,
      * не дожидаясь потока.
      */
-    val rows = remember(allRows, list, activeFilter, state.query, pendingDeletion) {
+    val rows = remember(allRows, list, activeFilter, state.query, hiddenKeys) {
         val shown = if (!activeFilter.isActive && state.query.isEmpty()) {
             allRows
         } else {
             val visible = list.mapTo(HashSet()) { it.key }
             allRows.filter { it.key in visible }
         }
-        if (pendingDeletion.isEmpty()) shown else shown.filterNot { it.key in pendingDeletion }
+        if (hiddenKeys.isEmpty()) shown else shown.filterNot { it.key in hiddenKeys }
     }
 
     /*
@@ -1329,8 +1350,9 @@ fun MainDialerScreen(
      * почта, фото) и короткие дубли — с SIM-карты, из мессенджера, «Мой
      * номер». В 2.0.0 брался первый попавшийся, и «Мой контакт» открывал
      * дубль с одним номером. Теперь фото берётся у самого полного из них
-     * (больше номеров и почты, с фото — выше), а карточка открывается
-     * по номеру, как раньше: она сама собирает всё, что есть в книге.
+     * (больше номеров и почты, с фото — выше). Карточка — по ключу
+     * OWN_CARD_KEY (2.1.0): по номеру она собирала только один контакт,
+     * а не всё, что есть в книге (было ошибочно написано обратное).
      */
     val ownPhotoUri = remember(ownNumber, state.contacts) {
         if (ownNumber.isBlank()) null else {
@@ -1442,7 +1464,9 @@ fun MainDialerScreen(
             onSearchChange = { vm.onQueryChange(it) },
             onCloseSearch = closeSearch,
             onMenu = { menuOpen = true },
-            onSwipeToContacts = if (settings.panelSwipeNav) onOpenContacts else null,
+            // 2.1.0: влево — соседний раздел «SMS», а не контакты через голову
+            // (карусель журнал → SMS → контакты → заметки → напоминания)
+            onSwipeToContacts = if (settings.panelSwipeNav) { { onOpenSection(MainSection.MESSAGES) } } else null,
             menuContent = {
                 OverflowMenu(
                     expanded = menuOpen,
@@ -1484,7 +1508,8 @@ fun MainDialerScreen(
                         if (ownNumber.isBlank()) {
                             showOwnNumber = true
                         } else {
-                            onOpenSubscriber("number:$ownNumber")
+                            // 2.1.0: своя карточка — все номера, почта, профиль «Я»
+                            onOpenSubscriber(com.ogneliss.dialer.ui.screens.OWN_CARD_KEY)
                         }
                     },
                     onThemeToggle = {
@@ -1508,7 +1533,8 @@ fun MainDialerScreen(
                         else selection.startEmpty()
                     },
                     selectionActive = selection.isActive,
-                    onHelp = { menuOpen = false; onOpenHelp() }
+                    onHelp = { menuOpen = false; onOpenHelp() },
+                    onArchive = { menuOpen = false; onOpenArchive() }
                 )
             }
         )
@@ -1579,7 +1605,20 @@ fun MainDialerScreen(
                         vm.blockGroups(list.filter { it.key in selection.selected })
                         selection.clear()
                     },
-                    onDelete = { confirmBulkDelete = true }
+                    // 2.1.0: «В архив» — убрать из журнала, не стирая
+                    onArchive = {
+                        vm.archiveGroups(list.filter { it.key in selection.selected })
+                        selection.clear()
+                    },
+                    /*
+                     * 2.1.0: без окна «Удалить N записей?» — правило автора
+                     * 07.11.2026: где есть «Отменить», не спрашиваем
+                     * (deleteGroupsWithUndo, как свайп и меню записи).
+                     */
+                    onDelete = {
+                        vm.deleteGroupsWithUndo(list.filter { it.key in selection.selected })
+                        selection.clear()
+                    }
                 )
             }
             /*
@@ -1713,6 +1752,7 @@ fun MainDialerScreen(
                                 scope = scope,
                                 listScrolling = listScrolling,
                                 swipeKeyPrefix = "found_",
+                                avatarSelects = false,
                                 onOpenSubscriber = onOpenSubscriber,
                                 onLongPress = {
                                     selectedAnchorY = touchAnchor.screenY
@@ -1772,10 +1812,8 @@ fun MainDialerScreen(
                                         EmptyReason.NoCallLogPermission
                                     else -> EmptyReason.NoCalls
                                 },
-                                onAction = {
-                                    if (state.query.isNotEmpty()) vm.onQueryChange("")
-                                    else onOpenSettings()
-                                }
+                                // Кнопка есть только у «нет доступа» (разбор у requestCallLog)
+                                onAction = requestCallLog
                             )
                         }
                     }
@@ -2063,11 +2101,8 @@ fun MainDialerScreen(
             onDismissRequest = { fakeCallOpen = false },
             title = stringResource(R.string.fake_call_title),
             content = {
-                Text(
-                    stringResource(R.string.settings_fake_call_hint),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                // 2.1.0: без пояснения «экран как у входящего, но вызова нет» —
+                // правило автора 07.11.2026, пояснений не показываем
 
                 /*
                  * СОСТОЯНИЕ: НАЗНАЧЕН ЛИ И НА КОГДА.
@@ -2285,6 +2320,7 @@ fun MainDialerScreen(
             origin = CardsOrigin.LOG,
             onOpenCard = { onOpenSubscriber(group.key) },
             onOpenBlockLists = onOpenBlockLists,
+            onOpenPinned = onOpenPinned,
             onDismiss = { selectedGroup = null }
         )
     }
@@ -2303,60 +2339,12 @@ fun MainDialerScreen(
     }
 
 
-    if (confirmBulkDelete) {
+    if (pendingWarning != null) {
         /*
-         * Общий контейнер приложения.
-         *
-         * Удаление записей журнала необратимо, поэтому треугольник
-         * предупреждения сохранён — он переехал из шапки в текст:
-         * места под значок у OgnelissDialog нет.
-         */
-        OgnelissDialog(
-            onDismissRequest = { confirmBulkDelete = false },
-            title = stringResource(R.string.selection_delete_title),
-            content = {
-                Row(verticalAlignment = Alignment.Top) {
-                    Icon(
-                        OgnelissIcons.Warning,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                    Spacer(Modifier.width(Space.m))
-                    Text(
-                        pluralStringResource(
-                            R.plurals.selection_delete_text, selection.count, selection.count
-                        )
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    // С «Отменить», как в Telegram: подтверждение и отмена
-                    // вместе (1.5.7)
-                    vm.deleteGroupsWithUndo(list.filter { it.key in selection.selected })
-                    selection.clear()
-                    confirmBulkDelete = false
-                }) {
-                    Text(
-                        stringResource(R.string.selection_delete),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { confirmBulkDelete = false }) {
-                    Text(stringResource(R.string.nav_cancel))
-                }
-            }
-        )
-    }
-
-
-    pendingWarning?.let { warning ->
-        /*
-         * Предупреждение перед звонком на платный или международный
-         * номер. Значок остаётся: цена ошибки здесь — деньги со счёта,
-         * и предупреждение должно опознаваться раньше, чем прочитано.
+         * Предупреждение перед звонком на платный номер. Значок остаётся:
+         * цена ошибки здесь — деньги со счёта, и предупреждение должно
+         * опознаваться раньше, чем прочитано. 2.1.0: только платные —
+         * о международном больше не спрашиваем (PreDialWarning).
          */
         OgnelissDialog(
             onDismissRequest = { pendingWarning = null; pendingCall = null },
@@ -2369,15 +2357,7 @@ fun MainDialerScreen(
                         tint = MaterialTheme.colorScheme.error
                     )
                     Spacer(Modifier.width(Space.m))
-                    Text(
-                        stringResource(
-                            when (warning.category) {
-                                NumberCategory.PREMIUM -> R.string.predial_premium
-                                NumberCategory.INTERNATIONAL -> R.string.predial_international
-                                else -> R.string.predial_generic
-                            }
-                        )
-                    )
+                    Text(stringResource(R.string.predial_premium))
                 }
             },
             confirmButton = {
@@ -2410,6 +2390,8 @@ private suspend fun handleLongDigit(
         digit == '0' -> vm.onQueryChange(query + "+")
         digit == '*' -> vm.onQueryChange(query + DialString.PAUSE)
         digit == '#' -> vm.onQueryChange(query + DialString.WAIT)
+        // 2.1.0: долгое «1» на пустом поле — голосовая почта (было: ничего)
+        query.isEmpty() && digit == '1' -> vm.actions.placeVoicemail()
         query.isEmpty() && digit in '2'..'9' -> {
             val dialed = vm.dialSpeedDial(digit.digitToInt())
             if (!dialed) onAssignSpeedDial(digit.digitToInt())

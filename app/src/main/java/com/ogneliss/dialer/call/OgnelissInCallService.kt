@@ -12,7 +12,10 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import com.ogneliss.dialer.util.PhoneFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -39,6 +42,8 @@ class OgnelissInCallService : InCallService() {
     /** Метка для лога при неудачном показе уведомления. Не интерфейсная строка. */
     private companion object {
         const val TAG = "InCallService"
+        /** Дольше настройку плашки при первом вызове не ждём (incomingBannerWanted). */
+        const val BANNER_PREF_WAIT_MS = 250L
         const val WHAT_INCOMING = "показ уведомления о входящем"
 
         /**
@@ -86,6 +91,10 @@ class OgnelissInCallService : InCallService() {
 
     /** Настройка «Предлагать напоминание после сброса» — копия, как у автодозвона. */
     @Volatile private var callbackSuggestionOn = true
+    /** «Входящий плашкой сверху», когда телефоном пользуются (2.1.0, Prefs.incomingBanner). */
+    @Volatile private var incomingBannerOn = true
+    /** Значение плашки уже пришло из настроек — до того решает [incomingBannerWanted]. */
+    @Volatile private var incomingBannerKnown = false
 
     override fun onCreate() {
         super.onCreate()
@@ -100,6 +109,12 @@ class OgnelissInCallService : InCallService() {
             }.collect { AutoRedial.config = it }
         }
         serviceScope.launch { prefs.callbackSuggestion.collect { callbackSuggestionOn = it } }
+        serviceScope.launch {
+            prefs.incomingBanner.collect {
+                incomingBannerOn = it
+                incomingBannerKnown = true
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -127,7 +142,8 @@ class OgnelissInCallService : InCallService() {
         val outgoing = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
             call.details.callDirection == Call.Details.DIRECTION_OUTGOING
         } else {
-            call.state == Call.STATE_DIALING || call.state == Call.STATE_CONNECTING
+            // 2.1.0: и «выбор SIM» — исходящий (CallScreenRules.outgoingOnAdd)
+            CallScreenRules.outgoingOnAdd(call.state)
         }
         if (outgoing) {
             MissedCallsNotifier.clear(this)
@@ -187,21 +203,15 @@ class OgnelissInCallService : InCallService() {
                         c.details,
                         getString(com.ogneliss.dialer.R.string.call_unknown_number)
                     )
+                    // Ошибку запуска служба разбирает сама: экран разговора
+                    // откроется в любом случае (2.1.0)
                     CallForegroundService.start(
-                        this@OgnelissInCallService, label, incoming = false
+                        this@OgnelissInCallService, label, CallDetailsCompat.number(c.details),
+                        incoming = false,
+                        // 2.1.0: таймер — от соединения, а не от показа уведомления
+                        connectedAt = c.details?.connectTimeMillis ?: 0L
                     )
-
-                    runCatching {
-                        startActivity(
-                            Intent(this@OgnelissInCallService, InCallActivity::class.java)
-                                .addFlags(
-                                    Intent.FLAG_ACTIVITY_NEW_TASK or
-                                        Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                )
-                        )
-                    }.onFailure {
-                        Logger.w(TAG, "Не удалось открыть экран разговора", it)
-                    }
+                    openCallScreen()
                     c.unregisterCallback(this)
                 }
             }
@@ -238,11 +248,20 @@ class OgnelissInCallService : InCallService() {
         val quiet = quietMarked && CallManager.calls.value.none { it != call }
         // Каким был входящий — для уведомления о пропущенном (QuietCallGate)
         if (!outgoing) QuietCallGate.noteIncoming(quiet)
+        val number = CallDetailsCompat.number(call.details)
+        // Каналы — до первого уведомления и до проверки плашки (важность канала)
+        runCatching { CallNotifications.ensureChannels(this) }
+            .onFailure { Logger.w(TAG, "Каналы уведомлений не созданы", it) }
+        /*
+         * ПРОПУЩЕННЫЕ, КОГДА НАШИ УВЕДОМЛЕНИЯ ЗАПРЕЩЕНЫ (2.1.0) — до конца
+         * звонка: Telecom решает, кому рисовать пропущенный, в момент сброса.
+         * Разбор — MissedCallsNotifier.syncReceiver.
+         */
+        if (!outgoing) appScope.launch(Dispatchers.IO) { MissedCallsNotifier.syncReceiver(applicationContext) }
         if (quiet) {
             Logger.i(TAG, "Тихий входящий: экран не открываем, звонок глушим")
             IncomingScreen.markQuiet(call)
-            CallNotifications.ensureChannels(this)
-            CallForegroundService.start(this, name, incoming = true, quiet = true)
+            CallForegroundService.start(this, name, number, incoming = true, quiet = true)
             silenceRinger()
             return
         }
@@ -272,141 +291,112 @@ class OgnelissInCallService : InCallService() {
         if (!ringing) Logger.i(TAG, "Вызов: открываю экран")
         else Logger.i(TAG, "Входящий: экран ${if (screenOff) "выключен" else "включён"}${if (locked) ", заблокирован" else ""}")
         if (ringing && !com.ogneliss.dialer.util.IncomingCallAccess.fullScreenAllowed(this)) Logger.w(TAG, "Полноэкранные уведомления запрещены — на блокировке входящий будет только плашкой")
-        if (screenOff) IncomingScreen.wake(this)
+        if (ringing) IncomingScreen.startRinging(this)
+        if (screenOff) IncomingScreen.wake(this, number)
 
-        // Foreground-сервис держит процесс живым на всё время вызова
-        if (ringing) {
-            IncomingScreen.notify(this, name, alert = false)
-        } else {
-            CallForegroundService.start(this, name, incoming = false)
+        /*
+         * ИСХОДЯЩИЙ И ИДУЩИЙ ВЫЗОВ — СРАЗУ ЭКРАН (служба и уведомление
+         * «Текущий вызов»). Запуск экрана не зависит от службы (2.1.0):
+         * не запустилась она — экран вызова всё равно открывается.
+         */
+        if (!ringing) {
+            CallForegroundService.start(this, name, number, incoming = false)
+            openCallScreen()
+            return
         }
 
+        /*
+         * ВХОДЯЩИЙ ПЛАШКОЙ СВЕРХУ (2.1.0, настройка «Входящий поверх
+         * приложений»). Пользователь, 07.11.2026: «а такое — компактное окно
+         * сверху с „Ответить“ и „Отклонить“ — вы специально не делали?».
+         * Телефон разблокирован и экран горит — только уведомление-плашка
+         * с кнопками (CallStyle), экран вызова — касанием по плашке.
+         * Погасший или заблокированный экран — во весь экран: иначе ответить
+         * нечем.
+         *
+         * Безопасно само (2.1.0): плашка — только где она наверняка всплывёт
+         * и продержится, пока звонит (IncomingScreen.bannerSafe). Включена
+         * по умолчанию (автор, 08.11.2026): так ведут себя стандартные
+         * звонилки. Экран погас и его включили, пока звонит, — экран вызова
+         * целиком (IncomingScreen.onScreenOn).
+         */
+        if (!screenOff && !locked && incomingBannerWanted() && IncomingScreen.bannerSafe(this)) {
+            Logger.i(TAG, "Входящий: плашкой сверху (настройка)")
+            IncomingScreen.bannerOnly = true
+            IncomingScreen.notify(this, call, alert = true)
+            return
+        }
+        IncomingScreen.bannerOnly = false
 
         /*
-         * Отдельного уведомления входящего больше нет.
-         *
-         * Его показывал этот блок, и оно висело ВТОРЫМ рядом
-         * с уведомлением переднего сервиса: человек видел
-         * «Входящий вызов» и «Текущий вызов» об одном звонке.
-         *
-         * Хуже того, система урезала его до строчки без кнопок —
-         * CallStyle разворачивается только у уведомления переднего
-         * сервиса с типом PHONE_CALL.
-         *
-         * Теперь сервис сам показывает нужное уведомление: с кнопками
-         * при входящем, обычное при разговоре. Одно на весь вызов.
+         * Уведомление входящего — всегда с «Ответить» и «Отклонить» (2.1.0):
+         * тихое, пока открывается экран вызова; всплывающее сразу — на MIUI,
+         * где запрет подтверждён и экран вызова почти наверняка не покажется.
+         * Было: тихим вариантом здесь ставился «Текущий вызов» с таймером
+         * и «Завершить» — без кнопки ответа.
          */
-        CallNotifications.ensureChannels(this)
-        /*
-         * ВХОДЯЩИЙ ОТКРЫВАЕТ ЭКРАН ЧЕРЕЗ УВЕДОМЛЕНИЕ, А НЕ НАПРЯМУЮ.
-         *
-         * ══════════════════════════════════════════════════════════════════
-         * ЧТО БЫЛО НЕ ТАК
-         * ══════════════════════════════════════════════════════════════════
-         * startActivity вызывался при любом состоянии, включая входящий.
-         * А уведомление входящего уже содержит full-screen intent,
-         * который открывает тот же экран.
-         *
-         * В итоге показывались оба: система рисовала уведомление сверху
-         * с кнопками «Ответить» и «Отклонить», а под ним открывался
-         * экран вызова со своими такими же кнопками. Две пары кнопок
-         * на одном экране — человеку неясно, какая настоящая.
-         *
-         * ── Почему решение принимает система ───────────────────────────────
-         * Она знает то, чего не знаем мы: заблокирован ли экран, идёт ли
-         * полноэкранная игра, включён ли режим «не беспокоить».
-         *
-         * При заблокированном экране full-screen intent открывает экран
-         * вызова во весь экран — иначе ответить было бы нечем.
-         * При разблокированном показывает уведомление сверху, не отнимая
-         * экран у того, чем человек занят.
-         *
-         * Это правильное поведение: звонок не должен выбрасывать
-         * из карты посреди поворота или из видеозвонка.
-         *
-         * ── Исходящие и активные открываем сами ────────────────────────────
-         * Там уведомления с full-screen intent нет, и без startActivity
-         * экран не появится вовсе.
-         */
+        val blocked = com.ogneliss.dialer.util.IncomingCallAccess.likelyBlocked(this)
+        if (blocked) Logger.i(TAG, "MIUI запрещает экран вызова — кнопки ответа сразу")
+        IncomingScreen.notify(this, call, alert = blocked)
+
         /*
          * ЭКРАН ОТКРЫВАЕТСЯ НАПРЯМУЮ — ВКЛЮЧАЯ ВХОДЯЩИЙ.
          *
-         * ══════════════════════════════════════════════════════════════════
-         * ПОЧЕМУ Я ВЕРНУЛ ПРЯМОЙ ЗАПУСК
-         * ══════════════════════════════════════════════════════════════════
-         * Раньше здесь стояло условие «кроме входящего»: считалось,
-         * что экран откроет полноэкранное намерение уведомления.
-         *
-         * Оно и открывало — пока уведомление было отдельным. После
-         * объединения с уведомлением переднего сервиса система перестала
-         * разворачивать намерение: у служебных уведомлений оно
-         * срабатывает не всегда, и это не наша прихоть, а поведение
-         * платформы.
-         *
-         * Итог: на заблокированном экране не открывалось ничего.
-         * Разговор шёл, ответить было нечем.
-         *
-         * ── Почему прямой запуск здесь допустим ────────────────────────────
          * Приложение — диалер по умолчанию, и система разрешает ему
-         * открывать экран вызова из фона. Именно так делают системные
-         * диалера.
+         * открывать экран вызова из фона (служба вызовов, к которой
+         * подключилась система, — исключение из запрета). Так делают
+         * системные диалеры. Активность помечена setShowWhenLocked
+         * и setTurnScreenOn: разбудит экран и покажется поверх блокировки.
+         * Полноэкранное намерение уведомления службы система разворачивает
+         * не всегда — поэтому не полагаемся на него одно.
          *
-         * Активность помечена setShowWhenLocked и setTurnScreenOn:
-         * она разбудит экран и покажется поверх блокировки.
-         *
-         * ── Уведомление при этом остаётся ──────────────────────────────────
-         * Оно нужно, когда человек ушёл с экрана вызова — свернул
-         * или переключился. И оно же держит передний сервис.
-         */
-        val screenOpened = runCatching {
-            startActivity(
-                Intent(this, InCallActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            )
-            true
-        }.getOrElse {
-            Logger.w(TAG, "Не удалось открыть экран вызова", it)
-            false
-        }
-
-        /*
-         * УВЕДОМЛЕНИЕ С КНОПКАМИ — ЕСЛИ ЭКРАН ВЫЗОВА НЕ ПОКАЗАЛСЯ.
-         *
-         * ══════════════════════════════════════════════════════════════════
-         * ПОЧЕМУ ОНО ВЫСКАКИВАЛО ПОВЕРХ
-         * ══════════════════════════════════════════════════════════════════
-         * Уведомление входящего показывалось всегда — и система выводила
-         * его шторкой поверх экрана вызова, который к тому моменту уже
-         * открылся сам.
-         *
-         * Получалось две пары кнопок «Ответить» и «Отклонить»: одна
-         * в шторке, другая на экране под ней. Человеку неясно, какая
-         * настоящая, и половина экрана закрыта.
-         *
-         * ── Когда уведомление всё же нужно ─────────────────────────────────
-         * Если запуск экрана не удался — прошивка запретила открывать
-         * активность из фона, такое бывает. Тогда уведомление
-         * с кнопками остаётся единственным способом ответить,
-         * и показать его обязательно.
-         *
-         * ── Почему сервису всё равно нужно уведомление ─────────────────────
-         * Передний сервис без уведомления существовать не может: система
-         * его остановит. Поэтому показываем обычное — с именем
-         * и длительностью, без кнопок и без всплытия.
+         * Уведомление при этом остаётся: оно держит передний сервис
+         * и нужно, когда человек ушёл с экрана вызова.
          *
          * ── «Запуск удался» ещё не значит «экран показан» (1.8.1) ──────────
          * startActivity не бросает ошибку, когда прошивка молча запрещает
-         * окно из фона: раньше в этом случае уведомление оставалось
-         * без кнопок, и ответить было нечем. Теперь решает само окно —
-         * показалось (IncomingScreen.visible) или нет: не показалось
-         * за SHOW_TIMEOUT_MS — уведомление с кнопками и всплытием.
+         * окно из фона. Решает само окно — получило ли фокус
+         * (IncomingScreen.visible); нет за SHOW_TIMEOUT_MS — уведомление
+         * с кнопками всплывает (IncomingScreen.checkShown).
          */
-        if (!ringing) return
-        if (!screenOpened) {
-            IncomingScreen.notify(this, name, alert = true)
-            com.ogneliss.dialer.util.IncomingCallAccess.reportBlocked(this)
+        if (!openCallScreen()) {
+            IncomingScreen.launchFailed(this, call)
             return
         }
+        watchCallScreen()
+    }
+
+    /** Открыть экран вызова; false — запуск бросил ошибку (она в журнале). */
+    /*
+     * НАСТРОЙКА ПЛАШКИ — ВЫБОР ЧЕЛОВЕКА, А НЕ НАЧАЛЬНАЯ КОПИЯ (2.1.0).
+     *
+     * Система создаёт службу вызовов вместе с первым вызовом, и onCallAdded
+     * приходит раньше, чем DataStore отдаёт значение: решала бы начальная
+     * копия, и выключенная плашка нет-нет да появлялась бы. Пока значения
+     * нет — ждём его, но не дольше BANNER_PREF_WAIT_MS (обычно это единицы
+     * миллисекунд); не дождались — значение по умолчанию.
+     */
+    private fun incomingBannerWanted(): Boolean {
+        if (incomingBannerKnown) return incomingBannerOn
+        return runCatching {
+            runBlocking { withTimeoutOrNull(BANNER_PREF_WAIT_MS) { prefs.incomingBanner.first() } }
+        }.onFailure { Logger.w(TAG, "Настройка плашки не прочиталась", it) }
+            .getOrNull() ?: incomingBannerOn
+    }
+
+    private fun openCallScreen(): Boolean = runCatching {
+        startActivity(
+            Intent(this, InCallActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        )
+        true
+    }.getOrElse {
+        Logger.w(TAG, "Не удалось открыть экран вызова", it)
+        false
+    }
+
+    /** Через SHOW_TIMEOUT_MS — показался ли экран вызова (IncomingScreen.checkShown). */
+    private fun watchCallScreen() {
         serviceScope.launch {
             delay(IncomingScreen.SHOW_TIMEOUT_MS)
             IncomingScreen.checkShown(this@OgnelissInCallService)
@@ -564,7 +554,42 @@ class OgnelissInCallService : InCallService() {
         if (CallManager.calls.value.isEmpty()) {
             CallManager.service = null
             CallForegroundService.stop(this)
+        } else {
+            refreshNotificationFor(CallManager.primary)
         }
+    }
+
+    /*
+     * УВЕДОМЛЕНИЕ ПОСЛЕ УХОДА ОДНОГО ИЗ ВЫЗОВОВ (2.1.0).
+     *
+     * Было: уведомление переднего сервиса пересобиралось только при
+     * появлении вызова и при ответе. Отклонили второй входящий или
+     * вышел участник конференции — в шторке оставались чужое имя или
+     * кнопки «Ответить/Отклонить» от уже ушедшего звонка. Стало: после
+     * удаления вызова уведомление строится заново по оставшемуся
+     * текущему вызову; таймер — от его соединения, а не с нуля.
+     */
+    @Suppress("DEPRECATION")
+    private fun refreshNotificationFor(call: Call?) {
+        call ?: return
+        // У конференции своего номера нет — подпись по числу участников
+        val label = if (call.children.isNotEmpty()) {
+            getString(com.ogneliss.dialer.R.string.incall_conference_title, call.children.size)
+        } else CallDetailsCompat.displayLabel(
+            call.details,
+            getString(com.ogneliss.dialer.R.string.call_unknown_number)
+        )
+        // Остался звонящий — входящее с кнопками: всплывающее, если экрана
+        // вызова не видно (2.1.0, IncomingScreen.notify)
+        if (call.state == Call.STATE_RINGING) {
+            IncomingScreen.notify(this, call, alert = !IncomingScreen.visible)
+            return
+        }
+        CallForegroundService.start(
+            this, label, CallDetailsCompat.number(call.details),
+            incoming = false,
+            connectedAt = call.details?.connectTimeMillis ?: 0L
+        )
     }
 
     /*

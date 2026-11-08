@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.telecom.TelecomManager
 import androidx.core.app.NotificationCompat
 import com.ogneliss.dialer.MainActivity
@@ -108,6 +109,37 @@ object MissedCallsNotifier {
         val text = number?.takeIf { it.isNotBlank() }?.let {
             context.getString(R.string.missed_calls_last, PhoneFormatter.format(it))
         }
+        /*
+         * «ПЕРЕЗВОНИТЬ», «НАПИСАТЬ» И СМАХИВАНИЕ (2.1.0).
+         *
+         * Было: только касание — открыть приложение; смахнутое уведомление
+         * оставляло счётчик на значке и непрочитанные в системе до следующего
+         * запуска. Стало: две кнопки по последнему номеру (вызов через
+         * Telecom — исходящий сам сбросит счётчик; «Написать» — своя
+         * переписка или приложение SMS, ExternalApps.smsIntent) и сброс
+         * счётчика при смахивании (CallControlReceiver → clear).
+         */
+        val last = number?.takeIf { it.isNotBlank() }
+        val callBack = last?.let {
+            PendingIntent.getActivity(
+                context, ID + 1,
+                Intent(Intent.ACTION_CALL, Uri.fromParts("tel", it, null))
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+        }
+        val write = last?.let {
+            PendingIntent.getActivity(
+                context, ID + 2,
+                ExternalApps.smsIntent(context, it).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+        }
+        val dismissed = PendingIntent.getBroadcast(
+            context, ID,
+            Intent(context, CallControlReceiver::class.java).setAction(CallControlReceiver.ACTION_CLEAR_MISSED),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
         val notification = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_stat_missed)  // 1.3.4: свой значок у каждого типа уведомления
             .setContentTitle(title)
@@ -116,6 +148,11 @@ object MissedCallsNotifier {
             .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
             .setCategory(Notification.CATEGORY_MISSED_CALL)
             .setContentIntent(open)
+            .setDeleteIntent(dismissed)
+            .apply {
+                callBack?.let { addAction(0, context.getString(R.string.missed_call_back), it) }
+                write?.let { addAction(0, context.getString(R.string.action_write), it) }
+            }
             .setAutoCancel(true)
             .setOnlyAlertOnce(true)
             .setSilent(silent)
@@ -124,11 +161,46 @@ object MissedCallsNotifier {
         Logger.i("Missed", "Пропущенных: $count")
     }
 
+    /*
+     * ПРОПУЩЕННЫЕ, КОГДА НАШИ УВЕДОМЛЕНИЯ ЗАПРЕЩЕНЫ (2.1.0).
+     *
+     * Было: приёмник MissedCallsReceiver объявлен всегда — и Telecom,
+     * увидев его у диалера по умолчанию, своё уведомление о пропущенном
+     * не рисует, а отдаёт число нам. Если человек запретил приложению
+     * уведомления (Android 13+: «Не разрешать» в первом же окне), наше
+     * уведомление не показывалось — пропущенные исчезали бесследно.
+     * Стало: уведомления запрещены — приёмник выключен, и Telecom рисует
+     * пропущенный сам (его уведомление от имени системы); разрешили снова —
+     * приёмник включается. Проверка — при открытии приложения, загрузке,
+     * обновлении и в начале каждого входящего.
+     */
+    fun syncReceiver(context: Context) {
+        runCatching {
+            val allowed = androidx.core.app.NotificationManagerCompat.from(context).areNotificationsEnabled()
+            val pm = context.packageManager
+            val component = android.content.ComponentName(context, MissedCallsReceiver::class.java)
+            val wanted = if (allowed) android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DEFAULT
+            else android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+            if (pm.getComponentEnabledSetting(component) != wanted) {
+                pm.setComponentEnabledSetting(component, wanted, android.content.pm.PackageManager.DONT_KILL_APP)
+                Logger.i("Missed", if (allowed) "Пропущенные снова показывает приложение" else "Уведомления запрещены — пропущенные покажет система")
+            }
+        }.onFailure { Logger.w("Missed", "Приёмник пропущенных не переключён", it) }
+    }
+
     fun cancel(context: Context) {
         context.getSystemService(NotificationManager::class.java)?.cancel(ID)
     }
 
-    /** Сброс счётчика: при открытии приложения и исходящем звонке. */
+    /**
+     * Сброс счётчика: при открытии приложения и исходящем звонке.
+     *
+     * @SuppressLint("MissingPermission"): cancelMissedCallsNotification помечен
+     * MODIFY_PHONE_STATE — системным разрешением, которого у приложений нет.
+     * Telecom пускает без него диалер по умолчанию; не он — SecurityException,
+     * её ловит runCatching (как silenceRinger в OgnelissInCallService).
+     */
+    @android.annotation.SuppressLint("MissingPermission")
     fun clear(context: Context) {
         // Нечего сбрасывать — систему не трогаем (разбор у savedCount)
         if (savedCount(context) == 0) return

@@ -115,18 +115,15 @@ fun StatsScreen(
                 }
             }
 
-            item {
-                // Полоса раздела (сплошной список, 1.5.3)
-                SectionBand(stringResource(R.string.stats_top_contacts))
-            }
-
-            if (stats.topContacts.isEmpty()) {
+            /*
+             * Раздел «Чаще всего» — только когда есть кого показать.
+             * 2.1.0: было — подпись раздела и под ней «Пока мало звонков»;
+             * правило автора 07.11.2026, пояснений не показываем.
+             */
+            if (stats.topContacts.isNotEmpty()) {
                 item {
-                    Text(
-                        stringResource(R.string.stats_empty),
-                        Modifier.padding(FlowUi.contentPadding),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    // Полоса раздела (сплошной список, 1.5.3)
+                    SectionBand(stringResource(R.string.stats_top_contacts))
                 }
             }
 

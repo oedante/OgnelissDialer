@@ -8,7 +8,10 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.annotation.SuppressLint
 import android.telecom.TelecomManager
+import android.telephony.TelephonyManager
+import com.ogneliss.dialer.log.Logger
 import androidx.core.content.ContextCompat
 import com.ogneliss.dialer.data.SimRepository
 
@@ -36,11 +39,35 @@ class CallActions(
     private val simRepository: SimRepository
 ) {
 
+    /*
+     * ВЫЗОВ БЕЗ РАЗРЕШЕНИЯ «ТЕЛЕФОН» (2.1.0).
+     *
+     * Было: без CALL_PHONE функция молча выходила — и на экстренный номер
+     * тоже: «112» не набирался вовсе. Стало:
+     * • экстренный номер — звоним всё равно: Telecom пускает диалер
+     *   по умолчанию к экстренному вызову и без разрешения
+     *   (TelecomServiceImpl.placeCall: «default dialer is always allowed
+     *   to attempt to place a call… in case it turns out to be an emergency
+     *   call»). Не вышло (мы не диалер по умолчанию) — системный набор
+     *   с этим номером ([dialEmergencyInSystemDialer]);
+     * • обычный номер — системное окно разрешения, после «Разрешить» —
+     *   тот же вызов (PermissionPrompt).
+     *
+     * @SuppressLint("MissingPermission"): без разрешения placeCall
+     * вызывается только для экстренного номера — разбор выше; отказ
+     * системы (SecurityException) ловим.
+     */
+    @SuppressLint("MissingPermission")
     fun placeCall(number: String, slotIndex: Int = -1) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE)
-            != PackageManager.PERMISSION_GRANTED
-        ) return
-        val tm = context.getSystemService(TelecomManager::class.java) ?: return
+        val allowed = ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) ==
+            PackageManager.PERMISSION_GRANTED
+        val emergency = !allowed && com.ogneliss.dialer.util.EmergencyNumbers.isEmergency(context, number)
+        if (!allowed && !emergency) {
+            com.ogneliss.dialer.util.PermissionPrompt.ask(arrayOf(Manifest.permission.CALL_PHONE)) { granted ->
+                if (granted) placeCall(number, slotIndex)
+            }
+            return
+        }
         val uri = Uri.fromParts("tel", number, null)
         val extras = Bundle()
         if (slotIndex >= 0) {
@@ -48,7 +75,99 @@ class CallActions(
                 extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, it)
             }
         }
-        runCatching { tm.placeCall(uri, extras) }
+        val tm = context.getSystemService(TelecomManager::class.java)
+        val placed = tm != null && runCatching { tm.placeCall(uri, extras); true }
+            .onFailure { Logger.w("Call", "Вызов не передан системе", it) }
+            .getOrDefault(false)
+        if (!placed && emergency) dialEmergencyInSystemDialer(number)
+    }
+
+    /**
+     * Экстренный номер, а позвонить сами не можем: системный набор с этим
+     * номером — у системного диалера экстренный вызов есть всегда (2.1.0).
+     * До Android 10 имени системного диалера не узнать — набор по умолчанию.
+     */
+    private fun dialEmergencyInSystemDialer(number: String) {
+        val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", number, null))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            context.getSystemService(TelecomManager::class.java)?.systemDialerPackage
+                ?.takeIf { it != context.packageName }
+                ?.let { intent.setPackage(it) }
+        }
+        Logger.w("Call", "Экстренный вызов — через системный набор")
+        runCatching { context.startActivity(intent) }
+            .onFailure { Logger.w("Call", "Системный набор не открылся", it) }
+    }
+
+    /*
+     * ГОЛОСОВАЯ ПОЧТА — ДОЛГОЕ НАЖАТИЕ «1» (2.1.0).
+     *
+     * Было: долгое «1» ничего не делало, хотя подсказка быстрого набора
+     * говорит, что цифра 1 занята под почту. Стало: вызов адреса
+     * «voicemail:» — Telecom сам подставит номер почты выбранной SIM
+     * (без номера в настройках оператора система покажет своё окно).
+     */
+    fun placeVoicemail() {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            // 2.1.0: как у обычного вызова — системное окно, затем звонок
+            com.ogneliss.dialer.util.PermissionPrompt.ask(arrayOf(Manifest.permission.CALL_PHONE)) { granted ->
+                if (granted) placeVoicemail()
+            }
+            return
+        }
+        val tm = context.getSystemService(TelecomManager::class.java) ?: return
+        runCatching { tm.placeCall(Uri.fromParts("voicemail", "", null), Bundle()) }
+            .onFailure { Logger.w("Call", "Не удалось позвонить на голосовую почту", it) }
+    }
+
+    /*
+     * СЕКРЕТНЫЕ КОДЫ НАБОРА (2.1.0).
+     *
+     * Было: «*#06#» и «*#*#…#*#*» уходили обычным вызовом. Стало:
+     * • *#*#код#*#* — TelephonyManager.sendDialerSpecificSecretCode: система
+     *   рассылает код приложениям, которые его ждут (сервисные меню и т. п.).
+     *   Разрешено только телефону по умолчанию — мы им и являемся.
+     * • *#06# (IMEI/MEID) — прочитать IMEI сами мы не можем: с Android 10
+     *   он доступен только привилегированным приложениям. Передаём код
+     *   системе (TelecomManager.handleMmi — телефону по умолчанию разрешено).
+     *
+     * @return true — код обработан, обычный вызов не нужен
+     */
+    @SuppressLint("MissingPermission")
+    fun handleSecretCode(query: String): Boolean {
+        val code = query.trim()
+        SECRET_CODE.matchEntire(code)?.let { match ->
+            val tm = context.getSystemService(TelephonyManager::class.java) ?: return false
+            /*
+             * Через отражение: метод открыт с API 26, но из заглушек
+             * compileSdk 37 его убрали (в android.jar его нет) — прямой
+             * вызов не компилируется. На устройствах он есть. Не нашёлся —
+             * false, и код уйдёт обычным вызовом, как раньше.
+             */
+            return runCatching {
+                TelephonyManager::class.java
+                    .getMethod("sendDialerSpecificSecretCode", String::class.java)
+                    .invoke(tm, match.groupValues[1])
+                true
+            }
+                .onFailure { Logger.w("Call", "Секретный код не передан", it) }
+                .getOrDefault(false)
+        }
+        if (code == IMEI_CODE) {
+            val tm = context.getSystemService(TelecomManager::class.java) ?: return false
+            return runCatching { tm.handleMmi(code) }
+                .onFailure { Logger.w("Call", "Код IMEI не обработан системой", it) }
+                .getOrDefault(false)
+        }
+        return false
+    }
+
+    private companion object {
+        val SECRET_CODE = Regex("""\*#\*#(\d+)#\*#\*""")
+        const val IMEI_CODE = "*#06#"
     }
 
     /** «Написать»: переписка в диалере или приложение SMS (см. ExternalApps.sms). */

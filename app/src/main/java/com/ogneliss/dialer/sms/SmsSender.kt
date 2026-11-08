@@ -34,6 +34,7 @@ object SmsSender {
     const val ACTION_SENT = "com.ogneliss.dialer.sms.SENT"
     const val ACTION_DELIVERED = "com.ogneliss.dialer.sms.DELIVERED"
     private const val EXTRA_URI = "message_uri"
+    private const val EXTRA_ADDRESS = "address"
     private const val EXTRA_PART = "part"
     private const val EXTRA_PARTS = "parts"
     private val requestCodes = AtomicInteger((System.currentTimeMillis() % 100_000).toInt())
@@ -90,8 +91,8 @@ object SmsSender {
             val sent = ArrayList<PendingIntent>(parts.size)
             val delivered = ArrayList<PendingIntent>(parts.size)
             parts.indices.forEach { i ->
-                sent += pending(context, ACTION_SENT, stored, i, parts.size)
-                if (report) delivered += pending(context, ACTION_DELIVERED, stored, i, parts.size)
+                sent += pending(context, ACTION_SENT, stored, i, parts.size, address)
+                if (report) delivered += pending(context, ACTION_DELIVERED, stored, i, parts.size, address)
             }
             if (parts.size == 1) {
                 manager.sendTextMessage(address, null, parts[0], sent[0], delivered.firstOrNull())
@@ -108,9 +109,11 @@ object SmsSender {
         }
     }
 
-    private fun pending(context: Context, action: String, uri: Uri?, part: Int, parts: Int): PendingIntent {
+    private fun pending(context: Context, action: String, uri: Uri?, part: Int, parts: Int, address: String): PendingIntent {
         val intent = Intent(context, StatusReceiver::class.java).setAction(action).apply {
             uri?.let { putExtra(EXTRA_URI, it.toString()) }
+            // Адрес — чтобы уведомление о неотправленном открыло переписку (2.1.0)
+            putExtra(EXTRA_ADDRESS, address)
             putExtra(EXTRA_PART, part)
             putExtra(EXTRA_PARTS, parts)
         }
@@ -135,8 +138,14 @@ object SmsSender {
                     if (!ok) Logger.w(TAG, "SMS не отправлено: код $resultCode, часть ${part + 1} из $parts")
                     if (uri == null) return
                     if (!ok) {
+                        /*
+                         * Одно уведомление на сообщение (2.1.0): было — на каждую
+                         * неотправленную часть, у длинного SMS — по три подряд.
+                         * Уже «не отправлено» — значит, о нём сказала прежняя часть.
+                         */
+                        val already = MessageStore.smsType(context, uri) == MessageStore.SMS_FAILED
                         MessageStore.updateSms(context, uri, type = MessageStore.SMS_FAILED, errorCode = resultCode)
-                        MessageNotifications.sendFailed(context)
+                        if (!already) MessageNotifications.sendFailed(context, intent.getStringExtra(EXTRA_ADDRESS))
                     } else if (part == parts - 1 && MessageStore.smsType(context, uri) != MessageStore.SMS_FAILED) {
                         MessageStore.updateSms(context, uri, type = MessageStore.SMS_SENT)
                     }

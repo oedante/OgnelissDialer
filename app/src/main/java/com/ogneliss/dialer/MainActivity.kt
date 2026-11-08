@@ -181,7 +181,18 @@ class MainActivity : ComponentActivity() {
                 var permsOk by remember {
                     mutableStateOf(AppPermissions.missing(this).none { it.required })
                 }
-                var onboardingDone by remember { mutableStateOf(false) }
+                /*
+                 * МАСТЕР — ТОЛЬКО КОГДА ЕСТЬ ЧТО ПОКАЗАТЬ (2.1.0): роли «Телефон»
+                 * нет или на MIUI/ColorOS есть шаг экрана входящего, который ещё
+                 * не предлагали. Было: мастер открывался и при любом невыданном
+                 * разрешении — страницами с пояснениями. Стало: разрешения
+                 * спрашиваются одним системным окном поверх журнала
+                 * (MissingPermissionsRequest). Решение — один раз за открытие:
+                 * после выдачи роли мастер доводит свои шаги до конца сам.
+                 */
+                var wizardDone by remember {
+                    mutableStateOf(!com.ogneliss.dialer.ui.screens.wizardNeeded(this@MainActivity, isDefault))
+                }
 
                 // Роль телефона или SMS не выдана после окна — подсказка поверх любого экрана (2.0.0)
                 roleHelp?.let { help ->
@@ -285,7 +296,7 @@ class MainActivity : ComponentActivity() {
                         onOpenDocument = { doc -> legalToShow = doc }
                     )
 
-                    !onboardingDone && (!isDefault || !permsOk) -> {
+                    !wizardDone -> {
                     /*
                      * Пошаговый мастер вместо общего списка карточек.
                      *
@@ -303,7 +314,7 @@ class MainActivity : ComponentActivity() {
                                 onOpenSystemSettings = {
                                     DefaultDialer.openSystemDefaultApps(this@MainActivity)
                                 },
-                                onFinished = { onboardingDone = true }
+                                onFinished = { wizardDone = true }
                             )
                         }
                     }
@@ -326,8 +337,13 @@ class MainActivity : ComponentActivity() {
                         openBlockLists = currentIntent
                             ?.getBooleanExtra(EXTRA_OPEN_BLOCK_LISTS, false) == true,
                         // «Написать» и ссылки sms: — переписка в диалере (2.0.0)
-                        openConversation = com.ogneliss.dialer.ui.conversation.ConversationRequest.from(currentIntent)
-                    ) }
+                        openConversation = com.ogneliss.dialer.ui.conversation.ConversationRequest.from(currentIntent),
+                        // Значок раздела на главном экране (2.1.0, widget/SectionWidgets)
+                        openSectionRoute = currentIntent?.getStringExtra(com.ogneliss.dialer.widget.SectionWidgets.EXTRA_OPEN_SECTION)
+                    )
+                        // Чего не выдала роль — одним системным окном, без своих страниц (2.1.0)
+                        com.ogneliss.dialer.ui.screens.MissingPermissionsRequest(isDefaultDialer = isDefault)
+                    }
                 }
             }
             }
@@ -370,7 +386,29 @@ class MainActivity : ComponentActivity() {
      */
     override fun onResume() {
         super.onResume()
+        // Значки разделов: роль SMS могла смениться, SMS — прочитаться (2.1.0)
+        com.ogneliss.dialer.widget.SectionWidgets.updateAll(this)
         com.ogneliss.dialer.call.MissedCallsNotifier.clear(this)
+        /*
+         * ПРИЛОЖЕНИЕ ОТКРЫЛИ, ПОКА ЗВОНИТ (2.1.0) — сразу экран вызова.
+         * Было: открывался журнал, а ответить можно было только из шторки —
+         * если экран вызова не показался (запрет прошивки) или его свернули.
+         * Ушли с экрана вызова сами («Назад») — не возвращаем: наверху
+         * полоса «Вернуться к вызову» (RootScreen).
+         */
+        if (com.ogneliss.dialer.call.IncomingScreen.shouldReturnToCall()) {
+            runCatching {
+                startActivity(
+                    Intent(this, com.ogneliss.dialer.call.InCallActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
+            }.onFailure { com.ogneliss.dialer.log.Logger.w("MainActivity", "Экран вызова не открылся", it) }
+        }
+        // Уведомления могли запретить или разрешить в настройках — пропущенные
+        // показывает тот, кому можно (2.1.0, MissedCallsNotifier.syncReceiver)
+        lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            com.ogneliss.dialer.call.MissedCallsNotifier.syncReceiver(applicationContext)
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -431,25 +469,38 @@ class MainActivity : ComponentActivity() {
     @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        val smsRequest = requestCode == com.ogneliss.dialer.sms.SmsRole.REQUEST_CODE ||
+            requestCode == com.ogneliss.dialer.sms.SmsRole.AUTO_REQUEST_CODE
         // RESULT_OK — система подтвердила роль, даже если её проверка отстаёт
-        val granted = resultCode == RESULT_OK || when (requestCode) {
-            DefaultDialer.REQUEST_CODE -> DefaultDialer.isDefault(this)
-            com.ogneliss.dialer.sms.SmsRole.REQUEST_CODE -> com.ogneliss.dialer.sms.SmsRole.isDefault(this)
+        val granted = resultCode == RESULT_OK || when {
+            requestCode == DefaultDialer.REQUEST_CODE -> DefaultDialer.isDefault(this)
+            smsRequest -> com.ogneliss.dialer.sms.SmsRole.isDefault(this)
             else -> return
         }
-        if (requestCode == com.ogneliss.dialer.sms.SmsRole.REQUEST_CODE) {
+        if (smsRequest) {
             com.ogneliss.dialer.log.Logger.i("SmsRole", com.ogneliss.dialer.sms.SmsRole.diagnostics(this))
         }
-        if (granted && requestCode == DefaultDialer.REQUEST_CODE) {
-            // Сразу за ролью телефона — роль SMS (решение автора, 2.0.0)
-            requestSmsRoleOnce()
-        } else if (!granted) {
-            roleHelp = com.ogneliss.dialer.util.RoleAccess.helpAfterDenied(this)
-        } else if (requestCode == com.ogneliss.dialer.sms.SmsRole.REQUEST_CODE &&
-            com.ogneliss.dialer.sms.SmsRole.needsNotificationPermission(this)
-        ) {
-            // Приложение SMS без уведомлений — входящие пришли бы молча
-            requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), NOTIFICATIONS_REQUEST)
+        when {
+            // Сразу за ролью телефона — роль SMS (решение автора, 2.0.0; 2.1.0 — не при RCS)
+            granted && requestCode == DefaultDialer.REQUEST_CODE -> requestSmsRoleOnce()
+            /*
+             * 2.1.0: отказ в роли, которую человек не просил (окно после роли
+             * телефона), — не объясняется окном: человек сам отказался или
+             * система не показала — пропустить и записать (правило автора:
+             * не показывать объяснений). Объяснение — только когда просил он сам.
+             */
+            !granted && requestCode == com.ogneliss.dialer.sms.SmsRole.AUTO_REQUEST_CODE ->
+                com.ogneliss.dialer.log.Logger.i("SmsRole", "Роль SMS без просьбы человека не выдана — пропущено")
+            !granted -> roleHelp = com.ogneliss.dialer.util.RoleAccess.helpAfterDenied(this)
+            smsRequest -> {
+                // Канал «Сообщения» — сразу, до первого SMS (SmsHealth). Проверка роли:
+                // код 4202 занят ещё и окном роли определителя (call/ScreeningRoleInfo)
+                if (com.ogneliss.dialer.sms.SmsRole.isDefault(this)) com.ogneliss.dialer.sms.SmsHealth.onRoleGranted(this)
+                // Приложение SMS без уведомлений — входящие пришли бы молча
+                if (com.ogneliss.dialer.sms.SmsRole.needsNotificationPermission(this)) {
+                    requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), NOTIFICATIONS_REQUEST)
+                }
+            }
         }
     }
 
@@ -463,17 +514,26 @@ class MainActivity : ComponentActivity() {
      *
      * Тот же вызов — при первом запуске 2.0.0 у тех, кто стал телефоном
      * по умолчанию ещё в прежних версиях.
+     *
+     * 2.1.0: только если приложение SMS по умолчанию сейчас — не с чатами RCS
+     * (SmsRole.autoOfferAllowed): взяв роль у Google Сообщений или Samsung
+     * Messages, диалер молча выключил бы человеку RCS. Там окно не
+     * показывается и не отмечается показанным — сменит человек приложение
+     * SMS на другое, предложим тогда. Роль по просьбе — «Вести SMS
+     * в Ogneliss» в разделе SMS. Код запроса свой (AUTO_REQUEST_CODE):
+     * отказ здесь не объясняется окном.
      */
     private fun requestSmsRoleOnce() {
         if (com.ogneliss.dialer.sms.SmsRole.isDefault(this)) return
         if (com.ogneliss.dialer.sms.SmsSettings.rolePromptDone(this)) return
+        if (!com.ogneliss.dialer.sms.SmsRole.autoOfferAllowed(this)) return
         val request = com.ogneliss.dialer.sms.SmsRole.request(this) ?: return
         com.ogneliss.dialer.sms.SmsSettings.markRolePromptDone(this)
         runCatching {
             com.ogneliss.dialer.util.RoleAccess.markRequested()
             @Suppress("DEPRECATION")
-            startActivityForResult(request, com.ogneliss.dialer.sms.SmsRole.REQUEST_CODE)
-        }
+            startActivityForResult(request, com.ogneliss.dialer.sms.SmsRole.AUTO_REQUEST_CODE)
+        }.onFailure { com.ogneliss.dialer.log.Logger.w("SmsRole", "Окно роли SMS не открылось — пропущено", it) }
     }
 
     private fun numberFromIntent(intent: Intent?): String? =

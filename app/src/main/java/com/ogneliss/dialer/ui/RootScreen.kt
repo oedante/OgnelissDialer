@@ -25,6 +25,7 @@ import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -40,6 +41,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import kotlinx.coroutines.launch
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.Lifecycle
@@ -54,7 +56,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.ui.text.style.TextAlign
 import com.ogneliss.dialer.ui.adaptive.ProvidePaneLayout
 import com.ogneliss.dialer.ui.adaptive.LocalNavigationRailShown
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -146,7 +147,9 @@ fun RootScreen(
     /** Открыть списки блокировки сразу после запуска: из уведомления. */
     openBlockLists: Boolean = false,
     /** Открыть переписку (2.0.0): «Написать», ссылка sms:, уведомление. */
-    openConversation: com.ogneliss.dialer.ui.conversation.ConversationRequest? = null
+    openConversation: com.ogneliss.dialer.ui.conversation.ConversationRequest? = null,
+    /** Открыть раздел (2.1.0): касание по значку «SMS» или «Контакты» на главном экране. */
+    openSectionRoute: String? = null
 ) {
     val nav = rememberNavController()
 
@@ -190,11 +193,20 @@ fun RootScreen(
      * не покрывает: во время разговора приложение в фоне, и часть
      * прошивок придерживает уведомления.
      */
+    /*
+     * Беда приёма SMS (2.1.0, SmsHealth): уведомления о SMS выключены или на
+     * Xiaomi выключен автозапуск, когда диалер — приложение SMS. Критично
+     * (SMS приходят молча или теряются) — полоса сверху на любом экране,
+     * пересчёт при каждом возвращении в приложение.
+     */
+    var smsProblem by remember { mutableStateOf<com.ogneliss.dialer.sms.SmsHealth.Problem?>(null) }
+    val healthContext = LocalContext.current.applicationContext
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val lifecycleObserver = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 vm.onReturnedToForeground()
+                smsProblem = runCatching { com.ogneliss.dialer.sms.SmsHealth.problem(healthContext) }.getOrNull()
 
                 /*
                  * Строки возвращаются на место при возврате в приложение.
@@ -330,6 +342,11 @@ fun RootScreen(
         if (openBlockLists) nav.navigate("blocklists")
     }
 
+    // Значок раздела на главном экране (2.1.0): ключ — и раздел, и счётчик намерений
+    LaunchedEffect(openSectionRoute, prefillToken) {
+        MainSection.entries.firstOrNull { it.route == openSectionRoute }?.let(openSection)
+    }
+
     LaunchedEffect(openCardForNumber) {
         openCardForNumber?.let { number ->
             nav.navigate("subscriber/" + android.net.Uri.encode("number:$number"))
@@ -387,35 +404,11 @@ fun RootScreen(
         }
     }
 
-    // Удаление записи свайпом — после подтверждения (разбор в handleSwipe)
-    val deleteRequest by vm.deleteRequest.collectAsStateWithLifecycle()
-    deleteRequest?.let { group ->
-        com.ogneliss.dialer.ui.components.OgnelissDialog(
-            onDismissRequest = { vm.dismissDeleteRequest() },
-            title = androidx.compose.ui.res.stringResource(R.string.delete_entry_confirm_title),
-            content = {
-                androidx.compose.material3.Text(
-                    androidx.compose.ui.res.stringResource(
-                        R.string.delete_entry_confirm_text,
-                        group.displayName ?: com.ogneliss.dialer.util.PhoneFormatter.format(group.number)
-                    )
-                )
-            },
-            confirmButton = {
-                androidx.compose.material3.TextButton(onClick = { vm.confirmDeleteRequest() }) {
-                    androidx.compose.material3.Text(
-                        androidx.compose.ui.res.stringResource(R.string.action_delete),
-                        color = androidx.compose.material3.MaterialTheme.colorScheme.error
-                    )
-                }
-            },
-            dismissButton = {
-                androidx.compose.material3.TextButton(onClick = { vm.dismissDeleteRequest() }) {
-                    androidx.compose.material3.Text(androidx.compose.ui.res.stringResource(R.string.nav_cancel))
-                }
-            }
-        )
-    }
+    /*
+     * Здесь было окно «Удалить из журнала?» для удаления свайпом.
+     * 2.1.0: свайп удаляет сразу, с «Отменить» (правило автора 07.11.2026:
+     * не спрашивать там, где есть отмена) — разбор в handleSwipe.
+     */
 
     // Нужно окну после звонка: показать уже поставленную отметку
 
@@ -515,10 +508,13 @@ fun RootScreen(
     val rootAnchor = rememberTouchAnchor()
     // Любое окно карточек (действия, SIM, номер, напоминание, заметка) размывает весь экран
     val cardsBlur = remember { CardsBlurState() }
+    // 2.1.0: звонить и писать сейчас можно? Нельзя — кнопки серые (CallAvailability)
+    val callAvailability = com.ogneliss.dialer.util.rememberCallAvailability()
     CompositionLocalProvider(
         LocalNavBarStrip provides navBarStrip,
         LocalTouchAnchor provides rootAnchor,
-        LocalCardsBlur provides cardsBlur
+        LocalCardsBlur provides cardsBlur,
+        com.ogneliss.dialer.util.LocalCallAvailability provides callAvailability
     ) {
     Box(
         Modifier
@@ -547,10 +543,17 @@ fun RootScreen(
                 WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
             )
     ) {
-        if (!isDefaultDialer) {
-            // Баннеру результат не нужен: он только приглашает,
-            // а объяснение при отказе покажет мастер
-            DefaultDialerBanner { onRequestDefault() }
+        /*
+         * «ВЕРНУТЬСЯ К ВЫЗОВУ» (2.1.0). Было: ушёл с экрана вызова во время
+         * разговора — вернуться можно было только из шторки. Стало: пока
+         * идёт, удержан, набирается или звонит вызов, сверху — зелёная полоса,
+         * касание открывает экран вызова. Вызовов нет — полосы нет.
+         */
+        val liveCalls by com.ogneliss.dialer.call.CallManager.calls.collectAsStateWithLifecycle()
+        val callRevision by com.ogneliss.dialer.call.CallManager.revision.collectAsStateWithLifecycle()
+        @Suppress("DEPRECATION")
+        val callToReturn = remember(liveCalls, callRevision) {
+            liveCalls.any { com.ogneliss.dialer.call.CallScreenRules.returnable(it.state, it.parent != null) }
         }
         /*
          * «Телефон не дал показать экран вызова» (1.8.1) — после входящего,
@@ -560,14 +563,65 @@ fun RootScreen(
         val incomingBlocked by remember {
             com.ogneliss.dialer.util.IncomingCallAccess.blockedNotice(context)
         }.collectAsStateWithLifecycle()
-        if (isDefaultDialer && incomingBlocked == true) {
+        val blockedShown = isDefaultDialer && incomingBlocked == true
+        /*
+         * Под строку состояния отступает только верхняя полоса (2.1.0):
+         * было — каждая сама, и две полосы подряд давали двойной отступ,
+         * а экраны под полосой «не дал показать» отступали ещё раз.
+         */
+        if (callToReturn) {
+            ReturnToCallStrip(padTop = true) {
+                runCatching {
+                    context.startActivity(
+                        android.content.Intent(context, com.ogneliss.dialer.call.InCallActivity::class.java)
+                            .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                    )
+                }
+            }
+        }
+        if (!isDefaultDialer) {
+            // Окно роли не открылось — сразу «Приложения по умолчанию», без
+            // объяснений (2.1.0, правило автора «выполнить, а не объяснять»)
+            DefaultDialerBanner(padTop = !callToReturn) {
+                if (!onRequestDefault()) onOpenSystemSettings()
+            }
+        }
+        if (blockedShown) {
             IncomingBlockedBanner(
+                padTop = !callToReturn && isDefaultDialer,
                 onFix = {
                     com.ogneliss.dialer.util.IncomingCallAccess.dismissNotice(context)
                     com.ogneliss.dialer.util.IncomingCallAccess.open(context)
                 },
                 onDismiss = { com.ogneliss.dialer.util.IncomingCallAccess.dismissNotice(context) }
             )
+        }
+        // В разделе SMS полоса стоит в самом списке — здесь не дублируем
+        val stripRoute by nav.currentBackStackEntryAsState()
+        val smsStripShown = smsProblem != null &&
+            stripRoute?.destination?.route != MainSection.MESSAGES.route
+        if (smsStripShown) smsProblem?.let { problem ->
+            Box(Modifier.statusBarSpace(!callToReturn && isDefaultDialer && !blockedShown)) {
+                com.ogneliss.dialer.ui.conversation.SmsProblemStrip(problem) {
+                    com.ogneliss.dialer.sms.SmsHealth.fix(context, problem)
+                }
+            }
+        }
+        val topStripShown = callToReturn || !isDefaultDialer || blockedShown || smsStripShown
+
+        /*
+         * ЗВОНОК БЕЗ РАЗРЕШЕНИЯ «ТЕЛЕФОН» (2.1.0): системное окно прямо
+         * по нажатию «Позвонить», после «Разрешить» — тот же звонок
+         * (разбор в util/PermissionPrompt.kt).
+         */
+        val permissionPrompt = rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { result -> com.ogneliss.dialer.util.PermissionPrompt.onResult(result) }
+        LaunchedEffect(Unit) {
+            com.ogneliss.dialer.util.PermissionPrompt.requests.collect { permissions ->
+                runCatching { permissionPrompt.launch(permissions) }
+                    .onFailure { com.ogneliss.dialer.util.PermissionPrompt.onResult(emptyMap()) }
+            }
         }
         /*
          * СООБЩЕНИЯ О ДЕЙСТВИЯХ — ОДНО ПОЛЕ НА ВСЁ ПРИЛОЖЕНИЕ.
@@ -611,26 +665,19 @@ fun RootScreen(
             }
         }
 
+        val resources = LocalResources.current
         LaunchedEffect(Unit) {
             vm.messages.collect { message ->
                 val text = message.formatArg
-                    ?.let { context.getString(message.textRes, it) }
-                    ?: context.getString(message.textRes)
+                    ?.let { resources.getString(message.textRes, it) }
+                    ?: resources.getString(message.textRes)
 
-                val actionText = when (message.textRes) {
-                    R.string.msg_reminder_set_inexact ->
-                        context.getString(R.string.msg_reminder_exact_fix)
-                    else -> context.getString(R.string.msg_undo)
-                }
-
+                // 2.1.0: сообщения — только с «Отменить» (разбор у vm.messages);
+                // долгого «напоминание может прийти позже» с «Настроить» больше нет
                 val result = appSnackbar.showSnackbar(
                     message = text,
-                    actionLabel = message.undo?.let { actionText },
-                    duration = if (message.textRes == R.string.msg_reminder_set_inexact) {
-                        SnackbarDuration.Long
-                    } else {
-                        SnackbarDuration.Short
-                    }
+                    actionLabel = message.undo?.let { resources.getString(R.string.msg_undo) },
+                    duration = SnackbarDuration.Short
                 )
 
                 // Погасло без «Отменить» — отложенное действие выполняется
@@ -674,7 +721,7 @@ fun RootScreen(
                 // Баннер сверху уже отступил под строку состояния —
                 // экранам под ним этот отступ не нужен (1.5.8)
                 .then(
-                    if (!isDefaultDialer) {
+                    if (topStripShown) {
                         Modifier.consumeWindowInsets(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
                     } else {
                         Modifier
@@ -709,11 +756,12 @@ fun RootScreen(
                     "dialer",
                     // Журнал и контакты — соседи (1.6.0): между ними —
                     // растворение, без сдвига (разбор у Motion.enterSibling)
+                    // 2.1.0: соседи — и SMS (isSectionList)
                     exitTransition = {
-                        if (isContactsList(targetState)) Motion.exitSibling(this) else Motion.exitForward(this)
+                        if (isSectionList(targetState)) Motion.exitSibling(this) else Motion.exitForward(this)
                     },
                     popEnterTransition = {
-                        if (isContactsList(initialState)) Motion.enterSibling(this) else Motion.enterBackward(this)
+                        if (isSectionList(initialState)) Motion.enterSibling(this) else Motion.enterBackward(this)
                     }
                 ) {
                     /*
@@ -752,7 +800,10 @@ fun RootScreen(
                             onOpenBlockLists = { nav.navigate("blocklists") },
                             onOpenFakeCallPicker = { nav.navigate("contacts?pick=fake") },
                             onOpenNotes = { nav.navigate("notes") },
-                            onOpenReminders = { nav.navigate("reminders") }
+                            onOpenReminders = { nav.navigate("reminders") },
+                            onOpenArchive = { nav.navigate("call_archive") },
+                            // Полный список закреплённых — экран «Закреплённые» (2.1.0)
+                            onOpenPinned = { nav.navigate("pinned") }
                         )
                     }
                 }
@@ -766,18 +817,28 @@ fun RootScreen(
                     // Из журнала и обратно — растворением, как соседи (1.6.0);
                     // выбор контакта из настроек — прежним сдвигом
                     enterTransition = {
-                        if (initialState.destination.route == MainSection.JOURNAL.route && isContactsList(targetState)) {
+                        if (initialState.destination.route in SIBLING_ROUTES && isContactsList(targetState)) {
                             Motion.enterSibling(this)
                         } else {
                             Motion.enterForward(this)
                         }
                     },
                     popExitTransition = {
-                        if (targetState.destination.route == MainSection.JOURNAL.route && isContactsList(initialState)) {
+                        if (targetState.destination.route in SIBLING_ROUTES && isContactsList(initialState)) {
                             Motion.exitSibling(this)
                         } else {
                             Motion.exitBackward(this)
                         }
+                    },
+                    // 2.1.0: из контактов в SMS (свайп по панели) — тоже растворением:
+                    // уходящий экран не должен ехать против жеста
+                    exitTransition = {
+                        if (isContactsList(initialState) && isSectionList(targetState)) Motion.exitSibling(this)
+                        else Motion.exitForward(this)
+                    },
+                    popEnterTransition = {
+                        if (isContactsList(targetState) && isSectionList(initialState)) Motion.enterSibling(this)
+                        else Motion.enterBackward(this)
                     }
                 ) { entry ->
                     /*
@@ -840,7 +901,9 @@ fun RootScreen(
                         },
                         onOpenSettings = { nav.navigate("settings") },
                         onOpenReminders = { openSection(MainSection.REMINDERS) },
-                        onOpenHelp = { nav.navigate("faq") }
+                        onOpenHelp = { nav.navigate("faq") },
+                        // Полный список закреплённых — экран «Закреплённые» (2.1.0)
+                        onOpenPinned = { nav.navigate("pinned") }
                     )
                     }
                 }
@@ -1007,7 +1070,14 @@ fun RootScreen(
                 composable(
                     MainSection.MESSAGES.route,
                     enterTransition = { Motion.enterSibling(this) },
-                    popExitTransition = { Motion.exitSibling(this) }
+                    popExitTransition = { Motion.exitSibling(this) },
+                    // 2.1.0: к соседям (журнал, контакты) — растворением; в переписку — сдвигом
+                    exitTransition = {
+                        if (isSectionList(targetState)) Motion.exitSibling(this) else Motion.exitForward(this)
+                    },
+                    popEnterTransition = {
+                        if (isSectionList(initialState)) Motion.enterSibling(this) else Motion.enterBackward(this)
+                    }
                 ) {
                     com.ogneliss.dialer.ui.conversation.MessagesScreen(
                         vm = vm,
@@ -1048,6 +1118,14 @@ fun RootScreen(
                         },
                         onCall = { number -> vm.call(number) }
                     )
+                }
+
+                /*
+                 * Архив журнала (2.1.0): «Ещё» → «Архив». Архив SMS — внутри
+                 * раздела SMS (MessagesScreen), своим видом списка.
+                 */
+                composable("call_archive") {
+                    com.ogneliss.dialer.ui.screens.CallArchiveScreen(vm = vm, onBack = { nav.popBackStack() })
                 }
 
                 composable("swipe_tuning") {
@@ -1193,12 +1271,12 @@ fun RootScreen(
  * прошивки и крестиком.
  */
 @Composable
-private fun IncomingBlockedBanner(onFix: () -> Unit, onDismiss: () -> Unit) {
+private fun IncomingBlockedBanner(padTop: Boolean, onFix: () -> Unit, onDismiss: () -> Unit) {
     Surface(color = MaterialTheme.colorScheme.primaryContainer) {
         Row(
             Modifier
                 .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
+                .statusBarSpace(padTop)
                 .padding(start = Space.m, top = Space.s, bottom = Space.s),
             verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
         ) {
@@ -1216,13 +1294,13 @@ private fun IncomingBlockedBanner(onFix: () -> Unit, onDismiss: () -> Unit) {
 }
 
 @Composable
-private fun DefaultDialerBanner(onRequest: () -> Unit) {
+private fun DefaultDialerBanner(padTop: Boolean, onRequest: () -> Unit) {
     Surface(color = MaterialTheme.colorScheme.primaryContainer) {
         Row(
             Modifier
                 .fillMaxWidth()
                 // Подложка — до верха экрана, текст — под строкой состояния (1.5.8)
-                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
+                .statusBarSpace(padTop)
                 .padding(Space.m),
             verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
         ) {
@@ -1236,6 +1314,38 @@ private fun DefaultDialerBanner(onRequest: () -> Unit) {
     }
 
 }
+
+
+/**
+ * «ВЕРНУТЬСЯ К ВЫЗОВУ» (2.1.0): зелёная полоса сверху, пока есть вызов.
+ * Зелёный в приложении — только звонок; здесь он и есть. Высота — цель
+ * касания (48 dp), вся полоса — одна кнопка.
+ */
+@Composable
+private fun ReturnToCallStrip(padTop: Boolean, onClick: () -> Unit) {
+    val label = stringResource(R.string.incall_return)
+    Surface(color = com.ogneliss.dialer.ui.theme.CallGreen, contentColor = androidx.compose.ui.graphics.Color.White) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .statusBarSpace(padTop)
+                .clickable(onClickLabel = label, onClick = onClick)
+                .heightIn(min = com.ogneliss.dialer.ui.theme.Dimens.MIN_TOUCH_TARGET)
+                .padding(horizontal = Space.l, vertical = Space.xs),
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(OgnelissIcons.Call, contentDescription = null, modifier = Modifier.size(com.ogneliss.dialer.ui.theme.FlowUi.iconSizeInline))
+            Spacer(Modifier.width(Space.s))
+            Text(label, style = MaterialTheme.typography.labelLarge)
+        }
+    }
+}
+
+/** Отступ под строку состояния — только у верхней из полос (2.1.0). */
+@Composable
+private fun Modifier.statusBarSpace(pad: Boolean): Modifier =
+    if (pad) windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top)) else this
 
 
 /**
@@ -1348,11 +1458,14 @@ private fun SettingsCategoryHost(
         mutableStateOf<(suspend () -> String?)?>(null)
     }
 
-    val settingsSnackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val exportDoneText = stringResource(R.string.export_done)
-    val exportFailedText = stringResource(R.string.export_failed)
 
+    /*
+     * 2.1.0: без «Сохранено» и «Не удалось сохранить файл» (правило автора
+     * 07.11.2026: успех не подтверждается, о некритичной неудаче
+     * не сообщаем). Неудача — пустой файл, который окно выбора уже
+     * создало, удаляется; причина — в журнале разработчика.
+     */
     val saveLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("text/*")
     ) { uri ->
@@ -1364,9 +1477,7 @@ private fun SettingsCategoryHost(
         scope.launch {
             val text = build()
             val ok = text != null && vm.writeTextToUri(uri, text)
-            settingsSnackbar.showSnackbar(
-                if (ok) exportDoneText else exportFailedText
-            )
+            if (!ok) vm.discardExport(uri)
         }
     }
 
@@ -1374,7 +1485,6 @@ private fun SettingsCategoryHost(
         category = category,
         vm = vm,
         onBack = onBack,
-        snackbar = settingsSnackbar,
         showBack = showBack,
         // Просьба — только разделу найденной настройки
         reveal = reveal?.takeIf { r -> SettingsRegistry.byCategory(category).any { it.id == r.entryId } },
@@ -1512,21 +1622,29 @@ private fun runSettingAction(
          */
         "fake_call_number" -> nav.navigate("contacts?pick=fake")
 
+        /*
+         * 2.1.0: магазин — только у установленного из Google Play
+         * (InstallSource). «Оценить» без него не показывается вовсе
+         * (SettingsRegistry.shown); было — сообщение «Google Play
+         * недоступен». «Версия» без магазина — сразу «О приложении».
+         */
         "rate_app" -> openDocument(
             context,
             "https://play.google.com/store/apps/details" +
                 "?id=com.ogneliss.dialer"
-        ) {
-            // Магазина на устройстве может не быть:
-            // тогда сообщаем, а не молчим
-            vm.notifyNoStore()
-        }
-
-        "version" -> openDocument(
-            context,
-            "https://play.google.com/store/apps/details" +
-                "?id=com.ogneliss.dialer"
         ) { nav.navigate("about") }
+
+        "version" -> {
+            if (com.ogneliss.dialer.util.InstallSource.isGooglePlay(context)) {
+                openDocument(
+                    context,
+                    "https://play.google.com/store/apps/details" +
+                        "?id=com.ogneliss.dialer"
+                ) { nav.navigate("about") }
+            } else {
+                nav.navigate("about")
+            }
+        }
 
         else -> vm.handleSettingsAction(key)
     }
@@ -1541,8 +1659,11 @@ private val ACTIONS_OF_SETTINGS_SCREEN = setOf("sim_labels", "calllog_export", "
 
 
 /**
- * Правая половина, пока запись не выбрана: подсказка, что сюда встанет
- * карточка. Пустая панель выглядела бы недогруженным экраном.
+ * Правая половина, пока запись не выбрана: значок на месте будущей
+ * карточки. Пустая панель выглядела бы недогруженным экраном.
+ *
+ * 2.1.0: без подписи «Выберите вызов, чтобы увидеть здесь карточку» —
+ * правило автора 07.11.2026, пояснений не показываем; значок остался.
  */
 @Composable
 private fun DetailPlaceholder() {
@@ -1556,13 +1677,6 @@ private fun DetailPlaceholder() {
             contentDescription = null,
             tint = MaterialTheme.colorScheme.outline,
             modifier = Modifier.size(48.dp)
-        )
-        Spacer(Modifier.height(Space.m))
-        Text(
-            stringResource(R.string.detail_placeholder),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
         )
     }
 }
@@ -1654,3 +1768,10 @@ private fun isContactsList(entry: androidx.navigation.NavBackStackEntry): Boolea
 private fun contactEditRoute(id: Long = -1L, number: String = "", name: String? = null): String =
     "contact_edit?id=$id&number=" + android.net.Uri.encode(number) +
         "&name=" + android.net.Uri.encode(name.orEmpty())
+
+/** Соседи контактов в карусели (2.1.0): переход растворением, а не сдвигом. */
+private val SIBLING_ROUTES = setOf(MainSection.JOURNAL.route, MainSection.MESSAGES.route)
+
+/** Разделы-соседи карусели: журнал, SMS, список контактов (2.1.0). */
+private fun isSectionList(entry: androidx.navigation.NavBackStackEntry): Boolean =
+    entry.destination.route in SIBLING_ROUTES || isContactsList(entry)

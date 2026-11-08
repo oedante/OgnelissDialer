@@ -12,16 +12,18 @@ import com.ogneliss.dialer.R
 
 /**
  * Разрешения Ogneliss Dialer, сгруппированные по назначению.
- * Для каждой группы — понятное объяснение, которое показывается пользователю
- * ДО системного диалога. Google Play требует такого обоснования для
- * чувствительных групп CALL_LOG и PHONE.
+ *
+ * 2.1.0: без своих пояснений к каждой группе (правило автора — не
+ * объяснять, а выполнять): с Android 10 почти всё выдаёт роль «Телефон»,
+ * недостающее спрашивается одним системным окном ([missingToRequest]).
+ * Согласие с обработкой журнала и контактов — экран согласия при первом
+ * запуске.
  */
 object AppPermissions {
 
     data class Group(
         val id: String,
         val titleRes: Int,
-        val rationaleRes: Int,
         val permissions: List<String>,
         val required: Boolean,
         /**
@@ -51,7 +53,6 @@ object AppPermissions {
             Group(
                 id = "phone",
                 titleRes = R.string.perm_phone_title,
-                rationaleRes = R.string.perm_phone_text,
                 permissions = buildList {
                     add(Manifest.permission.CALL_PHONE)
                     add(Manifest.permission.READ_PHONE_STATE)
@@ -68,7 +69,6 @@ object AppPermissions {
             Group(
                 id = "call_log",
                 titleRes = R.string.perm_calllog_title,
-                rationaleRes = R.string.perm_calllog_text,
                 permissions = listOf(
                     Manifest.permission.READ_CALL_LOG,
                     Manifest.permission.WRITE_CALL_LOG
@@ -78,7 +78,6 @@ object AppPermissions {
             Group(
                 id = "contacts",
                 titleRes = R.string.perm_contacts_title,
-                rationaleRes = R.string.perm_contacts_text,
                 permissions = listOf(
                     Manifest.permission.READ_CONTACTS,
                     Manifest.permission.WRITE_CONTACTS
@@ -88,7 +87,6 @@ object AppPermissions {
             Group(
                 id = "notifications",
                 titleRes = R.string.perm_notifications_title,
-                rationaleRes = R.string.perm_notifications_text,
                 permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                     listOf(Manifest.permission.POST_NOTIFICATIONS) else emptyList(),
                 required = false
@@ -96,7 +94,6 @@ object AppPermissions {
             Group(
                 id = "audio",
                 titleRes = R.string.perm_audio_title,
-                rationaleRes = R.string.perm_audio_text,
                 permissions = buildList {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                         add(Manifest.permission.BLUETOOTH_CONNECT)
@@ -108,6 +105,19 @@ object AppPermissions {
 
     fun runtimePermissions(): Array<String> =
         groups.flatMap { it.permissions }.distinct().toTypedArray()
+
+    /**
+     * Всё, что не выдано, — для одного системного окна (2.1.0): вместе
+     * с «попутными» (Bluetooth у телефонной группы).
+     */
+    fun missingToRequest(context: Context): Array<String> =
+        groups.flatMap { it.toRequest }.distinct().filter {
+            ContextCompat.checkSelfPermission(context, it) != PackageManager.PERMISSION_GRANTED
+        }.toTypedArray()
+
+    /** Системное окно недостающих уже показано в этом запуске (MissingPermissionsRequest). */
+    @Volatile
+    var promptedThisRun = false
 
     fun missing(context: Context): List<Group> = groups.filter { g ->
         g.permissions.any {

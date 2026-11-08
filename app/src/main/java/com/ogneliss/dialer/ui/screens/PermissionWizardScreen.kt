@@ -1,304 +1,225 @@
 package com.ogneliss.dialer.ui.screens
 
-import androidx.compose.foundation.shape.CircleShape
-import com.ogneliss.dialer.ui.theme.PanelReachesNavBar
-import com.ogneliss.dialer.ui.theme.PanelColors
-import com.ogneliss.dialer.ui.theme.Space
-
-import com.ogneliss.dialer.ui.theme.OgnelissIcons
-
-import androidx.compose.runtime.Immutable
-
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import com.ogneliss.dialer.util.AutoStart
-import com.ogneliss.dialer.util.IncomingCallAccess
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.ogneliss.dialer.ui.components.OgnelissPanel
-import com.ogneliss.dialer.ui.theme.FlowUi
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.components.ReadableWidth
-import com.ogneliss.dialer.ui.components.OgnelissDialog
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+import com.ogneliss.dialer.ui.theme.PanelColors
+import com.ogneliss.dialer.ui.theme.PanelReachesNavBar
+import com.ogneliss.dialer.ui.theme.Space
 import com.ogneliss.dialer.util.AppPermissions
+import com.ogneliss.dialer.util.IncomingCallAccess
+import kotlinx.coroutines.delay
 
 /**
- * ПОШАГОВЫЙ МАСТЕР РАЗРЕШЕНИЙ ПРИ ПЕРВОМ ЗАПУСКЕ.
+ * МАСТЕР ПЕРВОГО ЗАПУСКА — ТОЛЬКО ТО, ЧТО МОЖЕТ СДЕЛАТЬ ЛИШЬ ЧЕЛОВЕК (2.1.0).
  *
- * ── Что было не так со старым экраном ──────────────────────────────────────
- * Все разрешения показывались одним списком карточек. Понять по нему,
- * что уже выдано, что осталось и что из этого обязательно, было нельзя:
- * галочки терялись среди текста, а кнопка «Продолжить» становилась
- * активной по неочевидному условию.
+ * ══════════════════════════════════════════════════════════════════════════
+ * БЫЛО — СТАЛО — ПОЧЕМУ
+ * ══════════════════════════════════════════════════════════════════════════
+ * Было: страница на каждое разрешение (телефон, журнал, контакты,
+ * уведомления, звук), работа в фоне, автозапуск, экран входящего;
+ * на каждой — пояснение, «что перестанет работать», счётчик шагов.
  *
- * ── Как устроено сейчас ────────────────────────────────────────────────────
- * Один экран — одно разрешение. На каждом видно:
- *   • зачем оно нужно, человеческим языком;
- *   • что перестанет работать без него;
- *   • обязательное оно или нет;
- *   • выдано уже или нет — крупно и однозначно.
+ * Правило автора (07.11.2026): «Пользователь не должен думать и выбирать,
+ * чтобы приложение работало как нужно, на любой прошивке, с сервисами
+ * Google и без. Не показывать ошибки и объяснения — выполнять или
+ * пропускать».
  *
- * Кнопка «Далее» есть всегда: пропустить можно любой шаг, включая
- * обязательный. Запрещать это неправильно — пользователь вправе
- * не давать доступ. Но последствия он должен увидеть заранее,
- * а не обнаружить пустой журнал и решить, что приложение сломано.
- *
- * ── Порядок шагов ──────────────────────────────────────────────────────────
- * Сначала роль диалера: без неё Android не передаёт приложению управление
- * вызовами, и остальные разрешения бесполезны. Дальше по убыванию
- * важности, необязательные — в конце, когда пользователь уже втянулся.
+ * Стало:
+ * • «Телефон по умолчанию» — страница остаётся: роль выдаёт только
+ *   системное окно. Окно не открылось — сразу «Приложения по умолчанию».
+ * • Разрешения — без страниц. С Android 10 роль «Телефон» сама выдаёт
+ *   телефон, журнал, контакты, уведомления (13+), «поверх других»
+ *   и работу в фоне; чего не хватило — одно системное окно на всё
+ *   ([MissingPermissionsRequest]). На Android 8–9 — то же одно окно.
+ * • Работа в фоне и автозапуск — не в мастере, а строками в «Настройки →
+ *   Разрешения»: проверить их нельзя, а без них звонки работают.
+ * • «Экран входящего вызова» — только где запрет известен заранее
+ *   (IncomingCallAccess.stepBeforeCalls): MIUI/HyperOS с подтверждённым
+ *   запретом, ColorOS без «поверх других». Один раз за всё время.
  */
 @Composable
 fun PermissionWizardScreen(
     isDefaultDialer: Boolean,
     /**
-     * Запрос роли телефона.
-     *
-     * Возвращает false, если системное окно не открылось: оболочка
-     * его заблокировала. Тогда показываем объяснение — молча уводить
-     * в настройки нельзя, человек не поймёт, куда попал.
+     * Запрос роли телефона. false — системное окно не открылось
+     * (оболочка его заблокировала): тогда сразу [onOpenSystemSettings].
      */
     onRequestDefaultDialer: () -> Boolean,
+    /** «Приложения по умолчанию» — когда окно роли не открылось. */
     onOpenSystemSettings: () -> Unit = {},
     onFinished: () -> Unit
 ) {
     val context = LocalContext.current
-    var stepIndex by remember { mutableIntStateOf(0) }
 
-    // Пересчитывается после каждого запроса: результат должен быть виден сразу
-    var refreshTrigger by remember { mutableIntStateOf(0) }
-
-    /*
-     * Оболочка заблокировала выбор диалера по умолчанию.
-     *
-     * Xiaomi, Samsung, Huawei, nubia требуют сперва разрешить изменение
-     * системных настроек. Без объяснения человек упирается в стену:
-     * кнопка нажата, ничего не произошло.
-     */
-    var roleBlocked by remember { mutableStateOf(false) }
-
-    if (roleBlocked) {
-        // Общий контейнер приложения вместо AlertDialog
-        OgnelissDialog(
-            onDismissRequest = { roleBlocked = false },
-            title = stringResource(R.string.dialer_role_blocked_title),
-            content = { Text(stringResource(R.string.dialer_role_blocked_text)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    roleBlocked = false
-                    onOpenSystemSettings()
-                }) {
-                    Text(stringResource(R.string.dialer_role_open_settings))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { roleBlocked = false }) {
-                    Text(stringResource(R.string.nav_close))
-                }
-            }
-        )
+    // Разрешения прошивки выдают в её настройках — после возврата
+    // состояние перечитывается
+    var refresh by remember { mutableIntStateOf(0) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) refresh++
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    val steps = remember(isDefaultDialer, refreshTrigger) {
-        buildSteps(context, isDefaultDialer)
-    }
-    val step = steps.getOrNull(stepIndex)
+    var dialerSkipped by rememberSaveable { mutableStateOf(false) }
+    var incomingSkipped by rememberSaveable { mutableStateOf(false) }
+    // Шаг экрана входящего — один раз за всё время: запомнено при показе
+    val incomingOffered = rememberSaveable { !IncomingCallAccess.stepShownBefore(context) }
+    val incomingStep = remember(refresh) { IncomingCallAccess.stepBeforeCalls(context) }
 
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) {
-        // Результат придёт в следующем кадре: обновляем состояние экрана
-        refreshTrigger++
+    val page: WizardPage? = when {
+        !isDefaultDialer && !dialerSkipped -> WizardPage.Dialer
+        // Без роли «Телефон» экран вызова не наш — спрашивать о нём незачем
+        isDefaultDialer && incomingOffered && !incomingSkipped && incomingStep != null ->
+            WizardPage.Incoming(incomingStep)
+        else -> null
     }
 
-    if (step == null) {
+    if (page == null) {
         LaunchedEffect(Unit) { onFinished() }
         return
     }
+    if (page is WizardPage.Incoming) {
+        LaunchedEffect(Unit) { IncomingCallAccess.markStepShown(context) }
+    }
 
-    androidx.compose.runtime.CompositionLocalProvider(
+    CompositionLocalProvider(
         com.ogneliss.dialer.ui.theme.LocalPageTone provides com.ogneliss.dialer.ui.theme.PageTone.TINTED
     ) {
         Scaffold(
-            // Как настройки Ogneliss Mail: серо-голубая страница, группы — карточками (1.5.6)
+            // Как настройки Ogneliss Mail: серо-голубая страница (1.5.6)
             containerColor = com.ogneliss.dialer.ui.theme.OgnelissTheme.pageColor(com.ogneliss.dialer.ui.theme.PageTone.TINTED),
             // Insets обрабатывает Scaffold: без него содержимое уезжает
             // под строку состояния и под кнопки навигации
             contentWindowInsets = WindowInsets.safeDrawing,
             bottomBar = {
                 WizardButtons(
-                    isLastStep = stepIndex == steps.lastIndex,
-                    isGranted = step.isGranted,
-                    isRequired = step.required,
-                    onGrant = {
-                        when {
-                            step.id == STEP_DIALER -> {
-                                // false означает, что оболочка заблокировала
-                                // системное окно: показываем объяснение
-                                if (!onRequestDefaultDialer()) roleBlocked = true
-                            }
-                            step.permissions.isNotEmpty() ->
-                                permissionLauncher.launch(step.permissions.toTypedArray())
-                            else -> step.openSettings?.invoke()
+                    actionRes = page.actionRes,
+                    onAction = {
+                        when (page) {
+                            // Окно роли не открылось — сразу системный выбор, без объяснений
+                            WizardPage.Dialer -> if (!onRequestDefaultDialer()) onOpenSystemSettings()
+                            is WizardPage.Incoming -> IncomingCallAccess.open(context)
                         }
                     },
-                    onNext = {
-                        if (stepIndex == steps.lastIndex) onFinished() else stepIndex++
+                    onSkip = {
+                        when (page) {
+                            WizardPage.Dialer -> dialerSkipped = true
+                            is WizardPage.Incoming -> incomingSkipped = true
+                        }
                     }
                 )
             }
         ) { padding ->
             // Не шире 640 dp по центру на широком окне: разбор в ReadableWidth
             ReadableWidth {
-            Column(
-                Modifier
-                    .padding(padding)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = Space.xl)
-            ) {
-                // Индикатор прогресса: видно, сколько осталось, и что процесс
-                // конечен. Без него длинная череда запросов утомляет
-                LinearProgressIndicator(
-                    progress = { (stepIndex + 1f) / steps.size },
-                    modifier = Modifier.fillMaxWidth().padding(top = Space.l)
-                )
-                Text(
-                    stringResource(R.string.wizard_step_of, stepIndex + 1, steps.size),
-                    Modifier.padding(top = Space.s),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.outline
-                )
-
-                Spacer(Modifier.height(Space.xxl))
-
-                AnimatedContent(targetState = step, label = "step") { current ->
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        StatusIcon(current.icon, current.isGranted)
-
-                        Spacer(Modifier.height(Space.xl))
-
-                        Text(
-                            stringResource(current.titleRes),
-                            style = MaterialTheme.typography.headlineSmall,
-                            textAlign = TextAlign.Center
-                        )
-
-                        Spacer(Modifier.height(Space.s))
-
-                        // Обязательное или нет — сразу под заголовком,
-                        // чтобы решение принималось осознанно
-                        RequirementBadge(current.required, current.isGranted)
-
-                        Spacer(Modifier.height(Space.xl))
-
-                        Text(
-                            stringResource(current.rationaleRes),
-                            style = MaterialTheme.typography.bodyLarge,
-                            textAlign = TextAlign.Center
-                        )
-
-                        // Что перестанет работать: главное отличие от старого
-                        // экрана. Пользователь должен понимать цену отказа
-                        // до того, как откажется
-                        if (!current.isGranted) {
-                            Spacer(Modifier.height(20.dp))
-                            OgnelissPanel(
-                                color = MaterialTheme.colorScheme.surfaceVariant
-                            ) {
-                                Row(Modifier.padding(FlowUi.contentPadding), verticalAlignment = Alignment.Top) {
-                                    Icon(
-                                        OgnelissIcons.Info, null,
-                                        Modifier.size(FlowUi.iconSizeInline),
-                                        tint = MaterialTheme.colorScheme.outline
-                                    )
-                                    Spacer(Modifier.width(Space.m))
-                                    Text(
-                                        stringResource(current.consequenceRes),
-                                        style = MaterialTheme.typography.bodyMedium
-                                    )
-                                }
-                            }
+                Column(
+                    Modifier
+                        .padding(padding)
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = Space.xl),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    AnimatedContent(targetState = page, label = "step") { current ->
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            PageIcon(current.icon)
+                            Spacer(Modifier.height(Space.xl))
+                            Text(
+                                stringResource(current.titleRes),
+                                style = MaterialTheme.typography.headlineSmall,
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(Modifier.height(Space.m))
+                            // Одна короткая строка: что сделать, без «что будет, если нет»
+                            Text(
+                                stringResource(current.textRes),
+                                style = MaterialTheme.typography.bodyLarge,
+                                textAlign = TextAlign.Center
+                            )
                         }
                     }
                 }
-
-                Spacer(Modifier.height(Space.xxl))
-            }
             }
         }
     }
 }
 
-/** Крупная отметка состояния: выдано или нет. Понятно с одного взгляда. */
-@Composable
-private fun StatusIcon(icon: ImageVector, granted: Boolean) {
-    Box(contentAlignment = Alignment.BottomEnd) {
-        Surface(
-            shape = CircleShape,
-            color = if (granted) MaterialTheme.colorScheme.primaryContainer
-            else MaterialTheme.colorScheme.surfaceVariant,
-            modifier = Modifier.size(96.dp)
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(icon, null, Modifier.size(48.dp))
-            }
-        }
-        if (granted) {
-            Icon(
-                OgnelissIcons.CheckCircle, null,
-                Modifier.size(32.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-    }
-}
+/** Страница мастера: что показать и какая кнопка. */
+private sealed class WizardPage(
+    val icon: ImageVector,
+    val titleRes: Int,
+    val textRes: Int,
+    val actionRes: Int
+) {
+    /** Роль «Телефон по умолчанию». */
+    data object Dialer : WizardPage(
+        OgnelissIcons.Smartphone,
+        R.string.onboarding_default_title,
+        R.string.onboarding_default_text,
+        R.string.onboarding_default_action
+    )
 
-@Composable
-private fun RequirementBadge(required: Boolean, granted: Boolean) {
-    val (textRes, color) = when {
-        granted -> R.string.wizard_granted to MaterialTheme.colorScheme.primary
-        required -> R.string.wizard_required to MaterialTheme.colorScheme.error
-        else -> R.string.wizard_optional to MaterialTheme.colorScheme.outline
-    }
-    Text(
-        stringResource(textRes),
-        style = MaterialTheme.typography.labelLarge,
-        fontWeight = FontWeight.Medium,
-        color = color
+    /** Экран входящего: что разрешить на этой прошивке. */
+    data class Incoming(val step: IncomingCallAccess.Step) : WizardPage(
+        OgnelissIcons.PhonelinkLock,
+        R.string.incoming_access_title,
+        if (step == IncomingCallAccess.Step.MIUI) R.string.incoming_step_miui else R.string.incoming_step_overlay,
+        R.string.onboarding_grant
     )
 }
 
 /**
- * Кнопки внизу.
- *
- * «Далее» доступна всегда, даже если разрешение не выдано: запрещать
- * пользователю отказываться неправильно. Но текст кнопки меняется —
- * «Пропустить» вместо «Далее», чтобы отказ был осознанным действием,
- * а не машинальным нажатием.
+ * Нужен ли мастер при запуске: роли «Телефон» нет или есть шаг экрана
+ * входящего, который ещё не предлагали (2.1.0). Иначе — сразу журнал.
  */
+fun wizardNeeded(context: android.content.Context, isDefaultDialer: Boolean): Boolean =
+    !isDefaultDialer ||
+        (IncomingCallAccess.stepBeforeCalls(context) != null && !IncomingCallAccess.stepShownBefore(context))
+
+/** Крупный значок шага. */
 @Composable
-private fun WizardButtons(
-    isLastStep: Boolean,
-    isGranted: Boolean,
-    isRequired: Boolean,
-    onGrant: () -> Unit,
-    onNext: () -> Unit
-) {
-    // Цвет нижней панели, как на остальных экранах (1.4.0): прежний
-    // тональный подъём давал голубую дымку, а без неё сливался с фоном
+private fun PageIcon(icon: ImageVector) {
+    Surface(
+        shape = CircleShape,
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        modifier = Modifier.size(96.dp)
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Icon(icon, null, Modifier.size(48.dp))
+        }
+    }
+}
+
+/** Кнопки внизу: действие и «Пропустить» — шаг не обязателен. */
+@Composable
+private fun WizardButtons(actionRes: Int, onAction: () -> Unit, onSkip: () -> Unit) {
+    // Цвет нижней панели, как на остальных экранах (1.4.0)
     Surface(color = PanelColors.panel()) {
         PanelReachesNavBar()
         Column(
@@ -307,201 +228,45 @@ private fun WizardButtons(
                 .windowInsetsPadding(WindowInsets.navigationBars)
                 .padding(Space.xl)
         ) {
-            if (!isGranted) {
-                Button(onClick = onGrant, modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(R.string.wizard_grant))
-                }
-                Spacer(Modifier.height(Space.s))
+            Button(onClick = onAction, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(actionRes))
             }
-
-            TextButton(onClick = onNext, modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    stringResource(
-                        when {
-                            isLastStep -> R.string.wizard_finish
-                            isGranted -> R.string.wizard_next
-                            else -> R.string.wizard_skip
-                        }
-                    )
-                )
+            Spacer(Modifier.height(Space.s))
+            TextButton(onClick = onSkip, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.wizard_skip))
             }
         }
     }
 }
 
-// ── Описание шагов ─────────────────────────────────────────────────────────
+/** Пауза после возврата на экран: следом может открываться окно роли SMS. */
+private const val PROMPT_SETTLE_MS = 700L
 
-private const val STEP_DIALER = "dialer"
-private const val STEP_BATTERY = "battery"
-private const val STEP_AUTOSTART = "autostart"
-private const val STEP_INCOMING = "incoming_screen"
-
-private /**
- * @Immutable: шаг мастера перерисовывается при каждом изменении
- * состояния разрешений, а поле permissions типа List делало бы
- * его нестабильным.
+/**
+ * НЕДОСТАЮЩИЕ РАЗРЕШЕНИЯ — ОДНИМ СИСТЕМНЫМ ОКНОМ, БЕЗ СВОИХ СТРАНИЦ (2.1.0).
+ *
+ * Роль «Телефон» с Android 10 выдаёт почти всё сама; чего не хватило
+ * (Android 8–9, Bluetooth, отозванное потом) — одно окно на все, раз за
+ * запуск приложения и только у телефона по умолчанию. Окно ждёт, пока
+ * приложение на экране: сразу после роли телефона открывается окно роли
+ * SMS, и два окна поверх друг друга сбивали бы.
  */
-@Immutable
-data class WizardStep(
-    val id: String,
-    val icon: ImageVector,
-    val titleRes: Int,
-    val rationaleRes: Int,
-    /** Что перестанет работать без этого разрешения. */
-    val consequenceRes: Int,
-    val required: Boolean,
-    val isGranted: Boolean,
-    val permissions: List<String> = emptyList(),
-    val openSettings: (() -> Unit)? = null
-)
-
-private fun buildSteps(
-    context: android.content.Context,
-    isDefaultDialer: Boolean
-): List<WizardStep> = buildList {
-
-    // Роль диалера первой: без неё остальное бесполезно
-    add(
-        WizardStep(
-            id = STEP_DIALER,
-            icon = OgnelissIcons.Smartphone,
-            titleRes = R.string.onboarding_default_title,
-            rationaleRes = R.string.wizard_dialer_rationale,
-            consequenceRes = R.string.wizard_dialer_consequence,
-            required = true,
-            isGranted = isDefaultDialer
-        )
-    )
-
-    val icons = mapOf(
-        "phone" to OgnelissIcons.Call,
-        "call_log" to OgnelissIcons.History,
-        "contacts" to OgnelissIcons.Contacts,
-        "notifications" to OgnelissIcons.Notifications,
-        "audio" to OgnelissIcons.Headphones
-    )
-    val consequences = mapOf(
-        "phone" to R.string.wizard_phone_consequence,
-        "call_log" to R.string.wizard_calllog_consequence,
-        "contacts" to R.string.wizard_contacts_consequence,
-        "notifications" to R.string.wizard_notifications_consequence,
-        "audio" to R.string.wizard_audio_consequence
-    )
-
-    // Обязательные раньше необязательных: пользователь соглашается
-    // на важное, пока внимание ещё свежее
-    AppPermissions.groups
-        .filter { it.permissions.isNotEmpty() }
-        .sortedByDescending { it.required }
-        .forEach { group ->
-            add(
-                WizardStep(
-                    id = group.id,
-                    icon = icons[group.id] ?: OgnelissIcons.Lock,
-                    titleRes = group.titleRes,
-                    rationaleRes = group.rationaleRes,
-                    consequenceRes = consequences[group.id] ?: R.string.wizard_generic_consequence,
-                    required = group.required,
-                    isGranted = AppPermissions.missing(context).none { it.id == group.id },
-                    // Вместе с «попутными» (Bluetooth у телефонной группы) —
-                    // одним системным окном
-                    permissions = group.toRequest
-                )
-            )
+@Composable
+fun MissingPermissionsRequest(isDefaultDialer: Boolean) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { /* ответ разберёт MainActivity при возврате (permissionsJustGranted) */ }
+    LaunchedEffect(isDefaultDialer) {
+        if (!isDefaultDialer) return@LaunchedEffect
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            delay(PROMPT_SETTLE_MS)
+            if (AppPermissions.promptedThisRun) return@repeatOnLifecycle
+            val missing = AppPermissions.missingToRequest(context)
+            if (missing.isEmpty()) return@repeatOnLifecycle
+            AppPermissions.promptedThisRun = true
+            runCatching { launcher.launch(missing) }
         }
-
-    /*
-     * РАБОТА В ФОНЕ — ШАГ МАСТЕРА, А НЕ ПУНКТ НАСТРОЕК.
-     *
-     * ══════════════════════════════════════════════════════════════════════
-     * ПОЧЕМУ ЗДЕСЬ
-     * ══════════════════════════════════════════════════════════════════════
-     * Я сначала спрятал это в настройки, рассуждая, что пятая просьба
-     * при установке выглядит навязчиво. Это была ошибка.
-     *
-     * Человек не пойдёт разбираться, почему пропущенные не появляются
-     * в журнале. Он решит, что приложение сломано, и удалит его —
-     * и будет прав по факту: без исключения из энергосбережения
-     * наблюдатель за журналом не просыпается, и вызовы действительно
-     * теряются до следующего открытия.
-     *
-     * Лучше спросить один раз при установке, чем потерять человека
-     * через неделю.
-     *
-     * ── Почему не обязательный ─────────────────────────────────────────────
-     * Приложение без этого работает — просто журнал обновляется
-     * только когда его открывают. Помечать шаг обязательным значило бы
-     * не пустить дальше того, кто отказался: хуже, чем работать
-     * с оговоркой.
-     */
-    add(
-        WizardStep(
-            id = STEP_BATTERY,
-            icon = OgnelissIcons.BatteryAlert,
-            titleRes = R.string.settings_battery,
-            rationaleRes = R.string.wizard_battery_rationale,
-            consequenceRes = R.string.wizard_battery_consequence,
-            required = false,
-            isGranted = AppPermissions.isIgnoringBatteryOptimizations(context),
-            openSettings = { AppPermissions.requestIgnoreBatteryOptimizations(context) }
-        )
-    )
-
-    /*
-     * ЭКРАН ВХОДЯЩЕГО — НА ПРОШИВКАХ СО СВОИМИ ЗАПРЕТАМИ (1.8.1).
-     *
-     * Xiaomi, vivo, OPPO/realme/OnePlus не дают сторонним приложениям
-     * показывать окна поверх блокировки и из фона; на Android 14+ можно
-     * отозвать полноэкранные уведомления. Без этого телефон звонит,
-     * а экрана вызова нет (отзыв «не загорается экран»). Где состояние
-     * читается (Xiaomi, OPPO, полноэкранные) — шаг отмечается выданным;
-     * где нет (vivo) — остаётся подсказкой, как автозапуск. На телефонах
-     * без своих запретов шага нет. Разбор — IncomingCallAccess.
-     */
-    val incoming = IncomingCallAccess.state(context)
-    if (incoming != IncomingCallAccess.State.NOT_NEEDED) {
-        add(
-            WizardStep(
-                id = STEP_INCOMING,
-                icon = OgnelissIcons.PhonelinkLock,
-                titleRes = R.string.incoming_access_title,
-                rationaleRes = R.string.incoming_access_text,
-                consequenceRes = R.string.incoming_access_consequence,
-                required = false,
-                isGranted = incoming == IncomingCallAccess.State.GRANTED,
-                openSettings = { IncomingCallAccess.open(context) }
-            )
-        )
-    }
-
-    /*
-     * АВТОЗАПУСК — ТОЛЬКО НА ОБОЛОЧКАХ, ГДЕ ОН ЕСТЬ.
-     *
-     * ── Почему нельзя проверить, выдан ли ──────────────────────────────────
-     * Общего способа нет: у Xiaomi, Huawei, Oppo это собственные экраны
-     * в собственных оболочках, и состояние они наружу не отдают.
-     *
-     * Поэтому шаг не отмечается выполненным никогда — он остаётся
-     * подсказкой, а не проверкой. Это честнее, чем показывать галочку,
-     * которая ничего не значит.
-     *
-     * ── Почему показываем не всем ──────────────────────────────────────────
-     * На чистом Android такого экрана нет, и пункт вёл бы в никуда.
-     * Показываем только там, где производитель известен своими
-     * ограничениями.
-     */
-    if (AutoStart.isSupported()) {
-        add(
-            WizardStep(
-                id = STEP_AUTOSTART,
-                icon = OgnelissIcons.RestartAlt,
-                titleRes = R.string.wizard_autostart_title,
-                rationaleRes = R.string.wizard_autostart_rationale,
-                consequenceRes = R.string.wizard_autostart_consequence,
-                required = false,
-                isGranted = false,
-                openSettings = { AutoStart.open(context) }
-            )
-        )
     }
 }

@@ -80,6 +80,8 @@ data class SettingsState(
     val smartSpeaker: Boolean = false,
     val dialpadOpenAtStart: Boolean = false,
     val callbackSuggestion: Boolean = true,
+    /** Входящий плашкой сверху, когда телефоном пользуются (2.1.0). */
+    val incomingBanner: Boolean = true,
     val simLabels: Map<Int, String> = emptyMap(),
     /** Экран после звонка выключен по умолчанию — см. пояснение в Prefs. */
     val postCallEnabled: Boolean = false,
@@ -117,9 +119,11 @@ data class SettingsState(
     val scamMemo: Boolean = true,
     /** Тихие часы для незнакомых (1.8.0): разбор в call/QuietHours.kt. */
     val quietHours: QuietHours = QuietHours.DEFAULT,
-    /** Сообщения (2.0.0): разбор в sms/SmsRole.kt. */
-    val smsInApp: Boolean = true,
-    val smsDeliveryReports: Boolean = false
+    /** Сообщения (2.0.0): разбор в sms/SmsRole.kt. «Писать SMS в диалере» убран в 2.1.0. */
+    val smsDeliveryReports: Boolean = false,
+    /** Свайпы раздела «SMS» (2.1.0): свои, по умолчанию «SMS» и «Удалить». */
+    val smsSwipeRight: SwipeAction = SwipeAction.SMS,
+    val smsSwipeLeft: SwipeAction = SwipeAction.DELETE_FROM_LOG
 ) {
 
     /** Значение переключателя по ключу из реестра настроек. */
@@ -141,6 +145,7 @@ data class SettingsState(
         "smart_speaker" -> smartSpeaker
         "dialpad_open_at_start" -> dialpadOpenAtStart
         "callback_suggestion" -> callbackSuggestion
+        "incoming_banner" -> incomingBanner
         "post_call" -> postCallEnabled
         "post_call_unknown" -> postCallUnknownOnly
         "block_hidden" -> blockHidden
@@ -148,7 +153,6 @@ data class SettingsState(
         "block_tagged" -> blockTaggedSpam
         "file_logging" -> fileLogging
         "scam_memo" -> scamMemo
-        "sms_in_app" -> smsInApp
         "sms_delivery_reports" -> smsDeliveryReports
         else -> false
     }
@@ -160,7 +164,7 @@ data class SettingsState(
             "fake_call_button",
             "haptic", "key_tones",
             "merge_calls", "remember_sim", "smart_speaker",
-            "callback_suggestion", "dialpad_open_at_start", "post_call", "post_call_unknown",
+            "callback_suggestion", "dialpad_open_at_start", "post_call", "post_call_unknown", "incoming_banner",
             "block_hidden", "block_unknown", "block_tagged", "file_logging",
             // 1.3.3: переключатели обрабатывались (switchValue выше), но в список
             // не попали — SettingsRegistryTest падал ещё с 1.3.0
@@ -170,7 +174,7 @@ data class SettingsState(
             // 1.8.0
             "scam_memo",
             // 2.0.0
-            "sms_in_app", "sms_delivery_reports"
+            "sms_delivery_reports"
         )
     }
 }

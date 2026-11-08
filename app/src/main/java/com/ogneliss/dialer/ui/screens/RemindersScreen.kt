@@ -199,7 +199,7 @@ fun RemindersScreen(
                 } else {
                     EmptyReason.NoReminders
                 },
-                onAction = { search = "" },
+                // «Сбросить поиск» под пустым результатом нет с 2.1.0 (разбор в EmptyState)
                 // Отступы каркаса: иначе значок уходит под строку заголовка
                 modifier = Modifier.padding(padding)
             )
@@ -297,7 +297,7 @@ private fun ReminderListRow(
             ActionIconButton(
                 icon = OgnelissIcons.Call,
                 contentDescription = stringResource(R.string.action_call),
-                tint = CallGreen,
+                tint = com.ogneliss.dialer.util.LocalCallAvailability.current.callTint(com.ogneliss.dialer.ui.theme.CallGreen),
                 onClick = onCall,
                 onLongClick = onCallLongPress,
                 onLongClickLabel = stringResource(R.string.a11y_choose_sim)

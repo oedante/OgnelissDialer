@@ -134,8 +134,8 @@ android {
          * Перед публикацией в открытый доступ сменить на 1.0.0
          * и поднять versionCode.
          */
-        versionCode = 56
-        versionName = "2.0.2"
+        versionCode = 57
+        versionName = "2.1.0"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -306,6 +306,19 @@ android {
             "MissingTranslation",
             // Тексты для Google Play лежат в store/, а не в ресурсах
             "GoogleAppIndexingWarning",
+            /*
+             * NonObservableLocale (Compose 1.9+) — для этого приложения ложное.
+             *
+             * Проверка ругает Locale.getDefault() в составлении: при смене
+             * языка, обработанной без пересоздания окна, Compose не узнает
+             * о ней. Но ни одно окно приложения смену языка само не
+             * обрабатывает (в android:configChanges нет locale), а выбор
+             * языка в приложении (AppCompatDelegate.setApplicationLocales)
+             * пересоздаёт окна: составление начинается заново с новым
+             * языком. Девять мест (даты, номера, сортировка) переписывать
+             * ради этого незачем.
+             */
+            "NonObservableLocale",
             /*
              * ProduceStateDoesNotAssignValue — ложное срабатывание.
              *

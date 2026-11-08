@@ -27,11 +27,13 @@ object ExternalApps {
      * «НАПИСАТЬ» (2.0.0): переписка в диалере или приложение сообщений.
      *
      * Было: только намерение системе — SMS писало приложение сообщений.
-     * Стало: выбор человека (Настройки → Журнал → Сообщения). Диалер —
-     * приложение SMS или телефон по умолчанию с «Писать SMS в диалере» —
-     * намерение адресовано себе (setPackage): открывается своя переписка,
-     * без окна «Открыть с помощью». Иначе — приложению SMS по умолчанию,
-     * тоже без окна выбора.
+     * Стало: диалер — приложение SMS по умолчанию — намерение адресовано
+     * себе (setPackage): открывается своя переписка, без окна «Открыть
+     * с помощью». Иначе — приложению SMS по умолчанию, тоже без окна выбора.
+     *
+     * 2.1.0: выбора «Писать SMS в диалере» больше нет — решает роль SMS
+     * (SmsRole.composeTarget): без неё своя переписка не открывается
+     * никогда, даже при роли телефона.
      */
     fun sms(context: Context, number: String, body: String? = null) = launch(
         context,
@@ -40,12 +42,13 @@ object ExternalApps {
         }
     )
 
-    /** Намерение «написать на [number]» — себе или приложению SMS по умолчанию. */
+    /**
+     * Намерение «написать на [number]» — себе (роль SMS у нас) или приложению
+     * SMS по умолчанию, если оно его принимает; иначе без адресата — выберет система.
+     */
     fun smsIntent(context: Context, number: String): Intent =
         Intent(Intent.ACTION_SENDTO, Uri.fromParts("smsto", number, null)).apply {
-            val target = if (com.ogneliss.dialer.sms.SmsSettings.composeHere(context)) context.packageName
-            else android.provider.Telephony.Sms.getDefaultSmsPackage(context)
-            target?.let { setPackage(it) }
+            com.ogneliss.dialer.sms.SmsRole.composeTarget(context)?.let { setPackage(it) }
         }
 
     /**

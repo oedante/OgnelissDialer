@@ -25,8 +25,9 @@ import com.ogneliss.dialer.BuildConfig
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.DialerViewModel
 import com.ogneliss.dialer.ui.components.*
-import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.settings.*
+import com.ogneliss.dialer.util.AppPermissions
+import com.ogneliss.dialer.util.InstallSource
 
 /**
  * ЭКРАН ОДНОЙ КАТЕГОРИИ НАСТРОЕК.
@@ -46,14 +47,11 @@ fun SettingsCategoryScreen(
     category: SettingsCategory,
     vm: DialerViewModel,
     onBack: () -> Unit,
-    /**
-     * Поле для коротких сообщений.
-     *
-     * Нужно действиям, которые пишут файлы: сохранение заканчивается
-     * молча, и без сообщения непонятно, получилось ли. Хозяин поля —
-     * тот, кто запускает запись, поэтому оно приходит снаружи.
+    /*
+     * Поля для коротких сообщений (snackbar) больше нет (2.1.0): выгрузки
+     * из раздела заканчиваются молча — успех видно по файлу, неудача
+     * уходит в журнал разработчика (правило автора 07.11.2026).
      */
-    snackbar: SnackbarHostState = remember { SnackbarHostState() },
     /** Стрелка «назад»: разбор у ScreenScaffold.showBack. */
     showBack: Boolean = true,
     /** Настройка, найденная поиском: показать её (1.5.8). */
@@ -63,7 +61,28 @@ fun SettingsCategoryScreen(
     onAction: (String) -> Unit
 ) {
     val ctx = LocalContext.current
-    val entries = remember(category) { SettingsRegistry.byCategory(category) }
+    // Без Google Play «Оценить» не показывается (2.1.0): разбор у SettingsRegistry.shown
+    val entries = remember(category) {
+        SettingsRegistry.shown(SettingsRegistry.byCategory(category), InstallSource.isGooglePlay(ctx))
+    }
+
+    /*
+     * «Работа в фоне» уже разрешена (2.1.0) — так и написано в строке.
+     * Было: нажатие отвечало сообщением «Уже разрешено». Состояние
+     * перечитывается при возвращении: разрешение выдают в системном окне.
+     */
+    val lifecycle = androidx.lifecycle.compose.LocalLifecycleOwner.current.lifecycle
+    val hasBattery = remember(entries) { entries.any { it.id == "battery" } }
+    var batteryAllowed by remember { mutableStateOf(hasBattery && AppPermissions.isIgnoringBatteryOptimizations(ctx)) }
+    DisposableEffect(lifecycle, hasBattery) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (hasBattery && event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                batteryAllowed = AppPermissions.isIgnoringBatteryOptimizations(ctx)
+            }
+        }
+        lifecycle.addObserver(observer)
+        onDispose { lifecycle.removeObserver(observer) }
+    }
 
     // Диалог подтверждения опасной настройки: null — закрыт
     var pendingDangerous by remember { mutableStateOf<SettingEntry?>(null) }
@@ -118,13 +137,17 @@ fun SettingsCategoryScreen(
     // Дополнительные действия свайпа: исходно их нет — есть, значит, изменено
     val rightExtra by vm.swipeRightExtra.collectAsStateWithLifecycle()
     val leftExtra by vm.swipeLeftExtra.collectAsStateWithLifecycle()
+    val smsRightExtra by vm.smsSwipeRightExtra.collectAsStateWithLifecycle()
+    val smsLeftExtra by vm.smsSwipeLeftExtra.collectAsStateWithLifecycle()
     val isChanged: (SettingEntry) -> Boolean = { entry ->
         when (val k = entry.kind) {
             is SettingKind.Switch -> state.switchValue(k.key) != defaults.switchValue(k.key)
             is SettingKind.Choice -> k.key !in NOT_RESETTABLE && (
                 vm.choiceValueOf(k.key, state) != vm.choiceValueOf(k.key, defaults) ||
                     (k.key == "swipe_right" && rightExtra.isNotEmpty()) ||
-                    (k.key == "swipe_left" && leftExtra.isNotEmpty())
+                    (k.key == "swipe_left" && leftExtra.isNotEmpty()) ||
+                    (k.key == "sms_swipe_right" && smsRightExtra.isNotEmpty()) ||
+                    (k.key == "sms_swipe_left" && smsLeftExtra.isNotEmpty())
                 )
             else -> false
         }
@@ -172,13 +195,15 @@ fun SettingsCategoryScreen(
                      * это список без кода: подставить значение он не может,
                      * поэтому единственное исключение сделано здесь.
                      */
-                    if (entry.id == "version") {
-                        stringResource(
+                    when {
+                        entry.id == "version" -> stringResource(
                             res,
                             "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
                         )
-                    } else {
-                        stringResource(res)
+                        // Выдано — «Уже разрешено» вместо пояснения (2.1.0, разбор выше)
+                        entry.id == "battery" && batteryAllowed ->
+                            stringResource(R.string.settings_battery_already)
+                        else -> stringResource(res)
                     }
                 }
 
@@ -249,7 +274,6 @@ fun SettingsCategoryScreen(
         title = stringResource(category.titleRes),
         onBack = onBack,
         showBack = showBack,
-        snackbarHost = { SnackbarHost(snackbar) },
         /*
          * Панель закреплена.
          *
@@ -366,7 +390,7 @@ fun SettingsCategoryScreen(
 private fun dangerExplanationRes(entryId: String): Int = when (entryId) {
     "block_unknown" -> R.string.confirm_block_unknown
     "reset" -> R.string.confirm_reset
-    "external_lookup" -> R.string.confirm_external_lookup
+    // «Внешние справочники» — без этого окна с 2.1.0: вопрос задаёт сам экран (SettingsRegistry)
     else -> R.string.confirm_title
 }
 

@@ -6,6 +6,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.ogneliss.dialer.call.AutoRedialMode
 import com.ogneliss.dialer.call.QuietHours
 import com.ogneliss.dialer.call.RedialPace
+import com.ogneliss.dialer.data.ArchiveRules
 import com.ogneliss.dialer.data.GroupingSettings
 import com.ogneliss.dialer.data.NotesRetention
 import com.ogneliss.dialer.data.PinnedContacts
@@ -420,6 +421,16 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val SWIPE_RIGHT_EXTRA = stringPreferencesKey("swipe_right_extra")
         val SWIPE_LEFT_EXTRA = stringPreferencesKey("swipe_left_extra")
         val SWIPE_LEFT = stringPreferencesKey("swipe_left")
+        // 2.1.0: свайпы раздела «SMS» — свои, отдельно от журнала
+        val SMS_SWIPE_RIGHT = stringPreferencesKey("sms_swipe_right")
+        val SMS_SWIPE_LEFT = stringPreferencesKey("sms_swipe_left")
+        val SMS_SWIPE_RIGHT_EXTRA = stringPreferencesKey("sms_swipe_right_extra")
+        val SMS_SWIPE_LEFT_EXTRA = stringPreferencesKey("sms_swipe_left_extra")
+        // 2.1.0: закреплённые переписки — свои, отдельно от журнала
+        val SMS_PINNED = stringPreferencesKey("sms_pinned")
+        // 2.1.0: архив — переписки («ключ|время» строками) и записи журнала (id через запятую)
+        val SMS_ARCHIVED = stringPreferencesKey("sms_archived")
+        val CALL_ARCHIVED = stringPreferencesKey("call_archived")
         // Оформление
         val THEME = stringPreferencesKey("theme")
         val THEME_PRESET = stringPreferencesKey("theme_preset")
@@ -509,14 +520,18 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val SMART_SPEAKER = booleanPreferencesKey("smart_speaker")
         val DIALPAD_OPEN_AT_START = booleanPreferencesKey("dialpad_open_at_start")
         val CALLBACK_SUGGESTION = booleanPreferencesKey("callback_suggestion")
+        // 2.1.0: входящий плашкой сверху, когда телефоном пользуются
+        val INCOMING_BANNER = booleanPreferencesKey("incoming_banner")
         /** Автодозвон (1.8.0): выключен, предлагать, сразу — разбор в RedialPolicy. */
         val AUTO_REDIAL = stringPreferencesKey("auto_redial")
         /** Сколько раз и как часто (1.8.0): готовые сочетания RedialPace. */
         val AUTO_REDIAL_PACE = stringPreferencesKey("auto_redial_pace")
         /** Памятка о мошенниках в долгом разговоре с незнакомым (1.8.0). */
         val SCAM_MEMO = booleanPreferencesKey("scam_memo")
-        /** Сообщения (2.0.0): разбор в sms/SmsRole.kt (SmsSettings). */
-        val SMS_IN_APP = booleanPreferencesKey("sms_in_app")
+        /**
+         * Сообщения (2.0.0): разбор в sms/SmsRole.kt (SmsSettings).
+         * «sms_in_app» убран в 2.1.0 — сохранённое значение больше не читается.
+         */
         val SMS_DELIVERY_REPORTS = booleanPreferencesKey("sms_delivery_reports")
         val NOTES_RETENTION = stringPreferencesKey("notes_retention")
         val NOTES_RETENTION_SCOPE = stringPreferencesKey("notes_retention_scope")
@@ -575,6 +590,66 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     val swipeLeftExtra: Flow<List<SwipeAction>> = data.map { p ->
         parseActions(p[Keys.SWIPE_LEFT_EXTRA])
     }
+
+    /*
+     * СВАЙПЫ РАЗДЕЛА «SMS» (2.1.0).
+     *
+     * Было: переписки брали свайпы журнала — вправо «Позвонить», влево
+     * «SMS», и «SMS» по переписке открывал ту же переписку. Автор,
+     * 07.11.2026: «свайпы должны быть „SMS“ и „удалить“, настраиваться
+     * отдельно от журнала звонков». Стало: свои ключи, по умолчанию
+     * вправо — «SMS» (открыть переписку), влево — «Удалить».
+     */
+    val smsSwipeRight: Flow<SwipeAction> =
+        data.map { SwipeAction.from(it[Keys.SMS_SWIPE_RIGHT] ?: SwipeAction.SMS.key) }
+    val smsSwipeLeft: Flow<SwipeAction> =
+        data.map { SwipeAction.from(it[Keys.SMS_SWIPE_LEFT] ?: SwipeAction.DELETE_FROM_LOG.key) }
+    val smsSwipeRightExtra: Flow<List<SwipeAction>> = data.map { parseActions(it[Keys.SMS_SWIPE_RIGHT_EXTRA]) }
+    val smsSwipeLeftExtra: Flow<List<SwipeAction>> = data.map { parseActions(it[Keys.SMS_SWIPE_LEFT_EXTRA]) }
+
+    suspend fun setSmsSwipeRight(v: SwipeAction) = edit("sms_swipe_right", v.key) { it[Keys.SMS_SWIPE_RIGHT] = v.key }
+    suspend fun setSmsSwipeLeft(v: SwipeAction) = edit("sms_swipe_left", v.key) { it[Keys.SMS_SWIPE_LEFT] = v.key }
+    suspend fun setSmsSwipeRightExtra(actions: List<SwipeAction>) =
+        edit("sms_swipe_right_extra", actions.size) {
+            it[Keys.SMS_SWIPE_RIGHT_EXTRA] = actions.joinToString(",") { a -> a.key }
+        }
+    suspend fun setSmsSwipeLeftExtra(actions: List<SwipeAction>) =
+        edit("sms_swipe_left_extra", actions.size) {
+            it[Keys.SMS_SWIPE_LEFT_EXTRA] = actions.joinToString(",") { a -> a.key }
+        }
+
+    /*
+     * ЗАКРЕПЛЁННЫЕ ПЕРЕПИСКИ (2.1.0) — отдельно от закреплённых журнала
+     * (автор: «нужна возможность закрепления в SMS, отдельное от журнала
+     * звонков»). Храним адрес переписки в E.164 (или как есть у буквенных
+     * отправителей, «Bank»), порядок — порядок закрепления.
+     */
+    val smsPinned: Flow<List<String>> = data.map { p ->
+        p[Keys.SMS_PINNED]?.split('\n')?.map { it.trim() }?.filter { it.isNotEmpty() }?.distinct().orEmpty()
+    }
+
+    suspend fun setSmsPinned(addresses: List<String>) =
+        edit("sms_pinned", addresses.size) { it[Keys.SMS_PINNED] = addresses.joinToString("\n") }
+
+    /*
+     * АРХИВ (2.1.0) — правила в ArchiveRules. Было: только удалить; стало —
+     * «В архив» из режима выбора журнала и SMS. Изменение — одним edit
+     * (прочитать и записать внутри него): два быстрых нажатия «В архив»
+     * подряд не должны терять первое, как при записи готового списка.
+     */
+    val smsArchived: Flow<Map<String, Long>> = data.map { ArchiveRules.parseSms(it[Keys.SMS_ARCHIVED]) }
+
+    suspend fun updateSmsArchived(transform: (Map<String, Long>) -> Map<String, Long>) =
+        edit("sms_archived", null) {
+            it[Keys.SMS_ARCHIVED] = ArchiveRules.formatSms(transform(ArchiveRules.parseSms(it[Keys.SMS_ARCHIVED])))
+        }
+
+    val callArchived: Flow<Set<Long>> = data.map { ArchiveRules.parseCallIds(it[Keys.CALL_ARCHIVED]) }
+
+    suspend fun updateCallArchived(transform: (Set<Long>) -> Set<Long>) =
+        edit("call_archived", null) {
+            it[Keys.CALL_ARCHIVED] = ArchiveRules.formatCallIds(transform(ArchiveRules.parseCallIds(it[Keys.CALL_ARCHIVED])))
+        }
 
     private fun parseActions(raw: String?): List<SwipeAction> =
         raw?.split(',')
@@ -844,11 +919,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     val scamMemo: Flow<Boolean> = data.map { it[Keys.SCAM_MEMO] ?: true }
 
     /*
-     * Сообщения (2.0.0). Умолчания — те же, что у SmsSettings: писать
-     * в диалере — да, SMS в журнале — да, отчёт о доставке — нет (часть
-     * операторов берёт за него плату).
+     * Сообщения (2.0.0). Умолчание — то же, что у SmsSettings: отчёт
+     * о доставке — нет (часть операторов берёт за него плату).
      */
-    val smsInApp: Flow<Boolean> = data.map { it[Keys.SMS_IN_APP] ?: true }
     val smsDeliveryReports: Flow<Boolean> = data.map { it[Keys.SMS_DELIVERY_REPORTS] ?: false }
 
     /**
@@ -860,6 +933,21 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      */
     val dialpadOpenAtStart: Flow<Boolean> =
         data.map { it[Keys.DIALPAD_OPEN_AT_START] ?: false }
+
+    /**
+     * ВХОДЯЩИЙ ПЛАШКОЙ СВЕРХУ (2.1.0). Включено — пока телефон
+     * разблокирован и экран горит, входящий — плашкой с фото, «Ответить»
+     * и «Отклонить» поверх того, чем человек занят (OgnelissInCallService).
+     * Выключено — входящий всегда открывает экран вызова на весь экран.
+     *
+     * По умолчанию ВКЛЮЧЕНО (автор, 08.11.2026, после вопроса тестировщика):
+     * так ведут себя стандартные звонилки. Где плашка может не всплыть или
+     * не продержаться (IncomingScreen.bannerSafe) — экран вызова целиком
+     * и при включённой настройке.
+     */
+    val incomingBanner: Flow<Boolean> = data.map { it[Keys.INCOMING_BANNER] ?: true }
+
+    suspend fun setIncomingBanner(v: Boolean) = edit("incoming_banner", v) { it[Keys.INCOMING_BANNER] = v }
 
     /** Предлагать напоминание после сброшенного вызова. */
     val callbackSuggestion: Flow<Boolean> =
@@ -1105,11 +1193,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      * Настройки сообщений повторяются в SmsSettings (SharedPreferences):
      * приёмник SMS и кнопки «Написать» решают сразу, без чтения DataStore.
      */
-    suspend fun setSmsInApp(v: Boolean) {
-        edit("sms_in_app", v) { it[Keys.SMS_IN_APP] = v }
-        com.ogneliss.dialer.sms.SmsSettings.put(context, com.ogneliss.dialer.sms.SmsSettings.KEY_IN_APP, v)
-    }
-
     suspend fun setSmsDeliveryReports(v: Boolean) {
         edit("sms_delivery_reports", v) { it[Keys.SMS_DELIVERY_REPORTS] = v }
         com.ogneliss.dialer.sms.SmsSettings.put(context, com.ogneliss.dialer.sms.SmsSettings.KEY_DELIVERY_REPORTS, v)

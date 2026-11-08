@@ -12,6 +12,47 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 08.11.2026, вечер — 2.1.0 (57): плашка входящего, светлый значок, слияние в master
+
+- **Входящий плашкой — по умолчанию**, с фото контакта и типом номера
+  (`call/CallerCard.kt`); плашка держится, пока звонит; экран погас и включили —
+  экран вызова. Разбор — `docs/RELEASE_NOTES_2.1.0.md`, шестая серия.
+- **Светлый значок** (фон `#F2F5FA`, графитовая трубка, пламя и лиса прежние):
+  `scripts/make_light_master.py` → `make_icons.py`; тёмный исходник 1.5.5 —
+  `store/source/icon_master_dark_1024.png` (из него и монохромный слой).
+- Ветка `ccr-afe8e468-414w5e` слита в `master` по просьбе автора — выпуск
+  запускает он (метка `v2.1.0`, `.github/workflows/release.yml`).
+
+## 08.11.2026 — 2.1.0 (57) дополнена: прошивки, SMS без выбора, тихий интерфейс
+
+- **Правила автора:** приложение работает как ожидается на любой прошивке, с Google
+  и без, без выбора со стороны человека; ошибки и пояснения не показываются —
+  действие выполняется или пропускается; человеку — только критичное с кнопкой
+  (принцип 5 `docs/OGNELISS_DESIGN_SYSTEM.md`).
+- **Роль SMS:** сама просится только там, где по умолчанию нет приложения с RCS
+  (`SmsRole.autoOfferAllowed`); иначе режим «спутник» — «Написать» открывает
+  приложение SMS по умолчанию. Настройки `sms_in_app` больше нет.
+- **Звонки на прошивках** — `docs/OEM_COMPAT.md`, раздел 2.1.0; **SMS и тихий
+  интерфейс** — `docs/RELEASE_NOTES_2.1.0.md`, третья и четвёртая серии.
+- Сборка в облаке: зеркало Maven Central от Google — `~/.gradle/init.d/central-mirror.gradle`
+  (Maven Central отвечал 429), Robolectric — `robolectric.dependency.repo.url`.
+
+## Сделано 07.11.2026, вторая сессия — 2.1.0 (57)
+
+По списку автора: SMS — свои свайпы («SMS» / «Удалить»), дни, закреплённые переписки,
+перелистывание журнал ⇄ SMS ⇄ контакты, каркас без верхней строки и «Написать» кнопкой;
+SIM порядковым номером в переписке; цвета SIM (`ui/theme/SimColors.kt`); серые кнопки
+звонка и SMS, когда нельзя (`util/CallAvailability.kt`); раздел настроек «SMS» и новые
+группы главного экрана. Разбор — `docs/RELEASE_NOTES_2.1.0.md`; сравнение с почтой
+и предложения — `docs/MAIL_COMPARISON.md`.
+
+Сборка в облаке: окружение «Ogneliss» (dl.google.com, downloads.gradle.org) — SDK
+ставится `sdkmanager "platforms;android-37.0" "build-tools;37.0.0"`; демону Gradle нужен
+JDK 17 (`apt-get install openjdk-17-jdk-headless`, в `~/.gradle/gradle.properties`
+`org.gradle.java.installations.paths`), а строку `toolchainVendor` в
+`gradle/gradle-daemon-jvm.properties` убирать только локально (foojay закрыт).
+Тесты — с `LANG=C.UTF-8` и `-Dsun.jnu.encoding=UTF-8` (кириллица в именах тестов).
+
 ## Следующая сессия (список от 07.11.2026)
 
 **Прочитать сначала:** этот файл → `docs/PROGRESS.md` (раздел 2.0.0–2.0.2) →
@@ -20,7 +61,12 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 MessageNotifications, OtpDetector), `ui/conversation/`, `ui/RootScreen.kt` (маршруты, окно
 после звонка), `MainActivity.kt` (запрос ролей), `util/RoleAccess.kt`.
 
-**Автор — сборка и проверка 2.0.2:**
+**Автор — 2.1.0 (57) вместо 2.0.2:** AAB 2.1.0 в тест, «Что нового» — `store/whats_new_2.1.0.txt`;
+проверить на телефоне то же, что ниже, плюс: свайпы SMS («SMS» / «Удалить», Настройки → SMS),
+закрепление переписки, дни, перелистывание журнал ⇄ SMS ⇄ контакты, серые кнопки в режиме
+полёта и без SIM, цвета SIM при двух картах, выбор «SIM 1 / SIM 2» в переписке, шторку «Ещё» в SMS.
+
+**Автор — сборка и проверка (список для 2.0.2, остаётся в силе):**
 - собирать из чистой папки или после `git pull`: старый `data/JournalSource.kt` в рабочей
   папке ломает сборку;
 - журнал — только звонки, касание — карточка звонков;
@@ -36,23 +82,26 @@ MessageNotifications, OtpDetector), `ui/conversation/`, `ui/RootScreen.kt` (ма
 - при сбое — `ogneliss.log` и снимки экрана в чат.
 
 **Автор — Google Play:**
-- AAB 2.0.2 (56) в тест; «Что нового» — `store/whats_new_2.0.2.txt`;
+- AAB 2.1.0 (57) в тест; «Что нового» — `store/whats_new_2.1.0.txt`;
 - обновить декларацию SMS и снять видео (`PLAY_DECLARATION_2.0.0.md` §2–5);
 - декларация контактов — до 27.01.2027 (§9);
 - описание и краткое описание — `store/LISTING_*.md`; Data safety — без изменений;
 - сайт с политикой 1.2 выложить до отправки на проверку (архивы сайта от 06–07.11.2026).
 
 **Следующая сессия (Claude) — по итогам проверки:**
-- исправления по логу и снимкам; если 2.0.2 уже загружена — сначала спросить про 2.0.3;
+- исправления по логу и снимкам; если 2.1.0 уже загружена — сначала спросить про 2.1.1;
 - предложено, ждёт решения автора: страница FAQ на ogneliss.ru (нужны правила nginx);
 - старые открытые пункты (`PROGRESS.md`): вычитка de/fr носителем, Room
-  `generateKotlin`, метка `v2.0.2` для APK на GitHub (секреты `APK_*`), автопроверка GitHub
+  `generateKotlin`, метка `v2.1.0` для APK на GitHub (секреты `APK_*`), автопроверка GitHub
   на `main`/`develop` при работе в `master`, чтение журнала без роли «Телефон»;
 - лето 2027, targetSdk 38: `MANAGE_CONTACTS` или системные `ACTION_INSERT`/`ACTION_EDIT`
   (`PLAY_COMPLIANCE.md`).
 
 ## Состояние
 
+- **2.1.0** (versionCode 57) — к выпуску (`docs/RELEASE_NOTES_2.1.0.md`): SMS как журнал, раздел
+  настроек «SMS», цвета SIM, серые кнопки без связи. Номер — решение автора 07.11.2026;
+  2.1.0 включает всё из 2.0.2.
 - **2.0.2** (versionCode 56) — к выпуску (`docs/RELEASE_NOTES_2.0.2.md`); 2.0.1 (55) ушла в тестирование
   07.11.2026, 2.0.0 (54) — 06.11.2026 (`docs/RELEASE_NOTES_2.0.0.md`). Ветка `sms` влита в `master`
   и держится равной ему. Последний коммит сессии 07.11.2026 — `3f8b30b` (два предупреждения
@@ -260,7 +309,11 @@ MessageNotifications, OtpDetector), `ui/conversation/`, `ui/RootScreen.kt` (ма
   `terms`, `privacy`, `licenses`) обновлены здесь под лицензию Apache 2.0;
   их нужно перенести в многоязычные исходники сборщика Mail. До переноса
   на сервер выкладываются готовые страницы `ogneliss-site-dialer-1.5.7.zip`.
-- Интерфейс — по `docs/DESIGN_SYSTEM.md`; отступы — `Space.*`, не числами.
+- Интерфейс — по общей дизайн-системе Dialer и Mail `docs/OGNELISS_DESIGN_SYSTEM.md`
+  (одинаковый файл в обоих репозиториях, правка — в обоих; перед упаковкой
+  `python3 scripts/design_tokens_check.py --other ../OgnelissMail`) и подробностям
+  `docs/DESIGN_SYSTEM.md`; отступы — `Space.*`, не числами. Открытые решения Д1–Д12 —
+  раздел 8 общего документа.
 - Верх экрана (1.5.8): корень отступает только по бокам и снизу — каждый экран
   сам учитывает строку состояния (`ScreenScaffold` или `Scaffold` с
   `contentWindowInsets = WindowInsets.safeDrawing`). Новый экран без Scaffold
@@ -310,6 +363,13 @@ MessageNotifications, OtpDetector), `ui/conversation/`, `ui/RootScreen.kt` (ма
 | Свой редактор контактов | `ui/contactedit/*`, `data/ContactEditRepository.kt`, `data/ContactEditModel.kt`, `data/ContactPhotos.kt` |
 | Подпись раздела, линия между строками, карточка группы | `ui/components/OgnelissPanel.kt` (`SectionBand`, `RowDivider`, `OgnelissCard`) |
 | Свайпы: строка, панели, действия | `ui/components/swipe/*`, `DialerViewModel.handleSwipe / revealActionsFor` |
+| Свайпы и закреплённые раздела SMS (свои) | `Prefs.smsSwipe*`, `Prefs.smsPinned`, `sms/SmsPins.kt`, `ui/conversation/MessagesScreen.kt` (2.1.0) |
+| Роль SMS сама (не при RCS), «Написать» без роли — в приложение SMS | `SmsRole.autoOfferAllowed`, `composeTarget`, `handOff` (2.1.0) |
+| Доходят ли SMS: уведомления, автозапуск MIUI — полоса | `sms/SmsHealth.kt` (`problem`, `fix`), `ui/conversation/MessagesParts.kt` (2.1.0) |
+| MMS: не скачалось — повторы и «Загрузить» | `sms/MmsDownloads.kt`, `MmsRetryJob` (2.1.0) |
+| Цвета SIM | `ui/theme/SimColors.kt`, `SimBadge` (`NumberPickerSheet.kt`) (2.1.0) |
+| Значки SMS (счётчик) и «Контакты» на главном экране | `widget/SectionWidgets.kt`, `res/layout/widget_section.xml`, `res/xml/widget_*_info.xml` (2.1.0) |
+| Можно ли звонить и писать (серые кнопки) | `util/CallAvailability.kt`, `LocalCallAvailability` в `RootScreen` (2.1.0) |
 | Выбор действий свайпа (до 3) | `ui/screens/SwipeActionsDialog.kt` |
 | Мессенджеры контакта (по книге) | `data/ContactMessengers.kt` |
 | Экран вызова | `call/InCallActivity.kt`, `call/CallManager.kt` |
@@ -358,7 +418,8 @@ MessageNotifications, OtpDetector), `ui/conversation/`, `ui/RootScreen.kt` (ма
 - Видеозвонки — отложены до просьб в отзывах (`ROADMAP.md`).
 - Флагов в выборе языка нет (язык ≠ страна).
 - Зелёный цвет — только звонок; управление — основной (синий).
-- Меню — шторками с группами (`SheetGroup`), не выпадающими меню;
+- Меню — шторками, не выпадающими меню; «Ещё» с 2.1.0 — плитками по 4 в ряд по категориям (`OverflowMenuBody`, `MenuGroup`,
+  автор 08.11.2026: «не списком, а панелями»), остальные шторки — группами (`SheetGroup`);
   действия с записью по долгому нажатию — карточками (`ActionCards`, 1.5.7).
 - Удаление из журнала — с «Отменить», без окна подтверждения для одной
   записи (`deleteGroupsWithUndo`, 1.5.7).

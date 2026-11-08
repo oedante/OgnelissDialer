@@ -1,6 +1,8 @@
 package com.ogneliss.dialer.ui
 
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -20,9 +22,14 @@ import org.junit.Test
  * запуске: он только что выдал доступ к журналу, видит пустоту — и первый
  * вывод «разрешения не сработали».
  *
- * Причин пустоты четыре, и подсказки к ним разные. Эти тесты сторожат
+ * Причин пустоты четыре, и заголовки у них разные. Эти тесты сторожат
  * то, что разные причины не схлопнутся однажды в одну общую заглушку
  * «ничего нет», оставляющую человека в тупике.
+ *
+ * 2.1.0 (правило автора 07.11.2026): под заголовком пояснений нет,
+ * кнопка — только «Разрешить» там, где без доступа приложение
+ * не работает. «Сбросить поиск» снята — тест на неё стал тестом
+ * на её отсутствие.
  */
 class EmptyStateTest {
 
@@ -32,14 +39,14 @@ class EmptyStateTest {
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test
-    fun пустойЖурналОбъясняетПричину() {
+    fun пустойЖурналНазываетПричинуБезКнопки() {
         compose.setContent {
-            OgnelissDialerTheme { EmptyState(reason = EmptyReason.NoCalls) }
+            OgnelissDialerTheme { EmptyState(reason = EmptyReason.NoCalls, onAction = {}) }
         }
 
         compose.onNodeWithText(context.getString(R.string.empty_no_calls)).assertIsDisplayed()
-        compose.onNodeWithText(context.getString(R.string.empty_no_calls_hint))
-            .assertIsDisplayed()
+        // Без пояснения и без кнопки: делать тут нечего (2.1.0)
+        compose.onAllNodes(hasClickAction()).assertCountEquals(0)
     }
 
     @Test
@@ -75,27 +82,25 @@ class EmptyStateTest {
     }
 
     @Test
-    fun ненайденныйПоискПредлагаетСброс() {
-        var cleared = false
-
+    fun ненайденныйПоискБезКнопкиСброса() {
+        // 2.1.0: у поля поиска свой крестик — кнопка под пустым
+        // результатом для работы не нужна
         compose.setContent {
             OgnelissDialerTheme {
                 EmptyState(
                     reason = EmptyReason.NoSearchResults("9999"),
-                    onAction = { cleared = true }
+                    onAction = {}
                 )
             }
         }
 
-        compose.onNodeWithText(context.getString(R.string.empty_clear_search)).performClick()
-
-        assertTrue(cleared)
+        compose.onNodeWithText(context.getString(R.string.empty_no_results)).assertIsDisplayed()
+        compose.onAllNodes(hasClickAction()).assertCountEquals(0)
     }
 
     @Test
     fun компактныйВариантПоказываетТолькоЗаголовок() {
-        // В ландшафте и на узкой панели высоты под иллюстрацию
-        // и подсказку нет
+        // В ландшафте и на узкой панели высоты под значок нет
         compose.setContent {
             OgnelissDialerTheme {
                 EmptyState(reason = EmptyReason.NoCalls, compact = true)
@@ -103,7 +108,5 @@ class EmptyStateTest {
         }
 
         compose.onNodeWithText(context.getString(R.string.empty_no_calls)).assertIsDisplayed()
-        compose.onNodeWithText(context.getString(R.string.empty_no_calls_hint))
-            .assertDoesNotExist()
     }
 }

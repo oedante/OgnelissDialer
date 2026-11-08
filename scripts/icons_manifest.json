@@ -24,6 +24,11 @@
   "filled": false,
   "autoMirror": false
  },
+ "Archive": {
+  "symbol": "archive",
+  "filled": false,
+  "autoMirror": false
+ },
  "ArrowBack": {
   "symbol": "arrow_back",
   "filled": false,
@@ -516,6 +521,11 @@
  },
  "TouchApp": {
   "symbol": "touch_app",
+  "filled": false,
+  "autoMirror": false
+ },
+ "Unarchive": {
+  "symbol": "unarchive",
   "filled": false,
   "autoMirror": false
  },

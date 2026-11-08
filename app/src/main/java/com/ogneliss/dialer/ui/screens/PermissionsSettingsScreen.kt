@@ -1,68 +1,49 @@
 package com.ogneliss.dialer.ui.screens
 
-import com.ogneliss.dialer.ui.theme.Space
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.lazy.itemsIndexed
-import com.ogneliss.dialer.ui.components.GroupPosition
-import com.ogneliss.dialer.ui.components.GroupedRow
-import com.ogneliss.dialer.ui.theme.OgnelissIcons
-
+import android.os.SystemClock
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.*
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import com.ogneliss.dialer.ui.components.OgnelissListRow
 import com.ogneliss.dialer.R
-import com.ogneliss.dialer.ui.components.OgnelissDialog
+import com.ogneliss.dialer.ui.components.GroupPosition
+import com.ogneliss.dialer.ui.components.GroupedRow
 import com.ogneliss.dialer.ui.components.ScreenScaffold
 import com.ogneliss.dialer.ui.theme.Dimens
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
+import com.ogneliss.dialer.ui.theme.Space
 import com.ogneliss.dialer.util.AppPermissions
+import com.ogneliss.dialer.util.AutoStart
 import com.ogneliss.dialer.util.IncomingCallAccess
 
 /**
  * ПЕРЕЧЕНЬ РАЗРЕШЕНИЙ В НАСТРОЙКАХ.
  *
  * ── Зачем нужен отдельный экран ────────────────────────────────────────────
- * Мастер при первом запуске проходят один раз, и часть разрешений там
- * пропускают. Позже человек обнаруживает, что чего-то не хватает —
- * и должен иметь возможность посмотреть текущее состояние и доправить,
- * не переустанавливая приложение.
+ * Мастер при первом запуске показывает только роль «Телефон» (2.1.0),
+ * остальное выдаётся само или одним системным окном. Здесь видно всё
+ * сразу и можно доправить, не переустанавливая приложение.
  *
- * Системный экран разрешений Android для этого не годится: он показывает
- * технические названия групп и ничего не говорит о том, что именно
- * перестанет работать в этом приложении.
- *
- * ── Что показываем ─────────────────────────────────────────────────────────
- * Состояние каждого разрешения, обязательность и последствия отказа.
- * Нажатие на невыданное запрашивает его заново; если система больше
- * не показывает диалог (пользователь отказал дважды), открываются
- * системные настройки приложения.
+ * ── Что показываем (2.1.0) ─────────────────────────────────────────────────
+ * Было: у каждой строки — пояснение, «(необязательно)», строка-подсказка
+ * под системными настройками. Правило автора — не объяснять, а выполнять.
+ * Стало: название, состояние (отметка) и кнопка там, где есть что
+ * сделать. Работа в фоне и автозапуск — здесь, а не в мастере.
+ * Системное окно разрешения не появилось (уже дважды отказали — Android
+ * отвечает отказом сразу) — открываются свойства приложения, без слов.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PermissionsSettingsScreen(
     isDefaultDialer: Boolean,
-    /**
-     * Запрос роли телефона.
-     *
-     * Возвращает false, если оболочка заблокировала системное окно.
-     * Тогда показываем объяснение и путь в настройки — молча уводить
-     * туда нельзя, человек не поймёт, куда попал.
-     */
+    /** Запрос роли телефона. false — окно роли не открылось. */
     onRequestDefaultDialer: () -> Boolean,
+    /** «Приложения по умолчанию» — когда окно роли не открылось. */
     onOpenSystemSettings: () -> Unit = {},
     onBack: () -> Unit
 ) {
@@ -73,9 +54,15 @@ fun PermissionsSettingsScreen(
         AppPermissions.missing(context).map { it.id }.toSet()
     }
 
+    // Окно разрешения: ответ быстрее человеческого — окна не было
+    var askedAt by remember { mutableLongStateOf(0L) }
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
-    ) { refreshTrigger++ }
+    ) { result ->
+        refreshTrigger++
+        val quick = SystemClock.elapsedRealtime() - askedAt < QUICK_ANSWER_MS
+        if (quick && result.values.any { !it }) AppPermissions.openAppSettings(context)
+    }
 
     // Разрешения прошивки выдают в её настройках — после возврата
     // состояние перечитывается (1.8.1)
@@ -88,16 +75,7 @@ fun PermissionsSettingsScreen(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
     val incoming = remember(refreshTrigger) { IncomingCallAccess.state(context) }
-
-    /*
-     * Окно выбора диалера по умолчанию не открылось.
-     *
-     * Выбор уже отклоняли (система больше не спрашивает) или оболочка
-     * заменила окно своим. Без объяснения человек упирается в стену:
-     * кнопка нажата, ничего не произошло. Разбор — DefaultDialer
-     * .openSystemDefaultApps.
-     */
-    var roleBlocked by remember { mutableStateOf(false) }
+    val battery = remember(refreshTrigger) { AppPermissions.isIgnoringBatteryOptimizations(context) }
 
     /*
      * Роль SMS (2.0.0) — по желанию: строка показывает состояние и ведёт
@@ -114,27 +92,9 @@ fun PermissionsSettingsScreen(
     }
     val isDefaultSms = remember(refreshTrigger) { com.ogneliss.dialer.sms.SmsRole.isDefault(context) }
 
-    if (roleBlocked) {
-        // Общий контейнер приложения вместо AlertDialog
-        OgnelissDialog(
-            onDismissRequest = { roleBlocked = false },
-            title = stringResource(R.string.dialer_role_blocked_title),
-            content = { Text(stringResource(R.string.dialer_role_blocked_text)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    roleBlocked = false
-                    onOpenSystemSettings()
-                }) {
-                    Text(stringResource(R.string.dialer_role_open_settings))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { roleBlocked = false }) {
-                    Text(stringResource(R.string.nav_close))
-                }
-            }
-        )
-    }
+    val grant = stringResource(R.string.onboarding_grant)
+    val assign = stringResource(R.string.onboarding_default_action)
+    val open = stringResource(R.string.permissions_open)
 
     ScreenScaffold(
         // Как настройки Ogneliss Mail: серо-голубая страница, группы — карточками (1.5.6)
@@ -145,22 +105,17 @@ fun PermissionsSettingsScreen(
     ) { padding ->
         LazyColumn(Modifier.padding(padding).fillMaxSize()) {
 
-            // Роль диалера отдельной строкой: это не разрешение,
-            // а системная роль, и запрашивается иначе
-            // Роль и разрешения — одной группой с рамкой (строгий стиль, 1.5.1)
-            item {
+            // Роль диалера и разрешения — одной группой: без них звонки не работают
+            item(key = "dialer_role") {
                 GroupedRow(GroupPosition.FIRST) {
-                PermissionRow(
-                    title = stringResource(R.string.onboarding_default_title),
-                    description = stringResource(R.string.wizard_dialer_rationale),
-                    granted = isDefaultDialer,
-                    required = true,
-                    onClick = {
-                        if (!isDefaultDialer && !onRequestDefaultDialer()) {
-                            roleBlocked = true
-                        }
-                    }
-                )
+                    PermissionRow(
+                        title = stringResource(R.string.onboarding_default_title),
+                        status = if (isDefaultDialer) Status.GRANTED else Status.MISSING,
+                        required = true,
+                        action = assign,
+                        // Окно роли не открылось — сразу «Приложения по умолчанию»
+                        onAction = { if (!onRequestDefaultDialer()) onOpenSystemSettings() }
+                    )
                 }
             }
 
@@ -169,38 +124,71 @@ fun PermissionsSettingsScreen(
                 GroupedRow(
                     if (index == permissionGroups.lastIndex) GroupPosition.LAST else GroupPosition.MIDDLE
                 ) {
-                PermissionRow(
-                    title = stringResource(group.titleRes),
-                    description = stringResource(group.rationaleRes),
-                    granted = group.id !in missing,
-                    required = group.required,
-                    onClick = {
-                        if (group.id in missing) {
+                    PermissionRow(
+                        title = stringResource(group.titleRes),
+                        status = if (group.id in missing) Status.MISSING else Status.GRANTED,
+                        required = group.required,
+                        action = grant,
+                        onAction = {
+                            askedAt = SystemClock.elapsedRealtime()
                             launcher.launch(group.toRequest.toTypedArray())
                         }
-                    }
-                )
+                    )
                 }
             }
 
             /*
-             * Экран входящего на прошивках со своими запретами (1.8.1):
-             * Xiaomi, vivo, OPPO/realme/OnePlus, полноэкранные уведомления
-             * Android 14+. Разбор — IncomingCallAccess.
+             * Работа телефона в фоне (2.1.0 — из мастера сюда): экран входящего
+             * на прошивках со своими запретами, исключение из энергосбережения,
+             * автозапуск. Разбор — IncomingCallAccess, AutoStart.
              */
-            if (incoming != IncomingCallAccess.State.NOT_NEEDED) {
-                item(key = "incoming_screen") {
-                    Spacer(Modifier.height(Space.l))
-                    GroupedRow(GroupPosition.SINGLE) {
+            item(key = "background") {
+                Spacer(Modifier.height(Space.l))
+                val showIncoming = incoming != IncomingCallAccess.State.NOT_NEEDED
+                val showAutostart = AutoStart.isSupported()
+                if (showIncoming) {
+                    GroupedRow(GroupPosition.FIRST) {
                         PermissionRow(
                             title = stringResource(R.string.incoming_access_title),
-                            description = stringResource(R.string.incoming_access_text),
-                            granted = incoming == IncomingCallAccess.State.GRANTED,
+                            status = when (incoming) {
+                                IncomingCallAccess.State.GRANTED -> Status.GRANTED
+                                IncomingCallAccess.State.MISSING -> Status.MISSING
+                                else -> Status.UNKNOWN
+                            },
                             required = false,
-                            onClick = {
+                            action = if (incoming == IncomingCallAccess.State.MISSING) grant else open,
+                            onAction = {
                                 IncomingCallAccess.dismissNotice(context)
                                 IncomingCallAccess.open(context)
                             }
+                        )
+                    }
+                }
+                GroupedRow(
+                    when {
+                        !showIncoming && !showAutostart -> GroupPosition.SINGLE
+                        !showIncoming -> GroupPosition.FIRST
+                        !showAutostart -> GroupPosition.LAST
+                        else -> GroupPosition.MIDDLE
+                    }
+                ) {
+                    PermissionRow(
+                        title = stringResource(R.string.settings_battery),
+                        status = if (battery) Status.GRANTED else Status.MISSING,
+                        required = false,
+                        action = grant,
+                        onAction = { AppPermissions.requestIgnoreBatteryOptimizations(context) }
+                    )
+                }
+                if (showAutostart) {
+                    GroupedRow(GroupPosition.LAST) {
+                        PermissionRow(
+                            title = stringResource(R.string.wizard_autostart_title),
+                            // Состояние прошивки не отдают — отметки не ставим
+                            status = Status.UNKNOWN,
+                            required = false,
+                            action = open,
+                            onAction = { AutoStart.open(context) }
                         )
                     }
                 }
@@ -211,27 +199,24 @@ fun PermissionsSettingsScreen(
                 GroupedRow(GroupPosition.SINGLE) {
                     PermissionRow(
                         title = stringResource(R.string.settings_sms_default_app),
-                        description = stringResource(R.string.perm_sms_role_text),
-                        granted = isDefaultSms,
+                        status = if (isDefaultSms) Status.GRANTED else Status.MISSING,
                         required = false,
-                        onClick = { if (!isDefaultSms) requestSmsRole() }
+                        action = assign,
+                        onAction = { requestSmsRole() }
                     )
                 }
             }
 
-            // Путь для случая, когда система больше не показывает диалог:
-            // после двух отказов запрос игнорируется молча, и без этой
-            // строки пользователь оказывается в тупике
-            item {
-                // Общая строка списка: высота и подложка одни на всё
-                // приложение. Разбор — в OgnelissListRow
+            // Свойства приложения в Android: всё остальное — там
+            item(key = "system") {
                 Spacer(Modifier.height(Space.l))
                 GroupedRow(GroupPosition.SINGLE) {
-                    OgnelissListRow(
-                        headline = stringResource(R.string.permissions_open_system),
-                        supporting = stringResource(R.string.permissions_open_system_hint),
-                        leading = { Icon(OgnelissIcons.Settings, null) },
-                        onClick = { AppPermissions.openAppSettings(context) }
+                    PermissionRow(
+                        title = stringResource(R.string.permissions_open_system),
+                        status = null,
+                        required = false,
+                        action = open,
+                        onAction = { AppPermissions.openAppSettings(context) }
                     )
                 }
             }
@@ -239,42 +224,49 @@ fun PermissionsSettingsScreen(
     }
 }
 
+/** Ответ окна разрешения быстрее этого — окна не было (Android больше не спрашивает). */
+private const val QUICK_ANSWER_MS = 800L
+
+/** Что известно о строке: выдано, не выдано или проверить нельзя. */
+private enum class Status { GRANTED, MISSING, UNKNOWN }
+
+/**
+ * Строка: отметка состояния, название и кнопка. Выдано — кнопки нет;
+ * проверить нельзя (автозапуск, vivo) — кнопка всегда, без отметки.
+ */
 @Composable
 private fun PermissionRow(
     title: String,
-    description: String,
-    granted: Boolean,
+    /** null — у строки нет состояния (системные настройки). */
+    status: Status?,
     required: Boolean,
-    onClick: () -> Unit
+    action: String,
+    onAction: () -> Unit
 ) {
     ListItem(
         leadingContent = {
-            Icon(
-                if (granted) OgnelissIcons.CheckCircle else OgnelissIcons.RadioButtonUnchecked,
-                contentDescription = null,
-                tint = when {
-                    granted -> MaterialTheme.colorScheme.primary
-                    required -> MaterialTheme.colorScheme.error
-                    else -> MaterialTheme.colorScheme.outline
-                }
-            )
-        },
-        headlineContent = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(title)
-                if (!required) {
-                    Spacer(Modifier.width(6.dp))
-                    Text(
-                        stringResource(R.string.onboarding_optional),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.outline
-                    )
-                }
+            when (status) {
+                Status.GRANTED -> Icon(
+                    OgnelissIcons.CheckCircle,
+                    contentDescription = stringResource(R.string.wizard_granted),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Status.MISSING, Status.UNKNOWN -> Icon(
+                    OgnelissIcons.RadioButtonUnchecked,
+                    contentDescription = null,
+                    // Обязательное и не выданное — красным: без него звонки не работают
+                    tint = if (status == Status.MISSING && required) MaterialTheme.colorScheme.error
+                    else MaterialTheme.colorScheme.outline
+                )
+                null -> Icon(OgnelissIcons.Settings, contentDescription = null)
             }
         },
-        supportingContent = { Text(description) },
-        modifier = Modifier
-            .heightIn(min = Dimens.MIN_TOUCH_TARGET)
-            .clickable(onClick = onClick)
+        headlineContent = { Text(title) },
+        trailingContent = {
+            if (status != Status.GRANTED) {
+                TextButton(onClick = onAction) { Text(action) }
+            }
+        },
+        modifier = Modifier.heightIn(min = Dimens.MIN_TOUCH_TARGET)
     )
 }

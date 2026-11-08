@@ -8,7 +8,9 @@ import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -72,11 +74,9 @@ fun PhotoCropDialog(
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
-            Text(
-                stringResource(R.string.contact_edit_crop_hint),
-                color = Color.White.copy(alpha = 0.8f),
-                modifier = Modifier.padding(Space.l)
-            )
+            // 2.1.0: без подсказки «Сдвиньте и увеличьте снимок…» — правило автора
+            // 07.11.2026, пояснений не показываем; рамка обрезки говорит сама
+            Spacer(Modifier.height(Space.l))
             var crop by remember { mutableStateOf<Rect?>(null) }
             CropArea(source, Modifier.weight(1f).fillMaxWidth()) { crop = it }
             Row(

@@ -252,8 +252,10 @@ fun SimBadge(slotIndex: Int) {
     // Описание для TalkBack (1.3.2): без него плашка читалась как «1»,
     // похоже на счётчик звонков
     val description = "SIM ${slotIndex + 1}"
+    // 2.1.0: у каждой карты свой цвет (SimColors) — различаются с первого взгляда
+    val simColor = com.ogneliss.dialer.ui.theme.SimColors.of(slotIndex)
     Surface(
-        color = MaterialTheme.colorScheme.secondaryContainer,
+        color = com.ogneliss.dialer.ui.theme.SimColors.container(slotIndex),
         shape = MaterialTheme.shapes.extraSmall,
         modifier = Modifier.clearAndSetSemantics { contentDescription = description }
     ) {
@@ -271,7 +273,7 @@ fun SimBadge(slotIndex: Int) {
                 OgnelissIcons.SimCard,
                 contentDescription = null,
                 // Серым, как подписи-метки писем в Ogneliss Mail (1.5.6)
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = simColor,
                 modifier = Modifier.size(12.dp)
             )
             Spacer(Modifier.width(1.dp))
@@ -279,7 +281,7 @@ fun SimBadge(slotIndex: Int) {
                 (slotIndex + 1).toString(),
                 // labelSmall: подпись под номером — самый тихий текст
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = simColor
             )
         }
     }

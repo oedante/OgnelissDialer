@@ -30,16 +30,16 @@
         <item quantity="many">Выбрано %d записей</item>
         <item quantity="other">Выбрано %d записи</item>
     </plurals>
-    <plurals name="selection_delete_text">
-        <item quantity="one">%d запись будет удалена из журнала вызовов. Отменить это нельзя.</item>
-        <item quantity="few">%d записи будут удалены из журнала вызовов. Отменить это нельзя.</item>
-        <item quantity="many">%d записей будут удалены из журнала вызовов. Отменить это нельзя.</item>
-        <item quantity="other">%d записи будут удалены из журнала вызовов. Отменить это нельзя.</item>
-    </plurals>
     <plurals name="filter_match_count">
         <item quantity="one">Подходит %1$d запись</item>
         <item quantity="few">Подходит %1$d записи</item>
         <item quantity="many">Подходит %1$d записей</item>
         <item quantity="other">Подходит %1$d записи</item>
+    </plurals>
+    <plurals name="widget_sms_unread">
+        <item quantity="one">%1$s: %2$d непрочитанное сообщение</item>
+        <item quantity="few">%1$s: %2$d непрочитанных сообщения</item>
+        <item quantity="many">%1$s: %2$d непрочитанных сообщений</item>
+        <item quantity="other">%1$s: %2$d непрочитанного сообщения</item>
     </plurals>
 </resources>

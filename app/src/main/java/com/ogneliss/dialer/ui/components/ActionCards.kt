@@ -562,12 +562,14 @@ private fun ActionGrid(
  * значок, подпись до двух строк.
  */
 @Composable
-private fun ActionCircle(
+internal fun ActionCircle(
     action: CardAction,
     modifier: Modifier = Modifier,
     selected: Boolean = false,
     iconRotation: Float = 0f,
     description: String? = null,
+    /** Своё содержимое круга вместо значка — фото «Моего контакта» в «Ещё» (2.1.0). */
+    circleContent: (@Composable () -> Unit)? = null,
     /** Долгое нажатие — выбор SIM у «Позвонить» и «SMS» (1.8.0); null — нет. */
     onLongClick: (() -> Unit)? = null,
     onClick: () -> Unit
@@ -606,7 +608,8 @@ private fun ActionCircle(
                 .background(circle),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
+            if (circleContent != null) circleContent()
+            else Icon(
                 action.icon,
                 contentDescription = null,
                 tint = action.tint ?: scheme.onSurface,

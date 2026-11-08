@@ -90,6 +90,21 @@ object IncomingCallAccess {
         }
     }
 
+    /**
+     * Оболочка со своими запретами на окна из фона и всплытие (MIUI/HyperOS,
+     * vivo, ColorOS) — там плашку входящего не показываем (2.1.0,
+     * IncomingScreen.bannerSafe).
+     */
+    val restrictiveShell: Boolean get() = shell != Shell.OTHER
+
+    /**
+     * Android Go: «Поверх других приложений» там не выдаётся вовсе (2.1.0).
+     * Было: шаг и строка ColorOS просили его и на Go — человек попадал
+     * на экран, где переключателя нет.
+     */
+    private fun lowRam(context: Context): Boolean =
+        context.getSystemService(android.app.ActivityManager::class.java)?.isLowRamDevice == true
+
     // Коды AppOps MIUI/HyperOS — не из SDK, из прошивки
     private const val MIUI_OP_SHOW_WHEN_LOCKED = 10020
     private const val MIUI_OP_BACKGROUND_START_ACTIVITY = 10021
@@ -102,8 +117,11 @@ object IncomingCallAccess {
                 false -> State.MISSING
                 null -> State.UNKNOWN
             }
-            Shell.COLOR_OS ->
-                if (AppPermissions.canDrawOverlays(context)) State.GRANTED else State.MISSING
+            Shell.COLOR_OS -> when {
+                lowRam(context) -> State.NOT_NEEDED
+                AppPermissions.canDrawOverlays(context) -> State.GRANTED
+                else -> State.MISSING
+            }
             Shell.VIVO -> State.UNKNOWN
             Shell.OTHER -> State.NOT_NEEDED
         }
@@ -130,6 +148,48 @@ object IncomingCallAccess {
             check.invoke(ops, op, Process.myUid(), context.packageName) == AppOpsManager.MODE_ALLOWED
         }
     }.getOrNull()
+
+    /**
+     * Экран вызова почти наверняка не покажется (2.1.0): MIUI/HyperOS,
+     * и запрет подтверждён. Тогда уведомление с кнопками — сразу, а не через
+     * 1,5 с ожидания окна (IncomingScreen).
+     */
+    fun likelyBlocked(context: Context): Boolean =
+        shell == Shell.MIUI && state(context) == State.MISSING
+
+    /** Шаг мастера «Экран входящего вызова»: что разрешить. */
+    enum class Step { MIUI, OVERLAY }
+
+    /*
+     * ШАГ МАСТЕРА — ТОЛЬКО ГДЕ ЗАПРЕТ ИЗВЕСТЕН ЗАРАНЕЕ (2.1.0).
+     *
+     * Было: шаг показывался на всех прошивках со своими запретами и при
+     * отозванных полноэкранных уведомлениях — подсказкой даже там, где
+     * проверить ничего нельзя (vivo). Правило автора: человек видит только
+     * критичное и только когда оно точно случилось или точно случится.
+     * Стало: шаг до первого звонка — на MIUI/HyperOS, когда коды AppOps
+     * прямо говорят «запрещено», и на ColorOS, когда «Поверх других
+     * приложений» и правда не выдано (не на Android Go). vivo и отозванные
+     * полноэкранные уведомления — только после звонка, у которого экран
+     * вызова действительно не показался (полоса в приложении).
+     */
+    fun stepBeforeCalls(context: Context): Step? = when (shell) {
+        Shell.MIUI -> if (miuiAllowed(context) == false) Step.MIUI else null
+        Shell.COLOR_OS ->
+            if (!lowRam(context) && !AppPermissions.canDrawOverlays(context)) Step.OVERLAY else null
+        else -> null
+    }
+
+    private const val KEY_STEP_SHOWN = "step_shown"
+
+    /** Шаг уже показывали — второй раз мастер ради него не открывается. */
+    fun stepShownBefore(context: Context): Boolean =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_STEP_SHOWN, false)
+
+    fun markStepShown(context: Context) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit().putBoolean(KEY_STEP_SHOWN, true).apply()
+    }
 
     /** Для журнала разбора: что известно на этом телефоне. */
     fun describe(context: Context): String =
@@ -169,11 +229,20 @@ object IncomingCallAccess {
             add(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageUri))
         }
 
+        /*
+         * БЕЗ ПРЕДПРОВЕРКИ resolveActivity (2.1.0).
+         *
+         * Было: каждый экран сначала искали через resolveActivity. С Android
+         * 11 чужие пакеты (com.miui.securitycenter, com.vivo.permissionmanager…)
+         * приложению не видны без <queries>, поиск отвечал «нет», и кнопка
+         * открывала только свойства приложения. Стало: запускаем по очереди;
+         * нет экрана — ActivityNotFoundException, не открыт наружу —
+         * SecurityException, ловим и берём следующий. Запуск по имени
+         * компонента видимости пакета не требует.
+         */
         for (intent in candidates) {
             val opened = runCatching {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                if (intent.resolveActivity(context.packageManager) == null) return@runCatching false
-                context.startActivity(intent)
+                context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                 true
             }.getOrDefault(false)
             if (opened) {

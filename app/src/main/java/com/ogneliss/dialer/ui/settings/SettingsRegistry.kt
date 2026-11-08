@@ -78,6 +78,12 @@ enum class SettingsCategory(
      * Заметки переехали в «Журнал»: срок хранения относится к тому,
      * что человек записал, а записывает он в журнале и карточке.
      */
+    SIM(
+        "settings/sim",
+        R.string.settings_section_sim,
+        R.string.settings_section_sim_summary,
+        OgnelissIcons.SimCard
+    ),
     CALLS(
         "settings/calls",
         R.string.settings_section_calls,
@@ -90,17 +96,23 @@ enum class SettingsCategory(
         R.string.settings_section_log_summary,
         OgnelissIcons.List
     ),
-    SIM(
-        "settings/sim",
-        R.string.settings_section_sim,
-        R.string.settings_section_sim_summary,
-        OgnelissIcons.SimCard
-    ),
     QUICK_ACCESS(
         "settings/quick",
         R.string.settings_section_quick,
         R.string.settings_section_quick_summary,
         OgnelissIcons.Bolt
+    ),
+    /*
+     * «SMS» (2.1.0). Было: настройки сообщений жили подгруппой в «Журнале
+     * вызовов», хотя журнал с 2.0.2 — только звонки, а у SMS свой раздел
+     * на нижней панели. Стало: свой раздел — приложение SMS, свайпы
+     * переписок, мессенджеры.
+     */
+    MESSAGES(
+        "settings/messages",
+        R.string.nav_messages,
+        R.string.settings_section_messages_summary,
+        OgnelissIcons.Textsms
     ),
     SPAM(
         "settings/spam",
@@ -422,6 +434,13 @@ object SettingsRegistry {
             groupRes = R.string.settings_group_log_view
         ),
         SettingEntry(
+            "dialpad_open_at_start", SettingsCategory.CALL_LOG,
+            R.string.settings_dialpad_open, R.string.settings_dialpad_open_text,
+            SettingKind.Switch("dialpad_open_at_start"),
+            // 2.1.0: из «Оформления» — это поведение журнала при запуске
+            groupRes = R.string.settings_group_log_view
+        ),
+        SettingEntry(
             "sort_order", SettingsCategory.CALL_LOG,
             R.string.settings_sort_order, R.string.settings_sort_order_text,
             SettingKind.Choice("sort_order"),
@@ -438,25 +457,48 @@ object SettingsRegistry {
          * «Приложение SMS» — действие: роль выдаёт система своим окном.
          */
         SettingEntry(
-            "sms_default_app", SettingsCategory.CALL_LOG,
+            "sms_default_app", SettingsCategory.MESSAGES,
             R.string.settings_sms_default_app, R.string.settings_sms_default_app_text,
             SettingKind.Action("sms_default_app"),
             keywordsRes = R.string.keywords_sms,
             groupRes = R.string.settings_group_messages
         ),
+        /*
+         * «Писать SMS в диалере» (sms_in_app) убран в 2.1.0: куда ведёт
+         * «Написать», решает роль SMS сама (SmsRole.composeTarget) — правило
+         * автора «пользователь не должен выбирать, чтобы всё работало».
+         */
         SettingEntry(
-            "sms_in_app", SettingsCategory.CALL_LOG,
-            R.string.settings_sms_in_app, R.string.settings_sms_in_app_text,
-            SettingKind.Switch("sms_in_app"),
-            keywordsRes = R.string.keywords_sms,
-            groupRes = R.string.settings_group_messages
-        ),
-        SettingEntry(
-            "sms_delivery_reports", SettingsCategory.CALL_LOG,
+            "sms_delivery_reports", SettingsCategory.MESSAGES,
             R.string.settings_sms_delivery_reports, R.string.settings_sms_delivery_reports_text,
             SettingKind.Switch("sms_delivery_reports"),
             keywordsRes = R.string.keywords_sms,
             groupRes = R.string.settings_group_messages
+        ),
+        /*
+         * Свайпы раздела «SMS» (2.1.0) — свои, отдельно от журнала
+         * (автор, 07.11.2026). По умолчанию вправо «SMS», влево «Удалить».
+         */
+        SettingEntry(
+            "sms_swipe_right", SettingsCategory.MESSAGES,
+            R.string.settings_sms_swipe_right, R.string.settings_sms_swipe_text,
+            SettingKind.Choice("sms_swipe_right"),
+            keywordsRes = R.string.keywords_sms,
+            groupRes = R.string.settings_group_sms_swipe
+        ),
+        SettingEntry(
+            "sms_swipe_left", SettingsCategory.MESSAGES,
+            R.string.settings_sms_swipe_left, R.string.settings_sms_swipe_text,
+            SettingKind.Choice("sms_swipe_left"),
+            keywordsRes = R.string.keywords_sms,
+            groupRes = R.string.settings_group_sms_swipe
+        ),
+        SettingEntry(
+            "messengers_any_number", SettingsCategory.MESSAGES,
+            R.string.settings_messengers_any_number, R.string.settings_messengers_any_number_text,
+            SettingKind.Switch("messengers_any_number"),
+            // 2.1.0: из «Вызовов» — это о том, куда писать
+            groupRes = R.string.settings_group_messengers
         ),
         SettingEntry(
             "notes_retention", SettingsCategory.CALL_LOG,
@@ -501,12 +543,19 @@ object SettingsRegistry {
             SettingKind.Action("speed_dial"),
             groupRes = R.string.settings_group_at_hand
         ),
-        SettingEntry(
-            "dialpad_open_at_start", SettingsCategory.APPEARANCE,
-            R.string.settings_dialpad_open, R.string.settings_dialpad_open_text,
-            SettingKind.Switch("dialpad_open_at_start")
-        ),
         // 1.5.8, обзор интерфейса (У6): ответ сдвигом — от случайного касания
+        /*
+         * Входящий поверх приложений (2.1.0, вопрос пользователя 07.11.2026):
+         * на весь экран (как было) или плашкой сверху, пока телефон
+         * разблокирован. Разбор — OgnelissInCallService.
+         */
+        SettingEntry(
+            "incoming_banner", SettingsCategory.CALLS,
+            R.string.settings_incoming_banner, R.string.settings_incoming_banner_text,
+            SettingKind.Switch("incoming_banner"),
+            keywordsRes = R.string.keywords_incoming_banner,
+            groupRes = R.string.settings_group_during_call
+        ),
         SettingEntry(
             "answer_mode", SettingsCategory.CALLS,
             R.string.settings_answer_mode, R.string.settings_answer_mode_text,
@@ -600,11 +649,6 @@ object SettingsRegistry {
             groupRes = R.string.settings_group_after_call
         ),
         // 1.3.5: отзыв в Google Play — «Написать в WhatsApp тем, кого нет в контактах»
-        SettingEntry(
-            "messengers_any_number", SettingsCategory.CALLS,
-            R.string.settings_messengers_any_number, R.string.settings_messengers_any_number_text,
-            SettingKind.Switch("messengers_any_number")
-        ),
         SettingEntry(
             "sys_dnd", SettingsCategory.SYSTEM,
             R.string.settings_dnd, null, SettingKind.SystemLink("dnd")
@@ -700,11 +744,17 @@ object SettingsRegistry {
             SettingKind.SystemLink("blocked_numbers"),
             groupRes = R.string.settings_group_lists
         ),
+        /*
+         * 2.1.0: без dangerous. Было два вопроса подряд: «Вы уверены?»
+         * перед входом на экран и ещё одно — при включении справочника
+         * на самом экране. Стало (правило автора 07.11.2026) — только
+         * второй: он называет приложение, которому уйдёт номер, а вход
+         * на экран сам ничего не включает.
+         */
         SettingEntry(
             "external_lookup", SettingsCategory.SPAM,
             R.string.settings_external_lookup, R.string.settings_external_lookup_text,
             SettingKind.Action("external_lookup"),
-            dangerous = true,
             groupRes = R.string.settings_group_lookup
         ),
 
@@ -833,7 +883,8 @@ object SettingsRegistry {
          *
          * Теперь номер версии стоит прямо в подписи, а нажатие ведёт
          * на страницу приложения в Google Play — туда, куда идут
-         * за обновлением и отзывом.
+         * за обновлением и отзывом. 2.1.0: только у установленного
+         * из Google Play; иначе — «О приложении» (InstallSource).
          *
          * Подпись подставляется в экране категорий: номер версии
          * приходит из BuildConfig, а реестр — это список без кода.
@@ -846,6 +897,10 @@ object SettingsRegistry {
          * нельзя, а если попытаться — человек нажмёт и ничего
          * не произойдёт. Прямая ссылка честнее: нажал — открылась
          * страница приложения.
+         *
+         * 2.1.0: пункт виден только у установленного из Google Play
+         * (shown ниже). Было: без магазина нажатие отвечало «Google Play
+         * недоступен» — ссылка, которая никуда не ведёт.
          */
         SettingEntry(
             "rate_app", SettingsCategory.ABOUT,
@@ -863,4 +918,15 @@ object SettingsRegistry {
         entries.filter { it.category == category }
 
     fun byId(id: String): SettingEntry? = entries.firstOrNull { it.id == id }
+
+    /**
+     * Пункты, которые есть на этом устройстве (2.1.0): «Оценить» —
+     * только у установленного из Google Play (util/InstallSource).
+     * Одно правило для раздела и для поиска по настройкам.
+     */
+    fun shown(list: List<SettingEntry>, fromGooglePlay: Boolean): List<SettingEntry> =
+        if (fromGooglePlay) list else list.filter { it.id !in STORE_ONLY }
+
+    /** Пункты, которым без Google Play некуда вести. */
+    private val STORE_ONLY = setOf("rate_app")
 }

@@ -11,7 +11,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.os.ConfigurationCompat
 import androidx.compose.ui.res.stringResource
 import com.ogneliss.dialer.ui.theme.FlowUi
-import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.components.ScreenScaffold
 import com.ogneliss.dialer.log.Logger
 import kotlinx.coroutines.Dispatchers
@@ -71,11 +70,6 @@ fun LegalScreen(
 ) {
     val context = LocalContext.current
 
-    // Строка ошибки читается ЗДЕСЬ, а не внутри produceState: обращение
-    // к ресурсам через контекст обходит систему состояния Compose,
-    // и после смены языка сообщение осталось бы на прежнем
-    val loadFailedText = stringResource(R.string.legal_load_failed)
-
     // Чтение файла — операция с диском, поэтому в фоновом контексте
     /*
      * ЯЗЫК ЮРИДИЧЕСКОГО ДОКУМЕНТА.
@@ -94,9 +88,28 @@ fun LegalScreen(
     val locale = ConfigurationCompat.getLocales(LocalConfiguration.current)[0]
     val languageTag = locale?.language ?: "en"
 
-    val text by produceState(initialValue = "", document, languageTag) {
+    /*
+     * Текст не прочитался (2.1.0): было — на экране «Не удалось открыть
+     * документ». Стало (правило автора 07.11.2026 «выполнить запасной
+     * путь, а не объяснять»): тот же документ открывается на сайте
+     * (LegalDocument.url), а пустой экран закрывается. Нет и браузера —
+     * экран просто закрывается, причина — в журнале разработчика.
+     * null — ещё читается; "" — не прочитался.
+     */
+    val text by produceState<String?>(initialValue = null, document, languageTag) {
         value = withContext(Dispatchers.IO) {
-            readLocalizedAsset(context, document.assetName, languageTag) ?: loadFailedText
+            readLocalizedAsset(context, document.assetName, languageTag).orEmpty()
+        }
+    }
+    LaunchedEffect(text) {
+        if (text?.isEmpty() == true) {
+            runCatching {
+                context.startActivity(
+                    android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(document.url))
+                        .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
+            }.onFailure { Logger.w("Legal", "Документ не открылся и на сайте: ${document.name}", it) }
+            onBack()
         }
     }
 
@@ -105,7 +118,7 @@ fun LegalScreen(
         onBack = onBack
     ) { pad ->
         Text(
-            text,
+            text.orEmpty(),
             Modifier
                 .padding(pad)
                 .verticalScroll(rememberScrollState())

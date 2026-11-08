@@ -65,7 +65,17 @@ fun CallButtons(
      * тональный цвет панели (surfaceContainerHighest) вместо грязно-серого
      * «отключено» по умолчанию: кнопка видна, но ясно, что номера нет.
      */
-    val callColors = ButtonDefaults.buttonColors(
+    /*
+     * Звонить нельзя (2.1.0: нет SIM, режим полёта) — кнопка серая, но
+     * нажимается: экстренный номер наберётся и так (разбор в CallAvailability).
+     */
+    val canCall = com.ogneliss.dialer.util.LocalCallAvailability.current.canCall
+    val callColors = if (!canCall) ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+        disabledContentColor = MaterialTheme.colorScheme.outline
+    ) else ButtonDefaults.buttonColors(
         containerColor = CallGreen,
         contentColor = Color.White,
         /*

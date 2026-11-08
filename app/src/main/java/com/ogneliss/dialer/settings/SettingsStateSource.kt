@@ -154,17 +154,19 @@ class SettingsStateSource @Inject constructor(
     private val callHelp: Flow<CallHelp> = combine(
         prefs.autoRedialMode,
         prefs.autoRedialPace,
-        prefs.scamMemo
-    ) { mode, pace, memo ->
-        CallHelp(mode, pace, memo)
+        prefs.scamMemo,
+        prefs.incomingBanner
+    ) { mode, pace, memo, banner ->
+        CallHelp(mode, pace, memo, banner)
     }
 
-    /** Сообщения (2.0.0). */
+    /** Сообщения (2.0.0). 2.1.0: без «Писать SMS в диалере» — решает роль SMS. */
     private val sms: Flow<Sms> = combine(
-        prefs.smsInApp,
-        prefs.smsDeliveryReports
-    ) { inApp, reports ->
-        Sms(inApp, reports)
+        prefs.smsDeliveryReports,
+        prefs.smsSwipeRight,
+        prefs.smsSwipeLeft
+    ) { reports, right, left ->
+        Sms(reports, right, left)
     }
 
     /**
@@ -236,9 +238,11 @@ class SettingsStateSource @Inject constructor(
             autoRedialMode = h.autoRedialMode,
             autoRedialPace = h.autoRedialPace,
             scamMemo = h.scamMemo,
+            incomingBanner = h.incomingBanner,
 
-            smsInApp = m.inApp,
             smsDeliveryReports = m.deliveryReports,
+            smsSwipeRight = m.swipeRight,
+            smsSwipeLeft = m.swipeLeft,
 
             fileLogging = true
         )
@@ -312,13 +316,15 @@ class SettingsStateSource @Inject constructor(
     )
 
     private data class Sms(
-        val inApp: Boolean,
-        val deliveryReports: Boolean
+        val deliveryReports: Boolean,
+        val swipeRight: SwipeAction,
+        val swipeLeft: SwipeAction
     )
 
     private data class CallHelp(
         val autoRedialMode: AutoRedialMode,
         val autoRedialPace: RedialPace,
-        val scamMemo: Boolean
+        val scamMemo: Boolean,
+        val incomingBanner: Boolean
     )
 }

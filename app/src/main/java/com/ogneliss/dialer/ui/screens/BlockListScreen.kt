@@ -107,20 +107,23 @@ fun BlockListScreen(
             ReadableWidth {
             LazyColumn(Modifier.padding(pad).fillMaxSize()) {
 
-                // ── Белый список: первым и с объяснением приоритета ────────────
+                /*
+                 * ── Белый список: первым ───────────────────────────────────
+                 * Первым — потому что он сильнее чёрного: его непонимание
+                 * порождает жалобы «блокировка режет нужные звонки».
+                 *
+                 * 2.1.0 (правило автора 07.11.2026, пояснений не показываем):
+                 * без строки «Номера отсюда проходят всегда…» и без «Пока
+                 * ничего не разрешено» / «Пока ничего не заблокировано»
+                 * у пустого списка — пустой раздел виден и так, «+» рядом.
+                 */
                 item {
                     SectionHeaderWithAction(
                         title = stringResource(R.string.settings_allow_list),
                         onAdd = { adding = RuleKind.ALLOW }
                     )
-                    InfoNote(stringResource(R.string.allow_list_priority_note))
                 }
 
-                if (allowed.isEmpty()) {
-                    item { EmptyNote(stringResource(R.string.allow_list_empty)) }
-                }
-                // Белый список идёт первым и с пояснением приоритета: именно
-                // его непонимание порождает жалобы «блокировка режет нужные звонки»
                 itemsIndexed(allowed, key = { _, rule -> "allow_${rule.pattern}" }) { i, rule ->
                     // Правила — строками во всю ширину, линии между ними (1.5.3)
                     GroupedRow(GroupPosition.of(i, allowed.size)) {
@@ -155,9 +158,6 @@ fun BlockListScreen(
                     }
                 }
 
-                if (blocked.isEmpty()) {
-                    item { EmptyNote(stringResource(R.string.block_list_empty)) }
-                }
                 itemsIndexed(blocked, key = { _, rule -> "block_${rule.pattern}" }) { i, rule ->
                     GroupedRow(GroupPosition.of(i, blocked.size)) {
                     RuleRow(
@@ -253,34 +253,5 @@ private fun RuleRow(
             // Долгое нажатие включает выбор: здесь этот жест свободен,
             // в отличие от журнала, где он открывает карточку
             .combinedClickable(onClick = onClick, onLongClick = onLongClick)
-    )
-}
-
-@Composable
-private fun InfoNote(text: String) {
-    Row(
-        Modifier.padding(horizontal = Space.l, vertical = Space.xs),
-        verticalAlignment = androidx.compose.ui.Alignment.Top
-    ) {
-        Icon(
-            OgnelissIcons.Info, contentDescription = null,
-            Modifier.size(FlowUi.iconSizeInline), tint = MaterialTheme.colorScheme.outline
-        )
-        Spacer(Modifier.width(Space.s))
-        Text(
-            text,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.outline
-        )
-    }
-}
-
-@Composable
-private fun EmptyNote(text: String) {
-    Text(
-        text,
-        Modifier.padding(horizontal = Space.l, vertical = Space.m),
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }

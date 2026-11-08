@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.components.OgnelissListRow
-import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.components.ScreenScaffold
 import com.ogneliss.dialer.data.SpeedDialEntry
@@ -67,14 +66,10 @@ fun SpeedDialScreen(
     ) { pad ->
         LazyColumn(Modifier.padding(pad).fillMaxSize()) {
 
-            item {
-                Text(
-                    stringResource(R.string.speed_dial_hint),
-                    Modifier.padding(FlowUi.contentPadding),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline
-                )
-            }
+            // 2.1.0: без пояснения «Удерживайте цифру на клавиатуре…» сверху
+            // и «Цифра 1 занята по традиции» у голосовой почты — правило
+            // автора 07.11.2026, пояснений не показываем
+            item { Spacer(Modifier.height(Space.l)) }
 
             // Единица — голосовая почта, менять нельзя
             // Строки — одной белой группой с рамкой (строгий стиль, 1.5.1)
@@ -82,7 +77,6 @@ fun SpeedDialScreen(
                 GroupedRow(GroupPosition.FIRST) {
                     OgnelissListRow(
                         headline = stringResource(R.string.speed_dial_voicemail),
-                        supporting = stringResource(R.string.speed_dial_voicemail_hint),
                         leading = { DigitBadge("1") },
                         trailing = { Icon(OgnelissIcons.Voicemail, null) }
                     )

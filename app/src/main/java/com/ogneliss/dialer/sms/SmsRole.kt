@@ -2,10 +2,14 @@ package com.ogneliss.dialer.sms
 
 import android.Manifest
 import android.app.role.RoleManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.provider.Telephony
+import com.ogneliss.dialer.log.Logger
 import com.ogneliss.dialer.util.PermissionGuard
 
 /**
@@ -17,30 +21,63 @@ import com.ogneliss.dialer.util.PermissionGuard
  * «приём и отправка».
  *
  * ══════════════════════════════════════════════════════════════════════════
- * ДВА РЕЖИМА — ПРАВИЛАМИ GOOGLE PLAY
+ * ДВА РЕЖИМА — САМИ, БЕЗ ВЫБОРА ЧЕЛОВЕКА (2.1.0)
  * ══════════════════════════════════════════════════════════════════════════
- * Политика «SMS and Call Log permissions» (support.google.com/googleplay/
- * android-developer/answer/10208820): приложению для звонков
- * по умолчанию разрешено SEND_SMS, а читать SMS (READ_SMS) — только
- * приложению SMS по умолчанию. Поэтому:
+ * Было (2.0.0): переключатель «Писать SMS в диалере» — отправка из своей
+ * переписки при одной роли телефона (SEND_SMS), без истории и входящих;
+ * в переписке — плашка «сделайте приложением SMS» и окно SEND_SMS.
+ * Стало: режим следует из роли, человеку выбирать нечего (решение
+ * автора: «пользователь не должен думать и выбирать, чтобы приложение
+ * работало как надо — с сервисами Google или без»):
  *
- * • ОТПРАВКА — всегда: диалер по умолчанию просит SEND_SMS при первой
- *   отправке. Отправленное система сама записывает в общее хранилище
- *   SMS — оно видно и в приложении сообщений человека.
- * • ЖУРНАЛ, ПЕРЕПИСКИ, ПРИЁМ, MMS — только когда человек сам сделал диалер
- *   приложением SMS по умолчанию ([request]). Тогда приложение обязано
- *   само принимать SMS и MMS и записывать их в хранилище (SmsDeliverReceiver,
- *   MmsReceivers) — иначе сообщения потеряются. Перестал быть приложением
- *   SMS по умолчанию — чтение прекращается сразу ([canRead] проверяется
- *   при каждом чтении), как требует политика.
+ * • РОЛЬ SMS У НАС — переписки, приём, MMS, уведомления; «Написать»
+ *   открывает свою переписку. Роль обязывает само принимать SMS и MMS
+ *   и записывать их в хранилище (SmsDeliverReceiver, MmsTransport) —
+ *   иначе сообщения потеряются. Чтение — только пока роль у нас
+ *   ([canRead] при каждом чтении), как требует политика Google Play
+ *   («SMS and Call Log permissions»).
+ * • РОЛЬ У ДРУГОГО ПРИЛОЖЕНИЯ — режим спутника: «Написать» открывает
+ *   переписку в приложении SMS по умолчанию ([companionTarget]), без окон
+ *   SEND_SMS и без плашек «сделайте по умолчанию».
  *
- * Минус роли — чаты RCS в Google Messages: они работают только там.
- * Об этом — в пояснении настройки.
+ * ── Когда роль просится сама ───────────────────────────────────────────────
+ * Сразу после роли телефона (MainActivity) — только если сейчас
+ * по умолчанию не приложение с чатами RCS ([autoOfferAllowed]): взяв
+ * роль, диалер молча выключил бы человеку RCS (сторонним приложениям
+ * RCS недоступен). Там роль — только по явной просьбе («Вести SMS
+ * в Ogneliss» в разделе SMS, настройки, «Разрешения»).
  */
 object SmsRole {
 
+    private const val TAG = "SmsRole"
+
     /** Код запроса роли из настроек (у роли телефона — 4201). */
     const val REQUEST_CODE = 4202
+
+    /**
+     * Код запроса роли без просьбы человека — сразу за ролью телефона
+     * (2.1.0). Отдельный, чтобы по ответу отличить: у такого запроса отказ
+     * не объясняется окном (RoleHelpDialog) — пропускается и пишется в журнал.
+     */
+    const val AUTO_REQUEST_CODE = 4204
+
+    /**
+     * ПРИЛОЖЕНИЯ SMS С ЧАТАМИ RCS (2.1.0).
+     *
+     * Было: роль SMS просилась сама у всех сразу после роли телефона.
+     * На телефоне с Google Сообщениями или Samsung Messages это молча
+     * выключало чаты RCS: они работают только в своём приложении и только
+     * пока оно — приложение SMS по умолчанию.
+     * Стало: при таком приложении по умолчанию роль сама не просится.
+     * Без сервисов Google (AOSP «Сообщения», LineageOS, GrapheneOS, /e/OS,
+     * Huawei и другие) RCS нет — там всё как раньше.
+     *
+     * Список — по известным приложениям с RCS; появится новое — дописать.
+     */
+    val RCS_APPS: Set<String> = setOf(
+        "com.google.android.apps.messaging",
+        "com.samsung.android.messaging"
+    )
 
     /**
      * Диалер — приложение SMS по умолчанию.
@@ -63,6 +100,28 @@ object SmsRole {
             .getOrDefault(false)
     }
 
+    /** Пакет приложения SMS по умолчанию по ответу телефонии; null — нет такого. */
+    fun defaultSmsPackage(context: Context): String? =
+        runCatching { Telephony.Sms.getDefaultSmsPackage(context) }.getOrNull()?.takeIf { it.isNotBlank() }
+
+    /**
+     * Можно ли попросить роль SMS без просьбы человека (2.1.0): по умолчанию
+     * сейчас не приложение с RCS ([RCS_APPS]). Приложения SMS нет вовсе
+     * (планшет) — тоже можно: тогда и окна роли не будет (request → null).
+     */
+    fun autoOfferAllowed(context: Context): Boolean {
+        val current = defaultSmsPackage(context)
+        val allowed = current == null || current !in RCS_APPS
+        // В журнал — раз за запуск: вызывается при каждом возвращении в приложение
+        if (!allowed && !autoSkipLogged) {
+            autoSkipLogged = true
+            Logger.i(TAG, "Роль SMS сама не просится: по умолчанию $current (RCS)")
+        }
+        return allowed
+    }
+
+    @Volatile private var autoSkipLogged = false
+
     /**
      * Для журнала: роль и ответ телефонии расходятся — так видно в логе,
      * почему SMS не приходят (телефония отдаёт их другому приложению).
@@ -71,7 +130,7 @@ object SmsRole {
         val held = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) runCatching {
             context.getSystemService(RoleManager::class.java)?.isRoleHeld(RoleManager.ROLE_SMS)
         }.getOrNull() else null
-        val telephony = runCatching { Telephony.Sms.getDefaultSmsPackage(context) }.getOrNull()
+        val telephony = defaultSmsPackage(context)
         val same = telephony == context.packageName
         return "роль SMS: ${held ?: "—"}, телефония: ${if (same) "мы" else telephony ?: "нет"}, " +
             "READ_SMS: ${PermissionGuard.has(context, Manifest.permission.READ_SMS)}"
@@ -108,6 +167,106 @@ object SmsRole {
                 .putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, context.packageName)
         }
     }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // РЕЖИМ СПУТНИКА: SMS ВЕДЁТ ДРУГОЕ ПРИЛОЖЕНИЕ (2.1.0)
+    // ═══════════════════════════════════════════════════════════════════════
+
+    /** Приложение SMS по умолчанию — для кнопки «Открыть «…»» в разделе SMS. */
+    data class CompanionApp(val packageName: String, val label: String, val rcs: Boolean)
+
+    /** Приложение SMS по умолчанию, если это не мы и его видно; иначе null. */
+    fun companionApp(context: Context): CompanionApp? {
+        if (isDefault(context)) return null
+        val pkg = defaultSmsPackage(context)?.takeIf { it != context.packageName } ?: return null
+        val label = runCatching {
+            val pm = context.packageManager
+            pm.getApplicationLabel(pm.getApplicationInfo(pkg, 0)).toString()
+        }.getOrNull()?.takeIf { it.isNotBlank() } ?: return null
+        return CompanionApp(pkg, label, pkg in RCS_APPS)
+    }
+
+    /**
+     * Кому адресовать «Написать» (ExternalApps.smsIntent): роль у нас — себе;
+     * иначе приложению SMS по умолчанию, если оно принимает smsto:; его нет —
+     * единственному другому приложению сообщений; иначе null (система
+     * спросит сама). Себя без роли не выбираем никогда: своя переписка
+     * без роли только передала бы намерение дальше.
+     */
+    fun composeTarget(context: Context): String? {
+        if (isDefault(context)) return context.packageName
+        return companionTarget(context)
+    }
+
+    /** Приложение сообщений, которое не мы: по умолчанию, иначе единственное. */
+    fun companionTarget(context: Context): String? {
+        val own = context.packageName
+        val probe = Intent(Intent.ACTION_SENDTO, Uri.fromParts("smsto", "", null))
+        defaultSmsPackage(context)?.takeIf { it != own }?.let { pkg ->
+            if (handles(context, Intent(probe).setPackage(pkg))) return pkg
+        }
+        val others = handlersOf(context, probe).filter { it != own }.distinct()
+        return others.singleOrNull()
+    }
+
+    /**
+     * Переписка открыта у нас без роли (ссылка sms: выбрана в окне «Открыть
+     * с помощью», роль ушла другому) — передать её приложению SMS
+     * по умолчанию. Себе не передаём (кольцо); некому — молча пропускаем.
+     *
+     * @return передано ли
+     */
+    fun handOff(context: Context, address: String, body: String?, subId: Int?): Boolean {
+        val intent = Intent(Intent.ACTION_SENDTO, Uri.fromParts("smsto", address, null)).apply {
+            body?.takeIf { it.isNotEmpty() }?.let { putExtra("sms_body", it) }
+            subId?.let {
+                putExtra("subscription", it)
+                putExtra("android.telephony.extra.SUBSCRIPTION_INDEX", it)
+            }
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        val target = companionTarget(context)
+        val launch = when {
+            target != null -> intent.setPackage(target)
+            // Несколько приложений и ни одного по умолчанию — выбор системы, но без нас
+            handlersOf(context, intent).any { it != context.packageName } -> Intent.createChooser(intent, null).apply {
+                putExtra(
+                    Intent.EXTRA_EXCLUDE_COMPONENTS,
+                    arrayOf(ComponentName(context, com.ogneliss.dialer.MainActivity::class.java))
+                )
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            else -> null
+        }
+        if (launch == null) {
+            Logger.w(TAG, "Переписку без роли передать некому")
+            return false
+        }
+        return runCatching { context.startActivity(launch) }
+            .onFailure { Logger.w(TAG, "Переписку без роли передать не удалось", it) }
+            .isSuccess
+            .also { if (it) Logger.i(TAG, "Переписка передана приложению SMS: ${target ?: "выбор системы"}") }
+    }
+
+    /** «Открыть «Сообщения»» в разделе SMS без роли: главный экран приложения SMS. */
+    fun openCompanionApp(context: Context): Boolean {
+        val app = companionApp(context) ?: return false
+        val pm = context.packageManager
+        val launch = runCatching { pm.getLaunchIntentForPackage(app.packageName) }.getOrNull()
+            ?: Intent.makeMainSelectorActivity(Intent.ACTION_MAIN, Intent.CATEGORY_APP_MESSAGING)
+                .setPackage(app.packageName)
+        return runCatching { context.startActivity(launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
+            .onFailure { Logger.w(TAG, "Приложение SMS не открылось", it) }
+            .isSuccess
+    }
+
+    private fun handles(context: Context, intent: Intent): Boolean =
+        handlersOf(context, intent).isNotEmpty()
+
+    private fun handlersOf(context: Context, intent: Intent): List<String> = runCatching {
+        context.packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+            .mapNotNull { it.activityInfo?.packageName }
+    }.getOrDefault(emptyList())
 }
 
 /**
@@ -116,24 +275,25 @@ object SmsRole {
  * Приёмники SMS, сервис «ответить сообщением» и кнопки «Написать»
  * по всему приложению решают сразу, без чтения DataStore. Prefs при каждой
  * записи этих настроек повторяет их здесь (Prefs.setSms…).
+ *
+ * 2.1.0: переключателя «Писать SMS в диалере» (sms_in_app) больше нет —
+ * куда писать, решает роль (SmsRole.composeTarget). Старое значение
+ * в файле настроек не читается.
  */
 object SmsSettings {
     private const val FILE = "sms_settings"
-    const val KEY_IN_APP = "sms_in_app"
     const val KEY_DELIVERY_REPORTS = "sms_delivery_reports"
 
     private fun prefs(context: Context) = context.getSharedPreferences(FILE, Context.MODE_PRIVATE)
-
-    /** Писать SMS в диалере, а не в приложении сообщений (по умолчанию — да). */
-    fun inApp(context: Context): Boolean = prefs(context).getBoolean(KEY_IN_APP, true)
 
     /** Просить отчёт о доставке (по умолчанию — нет: часть операторов берёт плату). */
     fun deliveryReports(context: Context): Boolean = prefs(context).getBoolean(KEY_DELIVERY_REPORTS, false)
 
     /*
-     * Подсказка «разрешите автозапуск» в переписке — один раз: на Xiaomi,
-     * Huawei, OPPO, vivo и других закрытое приложение без автозапуска
-     * не получает входящие SMS, а проверить автозапуск прошивки не дают.
+     * Полоса «разрешите автозапуск» — один раз (2.1.0: в списке SMS,
+     * SmsHealth; было — в переписке): на Huawei, OPPO, vivo, Tecno
+     * и других закрытое приложение без автозапуска не получает входящие
+     * SMS, а проверить автозапуск прошивки не дают.
      */
     private const val KEY_AUTOSTART_HINT = "sms_autostart_hint_done"
 
@@ -153,12 +313,10 @@ object SmsSettings {
     }
 
     /**
-     * SMS открываются в диалере: он — приложение SMS по умолчанию, или он —
-     * телефон по умолчанию и так выбрано в настройках. Отправлять SMS
-     * без одной из двух ролей правила Google Play не разрешают — тогда
-     * «Написать» открывает приложение сообщений, как раньше.
+     * SMS открываются в диалере (2.1.0): только когда он — приложение SMS
+     * по умолчанию. Было: ещё и при роли телефона с «Писать SMS в диалере» —
+     * без истории и входящих, с окном SEND_SMS. Теперь без роли SMS
+     * «Написать» открывает приложение сообщений человека.
      */
-    fun composeHere(context: Context): Boolean =
-        SmsRole.isDefault(context) ||
-            (inApp(context) && com.ogneliss.dialer.util.DefaultDialer.isDefault(context))
+    fun composeHere(context: Context): Boolean = SmsRole.isDefault(context)
 }

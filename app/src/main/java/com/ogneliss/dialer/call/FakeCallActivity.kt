@@ -461,51 +461,52 @@ private fun FakeCallScreen(
                         onDecline = onHangUp,
                         modifier = Modifier.padding(horizontal = Space.s)
                     )
-                } else
-                Row(
-                    Modifier.fillMaxWidth().padding(horizontal = Space.s),
-                    horizontalArrangement = Arrangement.spacedBy(Space.l, Alignment.CenterHorizontally)
-                ) {
-                    if (!answered) {
-                        BigButton(
-                            stringResource(R.string.incall_decline),
-                            DeclineRed,
-                            OgnelissIcons.CallEnd,
-                            modifier = Modifier.weight(1f),
-                            shareRow = true,
-                            onClick = onHangUp
-                        )
-                        // Та же «дышащая» кнопка ответа, что у настоящего входящего
-                        val pulse = androidx.compose.animation.core.rememberInfiniteTransition(label = "fakeAnswer")
-                        val scale by pulse.animateFloat(
-                            initialValue = 1f,
-                            targetValue = 1.04f,
-                            animationSpec = androidx.compose.animation.core.infiniteRepeatable(
-                                androidx.compose.animation.core.tween(
-                                    1100, easing = androidx.compose.animation.core.FastOutSlowInEasing
-                                ),
-                                androidx.compose.animation.core.RepeatMode.Reverse
-                            ),
-                            label = "fakeAnswerScale"
-                        )
-                        Box(
-                            Modifier.weight(1f).graphicsLayer { scaleX = scale; scaleY = scale }
-                        ) {
+                } else {
+                    Row(
+                        Modifier.fillMaxWidth().padding(horizontal = Space.s),
+                        horizontalArrangement = Arrangement.spacedBy(Space.l, Alignment.CenterHorizontally)
+                    ) {
+                        if (!answered) {
                             BigButton(
-                                stringResource(R.string.incall_answer),
-                                CallGreen,
-                                OgnelissIcons.Call,
-                                modifier = Modifier.fillMaxWidth(),
-                                shareRow = true
-                            ) { answered = true; onAnswer() }
+                                stringResource(R.string.incall_decline),
+                                DeclineRed,
+                                OgnelissIcons.CallEnd,
+                                modifier = Modifier.weight(1f),
+                                shareRow = true,
+                                onClick = onHangUp
+                            )
+                            // Та же «дышащая» кнопка ответа, что у настоящего входящего
+                            val pulse = androidx.compose.animation.core.rememberInfiniteTransition(label = "fakeAnswer")
+                            val scale by pulse.animateFloat(
+                                initialValue = 1f,
+                                targetValue = 1.04f,
+                                animationSpec = androidx.compose.animation.core.infiniteRepeatable(
+                                    androidx.compose.animation.core.tween(
+                                        1100, easing = androidx.compose.animation.core.FastOutSlowInEasing
+                                    ),
+                                    androidx.compose.animation.core.RepeatMode.Reverse
+                                ),
+                                label = "fakeAnswerScale"
+                            )
+                            Box(
+                                Modifier.weight(1f).graphicsLayer { scaleX = scale; scaleY = scale }
+                            ) {
+                                BigButton(
+                                    stringResource(R.string.incall_answer),
+                                    CallGreen,
+                                    OgnelissIcons.Call,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shareRow = true
+                                ) { answered = true; onAnswer() }
+                            }
+                        } else {
+                            BigButton(
+                                stringResource(R.string.incall_hangup),
+                                DeclineRed,
+                                OgnelissIcons.CallEnd,
+                                onClick = onHangUp
+                            )
                         }
-                    } else {
-                        BigButton(
-                            stringResource(R.string.incall_hangup),
-                            DeclineRed,
-                            OgnelissIcons.CallEnd,
-                            onClick = onHangUp
-                        )
                     }
                 }
                 Spacer(Modifier.height(Space.xl))

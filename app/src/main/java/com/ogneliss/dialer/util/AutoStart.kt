@@ -87,13 +87,21 @@ object AutoStart {
             )
         )
 
+        /*
+         * БЕЗ ПРЕДПРОВЕРКИ resolveActivity (2.1.0).
+         *
+         * Было: экран оболочки сначала искали через resolveActivity. С Android
+         * 11 пакеты прошивок (com.miui.securitycenter, com.coloros.safecenter,
+         * com.huawei.systemmanager, com.transsion.phonemaster…) приложению
+         * не видны без <queries>, поиск отвечал «нет», и кнопка открывала
+         * только свойства приложения. Стало: запускаем по очереди; нет
+         * экрана — ActivityNotFoundException, закрыт — SecurityException,
+         * ловим и пробуем следующий. Запуск по имени компонента видимости
+         * пакета не требует, поэтому <queries> не нужны.
+         */
         for (intent in candidates) {
             val opened = runCatching {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                if (intent.resolveActivity(context.packageManager) == null) {
-                    return@runCatching false
-                }
-                context.startActivity(intent)
+                context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                 true
             }.getOrDefault(false)
 

@@ -385,53 +385,8 @@ class ContactEditRepository @Inject constructor(
             arrayOf(RawContacts.CONTACT_ID), null, null, null
         )?.use { c -> if (c.moveToFirst()) c.getLong(0) else null }
 
-    /**
-     * Значения строки. При правке имени пишутся только части — провайдер
-     * сам пересоберёт DISPLAY_NAME (если передать и его, он взял бы
-     * старое). Неизвестные редактору поля строки (префикс, фонетика,
-     * отдел) не перечисляются и потому не меняются.
-     */
-    private fun values(row: RowValue, insert: Boolean): ContentValues = ContentValues().apply {
-        when (row) {
-            is RowValue.Name -> {
-                if (insert) put(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
-                put(StructuredName.GIVEN_NAME, row.given.ifEmpty { null })
-                put(StructuredName.MIDDLE_NAME, row.middle.ifEmpty { null })
-                put(StructuredName.FAMILY_NAME, row.family.ifEmpty { null })
-            }
-            is RowValue.Phone -> {
-                if (insert) put(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE)
-                put(Phone.NUMBER, row.number)
-                put(Phone.TYPE, row.type)
-                put(Phone.LABEL, row.label)
-            }
-            is RowValue.Email -> {
-                if (insert) put(Data.MIMETYPE, Email.CONTENT_ITEM_TYPE)
-                put(Email.ADDRESS, row.address)
-                put(Email.TYPE, row.type)
-                put(Email.LABEL, row.label)
-            }
-            is RowValue.Organization -> {
-                if (insert) {
-                    put(Data.MIMETYPE, Organization.CONTENT_ITEM_TYPE)
-                    put(Organization.TYPE, Organization.TYPE_WORK)
-                }
-                put(Organization.COMPANY, row.company.ifEmpty { null })
-                put(Organization.TITLE, row.title.ifEmpty { null })
-            }
-            is RowValue.Birthday -> {
-                if (insert) {
-                    put(Data.MIMETYPE, Event.CONTENT_ITEM_TYPE)
-                    put(Event.TYPE, Event.TYPE_BIRTHDAY)
-                }
-                put(Event.START_DATE, row.date)
-            }
-            is RowValue.Note -> {
-                if (insert) put(Data.MIMETYPE, Note.CONTENT_ITEM_TYPE)
-                put(Note.NOTE, row.text)
-            }
-        }
-    }
+    /** Значения строки — общий перевод с системным редактором (rowValues ниже, 2.1.0). */
+    private fun values(row: RowValue, insert: Boolean): ContentValues = rowValues(row, insert)
 
     /**
      * ФОТО — ПОЛНОРАЗМЕРНОЕ, ЧЕРЕЗ DisplayPhoto.
@@ -472,5 +427,57 @@ class ContactEditRepository @Inject constructor(
                 resolver.insert(Data.CONTENT_URI, values)
             }
         }.onFailure { Logger.e(TAG, "Не удалось записать фото контакта", it) }
+    }
+}
+
+/**
+ * Значения строки. При правке имени пишутся только части — провайдер
+ * сам пересоберёт DISPLAY_NAME (если передать и его, он взял бы
+ * старое). Неизвестные редактору поля строки (префикс, фонетика,
+ * отдел) не перечисляются и потому не меняются.
+ *
+ * Вынесено из класса в 2.1.0: те же строки (insert = true) уходят
+ * в системные «Контакты», когда свой редактор не смог сохранить
+ * (ContactEditor.openDraft, Insert.DATA).
+ */
+internal fun rowValues(row: RowValue, insert: Boolean): ContentValues = ContentValues().apply {
+    when (row) {
+        is RowValue.Name -> {
+            if (insert) put(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
+            put(StructuredName.GIVEN_NAME, row.given.ifEmpty { null })
+            put(StructuredName.MIDDLE_NAME, row.middle.ifEmpty { null })
+            put(StructuredName.FAMILY_NAME, row.family.ifEmpty { null })
+        }
+        is RowValue.Phone -> {
+            if (insert) put(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE)
+            put(Phone.NUMBER, row.number)
+            put(Phone.TYPE, row.type)
+            put(Phone.LABEL, row.label)
+        }
+        is RowValue.Email -> {
+            if (insert) put(Data.MIMETYPE, Email.CONTENT_ITEM_TYPE)
+            put(Email.ADDRESS, row.address)
+            put(Email.TYPE, row.type)
+            put(Email.LABEL, row.label)
+        }
+        is RowValue.Organization -> {
+            if (insert) {
+                put(Data.MIMETYPE, Organization.CONTENT_ITEM_TYPE)
+                put(Organization.TYPE, Organization.TYPE_WORK)
+            }
+            put(Organization.COMPANY, row.company.ifEmpty { null })
+            put(Organization.TITLE, row.title.ifEmpty { null })
+        }
+        is RowValue.Birthday -> {
+            if (insert) {
+                put(Data.MIMETYPE, Event.CONTENT_ITEM_TYPE)
+                put(Event.TYPE, Event.TYPE_BIRTHDAY)
+            }
+            put(Event.START_DATE, row.date)
+        }
+        is RowValue.Note -> {
+            if (insert) put(Data.MIMETYPE, Note.CONTENT_ITEM_TYPE)
+            put(Note.NOTE, row.text)
+        }
     }
 }

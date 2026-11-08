@@ -28,8 +28,16 @@ import com.ogneliss.dialer.ui.components.OgnelissDialog
  *   E.164, поэтому введённое «8 (900)…» не совпадёт ни с чем. Правило
  *   будет в списке, выглядеть рабочим и молча не работать.
  *
- * Поэтому под полем всегда показывается, ЧТО именно попадёт под правило
+ * Поэтому под полем показывается, ЧТО именно попадёт под правило
  * в нормализованном виде.
+ *
+ * ── 2.1.0: без ошибок и подсказок ──────────────────────────────────────────
+ * Правило автора 07.11.2026 «не объяснять — выполнить или пропустить».
+ * Было: «Слишком широко…», «Недопустимые символы…» красным и «Звёздочка —
+ * любое окончание…» под пустым полем. Стало: недопустимые символы
+ * отбрасываются по мере ввода (RulePattern.sanitize), а у слишком
+ * широкого шаблона просто неактивна «Сохранить». Под полем остался
+ * только разбор введённого — что попадёт под правило.
  */
 @Composable
 fun AddRuleDialog(
@@ -75,51 +83,27 @@ fun AddRuleDialog(
             Column {
                 OutlinedTextField(
                     value = input,
-                    onValueChange = { input = it },
+                    onValueChange = { input = RulePattern.sanitize(it) },
                     label = { Text(stringResource(R.string.rule_number_or_mask)) },
                     placeholder = { Text("+7 800 *") },
                     singleLine = true,
-                    isError = input.isNotBlank() && !isValid,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 Spacer(Modifier.height(Space.xs))
 
-                // Обратная связь по мере ввода
-                when (val p = parsed) {
-                    is RulePattern.Result.Valid -> {
-                        Text(
-                            stringResource(
-                                if (p.isMask) R.string.rule_preview_mask
-                                else R.string.rule_preview_number,
-                                RulePattern.describe(p.pattern)
-                            ),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    is RulePattern.Result.TooBroad -> {
-                        Text(
-                            stringResource(R.string.rule_error_too_broad),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                    is RulePattern.Result.InvalidCharacters -> {
-                        Text(
-                            stringResource(R.string.rule_error_characters, p.characters),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                    RulePattern.Result.Empty -> {
-                        Text(
-                            stringResource(R.string.rule_mask_hint),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
-                        )
-                    }
+                // Что попадёт под правило — только у годного шаблона (2.1.0)
+                (parsed as? RulePattern.Result.Valid)?.let { p ->
+                    Text(
+                        stringResource(
+                            if (p.isMask) R.string.rule_preview_mask
+                            else R.string.rule_preview_number,
+                            RulePattern.describe(p.pattern)
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
 
                 Spacer(Modifier.height(Space.m))
