@@ -157,6 +157,7 @@
     <string name="incall_mute">Mute</string>
     <string name="incall_on_hold">On hold</string>
     <string name="incall_ongoing">Ongoing call</string>
+    <string name="incall_return">Return to call</string>
     <string name="incall_secondary">On hold: %1$s</string>
     <string name="incall_speaker">Speaker</string>
     <string name="incall_swap">Swap</string>
@@ -513,7 +514,6 @@
     <string name="incall_note_add">Write a note</string>
     <string name="incall_note_hide">Hide note</string>
     <string name="incall_note_hint">Delivery on Tuesday after four…</string>
-    <string name="incall_note_autosave">Saved automatically</string>
     <string name="action_add_note">Write a note</string>
 
     <!-- Consent -->
@@ -983,7 +983,6 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="redial_reason_busy">Busy</string>
     <string name="redial_reason_no_answer">No answer</string>
     <string name="redial_reason_failed">Call failed</string>
-    <string name="redial_offer_hint">Auto redial: up to %1$d times, every %2$d s</string>
     <string name="redial_waiting">Redialing in %d s</string>
     <string name="redial_attempt">Auto redial · attempt %1$d of %2$d</string>
     <string name="redial_calling">Dialing again…</string>

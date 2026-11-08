@@ -39,11 +39,35 @@ class CallActions(
     private val simRepository: SimRepository
 ) {
 
+    /*
+     * ВЫЗОВ БЕЗ РАЗРЕШЕНИЯ «ТЕЛЕФОН» (2.1.0).
+     *
+     * Было: без CALL_PHONE функция молча выходила — и на экстренный номер
+     * тоже: «112» не набирался вовсе. Стало:
+     * • экстренный номер — звоним всё равно: Telecom пускает диалер
+     *   по умолчанию к экстренному вызову и без разрешения
+     *   (TelecomServiceImpl.placeCall: «default dialer is always allowed
+     *   to attempt to place a call… in case it turns out to be an emergency
+     *   call»). Не вышло (мы не диалер по умолчанию) — системный набор
+     *   с этим номером ([dialEmergencyInSystemDialer]);
+     * • обычный номер — системное окно разрешения, после «Разрешить» —
+     *   тот же вызов (PermissionPrompt).
+     *
+     * @SuppressLint("MissingPermission"): без разрешения placeCall
+     * вызывается только для экстренного номера — разбор выше; отказ
+     * системы (SecurityException) ловим.
+     */
+    @SuppressLint("MissingPermission")
     fun placeCall(number: String, slotIndex: Int = -1) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE)
-            != PackageManager.PERMISSION_GRANTED
-        ) return
-        val tm = context.getSystemService(TelecomManager::class.java) ?: return
+        val allowed = ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) ==
+            PackageManager.PERMISSION_GRANTED
+        val emergency = !allowed && com.ogneliss.dialer.util.EmergencyNumbers.isEmergency(context, number)
+        if (!allowed && !emergency) {
+            com.ogneliss.dialer.util.PermissionPrompt.ask(arrayOf(Manifest.permission.CALL_PHONE)) { granted ->
+                if (granted) placeCall(number, slotIndex)
+            }
+            return
+        }
         val uri = Uri.fromParts("tel", number, null)
         val extras = Bundle()
         if (slotIndex >= 0) {
@@ -51,7 +75,29 @@ class CallActions(
                 extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, it)
             }
         }
-        runCatching { tm.placeCall(uri, extras) }
+        val tm = context.getSystemService(TelecomManager::class.java)
+        val placed = tm != null && runCatching { tm.placeCall(uri, extras); true }
+            .onFailure { Logger.w("Call", "Вызов не передан системе", it) }
+            .getOrDefault(false)
+        if (!placed && emergency) dialEmergencyInSystemDialer(number)
+    }
+
+    /**
+     * Экстренный номер, а позвонить сами не можем: системный набор с этим
+     * номером — у системного диалера экстренный вызов есть всегда (2.1.0).
+     * До Android 10 имени системного диалера не узнать — набор по умолчанию.
+     */
+    private fun dialEmergencyInSystemDialer(number: String) {
+        val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", number, null))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            context.getSystemService(TelecomManager::class.java)?.systemDialerPackage
+                ?.takeIf { it != context.packageName }
+                ?.let { intent.setPackage(it) }
+        }
+        Logger.w("Call", "Экстренный вызов — через системный набор")
+        runCatching { context.startActivity(intent) }
+            .onFailure { Logger.w("Call", "Системный набор не открылся", it) }
     }
 
     /*
@@ -65,7 +111,13 @@ class CallActions(
     fun placeVoicemail() {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE)
             != PackageManager.PERMISSION_GRANTED
-        ) return
+        ) {
+            // 2.1.0: как у обычного вызова — системное окно, затем звонок
+            com.ogneliss.dialer.util.PermissionPrompt.ask(arrayOf(Manifest.permission.CALL_PHONE)) { granted ->
+                if (granted) placeVoicemail()
+            }
+            return
+        }
         val tm = context.getSystemService(TelecomManager::class.java) ?: return
         runCatching { tm.placeCall(Uri.fromParts("voicemail", "", null), Bundle()) }
             .onFailure { Logger.w("Call", "Не удалось позвонить на голосовую почту", it) }

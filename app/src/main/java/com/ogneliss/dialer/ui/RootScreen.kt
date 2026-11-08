@@ -25,6 +25,7 @@ import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -550,10 +551,17 @@ fun RootScreen(
                 WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
             )
     ) {
-        if (!isDefaultDialer) {
-            // Баннеру результат не нужен: он только приглашает,
-            // а объяснение при отказе покажет мастер
-            DefaultDialerBanner { onRequestDefault() }
+        /*
+         * «ВЕРНУТЬСЯ К ВЫЗОВУ» (2.1.0). Было: ушёл с экрана вызова во время
+         * разговора — вернуться можно было только из шторки. Стало: пока
+         * идёт, удержан, набирается или звонит вызов, сверху — зелёная полоса,
+         * касание открывает экран вызова. Вызовов нет — полосы нет.
+         */
+        val liveCalls by com.ogneliss.dialer.call.CallManager.calls.collectAsStateWithLifecycle()
+        val callRevision by com.ogneliss.dialer.call.CallManager.revision.collectAsStateWithLifecycle()
+        @Suppress("DEPRECATION")
+        val callToReturn = remember(liveCalls, callRevision) {
+            liveCalls.any { com.ogneliss.dialer.call.CallScreenRules.returnable(it.state, it.parent != null) }
         }
         /*
          * «Телефон не дал показать экран вызова» (1.8.1) — после входящего,
@@ -563,14 +571,54 @@ fun RootScreen(
         val incomingBlocked by remember {
             com.ogneliss.dialer.util.IncomingCallAccess.blockedNotice(context)
         }.collectAsStateWithLifecycle()
-        if (isDefaultDialer && incomingBlocked == true) {
+        val blockedShown = isDefaultDialer && incomingBlocked == true
+        /*
+         * Под строку состояния отступает только верхняя полоса (2.1.0):
+         * было — каждая сама, и две полосы подряд давали двойной отступ,
+         * а экраны под полосой «не дал показать» отступали ещё раз.
+         */
+        if (callToReturn) {
+            ReturnToCallStrip(padTop = true) {
+                runCatching {
+                    context.startActivity(
+                        android.content.Intent(context, com.ogneliss.dialer.call.InCallActivity::class.java)
+                            .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                    )
+                }
+            }
+        }
+        if (!isDefaultDialer) {
+            // Окно роли не открылось — сразу «Приложения по умолчанию», без
+            // объяснений (2.1.0, правило автора «выполнить, а не объяснять»)
+            DefaultDialerBanner(padTop = !callToReturn) {
+                if (!onRequestDefault()) onOpenSystemSettings()
+            }
+        }
+        if (blockedShown) {
             IncomingBlockedBanner(
+                padTop = !callToReturn && isDefaultDialer,
                 onFix = {
                     com.ogneliss.dialer.util.IncomingCallAccess.dismissNotice(context)
                     com.ogneliss.dialer.util.IncomingCallAccess.open(context)
                 },
                 onDismiss = { com.ogneliss.dialer.util.IncomingCallAccess.dismissNotice(context) }
             )
+        }
+        val topStripShown = callToReturn || !isDefaultDialer || blockedShown
+
+        /*
+         * ЗВОНОК БЕЗ РАЗРЕШЕНИЯ «ТЕЛЕФОН» (2.1.0): системное окно прямо
+         * по нажатию «Позвонить», после «Разрешить» — тот же звонок
+         * (разбор в util/PermissionPrompt.kt).
+         */
+        val permissionPrompt = rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { result -> com.ogneliss.dialer.util.PermissionPrompt.onResult(result) }
+        LaunchedEffect(Unit) {
+            com.ogneliss.dialer.util.PermissionPrompt.requests.collect { permissions ->
+                runCatching { permissionPrompt.launch(permissions) }
+                    .onFailure { com.ogneliss.dialer.util.PermissionPrompt.onResult(emptyMap()) }
+            }
         }
         /*
          * СООБЩЕНИЯ О ДЕЙСТВИЯХ — ОДНО ПОЛЕ НА ВСЁ ПРИЛОЖЕНИЕ.
@@ -677,7 +725,7 @@ fun RootScreen(
                 // Баннер сверху уже отступил под строку состояния —
                 // экранам под ним этот отступ не нужен (1.5.8)
                 .then(
-                    if (!isDefaultDialer) {
+                    if (topStripShown) {
                         Modifier.consumeWindowInsets(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
                     } else {
                         Modifier
@@ -1223,12 +1271,12 @@ fun RootScreen(
  * прошивки и крестиком.
  */
 @Composable
-private fun IncomingBlockedBanner(onFix: () -> Unit, onDismiss: () -> Unit) {
+private fun IncomingBlockedBanner(padTop: Boolean, onFix: () -> Unit, onDismiss: () -> Unit) {
     Surface(color = MaterialTheme.colorScheme.primaryContainer) {
         Row(
             Modifier
                 .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
+                .statusBarSpace(padTop)
                 .padding(start = Space.m, top = Space.s, bottom = Space.s),
             verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
         ) {
@@ -1246,13 +1294,13 @@ private fun IncomingBlockedBanner(onFix: () -> Unit, onDismiss: () -> Unit) {
 }
 
 @Composable
-private fun DefaultDialerBanner(onRequest: () -> Unit) {
+private fun DefaultDialerBanner(padTop: Boolean, onRequest: () -> Unit) {
     Surface(color = MaterialTheme.colorScheme.primaryContainer) {
         Row(
             Modifier
                 .fillMaxWidth()
                 // Подложка — до верха экрана, текст — под строкой состояния (1.5.8)
-                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
+                .statusBarSpace(padTop)
                 .padding(Space.m),
             verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
         ) {
@@ -1266,6 +1314,38 @@ private fun DefaultDialerBanner(onRequest: () -> Unit) {
     }
 
 }
+
+
+/**
+ * «ВЕРНУТЬСЯ К ВЫЗОВУ» (2.1.0): зелёная полоса сверху, пока есть вызов.
+ * Зелёный в приложении — только звонок; здесь он и есть. Высота — цель
+ * касания (48 dp), вся полоса — одна кнопка.
+ */
+@Composable
+private fun ReturnToCallStrip(padTop: Boolean, onClick: () -> Unit) {
+    val label = stringResource(R.string.incall_return)
+    Surface(color = com.ogneliss.dialer.ui.theme.CallGreen, contentColor = androidx.compose.ui.graphics.Color.White) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .statusBarSpace(padTop)
+                .clickable(onClickLabel = label, onClick = onClick)
+                .heightIn(min = com.ogneliss.dialer.ui.theme.Dimens.MIN_TOUCH_TARGET)
+                .padding(horizontal = Space.l, vertical = Space.xs),
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(OgnelissIcons.Call, contentDescription = null, modifier = Modifier.size(com.ogneliss.dialer.ui.theme.FlowUi.iconSizeInline))
+            Spacer(Modifier.width(Space.s))
+            Text(label, style = MaterialTheme.typography.labelLarge)
+        }
+    }
+}
+
+/** Отступ под строку состояния — только у верхней из полос (2.1.0). */
+@Composable
+private fun Modifier.statusBarSpace(pad: Boolean): Modifier =
+    if (pad) windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top)) else this
 
 
 /**

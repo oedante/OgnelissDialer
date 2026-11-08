@@ -8,7 +8,7 @@ import android.content.Context
 import android.content.Intent
 import com.ogneliss.dialer.call.CallNotifications
 
-/** После перезагрузки восстанавливаем каналы уведомлений. */
+/** После перезагрузки и обновления восстанавливаем каналы уведомлений и напоминания. */
 @dagger.hilt.android.AndroidEntryPoint
 class BootReceiver : BroadcastReceiver() {
 
@@ -16,9 +16,15 @@ class BootReceiver : BroadcastReceiver() {
     lateinit var reminders: com.ogneliss.dialer.data.RemindersRepository
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action != Intent.ACTION_BOOT_COMPLETED) return
+        // 2.1.0: и после обновления приложения — состояние приёмника
+        // пропущенных сверяется с разрешением уведомлений
+        if (intent.action != Intent.ACTION_BOOT_COMPLETED &&
+            intent.action != Intent.ACTION_MY_PACKAGE_REPLACED
+        ) return
 
         CallNotifications.ensureChannels(context)
+        // Уведомления запрещены — пропущенные рисует система (MissedCallsNotifier.syncReceiver)
+        com.ogneliss.dialer.call.MissedCallsNotifier.syncReceiver(context)
 
         /*
          * ВОССТАНОВЛЕНИЕ НАПОМИНАНИЙ.

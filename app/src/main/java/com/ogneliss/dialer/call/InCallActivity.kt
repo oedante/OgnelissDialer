@@ -2144,13 +2144,8 @@ private fun InCallNoteField(
                 )
             }
         }
-
-        Text(
-            stringResource(R.string.incall_note_autosave),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.outline,
-            modifier = Modifier.padding(top = Space.s, start = Space.s)
-        )
+        // 2.1.0: без подписи «Сохраняется автоматически» — заметка и так
+        // сохраняется сама; пояснения на экране вызова не нужны
     }
 }
 

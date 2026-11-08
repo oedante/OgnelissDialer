@@ -141,6 +141,7 @@
     <string name="incall_mute">Stumm</string>
     <string name="incall_on_hold">Gehalten</string>
     <string name="incall_ongoing">Laufender Anruf</string>
+    <string name="incall_return">Zurück zum Anruf</string>
     <string name="incall_secondary">Gehalten: %1$s</string>
     <string name="incall_speaker">Lautsprecher</string>
     <string name="incall_swap">Wechseln</string>
@@ -487,7 +488,6 @@
     <string name="incall_note_add">Notiz schreiben</string>
     <string name="incall_note_hide">Notiz ausblenden</string>
     <string name="incall_note_hint">Lieferung am Dienstag nach vier…</string>
-    <string name="incall_note_autosave">Wird automatisch gespeichert</string>
     <string name="action_add_note">Notiz schreiben</string>
     <string name="consent_title">Bitte lesen Sie vor dem Start zwei kurze Dokumente</string>
     <string name="consent_privacy_summary">Ogneliss hat keine Internetberechtigung. Ihre Anrufliste, Kontakte und Notizen verlassen dieses Gerät nicht — das können Sie in den Details der installierten App selbst nachprüfen.</string>
@@ -954,7 +954,6 @@
     <string name="redial_reason_busy">Besetzt</string>
     <string name="redial_reason_no_answer">Keine Antwort</string>
     <string name="redial_reason_failed">Anruf fehlgeschlagen</string>
-    <string name="redial_offer_hint">Wahlwiederholung: bis zu %1$d-mal, alle %2$d s</string>
     <string name="redial_waiting">Neuer Versuch in %d s</string>
     <string name="redial_attempt">Wahlwiederholung · Versuch %1$d von %2$d</string>
     <string name="redial_calling">Erneute Wahl…</string>

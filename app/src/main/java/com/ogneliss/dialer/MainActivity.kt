@@ -371,6 +371,26 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         com.ogneliss.dialer.call.MissedCallsNotifier.clear(this)
+        /*
+         * ПРИЛОЖЕНИЕ ОТКРЫЛИ, ПОКА ЗВОНИТ (2.1.0) — сразу экран вызова.
+         * Было: открывался журнал, а ответить можно было только из шторки —
+         * если экран вызова не показался (запрет прошивки) или его свернули.
+         * Ушли с экрана вызова сами («Назад») — не возвращаем: наверху
+         * полоса «Вернуться к вызову» (RootScreen).
+         */
+        if (com.ogneliss.dialer.call.IncomingScreen.shouldReturnToCall()) {
+            runCatching {
+                startActivity(
+                    Intent(this, com.ogneliss.dialer.call.InCallActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
+            }.onFailure { com.ogneliss.dialer.log.Logger.w("MainActivity", "Экран вызова не открылся", it) }
+        }
+        // Уведомления могли запретить или разрешить в настройках — пропущенные
+        // показывает тот, кому можно (2.1.0, MissedCallsNotifier.syncReceiver)
+        lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            com.ogneliss.dialer.call.MissedCallsNotifier.syncReceiver(applicationContext)
+        }
     }
 
     override fun onNewIntent(intent: Intent) {

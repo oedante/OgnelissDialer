@@ -139,6 +139,7 @@
     <string name="incall_mute">Muet</string>
     <string name="incall_on_hold">En attente</string>
     <string name="incall_ongoing">Appel en cours</string>
+    <string name="incall_return">Revenir à l’appel</string>
     <string name="incall_secondary">En attente : %1$s</string>
     <string name="incall_speaker">Haut-parleur</string>
     <string name="incall_swap">Basculer</string>
@@ -485,7 +486,6 @@
     <string name="incall_note_add">Écrire une note</string>
     <string name="incall_note_hide">Masquer la note</string>
     <string name="incall_note_hint">Livraison mardi après seize heures…</string>
-    <string name="incall_note_autosave">Enregistré automatiquement</string>
     <string name="action_add_note">Écrire une note</string>
     <string name="consent_title">Avant de commencer, veuillez lire deux courts documents</string>
     <string name="consent_privacy_summary">Ogneliss n’a pas l’autorisation d’accès à Internet. Votre journal d’appels, vos contacts et vos notes ne quittent jamais cet appareil — vous pouvez le vérifier vous-même dans les détails de l’application installée.</string>
@@ -953,7 +953,6 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="redial_reason_busy">Occupé</string>
     <string name="redial_reason_no_answer">Pas de réponse</string>
     <string name="redial_reason_failed">L’appel a échoué</string>
-    <string name="redial_offer_hint">Rappel auto : jusqu’à %1$d fois, toutes les %2$d s</string>
     <string name="redial_waiting">Nouvel essai dans %d s</string>
     <string name="redial_attempt">Rappel auto · essai %1$d sur %2$d</string>
     <string name="redial_calling">Nouvel appel…</string>

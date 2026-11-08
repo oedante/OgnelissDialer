@@ -173,7 +173,10 @@
             </intent-filter>
         </activity>
 
-        <!-- Экран активного вызова -->
+        <!-- Экран активного вызова.
+             2.1.0: showWhenLocked вместо showOnLockScreen — прежний атрибут
+             с Android 6 означает «для всех пользователей», а не «поверх
+             блокировки»; на Android 8.0 то же делает флаг окна в onCreate. -->
                 <!--
             ЭКРАНЫ ВЫЗОВА НЕ ПЕРЕСОЗДАЮТСЯ ПРИ СКЛАДЫВАНИИ И ПОВОРОТЕ.
 
@@ -195,7 +198,7 @@
             android:exported="false"
             android:launchMode="singleInstance"
             android:excludeFromRecents="true"
-            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
             android:turnScreenOn="true"
             android:theme="@style/Theme.OgnelissDialer.InCall"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|density"/>
@@ -404,6 +407,8 @@
         <receiver android:name=".background.BootReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <!-- 2.1.0: после обновления — приёмник пропущенных и напоминания -->
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
 

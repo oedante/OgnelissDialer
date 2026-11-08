@@ -130,7 +130,8 @@ class OgnelissInCallService : InCallService() {
         val outgoing = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
             call.details.callDirection == Call.Details.DIRECTION_OUTGOING
         } else {
-            call.state == Call.STATE_DIALING || call.state == Call.STATE_CONNECTING
+            // 2.1.0: и «выбор SIM» — исходящий (CallScreenRules.outgoingOnAdd)
+            CallScreenRules.outgoingOnAdd(call.state)
         }
         if (outgoing) {
             MissedCallsNotifier.clear(this)

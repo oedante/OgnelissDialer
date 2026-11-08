@@ -129,6 +129,7 @@
     <string name="incall_mute">Звук</string>
     <string name="incall_on_hold">На удержании</string>
     <string name="incall_ongoing">Текущий вызов</string>
+    <string name="incall_return">Вернуться к вызову</string>
     <string name="incall_secondary">На удержании: %1$s</string>
     <string name="incall_speaker">Динамик</string>
     <string name="incall_swap">Переключить</string>
@@ -481,7 +482,6 @@
     <string name="incall_note_add">Записать заметку</string>
     <string name="incall_note_hide">Скрыть заметку</string>
     <string name="incall_note_hint">Привезут во вторник после четырёх…</string>
-    <string name="incall_note_autosave">Сохраняется автоматически</string>
     <string name="action_add_note">Записать заметку</string>
 
     <string name="consent_title">Перед началом ознакомьтесь с двумя короткими документами</string>
@@ -963,7 +963,6 @@
     <string name="redial_reason_busy">Занято</string>
     <string name="redial_reason_no_answer">Не отвечает</string>
     <string name="redial_reason_failed">Вызов не прошёл</string>
-    <string name="redial_offer_hint">Автодозвон: до %1$d раз, каждые %2$d с</string>
     <string name="redial_waiting">Повтор через %d с</string>
     <string name="redial_attempt">Автодозвон · попытка %1$d из %2$d</string>
     <string name="redial_calling">Набираем снова…</string>
