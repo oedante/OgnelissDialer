@@ -76,12 +76,8 @@ fun SwipeActionsDialog(
         title = vm.choiceTitle(LocalContext.current, settingKey),
         content = {
             Column {
-                Text(
-                    stringResource(R.string.swipe_actions_hint),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(Modifier.padding(top = Space.s))
+                // 2.1.0: без пояснения «одно действие — сразу, два-три —
+                // панель…» — правило автора 07.11.2026, пояснений не показываем
                 LazyColumn(Modifier.heightIn(max = 400.dp)) {
                     items(options, key = { it.key }) { action ->
                         val order = chosen.indexOf(action)

@@ -309,15 +309,9 @@
         <receiver android:name=".background.CallbackReminder$Receiver" android:exported="false" />
 
         <!--
-            Отмена блокировки из шторки.
-
-            exported="false": намерение формирует само приложение,
-            снаружи вызывать нечего. Открытый приёмник позволил бы
-            любому приложению снимать правила блокировки.
+            Приёмника «Разблокировать» из уведомления о заблокированном
+            вызове нет с 2.1.0: уведомления нет (background/BlockedCallNotice.kt).
         -->
-        <receiver
-            android:name=".background.BlockedCallNotice$Receiver"
-            android:exported="false" />
 
         <!-- Кнопки «напомнить» в предложении после сброшенного вызова -->
         <receiver

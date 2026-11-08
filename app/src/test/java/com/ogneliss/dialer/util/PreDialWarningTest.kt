@@ -25,11 +25,15 @@ class PreDialWarningTest {
     }
 
     @Test
-    fun `международный номер требует подтверждения`() {
+    fun `международный номер не останавливает набор`() {
+        // 2.1.0, правило автора 07.11.2026: спрашиваем только о платных.
+        // Международный набирают нарочно — окно перед каждым таким звонком
+        // приучало бы не читать и настоящее предупреждение
         val warning = PreDialWarning.evaluate(
             NumberCategory.INTERNATIONAL, isInContacts = false, country = "Латвия"
         )
-        assertTrue(PreDialWarning.requiresConfirmation(warning))
+        assertEquals(PreDialWarning.Level.INFO, warning.level)
+        assertFalse(PreDialWarning.requiresConfirmation(warning))
         assertEquals("Латвия", warning.country)
     }
 

@@ -1,6 +1,5 @@
 package com.ogneliss.dialer.ui.components
 
-import com.ogneliss.dialer.ui.theme.Space
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -10,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.util.ContactQr
@@ -52,15 +50,8 @@ fun QrCodeDialog(
                 Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    stringResource(R.string.qr_hint),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(Modifier.height(Space.l))
-
+                // 2.1.0: без подсказки «Наведите камеру…» — правило автора
+                // 07.11.2026, пояснений не показываем; код говорит сам
                 val image = bitmap
                 if (image != null) {
                     /*

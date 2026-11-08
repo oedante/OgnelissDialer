@@ -21,7 +21,6 @@ import com.ogneliss.dialer.ui.components.OgnelissListRow
 import com.ogneliss.dialer.ui.components.ScreenScaffold
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.util.AppLinks
-import com.ogneliss.dialer.ui.components.OgnelissDialog
 
 /**
  * ЭКРАН «О ПРИЛОЖЕНИИ».
@@ -36,9 +35,10 @@ import com.ogneliss.dialer.ui.components.OgnelissDialog
  *   libphonenumber), и лицензии обязывают указывать это. Отсутствие
  *   раздела — нарушение условий Apache 2.0.
  *
- * • ПОЧЕМУ НЕТ ЗАПИСИ РАЗГОВОРОВ. Это самый частый вопрос к диалерам,
- *   и без ответа он превращается в однозвёздочные отзывы «нет главной
- *   функции». Объяснить дешевле, чем спорить в комментариях.
+ * • ПОЧЕМУ НЕТ ЗАПИСИ РАЗГОВОРОВ — до 2.1.0 строка с окном-объяснением.
+ *   С 2.1.0 (правило автора 07.11.2026: пояснений не показываем) её
+ *   нет: тот же ответ — в «Вопросах и ответах» («Можно ли записывать
+ *   разговоры?», ui/help/Faq.kt), куда человек приходит за ним сам.
  *
  * ── Про блок приватности ───────────────────────────────────────────────────
  * Утверждение «нет доступа к сети» вынесено наверх и подано как
@@ -51,7 +51,6 @@ fun AboutScreen(
     onBack: () -> Unit,
     onOpenLegal: (LegalDocument) -> Unit
 ) {
-    var showRecordingInfo by remember { mutableStateOf(false) }
     val context = androidx.compose.ui.platform.LocalContext.current
 
     /*
@@ -151,53 +150,21 @@ fun AboutScreen(
                     stringResource(R.string.settings_licenses),
                     stringResource(R.string.about_licenses_hint)
                 ) { onOpenLegal(LegalDocument.LICENSES) }
-
-                RowDivider(Modifier.padding(start = 56.dp))
-                AboutRow(
-                    OgnelissIcons.MicOff,
-                    stringResource(R.string.settings_recording_title),
-                    stringResource(R.string.about_recording_hint)
-                ) { showRecordingInfo = true }
             }
 
             Spacer(Modifier.height(Space.xxl))
         }
     }
-
-    // Объяснение про запись разговоров — самый частый вопрос к диалерам
-    if (showRecordingInfo) {
-        /*
-         * Общий контейнер приложения.
-         *
-         * Текст длинный — это объяснение, почему запись разговора
-         * не работает на Android 10 и новее. Поэтому прокрутка
-         * с ограничением высоты: при крупном системном шрифте
-         * он иначе выдавил бы кнопку «Закрыть» за край экрана.
-         */
-        OgnelissDialog(
-            onDismissRequest = { showRecordingInfo = false },
-            title = stringResource(R.string.settings_recording_title),
-            content = {
-                Column(
-                    Modifier
-                        .heightIn(max = 400.dp)
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    Text(stringResource(R.string.settings_recording_text))
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showRecordingInfo = false }) {
-                    Text(stringResource(R.string.nav_close))
-                }
-            }
-        )
-    }
 }
 
-/** Какие юридические документы показываем. */
-enum class LegalDocument(val assetName: String, val titleRes: Int) {
-    PRIVACY("privacy_policy.txt", R.string.settings_privacy_policy),
+/**
+ * Какие юридические документы показываем.
+ *
+ * [url] — тот же документ на сайте (2.1.0): встроенный текст не прочитался —
+ * LegalScreen открывает его там, без сообщения «Не удалось открыть».
+ */
+enum class LegalDocument(val assetName: String, val titleRes: Int, val url: String) {
+    PRIVACY("privacy_policy.txt", R.string.settings_privacy_policy, AppLinks.PRIVACY),
 
     /**
      * Лицензия Apache 2.0 (1.5.7). До 1.5.7 здесь было лицензионное
@@ -205,9 +172,9 @@ enum class LegalDocument(val assetName: String, val titleRes: Int) {
      * использование, запрет изменять и распространять. Код открыт —
      * соглашение снято.
      */
-    LICENSE("license.txt", R.string.settings_license),
-    TERMS("terms_of_use.txt", R.string.settings_terms),
-    LICENSES("licenses.txt", R.string.settings_licenses)
+    LICENSE("license.txt", R.string.settings_license, AppLinks.LICENSE),
+    TERMS("terms_of_use.txt", R.string.settings_terms, AppLinks.TERMS),
+    LICENSES("licenses.txt", R.string.settings_licenses, AppLinks.LICENSES)
 }
 
 @Composable

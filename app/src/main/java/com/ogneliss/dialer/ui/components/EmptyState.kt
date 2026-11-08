@@ -22,21 +22,31 @@ import com.ogneliss.dialer.R
 /**
  * ПУСТЫЕ СОСТОЯНИЯ.
  *
- * Назначение: объяснить, почему список пуст и что делать дальше.
+ * Назначение: сказать, почему список пуст, — значком и коротким
+ * заголовком.
+ *
+ * ── 2.1.0: без пояснений ───────────────────────────────────────────────────
+ * Правило автора 07.11.2026 (дизайн-система, «Пустое состояние»): значок
+ * и короткий заголовок; без пояснений; кнопка — только если нужна для
+ * работы. Было: под заголовком — абзац («Звонки появятся здесь»,
+ * «Попробуйте меньше цифр…», «Без доступа к контактам…»), у поиска —
+ * кнопка «Сбросить поиск». Стало: абзацев нет, кнопка осталась одна —
+ * «Разрешить», когда нет доступа к журналу или контактам: без неё
+ * приложение не работает. Запрос разрешения — системным окном
+ * (rememberPermissionRequest у экранов).
  *
  * ── Почему это не мелочь ───────────────────────────────────────────────────
  * Пустой белый экран пользователь трактует как поломку. Особенно
  * при первом запуске: он только что выдал приложению доступ к журналу
  * вызовов, увидел пустоту — и первый вывод будет «разрешения не сработали».
  *
- * Причин пустоты несколько, и они требуют РАЗНЫХ подсказок:
+ * Причин пустоты несколько, и заголовки у них РАЗНЫЕ:
  *  • журнал действительно пуст — «звонков пока нет»
- *  • нет разрешения — нужна кнопка выдачи, а не совет позвонить
- *  • поиск ничего не нашёл — предложить сбросить запрос
- *  • всё отфильтровано — сказать, что фильтр активен
+ *  • нет разрешения — заголовок и кнопка выдачи
+ *  • поиск ничего не нашёл — «ничего не найдено»
  *
  * Одна общая заглушка «ничего нет» на все случаи оставляет пользователя
- * в тупике в трёх случаях из четырёх.
+ * в тупике: без доступа к журналу он решил бы, что звонков нет.
  *
  * ── Компактный вариант ─────────────────────────────────────────────────────
  * В ландшафте и на разделённом экране высоты под иллюстрацию нет.
@@ -85,7 +95,6 @@ fun EmptyState(
 ) {
     val icon = iconFor(reason)
     val title = stringResource(titleFor(reason))
-    val hint = hintFor(reason)?.let { stringResource(it) }
     val actionLabel = actionFor(reason)?.let { stringResource(it) }
 
     if (compact) {
@@ -138,17 +147,8 @@ fun EmptyState(
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center
         )
-        if (hint != null) {
-            Spacer(Modifier.height(Space.s))
-            Text(
-                hint,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.outline,
-                textAlign = TextAlign.Center
-            )
-        }
         if (actionLabel != null && onAction != null) {
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(Space.xl))
             Button(onClick = onAction) { Text(actionLabel) }
         }
     }
@@ -175,21 +175,12 @@ private fun titleFor(reason: EmptyReason): Int = when (reason) {
     EmptyReason.NoReminders -> R.string.empty_no_reminders
 }
 
-private fun hintFor(reason: EmptyReason): Int? = when (reason) {
-    EmptyReason.NoCalls -> R.string.empty_no_calls_hint
-    EmptyReason.NoCallLogPermission -> R.string.empty_no_calllog_permission_hint
-    EmptyReason.NoContactsPermission -> R.string.empty_no_contacts_permission_hint
-    is EmptyReason.NoSearchResults -> R.string.empty_no_results_hint
-    EmptyReason.NoContacts -> R.string.empty_no_contacts_hint
-    EmptyReason.NoFavourites -> R.string.empty_no_favourites_hint
-    EmptyReason.NoNotes -> R.string.empty_no_notes_hint
-    EmptyReason.NoReminders -> R.string.empty_no_reminders_hint
-}
-
-/** Кнопка нужна только там, где пользователь реально может что-то исправить. */
+/**
+ * Кнопка — только если без неё приложение не работает: выдать доступ.
+ * «Сбросить поиск» снята в 2.1.0 — у поля поиска свой крестик.
+ */
 private fun actionFor(reason: EmptyReason): Int? = when (reason) {
     EmptyReason.NoCallLogPermission, EmptyReason.NoContactsPermission ->
         R.string.onboarding_grant
-    is EmptyReason.NoSearchResults -> R.string.empty_clear_search
     else -> null
 }

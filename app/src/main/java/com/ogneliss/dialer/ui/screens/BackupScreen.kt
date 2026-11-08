@@ -13,13 +13,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.ogneliss.dialer.ui.components.RowDivider
-import com.ogneliss.dialer.ui.components.OgnelissPanel
 import com.ogneliss.dialer.ui.components.OgnelissListRow
-import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.components.ScreenScaffold
 import com.ogneliss.dialer.ui.DialerViewModel
@@ -54,14 +51,15 @@ fun BackupScreen(
     vm: DialerViewModel,
     onBack: () -> Unit
 ) {
-    val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    val exportDone = stringResource(R.string.backup_done)
-    val exportFailed = stringResource(R.string.backup_failed)
-    val importDone = stringResource(R.string.restore_done)
-    val importFailed = stringResource(R.string.restore_failed)
-
+    /*
+     * 2.1.0 (правило автора 07.11.2026): без «Копия сохранена», «Не удалось
+     * сохранить копию», «Копия восстановлена», «Не удалось прочитать файл».
+     * Успех видно по файлу и по вернувшимся заметкам; неудача — в журнале
+     * разработчика (BackupManager пишет причину), а пустой файл неудачной
+     * копии удаляется, чтобы потом не принять его за копию.
+     */
     // CreateDocument сам предлагает имя и папку, а результат — Uri
     // с правом записи именно в этот файл
     val exportLauncher = rememberLauncherForActivityResult(
@@ -69,8 +67,7 @@ fun BackupScreen(
     ) { uri ->
         if (uri == null) return@rememberLauncherForActivityResult
         scope.launch {
-            val ok = vm.exportBackup(uri)
-            snackbar.showSnackbar(if (ok) exportDone else exportFailed)
+            if (!vm.exportBackup(uri)) vm.discardExport(uri)
         }
     }
 
@@ -78,10 +75,7 @@ fun BackupScreen(
         ActivityResultContracts.OpenDocument()
     ) { uri ->
         if (uri == null) return@rememberLauncherForActivityResult
-        scope.launch {
-            val ok = vm.importBackup(uri)
-            snackbar.showSnackbar(if (ok) importDone else importFailed)
-        }
+        scope.launch { vm.importBackup(uri) }
     }
 
     ScreenScaffold(
@@ -89,24 +83,18 @@ fun BackupScreen(
         tone = com.ogneliss.dialer.ui.theme.PageTone.TINTED,
         title = stringResource(R.string.settings_section_maintenance),
         onBack = onBack,
-        snackbarHost = { SnackbarHost(snackbar) },
         // Экран настроек: заголовок закреплён
         pinnedTopBar = true
     ) { pad ->
         Column(Modifier.padding(pad).verticalScroll(rememberScrollState())) {
 
-            // Объяснение, почему копия вообще нужна: без него функция
-            // выглядит необязательной и её не используют до потери данных
-            OgnelissPanel(color = MaterialTheme.colorScheme.surfaceVariant) {
-                Row(verticalAlignment = Alignment.Top) {
-                    Icon(OgnelissIcons.Info, null)
-                    Spacer(Modifier.width(Space.m))
-                    Text(
-                        stringResource(R.string.backup_why),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            }
+            /*
+             * Панели «Облачное копирование отключено намеренно…» и строки
+             * «В файле — заметки, метки…» под действиями нет с 2.1.0:
+             * правило автора 07.11.2026, пояснений не показываем. Что
+             * переносится, сказано в «Вопросах и ответах» («Новый телефон»).
+             */
+            Spacer(Modifier.height(Space.s))
 
             // Действия — белой группой с рамкой (строгий стиль, 1.5.1)
             SettingsGroup {
@@ -127,13 +115,6 @@ fun BackupScreen(
                     onClick = { importLauncher.launch(arrayOf("application/json", "*/*")) }
                 )
             }
-
-            Text(
-                stringResource(R.string.backup_contents),
-                Modifier.padding(FlowUi.contentPadding),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
 
             Spacer(Modifier.height(Space.xxl))
         }

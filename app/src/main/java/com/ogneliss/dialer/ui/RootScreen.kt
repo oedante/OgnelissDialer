@@ -724,7 +724,9 @@ fun RootScreen(
                             onOpenFakeCallPicker = { nav.navigate("contacts?pick=fake") },
                             onOpenNotes = { nav.navigate("notes") },
                             onOpenReminders = { nav.navigate("reminders") },
-                            onOpenArchive = { nav.navigate("call_archive") }
+                            onOpenArchive = { nav.navigate("call_archive") },
+                            // Полный список закреплённых — экран «Закреплённые» (2.1.0)
+                            onOpenPinned = { nav.navigate("pinned") }
                         )
                     }
                 }
@@ -822,7 +824,9 @@ fun RootScreen(
                         },
                         onOpenSettings = { nav.navigate("settings") },
                         onOpenReminders = { openSection(MainSection.REMINDERS) },
-                        onOpenHelp = { nav.navigate("faq") }
+                        onOpenHelp = { nav.navigate("faq") },
+                        // Полный список закреплённых — экран «Закреплённые» (2.1.0)
+                        onOpenPinned = { nav.navigate("pinned") }
                     )
                     }
                 }
