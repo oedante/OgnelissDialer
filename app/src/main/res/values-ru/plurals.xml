@@ -42,10 +42,4 @@
         <item quantity="many">Подходит %1$d записей</item>
         <item quantity="other">Подходит %1$d записи</item>
     </plurals>
-    <plurals name="messages_delete_threads_text">
-        <item quantity="one">%d переписка будет удалена с телефона. Отменить это нельзя.</item>
-        <item quantity="few">%d переписки будут удалены с телефона. Отменить это нельзя.</item>
-        <item quantity="many">%d переписок будут удалены с телефона. Отменить это нельзя.</item>
-        <item quantity="other">%d переписки будут удалены с телефона. Отменить это нельзя.</item>
-    </plurals>
 </resources>

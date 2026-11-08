@@ -1035,12 +1035,8 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="sms_copy_code_action">Copy %1$s</string>
     <string name="sms_copy_number">Copy %1$s</string>
     <string name="sms_copy_text">Copy text</string>
-    <string name="sms_default_action">Make default</string>
-    <string name="sms_default_banner">Conversation history, incoming messages and MMS appear when the dialer is your default SMS app. For now you can only send.</string>
     <string name="sms_delete">Delete</string>
-    <string name="sms_download_failed">MMS was not downloaded</string>
     <string name="sms_empty">No messages yet</string>
-    <string name="sms_empty_send_only">Write the first message. The history appears when the dialer is your default SMS app.</string>
     <string name="sms_mark_read">Mark as read</string>
     <string name="sms_me">You</string>
     <string name="sms_message_actions">Message actions</string>
@@ -1057,14 +1053,12 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="sms_sim_default">Default SIM</string>
     <string name="sms_status_delivered">Delivered</string>
     <string name="sms_status_failed">Not sent — tap to retry</string>
-    <string name="sms_status_not_downloaded">Not downloaded</string>
+    <string name="sms_status_not_downloaded">MMS not downloaded — tap to download</string>
     <string name="sms_status_sending">Sending…</string>
     <string name="sms_you">You: %1$s</string>
     <string name="settings_group_messages">SMS app</string>
     <string name="settings_sms_default_app">Default SMS app</string>
     <string name="settings_sms_default_app_text">Conversations, incoming SMS and MMS in the dialer’s SMS section</string>
-    <string name="settings_sms_in_app">Write SMS in the dialer</string>
-    <string name="settings_sms_in_app_text">“Message” buttons open a conversation here instead of the messaging app (requires the dialer to be the default phone app)</string>
     <string name="settings_sms_delivery_reports">Delivery reports</string>
     <string name="settings_sms_delivery_reports_text">Ask the network to confirm delivery. Some carriers charge for it</string>
     <string name="keywords_sms">sms mms message text conversation chat code password otp default</string>
@@ -1072,7 +1066,7 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <!-- Вопросы о сообщениях (2.0.0) -->
     <string name="faq_section_messages">Messages</string>
     <string name="faq_q_sms">Can I send and receive SMS in the dialer?</string>
-    <string name="faq_a_sms">Yes, if you choose to. Sending: the “Message” buttons open the conversation right here (%1$s) — the dialer must be your default phone app for that. Receiving, the conversation history and pictures (MMS) need the dialer to be your default SMS app (%2$s). Conversations are in the SMS section of the bottom bar, with the same swipes as in the call log; the call log stays calls only. To stop, choose another SMS app at any time — the dialer stops reading messages right away. RCS chat is not available to third-party apps.</string>
+    <string name="faq_a_sms">Yes. When the dialer is your default SMS app (%1$s), conversations, incoming SMS and pictures (MMS) are right here, in the SMS section of the bottom bar, with the same swipes as in the call log; the call log stays calls only. When another app handles SMS, the “Message” buttons simply open the conversation there — nothing to set up. On a phone with an RCS app (Google Messages, Samsung Messages) the dialer does not ask for the SMS role by itself: RCS chat works only in that app and turns off when another app takes SMS. To stop, choose another SMS app at any time — the dialer stops reading messages right away.</string>
     <string name="faq_q_codes">How do I paste a code from an SMS?</string>
     <string name="faq_a_codes">When a message contains a verification code, the notification gets a “Copy 123456” button, and the conversation shows the same button under the message. The code goes to the clipboard marked as sensitive, and your keyboard offers to paste it with one tap. Filling the code into another app automatically is done by your keyboard or autofill service (for example, Gboard or Autofill with Google) — that keeps working with the dialer as your SMS app. The code is found on the phone: the dialer has no internet access. Long-press a message to copy the whole text, a phone number from it, or select any part.</string>
 
@@ -1081,20 +1075,27 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="role_restricted_text">The app was installed from an APK file rather than from a store, and Android 15+ keeps the phone and SMS roles and SMS permissions closed for such apps until you allow them. Open “App info”, tap ⋮ in the top-right corner → “Allow restricted settings”, confirm, then come back and try again. Installs from Google Play don’t need this step.</string>
     <string name="role_restricted_open">Open App info</string>
     <string name="sms_new_message">New message</string>
-    <string name="sms_autostart_hint">For SMS to arrive while the dialer is closed, allow it to autostart — on this phone autostart is off for third-party apps.</string>
+    <string name="sms_autostart_hint">Allow autostart for SMS</string>
     <string name="sms_autostart_action">Open</string>
+    <string name="sms_unknown_sender">Unknown</string>
+    <string name="sms_mms_not_downloaded">MMS not downloaded</string>
+    <string name="sms_mms_download">Download</string>
+    <string name="sms_notifications_off">SMS notifications are off</string>
+    <string name="sms_autostart_off">Autostart is off</string>
+    <string name="messages_open_app">Open “%1$s”</string>
+    <string name="messages_use_here">Use Ogneliss for SMS</string>
+    <string name="messages_rcs_note">RCS chats will stay in %1$s and turn off</string>
+    <string name="msg_sms_thread_deleted">Conversation deleted</string>
+    <string name="msg_sms_threads_deleted">Conversations deleted: %1$s</string>
     <string name="perm_sms_role_text">Conversations, incoming SMS and MMS. Optional — you can send SMS without it.</string>
 
     <!-- Раздел SMS и меню «Ещё» (2.0.0) -->
     <string name="nav_messages">SMS</string>
     <string name="messages_empty">No messages yet</string>
-    <string name="messages_not_default">To see conversations and receive SMS here, make the dialer your default SMS app. You can send messages without it.</string>
     <string name="messages_new">New message</string>
     <string name="messages_new_hint">Number or name</string>
     <string name="messages_write">Write</string>
     <string name="messages_search_hint">Search messages</string>
-    <string name="messages_delete_thread_title">Delete conversation?</string>
-    <string name="messages_delete_thread_text">All messages with %1$s will be deleted from the phone.</string>
     <string name="menu_section_list">List</string>
     <string name="menu_filters_active">Active conditions: %1$s</string>
     <string name="messages_delete_thread_action">Delete conversation</string>
@@ -1122,10 +1123,8 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="archive_row">Archive · %1$d</string>
     <string name="archive_empty">The archive is empty</string>
     <string name="archive_calls_note">A new call from the same person brings the entry back to the call log.</string>
-    <string name="archive_sms_note">A new message brings the conversation back to the list.</string>
     <string name="msg_archived_many">Moved to archive: %1$s</string>
     <string name="msg_unarchived">Returned from archive</string>
-    <string name="messages_delete_threads_title">Delete the selected conversations?</string>
     <string name="a11y_avatar_select">Select</string>
     <string name="settings_incoming_banner">Incoming call as a banner</string>
     <string name="settings_incoming_banner_text">While you use the phone, an incoming call appears at the top with Answer and Decline instead of opening full screen. On a locked or dark screen it is always full screen</string>

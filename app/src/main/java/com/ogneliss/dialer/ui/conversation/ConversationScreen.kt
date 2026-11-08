@@ -1,6 +1,5 @@
 package com.ogneliss.dialer.ui.conversation
 
-import android.Manifest
 import android.net.Uri
 import android.text.format.DateUtils
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -42,8 +41,6 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -64,7 +61,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -76,13 +72,9 @@ import coil.compose.AsyncImage
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.sms.Message
 import com.ogneliss.dialer.sms.OtpDetector
+import com.ogneliss.dialer.sms.MessageNotifications
 import com.ogneliss.dialer.sms.SmsClipboard
 import com.ogneliss.dialer.sms.SmsRole
-import com.ogneliss.dialer.sms.SmsSettings
-import com.ogneliss.dialer.ui.components.RoleHelpDialog
-import com.ogneliss.dialer.ui.components.rememberSmsRoleRequest
-import com.ogneliss.dialer.util.AutoStart
-import com.ogneliss.dialer.util.RoleAccess
 import com.ogneliss.dialer.ui.components.OgnelissDialog
 import com.ogneliss.dialer.ui.components.PhotoViewerDialog
 import com.ogneliss.dialer.ui.components.ScreenScaffold
@@ -109,6 +101,18 @@ import com.ogneliss.dialer.ui.components.listSheetContainerColor
  * Долгое нажатие — шторка: копировать текст, код, номер из текста;
  * выделить часть текста; повторить; удалить. Разбор — OtpDetector,
  * только на устройстве.
+ *
+ * ── 2.1.0: тихо ────────────────────────────────────────────────────────────
+ * • Без роли SMS экран не открывается: переписка передаётся приложению SMS
+ *   человека (SmsRole.handOff — ссылка sms: выбрана в «Открыть с помощью»,
+ *   роль ушла другому) и экран закрывается. Было: «только отправка»,
+ *   плашка «сделать приложением SMS», окно SEND_SMS.
+ * • Не отправлено — без сообщения внизу: пузырь «Не отправлено» с повтором
+ *   и черновик в поле остаются. Уведомление о неотправленном, пока
+ *   переписка на экране, не показывается (MessageNotifications).
+ * • Подсказки «разрешите автозапуск» здесь нет — она в списке SMS
+ *   и только там, где нужна (SmsHealth).
+ * • «MMS не загружено» — касание скачивает (MmsDownloads).
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -119,75 +123,58 @@ fun ConversationScreen(
     vm: ConversationViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    /*
+     * Без роли SMS — передать переписку приложению SMS и закрыть экран (2.1.0).
+     * Решается один раз при входе: роль на глазах не меняется.
+     */
+    val ownsSms = remember { SmsRole.isDefault(context) }
+    if (!ownsSms) {
+        LaunchedEffect(Unit) {
+            SmsRole.handOff(context, vm.address, vm.initialBody, vm.requestedSubId)
+            onBack()
+        }
+        return
+    }
     val state by vm.state.collectAsStateWithLifecycle()
-    // Ошибка отправки — снизу, не окном: человек может сразу повторить
-    val snackbar = remember { SnackbarHostState() }
     // Шторка действий, выделение текста и просмотр картинки — по одному окну за раз
     var actionsFor by remember { mutableStateOf<Message?>(null) }
     var selectTextOf by remember { mutableStateOf<Message?>(null) }
     var viewing by rememberSaveable { mutableStateOf<String?>(null) }
-    var sendAfterGrant by remember { mutableStateOf(false) }
 
-    // Вернулись на экран (сделали приложением SMS, выдали разрешение) — перечитать
+    // Вернулись на экран — перечитать; на экране — без уведомлений о неотправленном здесь
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     DisposableEffect(lifecycle) {
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) vm.refresh()
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> {
+                    MessageNotifications.setConversationVisible(vm.address, true)
+                    vm.refresh()
+                }
+                Lifecycle.Event.ON_PAUSE -> MessageNotifications.setConversationVisible(vm.address, false)
+                else -> Unit
+            }
         }
         lifecycle.addObserver(observer)
-        onDispose { lifecycle.removeObserver(observer) }
+        onDispose {
+            lifecycle.removeObserver(observer)
+            MessageNotifications.setConversationVisible(vm.address, false)
+        }
     }
 
     /*
-     * Три системных окна экрана:
-     * • роль SMS — системный выбор приложения SMS по умолчанию;
-     * • SEND_SMS — когда диалер не SMS по умолчанию (роль выдаёт его сама);
-     *   после выдачи черновик уходит сразу — человек уже нажал «Отправить»;
-     * • выбор картинок — системный (Photo Picker): без доступа ко всей
-     *   галерее, только к выбранным снимкам.
+     * Системное окно экрана одно — выбор картинок (Photo Picker): без доступа
+     * ко всей галерее, только к выбранным снимкам. Роль SMS и SEND_SMS
+     * здесь больше не спрашиваются (2.1.0): без роли экрана нет, роль
+     * выдаёт SEND_SMS сама.
      */
-    // Роль или разрешение SMS не выданы — что случилось и куда нажать (RoleAccess)
-    var roleHelp by remember { mutableStateOf<RoleAccess.Help?>(null) }
-    val requestSmsRole = rememberSmsRoleRequest { help ->
-        vm.refresh()
-        roleHelp = help
-    }
-    val sendPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        vm.refresh()
-        if (granted && sendAfterGrant) vm.send()
-        // Android 15 не выдаёт SMS приложению, установленному из файла, — без окна
-        if (!granted && RoleAccess.isRestrictedSource(context)) roleHelp = RoleAccess.Help.RESTRICTED
-        sendAfterGrant = false
-    }
-    // Автозапуск на прошивках, где без него закрытое приложение не получает SMS
-    var autostartHint by remember {
-        mutableStateOf(AutoStart.isSupported() && !SmsSettings.autostartHintDone(context))
-    }
     val pickImages = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(3)) { uris ->
         vm.addImages(uris)
-    }
-
-    val failedText = stringResource(R.string.sms_send_failed)
-    LaunchedEffect(state.sendFailed) {
-        if (state.sendFailed) {
-            snackbar.showSnackbar(failedText)
-            vm.consumeSendFailed()
-        }
-    }
-
-    val onSend = {
-        if (SmsRole.canSend(context)) vm.send()
-        else {
-            sendAfterGrant = true
-            sendPermission.launch(Manifest.permission.SEND_SMS)
-        }
     }
 
     ScreenScaffold(
         title = state.title,
         onBack = onBack,
         pinnedTopBar = true,
-        snackbarHost = { SnackbarHost(snackbar) },
         actions = {
             if (state.dialable) {
                 IconButton(onClick = { onCall(vm.address) }) {
@@ -213,30 +200,15 @@ fun ConversationScreen(
                 },
                 onRemoveImage = vm::removeImage,
                 onSelectSim = vm::selectSim,
-                onSend = onSend
+                onSend = vm::send
             )
         }
     ) { pad ->
         Column(Modifier.fillMaxSize().padding(pad)) {
-            if (!state.isDefaultSms && !state.loading) {
-                DefaultSmsBanner(onMakeDefault = requestSmsRole)
-            } else if (state.isDefaultSms && autostartHint) {
-                AutostartBanner(
-                    onOpen = {
-                        SmsSettings.markAutostartHintDone(context)
-                        autostartHint = false
-                        AutoStart.open(context)
-                    },
-                    onDismiss = {
-                        SmsSettings.markAutostartHintDone(context)
-                        autostartHint = false
-                    }
-                )
-            }
             if (state.messages.isEmpty() && !state.loading) {
                 Box(Modifier.weight(1f).fillMaxWidth().padding(Space.xl), contentAlignment = Alignment.Center) {
                     Text(
-                        stringResource(if (state.isDefaultSms) R.string.sms_empty else R.string.sms_empty_send_only),
+                        stringResource(R.string.sms_empty),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center
@@ -248,6 +220,7 @@ fun ConversationScreen(
                     modifier = Modifier.weight(1f),
                     onLongPress = { actionsFor = it },
                     onRetry = vm::retry,
+                    onDownload = vm::downloadMms,
                     onOpenImage = { viewing = it }
                 )
             }
@@ -286,7 +259,6 @@ fun ConversationScreen(
         PhotoViewerDialog(uri = uri, title = state.title, onDismiss = { viewing = null })
     }
 
-    roleHelp?.let { help -> RoleHelpDialog(help) { roleHelp = null } }
 }
 
 // ── Список ───────────────────────────────────────────────────────────────────
@@ -303,6 +275,7 @@ private fun MessageList(
     modifier: Modifier,
     onLongPress: (Message) -> Unit,
     onRetry: (Message) -> Unit,
+    onDownload: (Message) -> Unit,
     onOpenImage: (String) -> Unit
 ) {
     val listState = rememberLazyListState()
@@ -319,7 +292,7 @@ private fun MessageList(
     ) {
         newestFirst.forEachIndexed { index, message ->
             item(key = message.key) {
-                Bubble(message, onLongPress, onRetry, onOpenImage)
+                Bubble(message, onLongPress, onRetry, onDownload, onOpenImage)
             }
             // Подпись дня — над первым сообщением дня (в перевёрнутом списке — после)
             val older = newestFirst.getOrNull(index + 1)
@@ -368,11 +341,13 @@ private fun Bubble(
     message: Message,
     onLongPress: (Message) -> Unit,
     onRetry: (Message) -> Unit,
+    onDownload: (Message) -> Unit,
     onOpenImage: (String) -> Unit
 ) {
     val context = LocalContext.current
     val mine = message.outgoing
     val failed = message.status == Message.Status.FAILED
+    val notDownloaded = message.status == Message.Status.NOT_DOWNLOADED
     // Код ищется только во входящих: в своём сообщении он человеку не нужен
     val code = remember(message.key, message.body) {
         if (mine) null else OtpDetector.code(message.body)
@@ -404,7 +379,13 @@ private fun Bubble(
                 .widthIn(max = 320.dp)
                 .clip(MaterialTheme.shapes.large)
                 .combinedClickable(
-                    onClick = { if (failed) onRetry(message) },
+                    // Касание: не отправлено — повтор; MMS не загружено — скачать (2.1.0)
+                    onClick = {
+                        when {
+                            failed -> onRetry(message)
+                            notDownloaded -> onDownload(message)
+                        }
+                    },
                     onLongClick = { onLongPress(message) },
                     onLongClickLabel = stringResource(R.string.sms_message_actions)
                 )
@@ -427,6 +408,9 @@ private fun Bubble(
                 }
                 if (message.body.isNotBlank()) {
                     Text(message.body, style = MaterialTheme.typography.bodyLarge)
+                } else if (notDownloaded && message.subject.isNullOrBlank()) {
+                    // Пустой пузырь не читается — хотя бы «MMS»
+                    Text(stringResource(R.string.sms_mms), style = MaterialTheme.typography.bodyLarge)
                 }
             }
         }
@@ -443,7 +427,11 @@ private fun Bubble(
         Text(
             listOfNotNull(time, statusText).joinToString(" · "),
             style = MaterialTheme.typography.labelSmall,
-            color = if (failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+            color = when {
+                failed -> MaterialTheme.colorScheme.error
+                notDownloaded -> MaterialTheme.colorScheme.primary
+                else -> MaterialTheme.colorScheme.onSurfaceVariant
+            },
             modifier = Modifier.padding(horizontal = Space.xs, vertical = Space.xxs)
         )
     }
@@ -510,8 +498,8 @@ private fun ComposeBar(
                 }
             }
             Row(verticalAlignment = Alignment.Bottom) {
-                // Картинки — MMS, только у приложения SMS по умолчанию
-                if (state.isDefaultSms) {
+                // Картинки — MMS, только у приложения SMS по умолчанию и если оператор разрешает (2.1.0)
+                if (state.isDefaultSms && state.mmsEnabled) {
                     IconButton(onClick = onPickImages) {
                         Icon(OgnelissIcons.AddPhotoAlternate, contentDescription = stringResource(R.string.sms_attach_picture))
                     }
@@ -616,63 +604,6 @@ private fun simOrdinalName(sim: com.ogneliss.dialer.data.SimSlot): String = "SIM
 /** Вторая строка: имя карты, если оно не «SIM n», иначе оператор. */
 private fun simSecondLine(sim: com.ogneliss.dialer.data.SimSlot): String? =
     sim.label.takeIf { it.isNotBlank() && it != simOrdinalName(sim) } ?: sim.carrier?.takeIf { it.isNotBlank() }
-
-// ── Плашка роли SMS ──────────────────────────────────────────────────────────
-
-/**
- * Плашка «сделать приложением SMS». Не окно и не запрет: отправлять
- * можно и так, а история и входящие — по желанию человека.
- */
-@Composable
-private fun DefaultSmsBanner(onMakeDefault: () -> Unit) {
-    Surface(
-        color = MaterialTheme.colorScheme.secondaryContainer,
-        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-        shape = MaterialTheme.shapes.large,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = FlowUi.screenPadding, vertical = Space.s)
-    ) {
-        Row(Modifier.padding(start = Space.l, end = Space.s, top = Space.s, bottom = Space.s), verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                stringResource(R.string.sms_default_banner),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.weight(1f)
-            )
-            TextButton(onClick = onMakeDefault) {
-                Text(stringResource(R.string.sms_default_action), fontWeight = FontWeight.Medium)
-            }
-        }
-    }
-}
-
-/**
- * Подсказка об автозапуске — один раз после того, как диалер стал
- * приложением SMS, и только на прошивках, где автозапуск сторонним
- * приложениям закрыт (AutoStart.isSupported). Кнопка ведёт прямо на экран
- * прошивки; крестик — больше не показывать.
- */
-@Composable
-private fun AutostartBanner(onOpen: () -> Unit, onDismiss: () -> Unit) {
-    Surface(
-        color = MaterialTheme.colorScheme.tertiaryContainer,
-        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-        shape = MaterialTheme.shapes.large,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = FlowUi.screenPadding, vertical = Space.s)
-    ) {
-        Row(Modifier.padding(start = Space.l, end = Space.xs, top = Space.s, bottom = Space.s), verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                stringResource(R.string.sms_autostart_hint),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.weight(1f)
-            )
-            TextButton(onClick = onOpen) {
-                Text(stringResource(R.string.sms_autostart_action), fontWeight = FontWeight.Medium)
-            }
-            IconButton(onClick = onDismiss) {
-                Icon(OgnelissIcons.Close, contentDescription = stringResource(R.string.nav_close))
-            }
-        }
-    }
-}
 
 // ── Действия с сообщением ────────────────────────────────────────────────────
 

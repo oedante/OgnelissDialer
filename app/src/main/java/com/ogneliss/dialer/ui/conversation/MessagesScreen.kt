@@ -5,7 +5,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,7 +19,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Badge
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -40,7 +38,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -63,7 +60,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.ui.res.pluralStringResource
 import com.ogneliss.dialer.data.ArchiveRules
 import com.ogneliss.dialer.data.JournalDays
 import com.ogneliss.dialer.ui.components.SelectionTopBar
@@ -120,11 +116,22 @@ import com.ogneliss.dialer.util.RoleAccess
  * • Закреплённые переписки — сверху, своим списком (Prefs.smsPinned),
  *   отдельно от закреплённых журнала. Закрепить — карточки долгого нажатия.
  * • Свайпы — свои (Настройки → SMS): по умолчанию вправо «SMS» (открыть
- *   переписку), влево «Удалить» (с подтверждением).
+ *   переписку), влево «Удалить».
  * • Перелистывание по нижней панели: вправо — журнал, влево — контакты.
  * • Строка — как строка журнала: те же поля, фон, линии внутри дня.
  *
- * Без роли SMS — объяснение и кнопка «Сделать»; написать можно и так.
+ * ── 2.1.0: тихо (правило автора: выполнять или пропускать, не объяснять) ────
+ * • Без роли SMS — только «Открыть «Сообщения»» (приложение SMS человека)
+ *   и «Вести SMS в Ogneliss» (роль по просьбе); у приложения с RCS — одна
+ *   строка, что чаты RCS останутся там и выключатся. Было: абзац
+ *   объяснения и кнопка «Приложение SMS по умолчанию».
+ * • Удаление — сразу, с «Отменить» (было — окно подтверждения);
+ *   из хранилища — когда сообщение погаснет (MessagesViewModel.deleteWithUndo).
+ * • Сверху — полоса только о критичном: уведомления о SMS выключены,
+ *   автозапуск MIUI запрещён (SmsHealth); на прошивках, где автозапуск
+ *   не проверить, — один раз «разрешите автозапуск».
+ * • Пусто — значок и «Сообщений пока нет», без пояснений; пояснение
+ *   архива убрано.
  */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -162,7 +169,8 @@ fun MessagesScreen(
     val archive by vm.smsArchived.collectAsStateWithLifecycle()
     val selection = rememberSelectionState<String>()
     var showArchive by rememberSaveable { mutableStateOf(false) }
-    var confirmDeleteMany by remember { mutableStateOf(false) }
+    val pendingDeletion by messagesVm.pendingDeletion.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     var menuOpen by remember { mutableStateOf(false) }
     /*
@@ -174,8 +182,23 @@ fun MessagesScreen(
     var query by rememberSaveable { mutableStateOf("") }
     // Окно «Новое сообщение» переживает поворот: человек мог начать набирать
     var composeNew by rememberSaveable { mutableStateOf(false) }
-    // Удаление переписки — только с подтверждением: необратимо
-    var confirmDelete by remember { mutableStateOf<MessagesViewModel.Thread?>(null) }
+    /*
+     * Удаление (2.1.0): сразу из списка, «Отменить» — в общем поле с кольцом
+     * (DialerViewModel.notifyWithUndo), из хранилища — когда оно погаснет.
+     * Закрепление и архив снимаются только у удалённых на самом деле.
+     */
+    fun deleteThreads(threads: List<MessagesViewModel.Thread>) {
+        if (threads.isEmpty()) return
+        val (commit, undo) = messagesVm.deleteWithUndo(threads) { deleted ->
+            vm.forgetSmsThreads(deleted.map { it.address })
+        }
+        vm.notifyWithUndo(
+            textRes = if (threads.size == 1) R.string.msg_sms_thread_deleted else R.string.msg_sms_threads_deleted,
+            arg = if (threads.size == 1) null else threads.size.toString(),
+            onTimeout = commit,
+            undo = undo
+        )
+    }
     /*
      * Долгое нажатие — те же карточки действий, что в журнале (2.0.2):
      * номера с вызовом и SMS, «Позвонить», «Закрепить», «Блок», «Ещё».
@@ -184,6 +207,7 @@ fun MessagesScreen(
     var cardsFor by remember { mutableStateOf<MessagesViewModel.Thread?>(null) }
     var cardsAnchorY by remember { mutableStateOf<Float?>(null) }
     val touchAnchor = rememberTouchAnchor()
+    // Роль по просьбе человека («Вести SMS в Ogneliss») — отказ объясняется окном
     var roleHelp by remember { mutableStateOf<RoleAccess.Help?>(null) }
     val requestRole = rememberSmsRoleRequest { help ->
         messagesVm.refresh()
@@ -213,8 +237,8 @@ fun MessagesScreen(
      * как в журнале). Порог, подсказка-иконка и выбор SIM — общие.
      *
      * «SMS» здесь открывает переписку сразу, не через выбор номера:
-     * номер у переписки один. «Удалить» удаляет переписку
-     * с подтверждением: журнала у сообщений нет, а смысл жеста тот же.
+     * номер у переписки один. «Удалить» удаляет переписку (2.1.0 — сразу,
+     * с «Отменить»): журнала у сообщений нет, а смысл жеста тот же.
      */
     val swipeController = rememberSwipeRevealController()
     val swipeTuning by vm.swipeTuning.collectAsStateWithLifecycle()
@@ -241,7 +265,7 @@ fun MessagesScreen(
             action == SwipeAction.NONE -> Unit
             action == SwipeAction.DELETE_FROM_LOG -> {
                 swipeController.close()
-                confirmDelete = thread
+                deleteThreads(listOf(thread))
             }
             // «SMS» по переписке — она сама; у буквенного отправителя тоже
             action == SwipeAction.SMS -> {
@@ -256,9 +280,14 @@ fun MessagesScreen(
         }
     }
 
+    // Удалённые с «Отменить» — не видны; пришло новое сообщение — переписка снова видна
+    val visibleThreads = remember(state.threads, pendingDeletion) {
+        if (pendingDeletion.isEmpty()) state.threads
+        else state.threads.filterNot { t -> pendingDeletion[t.key]?.let { t.last.date <= it } == true }
+    }
     // Архивные — отдельно; новое сообщение возвращает переписку само (ArchiveRules)
-    val (archivedThreads, activeThreads) = remember(state.threads, archive) {
-        state.threads.partition { ArchiveRules.isSmsArchived(smsPinKey(it.address), it.last.date, archive) }
+    val (archivedThreads, activeThreads) = remember(visibleThreads, archive) {
+        visibleThreads.partition { ArchiveRules.isSmsArchived(smsPinKey(it.address), it.last.date, archive) }
     }
     val source = if (showArchive) archivedThreads else activeThreads
     val shown = remember(source, query, byNumber) {
@@ -348,7 +377,11 @@ fun MessagesScreen(
                             selection.clear()
                         }
                     },
-                    onDelete = { if (selection.count > 0) confirmDeleteMany = true }
+                    onDelete = {
+                        val chosen = selectedThreads()
+                        selection.clear()
+                        deleteThreads(chosen)
+                    }
                 )
                 // Архив — своей строкой заголовка со стрелкой назад
                 showArchive -> TopAppBar(
@@ -363,8 +396,9 @@ fun MessagesScreen(
         },
         floatingActionButton = {
             // «Написать» — как в почте: круглая кнопка справа внизу, у большого пальца.
-            // В архиве и при выборе — без неё: там не пишут
-            if (!searching && !showArchive && !selection.isActive) {
+            // В архиве и при выборе — без неё: там не пишут. Без роли SMS (2.1.0) —
+            // тоже: пишут в приложении SMS человека, кнопка «Открыть» — посередине
+            if (!searching && !showArchive && !selection.isActive && state.isDefaultSms) {
                 FloatingActionButton(
                     onClick = { composeNew = true },
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -422,24 +456,47 @@ fun MessagesScreen(
             )
         }
     ) { pad ->
-        Box(Modifier.fillMaxSize().padding(pad)) {
+        Column(Modifier.fillMaxSize().padding(pad)) {
             /*
-             * Три состояния: нет роли SMS — объяснение и кнопка; роль есть,
-             * переписок нет (или поиск ничего не нашёл) — строка по центру;
-             * иначе список. Пока идёт первое чтение — пусто, без мигания
-             * «сообщений нет».
+             * Полоса сверху (2.1.0) — только критичное, что исправит лишь
+             * человек (SmsHealth): уведомления о SMS выключены, автозапуск
+             * MIUI запрещён. Иначе — один раз «разрешите автозапуск» там,
+             * где его не проверить. В архиве и при выборе — без полос.
+             */
+            if (state.isDefaultSms && !showArchive && !selection.isActive) {
+                state.problem?.let { problem ->
+                    SmsProblemStrip(problem) {
+                        com.ogneliss.dialer.sms.SmsHealth.fix(context, problem)
+                    }
+                } ?: run {
+                    if (state.autostartHint) {
+                        AutostartHintStrip(
+                            onOpen = {
+                                messagesVm.dismissAutostartHint()
+                                com.ogneliss.dialer.util.AutoStart.open(context)
+                            },
+                            onDismiss = messagesVm::dismissAutostartHint
+                        )
+                    }
+                }
+            }
+        Box(Modifier.weight(1f).fillMaxWidth()) {
+            /*
+             * Три состояния: нет роли SMS — приложение SMS человека и роль
+             * по просьбе; роль есть, переписок нет — значок и строка по центру
+             * (поиск ничего не нашёл — пусто); иначе список. Пока идёт первое
+             * чтение — пусто, без мигания «сообщений нет».
              */
             if (!state.isDefaultSms && !state.loading) {
-                NotDefaultBlock(onMakeDefault = requestRole)
+                CompanionBlock(
+                    companion = state.companion,
+                    onOpenCompanion = { com.ogneliss.dialer.sms.SmsRole.openCompanionApp(context) },
+                    onUseHere = requestRole
+                )
             } else if (shown.isEmpty() && !state.loading && (showArchive || archivedThreads.isEmpty() || query.isNotBlank())) {
                 // Пустой общий список при непустом архиве — не «пусто»: сверху строка «Архив · N»
-                Box(Modifier.fillMaxSize().padding(Space.xl), contentAlignment = Alignment.Center) {
-                    Text(
-                        stringResource(if (showArchive && query.isBlank()) R.string.archive_empty else R.string.messages_empty),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center
-                    )
+                if (query.isBlank()) {
+                    MessagesEmpty(if (showArchive) R.string.archive_empty else R.string.messages_empty)
                 }
             } else {
                 @Composable
@@ -541,16 +598,7 @@ fun MessagesScreen(
                             ArchiveEntryRow(archivedThreads.size) { showArchive = true }
                         }
                     }
-                    if (showArchive) {
-                        item(key = "archive_note", contentType = "archive_note") {
-                            Text(
-                                stringResource(R.string.archive_sms_note),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(horizontal = Space.l, vertical = Space.s)
-                            )
-                        }
-                    }
+                    // 2.1.0: пояснение «новое сообщение вернёт переписку» над архивом убрано
                     if (pinnedThreads.isNotEmpty()) {
                         item(key = "pinned_header", contentType = "date_header") {
                             LetterHeader(pinnedHeader)
@@ -578,6 +626,7 @@ fun MessagesScreen(
                 )
             }
         }
+        }
     }
 
     if (composeNew) {
@@ -587,52 +636,6 @@ fun MessagesScreen(
             onPick = { number ->
                 composeNew = false
                 onOpenConversation(number)
-            }
-        )
-    }
-
-    confirmDelete?.let { thread ->
-        val who = contactOf(thread.address)?.displayName ?: PhoneFormatter.format(thread.address)
-        OgnelissDialog(
-            onDismissRequest = { confirmDelete = null },
-            title = stringResource(R.string.messages_delete_thread_title),
-            content = { Text(stringResource(R.string.messages_delete_thread_text, who)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    confirmDelete = null
-                    // Удалённая переписка не остаётся закреплённой пустым местом —
-                    // но только если удаление удалось: иначе закрепление терялось бы зря
-                    // 2.1.0: заодно и из архива — удалённой переписке там не место
-                    messagesVm.deleteThread(thread) { ok ->
-                        if (ok) vm.forgetSmsThreads(listOf(thread.address))
-                    }
-                }) { Text(stringResource(R.string.sms_delete), color = MaterialTheme.colorScheme.error) }
-            },
-            dismissButton = {
-                TextButton(onClick = { confirmDelete = null }) { Text(stringResource(R.string.nav_close)) }
-            }
-        )
-    }
-
-    if (confirmDeleteMany) {
-        val count = selection.count
-        OgnelissDialog(
-            onDismissRequest = { confirmDeleteMany = false },
-            title = stringResource(R.string.messages_delete_threads_title),
-            content = { Text(pluralStringResource(R.plurals.messages_delete_threads_text, count, count)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    val chosen = selectedThreads()
-                    confirmDeleteMany = false
-                    selection.clear()
-                    // Закрепление и место в архиве снимаются только у удалённых
-                    messagesVm.deleteThreads(chosen) { deleted ->
-                        vm.forgetSmsThreads(deleted.map { it.address })
-                    }
-                }) { Text(stringResource(R.string.sms_delete), color = MaterialTheme.colorScheme.error) }
-            },
-            dismissButton = {
-                TextButton(onClick = { confirmDeleteMany = false }) { Text(stringResource(R.string.nav_close)) }
             }
         )
     }
@@ -649,7 +652,7 @@ fun MessagesScreen(
                 onOpenCard(contact?.let { "contact:${it.id}" } ?: "number:${thread.address}")
             },
             onOpenBlockLists = { cardsFor = null; onOpenBlockLists() },
-            onDeleteThread = { confirmDelete = thread },
+            onDeleteThread = { cardsFor = null; deleteThreads(listOf(thread)) },
             smsPinned = smsPinKey(thread.address) in pinnedSet,
             onToggleSmsPin = { vm.toggleSmsPin(thread.address) },
             onDismiss = { cardsFor = null }
@@ -659,8 +662,8 @@ fun MessagesScreen(
     roleHelp?.let { help -> RoleHelpDialog(help) { roleHelp = null } }
 }
 
-/** Ключ строки ленты: разговор и адрес (у старых прошивок разговора может не быть). */
-private fun threadKey(t: MessagesViewModel.Thread): String = "thread:${t.threadId}:${t.address}"
+/** Ключ строки ленты (MessagesViewModel.Thread.key). */
+private fun threadKey(t: MessagesViewModel.Thread): String = t.key
 
 /**
  * Строка переписки — как строка журнала (2.1.0): те же поля по плотности
@@ -813,27 +816,6 @@ private fun ArchiveEntryRow(count: Int, onOpen: () -> Unit) {
                 modifier = Modifier.weight(1f)
             )
         }
-    }
-}
-
-/** Диалер ещё не приложение SMS: что даст роль и кнопка. */
-@Composable
-private fun NotDefaultBlock(onMakeDefault: () -> Unit) {
-    Column(
-        Modifier.fillMaxSize().padding(Space.xl),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(OgnelissIcons.Textsms, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-        Spacer(Modifier.height(Space.m))
-        Text(
-            stringResource(R.string.messages_not_default),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
-        Spacer(Modifier.height(Space.l))
-        FilledTonalButton(onClick = onMakeDefault) { Text(stringResource(R.string.settings_sms_default_app)) }
     }
 }
 

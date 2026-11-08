@@ -33,8 +33,4 @@
         <item quantity="one">%1$d Anruf passt</item>
         <item quantity="other">%1$d Anrufe passen</item>
     </plurals>
-    <plurals name="messages_delete_threads_text">
-        <item quantity="one">%d Unterhaltung wird vom Telefon gelöscht. Das kann nicht rückgängig gemacht werden.</item>
-        <item quantity="other">%d Unterhaltungen werden vom Telefon gelöscht. Das kann nicht rückgängig gemacht werden.</item>
-    </plurals>
 </resources>

@@ -1015,12 +1015,8 @@
     <string name="sms_copy_code_action">Копировать %1$s</string>
     <string name="sms_copy_number">Копировать %1$s</string>
     <string name="sms_copy_text">Копировать текст</string>
-    <string name="sms_default_action">Сделать</string>
-    <string name="sms_default_banner">История переписки, входящие и MMS появятся, когда диалер станет приложением SMS по умолчанию. Сейчас можно только отправлять.</string>
     <string name="sms_delete">Удалить</string>
-    <string name="sms_download_failed">MMS не скачано</string>
     <string name="sms_empty">Сообщений пока нет</string>
-    <string name="sms_empty_send_only">Напишите первое сообщение. История появится, когда диалер станет приложением SMS по умолчанию.</string>
     <string name="sms_mark_read">Прочитано</string>
     <string name="sms_me">Вы</string>
     <string name="sms_message_actions">Действия с сообщением</string>
@@ -1037,14 +1033,12 @@
     <string name="sms_sim_default">SIM по умолчанию</string>
     <string name="sms_status_delivered">Доставлено</string>
     <string name="sms_status_failed">Не отправлено — нажмите, чтобы повторить</string>
-    <string name="sms_status_not_downloaded">Не скачано</string>
+    <string name="sms_status_not_downloaded">MMS не загружено — нажмите, чтобы загрузить</string>
     <string name="sms_status_sending">Отправляется…</string>
     <string name="sms_you">Вы: %1$s</string>
     <string name="settings_group_messages">Приложение SMS</string>
     <string name="settings_sms_default_app">Приложение SMS по умолчанию</string>
     <string name="settings_sms_default_app_text">Переписка, входящие SMS и MMS в разделе SMS диалера</string>
-    <string name="settings_sms_in_app">Писать SMS в диалере</string>
-    <string name="settings_sms_in_app_text">Кнопки «Написать» открывают переписку здесь, а не в приложении сообщений (нужно, чтобы диалер был телефоном по умолчанию)</string>
     <string name="settings_sms_delivery_reports">Отчёт о доставке</string>
     <string name="settings_sms_delivery_reports_text">Просить сеть подтвердить доставку. Некоторые операторы берут за это плату</string>
     <string name="keywords_sms">смс sms ммс mms сообщение текст переписка чат код пароль по умолчанию</string>
@@ -1052,7 +1046,7 @@
     <!-- Вопросы о сообщениях (2.0.0) -->
     <string name="faq_section_messages">Сообщения</string>
     <string name="faq_q_sms">Можно ли писать и получать SMS в диалере?</string>
-    <string name="faq_a_sms">Да, если вы так решите. Писать: кнопки «Написать» открывают переписку прямо здесь (%1$s) — для этого диалер должен быть телефоном по умолчанию. Получать, видеть историю и отправлять картинки (MMS) — когда диалер станет приложением SMS по умолчанию (%2$s). Переписки — в разделе «SMS» на нижней панели, со свайпами, как в журнале; журнал остаётся только для звонков. Отказаться можно в любой момент, выбрав другое приложение SMS, — диалер сразу перестанет читать сообщения. Чаты RCS сторонним приложениям недоступны.</string>
+    <string name="faq_a_sms">Да. Когда диалер — приложение SMS по умолчанию (%1$s), переписки, входящие SMS и картинки (MMS) — прямо здесь, в разделе «SMS» на нижней панели, со свайпами, как в журнале; журнал остаётся только для звонков. Когда SMS ведёт другое приложение, кнопки «Написать» просто открывают переписку в нём — настраивать ничего не нужно. На телефоне с приложением, где есть RCS (Google Сообщения, Samsung Messages), диалер сам не просит роль SMS: чаты RCS работают только там и выключаются, если SMS забирает другое приложение. Отказаться можно в любой момент, выбрав другое приложение SMS, — диалер сразу перестанет читать сообщения.</string>
     <string name="faq_q_codes">Как вставить код из SMS?</string>
     <string name="faq_a_codes">Когда в сообщении есть код подтверждения, в уведомлении появляется кнопка «Копировать 123456», а в переписке — такая же под сообщением. Код попадает в буфер обмена с пометкой «секретно», и клавиатура предложит вставить его одним касанием. Подставлять код в поле другого приложения автоматически умеет клавиатура или служба автозаполнения (например, Gboard или «Автозаполнение Google») — с диалером в роли приложения SMS это продолжает работать. Код ищется на телефоне: у диалера нет доступа в интернет. Долгое нажатие на сообщение позволяет скопировать весь текст, номер телефона из него или выделить нужную часть.</string>
 
@@ -1061,20 +1055,27 @@
     <string name="role_restricted_text">Приложение установлено из файла APK, а не из магазина, — для таких Android 15+ закрывает роли телефона и SMS и разрешения SMS, пока вы их не разрешите. Откройте «О приложении», нажмите ⋮ вверху справа → «Разрешить ограниченные настройки», подтвердите, вернитесь и повторите. При установке из Google Play этого шага нет.</string>
     <string name="role_restricted_open">Открыть «О приложении»</string>
     <string name="sms_new_message">Новое сообщение</string>
-    <string name="sms_autostart_hint">Чтобы SMS приходили, даже когда диалер закрыт, разрешите ему автозапуск — на этом телефоне он выключен для сторонних приложений.</string>
+    <string name="sms_autostart_hint">Разрешите автозапуск для SMS</string>
     <string name="sms_autostart_action">Открыть</string>
+    <string name="sms_unknown_sender">Неизвестный</string>
+    <string name="sms_mms_not_downloaded">MMS не загружено</string>
+    <string name="sms_mms_download">Загрузить</string>
+    <string name="sms_notifications_off">Уведомления о SMS выключены</string>
+    <string name="sms_autostart_off">Автозапуск выключен</string>
+    <string name="messages_open_app">Открыть «%1$s»</string>
+    <string name="messages_use_here">Вести SMS в Ogneliss</string>
+    <string name="messages_rcs_note">Чаты RCS останутся в %1$s и отключатся</string>
+    <string name="msg_sms_thread_deleted">Переписка удалена</string>
+    <string name="msg_sms_threads_deleted">Удалено переписок: %1$s</string>
     <string name="perm_sms_role_text">Переписка, входящие SMS и MMS. По желанию — отправлять SMS можно и без этого.</string>
 
     <!-- Раздел SMS и меню «Ещё» (2.0.0) -->
     <string name="nav_messages">SMS</string>
     <string name="messages_empty">Сообщений пока нет</string>
-    <string name="messages_not_default">Чтобы видеть переписку и получать SMS здесь, сделайте диалер приложением SMS по умолчанию. Написать можно и без этого.</string>
     <string name="messages_new">Новое сообщение</string>
     <string name="messages_new_hint">Номер или имя</string>
     <string name="messages_write">Написать</string>
     <string name="messages_search_hint">Поиск по сообщениям</string>
-    <string name="messages_delete_thread_title">Удалить переписку?</string>
-    <string name="messages_delete_thread_text">Все сообщения с %1$s будут удалены с телефона.</string>
     <string name="menu_section_list">Список</string>
     <string name="menu_filters_active">Включено условий: %1$s</string>
     <string name="messages_delete_thread_action">Удалить переписку</string>
@@ -1102,10 +1103,8 @@
     <string name="archive_row">Архив · %1$d</string>
     <string name="archive_empty">В архиве пусто</string>
     <string name="archive_calls_note">Новый звонок того же абонента вернёт запись в журнал.</string>
-    <string name="archive_sms_note">Новое сообщение вернёт переписку в общий список.</string>
     <string name="msg_archived_many">Перенесено в архив: %1$s</string>
     <string name="msg_unarchived">Возвращено из архива</string>
-    <string name="messages_delete_threads_title">Удалить выбранные переписки?</string>
     <string name="a11y_avatar_select">Выбрать</string>
     <string name="settings_incoming_banner">Входящий плашкой сверху</string>
     <string name="settings_incoming_banner_text">Пока телефоном пользуются, входящий появляется сверху с «Ответить» и «Отклонить», а не на весь экран. На заблокированном и погасшем экране — всегда на весь экран</string>

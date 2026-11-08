@@ -2984,6 +2984,14 @@ class DialerViewModel @Inject constructor(
         _messages.trySend(UserMessage(textRes, arg, undo, onTimeout))
     }
 
+    /**
+     * «Удалено · Отменить» для других экранов (2.1.0, удаление переписок SMS —
+     * MessagesViewModel.deleteWithUndo): то же поле с кольцом над навигацией,
+     * что у удаления из журнала. [onTimeout] — погасло, [undo] — «Отменить».
+     */
+    fun notifyWithUndo(textRes: Int, arg: String?, onTimeout: () -> Unit, undo: () -> Unit) =
+        notify(textRes, arg, onTimeout, undo)
+
     // ── Закреплённые абоненты ──────────────────────────────────────────────
 
     val pinnedNumbers = prefs.pinnedNumbers

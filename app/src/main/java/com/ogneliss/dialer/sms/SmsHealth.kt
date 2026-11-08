@@ -90,7 +90,8 @@ object SmsHealth {
                 "checkOpNoThrow",
                 Int::class.javaPrimitiveType, Int::class.javaPrimitiveType, String::class.java
             )
-            when (check.invoke(ops, MIUI_OP_AUTOSTART, Process.myUid(), context.packageName)) {
+            val mode = check.invoke(ops, MIUI_OP_AUTOSTART, Process.myUid(), context.packageName) as? Int
+            when (mode) {
                 AppOpsManager.MODE_ALLOWED -> true
                 AppOpsManager.MODE_IGNORED -> false
                 else -> null

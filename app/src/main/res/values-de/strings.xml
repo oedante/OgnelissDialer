@@ -1006,12 +1006,8 @@
     <string name="sms_copy_code_action">%1$s kopieren</string>
     <string name="sms_copy_number">%1$s kopieren</string>
     <string name="sms_copy_text">Text kopieren</string>
-    <string name="sms_default_action">Festlegen</string>
-    <string name="sms_default_banner">Verlauf, eingehende Nachrichten und MMS erscheinen, wenn der Dialer Ihre Standard-SMS-App ist. Derzeit können Sie nur senden.</string>
     <string name="sms_delete">Löschen</string>
-    <string name="sms_download_failed">MMS wurde nicht heruntergeladen</string>
     <string name="sms_empty">Noch keine Nachrichten</string>
-    <string name="sms_empty_send_only">Schreiben Sie die erste Nachricht. Der Verlauf erscheint, wenn der Dialer Ihre Standard-SMS-App ist.</string>
     <string name="sms_mark_read">Als gelesen markieren</string>
     <string name="sms_me">Sie</string>
     <string name="sms_message_actions">Aktionen für Nachricht</string>
@@ -1028,14 +1024,12 @@
     <string name="sms_sim_default">Standard-SIM</string>
     <string name="sms_status_delivered">Zugestellt</string>
     <string name="sms_status_failed">Nicht gesendet – zum Wiederholen tippen</string>
-    <string name="sms_status_not_downloaded">Nicht heruntergeladen</string>
+    <string name="sms_status_not_downloaded">MMS nicht geladen – zum Laden tippen</string>
     <string name="sms_status_sending">Wird gesendet…</string>
     <string name="sms_you">Sie: %1$s</string>
     <string name="settings_group_messages">SMS-App</string>
     <string name="settings_sms_default_app">Standard-SMS-App</string>
     <string name="settings_sms_default_app_text">Unterhaltungen, eingehende SMS und MMS im SMS-Bereich des Dialers</string>
-    <string name="settings_sms_in_app">SMS im Dialer schreiben</string>
-    <string name="settings_sms_in_app_text">„Nachricht“-Tasten öffnen die Unterhaltung hier statt in der Nachrichten-App (der Dialer muss Standard-Telefon-App sein)</string>
     <string name="settings_sms_delivery_reports">Zustellberichte</string>
     <string name="settings_sms_delivery_reports_text">Das Netz um Zustellbestätigung bitten. Manche Anbieter berechnen dafür Gebühren</string>
     <string name="keywords_sms">sms mms nachricht text unterhaltung chat code passwort standard</string>
@@ -1043,7 +1037,7 @@
     <!-- Вопросы о сообщениях (2.0.0) -->
     <string name="faq_section_messages">Nachrichten</string>
     <string name="faq_q_sms">Kann ich im Dialer SMS schreiben und empfangen?</string>
-    <string name="faq_a_sms">Ja, wenn Sie möchten. Schreiben: Die „Nachricht“-Tasten öffnen die Unterhaltung direkt hier (%1$s) – dafür muss der Dialer Ihre Standard-Telefon-App sein. Empfangen, Verlauf und Bilder (MMS) gibt es, wenn der Dialer Ihre Standard-SMS-App ist (%2$s). Die Unterhaltungen stehen im Bereich „SMS“ der unteren Leiste, mit denselben Wischgesten wie in der Anrufliste; die Anrufliste zeigt weiterhin nur Anrufe. Zurück geht es jederzeit, indem Sie eine andere SMS-App wählen – der Dialer liest dann sofort keine Nachrichten mehr. RCS-Chats sind für Drittanbieter-Apps nicht verfügbar.</string>
+    <string name="faq_a_sms">Ja. Ist der Dialer Ihre Standard-SMS-App (%1$s), finden Sie Unterhaltungen, eingehende SMS und Bilder (MMS) direkt hier im Bereich „SMS“ der unteren Leiste, mit denselben Wischgesten wie in der Anrufliste; die Anrufliste zeigt weiterhin nur Anrufe. Verwaltet eine andere App die SMS, öffnen die „Nachricht“-Tasten die Unterhaltung einfach dort – einzurichten ist nichts. Auf einem Telefon mit einer RCS-App (Google Messages, Samsung Messages) fragt der Dialer nicht von selbst nach der SMS-Rolle: RCS-Chats funktionieren nur in dieser App und werden ausgeschaltet, wenn eine andere App die SMS übernimmt. Zurück geht es jederzeit, indem Sie eine andere SMS-App wählen – der Dialer liest dann sofort keine Nachrichten mehr.</string>
     <string name="faq_q_codes">Wie füge ich einen Code aus einer SMS ein?</string>
     <string name="faq_a_codes">Enthält eine Nachricht einen Bestätigungscode, zeigt die Benachrichtigung die Taste „123456 kopieren“, und in der Unterhaltung steht dieselbe Taste unter der Nachricht. Der Code landet als vertraulich markiert in der Zwischenablage, und Ihre Tastatur bietet ihn mit einem Tippen zum Einfügen an. Das automatische Ausfüllen in anderen Apps übernimmt Ihre Tastatur oder Ihr Autofill-Dienst (etwa Gboard oder Autofill mit Google) – das funktioniert mit dem Dialer als SMS-App weiter. Der Code wird auf dem Telefon erkannt: Der Dialer hat keinen Internetzugriff. Langes Drücken auf eine Nachricht kopiert den ganzen Text, eine Nummer daraus oder einen markierten Teil.</string>
 
@@ -1052,20 +1046,27 @@
     <string name="role_restricted_text">Die App wurde aus einer APK-Datei statt aus einem Store installiert. Für solche Apps sperrt Android 15+ die Rollen Telefon und SMS sowie die SMS-Berechtigungen, bis Sie sie erlauben. Öffnen Sie „App-Info“, tippen Sie oben rechts auf ⋮ → „Eingeschränkte Einstellungen zulassen“, bestätigen Sie, kehren Sie zurück und versuchen Sie es erneut. Bei Installation aus Google Play entfällt dieser Schritt.</string>
     <string name="role_restricted_open">App-Info öffnen</string>
     <string name="sms_new_message">Neue Nachricht</string>
-    <string name="sms_autostart_hint">Damit SMS auch bei geschlossenem Dialer ankommen, erlauben Sie den Autostart – auf diesem Telefon ist er für Drittanbieter-Apps ausgeschaltet.</string>
+    <string name="sms_autostart_hint">Autostart für SMS erlauben</string>
     <string name="sms_autostart_action">Öffnen</string>
+    <string name="sms_unknown_sender">Unbekannt</string>
+    <string name="sms_mms_not_downloaded">MMS nicht geladen</string>
+    <string name="sms_mms_download">Laden</string>
+    <string name="sms_notifications_off">SMS-Benachrichtigungen sind aus</string>
+    <string name="sms_autostart_off">Autostart ist aus</string>
+    <string name="messages_open_app">„%1$s“ öffnen</string>
+    <string name="messages_use_here">SMS in Ogneliss führen</string>
+    <string name="messages_rcs_note">RCS-Chats bleiben in %1$s und werden ausgeschaltet</string>
+    <string name="msg_sms_thread_deleted">Unterhaltung gelöscht</string>
+    <string name="msg_sms_threads_deleted">Unterhaltungen gelöscht: %1$s</string>
     <string name="perm_sms_role_text">Unterhaltungen, eingehende SMS und MMS. Optional – SMS senden geht auch ohne.</string>
 
     <!-- Раздел SMS и меню «Ещё» (2.0.0) -->
     <string name="nav_messages">SMS</string>
     <string name="messages_empty">Noch keine Nachrichten</string>
-    <string name="messages_not_default">Um Unterhaltungen zu sehen und SMS hier zu empfangen, legen Sie den Dialer als Standard-SMS-App fest. Schreiben geht auch ohne.</string>
     <string name="messages_new">Neue Nachricht</string>
     <string name="messages_new_hint">Nummer oder Name</string>
     <string name="messages_write">Schreiben</string>
     <string name="messages_search_hint">Nachrichten durchsuchen</string>
-    <string name="messages_delete_thread_title">Unterhaltung löschen?</string>
-    <string name="messages_delete_thread_text">Alle Nachrichten mit %1$s werden vom Telefon gelöscht.</string>
     <string name="menu_section_list">Liste</string>
     <string name="menu_filters_active">Aktive Bedingungen: %1$s</string>
     <string name="messages_delete_thread_action">Unterhaltung löschen</string>
@@ -1093,10 +1094,8 @@
     <string name="archive_row">Archiv · %1$d</string>
     <string name="archive_empty">Das Archiv ist leer</string>
     <string name="archive_calls_note">Ein neuer Anruf derselben Person holt den Eintrag zurück in die Anrufliste.</string>
-    <string name="archive_sms_note">Eine neue Nachricht holt die Unterhaltung zurück in die Liste.</string>
     <string name="msg_archived_many">Ins Archiv verschoben: %1$s</string>
     <string name="msg_unarchived">Aus dem Archiv geholt</string>
-    <string name="messages_delete_threads_title">Ausgewählte Unterhaltungen löschen?</string>
     <string name="a11y_avatar_select">Auswählen</string>
     <string name="settings_incoming_banner">Eingehender Anruf als Banner</string>
     <string name="settings_incoming_banner_text">Während Sie das Telefon benutzen, erscheint ein Anruf oben mit „Annehmen“ und „Ablehnen“ statt im Vollbild. Bei gesperrtem oder dunklem Bildschirm immer im Vollbild</string>

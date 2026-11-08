@@ -37,8 +37,4 @@
         <item quantity="one">%1$d appel correspond</item>
         <item quantity="other">%1$d appels correspondent</item>
     </plurals>
-    <plurals name="messages_delete_threads_text">
-        <item quantity="one">%d conversation sera supprimée du téléphone. Cette action est irréversible.</item>
-        <item quantity="other">%d conversations seront supprimées du téléphone. Cette action est irréversible.</item>
-    </plurals>
 </resources>

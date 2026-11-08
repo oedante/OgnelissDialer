@@ -34,8 +34,4 @@
         <item quantity="one">%1$d call matches</item>
         <item quantity="other">%1$d calls match</item>
     </plurals>
-    <plurals name="messages_delete_threads_text">
-        <item quantity="one">%d conversation will be deleted from the phone. This cannot be undone.</item>
-        <item quantity="other">%d conversations will be deleted from the phone. This cannot be undone.</item>
-    </plurals>
 </resources>
