@@ -145,8 +145,22 @@ object ScreeningRoleInfo {
         val rm = activity.getSystemService(RoleManager::class.java) ?: return
         if (!rm.isRoleAvailable(RoleManager.ROLE_CALL_SCREENING)) return
         if (rm.isRoleHeld(RoleManager.ROLE_CALL_SCREENING)) return
-        activity.startActivityForResult(
-            rm.createRequestRoleIntent(RoleManager.ROLE_CALL_SCREENING), 4202
-        )
+        runCatching {
+            activity.startActivityForResult(
+                rm.createRequestRoleIntent(RoleManager.ROLE_CALL_SCREENING), REQUEST_CODE
+            )
+        }.onFailure { com.ogneliss.dialer.log.Logger.w("ScreeningRole", "Окно роли определителя не открылось", it) }
     }
+
+    /*
+     * СВОЙ КОД ЗАПРОСА (2.1.0).
+     *
+     * Было: 4202 — тот же код, что у роли SMS (SmsRole.REQUEST_CODE).
+     * Ответ приходит в MainActivity.onActivityResult, и отказ в роли
+     * определителя разбирался как отказ в роли SMS: подсказка про SMS,
+     * лишние записи в журнале. Стало: отдельный код вне ряда 42xx
+     * (4201 — телефон, 4202 и соседние — SMS, 4203 — уведомления):
+     * MainActivity его не разбирает.
+     */
+    const val REQUEST_CODE = 4301
 }
