@@ -163,6 +163,11 @@ class OgnelissApp : Application(), Configuration.Provider, ImageLoaderFactory {
         runCatching { CallNotifications.ensureChannels(this) }
             .onFailure { Logger.e("App", "Не удалось создать каналы уведомлений", it) }
 
+        // 2.1.0: роль SMS у нас — канал «Сообщения» с первого запуска, а не с первого SMS
+        runCatching {
+            if (com.ogneliss.dialer.sms.SmsRole.isDefault(this)) com.ogneliss.dialer.sms.MessageNotifications.ensureChannel(this)
+        }.onFailure { Logger.e("App", "Не удалось создать канал сообщений", it) }
+
         /*
          * ПОСТАНОВКА ФОНОВЫХ ЗАДАЧ — ВНЕ ГЛАВНОГО ПОТОКА.
          *

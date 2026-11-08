@@ -112,9 +112,15 @@ object SmsRole {
     fun autoOfferAllowed(context: Context): Boolean {
         val current = defaultSmsPackage(context)
         val allowed = current == null || current !in RCS_APPS
-        if (!allowed) Logger.i(TAG, "Роль SMS сама не просится: по умолчанию $current (RCS)")
+        // В журнал — раз за запуск: вызывается при каждом возвращении в приложение
+        if (!allowed && !autoSkipLogged) {
+            autoSkipLogged = true
+            Logger.i(TAG, "Роль SMS сама не просится: по умолчанию $current (RCS)")
+        }
         return allowed
     }
+
+    @Volatile private var autoSkipLogged = false
 
     /**
      * Для журнала: роль и ответ телефонии расходятся — так видно в логе,

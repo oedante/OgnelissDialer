@@ -528,8 +528,10 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val AUTO_REDIAL_PACE = stringPreferencesKey("auto_redial_pace")
         /** Памятка о мошенниках в долгом разговоре с незнакомым (1.8.0). */
         val SCAM_MEMO = booleanPreferencesKey("scam_memo")
-        /** Сообщения (2.0.0): разбор в sms/SmsRole.kt (SmsSettings). */
-        val SMS_IN_APP = booleanPreferencesKey("sms_in_app")
+        /**
+         * Сообщения (2.0.0): разбор в sms/SmsRole.kt (SmsSettings).
+         * «sms_in_app» убран в 2.1.0 — сохранённое значение больше не читается.
+         */
         val SMS_DELIVERY_REPORTS = booleanPreferencesKey("sms_delivery_reports")
         val NOTES_RETENTION = stringPreferencesKey("notes_retention")
         val NOTES_RETENTION_SCOPE = stringPreferencesKey("notes_retention_scope")
@@ -917,11 +919,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     val scamMemo: Flow<Boolean> = data.map { it[Keys.SCAM_MEMO] ?: true }
 
     /*
-     * Сообщения (2.0.0). Умолчания — те же, что у SmsSettings: писать
-     * в диалере — да, SMS в журнале — да, отчёт о доставке — нет (часть
-     * операторов берёт за него плату).
+     * Сообщения (2.0.0). Умолчание — то же, что у SmsSettings: отчёт
+     * о доставке — нет (часть операторов берёт за него плату).
      */
-    val smsInApp: Flow<Boolean> = data.map { it[Keys.SMS_IN_APP] ?: true }
     val smsDeliveryReports: Flow<Boolean> = data.map { it[Keys.SMS_DELIVERY_REPORTS] ?: false }
 
     /**
@@ -1188,11 +1188,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      * Настройки сообщений повторяются в SmsSettings (SharedPreferences):
      * приёмник SMS и кнопки «Написать» решают сразу, без чтения DataStore.
      */
-    suspend fun setSmsInApp(v: Boolean) {
-        edit("sms_in_app", v) { it[Keys.SMS_IN_APP] = v }
-        com.ogneliss.dialer.sms.SmsSettings.put(context, com.ogneliss.dialer.sms.SmsSettings.KEY_IN_APP, v)
-    }
-
     suspend fun setSmsDeliveryReports(v: Boolean) {
         edit("sms_delivery_reports", v) { it[Keys.SMS_DELIVERY_REPORTS] = v }
         com.ogneliss.dialer.sms.SmsSettings.put(context, com.ogneliss.dialer.sms.SmsSettings.KEY_DELIVERY_REPORTS, v)

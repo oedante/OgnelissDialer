@@ -463,13 +463,11 @@ object SettingsRegistry {
             keywordsRes = R.string.keywords_sms,
             groupRes = R.string.settings_group_messages
         ),
-        SettingEntry(
-            "sms_in_app", SettingsCategory.MESSAGES,
-            R.string.settings_sms_in_app, R.string.settings_sms_in_app_text,
-            SettingKind.Switch("sms_in_app"),
-            keywordsRes = R.string.keywords_sms,
-            groupRes = R.string.settings_group_messages
-        ),
+        /*
+         * «Писать SMS в диалере» (sms_in_app) убран в 2.1.0: куда ведёт
+         * «Написать», решает роль SMS сама (SmsRole.composeTarget) — правило
+         * автора «пользователь не должен выбирать, чтобы всё работало».
+         */
         SettingEntry(
             "sms_delivery_reports", SettingsCategory.MESSAGES,
             R.string.settings_sms_delivery_reports, R.string.settings_sms_delivery_reports_text,

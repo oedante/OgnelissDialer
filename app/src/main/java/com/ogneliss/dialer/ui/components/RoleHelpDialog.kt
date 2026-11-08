@@ -56,6 +56,8 @@ fun rememberSmsRoleRequest(onResult: (RoleAccess.Help?) -> Unit): () -> Unit {
         // RESULT_OK — система подтвердила роль (в том числе если она уже была у нас)
         val granted = result.resultCode == android.app.Activity.RESULT_OK || SmsRole.isDefault(context)
         com.ogneliss.dialer.log.Logger.i("SmsRole", SmsRole.diagnostics(context))
+        // 2.1.0: канал «Сообщения» — сразу при выдаче роли (SmsHealth.onRoleGranted)
+        if (granted) com.ogneliss.dialer.sms.SmsHealth.onRoleGranted(context)
         if (granted && SmsRole.needsNotificationPermission(context)) {
             notifications.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         }

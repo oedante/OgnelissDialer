@@ -160,14 +160,13 @@ class SettingsStateSource @Inject constructor(
         CallHelp(mode, pace, memo, banner)
     }
 
-    /** Сообщения (2.0.0). */
+    /** Сообщения (2.0.0). 2.1.0: без «Писать SMS в диалере» — решает роль SMS. */
     private val sms: Flow<Sms> = combine(
-        prefs.smsInApp,
         prefs.smsDeliveryReports,
         prefs.smsSwipeRight,
         prefs.smsSwipeLeft
-    ) { inApp, reports, right, left ->
-        Sms(inApp, reports, right, left)
+    ) { reports, right, left ->
+        Sms(reports, right, left)
     }
 
     /**
@@ -241,7 +240,6 @@ class SettingsStateSource @Inject constructor(
             scamMemo = h.scamMemo,
             incomingBanner = h.incomingBanner,
 
-            smsInApp = m.inApp,
             smsDeliveryReports = m.deliveryReports,
             smsSwipeRight = m.swipeRight,
             smsSwipeLeft = m.swipeLeft,
@@ -318,7 +316,6 @@ class SettingsStateSource @Inject constructor(
     )
 
     private data class Sms(
-        val inApp: Boolean,
         val deliveryReports: Boolean,
         val swipeRight: SwipeAction,
         val swipeLeft: SwipeAction

@@ -71,6 +71,13 @@
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_MMS" />
+    <!--
+      2.1.0: повтор скачивания MMS ждёт сеть (JobScheduler, условие «есть
+      сеть»); с Android 14 такое условие требует этого разрешения. Только
+      знать, есть ли сеть, — не выход в неё: INTERNET по-прежнему нет.
+      (То же разрешение уже приносит WorkManager — здесь оно явно.)
+    -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!--
       РАЗРЕШЕНИЕ INTERNET НАМЕРЕННО ОТСУТСТВУЕТ.
@@ -400,6 +407,11 @@
         <receiver android:name=".sms.MmsTransport$DownloadedReceiver" android:exported="false" />
         <receiver android:name=".sms.MmsTransport$SentReceiver" android:exported="false" />
         <receiver android:name=".sms.MessageNotifications$ActionReceiver" android:exported="false" />
+        <!-- 2.1.0: повтор скачивания MMS, когда есть сеть (sms/MmsDownloads.kt) -->
+        <service
+            android:name=".sms.MmsRetryJob"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver android:name=".background.BootReceiver" android:exported="false">
             <intent-filter>
