@@ -186,9 +186,12 @@ internal fun OverflowMenu(
          * необратимое не стоит в одном ряду с частым.
          */
         val tiles = buildList {
-            if (onSearch != null) add(MenuTile(OgnelissIcons.Search, stringResource(R.string.nav_search), onSearch))
+            // Список: что сделать с этим списком
+            if (onAddContact != null) add(MenuTile(MenuGroup.LIST, OgnelissIcons.PersonAdd, stringResource(R.string.action_create_contact), onAddContact))
+            if (onSearch != null) add(MenuTile(MenuGroup.LIST, OgnelissIcons.Search, stringResource(R.string.nav_search), onSearch))
             if (onFilters != null) add(
                 MenuTile(
+                    MenuGroup.LIST,
                     OgnelissIcons.FilterList,
                     // «Фильтры · 2» — коротко: подпись плитки в две строки
                     stringResource(R.string.filter_title) + (filterBadge?.let { " · $it" } ?: ""),
@@ -196,25 +199,27 @@ internal fun OverflowMenu(
                     selected = filterBadge != null
                 )
             )
-            if (onAddContact != null) add(MenuTile(OgnelissIcons.PersonAdd, stringResource(R.string.action_create_contact), onAddContact))
-            if (onOwnNumber != null) add(MenuTile(OgnelissIcons.Person, ownLabel, onOwnNumber, photoUri = ownPhotoUri))
-            add(MenuTile(OgnelissIcons.PhoneCallback, fakeCallLabel, onFakeCall))
-            add(MenuTile(OgnelissIcons.StickyNote2, notesLabel, onNotes))
-            add(MenuTile(OgnelissIcons.Alarm, remindersLabel, onReminders))
-            if (onArchive != null) add(MenuTile(OgnelissIcons.Archive, stringResource(R.string.archive_title), onArchive))
             if (onStartSelection != null) add(
-                MenuTile(if (selectionActive) OgnelissIcons.Close else OgnelissIcons.Checklist, selectionLabel, onStartSelection)
+                MenuTile(MenuGroup.LIST, if (selectionActive) OgnelissIcons.Close else OgnelissIcons.Checklist, selectionLabel, onStartSelection)
             )
-            if (onPinToHome != null) add(MenuTile(OgnelissIcons.AddToHomeScreen, stringResource(R.string.menu_pin_home), onPinToHome))
+            if (onArchive != null) add(MenuTile(MenuGroup.LIST, OgnelissIcons.Archive, stringResource(R.string.archive_title), onArchive))
+            // Инструменты: своё и вспомогательные разделы
+            if (onOwnNumber != null) add(MenuTile(MenuGroup.TOOLS, OgnelissIcons.Person, ownLabel, onOwnNumber, photoUri = ownPhotoUri))
+            add(MenuTile(MenuGroup.TOOLS, OgnelissIcons.PhoneCallback, fakeCallLabel, onFakeCall))
+            add(MenuTile(MenuGroup.TOOLS, OgnelissIcons.StickyNote2, notesLabel, onNotes))
+            add(MenuTile(MenuGroup.TOOLS, OgnelissIcons.Alarm, remindersLabel, onReminders))
+            // Приложение
             add(
                 MenuTile(
+                    MenuGroup.APP,
                     if (settings.theme == ThemeMode.DARK) OgnelissIcons.LightMode else OgnelissIcons.DarkMode,
                     themeLabel,
                     onThemeToggle
                 )
             )
-            add(MenuTile(OgnelissIcons.Settings, settingsLabel, onSettings))
-            if (onHelp != null) add(MenuTile(OgnelissIcons.Help, helpLabel, onHelp))
+            add(MenuTile(MenuGroup.APP, OgnelissIcons.Settings, settingsLabel, onSettings))
+            if (onHelp != null) add(MenuTile(MenuGroup.APP, OgnelissIcons.Help, helpLabel, onHelp))
+            if (onPinToHome != null) add(MenuTile(MenuGroup.APP, OgnelissIcons.AddToHomeScreen, stringResource(R.string.menu_pin_home), onPinToHome))
         }
         OverflowMenuBody(tiles, clearLabel, onClearLog)
     }
@@ -223,12 +228,21 @@ internal fun OverflowMenu(
 /** Содержимое «Ещё» (2.1.0): плитки одной карточкой и «Очистить журнал» отдельно. */
 @Composable
 internal fun OverflowMenuBody(tiles: List<MenuTile>, clearLabel: String, onClearLog: (() -> Unit)?) {
-        // Колонок — по ширине: 4 на телефоне, больше на широком окне (плитка ≈ 88 dp)
-        val columns = (androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp / 88).coerceIn(4, 6)
-        Column(Modifier.padding(bottom = Space.l)) {
-            SheetGroup(first = true) {
+    // Колонок — по ширине: 4 на телефоне, больше на широком окне (плитка ≈ 88 dp)
+    val columns = (androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp / 88).coerceIn(4, 6)
+    Column(Modifier.padding(bottom = Space.l)) {
+        /*
+         * Категории (автор, 08.11.2026: «разбивать по категориям, а внутри
+         * плитки — иначе люди запутаются»). Каждая — подпись и, как правило,
+         * ОДИН ряд из четырёх: колонки совпадают между категориями,
+         * у пункта постоянное место — меню запоминается «по месту».
+         */
+        MenuGroup.entries.forEach { group ->
+            val groupTiles = tiles.filter { it.group == group }
+            if (groupTiles.isEmpty()) return@forEach
+            SheetGroup(title = stringResource(group.titleRes), first = group.ordinal == 0) {
                 Column(Modifier.padding(horizontal = Space.xs, vertical = Space.s)) {
-                    tiles.chunked(columns).forEach { row ->
+                    groupTiles.chunked(columns).forEach { row ->
                         Row(Modifier.fillMaxWidth().padding(vertical = Space.xxs)) {
                             row.forEach { tile ->
                                 com.ogneliss.dialer.ui.components.ActionCircle(
@@ -249,21 +263,30 @@ internal fun OverflowMenuBody(tiles: List<MenuTile>, clearLabel: String, onClear
                     }
                 }
             }
-            if (onClearLog != null) {
-                SheetGroup {
-                    SheetRow(
-                        OgnelissIcons.DeleteSweep,
-                        clearLabel,
-                        color = MaterialTheme.colorScheme.error,
-                        onClick = onClearLog
-                    )
-                }
+        }
+        if (onClearLog != null) {
+            SheetGroup {
+                SheetRow(
+                    OgnelissIcons.DeleteSweep,
+                    clearLabel,
+                    color = MaterialTheme.colorScheme.error,
+                    onClick = onClearLog
+                )
             }
         }
+    }
 }
 
-/** Плитка «Ещё» (2.1.0): значок или фото, подпись, действие. */
+/** Категории «Ещё» (2.1.0) — в этом порядке, у каждой своя подпись. */
+internal enum class MenuGroup(@androidx.annotation.StringRes val titleRes: Int) {
+    LIST(R.string.menu_section_list),
+    TOOLS(R.string.menu_section_tools),
+    APP(R.string.menu_section_app)
+}
+
+/** Плитка «Ещё» (2.1.0): категория, значок или фото, подпись, действие. */
 internal class MenuTile(
+    val group: MenuGroup,
     val icon: androidx.compose.ui.graphics.vector.ImageVector,
     val label: String,
     val onClick: () -> Unit,

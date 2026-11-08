@@ -991,4 +991,6 @@
     <string name="menu_pin_home">На главный экран</string>
     <string name="widget_sms_description">Значок SMS с числом непрочитанных</string>
     <string name="widget_contacts_description">Открывает «Контакты» в Ogneliss Dialer</string>
+    <string name="menu_section_list">Список</string>
+    <string name="menu_section_tools">Инструменты</string>
 </resources>

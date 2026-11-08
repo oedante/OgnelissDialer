@@ -982,4 +982,6 @@
     <string name="menu_pin_home">Auf den Startbildschirm</string>
     <string name="widget_sms_description">SMS-Symbol mit Anzahl ungelesener Nachrichten</string>
     <string name="widget_contacts_description">Öffnet „Kontakte“ in Ogneliss Dialer</string>
+    <string name="menu_section_list">Liste</string>
+    <string name="menu_section_tools">Werkzeuge</string>
 </resources>
