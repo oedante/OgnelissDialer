@@ -307,6 +307,19 @@ android {
             // Тексты для Google Play лежат в store/, а не в ресурсах
             "GoogleAppIndexingWarning",
             /*
+             * NonObservableLocale (Compose 1.9+) — для этого приложения ложное.
+             *
+             * Проверка ругает Locale.getDefault() в составлении: при смене
+             * языка, обработанной без пересоздания окна, Compose не узнает
+             * о ней. Но ни одно окно приложения смену языка само не
+             * обрабатывает (в android:configChanges нет locale), а выбор
+             * языка в приложении (AppCompatDelegate.setApplicationLocales)
+             * пересоздаёт окна: составление начинается заново с новым
+             * языком. Девять мест (даты, номера, сортировка) переписывать
+             * ради этого незачем.
+             */
+            "NonObservableLocale",
+            /*
              * ProduceStateDoesNotAssignValue — ложное срабатывание.
              *
              * Проверка утверждает, что внутри produceState не присваивается

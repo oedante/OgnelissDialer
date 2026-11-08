@@ -60,6 +60,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -307,10 +308,11 @@ private fun MessageList(
 @Composable
 private fun DayCaption(date: Long) {
     val context = LocalContext.current
-    val label = remember(date) {
+    val resources = LocalResources.current
+    val label = remember(date, resources) {
         when {
-            DateUtils.isToday(date) -> context.getString(R.string.date_group_today)
-            DateUtils.isToday(date + DateUtils.DAY_IN_MILLIS) -> context.getString(R.string.date_group_yesterday)
+            DateUtils.isToday(date) -> resources.getString(R.string.date_group_today)
+            DateUtils.isToday(date + DateUtils.DAY_IN_MILLIS) -> resources.getString(R.string.date_group_yesterday)
             else -> DateUtils.formatDateTime(
                 context, date,
                 DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_WEEKDAY or DateUtils.FORMAT_ABBREV_WEEKDAY

@@ -192,7 +192,15 @@ object MissedCallsNotifier {
         context.getSystemService(NotificationManager::class.java)?.cancel(ID)
     }
 
-    /** Сброс счётчика: при открытии приложения и исходящем звонке. */
+    /**
+     * Сброс счётчика: при открытии приложения и исходящем звонке.
+     *
+     * @SuppressLint("MissingPermission"): cancelMissedCallsNotification помечен
+     * MODIFY_PHONE_STATE — системным разрешением, которого у приложений нет.
+     * Telecom пускает без него диалер по умолчанию; не он — SecurityException,
+     * её ловит runCatching (как silenceRinger в OgnelissInCallService).
+     */
+    @android.annotation.SuppressLint("MissingPermission")
     fun clear(context: Context) {
         // Нечего сбрасывать — систему не трогаем (разбор у savedCount)
         if (savedCount(context) == 0) return

@@ -41,6 +41,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import kotlinx.coroutines.launch
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.Lifecycle
@@ -664,17 +665,18 @@ fun RootScreen(
             }
         }
 
+        val resources = LocalResources.current
         LaunchedEffect(Unit) {
             vm.messages.collect { message ->
                 val text = message.formatArg
-                    ?.let { context.getString(message.textRes, it) }
-                    ?: context.getString(message.textRes)
+                    ?.let { resources.getString(message.textRes, it) }
+                    ?: resources.getString(message.textRes)
 
                 // 2.1.0: сообщения — только с «Отменить» (разбор у vm.messages);
                 // долгого «напоминание может прийти позже» с «Настроить» больше нет
                 val result = appSnackbar.showSnackbar(
                     message = text,
-                    actionLabel = message.undo?.let { context.getString(R.string.msg_undo) },
+                    actionLabel = message.undo?.let { resources.getString(R.string.msg_undo) },
                     duration = SnackbarDuration.Short
                 )
 

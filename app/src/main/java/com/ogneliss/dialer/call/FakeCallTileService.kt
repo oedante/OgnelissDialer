@@ -28,6 +28,7 @@ import android.service.quicksettings.TileService
  */
 class FakeCallTileService : TileService() {
 
+    @android.annotation.SuppressLint("StartActivityAndCollapseDeprecated") // старый вызов — только до Android 14
     override fun onClick() {
         super.onClick()
 
@@ -51,6 +52,8 @@ class FakeCallTileService : TileService() {
                 )
             )
         } else {
+            // Ветка только до Android 14 (условие выше) — там это единственный способ
+            // (подавление проверки Lint — на функции)
             @Suppress("DEPRECATION")
             startActivityAndCollapse(intent)
         }
