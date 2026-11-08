@@ -162,16 +162,10 @@
     <string name="note_spam_tag_warning">При включённой блокировке спама этот номер перестанет звонить.</string>
     <string name="onboarding_default_text">Без этой роли Android не передаст приложению управление вызовами.</string>
     <string name="onboarding_default_title">Телефон по умолчанию</string>
-    <string name="onboarding_optional">(необязательно)</string>
-    <string name="perm_audio_text">Переключать динамик и Bluetooth-гарнитуру во время разговора.</string>
     <string name="perm_audio_title">Аудио и гарнитура</string>
-    <string name="perm_calllog_text">Показывать историю входящих, исходящих и пропущенных звонков, группировать их и удалять записи по вашей команде. Журнал хранится только на устройстве.</string>
     <string name="perm_calllog_title">Журнал вызовов</string>
-    <string name="perm_contacts_text">Подставлять имена и фото к номерам, искать контакты по T9, редактировать и отмечать избранные. Контакты никуда не отправляются.</string>
     <string name="perm_contacts_title">Контакты</string>
-    <string name="perm_notifications_text">Показывать входящий вызов в шторке, кнопки «Ответить» и «Отклонить», а также напоминания перезвонить.</string>
     <string name="perm_notifications_title">Уведомления</string>
-    <string name="perm_phone_text">Совершать и принимать звонки, определять активную SIM-карту. Без этого приложение не сможет работать как номеронабиратель.</string>
     <string name="perm_phone_title">Телефон и вызовы</string>
     <string name="postcall_no_answer">Вызов не состоялся</string>
     <string name="postcall_note_hint">Заметка о разговоре</string>
@@ -420,27 +414,12 @@
     <string name="selection_delete">Удалить</string>
     <string name="selection_delete_title">Удалить выбранные записи?</string>
 
-    <string name="wizard_step_of">Шаг %1$d из %2$d</string>
-    <string name="wizard_grant">Дать разрешение</string>
-    <string name="wizard_next">Далее</string>
     <string name="wizard_skip">Пропустить пока</string>
-    <string name="wizard_finish">Начать пользоваться</string>
     <string name="wizard_granted">Выдано</string>
-    <string name="wizard_required">Обязательно</string>
-    <string name="wizard_optional">Необязательно</string>
-    <string name="wizard_dialer_rationale">Android передаёт управление вызовами одному приложению. Без этой роли Ogneliss не сможет ни звонить, ни принимать вызовы.</string>
-    <string name="wizard_dialer_consequence">Без неё приложение откроется, но внутри ничего работать не будет.</string>
-    <string name="wizard_phone_consequence">Не получится звонить из приложения, и оно не увидит, какая SIM активна.</string>
-    <string name="wizard_calllog_consequence">Список вызовов останется пустым, и вы не увидите, кто вам звонил.</string>
-    <string name="wizard_contacts_consequence">Вызовы будут показываться голыми номерами, а T9-поиск не найдёт людей по имени.</string>
-    <string name="wizard_notifications_consequence">Входящие не появятся в шторке, а напоминания перезвонить не придут.</string>
-    <string name="wizard_audio_consequence">Переключение на динамик и Bluetooth-гарнитуру во время разговора может не работать.</string>
-    <string name="wizard_generic_consequence">Часть приложения работать не будет.</string>
 
     <string name="settings_permissions">Разрешения</string>
     <string name="settings_permissions_text">Посмотреть, что выдано, и доправить недостающее</string>
     <string name="permissions_open_system">Системные настройки приложения</string>
-    <string name="permissions_open_system_hint">Пригодится, если диалог запроса больше не появляется: после двух отказов Android перестаёт его показывать.</string>
 
     <string name="filter_title">Фильтры</string>
     <string name="filter_active_count">Фильтры: %1$d</string>
@@ -560,11 +539,6 @@
     <string name="selection_exit">Выйти из выбора</string>
     <string name="msg_reminder_set_inexact">Напоминание поставлено: %1$s — может прийти позже</string>
     <string name="msg_reminder_exact_fix">Настроить</string>
-    <string name="dialer_role_blocked_title">Окно выбора не открылось</string>
-    <string name="dialer_role_blocked_text">Так бывает, если выбор уже отклоняли раньше (тогда система больше не спрашивает) или оболочка телефона заменила окно своим.
-
-Откройте «Настройки → Приложения → Приложения по умолчанию → Телефон» (названия зависят от телефона) и выберите Ogneliss Dialer.</string>
-    <string name="dialer_role_open_settings">Открыть настройки</string>
     <string name="subscriber_same_number">Другие контакты с этим номером</string>
     <string name="subscriber_shown_here">Показан на этой карточке</string>
     <string name="blocked_prefix">Заблокирован</string>
@@ -617,15 +591,13 @@
     <string name="settings_battery">Работа в фоне</string>
     <string name="settings_battery_text">Без неё система усыпляет приложение, и пропущенные не появятся в журнале, пока вы сами его не откроете</string>
     <string name="settings_battery_already">Уже разрешено</string>
-    <string name="wizard_battery_rationale">Разрешите работу в фоне, чтобы пропущенные появлялись сразу</string>
-    <string name="wizard_battery_consequence">Без этого журнал обновляется только при открытии приложения</string>
     <string name="wizard_autostart_title">Автозапуск</string>
-    <string name="wizard_autostart_rationale">Производитель телефона ограничивает работу приложений в фоне. Откроются настройки телефона: разрешите Ogneliss Dialer автозапуск или работу в фоне</string>
-    <string name="wizard_autostart_consequence">Без этого пропущенные могут не появляться, пока вы не откроете приложение</string>
     <string name="incoming_access_title">Экран входящего вызова</string>
+    <string name="incoming_step_overlay">Разрешите показ поверх других приложений</string>
+    <string name="incoming_step_miui">Разрешите показ на экране блокировки и всплывающие окна в фоне</string>
+    <string name="permissions_open">Открыть</string>
     <string name="incoming_access_text">Показ на экране блокировки и всплывающие окна в фоне: без них телефон может не показать экран вызова</string>
-    <string name="incoming_access_consequence">Без этого входящий может быть виден только в шторке уведомлений</string>
-    <string name="incoming_blocked_banner">Телефон не дал показать экран вызова. Разрешите это в настройках телефона</string>
+    <string name="incoming_blocked_banner">Телефон не дал показать экран вызова</string>
     <string name="incoming_blocked_action">Разрешить</string>
     <string name="menu_my_contact">Мой контакт</string>
     <string name="settings_own_number_text">Нужен, чтобы делиться своей карточкой. Нажмите, чтобы изменить или убрать</string>
@@ -1057,12 +1029,11 @@
 
     <!-- Роли и проверка на прошивках (2.0.0) -->
     <string name="role_restricted_title">Android ограничил эту настройку</string>
-    <string name="role_restricted_text">Приложение установлено из файла APK, а не из магазина, — для таких Android 15+ закрывает роли телефона и SMS и разрешения SMS, пока вы их не разрешите. Откройте «О приложении», нажмите ⋮ вверху справа → «Разрешить ограниченные настройки», подтвердите, вернитесь и повторите. При установке из Google Play этого шага нет.</string>
+    <string name="role_restricted_text">Приложение установлено из файла APK. В «О приложении» нажмите ⋮ → «Разрешить ограниченные настройки» и повторите.</string>
     <string name="role_restricted_open">Открыть «О приложении»</string>
     <string name="sms_new_message">Новое сообщение</string>
     <string name="sms_autostart_hint">Чтобы SMS приходили, даже когда диалер закрыт, разрешите ему автозапуск — на этом телефоне он выключен для сторонних приложений.</string>
     <string name="sms_autostart_action">Открыть</string>
-    <string name="perm_sms_role_text">Переписка, входящие SMS и MMS. По желанию — отправлять SMS можно и без этого.</string>
 
     <!-- Раздел SMS и меню «Ещё» (2.0.0) -->
     <string name="nav_messages">SMS</string>

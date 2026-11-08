@@ -172,16 +172,10 @@
     <string name="note_spam_tag_warning">Avec le blocage du spam activé, ce numéro cessera de sonner.</string>
     <string name="onboarding_default_text">Sans ce rôle, Android ne confiera pas la gestion des appels à l’application.</string>
     <string name="onboarding_default_title">Application Téléphone par défaut</string>
-    <string name="onboarding_optional">(facultatif)</string>
-    <string name="perm_audio_text">Basculer le haut-parleur et l’oreillette Bluetooth pendant un appel.</string>
     <string name="perm_audio_title">Audio et oreillette</string>
-    <string name="perm_calllog_text">Afficher les appels entrants, sortants et manqués, les regrouper et supprimer des entrées à votre demande. Le journal reste sur cet appareil.</string>
     <string name="perm_calllog_title">Journal d’appels</string>
-    <string name="perm_contacts_text">Associer noms et photos aux numéros, chercher les contacts en T9, les modifier et les mettre en favoris. Les contacts ne sont jamais envoyés ailleurs.</string>
     <string name="perm_contacts_title">Contacts</string>
-    <string name="perm_notifications_text">Afficher les appels entrants dans le volet avec les boutons Répondre et Refuser, ainsi que les rappels.</string>
     <string name="perm_notifications_title">Notifications</string>
-    <string name="perm_phone_text">Passer et recevoir des appels, détecter la carte SIM active. Sans cela, l’application ne peut pas servir de téléphone.</string>
     <string name="perm_phone_title">Téléphone et appels</string>
     <string name="postcall_no_answer">Appel non abouti</string>
     <string name="postcall_note_hint">Note sur cet appel</string>
@@ -429,26 +423,11 @@
     <string name="selection_select_all">Tout sélectionner</string>
     <string name="selection_delete">Supprimer</string>
     <string name="selection_delete_title">Supprimer les entrées sélectionnées ?</string>
-    <string name="wizard_step_of">Étape %1$d sur %2$d</string>
-    <string name="wizard_grant">Accorder l’autorisation</string>
-    <string name="wizard_next">Suivant</string>
     <string name="wizard_skip">Plus tard</string>
-    <string name="wizard_finish">Commencer</string>
     <string name="wizard_granted">Accordée</string>
-    <string name="wizard_required">Obligatoire</string>
-    <string name="wizard_optional">Facultative</string>
-    <string name="wizard_dialer_rationale">Android confie la gestion des appels à une seule application à la fois. Sans ce rôle, Ogneliss ne peut ni passer ni recevoir d’appels.</string>
-    <string name="wizard_dialer_consequence">Sans cela, l’application s’ouvrira, mais rien à l’intérieur ne fonctionnera.</string>
-    <string name="wizard_phone_consequence">Vous ne pourrez pas appeler depuis l’application, et elle ne saura pas quelle SIM est active.</string>
-    <string name="wizard_calllog_consequence">La liste des appels restera vide et vous ne verrez pas qui vous a appelé.</string>
-    <string name="wizard_contacts_consequence">Les appels s’afficheront en numéros bruts et la recherche T9 ne trouvera personne par son nom.</string>
-    <string name="wizard_notifications_consequence">Les appels entrants n’apparaîtront pas dans le volet et les rappels n’arriveront pas.</string>
-    <string name="wizard_audio_consequence">Le passage au haut-parleur ou à une oreillette Bluetooth pendant un appel peut ne pas fonctionner.</string>
-    <string name="wizard_generic_consequence">Une partie de l’application ne fonctionnera pas.</string>
     <string name="settings_permissions">Autorisations</string>
     <string name="settings_permissions_text">Voir ce qui est accordé et corriger ce qui manque</string>
     <string name="permissions_open_system">Réglages système de l’application</string>
-    <string name="permissions_open_system_hint">À utiliser si la demande d’autorisation n’apparaît plus : Android cesse de l’afficher après deux refus.</string>
     <string name="filter_title">Filtres</string>
     <string name="filter_active_count">Filtres : %1$d</string>
     <string name="filter_group_type">Type d’appel</string>
@@ -563,11 +542,6 @@
     <string name="selection_exit">Quitter la sélection</string>
     <string name="msg_reminder_set_inexact">Rappel programmé pour %1$s — peut être retardé</string>
     <string name="msg_reminder_exact_fix">Configurer</string>
-    <string name="dialer_role_blocked_title">Impossible d’ouvrir le sélecteur</string>
-    <string name="dialer_role_blocked_text">Cela arrive si le choix a déjà été refusé (le système ne demande plus) ou si la surcouche du téléphone a remplacé la fenêtre par la sienne.
-
-Ouvrez Réglages → Applications → Applications par défaut → Téléphone (les noms varient selon le téléphone) et choisissez Ogneliss Dialer.</string>
-    <string name="dialer_role_open_settings">Ouvrir les réglages</string>
     <string name="subscriber_same_number">Autres contacts avec ce numéro</string>
     <string name="subscriber_shown_here">Affiché sur cette fiche</string>
     <string name="blocked_prefix">Bloqué</string>
@@ -620,15 +594,13 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
     <string name="settings_battery">Fonctionnement en arrière-plan</string>
     <string name="settings_battery_text">Sans cela, le système peut mettre l’application en veille et les appels manqués n’apparaîtront qu’à son ouverture</string>
     <string name="settings_battery_already">Déjà autorisé</string>
-    <string name="wizard_battery_rationale">Autorisez l’application à fonctionner en arrière-plan pour que les appels manqués apparaissent tout de suite</string>
-    <string name="wizard_battery_consequence">Sans cela, le journal ne se met à jour qu’à l’ouverture de l’application</string>
     <string name="wizard_autostart_title">Démarrage automatique</string>
-    <string name="wizard_autostart_rationale">Le constructeur de votre téléphone limite les applications en arrière-plan. Les réglages du téléphone vont s’ouvrir : autorisez Ogneliss Dialer à démarrer automatiquement ou à fonctionner en arrière-plan</string>
-    <string name="wizard_autostart_consequence">Sans cela, les appels manqués peuvent n’apparaître qu’à l’ouverture de l’application</string>
     <string name="incoming_access_title">Écran d’appel entrant</string>
+    <string name="incoming_step_overlay">Autorisez l’affichage par-dessus les autres applications</string>
+    <string name="incoming_step_miui">Autorisez l’affichage sur l’écran de verrouillage et les fenêtres pop-up en arrière-plan</string>
+    <string name="permissions_open">Ouvrir</string>
     <string name="incoming_access_text">Affichage sur l’écran de verrouillage et fenêtres pop-up en arrière-plan : sans eux, le téléphone peut ne pas afficher l’écran d’appel</string>
-    <string name="incoming_access_consequence">Sinon, un appel entrant peut n’apparaître que dans le volet des notifications</string>
-    <string name="incoming_blocked_banner">Le téléphone n’a pas laissé s’afficher l’écran d’appel. Autorisez-le dans les réglages du téléphone</string>
+    <string name="incoming_blocked_banner">Le téléphone n’a pas affiché l’écran d’appel</string>
     <string name="incoming_blocked_action">Autoriser</string>
     <string name="menu_my_contact">Ma fiche</string>
     <string name="settings_own_number_text">Sert à partager votre propre fiche. Touchez pour modifier ou effacer</string>
@@ -1047,12 +1019,11 @@ Ouvrez Réglages → Applications → Applications par défaut → Téléphone (
 
     <!-- Роли и проверка на прошивках (2.0.0) -->
     <string name="role_restricted_title">Android a restreint ce paramètre</string>
-    <string name="role_restricted_text">L\'application a été installée depuis un fichier APK et non depuis une boutique : pour ces applications, Android 15+ bloque les rôles Téléphone et SMS et les autorisations SMS tant que vous ne les autorisez pas. Ouvrez « Infos sur l\'appli », touchez ⋮ en haut à droite → « Autoriser les paramètres restreints », confirmez, revenez et réessayez. Une installation depuis Google Play ne demande pas cette étape.</string>
+    <string name="role_restricted_text">Installée depuis un fichier APK. Dans « Infos sur l\'appli », touchez ⋮ → « Autoriser les paramètres restreints », puis réessayez.</string>
     <string name="role_restricted_open">Ouvrir les infos de l\'appli</string>
     <string name="sms_new_message">Nouveau message</string>
     <string name="sms_autostart_hint">Pour recevoir les SMS même composeur fermé, autorisez son démarrage automatique — sur ce téléphone, il est désactivé pour les applis tierces.</string>
     <string name="sms_autostart_action">Ouvrir</string>
-    <string name="perm_sms_role_text">Conversations, SMS et MMS reçus. Facultatif — vous pouvez envoyer des SMS sans cela.</string>
 
     <!-- Раздел SMS и меню «Ещё» (2.0.0) -->
     <string name="nav_messages">SMS</string>

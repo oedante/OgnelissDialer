@@ -181,7 +181,18 @@ class MainActivity : ComponentActivity() {
                 var permsOk by remember {
                     mutableStateOf(AppPermissions.missing(this).none { it.required })
                 }
-                var onboardingDone by remember { mutableStateOf(false) }
+                /*
+                 * МАСТЕР — ТОЛЬКО КОГДА ЕСТЬ ЧТО ПОКАЗАТЬ (2.1.0): роли «Телефон»
+                 * нет или на MIUI/ColorOS есть шаг экрана входящего, который ещё
+                 * не предлагали. Было: мастер открывался и при любом невыданном
+                 * разрешении — страницами с пояснениями. Стало: разрешения
+                 * спрашиваются одним системным окном поверх журнала
+                 * (MissingPermissionsRequest). Решение — один раз за открытие:
+                 * после выдачи роли мастер доводит свои шаги до конца сам.
+                 */
+                var wizardDone by remember {
+                    mutableStateOf(!com.ogneliss.dialer.ui.screens.wizardNeeded(this@MainActivity, isDefault))
+                }
 
                 // Роль телефона или SMS не выдана после окна — подсказка поверх любого экрана (2.0.0)
                 roleHelp?.let { help ->
@@ -285,7 +296,7 @@ class MainActivity : ComponentActivity() {
                         onOpenDocument = { doc -> legalToShow = doc }
                     )
 
-                    !onboardingDone && (!isDefault || !permsOk) -> {
+                    !wizardDone -> {
                     /*
                      * Пошаговый мастер вместо общего списка карточек.
                      *
@@ -303,7 +314,7 @@ class MainActivity : ComponentActivity() {
                                 onOpenSystemSettings = {
                                     DefaultDialer.openSystemDefaultApps(this@MainActivity)
                                 },
-                                onFinished = { onboardingDone = true }
+                                onFinished = { wizardDone = true }
                             )
                         }
                     }
@@ -327,7 +338,10 @@ class MainActivity : ComponentActivity() {
                             ?.getBooleanExtra(EXTRA_OPEN_BLOCK_LISTS, false) == true,
                         // «Написать» и ссылки sms: — переписка в диалере (2.0.0)
                         openConversation = com.ogneliss.dialer.ui.conversation.ConversationRequest.from(currentIntent)
-                    ) }
+                    )
+                        // Чего не выдала роль — одним системным окном, без своих страниц (2.1.0)
+                        com.ogneliss.dialer.ui.screens.MissingPermissionsRequest(isDefaultDialer = isDefault)
+                    }
                 }
             }
             }
