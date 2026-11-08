@@ -79,7 +79,17 @@ fun rememberCallAvailability(): CallAvailability {
         val listener = object : SubscriptionManager.OnSubscriptionsChangedListener() {
             override fun onSubscriptionsChanged() { simCount = activeSimCount(context) }
         }
-        runCatching { sm?.addOnSubscriptionsChangedListener(listener) }
+        runCatching {
+            // С Android 11 — с исполнителем: вариант без него устарел
+            // (предупреждение сборки 2.1.0). Главный поток — как и раньше:
+            // слушатель меняет состояние экрана
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                sm?.addOnSubscriptionsChangedListener(ContextCompat.getMainExecutor(context), listener)
+            } else {
+                @Suppress("DEPRECATION")
+                sm?.addOnSubscriptionsChangedListener(listener)
+            }
+        }
         runCatching {
             ContextCompat.registerReceiver(
                 context, receiver, IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED),
@@ -91,9 +101,7 @@ fun rememberCallAvailability(): CallAvailability {
             runCatching { sm?.removeOnSubscriptionsChangedListener(listener) }
         }
     }
-    val voice = remember(context) {
-        context.getSystemService(TelephonyManager::class.java)?.isVoiceCapable ?: true
-    }
+    val voice = remember(context) { isVoiceDevice(context) }
     val callPermission = PermissionGuard.canCall(context)
     val noSim = simCount == 0
     return remember(airplane, voice, callPermission, noSim) {
@@ -110,6 +118,24 @@ private fun activeSimCount(context: Context): Int? {
     return runCatching {
         context.getSystemService(SubscriptionManager::class.java)?.activeSubscriptionInfoCount
     }.getOrNull()
+}
+
+/**
+ * Умеет ли устройство голосовые звонки (не планшет с одними данными).
+ * С Android 15 — isDeviceVoiceCapable: прежний isVoiceCapable устарел
+ * (предупреждение сборки 2.1.0, 08.11.2026). Не ответила система — считаем,
+ * что умеет: лучше зелёная кнопка лишний раз, чем серая на телефоне.
+ */
+private fun isVoiceDevice(context: Context): Boolean {
+    val tm = context.getSystemService(TelephonyManager::class.java) ?: return true
+    return runCatching {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            tm.isDeviceVoiceCapable
+        } else {
+            @Suppress("DEPRECATION")
+            tm.isVoiceCapable
+        }
+    }.getOrDefault(true)
 }
 
 private fun isAirplane(context: Context): Boolean =

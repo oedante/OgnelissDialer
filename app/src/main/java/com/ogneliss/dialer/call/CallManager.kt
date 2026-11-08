@@ -103,19 +103,51 @@ object CallManager {
     val awaitingAccount: Call?
         get() = topLevel.firstOrNull { it.state == Call.STATE_SELECT_PHONE_ACCOUNT }
 
-    /** Аккаунты, которые Telecom предложил для выбора; пусто — взять все свои. */
+    /**
+     * Аккаунты, которые Telecom предложил для выбора; пусто — взять все свои.
+     *
+     * С Android 10 список приходит ключом EXTRA_SUGGESTED_PHONE_ACCOUNTS
+     * (предложения в том же порядке), старый AVAILABLE_PHONE_ACCOUNTS
+     * устарел (предупреждение сборки 2.1.0, 08.11.2026). Старый ключ
+     * остаётся запасным: до Android 10 он единственный, а прошивка,
+     * которая не кладёт предложений, без него оставила бы окно выбора пустым.
+     */
     fun suggestedAccounts(call: Call): List<android.telecom.PhoneAccountHandle> {
         val extras = call.details?.intentExtras ?: return emptyList()
         return runCatching {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                extras.getParcelableArrayList(
-                    Call.AVAILABLE_PHONE_ACCOUNTS, android.telecom.PhoneAccountHandle::class.java
-                )
+            val suggested = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                suggestionsOf(extras)
             } else {
-                @Suppress("DEPRECATION")
-                extras.getParcelableArrayList<android.telecom.PhoneAccountHandle>(Call.AVAILABLE_PHONE_ACCOUNTS)
+                emptyList()
             }
+            suggested.ifEmpty { legacyAccountsOf(extras) }
         }.getOrNull().orEmpty()
+    }
+
+    @androidx.annotation.RequiresApi(android.os.Build.VERSION_CODES.Q)
+    private fun suggestionsOf(extras: android.os.Bundle): List<android.telecom.PhoneAccountHandle> {
+        val list = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            extras.getParcelableArrayList(
+                Call.EXTRA_SUGGESTED_PHONE_ACCOUNTS, android.telecom.PhoneAccountSuggestion::class.java
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            extras.getParcelableArrayList<android.telecom.PhoneAccountSuggestion>(Call.EXTRA_SUGGESTED_PHONE_ACCOUNTS)
+        }
+        return list.orEmpty().map { it.phoneAccountHandle }
+    }
+
+    /** Старый ключ — до Android 10 и для прошивок без предложений (см. выше). */
+    @Suppress("DEPRECATION")
+    private fun legacyAccountsOf(extras: android.os.Bundle): List<android.telecom.PhoneAccountHandle> {
+        val list = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            extras.getParcelableArrayList(
+                Call.AVAILABLE_PHONE_ACCOUNTS, android.telecom.PhoneAccountHandle::class.java
+            )
+        } else {
+            extras.getParcelableArrayList<android.telecom.PhoneAccountHandle>(Call.AVAILABLE_PHONE_ACCOUNTS)
+        }
+        return list.orEmpty()
     }
 
     fun selectAccount(call: Call, handle: android.telecom.PhoneAccountHandle) {
