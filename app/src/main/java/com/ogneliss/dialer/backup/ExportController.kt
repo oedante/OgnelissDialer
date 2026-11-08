@@ -2,6 +2,7 @@ package com.ogneliss.dialer.backup
 
 import android.app.Application
 import android.net.Uri
+import android.provider.DocumentsContract
 import com.ogneliss.dialer.concurrency.suspendRunCatching
 import com.ogneliss.dialer.data.CallLogGroup
 import com.ogneliss.dialer.data.CallLogRepository
@@ -92,6 +93,24 @@ class ExportController @Inject constructor(
                 false
             }
         }
+
+    /*
+     * ПУСТОЙ ФАЙЛ ПОСЛЕ НЕУДАЧНОЙ ВЫГРУЗКИ (2.1.0).
+     *
+     * Окно «Сохранить как» создаёт файл ещё до записи. Было: запись
+     * не удалась — внизу «Не удалось сохранить файл», а пустой файл
+     * оставался в папке. Стало (правило автора 07.11.2026 «не сообщать —
+     * выполнить или пропустить»): сообщения нет, а пустышка удаляется,
+     * чтобы потом не принять её за выгрузку. Причина — в журнале
+     * разработчика (её пишет тот, кто не смог записать).
+     */
+    suspend fun discard(uri: Uri) {
+        withContext(defaultDispatcher) {
+            suspendRunCatching { DocumentsContract.deleteDocument(app.contentResolver, uri) }
+                .onSuccess { Logger.i(TAG, "Пустой файл неудачной выгрузки удалён: $it") }
+                .onFailure { Logger.w(TAG, "Пустой файл выгрузки не удалился", it) }
+        }
+    }
 
     /** Файлы журнала приложения одним текстом, новые сверху. */
     suspend fun logText(): String? = suspendRunCatching {

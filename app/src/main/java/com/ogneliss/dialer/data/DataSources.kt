@@ -130,6 +130,15 @@ interface ContactEditorLauncher {
     fun createWithNumber(number: String, name: String?)
     fun addNumberToExisting(number: String)
     fun edit(contactId: Long)
+
+    /**
+     * Свой редактор не смог сохранить (2.1.0) — та же форма в системных
+     * «Контактах»: [contactId] null — новый контакт со всеми [rows],
+     * иначе правка этого контакта с [rows] новыми строками.
+     *
+     * @return false — открыть было некому
+     */
+    fun openDraft(contactId: Long?, rows: List<RowValue>): Boolean
 }
 
 /** Ярлыки на рабочем столе и в меню значка приложения. */

@@ -746,11 +746,17 @@ object SettingsRegistry {
             SettingKind.SystemLink("blocked_numbers"),
             groupRes = R.string.settings_group_lists
         ),
+        /*
+         * 2.1.0: без dangerous. Было два вопроса подряд: «Вы уверены?»
+         * перед входом на экран и ещё одно — при включении справочника
+         * на самом экране. Стало (правило автора 07.11.2026) — только
+         * второй: он называет приложение, которому уйдёт номер, а вход
+         * на экран сам ничего не включает.
+         */
         SettingEntry(
             "external_lookup", SettingsCategory.SPAM,
             R.string.settings_external_lookup, R.string.settings_external_lookup_text,
             SettingKind.Action("external_lookup"),
-            dangerous = true,
             groupRes = R.string.settings_group_lookup
         ),
 
@@ -879,7 +885,8 @@ object SettingsRegistry {
          *
          * Теперь номер версии стоит прямо в подписи, а нажатие ведёт
          * на страницу приложения в Google Play — туда, куда идут
-         * за обновлением и отзывом.
+         * за обновлением и отзывом. 2.1.0: только у установленного
+         * из Google Play; иначе — «О приложении» (InstallSource).
          *
          * Подпись подставляется в экране категорий: номер версии
          * приходит из BuildConfig, а реестр — это список без кода.
@@ -892,6 +899,10 @@ object SettingsRegistry {
          * нельзя, а если попытаться — человек нажмёт и ничего
          * не произойдёт. Прямая ссылка честнее: нажал — открылась
          * страница приложения.
+         *
+         * 2.1.0: пункт виден только у установленного из Google Play
+         * (shown ниже). Было: без магазина нажатие отвечало «Google Play
+         * недоступен» — ссылка, которая никуда не ведёт.
          */
         SettingEntry(
             "rate_app", SettingsCategory.ABOUT,
@@ -909,4 +920,15 @@ object SettingsRegistry {
         entries.filter { it.category == category }
 
     fun byId(id: String): SettingEntry? = entries.firstOrNull { it.id == id }
+
+    /**
+     * Пункты, которые есть на этом устройстве (2.1.0): «Оценить» —
+     * только у установленного из Google Play (util/InstallSource).
+     * Одно правило для раздела и для поиска по настройкам.
+     */
+    fun shown(list: List<SettingEntry>, fromGooglePlay: Boolean): List<SettingEntry> =
+        if (fromGooglePlay) list else list.filter { it.id !in STORE_ONLY }
+
+    /** Пункты, которым без Google Play некуда вести. */
+    private val STORE_ONLY = setOf("rate_app")
 }

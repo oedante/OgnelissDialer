@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,7 +37,6 @@ import com.ogneliss.dialer.data.CallType
 import com.ogneliss.dialer.data.Contact
 import com.ogneliss.dialer.data.ContactMessengers
 import com.ogneliss.dialer.data.NumberNote
-import com.ogneliss.dialer.data.PinnedContacts
 import com.ogneliss.dialer.data.PhoneNumber
 import com.ogneliss.dialer.data.RulePattern
 import com.ogneliss.dialer.data.SpamMarkType
@@ -49,7 +47,6 @@ import com.ogneliss.dialer.ui.components.ActionCardsOverlay
 import com.ogneliss.dialer.ui.components.CardAction
 import com.ogneliss.dialer.ui.components.CardActionSection
 import com.ogneliss.dialer.ui.components.DeleteContactDialog
-import com.ogneliss.dialer.ui.components.OgnelissDialog
 import com.ogneliss.dialer.ui.components.OgnelissDivider
 import com.ogneliss.dialer.ui.components.ReminderDialog
 import com.ogneliss.dialer.ui.components.ReminderTimeDialog
@@ -96,11 +93,16 @@ enum class CardsOrigin { LOG, CONTACTS, MESSAGES }
  * Контакты: позвонить, SMS, избранное, напомнить — блок для человека
  * из книги нужен реже, он в разделе «Номер».
  *
- * ── Подтверждения остались ─────────────────────────────────────────────────
- * Блокировка по маске, предел закреплённых и удаление контакта открывают
- * окно поверх карточек (CardAction.keepOpen): закрыл окно — карточки
- * на месте, можно выбрать другое. Удаление из журнала — без вопроса,
- * но с «Отменить» (deleteGroupsWithUndo).
+ * ── Подтверждения ──────────────────────────────────────────────────────────
+ * Удаление контакта открывает окно поверх карточек (CardAction.keepOpen):
+ * закрыл окно — карточки на месте, можно выбрать другое. Удаление
+ * из журнала — без вопроса, но с «Отменить» (deleteGroupsWithUndo).
+ *
+ * 2.1.0 (правило автора 07.11.2026 «не объяснять — выполнить»): окон
+ * «Заблокирован маской» и «Закреплённых уже пять» больше нет. Номер под
+ * маской разблокируется сразу (в белый список, с «Отменить»); при полном
+ * списке «Закрепить» открывает экран «Закреплённые» — там видно, кого
+ * открепить.
  */
 @Composable
 fun RecordActionCards(
@@ -110,8 +112,14 @@ fun RecordActionCards(
     anchorY: Float?,
     origin: CardsOrigin,
     onOpenCard: () -> Unit,
-    /** Переход в чёрный список: туда ведёт разбор блокировки по маске. */
-    onOpenBlockLists: () -> Unit,
+    /*
+     * Переход в чёрный список — туда вело окно блокировки по маске.
+     * С 2.1.0 окна нет (разбор у block ниже); параметр остаётся, пока его
+     * передают экраны разделов (SMS — MessagesScreen).
+     */
+    @Suppress("UNUSED_PARAMETER") onOpenBlockLists: () -> Unit,
+    /** Экран «Закреплённые» — при полном списке закреплённых (2.1.0). */
+    onOpenPinned: () -> Unit = {},
     /** Раздел SMS: «Удалить переписку» (подтверждение — на экране списка). */
     onDeleteThread: (() -> Unit)? = null,
     /**
@@ -131,9 +139,6 @@ fun RecordActionCards(
     // Отклик на необратимое: блокировка, снятие, удаление
     val haptics = rememberActionHaptics()
 
-    /** Маска, под которую попал номер, — показывается в предупреждении. */
-    var maskWarning by remember { mutableStateOf<String?>(null) }
-    var pinLimitReached by remember { mutableStateOf(false) }
     // id контакта, удаление которого подтверждается (1.3.4)
     var deleteContactId by remember { mutableStateOf<Long?>(null) }
     /*
@@ -157,7 +162,9 @@ fun RecordActionCards(
     val pinned = vm.isPinned(group.e164)
     val mark = state.spamMarks[group.e164]
     val exactRule = rules.firstOrNull { it.isBlock && it.pattern == group.e164 }
-    val maskRule = rules.firstOrNull {
+    // В белом списке — маска на номер не действует (белый список сильнее)
+    val allowed = rules.any { it.isAllow && RulePattern.matches(it.pattern, group.e164) }
+    val maskRule = if (allowed) null else rules.firstOrNull {
         it.isBlock && it.isMask && RulePattern.matches(it.pattern, group.e164)
     }
 
@@ -180,42 +187,7 @@ fun RecordActionCards(
         }
     }
 
-    // ── Окна подтверждения — поверх карточек ────────────────────────────────
-    maskWarning?.let { pattern ->
-        OgnelissDialog(
-            onDismissRequest = { maskWarning = null },
-            title = stringResource(R.string.block_by_mask_title),
-            content = { Text(stringResource(R.string.block_by_mask_text, pattern)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    maskWarning = null
-                    onDismiss()
-                    onOpenBlockLists()
-                }) {
-                    Text(stringResource(R.string.block_by_mask_open))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { maskWarning = null }) {
-                    Text(stringResource(R.string.nav_close))
-                }
-            }
-        )
-    }
-    if (pinLimitReached) {
-        OgnelissDialog(
-            onDismissRequest = { pinLimitReached = false },
-            title = stringResource(R.string.pin_limit_title),
-            content = {
-                Text(stringResource(R.string.pin_limit_text, PinnedContacts.MAX_PINNED))
-            },
-            confirmButton = {
-                TextButton(onClick = { pinLimitReached = false }) {
-                    Text(stringResource(R.string.nav_close))
-                }
-            }
-        )
-    }
+    // ── Окно подтверждения — поверх карточек ────────────────────────────────
     deleteContactId?.let { id ->
         DeleteContactDialog(
             pinned = vm.isContactPinned(id),
@@ -295,28 +267,24 @@ fun RecordActionCards(
     )
     /*
      * Блок — с тремя состояниями, как в карточке: заблокирован точным
-     * правилом — снять; попадает под маску — показать маску и предложить
-     * открыть список (снять отсюда нельзя, иначе снялась бы вся маска);
-     * не заблокирован — блокировать.
+     * правилом — снять; попадает под маску — в белый список (маску отсюда
+     * не снять: разблокировался бы весь диапазон); не заблокирован —
+     * блокировать. 2.1.0: было — окно с объяснением маски и переходом
+     * в список; стало — сразу, с «Отменить» (vm.allowNumber, vm.blockNumber).
      */
+    val unblock = exactRule != null || maskRule != null
     val block = CardAction(
         OgnelissIcons.Block,
-        stringResource(
-            when {
-                exactRule != null -> R.string.action_unblock_short
-                maskRule != null -> R.string.action_blocked_by_mask
-                else -> R.string.action_block_short
-            }
-        ),
+        stringResource(if (unblock) R.string.action_unblock_short else R.string.action_block_short),
         onClick = {
+            haptics()
             when {
-                exactRule != null -> { haptics(); vm.removeRule(group.e164) }
-                maskRule != null -> maskWarning = maskRule.pattern
-                else -> { haptics(); vm.blockNumber(group.e164) }
+                exactRule != null -> vm.removeRule(group.e164)
+                maskRule != null -> vm.allowNumber(group.e164)
+                else -> vm.blockNumber(group.e164)
             }
         },
-        tint = if (exactRule != null) scheme.primary else BlockRed,
-        keepOpen = exactRule == null && maskRule != null
+        tint = if (unblock) scheme.primary else BlockRed
     )
     val favourite = contact?.let { c ->
         CardAction(
@@ -398,14 +366,17 @@ fun RecordActionCards(
                 stringResource(if (pinned) R.string.action_unpin else R.string.action_pin),
                 onClick = {
                     when {
-                        pinned -> { vm.unpinNumber(group.e164); onDismiss() }
-                        vm.pinNumber(group.e164) -> onDismiss()
-                        else -> pinLimitReached = true
+                        pinned -> vm.unpinNumber(group.e164)
+                        vm.pinNumber(group.e164) -> Unit
+                        // Список полон (2.1.0): было окно «Закреплённых уже N» —
+                        // стало: экран «Закреплённые», там видно, кого открепить
+                        else -> onOpenPinned()
                     }
+                    onDismiss()
                 },
                 tint = if (pinned) scheme.primary else null,
-                // Предел закреплённых выясняется при нажатии — карточки
-                // закрывает само действие
+                // Карточки закрывает само действие: при полном списке —
+                // уже после перехода на экран «Закреплённые»
                 keepOpen = true
             )
         )
@@ -423,7 +394,8 @@ fun RecordActionCards(
         add(
             CardAction(
                 OgnelissIcons.ContentCopy, stringResource(R.string.action_copy),
-                onClick = { vm.copyNumber(group.number) }
+                // Отклик — вибрацией, без сообщения (2.1.0, разбор у copyNumber)
+                onClick = { haptics(); vm.copyNumber(group.number) }
             )
         )
         add(

@@ -206,6 +206,10 @@ class FakeContactEditorLauncher : ContactEditorLauncher {
     override fun createWithNumber(number: String, name: String?) { created += number }
     override fun addNumberToExisting(number: String) { created += number }
     override fun edit(contactId: Long) { edited += contactId }
+    override fun openDraft(contactId: Long?, rows: List<com.ogneliss.dialer.data.RowValue>): Boolean {
+        contactId?.let { edited += it }
+        return true
+    }
 }
 
 /** Ярлыки: сохраняем последний переданный список для проверки порядка. */
