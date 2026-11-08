@@ -142,6 +142,9 @@ class InCallActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Окно создано, пока звонит: медленному телефону дадим ещё время,
+        // прежде чем винить прошивку (2.1.0, IncomingScreen.checkShown)
+        IncomingScreen.onCreated()
 
         /*
          * EDGE-TO-EDGE НУЖЕН И ЗДЕСЬ.
@@ -383,9 +386,23 @@ class InCallActivity : ComponentActivity() {
      * входящего становится тихим (на экране свои кнопки) или, если ушли
      * с экрана, пока звонит, снова с кнопками. Разбор — IncomingScreen.
      */
+    /*
+     * «ПОКАЗАН» — ЭТО ФОКУС ОКНА, А НЕ onStart (2.1.0).
+     *
+     * Было: экран вызова считался показанным уже в onStart. На MIUI
+     * с запретом «Экран блокировки» окно запускается — и остаётся за экраном
+     * блокировки: onStart пришёл, а человек видит блокировку без кнопок,
+     * и запасное уведомление не всплывало. Стало: показан, когда окно
+     * получило фокус; потеря фокуса (шторка, диалог) — не «ушли».
+     */
     override fun onStart() {
         super.onStart()
-        IncomingScreen.onShown(this)
+        IncomingScreen.onStarted()
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) IncomingScreen.onShown(this)
     }
 
     override fun onStop() {

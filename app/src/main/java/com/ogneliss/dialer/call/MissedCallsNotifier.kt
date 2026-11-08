@@ -161,6 +161,33 @@ object MissedCallsNotifier {
         Logger.i("Missed", "Пропущенных: $count")
     }
 
+    /*
+     * ПРОПУЩЕННЫЕ, КОГДА НАШИ УВЕДОМЛЕНИЯ ЗАПРЕЩЕНЫ (2.1.0).
+     *
+     * Было: приёмник MissedCallsReceiver объявлен всегда — и Telecom,
+     * увидев его у диалера по умолчанию, своё уведомление о пропущенном
+     * не рисует, а отдаёт число нам. Если человек запретил приложению
+     * уведомления (Android 13+: «Не разрешать» в первом же окне), наше
+     * уведомление не показывалось — пропущенные исчезали бесследно.
+     * Стало: уведомления запрещены — приёмник выключен, и Telecom рисует
+     * пропущенный сам (его уведомление от имени системы); разрешили снова —
+     * приёмник включается. Проверка — при открытии приложения, загрузке,
+     * обновлении и в начале каждого входящего.
+     */
+    fun syncReceiver(context: Context) {
+        runCatching {
+            val allowed = androidx.core.app.NotificationManagerCompat.from(context).areNotificationsEnabled()
+            val pm = context.packageManager
+            val component = android.content.ComponentName(context, MissedCallsReceiver::class.java)
+            val wanted = if (allowed) android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DEFAULT
+            else android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+            if (pm.getComponentEnabledSetting(component) != wanted) {
+                pm.setComponentEnabledSetting(component, wanted, android.content.pm.PackageManager.DONT_KILL_APP)
+                Logger.i("Missed", if (allowed) "Пропущенные снова показывает приложение" else "Уведомления запрещены — пропущенные покажет система")
+            }
+        }.onFailure { Logger.w("Missed", "Приёмник пропущенных не переключён", it) }
+    }
+
     fun cancel(context: Context) {
         context.getSystemService(NotificationManager::class.java)?.cancel(ID)
     }

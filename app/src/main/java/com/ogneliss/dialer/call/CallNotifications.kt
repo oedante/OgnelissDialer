@@ -69,6 +69,19 @@ object CallNotifications {
     const val CHANNEL_BLOCKED = "call_blocked"
 
     const val ID_ONGOING = 1001
+
+    /*
+     * ВСПЛЫВАЮЩЕЕ УВЕДОМЛЕНИЕ ВХОДЯЩЕГО — ПОД СВОИМ НОМЕРОМ (2.1.0).
+     *
+     * Было: одно уведомление службы (ID_ONGOING) на весь вызов, и запасное
+     * «окно вызова не показалось» лишь обновляло его — с тихого на
+     * всплывающее. Но системная оболочка запускает полноэкранное намерение
+     * только у НОВОГО уведомления (SystemUI: onEntryAdded), а у обновлённого —
+     * нет: на заблокированном телефоне запасной путь не будил экран.
+     * Стало: всплывающее входящее ставится под ID_INCOMING. Служба
+     * переходит на него (startForeground с другим номером снимает прежнее),
+     * и система видит новое уведомление — с полноэкранным показом и всплытием.
+     */
     const val ID_INCOMING = 1002
 
     fun ensureChannels(context: Context) {
@@ -102,21 +115,54 @@ object CallNotifications {
         )
     }
 
-    fun incoming(context: Context, callerName: String): Notification {
-        val fullScreen = pending(context, InCallActivity::class.java, 0)
-        val builder = NotificationCompat.Builder(context, CHANNEL_INCOMING)
+    /**
+     * ВХОДЯЩИЙ — ВСЕГДА С «ОТВЕТИТЬ» И «ОТКЛОНИТЬ» (2.1.0).
+     *
+     * Было: пока звонит, а экран вызова открыт, служба показывала «Текущий
+     * вызов» с таймером и кнопкой «Завершить» (ongoing). Не показался экран
+     * вызова, а запасное уведомление не сработало (экран погас, «Не
+     * беспокоить») — телефон звонил, а ответить было нечем. Стало: пока
+     * вызов звонит, уведомление всегда входящее (CallStyle.forIncomingCall).
+     *
+     * @param alert всплывающее: канал входящих, полноэкранный показ, всплытие
+     *        поверх. Иначе — тихое: канал текущего вызова (без звука
+     *        и всплытия), без полноэкранного показа, но с теми же кнопками.
+     * @param number номер звонящего: по нему «Не беспокоить» узнаёт
+     *        контакт и избранных (исключения режима) — [caller].
+     */
+    fun incoming(
+        context: Context,
+        callerName: String,
+        number: String?,
+        alert: Boolean,
+        text: String = context.getString(R.string.incall_incoming)
+    ): Notification {
+        val open = pending(context, InCallActivity::class.java, 0)
+        val person = caller(callerName, number)
+        val builder = NotificationCompat.Builder(context, if (alert) CHANNEL_INCOMING else CHANNEL_ONGOING)
             .setSmallIcon(R.drawable.ic_call)
             .setContentTitle(callerName)
-            .setContentText(context.getString(R.string.incall_incoming))
+            .setContentText(text)
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setOngoing(true)
-            .setFullScreenIntent(fullScreen, true)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
+            // Повторная постановка того же уведомления (пересборка, второй
+            // вызов) не всплывает и не звучит заново (2.1.0)
+            .setOnlyAlertOnce(true)
+            // Касание по плашке — экран вызова на любой прошивке (2.1.0):
+            // одной полноэкранной части мало, часть оболочек её не запускает
+            // по касанию
+            .setContentIntent(open)
+            .addPerson(person)
+        if (alert) {
+            builder.setFullScreenIntent(open, true).setPriority(NotificationCompat.PRIORITY_MAX)
+        } else {
+            builder.setSilent(true)
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             builder.setStyle(
                 NotificationCompat.CallStyle.forIncomingCall(
-                    androidx.core.app.Person.Builder().setName(callerName).build(),
+                    person,
                     actionIntent(context, CallControlReceiver.ACTION_REJECT),
                     actionIntent(context, CallControlReceiver.ACTION_ANSWER)
                 )
@@ -131,38 +177,35 @@ object CallNotifications {
     /**
      * ТИХИЙ ВХОДЯЩИЙ (1.8.0, тихие часы для незнакомых).
      *
-     * Канал «текущий вызов» — с низкой важностью: без звука, без всплытия
+     * Тихий вариант входящего ([incoming] без alert): без звука, без всплытия
      * поверх экрана и без полноэкранного показа. Иначе уведомление само
      * разбудило бы экран посреди ночи — ровно то, от чего тихие часы
      * защищают. Кнопки «Ответить» и «Отклонить» остаются: кто не спит
      * и смотрит в телефон, ответит из шторки.
      */
-    fun quietIncoming(context: Context, callerName: String): Notification {
-        val builder = NotificationCompat.Builder(context, CHANNEL_ONGOING)
-            .setSmallIcon(R.drawable.ic_call)
-            .setContentTitle(callerName)
-            .setContentText(context.getString(R.string.quiet_call_notification))
-            .setCategory(NotificationCompat.CATEGORY_CALL)
-            .setOngoing(true)
-            .setSilent(true)
-            .setContentIntent(pending(context, InCallActivity::class.java, 2))
+    fun quietIncoming(context: Context, callerName: String, number: String?): Notification =
+        incoming(context, callerName, number, alert = false, text = context.getString(R.string.quiet_call_notification))
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            builder.setStyle(
-                NotificationCompat.CallStyle.forIncomingCall(
-                    androidx.core.app.Person.Builder().setName(callerName).build(),
-                    actionIntent(context, CallControlReceiver.ACTION_REJECT),
-                    actionIntent(context, CallControlReceiver.ACTION_ANSWER)
-                )
-            )
-        } else {
-            builder.addAction(0, context.getString(R.string.incall_decline), actionIntent(context, CallControlReceiver.ACTION_REJECT))
-            builder.addAction(0, context.getString(R.string.incall_answer), actionIntent(context, CallControlReceiver.ACTION_ANSWER))
-        }
-        return builder.build()
+    /*
+     * ЗВОНЯЩИЙ В УВЕДОМЛЕНИИ — С НОМЕРОМ (2.1.0).
+     *
+     * Было: Person только с именем и не добавлен в уведомление. «Не
+     * беспокоить» с исключениями («звонки от контактов», «от избранных»,
+     * «повторные») сверяет звонящего по адресу tel: из уведомления —
+     * без него наш входящий скрывался даже для разрешённых. Стало: адрес
+     * tel: в E.164, «важный» и addPerson — как у системного диалера.
+     */
+    private fun caller(callerName: String, number: String?): androidx.core.app.Person {
+        val e164 = number?.let { com.ogneliss.dialer.util.PhoneFormatter.toE164(it) }?.takeIf { it.isNotBlank() }
+        return androidx.core.app.Person.Builder()
+            .setName(callerName)
+            .apply { if (e164 != null) setUri(android.net.Uri.fromParts("tel", e164, null).toString()) }
+            .setImportant(true)
+            .build()
     }
 
-    fun ongoing(context: Context, callerName: String, startedAt: Long): Notification {
+    fun ongoing(context: Context, callerName: String, number: String?, startedAt: Long): Notification {
+        val person = caller(callerName, number)
         val builder = NotificationCompat.Builder(context, CHANNEL_ONGOING)
             .setSmallIcon(R.drawable.ic_call)
             .setContentTitle(callerName)
@@ -176,6 +219,7 @@ object CallNotifications {
             // звук каналу включили в настройках (1.8.3)
             .setOnlyAlertOnce(true)
             .setContentIntent(pending(context, InCallActivity::class.java, 1))
+            .addPerson(person)
         val hangup = actionIntent(context, CallControlReceiver.ACTION_HANGUP)
         /*
          * «ДИНАМИК» И «МИКРОФОН» В ШТОРКЕ (2.1.0).
@@ -190,7 +234,7 @@ object CallNotifications {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             builder.setStyle(
                 NotificationCompat.CallStyle.forOngoingCall(
-                    androidx.core.app.Person.Builder().setName(callerName).build(),
+                    person,
                     hangup
                 )
             )
