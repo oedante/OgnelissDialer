@@ -116,6 +116,7 @@
     <string name="incall_mute">Stumm</string>
     <string name="incall_on_hold">Gehalten</string>
     <string name="incall_ongoing">Laufender Anruf</string>
+    <string name="incall_return">Zurück zum Anruf</string>
     <string name="incall_secondary">Gehalten: %1$s</string>
     <string name="incall_speaker">Lautsprecher</string>
     <string name="incall_swap">Wechseln</string>
@@ -146,16 +147,10 @@
     <string name="nav_settings">Einstellungen</string>
     <string name="onboarding_default_text">Ohne diese Rolle übergibt Android der App nicht die Steuerung der Anrufe.</string>
     <string name="onboarding_default_title">Standard-Telefon-App</string>
-    <string name="onboarding_optional">(optional)</string>
-    <string name="perm_audio_text">Lautsprecher und Bluetooth-Headset während des Gesprächs umschalten.</string>
     <string name="perm_audio_title">Audio und Headset</string>
-    <string name="perm_calllog_text">Eingehende, ausgehende und verpasste Anrufe anzeigen, gruppieren und auf Ihren Wunsch löschen. Die Liste bleibt auf diesem Gerät.</string>
     <string name="perm_calllog_title">Anrufliste</string>
-    <string name="perm_contacts_text">Namen und Fotos den Nummern zuordnen, Kontakte per T9 suchen, bearbeiten und als Favorit markieren. Kontakte werden nirgendwohin gesendet.</string>
     <string name="perm_contacts_title">Kontakte</string>
-    <string name="perm_notifications_text">Eingehende Anrufe in der Leiste anzeigen, mit Schaltflächen zum Annehmen und Ablehnen, sowie Rückruferinnerungen.</string>
     <string name="perm_notifications_title">Benachrichtigungen</string>
-    <string name="perm_phone_text">Anrufe tätigen und annehmen, die aktive SIM-Karte erkennen. Ohne diese Berechtigung kann die App nicht als Dialer arbeiten.</string>
     <string name="perm_phone_title">Telefon und Anrufe</string>
     <string name="postcall_no_answer">Anruf nicht zustande gekommen</string>
     <string name="postcall_note_hint">Notiz zu diesem Anruf</string>
@@ -384,26 +379,11 @@
     <string name="selection_start">Mehrere auswählen</string>
     <string name="selection_select_all">Alle auswählen</string>
     <string name="selection_delete">Löschen</string>
-    <string name="wizard_step_of">Schritt %1$d von %2$d</string>
-    <string name="wizard_grant">Berechtigung erteilen</string>
-    <string name="wizard_next">Weiter</string>
     <string name="wizard_skip">Vorerst überspringen</string>
-    <string name="wizard_finish">Los geht’s</string>
     <string name="wizard_granted">Erteilt</string>
-    <string name="wizard_required">Erforderlich</string>
-    <string name="wizard_optional">Optional</string>
-    <string name="wizard_dialer_rationale">Android übergibt die Anrufsteuerung an eine App. Ohne diese Rolle kann Ogneliss weder anrufen noch Anrufe annehmen.</string>
-    <string name="wizard_dialer_consequence">Ohne sie öffnet sich die App, aber nichts darin funktioniert.</string>
-    <string name="wizard_phone_consequence">Sie können aus der App nicht anrufen, und sie erkennt nicht, welche SIM aktiv ist.</string>
-    <string name="wizard_calllog_consequence">Die Anrufliste bleibt leer, und Sie sehen nicht, wer angerufen hat.</string>
-    <string name="wizard_contacts_consequence">Anrufe erscheinen als nackte Nummern, und die T9-Suche findet niemanden über den Namen.</string>
-    <string name="wizard_notifications_consequence">Eingehende Anrufe erscheinen nicht in der Leiste, und Rückruferinnerungen kommen nicht an.</string>
-    <string name="wizard_audio_consequence">Das Umschalten auf Lautsprecher oder Bluetooth-Headset während des Gesprächs funktioniert möglicherweise nicht.</string>
-    <string name="wizard_generic_consequence">Ein Teil der App wird nicht funktionieren.</string>
     <string name="settings_permissions">Berechtigungen</string>
     <string name="settings_permissions_text">Sehen, was erteilt ist, und Fehlendes ergänzen</string>
     <string name="permissions_open_system">System-App-Einstellungen</string>
-    <string name="permissions_open_system_hint">Nutzen Sie dies, wenn kein Berechtigungsdialog mehr erscheint — Android zeigt ihn nach zwei Ablehnungen nicht mehr an.</string>
     <string name="filter_title">Filter</string>
     <string name="filter_active_count">Filter: %1$d</string>
     <string name="filter_group_type">Anrufart</string>
@@ -440,7 +420,6 @@
     <string name="incall_note_add">Notiz schreiben</string>
     <string name="incall_note_hide">Notiz ausblenden</string>
     <string name="incall_note_hint">Lieferung am Dienstag nach vier…</string>
-    <string name="incall_note_autosave">Wird automatisch gespeichert</string>
     <string name="action_add_note">Notiz schreiben</string>
     <string name="consent_title">Bitte lesen Sie vor dem Start zwei kurze Dokumente</string>
     <string name="consent_privacy_summary">Ogneliss hat keine Internetberechtigung. Ihre Anrufliste, Kontakte und Notizen verlassen dieses Gerät nicht — das können Sie in den Details der installierten App selbst nachprüfen.</string>
@@ -508,11 +487,6 @@
     <string name="menu_theme_light">Helles Design</string>
     <string name="menu_theme_dark">Dunkles Design</string>
     <string name="selection_exit">Auswahl beenden</string>
-    <string name="dialer_role_blocked_title">Auswahlfenster ließ sich nicht öffnen</string>
-    <string name="dialer_role_blocked_text">Das passiert, wenn die Auswahl schon einmal abgelehnt wurde (dann fragt das System nicht mehr) oder die Hersteller-Oberfläche das Fenster ersetzt hat.
-
-Öffnen Sie „Einstellungen → Apps → Standard-Apps → Telefon-App“ (die Namen hängen vom Telefon ab) und wählen Sie Ogneliss Dialer.</string>
-    <string name="dialer_role_open_settings">Einstellungen öffnen</string>
     <string name="subscriber_same_number">Weitere Kontakte mit dieser Nummer</string>
     <string name="subscriber_shown_here">Auf dieser Karte angezeigt</string>
     <string name="blocked_prefix">Gesperrt</string>
@@ -559,15 +533,13 @@
     <string name="settings_battery">Hintergrundbetrieb</string>
     <string name="settings_battery_text">Ohne ihn schläft die App ein, und verpasste Anrufe erscheinen erst, wenn Sie sie selbst öffnen</string>
     <string name="settings_battery_already">Bereits erlaubt</string>
-    <string name="wizard_battery_rationale">Hintergrundbetrieb erlauben, damit verpasste Anrufe sofort erscheinen</string>
-    <string name="wizard_battery_consequence">Sonst wird die Anrufliste nur beim Öffnen aktualisiert</string>
     <string name="wizard_autostart_title">Autostart</string>
-    <string name="wizard_autostart_rationale">Ihr Hersteller schränkt Apps im Hintergrund ein. Die Telefoneinstellungen öffnen sich: Erlauben Sie Ogneliss Dialer den Autostart oder den Hintergrundbetrieb</string>
-    <string name="wizard_autostart_consequence">Sonst erscheinen verpasste Anrufe erst beim Öffnen der App</string>
     <string name="incoming_access_title">Anrufbildschirm bei Anrufen</string>
+    <string name="incoming_step_overlay">Erlauben Sie die Anzeige über anderen Apps</string>
+    <string name="incoming_step_miui">Erlauben Sie die Anzeige auf dem Sperrbildschirm und Pop-up-Fenster im Hintergrund</string>
+    <string name="permissions_open">Öffnen</string>
     <string name="incoming_access_text">Anzeige auf dem Sperrbildschirm und Pop-up-Fenster im Hintergrund: ohne sie zeigt das Telefon den Anrufbildschirm eventuell nicht</string>
-    <string name="incoming_access_consequence">Sonst erscheint ein eingehender Anruf eventuell nur in der Benachrichtigungsleiste</string>
-    <string name="incoming_blocked_banner">Das Telefon hat den Anrufbildschirm nicht angezeigt. Erlauben Sie es in den Telefoneinstellungen</string>
+    <string name="incoming_blocked_banner">Das Telefon hat den Anrufbildschirm nicht angezeigt</string>
     <string name="incoming_blocked_action">Erlauben</string>
     <string name="menu_my_contact">Mein Kontakt</string>
     <string name="settings_own_number_text">Nötig, um die eigene Karte zu teilen. Zum Ändern oder Löschen tippen</string>
@@ -868,7 +840,6 @@
     <string name="redial_reason_busy">Besetzt</string>
     <string name="redial_reason_no_answer">Keine Antwort</string>
     <string name="redial_reason_failed">Anruf fehlgeschlagen</string>
-    <string name="redial_offer_hint">Wahlwiederholung: bis zu %1$d-mal, alle %2$d s</string>
     <string name="redial_waiting">Neuer Versuch in %d s</string>
     <string name="redial_attempt">Wahlwiederholung · Versuch %1$d von %2$d</string>
     <string name="redial_calling">Erneute Wahl…</string>
@@ -957,7 +928,7 @@
 
     <!-- Роли и проверка на прошивках (2.0.0) -->
     <string name="role_restricted_title">Android hat diese Einstellung eingeschränkt</string>
-    <string name="role_restricted_text">Die App wurde aus einer APK-Datei statt aus einem Store installiert. Für solche Apps sperrt Android 15+ die Rollen Telefon und SMS sowie die SMS-Berechtigungen, bis Sie sie erlauben. Öffnen Sie „App-Info“, tippen Sie oben rechts auf ⋮ → „Eingeschränkte Einstellungen zulassen“, bestätigen Sie, kehren Sie zurück und versuchen Sie es erneut. Bei Installation aus Google Play entfällt dieser Schritt.</string>
+    <string name="role_restricted_text">Aus einer APK-Datei installiert. Tippen Sie in „App-Info“ auf ⋮ → „Eingeschränkte Einstellungen zulassen“ und versuchen Sie es erneut.</string>
     <string name="role_restricted_open">App-Info öffnen</string>
     <string name="sms_new_message">Neue Nachricht</string>
     <string name="sms_autostart_hint">Autostart für SMS erlauben</string>
@@ -972,7 +943,6 @@
     <string name="messages_rcs_note">RCS-Chats bleiben in %1$s und werden ausgeschaltet</string>
     <string name="msg_sms_thread_deleted">Unterhaltung gelöscht</string>
     <string name="msg_sms_threads_deleted">Unterhaltungen gelöscht: %1$s</string>
-    <string name="perm_sms_role_text">Unterhaltungen, eingehende SMS und MMS. Optional – SMS senden geht auch ohne.</string>
 
     <!-- Раздел SMS и меню «Ещё» (2.0.0) -->
     <string name="nav_messages">SMS</string>

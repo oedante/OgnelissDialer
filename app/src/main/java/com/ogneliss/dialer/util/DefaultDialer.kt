@@ -124,9 +124,10 @@ object DefaultDialer {
             )
         )
 
+        // 2.1.0: без предпроверки resolveActivity — с Android 11 она отвечает
+        // «нет» и для существующих экранов; нет экрана — исключение, следующий
         for (intent in candidates) {
             val opened = runCatching {
-                if (intent.resolveActivity(activity.packageManager) == null) return@runCatching false
                 activity.startActivity(intent)
                 true
             }.getOrDefault(false)

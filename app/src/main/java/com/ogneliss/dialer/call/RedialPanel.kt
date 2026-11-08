@@ -60,8 +60,9 @@ internal fun RedialStatus(session: AutoRedial.Session) {
     val attemptLine = stringResource(R.string.redial_attempt, session.attempt.coerceAtLeast(1), session.maxAttempts)
 
     val (pill, caption) = when (session.phase) {
-        Phase.OFFER -> reason to
-            stringResource(R.string.redial_offer_hint, session.maxAttempts, session.intervalSec)
+        // 2.1.0: без строки «Автодозвон: до N раз, каждые N с» — подсказка
+        // о настройках, а не о звонке; на кнопке и так «Дозваниваться»
+        Phase.OFFER -> reason to ""
         Phase.WAITING -> stringResource(R.string.redial_waiting, remaining) to "$reason · $attemptLine"
         Phase.CALLING -> stringResource(R.string.redial_calling) to attemptLine
         Phase.GAVE_UP -> stringResource(R.string.redial_gave_up) to
@@ -72,18 +73,20 @@ internal fun RedialStatus(session: AutoRedial.Session) {
         Phase.WAITING, Phase.CALLING -> stringResource(
             R.string.redial_spoken, reason, session.attempt.coerceAtLeast(1), session.maxAttempts
         )
-        else -> "$pill. $caption"
+        else -> if (caption.isEmpty()) pill else "$pill. $caption"
     }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         CallStatusPill(active = false, text = pill, spoken = spoken)
-        Spacer(Modifier.height(Space.s))
-        Text(
-            caption,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
+        if (caption.isNotEmpty()) {
+            Spacer(Modifier.height(Space.s))
+            Text(
+                caption,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
 

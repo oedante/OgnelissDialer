@@ -132,6 +132,7 @@
     <string name="incall_mute">Mute</string>
     <string name="incall_on_hold">On hold</string>
     <string name="incall_ongoing">Ongoing call</string>
+    <string name="incall_return">Return to call</string>
     <string name="incall_secondary">On hold: %1$s</string>
     <string name="incall_speaker">Speaker</string>
     <string name="incall_swap">Swap</string>
@@ -162,16 +163,10 @@
     <string name="nav_settings">Settings</string>
     <string name="onboarding_default_text">Without this role Android will not hand call control to the app.</string>
     <string name="onboarding_default_title">Default phone app</string>
-    <string name="onboarding_optional">(optional)</string>
-    <string name="perm_audio_text">Switch the speaker and Bluetooth headset during a call.</string>
     <string name="perm_audio_title">Audio and headset</string>
-    <string name="perm_calllog_text">Show incoming, outgoing and missed calls, group them and delete entries at your request. The log stays on this device.</string>
     <string name="perm_calllog_title">Call log</string>
-    <string name="perm_contacts_text">Match names and photos to numbers, search contacts with T9, edit and star them. Contacts are never sent anywhere.</string>
     <string name="perm_contacts_title">Contacts</string>
-    <string name="perm_notifications_text">Show incoming calls in the shade with Answer and Decline buttons, plus call-back reminders.</string>
     <string name="perm_notifications_title">Notifications</string>
-    <string name="perm_phone_text">Make and receive calls, detect the active SIM card. Without this the app cannot work as a dialer.</string>
     <string name="perm_phone_title">Phone and calls</string>
     <string name="postcall_no_answer">Call not completed</string>
     <string name="postcall_note_hint">Note about this call</string>
@@ -402,27 +397,12 @@
     <string name="selection_delete">Delete</string>
 
     <!-- Permission wizard -->
-    <string name="wizard_step_of">Step %1$d of %2$d</string>
-    <string name="wizard_grant">Grant permission</string>
-    <string name="wizard_next">Next</string>
     <string name="wizard_skip">Skip for now</string>
-    <string name="wizard_finish">Get started</string>
     <string name="wizard_granted">Granted</string>
-    <string name="wizard_required">Required</string>
-    <string name="wizard_optional">Optional</string>
-    <string name="wizard_dialer_rationale">Android hands call control to one app at a time. Without this role Ogneliss cannot place or receive calls.</string>
-    <string name="wizard_dialer_consequence">Without it the app will open, but nothing inside it will work.</string>
-    <string name="wizard_phone_consequence">You will not be able to make calls from the app, and it will not see which SIM is active.</string>
-    <string name="wizard_calllog_consequence">The call list will stay empty and you will not see who called you.</string>
-    <string name="wizard_contacts_consequence">Calls will show as bare numbers, and T9 search will not find people by name.</string>
-    <string name="wizard_notifications_consequence">Incoming calls will not appear in the shade, and call-back reminders will not arrive.</string>
-    <string name="wizard_audio_consequence">Switching to the speaker or a Bluetooth headset during a call may not work.</string>
-    <string name="wizard_generic_consequence">Part of the app will not work.</string>
 
     <string name="settings_permissions">Permissions</string>
     <string name="settings_permissions_text">See what is granted and fix what is missing</string>
     <string name="permissions_open_system">System app settings</string>
-    <string name="permissions_open_system_hint">Use this if a permission dialog no longer appears — Android stops showing it after two refusals.</string>
 
     <!-- Filters -->
     <string name="filter_title">Filters</string>
@@ -466,7 +446,6 @@
     <string name="incall_note_add">Write a note</string>
     <string name="incall_note_hide">Hide note</string>
     <string name="incall_note_hint">Delivery on Tuesday after four…</string>
-    <string name="incall_note_autosave">Saved automatically</string>
     <string name="action_add_note">Write a note</string>
 
     <!-- Consent -->
@@ -536,11 +515,6 @@
     <string name="menu_theme_light">Switch to light theme</string>
     <string name="menu_theme_dark">Switch to dark theme</string>
     <string name="selection_exit">Exit selection</string>
-    <string name="dialer_role_blocked_title">Could not open the chooser</string>
-    <string name="dialer_role_blocked_text">Usually this happens when the request was declined before (the system stops asking) or the phone’s shell replaced the chooser with its own.
-
-Open Settings → Apps → Default apps → Phone app (names differ by phone) and choose Ogneliss Dialer.</string>
-    <string name="dialer_role_open_settings">Open settings</string>
     <string name="subscriber_same_number">Other contacts with this number</string>
     <string name="subscriber_shown_here">Shown on this card</string>
     <string name="blocked_prefix">Blocked</string>
@@ -587,15 +561,13 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="settings_battery">Background work</string>
     <string name="settings_battery_text">Without it the system may sleep the app, and missed calls will not appear until you open it yourself</string>
     <string name="settings_battery_already">Already allowed</string>
-    <string name="wizard_battery_rationale">Allow the app to work in the background so missed calls appear right away</string>
-    <string name="wizard_battery_consequence">Without it the call log updates only when you open the app</string>
     <string name="wizard_autostart_title">Auto-start</string>
-    <string name="wizard_autostart_rationale">Your phone maker limits apps running in the background. The phone settings will open: allow Ogneliss Dialer to start automatically or run in the background</string>
-    <string name="wizard_autostart_consequence">Without it missed calls may not appear until you open the app</string>
     <string name="incoming_access_title">Incoming call screen</string>
+    <string name="incoming_step_overlay">Allow display over other apps</string>
+    <string name="incoming_step_miui">Allow showing on the lock screen and pop-up windows in the background</string>
+    <string name="permissions_open">Open</string>
     <string name="incoming_access_text">Show on the lock screen and pop-up windows in the background: without them the phone may not show the call screen</string>
-    <string name="incoming_access_consequence">Without it, an incoming call may show up only in the notification shade</string>
-    <string name="incoming_blocked_banner">The phone did not let the call screen appear. Allow it in the phone settings</string>
+    <string name="incoming_blocked_banner">The phone did not show the call screen</string>
     <string name="incoming_blocked_action">Allow</string>
     <string name="menu_my_contact">My contact</string>
     <string name="settings_own_number_text">Used to share your own card. Tap to change or clear</string>
@@ -897,7 +869,6 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="redial_reason_busy">Busy</string>
     <string name="redial_reason_no_answer">No answer</string>
     <string name="redial_reason_failed">Call failed</string>
-    <string name="redial_offer_hint">Auto redial: up to %1$d times, every %2$d s</string>
     <string name="redial_waiting">Redialing in %d s</string>
     <string name="redial_attempt">Auto redial · attempt %1$d of %2$d</string>
     <string name="redial_calling">Dialing again…</string>
@@ -986,7 +957,7 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
 
     <!-- Роли и проверка на прошивках (2.0.0) -->
     <string name="role_restricted_title">Android restricted this setting</string>
-    <string name="role_restricted_text">The app was installed from an APK file rather than from a store, and Android 15+ keeps the phone and SMS roles and SMS permissions closed for such apps until you allow them. Open “App info”, tap ⋮ in the top-right corner → “Allow restricted settings”, confirm, then come back and try again. Installs from Google Play don’t need this step.</string>
+    <string name="role_restricted_text">Installed from an APK file. In App info tap ⋮ → “Allow restricted settings”, then try again.</string>
     <string name="role_restricted_open">Open App info</string>
     <string name="sms_new_message">New message</string>
     <string name="sms_autostart_hint">Allow autostart for SMS</string>
@@ -1001,7 +972,6 @@ Open Settings → Apps → Default apps → Phone app (names differ by phone) an
     <string name="messages_rcs_note">RCS chats will stay in %1$s and turn off</string>
     <string name="msg_sms_thread_deleted">Conversation deleted</string>
     <string name="msg_sms_threads_deleted">Conversations deleted: %1$s</string>
-    <string name="perm_sms_role_text">Conversations, incoming SMS and MMS. Optional — you can send SMS without it.</string>
 
     <!-- Раздел SMS и меню «Ещё» (2.0.0) -->
     <string name="nav_messages">SMS</string>

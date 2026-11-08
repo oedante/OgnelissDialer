@@ -62,4 +62,48 @@ internal object CallScreenRules {
             state == Call.STATE_PULLING_CALL
         return offHook && atEar
     }
+
+    /**
+     * ПЛАШКА ВХОДЯЩЕГО — ТОЛЬКО ГДЕ ОНА НАВЕРНЯКА ВСПЛЫВЁТ (2.1.0, разбор
+     * в IncomingScreen.bannerSafe). Иначе — экран вызова целиком.
+     *
+     * @param restrictiveShell MIUI/HyperOS, vivo, ColorOS — свои запреты
+     *        на всплытие и окна из фона
+     * @param channelImportance важность канала входящих (NotificationManager.IMPORTANCE_*)
+     * @param interruptionFilterAll «Не беспокоить» выключен
+     * @param headsUpOn всплывающие уведомления не отключены в системе
+     */
+    fun incomingBannerAllowed(
+        restrictiveShell: Boolean,
+        notificationsEnabled: Boolean,
+        channelImportance: Int,
+        interruptionFilterAll: Boolean,
+        headsUpOn: Boolean
+    ): Boolean = !restrictiveShell && notificationsEnabled &&
+        channelImportance >= android.app.NotificationManager.IMPORTANCE_HIGH &&
+        interruptionFilterAll && headsUpOn
+
+    /**
+     * ИСХОДЯЩИЙ ПО СОСТОЯНИЮ — ANDROID 8–9 (2.1.0).
+     *
+     * До Android 10 направления вызова в Details нет, и в onCallAdded его
+     * угадывают по состоянию. Было: только «набирается» и «соединяется», —
+     * исходящий с выбором SIM («Спрашивать каждый раз») приходил
+     * в SELECT_PHONE_ACCOUNT и считался входящим: пропущенные сбрасывались
+     * не тогда, а после сброса выходило «Перезвонить?».
+     */
+    @Suppress("DEPRECATION")
+    fun outgoingOnAdd(state: Int): Boolean =
+        state == Call.STATE_DIALING ||
+            state == Call.STATE_CONNECTING ||
+            state == Call.STATE_SELECT_PHONE_ACCOUNT
+
+    /**
+     * Вызов, к которому можно вернуться полосой «Вернуться к вызову» (2.1.0):
+     * идёт, удержан, набирается, ждёт выбора SIM или звонит. Участник
+     * конференции не в счёт — к ней ведёт сама конференция.
+     */
+    @Suppress("DEPRECATION")
+    fun returnable(state: Int, isConferenceChild: Boolean): Boolean =
+        !isConferenceChild && state != Call.STATE_DISCONNECTED && state != Call.STATE_DISCONNECTING
 }
