@@ -640,7 +640,6 @@
     <string name="action_write_email">Écrire un e-mail</string>
     <string name="action_copy_email">Copier l\'adresse</string>
     <!-- Подписи разделов меню «Ещё» (строгий стиль, 1.5.1) -->
-    <string name="menu_section_lists">Rubriques</string>
     <string name="menu_section_app">Application</string>
     <!-- 1.5.7: карточки долгого нажатия, «Наверх», удаление с отменой, размер фото -->
     <string name="a11y_cards_expand">Plus d’actions</string>
@@ -950,8 +949,6 @@
     <string name="messages_new_hint">Numéro ou nom</string>
     <string name="messages_write">Écrire</string>
     <string name="messages_search_hint">Rechercher dans les messages</string>
-    <string name="menu_section_list">Liste</string>
-    <string name="menu_filters_active">Conditions actives : %1$s</string>
     <string name="messages_delete_thread_action">Supprimer la conversation</string>
     <string name="settings_sms_swipe_right">Balayage vers la droite sur une conversation</string>
     <string name="settings_sms_swipe_left">Balayage vers la gauche sur une conversation</string>
@@ -981,7 +978,7 @@
     <string name="settings_incoming_banner">Appel entrant en bannière</string>
     <string name="settings_incoming_banner_text">Pendant l’utilisation du téléphone, l’appel s’affiche en haut avec « Répondre » et « Refuser » au lieu du plein écran. Écran verrouillé ou éteint : toujours en plein écran</string>
     <string name="keywords_incoming_banner">fenêtre compacte petite en haut notification plein écran entrant</string>
-    <string name="menu_pin_home">Icône sur l’écran d’accueil</string>
+    <string name="menu_pin_home">Sur l’écran d’accueil</string>
     <string name="widget_sms_description">Icône SMS avec le nombre de messages non lus</string>
     <string name="widget_contacts_description">Ouvre « Contacts » dans Ogneliss Dialer</string>
 </resources>

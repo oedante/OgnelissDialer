@@ -644,7 +644,6 @@
     <string name="action_write_email">Написать письмо</string>
     <string name="action_copy_email">Копировать адрес</string>
     <!-- Подписи разделов меню «Ещё» (строгий стиль, 1.5.1) -->
-    <string name="menu_section_lists">Разделы</string>
     <string name="menu_section_app">Приложение</string>
     <!-- 1.5.7: карточки долгого нажатия, «Наверх», удаление с отменой, размер фото -->
     <string name="a11y_cards_expand">Ещё действия</string>
@@ -960,8 +959,6 @@
     <string name="messages_new_hint">Номер или имя</string>
     <string name="messages_write">Написать</string>
     <string name="messages_search_hint">Поиск по сообщениям</string>
-    <string name="menu_section_list">Список</string>
-    <string name="menu_filters_active">Включено условий: %1$s</string>
     <string name="messages_delete_thread_action">Удалить переписку</string>
     <string name="settings_sms_swipe_right">Свайп вправо по переписке</string>
     <string name="settings_sms_swipe_left">Свайп влево по переписке</string>
@@ -991,7 +988,7 @@
     <string name="settings_incoming_banner">Входящий плашкой сверху</string>
     <string name="settings_incoming_banner_text">Пока телефоном пользуются, входящий появляется сверху с «Ответить» и «Отклонить», а не на весь экран. На заблокированном и погасшем экране — всегда на весь экран</string>
     <string name="keywords_incoming_banner">всплывающее компактное маленькое окно плашка сверху уведомление весь экран входящий</string>
-    <string name="menu_pin_home">Значок на главный экран</string>
+    <string name="menu_pin_home">На главный экран</string>
     <string name="widget_sms_description">Значок SMS с числом непрочитанных</string>
     <string name="widget_contacts_description">Открывает «Контакты» в Ogneliss Dialer</string>
 </resources>

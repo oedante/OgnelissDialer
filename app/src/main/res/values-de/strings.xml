@@ -641,7 +641,6 @@
     <string name="action_write_email">E-Mail schreiben</string>
     <string name="action_copy_email">Adresse kopieren</string>
     <!-- Подписи разделов меню «Ещё» (строгий стиль, 1.5.1) -->
-    <string name="menu_section_lists">Bereiche</string>
     <string name="menu_section_app">App</string>
     <!-- 1.5.7: карточки долгого нажатия, «Наверх», удаление с отменой, размер фото -->
     <string name="a11y_cards_expand">Weitere Aktionen</string>
@@ -951,8 +950,6 @@
     <string name="messages_new_hint">Nummer oder Name</string>
     <string name="messages_write">Schreiben</string>
     <string name="messages_search_hint">Nachrichten durchsuchen</string>
-    <string name="menu_section_list">Liste</string>
-    <string name="menu_filters_active">Aktive Bedingungen: %1$s</string>
     <string name="messages_delete_thread_action">Unterhaltung löschen</string>
     <string name="settings_sms_swipe_right">Unterhaltung nach rechts wischen</string>
     <string name="settings_sms_swipe_left">Unterhaltung nach links wischen</string>
@@ -982,7 +979,7 @@
     <string name="settings_incoming_banner">Eingehender Anruf als Banner</string>
     <string name="settings_incoming_banner_text">Während Sie das Telefon benutzen, erscheint ein Anruf oben mit „Annehmen“ und „Ablehnen“ statt im Vollbild. Bei gesperrtem oder dunklem Bildschirm immer im Vollbild</string>
     <string name="keywords_incoming_banner">Popup kompakt kleines Fenster oben Benachrichtigung Vollbild eingehend</string>
-    <string name="menu_pin_home">Symbol auf den Startbildschirm</string>
+    <string name="menu_pin_home">Auf den Startbildschirm</string>
     <string name="widget_sms_description">SMS-Symbol mit Anzahl ungelesener Nachrichten</string>
     <string name="widget_contacts_description">Öffnet „Kontakte“ in Ogneliss Dialer</string>
 </resources>

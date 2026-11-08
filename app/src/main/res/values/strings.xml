@@ -670,7 +670,6 @@
     <string name="action_write_email">Write email</string>
     <string name="action_copy_email">Copy address</string>
     <!-- Подписи разделов меню «Ещё» (строгий стиль, 1.5.1) -->
-    <string name="menu_section_lists">Sections</string>
     <string name="menu_section_app">App</string>
     <!-- 1.5.7: карточки долгого нажатия, «Наверх», удаление с отменой, размер фото -->
     <string name="a11y_cards_expand">More actions</string>
@@ -980,8 +979,6 @@
     <string name="messages_new_hint">Number or name</string>
     <string name="messages_write">Write</string>
     <string name="messages_search_hint">Search messages</string>
-    <string name="menu_section_list">List</string>
-    <string name="menu_filters_active">Active conditions: %1$s</string>
     <string name="messages_delete_thread_action">Delete conversation</string>
     <string name="settings_sms_swipe_right">Swipe right on a conversation</string>
     <string name="settings_sms_swipe_left">Swipe left on a conversation</string>
@@ -1011,7 +1008,7 @@
     <string name="settings_incoming_banner">Incoming call as a banner</string>
     <string name="settings_incoming_banner_text">While you use the phone, an incoming call appears at the top with Answer and Decline instead of opening full screen. On a locked or dark screen it is always full screen</string>
     <string name="keywords_incoming_banner">popup heads-up compact small window top notification full screen incoming</string>
-    <string name="menu_pin_home">Icon on the home screen</string>
+    <string name="menu_pin_home">To home screen</string>
     <string name="widget_sms_description">SMS icon with the number of unread messages</string>
     <string name="widget_contacts_description">Opens Contacts in Ogneliss Dialer</string>
 </resources>
