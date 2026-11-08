@@ -30,4 +30,8 @@
         <item quantity="one">%1$d call matches</item>
         <item quantity="other">%1$d calls match</item>
     </plurals>
+    <plurals name="widget_sms_unread">
+        <item quantity="one">%1$s: %2$d unread message</item>
+        <item quantity="other">%1$s: %2$d unread messages</item>
+    </plurals>
 </resources>

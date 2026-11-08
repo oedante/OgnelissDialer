@@ -982,4 +982,7 @@
     <string name="settings_incoming_banner">Eingehender Anruf als Banner</string>
     <string name="settings_incoming_banner_text">Während Sie das Telefon benutzen, erscheint ein Anruf oben mit „Annehmen“ und „Ablehnen“ statt im Vollbild. Bei gesperrtem oder dunklem Bildschirm immer im Vollbild</string>
     <string name="keywords_incoming_banner">Popup kompakt kleines Fenster oben Benachrichtigung Vollbild eingehend</string>
+    <string name="menu_pin_home">Symbol auf den Startbildschirm</string>
+    <string name="widget_sms_description">SMS-Symbol mit Anzahl ungelesener Nachrichten</string>
+    <string name="widget_contacts_description">Öffnet „Kontakte“ in Ogneliss Dialer</string>
 </resources>

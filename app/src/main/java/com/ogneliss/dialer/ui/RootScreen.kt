@@ -146,7 +146,9 @@ fun RootScreen(
     /** Открыть списки блокировки сразу после запуска: из уведомления. */
     openBlockLists: Boolean = false,
     /** Открыть переписку (2.0.0): «Написать», ссылка sms:, уведомление. */
-    openConversation: com.ogneliss.dialer.ui.conversation.ConversationRequest? = null
+    openConversation: com.ogneliss.dialer.ui.conversation.ConversationRequest? = null,
+    /** Открыть раздел (2.1.0): касание по значку «SMS» или «Контакты» на главном экране. */
+    openSectionRoute: String? = null
 ) {
     val nav = rememberNavController()
 
@@ -337,6 +339,11 @@ fun RootScreen(
         // Уведомление о заблокированном звонке: человек хочет увидеть,
         // каким правилом номер отсечён
         if (openBlockLists) nav.navigate("blocklists")
+    }
+
+    // Значок раздела на главном экране (2.1.0): ключ — и раздел, и счётчик намерений
+    LaunchedEffect(openSectionRoute, prefillToken) {
+        MainSection.entries.firstOrNull { it.route == openSectionRoute }?.let(openSection)
     }
 
     LaunchedEffect(openCardForNumber) {

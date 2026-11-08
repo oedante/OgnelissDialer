@@ -225,6 +225,8 @@ object MmsTransport {
         writeAddress(context, id, from, MessageStore.ADDR_FROM)
         m.to.forEach { writeAddress(context, id, it, MessageStore.ADDR_TO) }
         m.cc.forEach { writeAddress(context, id, it, MessageStore.ADDR_CC) }
+        // Счётчик на значке «SMS» (2.1.0): пришло MMS
+        com.ogneliss.dialer.widget.SectionWidgets.updateSms(context)
         uri
     }.onFailure { Logger.e(TAG, "Не удалось сохранить MMS", it) }.getOrNull()
 

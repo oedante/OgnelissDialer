@@ -357,6 +357,7 @@ MessageNotifications, OtpDetector), `ui/conversation/`, `ui/RootScreen.kt` (ма
 | Доходят ли SMS: уведомления, автозапуск MIUI — полоса | `sms/SmsHealth.kt` (`problem`, `fix`), `ui/conversation/MessagesParts.kt` (2.1.0) |
 | MMS: не скачалось — повторы и «Загрузить» | `sms/MmsDownloads.kt`, `MmsRetryJob` (2.1.0) |
 | Цвета SIM | `ui/theme/SimColors.kt`, `SimBadge` (`NumberPickerSheet.kt`) (2.1.0) |
+| Значки SMS (счётчик) и «Контакты» на главном экране | `widget/SectionWidgets.kt`, `res/layout/widget_section.xml`, `res/xml/widget_*_info.xml` (2.1.0) |
 | Можно ли звонить и писать (серые кнопки) | `util/CallAvailability.kt`, `LocalCallAvailability` в `RootScreen` (2.1.0) |
 | Выбор действий свайпа (до 3) | `ui/screens/SwipeActionsDialog.kt` |
 | Мессенджеры контакта (по книге) | `data/ContactMessengers.kt` |

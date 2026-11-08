@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 2.1.0: значок раздела «sms» на главном экране, 1 × 1; обновляет приложение само (updatePeriodMillis = 0) -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="40dp"
+    android:minHeight="40dp"
+    android:targetCellWidth="1"
+    android:targetCellHeight="1"
+    android:updatePeriodMillis="0"
+    android:initialLayout="@layout/widget_section"
+    android:previewImage="@drawable/ic_shortcut_sms"
+    android:resizeMode="none"
+    android:widgetCategory="home_screen"
+    android:description="@string/widget_sms_description" />

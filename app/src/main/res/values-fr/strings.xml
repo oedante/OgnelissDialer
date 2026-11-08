@@ -981,4 +981,7 @@
     <string name="settings_incoming_banner">Appel entrant en bannière</string>
     <string name="settings_incoming_banner_text">Pendant l’utilisation du téléphone, l’appel s’affiche en haut avec « Répondre » et « Refuser » au lieu du plein écran. Écran verrouillé ou éteint : toujours en plein écran</string>
     <string name="keywords_incoming_banner">fenêtre compacte petite en haut notification plein écran entrant</string>
+    <string name="menu_pin_home">Icône sur l’écran d’accueil</string>
+    <string name="widget_sms_description">Icône SMS avec le nombre de messages non lus</string>
+    <string name="widget_contacts_description">Ouvre « Contacts » dans Ogneliss Dialer</string>
 </resources>

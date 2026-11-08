@@ -696,6 +696,10 @@ fun ContactsScreen(
                     onSwipeRight = if (settings.panelSwipeNav) toJournal else null,
                     onSwipeLeft = if (settings.panelSwipeNav) onOpenNotes else null,
                     menuContent = {
+                        val pinContext = androidx.compose.ui.platform.LocalContext.current
+                        val pinToHome: (() -> Unit)? = if (com.ogneliss.dialer.widget.SectionWidgets.pinSupported(pinContext)) {
+                            { menuOpen = false; com.ogneliss.dialer.widget.SectionWidgets.requestPin(pinContext, com.ogneliss.dialer.ui.components.MainSection.CONTACTS) }
+                        } else null
                         OverflowMenu(
                             expanded = menuOpen,
                             onDismiss = { menuOpen = false },
@@ -722,7 +726,9 @@ fun ContactsScreen(
                             onReminders = { menuOpen = false; onOpenReminders() },
                             onStartSelection = null,
                             onAddContact = { menuOpen = false; vm.createContact("") },
-                            onHelp = { menuOpen = false; onOpenHelp() }
+                            onHelp = { menuOpen = false; onOpenHelp() },
+                            // 2.1.0: значок «Контакты» на главный экран (SectionWidgets)
+                            onPinToHome = pinToHome
                         )
                     }
                 )

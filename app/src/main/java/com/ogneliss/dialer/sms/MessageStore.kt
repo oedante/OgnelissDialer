@@ -422,6 +422,8 @@ object MessageStore {
         }
         context.contentResolver.insert(Uri.parse("content://sms/inbox"), values)
     }.onFailure { Logger.e(TAG, "Не удалось сохранить входящее SMS", it) }.getOrNull()
+        // Счётчик на значке «SMS» (2.1.0) — после каждого изменения хранилища
+        .also { com.ogneliss.dialer.widget.SectionWidgets.updateSms(context) }
 
     /** Исходящее SMS — в «Исходящие» до ответа сети. */
     fun insertOutgoingSms(context: Context, address: String, body: String, subId: Int?, threadId: Long?): Uri? = runCatching {
@@ -467,6 +469,7 @@ object MessageStore {
             context.contentResolver.update(SMS_URI, values, "thread_id = ? AND read = 0", args)
             context.contentResolver.update(MMS_URI, values, "thread_id = ? AND read = 0", args)
         }.onFailure { Logger.w(TAG, "Не удалось отметить прочитанным", it) }
+        com.ogneliss.dialer.widget.SectionWidgets.updateSms(context)
     }
 
     /** Удалить сообщения по ключам «sms:12», «mms:7». */
@@ -480,6 +483,7 @@ object MessageStore {
             deleted += runCatching { context.contentResolver.delete(uri, null, null) }.getOrDefault(0)
         }
         Logger.i(TAG, "Удалено сообщений: $deleted")
+        com.ogneliss.dialer.widget.SectionWidgets.updateSms(context)
         return deleted
     }
 
@@ -493,7 +497,11 @@ object MessageStore {
      * не новее [upTo], а переписка с новым остаётся (false: целиком
      * не удалена — закрепление и архив не снимаются).
      */
-    fun deleteThread(context: Context, threadId: Long, upTo: Long? = null): Boolean {
+    fun deleteThread(context: Context, threadId: Long, upTo: Long? = null): Boolean =
+        deleteThreadInner(context, threadId, upTo)
+            .also { com.ogneliss.dialer.widget.SectionWidgets.updateSms(context) }
+
+    private fun deleteThreadInner(context: Context, threadId: Long, upTo: Long?): Boolean {
         if (!SmsRole.isDefault(context)) return false
         val newest = if (upTo == null) null else newestDate(context, threadId)
         if (upTo != null && (newest == null || newest > upTo)) {

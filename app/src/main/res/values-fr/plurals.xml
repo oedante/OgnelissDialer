@@ -33,4 +33,9 @@
         <item quantity="one">%1$d appel correspond</item>
         <item quantity="other">%1$d appels correspondent</item>
     </plurals>
+    <plurals name="widget_sms_unread">
+        <item quantity="one">%1$s : %2$d message non lu</item>
+        <item quantity="many">%1$s : %2$d messages non lus</item>
+        <item quantity="other">%1$s : %2$d messages non lus</item>
+    </plurals>
 </resources>

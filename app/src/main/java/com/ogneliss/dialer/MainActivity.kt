@@ -337,7 +337,9 @@ class MainActivity : ComponentActivity() {
                         openBlockLists = currentIntent
                             ?.getBooleanExtra(EXTRA_OPEN_BLOCK_LISTS, false) == true,
                         // «Написать» и ссылки sms: — переписка в диалере (2.0.0)
-                        openConversation = com.ogneliss.dialer.ui.conversation.ConversationRequest.from(currentIntent)
+                        openConversation = com.ogneliss.dialer.ui.conversation.ConversationRequest.from(currentIntent),
+                        // Значок раздела на главном экране (2.1.0, widget/SectionWidgets)
+                        openSectionRoute = currentIntent?.getStringExtra(com.ogneliss.dialer.widget.SectionWidgets.EXTRA_OPEN_SECTION)
                     )
                         // Чего не выдала роль — одним системным окном, без своих страниц (2.1.0)
                         com.ogneliss.dialer.ui.screens.MissingPermissionsRequest(isDefaultDialer = isDefault)
@@ -384,6 +386,8 @@ class MainActivity : ComponentActivity() {
      */
     override fun onResume() {
         super.onResume()
+        // Значки разделов: роль SMS могла смениться, SMS — прочитаться (2.1.0)
+        com.ogneliss.dialer.widget.SectionWidgets.updateAll(this)
         com.ogneliss.dialer.call.MissedCallsNotifier.clear(this)
         /*
          * ПРИЛОЖЕНИЕ ОТКРЫЛИ, ПОКА ЗВОНИТ (2.1.0) — сразу экран вызова.

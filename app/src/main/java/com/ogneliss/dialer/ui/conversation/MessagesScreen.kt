@@ -430,6 +430,10 @@ fun MessagesScreen(
                 onSwipeLeft = if (swipeNav) { { onOpenSection(MainSection.CONTACTS) } } else null,
                 menuContent = {
                     // Пункты — как у журнала и контактов, тем же окном (OverflowMenu)
+                    val pinContext = androidx.compose.ui.platform.LocalContext.current
+                    val pinToHome: (() -> Unit)? = if (com.ogneliss.dialer.widget.SectionWidgets.pinSupported(pinContext)) {
+                        { menuOpen = false; com.ogneliss.dialer.widget.SectionWidgets.requestPin(pinContext, com.ogneliss.dialer.ui.components.MainSection.MESSAGES) }
+                    } else null
                     OverflowMenu(
                         expanded = menuOpen,
                         onDismiss = { menuOpen = false },
@@ -450,6 +454,8 @@ fun MessagesScreen(
                         onReminders = { menuOpen = false; onOpenReminders() },
                         onStartSelection = null,
                         onHelp = { menuOpen = false; onOpenHelp() },
+                        // 2.1.0: значок «SMS» со счётчиком на главный экран (SectionWidgets)
+                        onPinToHome = pinToHome,
                         onArchive = { menuOpen = false; selection.clear(); showArchive = true }
                     )
                 }

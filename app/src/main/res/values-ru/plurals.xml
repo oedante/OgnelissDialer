@@ -36,4 +36,10 @@
         <item quantity="many">Подходит %1$d записей</item>
         <item quantity="other">Подходит %1$d записи</item>
     </plurals>
+    <plurals name="widget_sms_unread">
+        <item quantity="one">%1$s: %2$d непрочитанное сообщение</item>
+        <item quantity="few">%1$s: %2$d непрочитанных сообщения</item>
+        <item quantity="many">%1$s: %2$d непрочитанных сообщений</item>
+        <item quantity="other">%1$s: %2$d непрочитанного сообщения</item>
+    </plurals>
 </resources>

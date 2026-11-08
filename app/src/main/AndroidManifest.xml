@@ -418,5 +418,41 @@
             </intent-filter>
         </receiver>
 
+        <!--
+            2.1.0: значки разделов на главном экране — «SMS» с числом
+            непрочитанных и «Контакты» (widget/SectionWidgets.kt). Виджеты
+            1 × 1 рисует приложение само; обновления — от приложения.
+        -->
+        <receiver
+            android:name=".widget.SmsWidgetProvider"
+            android:exported="false"
+            android:label="@string/nav_messages">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_sms_info" />
+        </receiver>
+        <receiver
+            android:name=".widget.ContactsWidgetProvider"
+            android:exported="false"
+            android:label="@string/nav_contacts">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_contacts_info" />
+        </receiver>
+        <!-- Переходник касания по значку раздела: без окна, решает и закрывается -->
+        <activity
+            android:name=".widget.SectionLaunchActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.NoDisplay" />
+
     </application>
 </manifest>

@@ -2,188 +2,188 @@
 • SMS и MMS в диалере: переписки по дням, закреплённые, архив; «Ответить», «Удалить» и «Копировать код» прямо в уведомлении.
 • Если SMS ведут «Сообщения» Google или Samsung, «Написать» откроет их — чаты RCS на месте.
 • Карточка: звонки и SMS по всем номерам; «Мой контакт» целиком.
-• Долгое нажатие на портрет — удалить или в архив.
-• Звонки надёжнее на Xiaomi, OPPO, vivo, Huawei; цвета SIM; меньше лишних сообщений.
+• Значки SMS (с числом новых) и «Контакты» для главного экрана; долгое нажатие на портрет — удалить или в архив.
+• Звонки надёжнее на Xiaomi, OPPO, vivo, Huawei; цвета SIM.
 </ru-RU>
 <ar>
 • الرسائل القصيرة ومتعددة الوسائط في تطبيق الاتصال: المحادثات حسب الأيام، المثبّتة، الأرشيف؛ «رد» و«حذف» و«نسخ الرمز» في الإشعار.
 • إذا كانت رسائل Google أو Samsung Messages تدير رسائلك، فإن «اكتب» يفتحها — وتبقى محادثات RCS تعمل.
 • بطاقة جهة الاتصال: المكالمات والرسائل لكل الأرقام؛ «جهة اتصالي» كاملة.
-• اضغط مطولًا على الصورة للحذف أو الأرشفة.
-• مكالمات أكثر موثوقية على Xiaomi وOPPO وvivo وHuawei؛ ألوان للشرائح؛ رسائل غير ضرورية أقل.
+• أيقونات للشاشة الرئيسية: الرسائل مع عدد غير المقروءة وجهات الاتصال؛ اضغط مطولًا على الصورة للحذف أو الأرشفة.
+• مكالمات أكثر موثوقية على Xiaomi وOPPO وvivo وHuawei؛ ألوان للشرائح.
 </ar>
 <cs-CZ>
 • SMS a MMS v aplikaci: konverzace podle dnů, připnuté, archiv; „Odpovědět“, „Smazat“ a „Kopírovat kód“ přímo v oznámení.
 • Pokud SMS spravují Zprávy Google nebo Samsung Messages, „Napsat“ otevře je – chaty RCS dál fungují.
 • Karta kontaktu: hovory a SMS ze všech čísel; „Můj kontakt“ celý.
-• Podržením fotky smažete nebo archivujete.
-• Spolehlivější hovory na Xiaomi, OPPO, vivo, Huawei; barvy SIM; méně zbytečných hlášení.
+• Ikony na plochu: SMS s počtem nepřečtených a Kontakty; podržením fotky smažete nebo archivujete.
+• Spolehlivější hovory na Xiaomi, OPPO, vivo, Huawei; barvy SIM.
 </cs-CZ>
 <da-DK>
 • Sms og mms i opkaldsappen: samtaler pr. dag, fastgjorte, arkiv; „Svar“, „Slet“ og „Kopiér kode“ i notifikationen.
 • Styrer Google Beskeder eller Samsung Messages dine sms'er, åbner „Skriv“ den app – RCS-chats virker stadig.
 • Kontaktkort: opkald og sms for alle numre; „Min kontakt“ komplet.
-• Hold på et billede for at slette eller arkivere.
-• Mere pålidelige opkald på Xiaomi, OPPO, vivo, Huawei; SIM-farver; færre unødige beskeder.
+• Ikoner til startskærmen: sms med antal ulæste og Kontakter; hold på et billede for at slette eller arkivere.
+• Mere pålidelige opkald på Xiaomi, OPPO, vivo, Huawei; SIM-farver.
 </da-DK>
 <de-DE>
-• SMS und MMS in der Telefon-App: Unterhaltungen nach Tagen, Angeheftete, Archiv; „Antworten“, „Löschen“ und „Code kopieren“ in der Benachrichtigung.
+• SMS und MMS in der Telefon-App: nach Tagen, Angeheftete, Archiv; „Antworten“, „Löschen“, „Code kopieren“ in der Benachrichtigung.
 • Verwaltet Google Messages oder Samsung Messages Ihre SMS, öffnet „Schreiben“ diese App – RCS-Chats bleiben.
 • Kontaktkarte: Anrufe und SMS aller Nummern; „Mein Kontakt“ vollständig.
-• Foto lange drücken: löschen oder archivieren.
-• Zuverlässigere Anrufe auf Xiaomi, OPPO, vivo, Huawei; SIM-Farben; weniger unnötige Meldungen.
+• Startbildschirm-Symbole: SMS mit Zahl neuer Nachrichten und Kontakte; Foto lange drücken: löschen, archivieren.
+• Zuverlässigere Anrufe auf Xiaomi, OPPO, vivo, Huawei; SIM-Farben.
 </de-DE>
 <en-US>
 • SMS and MMS in the dialer: conversations by day, pinned, archive; Reply, Delete and Copy code right in the notification.
 • If Google Messages or Samsung Messages handles your SMS, Write opens it — RCS chats keep working.
 • Contact card: calls and SMS for all numbers; My contact shows everything.
-• Long-press a photo to delete or archive.
-• More reliable calls on Xiaomi, OPPO, vivo, Huawei; SIM colours; fewer needless messages.
+• Home-screen icons: SMS with the unread count and Contacts; long-press a photo to delete or archive.
+• More reliable calls on Xiaomi, OPPO, vivo, Huawei; SIM colours.
 </en-US>
 <es-ES>
-• SMS y MMS en el marcador: conversaciones por día, fijadas, archivo; «Responder», «Eliminar» y «Copiar código» en la notificación.
+• SMS y MMS en el marcador: por días, fijadas, archivo; «Responder», «Eliminar» y «Copiar código» en la notificación.
 • Si Google Messages o Samsung Messages gestiona tus SMS, «Escribir» lo abre: los chats RCS siguen activos.
 • Ficha de contacto: llamadas y SMS de todos los números; «Mi contacto» completo.
-• Mantén pulsada una foto para eliminar o archivar.
-• Llamadas más fiables en Xiaomi, OPPO, vivo y Huawei; colores de SIM; menos mensajes innecesarios.
+• Iconos para la pantalla de inicio: SMS con no leídos y Contactos; mantén pulsada una foto para eliminar o archivar.
+• Llamadas más fiables en Xiaomi, OPPO, vivo y Huawei; colores de SIM.
 </es-ES>
 <fi-FI>
-• Tekstiviestit ja MMS puhelinsovelluksessa: keskustelut päivittäin, kiinnitetyt, arkisto; ”Vastaa”, ”Poista” ja ”Kopioi koodi” ilmoituksessa.
+• Tekstiviestit ja MMS: päivittäin, kiinnitetyt, arkisto; ”Vastaa”, ”Poista” ja ”Kopioi koodi” ilmoituksessa.
 • Jos viestejä hoitaa Google Viestit tai Samsung Messages, ”Kirjoita” avaa sen – RCS-keskustelut toimivat.
 • Yhteystietokortti: puhelut ja viestit kaikista numeroista; ”Oma yhteystieto” kokonaan.
-• Pidä kuvaa painettuna: poista tai arkistoi.
-• Luotettavammat puhelut: Xiaomi, OPPO, vivo, Huawei; SIM-värit; vähemmän turhia ilmoituksia.
+• Aloitusnäytön kuvakkeet: viestit lukemattomien määrällä ja yhteystiedot; pidä kuvaa painettuna: poista tai arkistoi.
+• Luotettavammat puhelut: Xiaomi, OPPO, vivo, Huawei; SIM-värit.
 </fi-FI>
 <fr-FR>
-• SMS et MMS dans le composeur : conversations par jour, épinglées, archive ; « Répondre », « Supprimer » et « Copier le code » dans la notification.
-• Si Google Messages ou Samsung Messages gère vos SMS, « Écrire » l’ouvre – les chats RCS restent actifs.
+• SMS et MMS dans le composeur : par jour, épinglés, archive ; « Répondre », « Supprimer », « Copier le code » dans la notification.
+• Si Google Messages ou Samsung Messages gère vos SMS, « Écrire » l’ouvre : les chats RCS restent.
 • Fiche contact : appels et SMS de tous les numéros ; « Mon contact » complet.
-• Appui long sur une photo : supprimer ou archiver.
-• Appels plus fiables sur Xiaomi, OPPO, vivo, Huawei ; couleurs des SIM ; moins de messages inutiles.
+• Icônes d’écran d’accueil : SMS avec les non-lus et Contacts ; appui long sur une photo : supprimer ou archiver.
+• Appels plus fiables sur Xiaomi, OPPO, vivo, Huawei ; couleurs des SIM .
 </fr-FR>
 <hi-IN>
 • डायलर में SMS और MMS: दिन के अनुसार बातचीत, पिन की गई, संग्रह; सूचना में ही «जवाब दें», «हटाएँ» और «कोड कॉपी करें»।
 • अगर SMS Google Messages या Samsung Messages संभालते हैं, तो «लिखें» उन्हें खोलता है — RCS चैट चलते रहते हैं।
 • संपर्क कार्ड: सभी नंबरों के कॉल और SMS; «मेरा संपर्क» पूरा।
-• फ़ोटो को देर तक दबाकर हटाएँ या संग्रह में डालें।
-• Xiaomi, OPPO, vivo, Huawei पर ज़्यादा भरोसेमंद कॉल; SIM के रंग; कम अनावश्यक संदेश।
+• होम स्क्रीन के आइकन: न पढ़े संदेशों की गिनती वाला SMS और संपर्क; फ़ोटो देर तक दबाकर हटाएँ या संग्रह में डालें।
+• Xiaomi, OPPO, vivo, Huawei पर ज़्यादा भरोसेमंद कॉल; SIM के रंग.
 </hi-IN>
 <hu-HU>
-• SMS és MMS a tárcsázóban: beszélgetések napok szerint, kitűzöttek, archívum; „Válasz”, „Törlés” és „Kód másolása” az értesítésben.
+• SMS és MMS a tárcsázóban: napok szerint, kitűzöttek, archívum; „Válasz”, „Törlés”, „Kód másolása” az értesítésben.
 • Ha az SMS-eket a Google Üzenetek vagy a Samsung Messages kezeli, az „Írás” azt nyitja meg – az RCS-csevegések maradnak.
 • Névjegykártya: hívások és SMS-ek minden számról; „Saját névjegy” teljesen.
-• Fotó hosszú nyomása: törlés vagy archiválás.
-• Megbízhatóbb hívások Xiaomin, OPPO-n, vivón, Huawein; SIM-színek; kevesebb fölösleges üzenet.
+• Kezdőképernyő-ikonok: SMS az olvasatlanok számával és Névjegyek; fotó hosszú nyomása: törlés vagy archiválás.
+• Megbízhatóbb hívások Xiaomin, OPPO-n, vivón, Huawein; SIM-színek.
 </hu-HU>
 <id>
 • SMS dan MMS di aplikasi telepon: percakapan per hari, disematkan, arsip; «Balas», «Hapus» dan «Salin kode» di notifikasi.
 • Jika SMS dikelola Google Messages atau Samsung Messages, «Tulis» membukanya — chat RCS tetap berjalan.
 • Kartu kontak: panggilan dan SMS dari semua nomor; «Kontak saya» lengkap.
-• Tekan lama foto untuk menghapus atau mengarsipkan.
-• Panggilan lebih andal di Xiaomi, OPPO, vivo, Huawei; warna SIM; lebih sedikit pesan yang tak perlu.
+• Ikon layar utama: SMS dengan jumlah belum dibaca dan Kontak; tekan lama foto untuk menghapus atau mengarsipkan.
+• Panggilan lebih andal di Xiaomi, OPPO, vivo, Huawei; warna SIM.
 </id>
 <it-IT>
-• SMS e MMS nel telefono: conversazioni per giorno, fissate, archivio; «Rispondi», «Elimina» e «Copia codice» nella notifica.
-• Se i tuoi SMS sono gestiti da Google Messaggi o Samsung Messages, «Scrivi» apre quell'app: le chat RCS restano attive.
+• SMS e MMS nel telefono: per giorno, fissate, archivio; «Rispondi», «Elimina» e «Copia codice» nella notifica.
+• Se i tuoi SMS sono gestiti da Google Messaggi o Samsung Messages, «Scrivi» li apre: le chat RCS restano.
 • Scheda contatto: chiamate e SMS di tutti i numeri; «Il mio contatto» completo.
-• Tieni premuta una foto per eliminare o archiviare.
-• Chiamate più affidabili su Xiaomi, OPPO, vivo, Huawei; colori delle SIM; meno messaggi superflui.
+• Icone per la schermata Home: SMS con i non letti e Contatti; tieni premuta una foto per eliminare o archiviare.
+• Chiamate più affidabili su Xiaomi, OPPO, vivo, Huawei; colori delle SIM.
 </it-IT>
 <iw-IL>
 • SMS ו-MMS בחייגן: שיחות לפי ימים, נעוצות, ארכיון; «תשובה», «מחיקה» ו«העתקת קוד» ישירות בהתראה.
 • אם Google Messages או Samsung Messages מנהלות את ה-SMS, «כתיבה» פותחת אותן — צ'אטים של RCS ממשיכים לעבוד.
 • כרטיס איש קשר: שיחות ו-SMS מכל המספרים; «איש הקשר שלי» במלואו.
-• לחיצה ארוכה על תמונה — מחיקה או העברה לארכיון.
-• שיחות אמינות יותר ב-Xiaomi, OPPO, vivo, Huawei; צבעי SIM; פחות הודעות מיותרות.
+• סמלים למסך הבית: SMS עם מספר שלא נקראו ואנשי קשר; לחיצה ארוכה על תמונה — מחיקה או ארכיון.
+• שיחות אמינות יותר ב-Xiaomi, OPPO, vivo, Huawei; צבעי SIM.
 </iw-IL>
 <ja-JP>
 • ダイヤラーでSMS・MMS：日付ごとの会話、固定、アーカイブ。通知から「返信」「削除」「コードをコピー」。
 • SMSをGoogleメッセージやSamsung Messagesで使っている場合、「作成」はそのアプリを開きます。RCSチャットはそのまま。
 • 連絡先カード：全番号の通話とSMS。「自分の連絡先」もすべて表示。
-• 写真を長押しで削除・アーカイブ。
-• Xiaomi、OPPO、vivo、Huaweiで通話がより確実に。SIMの色分け。不要なメッセージを削減。
+• ホーム画面アイコン：未読数つきのSMSと連絡先。写真を長押しで削除・アーカイブ。
+• Xiaomi、OPPO、vivo、Huaweiで通話がより確実に。SIMの色分け。
 </ja-JP>
 <ko-KR>
 • 전화 앱에서 SMS·MMS: 날짜별 대화, 고정, 보관함. 알림에서 바로 「답장」「삭제」「코드 복사」.
 • SMS를 Google 메시지나 Samsung Messages가 관리하면 「작성」이 해당 앱을 엽니다. RCS 채팅은 그대로.
 • 연락처 카드: 모든 번호의 통화와 SMS, 「내 연락처」 전체 표시.
-• 사진을 길게 눌러 삭제 또는 보관.
-• Xiaomi, OPPO, vivo, Huawei에서 더 안정적인 통화, SIM별 색상, 불필요한 메시지 감소.
+• 홈 화면 아이콘: 읽지 않은 수가 표시되는 SMS와 연락처, 사진을 길게 눌러 삭제 또는 보관.
+• Xiaomi, OPPO, vivo, Huawei에서 더 안정적인 통화, SIM별 색상.
 </ko-KR>
 <nl-NL>
-• Sms en mms in de telefoonapp: gesprekken per dag, vastgezet, archief; ‘Beantwoorden’, ‘Verwijderen’ en ‘Code kopiëren’ in de melding.
+• Sms en mms in de telefoonapp: per dag, vastgezet, archief; ‘Beantwoorden’, ‘Verwijderen’, ‘Code kopiëren’ in de melding.
 • Beheert Google Berichten of Samsung Messages je sms, dan opent ‘Schrijven’ die app – RCS-chats blijven werken.
 • Contactkaart: oproepen en sms van alle nummers; ‘Mijn contact’ volledig.
-• Houd een foto ingedrukt om te verwijderen of te archiveren.
-• Betrouwbaarder bellen op Xiaomi, OPPO, vivo, Huawei; simkleuren; minder onnodige meldingen.
+• Startschermpictogrammen: sms met ongelezen en Contacten; houd een foto ingedrukt om te verwijderen of archiveren.
+• Betrouwbaarder bellen op Xiaomi, OPPO, vivo, Huawei; simkleuren.
 </nl-NL>
 <no-NO>
 • SMS og MMS i telefonappen: samtaler per dag, festede, arkiv; «Svar», «Slett» og «Kopier kode» i varselet.
 • Håndterer Google Meldinger eller Samsung Messages SMS-ene dine, åpner «Skriv» den appen – RCS-chatter fungerer fortsatt.
 • Kontaktkort: anrop og SMS for alle numre; «Min kontakt» komplett.
-• Hold på et bilde for å slette eller arkivere.
-• Mer pålitelige anrop på Xiaomi, OPPO, vivo, Huawei; SIM-farger; færre unødvendige meldinger.
+• Ikoner for startskjermen: SMS med antall uleste og Kontakter; hold på et bilde for å slette eller arkivere.
+• Mer pålitelige anrop på Xiaomi, OPPO, vivo, Huawei; SIM-farger.
 </no-NO>
 <pl-PL>
-• SMS i MMS w dialerze: rozmowy według dni, przypięte, archiwum; „Odpowiedz”, „Usuń” i „Kopiuj kod” w powiadomieniu.
-• Jeśli SMS-y obsługuje Wiadomości Google lub Samsung Messages, „Napisz” otwiera tę aplikację – czaty RCS działają dalej.
+• SMS i MMS w dialerze: według dni, przypięte, archiwum; „Odpowiedz”, „Usuń”, „Kopiuj kod” w powiadomieniu.
+• Jeśli SMS-y obsługuje Wiadomości Google lub Samsung Messages, „Napisz” ją otworzy – czaty RCS działają.
 • Karta kontaktu: połączenia i SMS ze wszystkich numerów; „Mój kontakt” w całości.
-• Przytrzymaj zdjęcie, aby usunąć lub zarchiwizować.
-• Pewniejsze połączenia na Xiaomi, OPPO, vivo, Huawei; kolory kart SIM; mniej zbędnych komunikatów.
+• Ikony na ekran główny: SMS z liczbą nieprzeczytanych i Kontakty; przytrzymaj zdjęcie, aby usunąć lub zarchiwizować.
+• Pewniejsze połączenia na Xiaomi, OPPO, vivo, Huawei; kolory kart SIM.
 </pl-PL>
 <pt-BR>
 • SMS e MMS no discador: conversas por dia, fixadas, arquivo; «Responder», «Excluir» e «Copiar código» na notificação.
 • Se o Google Mensagens ou o Samsung Messages cuida dos seus SMS, «Escrever» abre esse app — os chats RCS continuam.
 • Ficha do contato: chamadas e SMS de todos os números; «Meu contato» completo.
-• Toque e segure uma foto para excluir ou arquivar.
-• Chamadas mais confiáveis em Xiaomi, OPPO, vivo, Huawei; cores dos chips; menos mensagens desnecessárias.
+• Ícones na tela inicial: SMS com não lidas e Contatos; toque e segure uma foto para excluir ou arquivar.
+• Chamadas mais confiáveis em Xiaomi, OPPO, vivo, Huawei; cores dos chips.
 </pt-BR>
 <ro>
-• SMS și MMS în aplicația de apel: conversații pe zile, fixate, arhivă; „Răspunde”, „Șterge” și „Copiază codul” în notificare.
+• SMS și MMS: pe zile, fixate, arhivă; „Răspunde”, „Șterge”, „Copiază codul” în notificare.
 • Dacă SMS-urile sunt gestionate de Google Messages sau Samsung Messages, „Scrie” deschide aplicația – chaturile RCS rămân.
 • Fișa contactului: apeluri și SMS de pe toate numerele; „Contactul meu” complet.
-• Atingeți lung o fotografie pentru a șterge sau arhiva.
-• Apeluri mai sigure pe Xiaomi, OPPO, vivo, Huawei; culori SIM; mai puține mesaje inutile.
+• Pictograme pe ecranul de pornire: SMS cu cele necitite și Contacte; atingeți lung o fotografie pentru a șterge sau arhiva.
+• Apeluri mai sigure pe Xiaomi, OPPO, vivo, Huawei; culori SIM.
 </ro>
 <sk>
 • SMS a MMS v aplikácii: konverzácie podľa dní, pripnuté, archív; „Odpovedať“, „Odstrániť“ a „Kopírovať kód“ priamo v upozornení.
 • Ak SMS spravujú Správy Google alebo Samsung Messages, „Napísať“ otvorí ich – čety RCS fungujú ďalej.
 • Karta kontaktu: hovory a SMS zo všetkých čísel; „Môj kontakt“ celý.
-• Podržaním fotky odstránite alebo archivujete.
-• Spoľahlivejšie hovory na Xiaomi, OPPO, vivo, Huawei; farby SIM; menej zbytočných hlásení.
+• Ikony na plochu: SMS s počtom neprečítaných a Kontakty; podržaním fotky odstránite alebo archivujete.
+• Spoľahlivejšie hovory na Xiaomi, OPPO, vivo, Huawei; farby SIM.
 </sk>
 <sv-SE>
 • Sms och mms i telefonappen: konversationer per dag, fästa, arkiv; ”Svara”, ”Radera” och ”Kopiera kod” i aviseringen.
 • Om Google Messages eller Samsung Messages sköter dina sms öppnar ”Skriv” den appen – RCS-chattar fungerar som förut.
 • Kontaktkort: samtal och sms för alla nummer; ”Min kontakt” komplett.
-• Håll på ett foto för att radera eller arkivera.
-• Pålitligare samtal på Xiaomi, OPPO, vivo, Huawei; SIM-färger; färre onödiga meddelanden.
+• Ikoner för hemskärmen: sms med antal olästa och Kontakter; håll på ett foto för att radera eller arkivera.
+• Pålitligare samtal på Xiaomi, OPPO, vivo, Huawei; SIM-färger.
 </sv-SE>
 <th>
 • SMS และ MMS ในแอปโทร: บทสนทนาแยกตามวัน ปักหมุด เก็บถาวร และ «ตอบกลับ» «ลบ» «คัดลอกรหัส» ในการแจ้งเตือน
 • หากใช้ Google Messages หรือ Samsung Messages จัดการ SMS ปุ่ม «เขียน» จะเปิดแอปนั้น แชต RCS ยังใช้ได้
 • การ์ดผู้ติดต่อ: การโทรและ SMS ของทุกหมายเลข «ผู้ติดต่อของฉัน» ครบถ้วน
-• กดรูปค้างไว้เพื่อลบหรือเก็บถาวร
-• การโทรเสถียรขึ้นบน Xiaomi, OPPO, vivo, Huawei สีแยกตามซิม ข้อความที่ไม่จำเป็นน้อยลง
+• ไอคอนหน้าจอหลัก: SMS พร้อมจำนวนที่ยังไม่อ่าน และรายชื่อ กดรูปค้างไว้เพื่อลบหรือเก็บถาวร
+• การโทรเสถียรขึ้นบน Xiaomi, OPPO, vivo, Huawei สีแยกตามซิม
 </th>
 <tr-TR>
 • Arama uygulamasında SMS ve MMS: güne göre sohbetler, sabitlenenler, arşiv; bildirimde «Yanıtla», «Sil» ve «Kodu kopyala».
 • SMS'lerinizi Google Mesajlar veya Samsung Messages yönetiyorsa «Yaz» onu açar – RCS sohbetleri çalışmaya devam eder.
 • Kişi kartı: tüm numaralardaki aramalar ve SMS'ler; «Kişim» eksiksiz.
-• Silmek veya arşivlemek için fotoğrafa uzun basın.
-• Xiaomi, OPPO, vivo, Huawei'de daha güvenilir aramalar; SIM renkleri; daha az gereksiz mesaj.
+• Ana ekran simgeleri: okunmamış sayısıyla SMS ve Kişiler; silmek veya arşivlemek için fotoğrafa uzun basın.
+• Xiaomi, OPPO, vivo, Huawei'de daha güvenilir aramalar; SIM renkleri.
 </tr-TR>
 <vi>
 • SMS và MMS trong ứng dụng gọi: hội thoại theo ngày, ghim, lưu trữ; «Trả lời», «Xóa» và «Sao chép mã» ngay trong thông báo.
 • Nếu Google Tin nhắn hoặc Samsung Messages quản lý SMS, «Soạn» sẽ mở ứng dụng đó — trò chuyện RCS vẫn hoạt động.
 • Thẻ liên hệ: cuộc gọi và SMS của mọi số; «Liên hệ của tôi» đầy đủ.
-• Nhấn giữ ảnh để xóa hoặc lưu trữ.
-• Cuộc gọi ổn định hơn trên Xiaomi, OPPO, vivo, Huawei; màu SIM; ít thông báo thừa hơn.
+• Biểu tượng màn hình chính: SMS kèm số tin chưa đọc và Danh bạ; nhấn giữ ảnh để xóa hoặc lưu trữ.
+• Cuộc gọi ổn định hơn trên Xiaomi, OPPO, vivo, Huawei; màu SIM.
 </vi>
 <zh-CN>
 • 拨号器内置短信和彩信：按天分组、置顶、归档；通知中可直接「回复」「删除」「复制验证码」。
 • 若短信由 Google 信息或 Samsung Messages 管理，「编写」会打开该应用，RCS 聊天不受影响。
 • 联系人卡片：所有号码的通话和短信；「我的联系人」信息完整。
-• 长按头像即可删除或归档。
-• 在小米、OPPO、vivo、华为上通话更可靠；SIM 卡颜色区分；减少不必要的提示。
+• 主屏幕图标：带未读数的短信和联系人；长按头像即可删除或归档。
+• 在小米、OPPO、vivo、华为上通话更可靠；SIM 卡颜色区分。
 </zh-CN>

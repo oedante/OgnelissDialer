@@ -104,7 +104,12 @@ internal fun OverflowMenu(
      * «Архив» (2.1.0): записи, убранные из журнала или SMS режимом выбора.
      * null — пункта нет.
      */
-    onArchive: (() -> Unit)? = null
+    onArchive: (() -> Unit)? = null,
+    /**
+     * «Значок на главный экран» (2.1.0): значок раздела со счётчиком —
+     * widget/SectionWidgets. null — пункта нет (журнал; лаунчер не умеет).
+     */
+    onPinToHome: (() -> Unit)? = null
 ) {
     /*
      * ПОРЯДОК ПУНКТОВ МЕНЮ.
@@ -238,6 +243,14 @@ internal fun OverflowMenu(
                         OgnelissIcons.Archive,
                         stringResource(R.string.archive_title),
                         onClick = onArchive
+                    )
+                }
+                if (onPinToHome != null) {
+                    SheetDivider()
+                    SheetRow(
+                        OgnelissIcons.AddToHomeScreen,
+                        stringResource(R.string.menu_pin_home),
+                        onClick = onPinToHome
                     )
                 }
                 if (onStartSelection != null) {

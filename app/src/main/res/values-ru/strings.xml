@@ -991,4 +991,7 @@
     <string name="settings_incoming_banner">Входящий плашкой сверху</string>
     <string name="settings_incoming_banner_text">Пока телефоном пользуются, входящий появляется сверху с «Ответить» и «Отклонить», а не на весь экран. На заблокированном и погасшем экране — всегда на весь экран</string>
     <string name="keywords_incoming_banner">всплывающее компактное маленькое окно плашка сверху уведомление весь экран входящий</string>
+    <string name="menu_pin_home">Значок на главный экран</string>
+    <string name="widget_sms_description">Значок SMS с числом непрочитанных</string>
+    <string name="widget_contacts_description">Открывает «Контакты» в Ogneliss Dialer</string>
 </resources>
