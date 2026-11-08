@@ -190,11 +190,20 @@ fun RootScreen(
      * не покрывает: во время разговора приложение в фоне, и часть
      * прошивок придерживает уведомления.
      */
+    /*
+     * Беда приёма SMS (2.1.0, SmsHealth): уведомления о SMS выключены или на
+     * Xiaomi выключен автозапуск, когда диалер — приложение SMS. Критично
+     * (SMS приходят молча или теряются) — полоса сверху на любом экране,
+     * пересчёт при каждом возвращении в приложение.
+     */
+    var smsProblem by remember { mutableStateOf<com.ogneliss.dialer.sms.SmsHealth.Problem?>(null) }
+    val healthContext = LocalContext.current.applicationContext
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val lifecycleObserver = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 vm.onReturnedToForeground()
+                smsProblem = runCatching { com.ogneliss.dialer.sms.SmsHealth.problem(healthContext) }.getOrNull()
 
                 /*
                  * Строки возвращаются на место при возврате в приложение.
@@ -579,7 +588,18 @@ fun RootScreen(
                 onDismiss = { com.ogneliss.dialer.util.IncomingCallAccess.dismissNotice(context) }
             )
         }
-        val topStripShown = callToReturn || !isDefaultDialer || blockedShown
+        // В разделе SMS полоса стоит в самом списке — здесь не дублируем
+        val stripRoute by nav.currentBackStackEntryAsState()
+        val smsStripShown = smsProblem != null &&
+            stripRoute?.destination?.route != MainSection.MESSAGES.route
+        if (smsStripShown) smsProblem?.let { problem ->
+            Box(Modifier.statusBarSpace(!callToReturn && isDefaultDialer && !blockedShown)) {
+                com.ogneliss.dialer.ui.conversation.SmsProblemStrip(problem) {
+                    com.ogneliss.dialer.sms.SmsHealth.fix(context, problem)
+                }
+            }
+        }
+        val topStripShown = callToReturn || !isDefaultDialer || blockedShown || smsStripShown
 
         /*
          * ЗВОНОК БЕЗ РАЗРЕШЕНИЯ «ТЕЛЕФОН» (2.1.0): системное окно прямо
