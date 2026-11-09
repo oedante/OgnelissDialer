@@ -4,6 +4,7 @@
 
     python3 scripts/make_light_master.py    # store/source/icon_master_1024.png
     python3 scripts/make_icons.py           # все размеры из него
+    python3 scripts/make_section_icons.py   # значки «SMS» и «Контакты» (эмблема отсюда)
     python3 scripts/build_feature_graphic.py
 
 Автор, 08.11.2026: «может, ещё иконку сделаем в светлых тонах? Но лиса
@@ -47,6 +48,7 @@ from scipy import ndimage
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / 'store' / 'source' / 'icon_master_dark_1024.png'
 OUT = ROOT / 'store' / 'source' / 'icon_master_1024.png'
+EMBLEM = ROOT / 'store' / 'source' / 'emblem_1024.png'
 
 DARK_BG = np.array([58, 68, 80], float)       # #3A4450 — фон тёмного исходника
 INKS = np.array([[211, 216, 220],             # #D3D8DC — трубка, лиса
@@ -137,6 +139,8 @@ inside = ndimage.binary_dilation(added > 0, iterations=3) * box   # только
 sub_a = alpha[by0:by1, bx0:bx1]
 sub_c = new[by0:by1, bx0:bx1]
 tot = np.where(inside > 0, np.maximum(sub_a, cover), sub_a)
+# закрытая щель — часть эмблемы (её отдельный слой — шаг 5)
+emblem[by0:by1, bx0:bx1] |= (tot - sub_a) > 0
 # Золото — под имеющимся рисунком: лиса и пламя поверх него не меняются
 gain = tot - sub_a
 sub_c[:] = np.where(tot[..., None] > 0,
@@ -148,3 +152,11 @@ print(f'щель под лисой закрыта: {gain.sum():.0f} px золо�
 out = alpha[..., None] * new + (1 - alpha[..., None]) * LIGHT_BG
 Image.fromarray(np.uint8(np.round(np.clip(out, 0, 255)))).save(OUT, optimize=True)
 print(f'светлый исходник: {OUT.relative_to(ROOT)}')
+
+# ── 5. эмблема отдельным слоем — для значков «SMS» и «Контакты» ────────────
+# (scripts/make_section_icons.py): пламя с лисой без фона, на своём месте
+# в кадре 1024 × 1024
+em_a = np.where(emblem, alpha, 0.0)
+rgba = np.dstack([np.clip(np.where(em_a[..., None] > 0, new, 0), 0, 255), em_a * 255])
+Image.fromarray(np.uint8(np.round(rgba)), 'RGBA').save(EMBLEM, optimize=True)
+print(f'эмблема: {EMBLEM.relative_to(ROOT)}')
