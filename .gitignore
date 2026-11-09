@@ -29,3 +29,7 @@ docs/baseline/traces/
 
 # Служебные файлы Kotlin 2.x (сеансы компилятора) — не код
 .kotlin/
+
+# Кэш Python при запуске скриптов scripts/ — не код (2.1.2)
+__pycache__/
+*.pyc
