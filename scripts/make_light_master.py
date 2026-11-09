@@ -2,10 +2,17 @@
 """
 Светлый значок 2.1.0 из тёмного исходника 1.5.5.
 
-    python3 scripts/make_light_master.py    # store/source/icon_master_1024.png
-    python3 scripts/make_icons.py           # все размеры из него
-    python3 scripts/make_section_icons.py   # значки «SMS» и «Контакты» (эмблема отсюда)
-    python3 scripts/build_feature_graphic.py
+СЕЙЧАС НЕ ИСПОЛЬЗУЕТСЯ. Светлый значок был в 2.1.0–2.1.1; 09.11.2026 автор
+вернул тёмный («давай вернёмся к предыдущему варианту иконки»), и
+store/source/icon_master_1024.png — снова тёмный 1.5.5. Скрипт оставлен,
+чтобы светлый вариант можно было собрать заново: он пишет
+store/source/icon_master_light_1024.png и эмблему emblem_light_1024.png
+и ничего в приложении не трогает. Вернуть светлый в приложение —
+скопировать его на место icon_master_1024.png, поменять цвета в
+make_icons.py, ic_launcher_background.xml и заставке (как в коммите 2.1.0
+83f4e1c) и пересобрать значки разделов в светлом стиле (коммит 1648ab2).
+
+    python3 scripts/make_light_master.py    # store/source/icon_master_light_1024.png
 
 Автор, 08.11.2026: «может, ещё иконку сделаем в светлых тонах? Но лиса
 и пламя должны остаться».
@@ -46,9 +53,9 @@ from PIL import Image
 from scipy import ndimage
 
 ROOT = Path(__file__).resolve().parent.parent
-SRC = ROOT / 'store' / 'source' / 'icon_master_dark_1024.png'
-OUT = ROOT / 'store' / 'source' / 'icon_master_1024.png'
-EMBLEM = ROOT / 'store' / 'source' / 'emblem_1024.png'
+SRC = ROOT / 'store' / 'source' / 'icon_master_1024.png'          # тёмный 1.5.5
+OUT = ROOT / 'store' / 'source' / 'icon_master_light_1024.png'
+EMBLEM = ROOT / 'store' / 'source' / 'emblem_light_1024.png'
 
 DARK_BG = np.array([58, 68, 80], float)       # #3A4450 — фон тёмного исходника
 INKS = np.array([[211, 216, 220],             # #D3D8DC — трубка, лиса
@@ -153,9 +160,9 @@ out = alpha[..., None] * new + (1 - alpha[..., None]) * LIGHT_BG
 Image.fromarray(np.uint8(np.round(np.clip(out, 0, 255)))).save(OUT, optimize=True)
 print(f'светлый исходник: {OUT.relative_to(ROOT)}')
 
-# ── 5. эмблема отдельным слоем — для значков «SMS» и «Контакты» ────────────
-# (scripts/make_section_icons.py): пламя с лисой без фона, на своём месте
-# в кадре 1024 × 1024
+# ── 5. эмблема отдельным слоем — для светлых значков «SMS» и «Контакты» ───
+# (make_section_icons.py 2.1.1, коммит 1648ab2): пламя с лисой без фона,
+# на своём месте в кадре 1024 × 1024
 em_a = np.where(emblem, alpha, 0.0)
 rgba = np.dstack([np.clip(np.where(em_a[..., None] > 0, new, 0), 0, 255), em_a * 255])
 Image.fromarray(np.uint8(np.round(rgba)), 'RGBA').save(EMBLEM, optimize=True)

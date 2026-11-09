@@ -29,9 +29,7 @@ from skimage import measure
 from skimage.morphology import convex_hull_image
 
 ROOT = Path(__file__).resolve().parent.parent
-# Форма та же, что у светлого значка 2.1.0; пороги цвета ниже — под тёмный
-# исходник 1.5.5, из которого светлый и собран (make_light_master.py)
-SRC = ROOT / 'store' / 'source' / 'icon_master_dark_1024.png'
+SRC = ROOT / 'store' / 'source' / 'icon_master_1024.png'
 OUT = ROOT / 'app' / 'src' / 'main' / 'res' / 'drawable' / 'ic_launcher_monochrome.xml'
 
 GRID = 108.0
@@ -119,8 +117,7 @@ HEAD = '''<?xml version="1.0" encoding="utf-8"?>
   следующий вложенный контур меняет «залито / пусто», и вырез получается
   без отдельных путей.
 
-  Файл собирает scripts/make_monochrome.py из store/source/icon_master_dark_1024.png
-  (тёмный значок 1.5.5: форма та же, что у светлого 2.1.0) —
+  Файл собирает scripts/make_monochrome.py из store/source/icon_master_1024.png —
   вручную не править. Геометрия — как у слоя foreground: исходник целиком
   в видимых 72 dp сетки 108 dp.
 -->
