@@ -246,43 +246,54 @@ private fun ActionButton(
     }
 }
 
-/** Компактный индикатор SIM: «1» или «2» в рамке. */
+/**
+ * Компактный индикатор SIM: значок карты и номер слота её цветом.
+ *
+ * 2.1.0, по снимку автора: «заливка SIM смотрится странно». Была плашка —
+ * тот же цвет на 14 % подложкой: в каждой строке журнала и SMS лиловый
+ * прямоугольник, который читался как выделение или кнопка. Стало: без
+ * подложки — значок и цифра цветом карты (SimColors), как прочие пометки
+ * строки (стрелка направления, время). Цвет различает карты и так.
+ */
 @Composable
 fun SimBadge(slotIndex: Int) {
-    // Описание для TalkBack (1.3.2): без него плашка читалась как «1»,
+    // Описание для TalkBack (1.3.2): без него пометка читалась как «1»,
     // похоже на счётчик звонков
     val description = "SIM ${slotIndex + 1}"
-    // 2.1.0: у каждой карты свой цвет (SimColors) — различаются с первого взгляда
     val simColor = com.ogneliss.dialer.ui.theme.SimColors.of(slotIndex)
-    Surface(
-        color = com.ogneliss.dialer.ui.theme.SimColors.container(slotIndex),
-        shape = MaterialTheme.shapes.extraSmall,
-        modifier = Modifier.clearAndSetSemantics { contentDescription = description }
+    /*
+     * Значок SIM перед цифрой (1.3.4, 04.10.2026, дизайн-система).
+     * Было: одна цифра — глазом её принимали за число звонков (у строки
+     * журнала рядом и правда есть счётчик). Стало: «▯1» — значок SIM-карты
+     * 12 dp и номер слота; читается однозначно.
+     */
+    Row(
+        Modifier.clearAndSetSemantics { contentDescription = description },
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        /*
-         * Значок SIM перед цифрой (1.3.4, 04.10.2026, дизайн-система).
-         * Было: одна цифра в плашке — глазом её принимали за число звонков
-         * (у строки журнала рядом и правда есть счётчик). Стало: «▯1» —
-         * значок SIM-карты 12 dp и номер слота; читается однозначно.
-         */
-        Row(
-            Modifier.padding(start = Space.xxs, end = Space.xs),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                OgnelissIcons.SimCard,
-                contentDescription = null,
-                // Серым, как подписи-метки писем в Ogneliss Mail (1.5.6)
-                tint = simColor,
-                modifier = Modifier.size(12.dp)
-            )
-            Spacer(Modifier.width(1.dp))
-            Text(
-                (slotIndex + 1).toString(),
-                // labelSmall: подпись под номером — самый тихий текст
-                style = MaterialTheme.typography.labelSmall,
-                color = simColor
-            )
-        }
+        Icon(
+            OgnelissIcons.SimCard,
+            contentDescription = null,
+            tint = simColor,
+            modifier = Modifier.size(12.dp)
+        )
+        Spacer(Modifier.width(1.dp))
+        Text(
+            (slotIndex + 1).toString(),
+            // labelSmall: пометка в строке — самый тихий текст
+            style = MaterialTheme.typography.labelSmall,
+            color = simColor
+        )
     }
+}
+
+/** Значок карты её цветом — где номер уже написан словами («SIM 1»). */
+@Composable
+fun SimIcon(slotIndex: Int, modifier: Modifier = Modifier) {
+    Icon(
+        OgnelissIcons.SimCard,
+        contentDescription = null,
+        tint = com.ogneliss.dialer.ui.theme.SimColors.of(slotIndex),
+        modifier = modifier
+    )
 }

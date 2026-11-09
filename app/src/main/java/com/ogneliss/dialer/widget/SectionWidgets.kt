@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Telephony
-import android.view.View
 import android.widget.RemoteViews
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
@@ -38,6 +37,14 @@ import java.util.concurrent.Executors
  * «SMS» — раздел SMS; если SMS ведёт другое приложение (Google Сообщения,
  * Samsung Messages — режим «спутник», SmsRole), сразу его: человек ждёт
  * переписку, а не кнопку «Открыть». «Контакты» — раздел контактов.
+ *
+ * ── Как выглядит (2.1.0, по снимку автора) ─────────────────────────────────
+ * Автор: «значки SMS и контактов не соответствуют основному значку». Было:
+ * глиф Material в круге 48 dp и подпись под ним — мельче значков лаунчера,
+ * кругом среди скруглённых квадратов и с подписью там, где лаунчер подписи
+ * прячет. Стало: рисунок того же семейства, что значок приложения (графит,
+ * пламя с лисой, scripts/make_section_icons.py), значок крупнее, без
+ * подписи, форма — как у лаунчера (WidgetIcon), счётчик — на самом значке.
  *
  * ── Когда обновляется ──────────────────────────────────────────────────────
  * Изменилось хранилище SMS (MessageStore: пришло, прочитано, удалено),
@@ -79,20 +86,19 @@ object SectionWidgets {
         val sms = section == MainSection.MESSAGES
         val unread = if (sms) unreadCount(context) else null
         val label = context.getString(section.labelRes)
+        val iconRes = if (sms) R.drawable.ic_shortcut_sms else R.drawable.ic_shortcut_contacts
         val views = RemoteViews(context.packageName, R.layout.widget_section).apply {
-            setImageViewResource(R.id.widget_icon, if (sms) R.drawable.ic_shortcut_sms else R.drawable.ic_shortcut_contacts)
-            setTextViewText(R.id.widget_label, label)
-            if (unread != null && unread > 0) {
-                setViewVisibility(R.id.widget_badge, View.VISIBLE)
-                setTextViewText(R.id.widget_badge, if (unread > 99) "99+" else unread.toString())
-                setContentDescription(
-                    R.id.widget_root,
+            val bitmap = runCatching { WidgetIcon.draw(context, iconRes, unread ?: 0) }
+                .onFailure { Logger.w(TAG, "Значок виджета не нарисован — ставлю ресурс", it) }
+                .getOrNull()
+            if (bitmap != null) setImageViewBitmap(R.id.widget_icon, bitmap)
+            else setImageViewResource(R.id.widget_icon, iconRes)
+            setContentDescription(
+                R.id.widget_root,
+                if (unread != null && unread > 0)
                     context.resources.getQuantityString(R.plurals.widget_sms_unread, unread, label, unread)
-                )
-            } else {
-                setViewVisibility(R.id.widget_badge, View.GONE)
-                setContentDescription(R.id.widget_root, label)
-            }
+                else label
+            )
             setOnClickPendingIntent(R.id.widget_root, openIntent(context, section))
         }
         manager.updateAppWidget(ids, views)

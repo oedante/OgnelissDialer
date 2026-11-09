@@ -560,16 +560,20 @@ private fun SimPicker(state: ConversationViewModel.UiState, onSelectSim: (Int) -
     var open by remember { mutableStateOf(false) }
     val current = state.sims.firstOrNull { it.subscriptionId == state.subId }
     Box {
+        // «▯ SIM 1» цветом карты (2.1.0): номер — словами, без второй «1»
+        // пометки SimBadge и без её подложки (снимок автора)
+        val simColor = current?.let { com.ogneliss.dialer.ui.theme.SimColors.of(it.slotIndex) }
         TextButton(onClick = { open = true }) {
             if (current != null) {
-                com.ogneliss.dialer.ui.components.SimBadge(current.slotIndex)
+                com.ogneliss.dialer.ui.components.SimIcon(current.slotIndex, Modifier.size(FlowUi.iconSizeInline))
             } else {
                 Icon(OgnelissIcons.SimCard, contentDescription = null, modifier = Modifier.size(FlowUi.iconSizeInline))
             }
             Text(
                 current?.let { simOrdinalName(it) } ?: stringResource(R.string.sms_sim_default),
                 modifier = Modifier.padding(start = Space.xs),
-                style = MaterialTheme.typography.labelLarge
+                style = MaterialTheme.typography.labelLarge,
+                color = simColor ?: androidx.compose.ui.graphics.Color.Unspecified
             )
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
@@ -590,7 +594,7 @@ private fun SimPicker(state: ConversationViewModel.UiState, onSelectSim: (Int) -
                     },
                     onClick = { onSelectSim(sim.subscriptionId); open = false },
                     modifier = Modifier.heightIn(min = FlowUi.menuItemHeight),
-                    leadingIcon = { com.ogneliss.dialer.ui.components.SimBadge(sim.slotIndex) },
+                    leadingIcon = { com.ogneliss.dialer.ui.components.SimIcon(sim.slotIndex, Modifier.size(FlowUi.iconSizeInline)) },
                     trailingIcon = if (sim.subscriptionId == state.subId) {
                         { Icon(OgnelissIcons.Check, contentDescription = null) }
                     } else null
