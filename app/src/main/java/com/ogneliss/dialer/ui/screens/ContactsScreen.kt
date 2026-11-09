@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.scrollEdgeFade
 import com.ogneliss.dialer.ui.components.ActionIconButton
 import com.ogneliss.dialer.ui.theme.listName
 import com.ogneliss.dialer.settings.ContactSort
@@ -824,7 +825,8 @@ fun ContactsScreen(
              */
 
             Box(Modifier.fillMaxSize().trackTouch(touchAnchor)) {
-            LazyColumn(state = listState) {
+            // Тень у края прокрутки (2.1.2, Д7 — как в Mail)
+            LazyColumn(state = listState, modifier = Modifier.scrollEdgeFade(listState)) {
 
                 /*
                  * ИЗБРАННЫЕ ОТДЕЛЬНОЙ ГРУППОЙ СВЕРХУ.

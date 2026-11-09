@@ -418,10 +418,25 @@ fun OgnelissDialerTheme(
     }
     val density = remember(baseDensity, scaleFactor) { UiScaleMath.scaledDensity(baseDensity, scaleFactor) }
 
+    /*
+     * УДЕРЖАНИЕ 250 МС (2.1.2, дизайн-система Д5 — как в Ogneliss Mail).
+     * Системное ~400–500 мс ощущается «залипанием»: выбор по портрету
+     * и карточки по строке открываются вдвое быстрее. Если человек сам
+     * увеличил задержку в спецвозможностях (больше 500 мс) — она главнее.
+     */
+    val baseViewConfiguration = androidx.compose.ui.platform.LocalViewConfiguration.current
+    val viewConfiguration = remember(baseViewConfiguration) {
+        if (baseViewConfiguration.longPressTimeoutMillis > LONG_PRESS_SYSTEM_MAX_MS) baseViewConfiguration
+        else object : androidx.compose.ui.platform.ViewConfiguration by baseViewConfiguration {
+            override val longPressTimeoutMillis: Long get() = LONG_PRESS_MS
+        }
+    }
+
     CompositionLocalProvider(
         LocalDensity provides density,
         LocalUiScaleFactor provides scaleFactor,
-        LocalOgnelissSurfaces provides surfaces
+        LocalOgnelissSurfaces provides surfaces,
+        androidx.compose.ui.platform.LocalViewConfiguration provides viewConfiguration
     ) {
     /*
      * Скругление и шрифт (1.9.0): формы темы и типографика — по выбору;
@@ -486,3 +501,9 @@ private fun presetScheme(
 ): ColorScheme =
     if (!applies) base
     else presetSchemes.getOrPut(SchemeKey(base, preset, accent, dark)) { ThemePresets.scheme(base, preset, dark, accent) }
+
+/** Удержание (2.1.2, Д5): как в Ogneliss Mail. */
+private const val LONG_PRESS_MS = 250L
+
+/** Системная задержка не больше этого — стандартная; больше — выбрана в спецвозможностях. */
+private const val LONG_PRESS_SYSTEM_MAX_MS = 500L

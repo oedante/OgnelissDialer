@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.components
 
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.foundation.shape.CircleShape
 import com.ogneliss.dialer.ui.theme.listName
 import com.ogneliss.dialer.ui.theme.Space
@@ -562,6 +563,14 @@ private fun Avatar(
     val soft = { c: androidx.compose.ui.graphics.Color ->
         c.copy(alpha = AVATAR_FILL_ALPHA).compositeOver(scheme.surface)
     }
+    // 2.1.2 (Д8): у контакта свой тон из палитры Mail — по имени (AvatarPalette)
+    val toneColors = remember(name, scheme.surface, outlined) {
+        name?.takeIf { initials != null }?.let {
+            com.ogneliss.dialer.ui.theme.AvatarPalette.colors(
+                it, dark = scheme.surface.luminance() < 0.5f, highContrast = outlined, surface = scheme.surface
+            )
+        }
+    }
 
     Box(contentAlignment = Alignment.Center) {
         Surface(
@@ -576,6 +585,7 @@ private fun Avatar(
              * Высококонтрастная тема — прежние насыщенные заливки.
              */
             color = when {
+                toneColors != null -> toneColors.first
                 initials != null -> if (outlined) scheme.primaryContainer else soft(scheme.primaryContainer)
                 else -> if (outlined) scheme.surfaceContainerHighest else soft(scheme.surfaceContainerHighest)
             },
@@ -618,7 +628,7 @@ private fun Avatar(
                         ),
                         fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
                         // На светлой заливке — буквы цветом акцента (5,6 : 1 в светлой)
-                        color = if (outlined) scheme.onPrimaryContainer else scheme.primary,
+                        color = toneColors?.second ?: if (outlined) scheme.onPrimaryContainer else scheme.primary,
                         maxLines = 1
                     )
                 } else {

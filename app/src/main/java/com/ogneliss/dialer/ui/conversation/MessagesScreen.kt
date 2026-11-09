@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.conversation
 
+import com.ogneliss.dialer.ui.components.scrollEdgeFade
 import android.text.format.DateUtils
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -595,7 +596,8 @@ fun MessagesScreen(
                 }
 
                 LazyColumn(
-                    Modifier.fillMaxSize().trackTouch(touchAnchor),
+                    // Тень у края прокрутки (2.1.2, Д7 — как в Mail)
+                    Modifier.fillMaxSize().trackTouch(touchAnchor).scrollEdgeFade(listState),
                     state = listState,
                     // Под кнопкой «Написать» — запас: она висит над правым краем
                     contentPadding = PaddingValues(top = Space.xs, bottom = FAB_CLEARANCE + Space.l)

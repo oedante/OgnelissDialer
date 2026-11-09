@@ -121,7 +121,7 @@ fun ScreenScaffold(
         },
         bottomBar = bottomBar,
         snackbarHost = snackbarHost,
-        // Не шире 640 dp по центру на широком окне: разбор в ReadableWidth
+        // Не шире 720 dp по центру на широком окне: разбор в ReadableWidth
         content = { pad ->
             CompositionLocalProvider(LocalPageTone provides tone) {
                 ReadableWidth { content(pad) }

@@ -51,4 +51,5 @@ fun ReadableWidth(content: @Composable () -> Unit) {
     }
 }
 
-private val READABLE_MAX_WIDTH = 640.dp
+// 2.1.2: 720, как настройки Ogneliss Mail (было 640; дизайн-система, Д10)
+private val READABLE_MAX_WIDTH = 720.dp

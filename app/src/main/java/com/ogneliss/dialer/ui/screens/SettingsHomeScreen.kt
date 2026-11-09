@@ -161,7 +161,7 @@ fun SettingsHomeScreen(
                 )
             }
         ) { pad ->
-            // Не шире 640 dp по центру на широком окне: разбор в ReadableWidth
+            // Не шире 720 dp по центру на широком окне: разбор в ReadableWidth
             ReadableWidth {
             LazyColumn(Modifier.padding(pad).fillMaxSize()) {
 
