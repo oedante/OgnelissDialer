@@ -32,10 +32,11 @@ import androidx.compose.ui.unit.min
  *
  * ── Где что ────────────────────────────────────────────────────────────────
  * extraSmall (6)  — бейджи SIM, мелкие метки
- * small (10)      — чипы фильтров
+ * small (12)      — чипы фильтров (2.1.2: 12, как в Mail; было 10)
  * medium (14)     — поля ввода, мелкие плашки
  * large (18)      — цветные пояснения (предупреждение, «без интернета»)
- * extraLarge (24) — шторки, диалоги, нижние панели
+ * extraLarge (28) — шторки, диалоги, нижние панели (2.1.2: 28, как в Mail;
+ *                   было 24 — дизайн-система, Д11)
  *
  * Круглые — аватары и круглые кнопки-значки; «пилюли» — кнопки
  * (Button), клавиши, строка номера, поиск, плашка состояния вызова. Для них — CircleShape явно, а не extraLarge (раньше
@@ -43,10 +44,10 @@ import androidx.compose.ui.unit.min
  */
 val OgnelissShapes = Shapes(
     extraSmall = RoundedCornerShape(6.dp),
-    small = RoundedCornerShape(10.dp),
+    small = RoundedCornerShape(12.dp),
     medium = RoundedCornerShape(14.dp),
     large = RoundedCornerShape(18.dp),
-    extraLarge = RoundedCornerShape(24.dp)
+    extraLarge = RoundedCornerShape(28.dp)
 )
 
 /**
@@ -80,10 +81,10 @@ fun sheetRadius(base: Dp): Dp = min(base * CornerScale.factor, MAX_SHEET_RADIUS)
 /** Формы темы со скруглением × [k]; при × 1 — прежний набор цвет в цвет. */
 fun shapesFor(k: Float): Shapes = if (k == 1f) OgnelissShapes else Shapes(
     extraSmall = RoundedCornerShape(6.dp * k),
-    small = RoundedCornerShape(10.dp * k),
+    small = RoundedCornerShape(12.dp * k),
     medium = RoundedCornerShape(14.dp * k),
     large = RoundedCornerShape(18.dp * k),
-    extraLarge = RoundedCornerShape(min(24.dp * k, MAX_SHEET_RADIUS))
+    extraLarge = RoundedCornerShape(min(28.dp * k, MAX_SHEET_RADIUS))
 )
 
 /** Формы для случаев, которых нет в стандартном наборе. */

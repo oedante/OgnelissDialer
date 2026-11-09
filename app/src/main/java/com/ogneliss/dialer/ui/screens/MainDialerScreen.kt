@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.scrollEdgeFade
 import com.ogneliss.dialer.ui.components.SelectionBottomBar
 import com.ogneliss.dialer.ui.theme.Space
 
@@ -1708,7 +1709,8 @@ fun MainDialerScreen(
 
                 LazyColumn(
                     state = listState,
-                    modifier = Modifier.padding(padding).fillMaxSize(),
+                    // Тень у края прокрутки (2.1.2, Д7 — как в Mail)
+                    modifier = Modifier.padding(padding).fillMaxSize().scrollEdgeFade(listState),
                     /*
                      * Под кнопкой псевдозвонка — запас (1.5.7): круглая кнопка
                      * висит над правым краем списка и закрывала кнопку вызова

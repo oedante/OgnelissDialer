@@ -753,7 +753,8 @@ internal val CARD_SIDE_COLUMN_WIDTH = 360.dp
  * шапки правая и так уже, а на планшете строка номера с тремя кнопками
  * во всю оставшуюся ширину растянулась бы на тысячу точек.
  */
-internal val CARD_CONTENT_MAX_WIDTH = 640.dp
+// 2.1.2: 720, как ReadableWidth и настройки Mail (было 640)
+internal val CARD_CONTENT_MAX_WIDTH = 720.dp
 
 /** Ключ карточки, который сам является номером: «+79101234567», «89101234567». */
 internal val BARE_NUMBER = Regex("""^\+?\d{3,}$""")
