@@ -218,14 +218,7 @@ fun CallLogCard(
                 // В режиме выбора кружок вместо аватара: он показывает
                 // и что строку можно отметить, и отмечена ли она
                 if (selectionActive) {
-                    Icon(
-                        if (selected) OgnelissIcons.CheckCircle
-                        else OgnelissIcons.RadioButtonUnchecked,
-                        contentDescription = null,
-                        tint = if (selected) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.outline,
-                        modifier = Modifier.size(LocalAppearance.current.avatarSize)
-                    )
+                    com.ogneliss.dialer.ui.components.SelectionMark(selected)
                 } else Box(
                     // Портрет — своя цель касания (2.1.0): короткое — как строка,
                     // долгое — режим выбора. Без onAvatarLongClick — как было

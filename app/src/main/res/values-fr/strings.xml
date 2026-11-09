@@ -983,4 +983,7 @@
     <string name="widget_contacts_description">Ouvre « Contacts » dans Ogneliss Dialer</string>
     <string name="menu_section_list">Liste</string>
     <string name="menu_section_tools">Outils</string>
+    <string name="selection_short_all">Tout</string>
+    <string name="selection_short_block">Bloquer</string>
+    <string name="selection_short_unarchive">Restaurer</string>
 </resources>
