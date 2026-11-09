@@ -522,6 +522,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val CALLBACK_SUGGESTION = booleanPreferencesKey("callback_suggestion")
         // 2.1.0: входящий плашкой сверху, когда телефоном пользуются
         val INCOMING_BANNER = booleanPreferencesKey("incoming_banner")
+        val SWAP_ANSWER = booleanPreferencesKey("swap_answer")
         /** Автодозвон (1.8.0): выключен, предлагать, сразу — разбор в RedialPolicy. */
         val AUTO_REDIAL = stringPreferencesKey("auto_redial")
         /** Сколько раз и как часто (1.8.0): готовые сочетания RedialPace. */
@@ -948,6 +949,19 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     val incomingBanner: Flow<Boolean> = data.map { it[Keys.INCOMING_BANNER] ?: true }
 
     suspend fun setIncomingBanner(v: Boolean) = edit("incoming_banner", v) { it[Keys.INCOMING_BANNER] = v }
+
+    /**
+     * «ОТВЕТИТЬ» СЛЕВА (2.1.1, просьба пользователей через автора 09.11.2026).
+     *
+     * Обычно, как в большинстве звонилок, «Отклонить» слева, «Ответить»
+     * справа. Привыкшим к другому телефону (часть прошивок ставит ответ
+     * слева) — наоборот: кнопки экрана вызова и псевдозвонка меняются местами,
+     * сдвиг к ответу — влево. Плашку и уведомление вызова раскладывает
+     * система (CallStyle) — там порядок прежний, одинаковый во всех звонилках.
+     */
+    val swapAnswer: Flow<Boolean> = data.map { it[Keys.SWAP_ANSWER] ?: false }
+
+    suspend fun setSwapAnswer(v: Boolean) = edit("swap_answer", v) { it[Keys.SWAP_ANSWER] = v }
 
     /** Предлагать напоминание после сброшенного вызова. */
     val callbackSuggestion: Flow<Boolean> =

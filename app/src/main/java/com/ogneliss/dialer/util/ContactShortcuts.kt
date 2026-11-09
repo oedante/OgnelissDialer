@@ -115,7 +115,7 @@ object ContactShortcuts {
                         context.getString(R.string.shortcut_call_label, target.name)
                     )
                     .setIcon(iconFor(context, target))
-                    .setIntent(callIntent(target.number))
+                    .setIntent(callIntent(context, target.number))
                     // Ранг определяет порядок в меню лаунчера: контакты
                     // первыми по рангу, псевдозвонок — последним (разбор выше)
                     .setRank(index)
@@ -145,7 +145,7 @@ object ContactShortcuts {
                 .setShortLabel(target.name)
                 .setLongLabel(context.getString(R.string.shortcut_call_label, target.name))
                 .setIcon(IconCompat.createWithResource(context, R.drawable.ic_call))
-                .setIntent(callIntent(target.number))
+                .setIntent(callIntent(context, target.number))
                 .build()
 
             ShortcutManagerCompat.requestPinShortcut(context, shortcut, null)
@@ -241,9 +241,13 @@ object ContactShortcuts {
         return sample
     }
 
-    private fun callIntent(number: String): Intent =
-        Intent(Intent.ACTION_CALL, Uri.fromParts("tel", number, null))
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+    /*
+     * 2.1.1: ярлык звонит своим приложением (CallNumberActivity), а не общим
+     * ACTION_CALL — на Samsung тот открывал выбор приложения, где нас нет.
+     */
+    private fun callIntent(context: Context, number: String): Intent =
+        com.ogneliss.dialer.call.CallNumberActivity.intent(context, number)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
     /*
      * ShortcutTarget объявлен в data/DataSources.kt.

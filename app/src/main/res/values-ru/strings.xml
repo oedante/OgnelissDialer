@@ -996,4 +996,7 @@
     <string name="selection_short_all">Все</string>
     <string name="selection_short_block">Блокировать</string>
     <string name="selection_short_unarchive">Вернуть</string>
+    <string name="settings_swap_answer">«Ответить» слева</string>
+    <string name="settings_swap_answer_text">Кнопки «Ответить» и «Отклонить» меняются местами на экране вызова; ответ сдвигом — влево</string>
+    <string name="keywords_swap_answer">поменять местами ответить отклонить кнопки слева справа порядок входящий</string>
 </resources>

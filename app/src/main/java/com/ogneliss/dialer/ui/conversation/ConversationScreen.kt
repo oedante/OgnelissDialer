@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.conversation
 
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import android.net.Uri
 import android.text.format.DateUtils
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -560,21 +562,35 @@ private fun SimPicker(state: ConversationViewModel.UiState, onSelectSim: (Int) -
     var open by remember { mutableStateOf(false) }
     val current = state.sims.firstOrNull { it.subscriptionId == state.subId }
     Box {
-        // «▯ SIM 1» цветом карты (2.1.0): номер — словами, без второй «1»
-        // пометки SimBadge и без её подложки (снимок автора)
-        val simColor = current?.let { com.ogneliss.dialer.ui.theme.SimColors.of(it.slotIndex) }
-        TextButton(onClick = { open = true }) {
+        /*
+         * КОМПАКТНО: «▯1» ВМЕСТО «▯ SIM 1» (2.1.1).
+         *
+         * Автор, 09.11.2026: «значок выбора SIM сделаем компактней, а то много
+         * места занимает». Было: кнопка с текстом «SIM 1» — около 110 dp, и
+         * поле сообщения сужалось на треть строки. Стало: кнопка размером
+         * с соседние (48 dp) — значок карты и цифра цветом карты (SimColors),
+         * как пометка SIM в строках журнала и SMS. «SIM 1» словами, имя
+         * карты и оператор — в меню по касанию; TalkBack читает «SIM 1».
+         */
+        val name = current?.let { simOrdinalName(it) } ?: stringResource(R.string.sms_sim_default)
+        IconButton(
+            onClick = { open = true },
+            modifier = Modifier.semantics { contentDescription = name }
+        ) {
             if (current != null) {
-                com.ogneliss.dialer.ui.components.SimIcon(current.slotIndex, Modifier.size(FlowUi.iconSizeInline))
+                val simColor = com.ogneliss.dialer.ui.theme.SimColors.of(current.slotIndex)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    com.ogneliss.dialer.ui.components.SimIcon(current.slotIndex, Modifier.size(FlowUi.iconSizeInline))
+                    Text(
+                        (current.slotIndex + 1).toString(),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = simColor,
+                        modifier = Modifier.padding(start = Space.xxs)
+                    )
+                }
             } else {
                 Icon(OgnelissIcons.SimCard, contentDescription = null, modifier = Modifier.size(FlowUi.iconSizeInline))
             }
-            Text(
-                current?.let { simOrdinalName(it) } ?: stringResource(R.string.sms_sim_default),
-                modifier = Modifier.padding(start = Space.xs),
-                style = MaterialTheme.typography.labelLarge,
-                color = simColor ?: androidx.compose.ui.graphics.Color.Unspecified
-            )
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             state.sims.forEach { sim ->

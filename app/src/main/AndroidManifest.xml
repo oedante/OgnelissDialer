@@ -445,6 +445,16 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_contacts_info" />
         </receiver>
+        <!-- «Позвонить» из напоминаний, пропущенных и ярлыков (2.1.1): звонит своим
+             приложением, без окна выбора — разбор в call/CallNumberActivity.kt -->
+        <activity
+            android:name=".call.CallNumberActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.NoDisplay" />
+
         <!-- Переходник касания по значку раздела: без окна, решает и закрывается -->
         <activity
             android:name=".widget.SectionLaunchActivity"

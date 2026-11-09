@@ -987,4 +987,7 @@
     <string name="selection_short_all">Alle</string>
     <string name="selection_short_block">Sperren</string>
     <string name="selection_short_unarchive">Zurückholen</string>
+    <string name="settings_swap_answer">„Annehmen“ links</string>
+    <string name="settings_swap_answer_text">Tauscht „Annehmen“ und „Ablehnen“ auf dem Anrufbildschirm; zum Annehmen nach links wischen</string>
+    <string name="keywords_swap_answer">tauschen annehmen ablehnen tasten links rechts reihenfolge eingehend</string>
 </resources>

@@ -129,6 +129,8 @@ class FakeCallActivity : ComponentActivity() {
             val callPhotoSize by prefs.callPhotoSize.collectAsStateWithLifecycle(CallPhotoSize.LARGE)
             // Ответ касанием или сдвигом — как у настоящего вызова (1.5.8)
             val answerMode by prefs.answerMode.collectAsStateWithLifecycle(AnswerMode.TAP)
+            // «Ответить» слева — как у настоящего вызова (2.1.1)
+            val swapAnswer by prefs.swapAnswer.collectAsStateWithLifecycle(false)
 
             /*
              * Кто «звонит».
@@ -191,6 +193,7 @@ class FakeCallActivity : ComponentActivity() {
                     photoStyle = callPhotoStyle,
                     largePortrait = callPhotoSize == CallPhotoSize.LARGE,
                     slideToAnswer = answerMode == AnswerMode.SLIDE,
+                    swapAnswer = swapAnswer,
                     onAnswer = { stopRinging() },
                     onHangUp = { finish() }
                 )
@@ -259,6 +262,8 @@ private fun FakeCallScreen(
     largePortrait: Boolean = false,
     /** Настройка «Ответ на вызов» — сдвигом (1.5.8), как у настоящего. */
     slideToAnswer: Boolean = false,
+    /** «Ответить» слева (2.1.1), как у настоящего. */
+    swapAnswer: Boolean = false,
     onAnswer: () -> Unit,
     onHangUp: () -> Unit
 ) {
@@ -459,7 +464,8 @@ private fun FakeCallScreen(
                     SlideToAnswer(
                         onAnswer = { answered = true; onAnswer() },
                         onDecline = onHangUp,
-                        modifier = Modifier.padding(horizontal = Space.s)
+                        modifier = Modifier.padding(horizontal = Space.s),
+                        swapped = swapAnswer
                     )
                 } else {
                     Row(
@@ -467,14 +473,16 @@ private fun FakeCallScreen(
                         horizontalArrangement = Arrangement.spacedBy(Space.l, Alignment.CenterHorizontally)
                     ) {
                         if (!answered) {
-                            BigButton(
-                                stringResource(R.string.incall_decline),
-                                DeclineRed,
-                                OgnelissIcons.CallEnd,
-                                modifier = Modifier.weight(1f),
-                                shareRow = true,
-                                onClick = onHangUp
-                            )
+                            val decline: @Composable androidx.compose.foundation.layout.RowScope.() -> Unit = {
+                                BigButton(
+                                    stringResource(R.string.incall_decline),
+                                    DeclineRed,
+                                    OgnelissIcons.CallEnd,
+                                    modifier = Modifier.weight(1f),
+                                    shareRow = true,
+                                    onClick = onHangUp
+                                )
+                            }
                             // Та же «дышащая» кнопка ответа, что у настоящего входящего
                             val pulse = androidx.compose.animation.core.rememberInfiniteTransition(label = "fakeAnswer")
                             val scale by pulse.animateFloat(
@@ -488,17 +496,20 @@ private fun FakeCallScreen(
                                 ),
                                 label = "fakeAnswerScale"
                             )
-                            Box(
-                                Modifier.weight(1f).graphicsLayer { scaleX = scale; scaleY = scale }
-                            ) {
-                                BigButton(
-                                    stringResource(R.string.incall_answer),
-                                    CallGreen,
-                                    OgnelissIcons.Call,
-                                    modifier = Modifier.fillMaxWidth(),
-                                    shareRow = true
-                                ) { answered = true; onAnswer() }
+                            val answer: @Composable androidx.compose.foundation.layout.RowScope.() -> Unit = {
+                                Box(
+                                    Modifier.weight(1f).graphicsLayer { scaleX = scale; scaleY = scale }
+                                ) {
+                                    BigButton(
+                                        stringResource(R.string.incall_answer),
+                                        CallGreen,
+                                        OgnelissIcons.Call,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shareRow = true
+                                    ) { answered = true; onAnswer() }
+                                }
                             }
+                            if (swapAnswer) { answer(); decline() } else { decline(); answer() }
                         } else {
                             BigButton(
                                 stringResource(R.string.incall_hangup),

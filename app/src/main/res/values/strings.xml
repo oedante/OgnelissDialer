@@ -1016,4 +1016,7 @@
     <string name="selection_short_all">All</string>
     <string name="selection_short_block">Block</string>
     <string name="selection_short_unarchive">Restore</string>
+    <string name="settings_swap_answer">Answer on the left</string>
+    <string name="settings_swap_answer_text">Swaps the Answer and Decline buttons on the call screen; slide left to answer</string>
+    <string name="keywords_swap_answer">swap answer decline buttons left right order incoming</string>
 </resources>
