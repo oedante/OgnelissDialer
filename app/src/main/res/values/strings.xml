@@ -1013,4 +1013,7 @@
     <string name="widget_contacts_description">Opens Contacts in Ogneliss Dialer</string>
     <string name="menu_section_list">List</string>
     <string name="menu_section_tools">Tools</string>
+    <string name="selection_short_all">All</string>
+    <string name="selection_short_block">Block</string>
+    <string name="selection_short_unarchive">Restore</string>
 </resources>

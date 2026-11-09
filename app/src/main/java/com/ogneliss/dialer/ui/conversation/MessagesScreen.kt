@@ -62,7 +62,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.shape.CircleShape
 import com.ogneliss.dialer.data.ArchiveRules
 import com.ogneliss.dialer.data.JournalDays
-import com.ogneliss.dialer.ui.components.SelectionTopBar
+import com.ogneliss.dialer.ui.components.SelectionBottomBar
 import com.ogneliss.dialer.ui.components.rememberSelectionState
 import com.ogneliss.dialer.sms.smsPinKey
 import com.ogneliss.dialer.ui.components.FloatingDatePill
@@ -360,29 +360,6 @@ fun MessagesScreen(
         contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
             when {
-                selection.isActive -> SelectionTopBar(
-                    count = selection.count,
-                    onClose = { selection.clear() },
-                    onSelectAll = { selection.selectAll(shown.map { threadKey(it) }) },
-                    // В списке — «В архив», в архиве — «Вернуть из архива»
-                    onArchive = if (showArchive) null else {
-                        {
-                            vm.archiveSms(selectedThreads().associate { it.address to it.last.date })
-                            selection.clear()
-                        }
-                    },
-                    onUnarchive = if (!showArchive) null else {
-                        {
-                            vm.unarchiveSms(selectedThreads().map { it.address })
-                            selection.clear()
-                        }
-                    },
-                    onDelete = {
-                        val chosen = selectedThreads()
-                        selection.clear()
-                        deleteThreads(chosen)
-                    }
-                )
                 // Архив — своей строкой заголовка со стрелкой назад
                 showArchive -> TopAppBar(
                     title = { Text(stringResource(R.string.archive_title)) },
@@ -414,8 +391,33 @@ fun MessagesScreen(
          * кнопка открывает её там.
          */
         bottomBar = {
+            // Режим выбора (2.1.1): действия внизу, на месте панели разделов —
+            // сверху панель сдвигала список (автор, 09.11.2026; Д2)
+            if (selection.isActive) SelectionBottomBar(
+                count = selection.count,
+                onClose = { selection.clear() },
+                onSelectAll = { selection.selectAll(shown.map { threadKey(it) }) },
+                // В списке — «В архив», в архиве — «Вернуть из архива»
+                onArchive = if (showArchive) null else {
+                    {
+                        vm.archiveSms(selectedThreads().associate { it.address to it.last.date })
+                        selection.clear()
+                    }
+                },
+                onUnarchive = if (!showArchive) null else {
+                    {
+                        vm.unarchiveSms(selectedThreads().map { it.address })
+                        selection.clear()
+                    }
+                },
+                onDelete = {
+                    val chosen = selectedThreads()
+                    selection.clear()
+                    deleteThreads(chosen)
+                }
+            )
             // В архиве панели разделов нет: из него возвращаются стрелкой
-            if (!showArchive) ListPanel(
+            else if (!showArchive) ListPanel(
                 section = MainSection.MESSAGES,
                 onOpenSection = onOpenSection,
                 filterActive = false,
@@ -723,12 +725,7 @@ private fun ThreadRow(
     ) {
         // В режиме выбора кружок вместо портрета — как в журнале (CallLogCard)
         if (selectionActive) {
-            Icon(
-                if (selected) OgnelissIcons.CheckCircle else OgnelissIcons.RadioButtonUnchecked,
-                contentDescription = null,
-                tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                modifier = Modifier.size(LocalAppearance.current.avatarSize)
-            )
+            com.ogneliss.dialer.ui.components.SelectionMark(selected)
         } else Box(
             // Портрет — своя цель касания: тело строки по долгому нажатию — карточки
             if (onAvatarLongClick != null) Modifier

@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.SelectionBottomBar
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -1596,31 +1597,11 @@ fun MainDialerScreen(
             }
         },
         topBar = {
-            if (selection.isActive) {
-                SelectionTopBar(
-                    count = selection.count,
-                    onClose = { selection.clear() },
-                    onSelectAll = { selection.selectAll(list.map { it.key }) },
-                    onBlock = {
-                        vm.blockGroups(list.filter { it.key in selection.selected })
-                        selection.clear()
-                    },
-                    // 2.1.0: «В архив» — убрать из журнала, не стирая
-                    onArchive = {
-                        vm.archiveGroups(list.filter { it.key in selection.selected })
-                        selection.clear()
-                    },
-                    /*
-                     * 2.1.0: без окна «Удалить N записей?» — правило автора
-                     * 07.11.2026: где есть «Отменить», не спрашиваем
-                     * (deleteGroupsWithUndo, как свайп и меню записи).
-                     */
-                    onDelete = {
-                        vm.deleteGroupsWithUndo(list.filter { it.key in selection.selected })
-                        selection.clear()
-                    }
-                )
-            }
+            /*
+             * Панели выбора сверху нет (2.1.1): она сдвигала весь журнал
+             * на свою высоту (автор, 09.11.2026). Действия выбора — внизу,
+             * на месте панели разделов (SelectionBottomBar, Д2).
+             */
             /*
              * Заголовка сверху нет намеренно.
              *
@@ -1651,9 +1632,31 @@ fun MainDialerScreen(
                     onClose = closeSearch
                 )
             }
+            // Режим выбора (2.1.1): действия — на месте панели разделов
+            if (selection.isActive) {
+                SelectionBottomBar(
+                    count = selection.count,
+                    onClose = { selection.clear() },
+                    onSelectAll = { selection.selectAll(list.map { it.key }) },
+                    onBlock = {
+                        vm.blockGroups(list.filter { it.key in selection.selected })
+                        selection.clear()
+                    },
+                    // 2.1.0: «В архив» — убрать из журнала, не стирая
+                    onArchive = {
+                        vm.archiveGroups(list.filter { it.key in selection.selected })
+                        selection.clear()
+                    },
+                    // Без окна «Удалить N записей?»: есть «Отменить» (правило автора 07.11.2026)
+                    onDelete = {
+                        vm.deleteGroupsWithUndo(list.filter { it.key in selection.selected })
+                        selection.clear()
+                    }
+                )
+            }
             AnimatedVisibility(
-                // Лёжа панель справа — внизу её нет вовсе
-                visible = !sideDialpad && !landscapeRail,
+                // Лёжа панель справа — внизу её нет вовсе; при выборе — панель выбора
+                visible = !sideDialpad && !landscapeRail && !selection.isActive,
                 enter = expandVertically(tween(Motion.NORMAL_MS), expandFrom = Alignment.Top) +
                     fadeIn(tween(Motion.NORMAL_MS)),
                 exit = shrinkVertically(tween(Motion.NORMAL_MS), shrinkTowards = Alignment.Top) +
