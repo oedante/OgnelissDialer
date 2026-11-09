@@ -246,6 +246,8 @@ class InCallActivity : ComponentActivity() {
             // Ответ на вызов: касанием или сдвигом (1.5.8): разбор в AnswerMode
             val answerMode by prefs.answerMode
                 .collectAsStateWithLifecycle(initialValue = AnswerMode.TAP)
+            // «Ответить» слева (2.1.1): разбор в Prefs.swapAnswer
+            val swapAnswer by prefs.swapAnswer.collectAsStateWithLifecycle(initialValue = false)
             // Имя «Фамилия Имя» (1.6.2): разбор в data/ContactNames.kt
             val nameFormat by prefs.contactNameFormat
                 .collectAsStateWithLifecycle(initialValue = ContactNameFormat.GIVEN_FIRST)
@@ -355,6 +357,7 @@ class InCallActivity : ComponentActivity() {
                     photoStyle = callPhotoStyle,
                     largePortrait = callPhotoSize == CallPhotoSize.LARGE,
                     slideToAnswer = answerMode == AnswerMode.SLIDE,
+                    swapAnswer = swapAnswer,
                     familyFirst = nameFormat == ContactNameFormat.FAMILY_FIRST,
                     redial = redial,
                     scamMemo = scamMemo,
@@ -468,6 +471,8 @@ private fun InCallScreen(
     largePortrait: Boolean = false,
     /** Настройка «Ответ на вызов» — сдвигом (1.5.8): разбор в SlideToAnswer. */
     slideToAnswer: Boolean = false,
+    /** Настройка «Ответить» слева (2.1.1): кнопки и сдвиг — зеркально. */
+    swapAnswer: Boolean = false,
     /** Настройка «Как показывать имя» — «Фамилия Имя» (1.6.2). */
     familyFirst: Boolean = false,
     /** Сеанс автодозвона (1.8.0): между попытками вместо кнопок вызова — его кнопки. */
@@ -1104,7 +1109,8 @@ private fun InCallScreen(
                         // Ответ сдвигом (1.5.8): от случайного касания
                         SlideToAnswer(
                             onAnswer = { CallManager.answer() },
-                            onDecline = { CallManager.reject() }
+                            onDecline = { CallManager.reject() },
+                            swapped = swapAnswer
                         )
                     } else
                     Row(
@@ -1112,24 +1118,30 @@ private fun InCallScreen(
                         horizontalArrangement = Arrangement.spacedBy(Space.l, Alignment.CenterHorizontally)
                     ) {
                         if (state == Call.STATE_RINGING) {
-                            BigButton(
-                                stringResource(R.string.incall_decline),
-                                DeclineRed,
-                                OgnelissIcons.CallEnd,
-                                modifier = Modifier.weight(1f),
-                                shareRow = true
-                            ) {
-                                CallManager.reject()
+                            val decline: @Composable RowScope.() -> Unit = {
+                                BigButton(
+                                    stringResource(R.string.incall_decline),
+                                    DeclineRed,
+                                    OgnelissIcons.CallEnd,
+                                    modifier = Modifier.weight(1f),
+                                    shareRow = true
+                                ) {
+                                    CallManager.reject()
+                                }
                             }
-                            BigButton(
-                                stringResource(R.string.incall_answer),
-                                CallGreen,
-                                OgnelissIcons.Call,
-                                modifier = Modifier.weight(1f),
-                                shareRow = true
-                            ) {
-                                CallManager.answer()
+                            val answer: @Composable RowScope.() -> Unit = {
+                                BigButton(
+                                    stringResource(R.string.incall_answer),
+                                    CallGreen,
+                                    OgnelissIcons.Call,
+                                    modifier = Modifier.weight(1f),
+                                    shareRow = true
+                                ) {
+                                    CallManager.answer()
+                                }
                             }
+                            // «Ответить» слева (2.1.1, Prefs.swapAnswer)
+                            if (swapAnswer) { answer(); decline() } else { decline(); answer() }
                         } else {
                             BigButton(
                                 stringResource(R.string.incall_hangup),
@@ -1593,7 +1605,8 @@ private fun InCallScreen(
                     SlideToAnswer(
                         onAnswer = { CallManager.answer() },
                         onDecline = { CallManager.reject() },
-                        modifier = Modifier.padding(horizontal = Space.s)
+                        modifier = Modifier.padding(horizontal = Space.s),
+                        swapped = swapAnswer
                     )
                 } else
                 Row(
@@ -1603,13 +1616,15 @@ private fun InCallScreen(
                     horizontalArrangement = Arrangement.spacedBy(Space.l, Alignment.CenterHorizontally)
                 ) {
                     if (state == Call.STATE_RINGING) {
-                        BigButton(
-                            stringResource(R.string.incall_decline),
-                            DeclineRed,
-                            OgnelissIcons.CallEnd,
-                            modifier = Modifier.weight(1f),
-                            shareRow = true
-                        ) { CallManager.reject() }
+                        val decline: @Composable RowScope.() -> Unit = {
+                            BigButton(
+                                stringResource(R.string.incall_decline),
+                                DeclineRed,
+                                OgnelissIcons.CallEnd,
+                                modifier = Modifier.weight(1f),
+                                shareRow = true
+                            ) { CallManager.reject() }
+                        }
 
                         /*
                          * ПУЛЬСАЦИЯ КНОПКИ ОТВЕТА.
@@ -1649,15 +1664,19 @@ private fun InCallScreen(
                             label = "answerScale"
                         )
 
-                        Box(Modifier.weight(1f).graphicsLayer { scaleX = scale; scaleY = scale }) {
-                            BigButton(
-                                stringResource(R.string.incall_answer),
-                                CallGreen,
-                                OgnelissIcons.Call,
-                                modifier = Modifier.fillMaxWidth(),
-                                shareRow = true
-                            ) { CallManager.answer() }
+                        val answer: @Composable RowScope.() -> Unit = {
+                            Box(Modifier.weight(1f).graphicsLayer { scaleX = scale; scaleY = scale }) {
+                                BigButton(
+                                    stringResource(R.string.incall_answer),
+                                    CallGreen,
+                                    OgnelissIcons.Call,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shareRow = true
+                                ) { CallManager.answer() }
+                            }
                         }
+                        // «Ответить» слева (2.1.1, Prefs.swapAnswer)
+                        if (swapAnswer) { answer(); decline() } else { decline(); answer() }
                     } else {
                         BigButton(
                             stringResource(R.string.incall_hangup),

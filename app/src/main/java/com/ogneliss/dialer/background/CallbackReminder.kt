@@ -35,6 +35,15 @@ object CallbackReminder {
     private const val EXTRA_NUMBER = "number"
     private const val EXTRA_NAME = "name"
 
+    /** Срок напоминания — в будильнике (2.1.1): по нему побудка решает, пора ли. */
+    private const val EXTRA_AT = "at"
+
+    /** Без точных будильников: ближе этого к сроку ставим сам срок (разбор у [schedule]). */
+    private const val FINAL_STEP_MS = 10 * 60_000L
+
+    /** Побудка не раньше чем за минуту до срока — уже срок. */
+    private const val EARLY_MS = 60_000L
+
     /**
      * Планирует напоминание.
      *
@@ -48,19 +57,49 @@ object CallbackReminder {
             context, number.hashCode(),
             Intent(context, Receiver::class.java)
                 .putExtra(EXTRA_NUMBER, number)
-                .putExtra(EXTRA_NAME, name),
+                .putExtra(EXTRA_NAME, name)
+                .putExtra(EXTRA_AT, atMillis),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
-        // Android 12+: точные будильники требуют разрешения, поэтому
-        // при его отсутствии откатываемся на неточный — напоминание
-        // не критично ко времени до секунды.
-        val canExact = Build.VERSION.SDK_INT < Build.VERSION_CODES.S || am.canScheduleExactAlarms()
+        val canExact = Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
+            runCatching { am.canScheduleExactAlarms() }.getOrDefault(false)
         if (canExact) {
             am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, atMillis, pi)
-        } else {
-            am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, atMillis, pi)
+            return
         }
+        /*
+         * БЕЗ ТОЧНЫХ БУДИЛЬНИКОВ — К СРОКУ СТУПЕНЯМИ (2.1.1).
+         *
+         * Отзыв с форума (Samsung S23, 09.11.2026): «если время напоминания
+         * выбирать не из пресетов, а вручную, оно не срабатывает». С Android 14
+         * разрешения на точные будильники по умолчанию нет, и напоминание
+         * ставилось неточным будильником. Система вправе сдвинуть такой на
+         * три четверти оставшегося срока: «через 5 минут» опаздывало на минуты,
+         * а «сегодня в 18:00», поставленное в обед, — на несколько часов,
+         * то есть на деле не приходило.
+         *
+         * Стало: при сроке дальше [FINAL_STEP_MS] — промежуточная побудка
+         * на середине оставшегося. Даже сдвинутая на три четверти, она
+         * приходит раньше срока, и следующая ставится ближе; последняя —
+         * на сам срок, с опозданием в считанные минуты. Побудок немного
+         * (на сутки — около восьми), каждая — короткий приём без окон.
+         * Разрешение на точные будильники по-прежнему можно дать
+         * в «Разрешениях» — тогда срок ставится сразу.
+         */
+        am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, inexactWake(System.currentTimeMillis(), atMillis), pi)
     }
+
+    /**
+     * Когда будить неточным будильником (2.1.1, разбор у [schedule]): близко
+     * к сроку — сам срок, иначе середина оставшегося.
+     */
+    internal fun inexactWake(now: Long, atMillis: Long): Long {
+        val remaining = atMillis - now
+        return if (remaining <= FINAL_STEP_MS) atMillis else now + remaining / 2
+    }
+
+    /** Побудка в [now] при сроке [atMillis] — уже срок, а не промежуточная. */
+    internal fun isDue(now: Long, atMillis: Long): Boolean = atMillis <= 0L || now >= atMillis - EARLY_MS
 
     /**
      * Можно ли ставить точные будильники.
@@ -94,6 +133,15 @@ object CallbackReminder {
         override fun onReceive(context: Context, intent: Intent) {
             val number = intent.getStringExtra(EXTRA_NUMBER) ?: return
             val name = intent.getStringExtra(EXTRA_NAME) ?: number
+
+            // Промежуточная побудка (2.1.1, разбор у schedule): до срока ещё
+            // далеко — ставим следующую, ближе. Без срока в намерении — будильник
+            // прежней версии: срабатывает как раньше
+            val at = intent.getLongExtra(EXTRA_AT, 0L)
+            if (intent.action != ACTION_SNOOZE && !isDue(System.currentTimeMillis(), at)) {
+                schedule(context, number, intent.getStringExtra(EXTRA_NAME), at)
+                return
+            }
 
             /*
              * Запись удаляется сразу после срабатывания.
@@ -156,18 +204,17 @@ object CallbackReminder {
             )
 
             /*
-             * Звонок сразу, минуя приложение.
+             * Звонок сразу — своим приложением (2.1.1).
              *
-             * ACTION_CALL требует разрешения CALL_PHONE, которое у нас
-             * есть как у диалера по умолчанию. Открывать ради звонка
-             * приложение незачем: человек уже решил позвонить, нажав
-             * именно эту кнопку.
+             * Было: общее намерение ACTION_CALL. На Samsung его перехватывало
+             * окно выбора приложения, где Ogneliss Dialer нет (отзыв с форума,
+             * S23). Стало: своё окно без интерфейса звонит через Telecom
+             * и снимает это уведомление (CallNumberActivity).
              */
             val callIntent = PendingIntent.getActivity(
                 context, number.hashCode() + 1,
-                Intent(Intent.ACTION_CALL, android.net.Uri.fromParts("tel", number, null))
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-                PendingIntent.FLAG_IMMUTABLE
+                com.ogneliss.dialer.call.CallNumberActivity.intent(context, number, number.hashCode()),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             )
 
             /*

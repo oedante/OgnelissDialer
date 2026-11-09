@@ -155,9 +155,10 @@ class SettingsStateSource @Inject constructor(
         prefs.autoRedialMode,
         prefs.autoRedialPace,
         prefs.scamMemo,
-        prefs.incomingBanner
-    ) { mode, pace, memo, banner ->
-        CallHelp(mode, pace, memo, banner)
+        prefs.incomingBanner,
+        prefs.swapAnswer
+    ) { mode, pace, memo, banner, swap ->
+        CallHelp(mode, pace, memo, banner, swap)
     }
 
     /** Сообщения (2.0.0). 2.1.0: без «Писать SMS в диалере» — решает роль SMS. */
@@ -239,6 +240,7 @@ class SettingsStateSource @Inject constructor(
             autoRedialPace = h.autoRedialPace,
             scamMemo = h.scamMemo,
             incomingBanner = h.incomingBanner,
+            swapAnswer = h.swapAnswer,
 
             smsDeliveryReports = m.deliveryReports,
             smsSwipeRight = m.swipeRight,
@@ -325,6 +327,7 @@ class SettingsStateSource @Inject constructor(
         val autoRedialMode: AutoRedialMode,
         val autoRedialPace: RedialPace,
         val scamMemo: Boolean,
-        val incomingBanner: Boolean
+        val incomingBanner: Boolean,
+        val swapAnswer: Boolean
     )
 }

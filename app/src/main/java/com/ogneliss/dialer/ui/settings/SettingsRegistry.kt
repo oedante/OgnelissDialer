@@ -562,6 +562,17 @@ object SettingsRegistry {
             SettingKind.Choice("answer_mode"),
             groupRes = R.string.settings_group_during_call
         ),
+        /*
+         * «Ответить» слева (2.1.1, просьба пользователей): привыкшим к ответу
+         * слева на прежнем телефоне. Разбор — Prefs.swapAnswer.
+         */
+        SettingEntry(
+            "swap_answer", SettingsCategory.CALLS,
+            R.string.settings_swap_answer, R.string.settings_swap_answer_text,
+            SettingKind.Switch("swap_answer"),
+            keywordsRes = R.string.keywords_swap_answer,
+            groupRes = R.string.settings_group_during_call
+        ),
         SettingEntry(
             "smart_speaker", SettingsCategory.CALLS,
             R.string.settings_smart_speaker, R.string.settings_smart_speaker_text,
@@ -597,18 +608,6 @@ object SettingsRegistry {
             "call_animation", SettingsCategory.CALLS,
             R.string.settings_call_animation, R.string.settings_call_animation_text,
             SettingKind.Switch("call_animation"),
-            groupRes = R.string.settings_group_during_call
-        ),
-        /*
-         * Памятка о мошенниках (1.8.0, автор: «Памятка о мошенниках»):
-         * долгий разговор с незнакомым номером — одно напоминание
-         * о кодах из SMS. Разбор — call/ScamMemo.kt.
-         */
-        SettingEntry(
-            "scam_memo", SettingsCategory.CALLS,
-            R.string.settings_scam_memo, R.string.settings_scam_memo_text,
-            SettingKind.Switch("scam_memo"),
-            keywordsRes = R.string.keywords_scam_memo,
             groupRes = R.string.settings_group_during_call
         ),
         SettingEntry(
@@ -756,6 +755,22 @@ object SettingsRegistry {
             R.string.settings_external_lookup, R.string.settings_external_lookup_text,
             SettingKind.Action("external_lookup"),
             groupRes = R.string.settings_group_lookup
+        ),
+        /*
+         * Памятка о мошенниках (1.8.0, автор: «Памятка о мошенниках»):
+         * долгий разговор с незнакомым номером — одно напоминание
+         * о кодах из SMS. Разбор — call/ScamMemo.kt.
+         *
+         * 2.1.1: из «Звонков» — в «Защиту», своей группой «Во время вызова».
+         * В «Звонках» стало бы пятнадцать пунктов («Ответить» слева), а памятка
+         * по смыслу — защита от мошенников, рядом с блокировкой.
+         */
+        SettingEntry(
+            "scam_memo", SettingsCategory.SPAM,
+            R.string.settings_scam_memo, R.string.settings_scam_memo_text,
+            SettingKind.Switch("scam_memo"),
+            keywordsRes = R.string.keywords_scam_memo,
+            groupRes = R.string.settings_group_during_call
         ),
 
         // ── Резервная копия ────────────────────────────────────────────────

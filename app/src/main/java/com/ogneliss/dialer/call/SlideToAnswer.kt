@@ -13,6 +13,7 @@ import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -104,12 +105,20 @@ import kotlin.math.roundToInt
 internal fun SlideToAnswer(
     onAnswer: () -> Unit,
     onDecline: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /**
+     * «Ответить» слева (2.1.1, Prefs.swapAnswer): ответ — сдвигом к другому
+     * краю, подписи и цвета по краям — зеркально. Как справа налево, только
+     * при обычной раскладке.
+     */
+    swapped: Boolean = false
 ) {
     val haptic = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()
     // Сдвиг «к ответу» — вправо, а справа налево — влево (разбор выше)
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    // Сторона ответа на экране: «справа налево» и «ответ слева» гасят друг друга
+    val mirrored = rtl != swapped
     val drag = remember { Animatable(0f) }
     var armed by remember { mutableStateOf(false) }
     var done by remember { mutableStateOf(false) }
@@ -117,7 +126,7 @@ internal fun SlideToAnswer(
     val answerLabel = stringResource(R.string.incall_answer)
     val declineLabel = stringResource(R.string.incall_decline)
     // Подсказка называет стороны — в зеркальной раскладке они другие
-    val hint = stringResource(if (rtl) R.string.incall_slide_hint_rtl else R.string.incall_slide_hint)
+    val hint = stringResource(if (mirrored) R.string.incall_slide_hint_rtl else R.string.incall_slide_hint)
 
     // «Дыхание» ручки — пока её не тронули: тот же ритм, что у кнопки ответа
     val pulse = rememberInfiniteTransition(label = "slideKnob")
@@ -159,28 +168,53 @@ internal fun SlideToAnswer(
                 .graphicsLayer { alpha = hintsAlpha },
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(OgnelissIcons.CallEnd, contentDescription = null, tint = DeclineRed)
-            Spacer(Modifier.width(Space.s))
-            Text(
-                declineLabel,
-                style = MaterialTheme.typography.labelLarge,
-                color = DeclineRed,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(Modifier.width(knob))
-            Text(
-                answerLabel,
-                style = MaterialTheme.typography.labelLarge,
-                color = CallGreen,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.End
-            )
-            Spacer(Modifier.width(Space.s))
-            Icon(OgnelissIcons.Call, contentDescription = null, tint = CallGreen)
+            val declineSide: @Composable RowScope.(Boolean) -> Unit = { atStart ->
+                if (atStart) {
+                    Icon(OgnelissIcons.CallEnd, contentDescription = null, tint = DeclineRed)
+                    Spacer(Modifier.width(Space.s))
+                }
+                Text(
+                    declineLabel,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = DeclineRed,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
+                    textAlign = if (atStart) TextAlign.Start else TextAlign.End
+                )
+                if (!atStart) {
+                    Spacer(Modifier.width(Space.s))
+                    Icon(OgnelissIcons.CallEnd, contentDescription = null, tint = DeclineRed)
+                }
+            }
+            val answerSide: @Composable RowScope.(Boolean) -> Unit = { atStart ->
+                if (atStart) {
+                    Icon(OgnelissIcons.Call, contentDescription = null, tint = CallGreen)
+                    Spacer(Modifier.width(Space.s))
+                }
+                Text(
+                    answerLabel,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = CallGreen,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
+                    textAlign = if (atStart) TextAlign.Start else TextAlign.End
+                )
+                if (!atStart) {
+                    Spacer(Modifier.width(Space.s))
+                    Icon(OgnelissIcons.Call, contentDescription = null, tint = CallGreen)
+                }
+            }
+            if (swapped) {
+                answerSide(true)
+                Spacer(Modifier.width(knob))
+                declineSide(false)
+            } else {
+                declineSide(true)
+                Spacer(Modifier.width(knob))
+                answerSide(false)
+            }
         }
 
         // Ручка
@@ -190,7 +224,7 @@ internal fun SlideToAnswer(
         Box(
             Modifier
                 .align(Alignment.Center)
-                .offset { IntOffset(drag.value.roundToInt(), 0) }
+                .offset { IntOffset((if (swapped) -drag.value else drag.value).roundToInt(), 0) }
                 .size(knob)
                 .graphicsLayer {
                     val s = if (idle) breathe else 1f
@@ -206,7 +240,7 @@ internal fun SlideToAnswer(
                         CustomAccessibilityAction(declineLabel) { done = true; onDecline(); true }
                     )
                 }
-                .pointerInput(maxTravel, rtl) {
+                .pointerInput(maxTravel, mirrored) {
                     // Положение ручки считаем здесь, а не по drag.value:
                     // snapTo выполнится позже, и несколько событий одного
                     // кадра сложились бы с устаревшим значением
@@ -240,7 +274,7 @@ internal fun SlideToAnswer(
                         onHorizontalDrag = move@{ change, delta ->
                             if (done) return@move
                             change.consume()
-                            val toward = if (rtl) -delta else delta
+                            val toward = if (mirrored) -delta else delta
                             current = (current + toward).coerceIn(-maxTravel, maxTravel)
                             val target = current
                             scope.launch { drag.snapTo(target) }

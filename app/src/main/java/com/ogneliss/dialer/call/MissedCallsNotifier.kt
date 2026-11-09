@@ -7,7 +7,6 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.telecom.TelecomManager
 import androidx.core.app.NotificationCompat
 import com.ogneliss.dialer.MainActivity
@@ -121,10 +120,11 @@ object MissedCallsNotifier {
          */
         val last = number?.takeIf { it.isNotBlank() }
         val callBack = last?.let {
+            // 2.1.1: своим приложением, не общим ACTION_CALL — на Samsung оно
+            // открывало выбор приложения без нас (CallNumberActivity)
             PendingIntent.getActivity(
                 context, ID + 1,
-                Intent(Intent.ACTION_CALL, Uri.fromParts("tel", it, null))
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                CallNumberActivity.intent(context, it),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         }

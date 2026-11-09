@@ -986,4 +986,7 @@
     <string name="selection_short_all">Tout</string>
     <string name="selection_short_block">Bloquer</string>
     <string name="selection_short_unarchive">Restaurer</string>
+    <string name="settings_swap_answer">« Répondre » à gauche</string>
+    <string name="settings_swap_answer_text">Inverse « Répondre » et « Refuser » sur l’écran d’appel ; glissez vers la gauche pour répondre</string>
+    <string name="keywords_swap_answer">inverser répondre refuser boutons gauche droite ordre entrant</string>
 </resources>
