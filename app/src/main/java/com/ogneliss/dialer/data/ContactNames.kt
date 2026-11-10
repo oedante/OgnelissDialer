@@ -40,6 +40,30 @@ import java.text.Collator
  */
 object ContactNames {
 
+    /*
+     * «ФАМИЛИЯ ИМЯ» ИЗ ЧАСТЕЙ ИМЕНИ (2.1.2).
+     *
+     * Отзыв пользователя (Redmi Note 14 Pro): «переключил на „Фамилия Имя“ —
+     * ничего не меняется, перезагрузил — тоже». Было: вторая форма — только
+     * DISPLAY_NAME_ALTERNATIVE. Книга Xiaomi (MIUI/HyperOS) кладёт туда ту же
+     * основную форму, хотя имя и фамилию хранит отдельно — переставлять
+     * было нечего. Стало: форма собирается из частей (StructuredName: имя,
+     * отчество, фамилия), а вторая форма книги — запасной путь.
+     *
+     * Части берутся, только если это действительно части показанного имени:
+     * и фамилия, и имя есть в основной форме. Человек мог задать в книге
+     * своё отображаемое имя («Мама», «Сантехник Олег») — его не трогаем.
+     */
+    fun fromParts(primary: String, given: String?, middle: String?, family: String?): String? {
+        val g = given?.trim().orEmpty()
+        val f = family?.trim().orEmpty()
+        if (g.isEmpty() || f.isEmpty()) return null
+        val shown = primary.lowercase()
+        if (g.lowercase() !in shown || f.lowercase() !in shown) return null
+        val m = middle?.trim().orEmpty().takeIf { it.isNotEmpty() && it.lowercase() in shown }
+        return listOfNotNull(f, g, m).joinToString(" ")
+    }
+
     /**
      * «Фамилия Имя» из второй формы книги. Пустая или такая же —
      * основная форма [primary].

@@ -111,6 +111,8 @@ class ContactsRepository @Inject constructor(
 
         val emails = loadEmails()
         val events = loadEvents()
+        // 2.1.2: «Фамилия Имя» из частей имени — разбор у ContactNames.fromParts
+        val parts = loadNameParts()
 
         val starredIds = loadStarredIds()
 
@@ -126,10 +128,46 @@ class ContactsRepository @Inject constructor(
                 numbers = byId[id]?.distinctBy { it.e164 } ?: emptyList(),
                 emails = emails[id].orEmpty(),
                 events = events[id].orEmpty(),
-                // Пусто, если совпадает с основной формой: меньше в кэше
-                nameAlt = altNames[id].orEmpty().takeIf { it != m.first }.orEmpty()
+                // Пусто, если совпадает с основной формой: меньше в кэше.
+                // 2.1.2: сначала из частей имени, затем вторая форма книги
+                nameAlt = (parts[id]?.let { (g, mid, f) -> ContactNames.fromParts(m.first, g, mid, f) }
+                    ?: altNames[id].orEmpty())
+                    .takeIf { it != m.first }.orEmpty()
             )
+        }.also { list ->
+            Logger.i("Contacts", "Контактов: ${list.size}, с формой «Фамилия Имя»: ${list.count { it.nameAlt.isNotEmpty() }}")
         }
+    }
+
+    /**
+     * Части имени (имя, отчество, фамилия) по контактам — StructuredName
+     * (2.1.2, разбор у ContactNames.fromParts). Без разрешения или при ошибке
+     * книги — пусто: остаётся вторая форма книги.
+     */
+    private fun loadNameParts(): Map<Long, Triple<String?, String?, String?>> = runCatching {
+        val out = HashMap<Long, Triple<String?, String?, String?>>()
+        val sn = ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE
+        context.contentResolver.query(
+            ContactsContract.Data.CONTENT_URI,
+            arrayOf(
+                ContactsContract.Data.CONTACT_ID,
+                ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME,
+                ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME,
+                ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME
+            ),
+            "${ContactsContract.Data.MIMETYPE} = ?", arrayOf(sn), null
+        )?.use { c ->
+            while (c.moveToNext()) {
+                val id = c.getLong(0)
+                val parts = Triple(c.getString(1), c.getString(2), c.getString(3))
+                // Несколько сырых записей у одного контакта — берём ту, где есть фамилия
+                if (id !in out || out[id]?.third.isNullOrBlank()) out[id] = parts
+            }
+        }
+        out
+    }.getOrElse {
+        Logger.w("Contacts", "Части имён не прочитаны — остаётся вторая форма книги", it)
+        emptyMap()
     }
 
     /**
@@ -388,6 +426,28 @@ class ContactsRepository @Inject constructor(
      *
      * @return «Фамилия Имя» или null — оставить как есть
      */
+    /** Части имени одного контакта (2.1.2) или null. */
+    private fun namePartsOf(contactId: Long): Triple<String?, String?, String?>? = runCatching {
+        context.contentResolver.query(
+            ContactsContract.Data.CONTENT_URI,
+            arrayOf(
+                ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME,
+                ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME,
+                ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME
+            ),
+            "${ContactsContract.Data.CONTACT_ID} = ? AND ${ContactsContract.Data.MIMETYPE} = ?",
+            arrayOf(contactId.toString(), ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE),
+            null
+        )?.use { c ->
+            var best: Triple<String?, String?, String?>? = null
+            while (c.moveToNext()) {
+                val t = Triple(c.getString(0), c.getString(1), c.getString(2))
+                if (best == null || best.third.isNullOrBlank()) best = t
+            }
+            best
+        }
+    }.getOrNull()
+
     suspend fun familyFirstName(number: String, shown: String): String? = withContext(io) {
         if (number.isBlank() || shown.isBlank()) return@withContext null
         if (!PermissionGuard.canReadContacts(context)) return@withContext null
@@ -412,7 +472,10 @@ class ContactsRepository @Inject constructor(
                     null
                 )?.use { c ->
                     if (!c.moveToFirst() || c.getString(0) != shown) null
-                    else ContactNames.familyFirst(shown, c.getString(1).orEmpty())
+                    // 2.1.2: сначала из частей имени (на Xiaomi вторая форма книги
+                    // совпадает с основной), затем вторая форма
+                    else namePartsOf(id)?.let { (g, m, f) -> ContactNames.fromParts(shown, g, m, f) }
+                        ?: ContactNames.familyFirst(shown, c.getString(1).orEmpty())
                 }
             }?.takeIf { it != shown }
         }.getOrElse {
