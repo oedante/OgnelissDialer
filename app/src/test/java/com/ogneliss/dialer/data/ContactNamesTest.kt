@@ -77,4 +77,34 @@ class ContactNamesTest {
             ContactNames.journalNames(listOf(anna), ContactNameFormat.GIVEN_FIRST)
         )
     }
+
+    // ── 2.1.2: «Фамилия Имя» из частей имени (Xiaomi: вторая форма книги = основная) ──
+
+    @Test
+    fun `из частей — фамилия первой, с отчеством`() {
+        assertEquals("Петров Иван", ContactNames.fromParts("Иван Петров", "Иван", null, "Петров"))
+        assertEquals(
+            "Петров Иван Сергеевич",
+            ContactNames.fromParts("Иван Сергеевич Петров", "Иван", "Сергеевич", "Петров")
+        )
+    }
+
+    @Test
+    fun `без фамилии или имени — не переставляем`() {
+        assertEquals(null, ContactNames.fromParts("Иван", "Иван", null, null))
+        assertEquals(null, ContactNames.fromParts("Петров", null, null, "Петров"))
+        assertEquals(null, ContactNames.fromParts("Сервис доставки", "Сервис доставки", null, ""))
+    }
+
+    @Test
+    fun `своё отображаемое имя в книге — не трогаем`() {
+        // Части есть, но показано другое имя — его задал человек
+        assertEquals(null, ContactNames.fromParts("Мама", "Анна", null, "Петрова"))
+    }
+
+    @Test
+    fun `форма из частей проходит через показ`() {
+        val alt = ContactNames.fromParts("Иван Петров", "Иван", null, "Петров")!!
+        assertEquals("Петров Иван", ContactNames.familyFirst("Иван Петров", alt))
+    }
 }
