@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -59,6 +60,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
@@ -179,6 +181,42 @@ fun ConversationScreen(
         title = state.title,
         onBack = onBack,
         pinnedTopBar = true,
+        /*
+         * ПОРТРЕТ СОБЕСЕДНИКА В ШАПКЕ (2.1.3, как в мессенджерах): фото или
+         * буквы в его тоне — тем же, что у входящих сообщений; под именем —
+         * номер. Касание по шапке — карточка (отдельной кнопки «человек»
+         * справа больше нет: она дублировала бы портрет).
+         */
+        titleContent = {
+            Row(
+                Modifier
+                    .clip(MaterialTheme.shapes.medium)
+                    .clickable(
+                        enabled = state.dialable,
+                        onClickLabel = stringResource(R.string.sms_open_card)
+                    ) { onOpenCard(vm.address) }
+                    .padding(end = Space.s),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                com.ogneliss.dialer.ui.components.RowAvatar(
+                    state.photoUri,
+                    size = HEADER_AVATAR,
+                    name = state.title.takeIf { state.subtitle != null }
+                )
+                Spacer(Modifier.width(Space.m))
+                Column {
+                    Text(state.title, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    state.subtitle?.let {
+                        Text(
+                            it,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1
+                        )
+                    }
+                }
+            }
+        },
         actions = {
             if (state.dialable) {
                 IconButton(onClick = { onCall(vm.address) }) {
@@ -189,9 +227,6 @@ fun ConversationScreen(
                         tint = com.ogneliss.dialer.util.LocalCallAvailability.current
                             .callTint(com.ogneliss.dialer.ui.theme.CallGreen)
                     )
-                }
-                IconButton(onClick = { onOpenCard(vm.address) }) {
-                    Icon(OgnelissIcons.Person, contentDescription = stringResource(R.string.sms_open_card))
                 }
             }
         },
@@ -474,6 +509,9 @@ private fun Bubble(
         )
     }
 }
+
+/** Портрет в шапке переписки — меньше строки списка: шапка ниже. */
+private val HEADER_AVATAR = 36.dp
 
 /** Сообщения одной стороны не дальше этого друг от друга — под одним временем. */
 private const val TIME_GROUP_MS = 3 * 60_000L

@@ -30,6 +30,7 @@ import com.ogneliss.dialer.data.RulePattern
 import com.ogneliss.dialer.ui.DialerViewModel
 import androidx.compose.foundation.combinedClickable
 import com.ogneliss.dialer.ui.components.SelectionTopBar
+import com.ogneliss.dialer.ui.components.dragSelect
 import com.ogneliss.dialer.ui.components.rememberSelectionState
 import com.ogneliss.dialer.ui.theme.Dimens
 
@@ -105,7 +106,16 @@ fun BlockListScreen(
         ) { pad ->
             // Не шире 640 dp по центру на широком окне: разбор в ReadableWidth
             ReadableWidth {
-            LazyColumn(Modifier.padding(pad).fillMaxSize()) {
+            val listState = androidx.compose.foundation.lazy.rememberLazyListState()
+            LazyColumn(
+                // Выбор протягиванием по левому столбцу (2.1.3, DragSelect):
+                // ключи строк — «allow_…» и «block_…», выбор — по самому правилу
+                Modifier.padding(pad).fillMaxSize().dragSelect(selection, listState) { key ->
+                    (key as? String)?.takeIf { it.startsWith("allow_") || it.startsWith("block_") }
+                        ?.substringAfter('_')
+                },
+                state = listState
+            ) {
 
                 /*
                  * ── Белый список: первым ───────────────────────────────────

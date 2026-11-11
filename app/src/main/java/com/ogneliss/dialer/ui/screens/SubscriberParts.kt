@@ -71,7 +71,13 @@ internal fun CallHistoryRow(
      */
     showNumber: Boolean = false,
     /** Только время: день уже в заголовке группы («Сегодня», «Вчера») — 1.3.4. */
-    timeOnly: Boolean = false
+    timeOnly: Boolean = false,
+    /**
+     * Слот SIM, через которую шёл вызов (2.1.3, просьба пользователя:
+     * «в истории звонков и SMS указывать номер сим-карты»); null — карта
+     * одна или неизвестна, пометки нет.
+     */
+    simSlot: Int? = null
 ) {
     // Формат даты зависит от локали, поэтому пересоздаётся при её смене.
     // Статический форматтер показывал бы даты на прежнем языке
@@ -143,14 +149,19 @@ internal fun CallHistoryRow(
             null
         },
         trailingContent = {
-            if (entry.durationSec > 0) {
-                Text(
-                    String.format(
-                        java.util.Locale.getDefault(), "%d:%02d",
-                        entry.durationSec / 60, entry.durationSec % 60
-                    ),
-                    style = MaterialTheme.typography.bodySmall
-                )
+            // Пометка SIM — перед длительностью, как в строке журнала (2.1.3)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                simSlot?.let { com.ogneliss.dialer.ui.components.SimBadge(it) }
+                if (entry.durationSec > 0) {
+                    if (simSlot != null) Spacer(Modifier.width(Space.s))
+                    Text(
+                        String.format(
+                            java.util.Locale.getDefault(), "%d:%02d",
+                            entry.durationSec / 60, entry.durationSec % 60
+                        ),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
             }
         }
     )
@@ -194,6 +205,8 @@ internal fun SmsHistoryRow(
     message: com.ogneliss.dialer.sms.Message,
     showNumber: Boolean,
     timeOnly: Boolean,
+    /** Слот SIM сообщения (2.1.3); null — карта одна или неизвестна. */
+    simSlot: Int? = null,
     onOpen: () -> Unit
 ) {
     val configuration = LocalConfiguration.current
@@ -227,7 +240,15 @@ internal fun SmsHistoryRow(
                 )
             }
         } else null,
-        trailingContent = { Text(time, style = MaterialTheme.typography.bodySmall) }
+        trailingContent = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                simSlot?.let {
+                    com.ogneliss.dialer.ui.components.SimBadge(it)
+                    Spacer(Modifier.width(Space.s))
+                }
+                Text(time, style = MaterialTheme.typography.bodySmall)
+            }
+        }
     )
 }
 

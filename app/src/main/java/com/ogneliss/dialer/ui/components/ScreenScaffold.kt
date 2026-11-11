@@ -72,6 +72,11 @@ fun ScreenScaffold(
      * TINTED — серо-голубые настройки с карточками. Разбор — Surfaces.kt.
      */
     tone: PageTone = PageTone.LIST,
+    /**
+     * Свой заголовок вместо строки [title] (2.1.3): портрет и имя в шапке
+     * переписки. null — обычный текст.
+     */
+    titleContent: (@Composable () -> Unit)? = null,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val scrollBehavior = if (pinnedTopBar) {
@@ -88,7 +93,8 @@ fun ScreenScaffold(
             TopAppBar(
                 // Отступ заголовка — как в почте (FlowUi.topBarTitleInset, 1.8.4)
                 title = {
-                    Text(
+                    if (titleContent != null) titleContent()
+                    else Text(
                         title,
                         Modifier.padding(start = if (showBack) FlowUi.topBarTitleInset else 0.dp)
                     )
