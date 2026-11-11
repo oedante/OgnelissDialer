@@ -1565,8 +1565,10 @@ private fun runSettingAction(
             com.ogneliss.dialer.backup.SmsBackup.fileName()
         )
         "sms_folders" -> nav.navigate("sms_folders")
-        // Окно выбора файла копии — у раздела настроек (SettingsCategoryHost, restoreLauncher)
-        "sms_restore" -> Unit
+        "sms_restore" -> {
+            // Окно выбора файла копии — у раздела настроек (SettingsCategoryHost,
+            // restoreLauncher); сюда ключ не доходит: он в ACTIONS_OF_SETTINGS_SCREEN
+        }
         "stats" -> nav.navigate("stats")
         /*
          * Приложение SMS по умолчанию (2.0.0). Уже по умолчанию — системный

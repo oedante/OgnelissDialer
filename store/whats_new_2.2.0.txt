@@ -1,0 +1,243 @@
+<ru-RU>
+• SMS: черновики, отмена отправки и «Отправить позже» (удерживайте «Отправить»).
+• Выбор нескольких сообщений: копировать, переслать, в избранное, удалить.
+• Звонки с собеседником в переписке, с номером SIM.
+• Поиск по тексту всех сообщений.
+• Папки: личные, незнакомые, сервисы, непрочитанные, избранное — в меню «Ещё».
+• Автоудаление кодов и копия SMS в файл.
+• Виджет «Закреплённые»: звонок в одно касание.
+</ru-RU>
+<ar>
+• الرسائل: المسودات، وإلغاء الإرسال، و«الإرسال لاحقًا» (اضغط مطولًا على «إرسال»).
+• تحديد عدة رسائل: نسخ، إعادة توجيه، إضافة إلى المفضلة، حذف.
+• المكالمات مع جهة الاتصال داخل المحادثة مع رقم الشريحة.
+• البحث في نص جميع الرسائل.
+• المجلدات: شخصية، غير معروفة، خدمات، غير مقروءة، المفضلة — في قائمة «المزيد».
+• حذف الرموز تلقائيًا ونسخ احتياطي للرسائل في ملف.
+• أداة «المثبّتة»: اتصال بلمسة واحدة.
+</ar>
+<cs-CZ>
+• SMS: koncepty, zrušení odeslání a „Odeslat později“ (podržte „Odeslat“).
+• Výběr více zpráv: kopírovat, přeposlat, označit hvězdičkou, smazat.
+• Hovory s kontaktem přímo v konverzaci, s číslem SIM.
+• Hledání v textu všech zpráv.
+• Složky: osobní, neznámé, služby, nepřečtené, označené — v nabídce „Více“.
+• Automatické mazání kódů a záloha SMS do souboru.
+• Widget „Připnuté“: hovor jedním klepnutím.
+</cs-CZ>
+<da-DK>
+• SMS: kladder, fortryd afsendelse og „Send senere“ (hold „Send“ nede).
+• Vælg flere beskeder: kopiér, videresend, stjernemarkér, slet.
+• Opkald med kontakten i samtalen, med SIM-nummer.
+• Søg i teksten i alle beskeder.
+• Mapper: personlige, ukendte, tjenester, ulæste, stjernemarkerede — i menuen „Mere“.
+• Automatisk sletning af koder og backup af SMS til fil.
+• Widget „Fastgjorte“: ring med ét tryk.
+</da-DK>
+<de-DE>
+• SMS: Entwürfe, Senden rückgängig machen und „Später senden“ („Senden“ gedrückt halten).
+• Mehrere Nachrichten auswählen: kopieren, weiterleiten, markieren, löschen.
+• Anrufe mit dem Kontakt im Chatverlauf, mit SIM-Nummer.
+• Suche im Text aller Nachrichten.
+• Ordner: Persönlich, Unbekannt, Dienste, Ungelesen, Markiert – im Menü „Mehr“.
+• Codes automatisch löschen und SMS in Datei sichern.
+• Widget „Angeheftet“: Anruf mit einem Tippen.
+</de-DE>
+<en-US>
+• SMS: drafts, undo send and Send later (hold Send).
+• Select several messages: copy, forward, star, delete.
+• Calls with the contact right in the conversation, with the SIM.
+• Search the text of all messages.
+• Folders: Personal, Unknown, Services, Unread, Starred — in the More menu.
+• Delete codes automatically and back up SMS to a file.
+• Pinned widget: call with one tap.
+</en-US>
+<es-ES>
+• SMS: borradores, deshacer envío y «Enviar más tarde» (mantén pulsado «Enviar»).
+• Selecciona varios mensajes: copiar, reenviar, destacar, eliminar.
+• Llamadas con el contacto dentro de la conversación, con la SIM.
+• Búsqueda en el texto de todos los mensajes.
+• Carpetas: personales, desconocidos, servicios, no leídos, destacados — en el menú «Más».
+• Borrado automático de códigos y copia de los SMS en un archivo.
+• Widget «Fijados»: llama con un toque.
+</es-ES>
+<fi-FI>
+• Tekstiviestit: luonnokset, lähetyksen peruminen ja ”Lähetä myöhemmin” (pidä ”Lähetä” painettuna).
+• Valitse useita viestejä: kopioi, välitä, tähdellä, poista.
+• Puhelut yhteyshenkilön kanssa keskustelussa SIM-tiedolla.
+• Haku kaikkien viestien tekstistä.
+• Kansiot: henkilökohtaiset, tuntemattomat, palvelut, lukemattomat, tähdelliset – Lisää-valikossa.
+• Koodien automaattinen poisto ja viestien varmuuskopio tiedostoon.
+• Kiinnitetyt-widget: soita yhdellä napautuksella.
+</fi-FI>
+<fr-FR>
+• SMS : brouillons, annulation de l’envoi et « Envoyer plus tard » (maintenez « Envoyer »).
+• Sélection de plusieurs messages : copier, transférer, favori, supprimer.
+• Appels avec le contact dans la conversation, avec la SIM.
+• Recherche dans le texte de tous les messages.
+• Dossiers : personnels, inconnus, services, non lus, favoris — dans le menu « Plus ».
+• Suppression automatique des codes et sauvegarde des SMS dans un fichier.
+• Widget « Épinglés » : appel d’une touche.
+</fr-FR>
+<hi-IN>
+• SMS: ड्राफ़्ट, भेजना रद्द करें और «बाद में भेजें» («भेजें» दबाकर रखें)।
+• कई संदेश चुनें: कॉपी, आगे भेजें, तारांकित, हटाएँ।
+• बातचीत में ही संपर्क के साथ कॉल, SIM के साथ।
+• सभी संदेशों के टेक्स्ट में खोज।
+• फ़ोल्डर: व्यक्तिगत, अनजान, सेवाएँ, अपठित, तारांकित — «अधिक» मेन्यू में।
+• कोड अपने-आप हटाना और SMS का फ़ाइल में बैकअप।
+• «पिन किए गए» विजेट: एक टैप में कॉल।
+</hi-IN>
+<hu-HU>
+• SMS: piszkozatok, küldés visszavonása és „Küldés később” (tartsa nyomva a „Küldés” gombot).
+• Több üzenet kijelölése: másolás, továbbítás, csillagozás, törlés.
+• Hívások a partnerrel a beszélgetésben, SIM-mel.
+• Keresés az összes üzenet szövegében.
+• Mappák: személyes, ismeretlen, szolgáltatások, olvasatlan, csillagozott – a „Továbbiak” menüben.
+• Kódok automatikus törlése és SMS-mentés fájlba.
+• „Rögzített” widget: hívás egy érintéssel.
+</hu-HU>
+<id>
+• SMS: draf, batalkan kirim, dan "Kirim nanti" (tahan "Kirim").
+• Pilih beberapa pesan: salin, teruskan, bintangi, hapus.
+• Panggilan dengan kontak langsung di percakapan, dengan SIM.
+• Cari di teks semua pesan.
+• Folder: Pribadi, Tak dikenal, Layanan, Belum dibaca, Berbintang — di menu Lainnya.
+• Hapus kode otomatis dan cadangkan SMS ke file.
+• Widget Disematkan: telepon dengan satu ketukan.
+</id>
+<it-IT>
+• SMS: bozze, annulla invio e «Invia più tardi» (tieni premuto «Invia»).
+• Seleziona più messaggi: copia, inoltra, aggiungi ai preferiti, elimina.
+• Chiamate con il contatto nella conversazione, con la SIM.
+• Ricerca nel testo di tutti i messaggi.
+• Cartelle: personali, sconosciuti, servizi, non letti, preferiti — nel menu «Altro».
+• Eliminazione automatica dei codici e backup degli SMS su file.
+• Widget «Fissati»: chiama con un tocco.
+</it-IT>
+<iw-IL>
+• SMS: טיוטות, ביטול שליחה ו«שליחה מאוחר יותר» (לחיצה ארוכה על «שליחה»).
+• בחירת כמה הודעות: העתקה, העברה, סימון בכוכב, מחיקה.
+• שיחות עם איש הקשר בתוך השיחה, עם מספר ה-SIM.
+• חיפוש בטקסט של כל ההודעות.
+• תיקיות: אישיות, לא מוכרים, שירותים, לא נקראו, מסומנות — בתפריט «עוד».
+• מחיקה אוטומטית של קודים וגיבוי SMS לקובץ.
+• ווידג'ט «מוצמדים»: שיחה בנגיעה אחת.
+</iw-IL>
+<ja-JP>
+• SMS：下書き、送信の取り消し、「後で送信」（「送信」を長押し）。
+• 複数のメッセージを選択：コピー、転送、スター、削除。
+• 相手との通話を会話の中に SIM 付きで表示。
+• すべてのメッセージの本文を検索。
+• フォルダ：個人、不明、サービス、未読、スター付き —「その他」メニューから。
+• 認証コードの自動削除と SMS のファイルへのバックアップ。
+• 「固定」ウィジェット：ワンタップで発信。
+</ja-JP>
+<ko-KR>
+• SMS: 임시 저장, 보내기 취소, '나중에 보내기'('보내기' 길게 누르기).
+• 여러 메시지 선택: 복사, 전달, 별표, 삭제.
+• 대화 안에 상대와의 통화를 SIM과 함께 표시.
+• 모든 메시지 본문 검색.
+• 폴더: 개인, 모르는 번호, 서비스, 읽지 않음, 별표 — '더보기' 메뉴에서.
+• 인증 코드 자동 삭제와 SMS 파일 백업.
+• '고정됨' 위젯: 한 번 탭으로 전화.
+</ko-KR>
+<nl-NL>
+• Sms: concepten, verzenden ongedaan maken en ‘Later verzenden’ (houd ‘Verzenden’ ingedrukt).
+• Meerdere berichten selecteren: kopiëren, doorsturen, ster, verwijderen.
+• Gesprekken met het contact in de conversatie, met de simkaart.
+• Zoeken in de tekst van alle berichten.
+• Mappen: persoonlijk, onbekend, diensten, ongelezen, met ster — in het menu ‘Meer’.
+• Codes automatisch verwijderen en sms-back-up naar een bestand.
+• Widget ‘Vastgezet’: bellen met één tik.
+</nl-NL>
+<no-NO>
+• SMS: utkast, angre sending og «Send senere» (hold inne «Send»).
+• Velg flere meldinger: kopier, videresend, stjernemerk, slett.
+• Anrop med kontakten rett i samtalen, med SIM.
+• Søk i teksten i alle meldinger.
+• Mapper: personlige, ukjente, tjenester, uleste, stjernemerkede – i «Mer»-menyen.
+• Automatisk sletting av koder og sikkerhetskopi av SMS til fil.
+• Widgeten «Festet»: ring med ett trykk.
+</no-NO>
+<pl-PL>
+• SMS: wersje robocze, cofanie wysyłki i „Wyślij później” (przytrzymaj „Wyślij”).
+• Zaznaczanie wielu wiadomości: kopiuj, przekaż, oznacz gwiazdką, usuń.
+• Połączenia z rozmówcą w wątku, z numerem SIM.
+• Wyszukiwanie w treści wszystkich wiadomości.
+• Foldery: osobiste, nieznane, usługi, nieprzeczytane, oznaczone — w menu „Więcej”.
+• Automatyczne usuwanie kodów i kopia SMS do pliku.
+• Widżet „Przypięte”: połączenie jednym dotknięciem.
+</pl-PL>
+<pt-BR>
+• SMS: rascunhos, desfazer envio e "Enviar mais tarde" (toque e segure "Enviar").
+• Selecione várias mensagens: copiar, encaminhar, favoritar, excluir.
+• Ligações com o contato dentro da conversa, com o chip.
+• Pesquisa no texto de todas as mensagens.
+• Pastas: pessoais, desconhecidos, serviços, não lidas, favoritas — no menu "Mais".
+• Exclusão automática de códigos e backup dos SMS em arquivo.
+• Widget "Fixados": ligue com um toque.
+</pt-BR>
+<ro>
+• SMS: ciorne, anularea trimiterii și „Trimite mai târziu” (ține apăsat „Trimite”).
+• Selectează mai multe mesaje: copiază, redirecționează, marchează cu stea, șterge.
+• Apelurile cu persoana direct în conversație, cu SIM-ul.
+• Căutare în textul tuturor mesajelor.
+• Dosare: personale, necunoscute, servicii, necitite, cu stea — în meniul „Mai multe”.
+• Ștergerea automată a codurilor și copie de rezervă a SMS-urilor în fișier.
+• Widgetul „Fixate”: apel cu o atingere.
+</ro>
+<sk>
+• SMS: koncepty, zrušenie odoslania a „Odoslať neskôr“ (podržte „Odoslať“).
+• Výber viacerých správ: kopírovať, preposlať, označiť hviezdičkou, odstrániť.
+• Hovory s kontaktom priamo v konverzácii, s číslom SIM.
+• Vyhľadávanie v texte všetkých správ.
+• Priečinky: osobné, neznáme, služby, neprečítané, označené — v ponuke „Viac“.
+• Automatické mazanie kódov a záloha SMS do súboru.
+• Miniaplikácia „Pripnuté“: hovor jedným ťuknutím.
+</sk>
+<sv-SE>
+• SMS: utkast, ångra skicka och ”Skicka senare” (håll in ”Skicka”).
+• Markera flera meddelanden: kopiera, vidarebefordra, stjärnmärk, radera.
+• Samtal med kontakten direkt i konversationen, med SIM.
+• Sök i texten i alla meddelanden.
+• Mappar: personliga, okända, tjänster, olästa, stjärnmärkta – i menyn ”Mer”.
+• Automatisk radering av koder och säkerhetskopia av SMS till fil.
+• Widgeten ”Fästa”: ring med ett tryck.
+</sv-SE>
+<th>
+• SMS: ฉบับร่าง เลิกส่ง และ «ส่งภายหลัง» (กดค้างที่ «ส่ง»)
+• เลือกหลายข้อความ: คัดลอก ส่งต่อ ติดดาว ลบ
+• สายสนทนากับผู้ติดต่อแสดงในแชทพร้อม SIM
+• ค้นหาในข้อความทั้งหมด
+• โฟลเดอร์: ส่วนตัว ไม่รู้จัก บริการ ยังไม่อ่าน ติดดาว — ในเมนู «เพิ่มเติม»
+• ลบรหัสอัตโนมัติ และสำรอง SMS เป็นไฟล์
+• วิดเจ็ต «ที่ปักหมุด»: โทรด้วยการแตะครั้งเดียว
+</th>
+<tr-TR>
+• SMS: taslaklar, gönderimi geri alma ve "Sonra gönder" ("Gönder"e basılı tutun).
+• Birden çok mesaj seçin: kopyala, ilet, yıldızla, sil.
+• Kişiyle yapılan aramalar sohbetin içinde, SIM bilgisiyle.
+• Tüm mesajların metninde arama.
+• Klasörler: kişisel, bilinmeyen, hizmetler, okunmamış, yıldızlı — "Diğer" menüsünde.
+• Kodların otomatik silinmesi ve SMS'lerin dosyaya yedeklenmesi.
+• "Sabitlenenler" widget'ı: tek dokunuşla arama.
+</tr-TR>
+<vi>
+• SMS: bản nháp, hủy gửi và «Gửi sau» (nhấn giữ «Gửi»).
+• Chọn nhiều tin nhắn: sao chép, chuyển tiếp, gắn sao, xóa.
+• Cuộc gọi với người liên hệ ngay trong cuộc trò chuyện, kèm SIM.
+• Tìm trong nội dung mọi tin nhắn.
+• Thư mục: cá nhân, không xác định, dịch vụ, chưa đọc, gắn sao — trong menu «Thêm».
+• Tự động xóa mã và sao lưu SMS ra tệp.
+• Tiện ích «Đã ghim»: gọi bằng một chạm.
+</vi>
+<zh-CN>
+• 短信：草稿、撤销发送和“稍后发送”（长按“发送”）。
+• 多选消息：复制、转发、加星标、删除。
+• 在对话中显示与联系人的通话，并标明 SIM 卡。
+• 搜索所有消息的内容。
+• 文件夹：个人、陌生号码、服务、未读、星标 ——在“更多”菜单中。
+• 自动删除验证码，短信备份到文件。
+• “已固定”小组件：一键拨号。
+</zh-CN>
