@@ -230,7 +230,8 @@ fun ConversationScreen(
                         highContrast = highContrast,
                         surface = scheme.surface,
                         // В светлой теме surfaceContainerHigh белый, как страница, — берём серый
-                        neutral = if (highContrast) scheme.surfaceContainerHigh else scheme.surfaceContainerHighest
+                        neutral = if (highContrast) scheme.surfaceContainerHigh else scheme.surfaceContainerHighest,
+                        own = scheme.primary
                     )
                 }
                 MessageList(
@@ -312,8 +313,20 @@ private fun MessageList(
         )
     ) {
         newestFirst.forEachIndexed { index, message ->
+            /*
+             * ВРЕМЯ — ОДНО НА СООБЩЕНИЯ ПОДРЯД (2.1.3, обзор интерфейса).
+             * Было: строка времени под каждым пузырём — три сообщения за
+             * минуту давали три одинаковых «05:37», и лента наполовину
+             * состояла из подписей. Стало: время — под последним из идущих
+             * подряд (та же сторона, тот же день, не дальше [TIME_GROUP_MS]
+             * от следующего); состояние («Не отправлено», «Доставлено»)
+             * показывается всегда.
+             */
+            val newer = newestFirst.getOrNull(index - 1)
+            val showTime = newer == null || newer.outgoing != message.outgoing ||
+                newer.date - message.date > TIME_GROUP_MS || !sameDay(newer.date, message.date)
             item(key = message.key) {
-                Bubble(message, incomingColor, onLongPress, onRetry, onDownload, onOpenImage)
+                Bubble(message, incomingColor, showTime, onLongPress, onRetry, onDownload, onOpenImage)
             }
             // Подпись дня — над первым сообщением дня (в перевёрнутом списке — после)
             val older = newestFirst.getOrNull(index + 1)
@@ -363,6 +376,8 @@ private fun DayCaption(date: Long) {
 private fun Bubble(
     message: Message,
     incomingColor: Color,
+    /** Время под пузырём: у идущих подряд — только под последним (2.1.3). */
+    showTime: Boolean,
     onLongPress: (Message) -> Unit,
     onRetry: (Message) -> Unit,
     onDownload: (Message) -> Unit,
@@ -447,7 +462,7 @@ private fun Bubble(
                 modifier = Modifier.padding(top = Space.xs)
             )
         }
-        Text(
+        if (showTime || statusText != null) Text(
             listOfNotNull(time, statusText).joinToString(" · "),
             style = MaterialTheme.typography.labelSmall,
             color = when {
@@ -459,6 +474,9 @@ private fun Bubble(
         )
     }
 }
+
+/** Сообщения одной стороны не дальше этого друг от друга — под одним временем. */
+private const val TIME_GROUP_MS = 3 * 60_000L
 
 // ── Строка ввода ─────────────────────────────────────────────────────────────
 
