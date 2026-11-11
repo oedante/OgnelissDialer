@@ -41,6 +41,7 @@ import com.ogneliss.dialer.ui.DialerViewModel
 import com.ogneliss.dialer.ui.components.RowAvatar
 import com.ogneliss.dialer.ui.components.RowDivider
 import com.ogneliss.dialer.ui.components.SelectionTopBar
+import com.ogneliss.dialer.ui.components.dragSelect
 import com.ogneliss.dialer.ui.components.rememberSelectionState
 import com.ogneliss.dialer.ui.theme.LocalAppearance
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -133,8 +134,12 @@ fun CallArchiveScreen(vm: DialerViewModel, onBack: () -> Unit) {
                 )
             }
         } else {
+            val listState = androidx.compose.foundation.lazy.rememberLazyListState()
             LazyColumn(
-                Modifier.fillMaxSize().padding(pad),
+                // Выбор протягиванием по кружкам (2.1.3, DragSelect)
+                Modifier.fillMaxSize().padding(pad)
+                    .dragSelect(selection, listState) { it as? String },
+                state = listState,
                 contentPadding = PaddingValues(bottom = Space.l)
             ) {
                 // 2.1.0: без строки «Новый звонок вернёт запись в журнал» —
