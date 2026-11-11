@@ -225,6 +225,7 @@ fun MessagesScreen(
     val byNumber = remember(dialer.contacts) { contactIndex(dialer.contacts) }
     fun contactOf(address: String): Contact? {
         val e164 = PhoneFormatter.toE164(address)
+        if (e164.isBlank()) return null
         return byNumber[e164] ?: CallLogGrouper.tailKey(e164)?.let { byNumber[it] }
     }
 
@@ -873,6 +874,8 @@ private fun threadAsGroup(address: String, contact: Contact?): CallLogGroup {
 private fun contactIndex(contacts: List<Contact>): Map<String, Contact> = buildMap {
     contacts.sortedBy { it.displayName.lowercase() }.forEach { c ->
         c.numbers.forEach { n ->
+            // Пустой ключ (номер из одних знаков) совпал бы с любым «пустым» адресом (2.1.3)
+            if (n.e164.isBlank()) return@forEach
             putIfAbsent(n.e164, c)
             CallLogGrouper.tailKey(n.e164)?.let { putIfAbsent(it, c) }
         }

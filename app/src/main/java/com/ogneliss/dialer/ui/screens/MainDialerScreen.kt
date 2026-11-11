@@ -746,6 +746,7 @@ fun MainDialerScreen(
         buildMap {
             state.contacts.forEach { contact ->
                 contact.numbers.forEach { n ->
+                    if (n.e164.isBlank()) return@forEach
                     putIfAbsent(n.e164, contact.lookupKey)
                     com.ogneliss.dialer.data.CallLogGrouper.tailKey(n.e164)?.let { putIfAbsent(it, contact.lookupKey) }
                 }
@@ -797,7 +798,7 @@ fun MainDialerScreen(
             val byLookup = state.contacts.associateBy { it.lookupKey }
             val byNumber = buildMap {
                 state.contacts.forEach { contact ->
-                    contact.numbers.forEach { number -> putIfAbsent(number.e164, contact) }
+                    contact.numbers.forEach { number -> if (number.e164.isNotBlank()) putIfAbsent(number.e164, contact) }
                 }
             }
 

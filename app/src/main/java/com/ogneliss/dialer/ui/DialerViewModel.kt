@@ -2725,9 +2725,12 @@ class DialerViewModel @Inject constructor(
         val photos = HashMap<String, String>()
         val names = HashMap<String, String>()
         sorted.forEach { (_, contact) ->
-            contact.photoUri?.let { photo -> contact.numbers.forEach { photos.putIfAbsent(it.e164, photo) } }
+            // 2.1.3: без пустых ключей — иначе скрытый номер получил бы имя и фото
+            // контакта, у которого «номер» из одних знаков
+            val numbers = contact.numbers.filter { it.e164.isNotBlank() }
+            contact.photoUri?.let { photo -> numbers.forEach { photos.putIfAbsent(it.e164, photo) } }
             if (contact.displayName.isNotBlank()) {
-                contact.numbers.forEach { names.putIfAbsent(it.e164, contact.displayName) }
+                numbers.forEach { names.putIfAbsent(it.e164, contact.displayName) }
             }
         }
         return BookMaps(
