@@ -341,6 +341,7 @@ fun ConversationScreen(
                 }
                 MessageList(
                     state = state,
+                    focusKey = vm.focusKey,
                     incomingColor = incomingColor,
                     selection = selection,
                     modifier = Modifier.weight(1f),
@@ -414,6 +415,8 @@ fun ConversationScreen(
 @Composable
 private fun MessageList(
     state: ConversationViewModel.UiState,
+    /** Прокрутить к этому сообщению и подсветить (2.2.0: поиск, избранное). */
+    focusKey: String?,
     /** Заливка входящих — тон собеседника (2.1.3). */
     incomingColor: Color,
     selection: SelectionState<String>,
@@ -426,9 +429,12 @@ private fun MessageList(
 ) {
     val messages = state.messages
     val listState = rememberLazyListState()
+    // К найденному — один раз, после первого чтения; до того список не дёргается к низу
+    var focusDone by rememberSaveable { mutableStateOf(focusKey == null) }
+    var highlighted by remember { mutableStateOf<String?>(null) }
     // Новое сообщение — список у нижнего края (reverseLayout: нулевой — самый новый)
     LaunchedEffect(messages.size, state.queued.size) {
-        if (messages.isNotEmpty() || state.queued.isNotEmpty()) listState.animateScrollToItem(0)
+        if (focusDone && (messages.isNotEmpty() || state.queued.isNotEmpty())) listState.animateScrollToItem(0)
     }
     // Сообщения и звонки — одной лентой по времени, новые первыми
     val newestFirst: List<Any> = remember(messages, state.calls) {
@@ -436,6 +442,16 @@ private fun MessageList(
         else (messages + state.calls).sortedByDescending { if (it is Message) it.date else (it as ConversationViewModel.CallEvent).date }
     }
     val messageKeys = remember(messages) { messages.mapTo(HashSet()) { it.key } }
+    LaunchedEffect(messages, focusKey) {
+        if (focusDone || focusKey == null || messages.isEmpty()) return@LaunchedEffect
+        focusDone = true
+        val index = orderedKeys(state.queued, newestFirst).indexOf(focusKey)
+        if (index < 0) return@LaunchedEffect
+        listState.scrollToItem(index)
+        highlighted = focusKey
+        kotlinx.coroutines.delay(HIGHLIGHT_MS)
+        highlighted = null
+    }
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
@@ -466,7 +482,7 @@ private fun MessageList(
                 val showTime = newer == null || newer.outgoing != entry.outgoing ||
                     newer.date - entry.date > TIME_GROUP_MS || !sameDay(newer.date, entry.date)
                 item(key = entry.key) {
-                    SelectableRow(selection, entry.key) {
+                    SelectableRow(selection, entry.key, highlighted = entry.key == highlighted) {
                         Bubble(
                             message = entry,
                             incomingColor = incomingColor,
@@ -505,9 +521,20 @@ private fun MessageList(
  * Вне режима — только содержимое, без отступа под кружок.
  */
 @Composable
-private fun SelectableRow(selection: SelectionState<String>, key: String, content: @Composable () -> Unit) {
+private fun SelectableRow(
+    selection: SelectionState<String>,
+    key: String,
+    highlighted: Boolean = false,
+    content: @Composable () -> Unit
+) {
     if (!selection.isActive) {
-        content()
+        // Найденное (2.2.0) — на пару секунд подсвечено: глаз сразу находит его в ленте
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.medium)
+                .background(if (highlighted) MaterialTheme.colorScheme.primary.copy(alpha = 0.14f) else Color.Transparent)
+        ) { content() }
         return
     }
     val on = selection.isSelected(key)
@@ -637,6 +664,31 @@ private fun QueueLink(label: String, onClick: () -> Unit) {
             .padding(horizontal = Space.s, vertical = Space.m)
     )
 }
+
+/**
+ * Ключи строк ленты в порядке LazyColumn выше (очередь, затем сообщения
+ * и звонки с подписями дней) — номер строки для прокрутки к найденному.
+ */
+private fun orderedKeys(queued: List<ConversationViewModel.Queued>, newestFirst: List<Any>): List<String> {
+    val out = ArrayList<String>(newestFirst.size * 2 + queued.size)
+    queued.forEach { out += "queued:" + it.id }
+    newestFirst.forEachIndexed { index, entry ->
+        val key = if (entry is Message) entry.key else (entry as ConversationViewModel.CallEvent).key
+        val date = if (entry is Message) entry.date else (entry as ConversationViewModel.CallEvent).date
+        out += key
+        val older = newestFirst.getOrNull(index + 1)
+        val olderDate = when (older) {
+            is Message -> older.date
+            is ConversationViewModel.CallEvent -> older.date
+            else -> null
+        }
+        if (olderDate == null || !sameDay(olderDate, date)) out += "day:$key"
+    }
+    return out
+}
+
+/** Подсветка найденного сообщения. */
+private const val HIGHLIGHT_MS = 2_500L
 
 /** Текст выбранных для копирования и пересылки: по порядку, через пустую строку. */
 private fun joinForCopy(messages: List<Message>): String =

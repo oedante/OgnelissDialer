@@ -1042,4 +1042,12 @@
     <string name="sms_scheduled_for">Запланировано на %1$s</string>
     <string name="sms_send_now">Отправить сейчас</string>
     <string name="sms_undo">Отменить</string>
+    <string name="sms_folder_all">Все</string>
+    <string name="sms_folder_personal">Личные</string>
+    <string name="sms_folder_unknown">Незнакомые</string>
+    <string name="sms_folder_service">Сервисы</string>
+    <string name="sms_folder_unread">Непрочитанные</string>
+    <string name="sms_folder_starred">Избранное</string>
+    <string name="messages_found_header">Сообщения</string>
+    <string name="sms_draft_label">Черновик:</string>
 </resources>

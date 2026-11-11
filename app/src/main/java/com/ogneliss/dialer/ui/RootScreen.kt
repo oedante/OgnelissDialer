@@ -1097,7 +1097,12 @@ fun RootScreen(
                         onOpenHelp = { nav.navigate("faq") },
                         onFakeCall = { FakeCall.ringNow(context) },
                         onOpenCard = { key -> nav.navigate("subscriber/" + android.net.Uri.encode(key)) },
-                        onOpenBlockLists = { nav.navigate("blocklists") }
+                        onOpenBlockLists = { nav.navigate("blocklists") },
+                        // 2.2.0: найденное поиском сообщение — переписка, прокрученная к нему
+                        onOpenMessage = { address, key ->
+                            nav.navigate(com.ogneliss.dialer.ui.conversation.ConversationRequest(address, null, null, key).route())
+                        },
+                        onOpenFolders = { nav.navigate("sms_folders") }
                     )
                 }
 
@@ -1110,7 +1115,8 @@ fun RootScreen(
                     arguments = listOf(
                         navArgument(com.ogneliss.dialer.ui.conversation.ConversationRequest.ARG_ADDRESS) { defaultValue = ""; type = NavType.StringType },
                         navArgument(com.ogneliss.dialer.ui.conversation.ConversationRequest.ARG_BODY) { defaultValue = ""; type = NavType.StringType },
-                        navArgument(com.ogneliss.dialer.ui.conversation.ConversationRequest.ARG_SUB) { defaultValue = -1; type = NavType.IntType }
+                        navArgument(com.ogneliss.dialer.ui.conversation.ConversationRequest.ARG_SUB) { defaultValue = -1; type = NavType.IntType },
+                        navArgument(com.ogneliss.dialer.ui.conversation.ConversationRequest.ARG_MSG) { defaultValue = ""; type = NavType.StringType }
                     )
                 ) {
                     com.ogneliss.dialer.ui.conversation.ConversationScreen(
@@ -1134,6 +1140,11 @@ fun RootScreen(
                  */
                 composable("call_archive") {
                     com.ogneliss.dialer.ui.screens.CallArchiveScreen(vm = vm, onBack = { nav.popBackStack() })
+                }
+
+                // Папки SMS (2.2.0): порядок и показ вкладок
+                composable("sms_folders") {
+                    com.ogneliss.dialer.ui.conversation.SmsFoldersScreen(onBack = { nav.popBackStack() })
                 }
 
                 composable("swipe_tuning") {
@@ -1489,6 +1500,15 @@ private fun SettingsCategoryHost(
         }
     }
 
+    /*
+     * ВОССТАНОВЛЕНИЕ SMS ИЗ ФАЙЛА (2.2.0): файл выбирает человек; без
+     * сообщений об итоге (тихий интерфейс) — восстановленное видно
+     * в разделе SMS, подробности — в журнале разработчика.
+     */
+    val restoreLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) scope.launch { com.ogneliss.dialer.backup.SmsBackup.restore(context, uri) }
+    }
+
     SettingsCategoryScreen(
         category = category,
         vm = vm,
@@ -1498,7 +1518,10 @@ private fun SettingsCategoryHost(
         reveal = reveal?.takeIf { r -> SettingsRegistry.byCategory(category).any { it.id == r.entryId } },
         onRevealConsumed = onRevealConsumed,
         onAction = { key ->
-            runSettingAction(key, context, nav, vm, onOwnNumber) { build, fileName ->
+            if (key == "sms_restore") {
+                // Любой тип: XML копии в проводниках часто помечен как text/plain или octet-stream
+                runCatching { restoreLauncher.launch(arrayOf("*/*")) }
+            } else runSettingAction(key, context, nav, vm, onOwnNumber) { build, fileName ->
                 pendingText = build
                 saveLauncher.launch(fileName)
             }
@@ -1536,6 +1559,12 @@ private fun runSettingAction(
         "calllog_export" -> saveToFile?.invoke({ vm.buildCallLogCsv() }, vm.callLogCsvFileName())
 
         "log_save" -> saveToFile?.invoke({ vm.buildLogText() }, "ogneliss.log")
+        // Резервная копия SMS (2.2.0): файл XML в выбранное место; восстановление — у раздела настроек
+        "sms_backup" -> saveToFile?.invoke(
+            { com.ogneliss.dialer.backup.SmsBackup.export(context) },
+            com.ogneliss.dialer.backup.SmsBackup.fileName()
+        )
+        "sms_folders" -> nav.navigate("sms_folders")
         "stats" -> nav.navigate("stats")
         /*
          * Приложение SMS по умолчанию (2.0.0). Уже по умолчанию — системный
@@ -1663,7 +1692,7 @@ private fun runSettingAction(
  * выгрузки — его выбор файла. Кнопка в «Вопросах и ответах» для них
  * открывает раздел и подсвечивает пункт, а не выполняет действие.
  */
-private val ACTIONS_OF_SETTINGS_SCREEN = setOf("sim_labels", "calllog_export", "log_save")
+private val ACTIONS_OF_SETTINGS_SCREEN = setOf("sim_labels", "calllog_export", "log_save", "sms_backup", "sms_restore")
 
 
 /**

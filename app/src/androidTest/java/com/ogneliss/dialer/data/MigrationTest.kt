@@ -257,6 +257,39 @@ class MigrationTest {
     }
 
     /**
+     * 8 → 9 (2.2.0): черновики, очередь и избранное SMS — новые пустые
+     * таблицы; заметки на месте.
+     */
+    @Test
+    fun таблицыSmsСоздаютсяПустыми() {
+        helper.createDatabase(TEST_DB, 8).use { db ->
+            db.execSQL(
+                "INSERT INTO number_notes (e164, note, tags, customLabel, updatedAt) " +
+                    "VALUES ('+79000000001', 'Курьер', '', NULL, 0)"
+            )
+        }
+
+        val db = helper.runMigrationsAndValidate(TEST_DB, 9, true, AppDatabase.MIGRATION_8_9)
+
+        db.query("SELECT note FROM number_notes WHERE e164 = '+79000000001'").use { c ->
+            assertTrue("Заметка потерялась", c.moveToFirst())
+        }
+        db.execSQL("INSERT INTO sms_drafts (address, body, updatedAt) VALUES ('+79000000002', 'Привет', 1)")
+        db.execSQL(
+            "INSERT INTO sms_scheduled (address, addressKey, body, subId, atMillis, scheduled) " +
+                "VALUES ('89000000002', '+79000000002', 'Позже', NULL, 5, 1)"
+        )
+        db.execSQL(
+            "INSERT INTO sms_starred (msgKey, address, body, date, outgoing, starredAt) " +
+                "VALUES ('sms:1', '+79000000002', 'Важно', 1, 0, 2)"
+        )
+        db.query("SELECT COUNT(*) FROM sms_scheduled").use { c ->
+            assertTrue(c.moveToFirst())
+            assertEquals(1, c.getInt(0))
+        }
+    }
+
+    /**
      * Проверка, что все объявленные миграции применяются подряд
      * от первой версии до текущей. Ловит пропущенную миграцию:
      * например, версия поднята с 2 до 3, а Migration(2,3) забыли написать.

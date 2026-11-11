@@ -588,6 +588,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val SMS_UNDO_SEND = stringPreferencesKey("sms_undo_send")
         val SMS_CALLS_IN_THREAD = booleanPreferencesKey("sms_calls_in_thread")
         val SMS_OTP_CLEANUP = stringPreferencesKey("sms_otp_cleanup")
+        val SMS_FOLDERS = stringPreferencesKey("sms_folders")
         val NOTES_RETENTION = stringPreferencesKey("notes_retention")
         val NOTES_RETENTION_SCOPE = stringPreferencesKey("notes_retention_scope")
         // Экран после звонка
@@ -991,6 +992,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     /** Автоудаление кодов (2.2.0): по умолчанию выключено — удаление без спроса. */
     val smsOtpCleanup: Flow<OtpCleanup> = data.map { OtpCleanup.from(it[Keys.SMS_OTP_CLEANUP]) }
 
+    /** Папки SMS (2.2.0): порядок и видимость строкой, разбор — SmsFolders. */
+    val smsFolders: Flow<String?> = data.map { it[Keys.SMS_FOLDERS] }
+
     /**
      * Открывать клавиатуру сразу при запуске.
      *
@@ -1284,6 +1288,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("sms_undo_send", v.name) { it[Keys.SMS_UNDO_SEND] = v.name }
         com.ogneliss.dialer.sms.SmsSettings.putInt(context, com.ogneliss.dialer.sms.SmsSettings.KEY_UNDO_SECONDS, v.seconds)
     }
+    suspend fun setSmsFolders(v: String) = edit("sms_folders", v) { it[Keys.SMS_FOLDERS] = v }
     suspend fun setSmsCallsInThread(v: Boolean) =
         edit("sms_calls_in_thread", v) { it[Keys.SMS_CALLS_IN_THREAD] = v }
     suspend fun setSmsOtpCleanup(v: OtpCleanup) {

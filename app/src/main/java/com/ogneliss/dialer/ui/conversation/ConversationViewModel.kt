@@ -128,6 +128,9 @@ class ConversationViewModel @Inject constructor(
     val initialBody: String? = savedState.get<String>(ConversationRequest.ARG_BODY)?.takeIf { it.isNotEmpty() }
     val requestedSubId: Int? = savedState.get<Int>(ConversationRequest.ARG_SUB)?.takeIf { it >= 0 }
 
+    /** Сообщение, к которому прокрутить (2.2.0: найдено поиском, из избранного). */
+    val focusKey: String? = savedState.get<String>(ConversationRequest.ARG_MSG)?.takeIf { it.isNotEmpty() }
+
     /** Ключ переписки для черновика и очереди: «8 912…» и «+7 912…» — одна. */
     private val draftKey: String = smsPinKey(address)
     private var draftJob: Job? = null

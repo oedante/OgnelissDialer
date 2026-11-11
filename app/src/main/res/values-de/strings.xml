@@ -1033,4 +1033,12 @@
     <string name="sms_scheduled_for">Geplant für %1$s</string>
     <string name="sms_send_now">Jetzt senden</string>
     <string name="sms_undo">Rückgängig</string>
+    <string name="sms_folder_all">Alle</string>
+    <string name="sms_folder_personal">Persönlich</string>
+    <string name="sms_folder_unknown">Unbekannt</string>
+    <string name="sms_folder_service">Dienste</string>
+    <string name="sms_folder_unread">Ungelesen</string>
+    <string name="sms_folder_starred">Markiert</string>
+    <string name="messages_found_header">Nachrichten</string>
+    <string name="sms_draft_label">Entwurf:</string>
 </resources>

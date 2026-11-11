@@ -403,6 +403,8 @@
         <receiver android:name=".sms.SmsSender$StatusReceiver" android:exported="false" />
         <!-- 2.2.0: отложенные SMS и окно «Отменить» (SmsQueue) -->
         <receiver android:name=".sms.SmsQueue$Receiver" android:exported="false" />
+        <!-- 2.2.0: автоудаление кодов (OtpSweeper) -->
+        <receiver android:name=".sms.OtpSweeper$Receiver" android:exported="false" />
         <receiver android:name=".sms.MmsTransport$DownloadedReceiver" android:exported="false" />
         <receiver android:name=".sms.MmsTransport$SentReceiver" android:exported="false" />
         <receiver android:name=".sms.MessageNotifications$ActionReceiver" android:exported="false" />

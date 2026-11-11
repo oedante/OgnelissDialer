@@ -21,20 +21,24 @@ import android.net.Uri
 data class ConversationRequest(
     val address: String,
     val body: String?,
-    val subId: Int?
+    val subId: Int?,
+    /** Сообщение, к которому прокрутить (2.2.0, найденное поиском): Message.key. */
+    val messageKey: String? = null
 ) {
     /** Маршрут экрана переписки (RootScreen). */
     fun route(): String = buildString {
         append("conversation?address=").append(Uri.encode(address))
         body?.takeIf { it.isNotEmpty() }?.let { append("&body=").append(Uri.encode(it)) }
         subId?.let { append("&sub=").append(it) }
+        messageKey?.let { append("&msg=").append(Uri.encode(it)) }
     }
 
     companion object {
-        const val ROUTE = "conversation?address={address}&body={body}&sub={sub}"
+        const val ROUTE = "conversation?address={address}&body={body}&sub={sub}&msg={msg}"
         const val ARG_ADDRESS = "address"
         const val ARG_BODY = "body"
         const val ARG_SUB = "sub"
+        const val ARG_MSG = "msg"
 
         private val SCHEMES = setOf("sms", "smsto", "mms", "mmsto")
         private val ACTIONS = setOf(Intent.ACTION_SENDTO, Intent.ACTION_SEND, Intent.ACTION_VIEW)

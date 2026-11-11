@@ -117,6 +117,8 @@ class SmsDeliverReceiver : BroadcastReceiver() {
         if (uri != null) Logger.i(TAG, "Входящее SMS сохранено$what")
         else Logger.e(TAG, "Входящее SMS НЕ сохранено и после повтора$what — показано уведомлением")
         if (blocked) return
+        // Код подтверждения — обход автоудаления через срок из настройки (2.2.0, OtpSweeper)
+        runCatching { OtpSweeper.scheduleAfterCode(context, body) }
         val key = uri?.let { runCatching { Message.keyOf(false, ContentUris.parseId(it)) }.getOrNull() }
         MessageNotifications.showForAddress(
             context, address,

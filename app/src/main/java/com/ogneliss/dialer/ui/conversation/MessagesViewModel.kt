@@ -13,6 +13,14 @@ import com.ogneliss.dialer.sms.MessageStore
 import com.ogneliss.dialer.sms.SmsHealth
 import com.ogneliss.dialer.sms.SmsRole
 import com.ogneliss.dialer.sms.SmsSettings
+import com.ogneliss.dialer.data.db.SmsDraftDao
+import com.ogneliss.dialer.data.db.StarredSmsDao
+import com.ogneliss.dialer.data.db.StarredSmsEntity
+import com.ogneliss.dialer.settings.Prefs
+import com.ogneliss.dialer.sms.SmsFolder
+import com.ogneliss.dialer.sms.SmsFolders
+import com.ogneliss.dialer.sms.OtpSweeper
+import kotlinx.coroutines.flow.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
@@ -53,7 +61,11 @@ import javax.inject.Inject
 @HiltViewModel
 class MessagesViewModel @Inject constructor(
     @ApplicationContext private val app: Context,
-    @IoDispatcher private val io: CoroutineDispatcher
+    @IoDispatcher private val io: CoroutineDispatcher,
+    private val prefs: Prefs,
+    private val draftsDao: SmsDraftDao,
+    private val starredDao: StarredSmsDao,
+    private val otpCleanup: OtpSweeper
 ) : ViewModel() {
 
     private companion object {
@@ -68,6 +80,9 @@ class MessagesViewModel @Inject constructor(
 
         /** Сколько ждать перечитанного списка после удаления. */
         const val REFRESH_WAIT_MS = 3_000L
+
+        /** Поиск по тексту — после паузы в наборе (2.2.0). */
+        const val SEARCH_DELAY_MS = 300L
 
         /**
          * Переписки, удалённые с «Отменить» (2.1.0): ключ → дата последнего
@@ -105,7 +120,15 @@ class MessagesViewModel @Inject constructor(
         /** С ролью — критичная беда приёма (полоса сверху), 2.1.0. */
         val problem: SmsHealth.Problem? = null,
         /** Полоса «разрешите автозапуск» — один раз (прошивки без проверки), 2.1.0. */
-        val autostartHint: Boolean = false
+        val autostartHint: Boolean = false,
+        /** Черновики (2.2.0): smsPinKey(адрес) → текст. */
+        val drafts: Map<String, String> = emptyMap(),
+        /** Избранные сообщения (2.2.0), новые первыми. */
+        val starred: List<StarredSmsEntity> = emptyList(),
+        /** Папки (2.2.0): порядок и видимость. */
+        val folders: List<Pair<SmsFolder, Boolean>> = SmsFolders.DEFAULT,
+        /** Найденные по тексту SMS (2.2.0), новые первыми. */
+        val found: List<Message> = emptyList()
     )
 
     private val _state = MutableStateFlow(UiState())
@@ -117,6 +140,47 @@ class MessagesViewModel @Inject constructor(
     init {
         refresh()
         observe()
+        viewModelScope.launch {
+            draftsDao.all().map { list -> list.associate { it.address to it.body } }
+                .collect { d -> _state.update { it.copy(drafts = d) } }
+        }
+        viewModelScope.launch {
+            starredDao.all().collect { list -> _state.update { it.copy(starred = list) } }
+        }
+        viewModelScope.launch {
+            prefs.smsFolders.map(SmsFolders::parse).collect { f -> _state.update { it.copy(folders = f) } }
+        }
+        // Автоудаление кодов (2.2.0): при открытии раздела — то, чему пришёл срок
+        viewModelScope.launch { suspendRunCatching { otpCleanup.sweep() } }
+    }
+
+    private var searchJob: Job? = null
+
+    /**
+     * Поиск по тексту всех SMS (2.2.0): после паузы в наборе, от двух
+     * знаков. Переписки по имени и номеру ищет экран сам — здесь сообщения.
+     */
+    fun search(query: String) {
+        searchJob?.cancel()
+        if (query.trim().length < 2) {
+            _state.update { it.copy(found = emptyList()) }
+            return
+        }
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DELAY_MS)
+            val found = withContext(io) { suspendRunCatching { MessageStore.search(app, query) }.getOrDefault(emptyList()) }
+            _state.update { it.copy(found = found) }
+        }
+    }
+
+    /** Порядок и видимость папок (2.2.0). */
+    fun setFolders(list: List<Pair<SmsFolder, Boolean>>) {
+        viewModelScope.launch { prefs.setSmsFolders(SmsFolders.encode(list)) }
+    }
+
+    /** Снять отметку «избранное» (2.2.0). */
+    fun unstar(key: String) {
+        viewModelScope.launch(io) { suspendRunCatching { starredDao.delete(listOf(key)) } }
     }
 
     @OptIn(FlowPreview::class)

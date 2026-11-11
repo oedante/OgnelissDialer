@@ -1062,4 +1062,12 @@
     <string name="sms_scheduled_for">Scheduled for %1$s</string>
     <string name="sms_send_now">Send now</string>
     <string name="sms_undo">Undo</string>
+    <string name="sms_folder_all">All</string>
+    <string name="sms_folder_personal">Personal</string>
+    <string name="sms_folder_unknown">Unknown</string>
+    <string name="sms_folder_service">Services</string>
+    <string name="sms_folder_unread">Unread</string>
+    <string name="sms_folder_starred">Starred</string>
+    <string name="messages_found_header">Messages</string>
+    <string name="sms_draft_label">Draft:</string>
 </resources>
