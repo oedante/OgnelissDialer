@@ -95,10 +95,13 @@ private const val MARK_DP = 24
 fun SelectionBottomBar(
     count: Int,
     onClose: () -> Unit,
-    onSelectAll: () -> Unit,
+    /** null — без «Все» (переписка, 2.2.0: место нужнее своим действиям). */
+    onSelectAll: (() -> Unit)?,
     onBlock: (() -> Unit)? = null,
     onArchive: (() -> Unit)? = null,
     onUnarchive: (() -> Unit)? = null,
+    /** Свои действия экрана перед «Удалить» (2.2.0: переписка — копировать, переслать, избранное). */
+    extra: @Composable RowScope.() -> Unit = {},
     onDelete: () -> Unit
 ) {
     val countText = pluralStringResource(R.plurals.selected_count, count, count)
@@ -124,7 +127,9 @@ fun SelectionBottomBar(
                         .clearAndSetSemantics { contentDescription = countText }
                 )
                 Row(Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
-                    SelectionAction(OgnelissIcons.SelectAll, stringResource(R.string.selection_short_all), true, onSelectAll)
+                    if (onSelectAll != null) {
+                        SelectionAction(OgnelissIcons.SelectAll, stringResource(R.string.selection_short_all), true, onSelectAll)
+                    }
                     if (onBlock != null) {
                         SelectionAction(OgnelissIcons.Block, stringResource(R.string.selection_short_block), count > 0, onBlock)
                     }
@@ -134,6 +139,7 @@ fun SelectionBottomBar(
                     if (onUnarchive != null) {
                         SelectionAction(OgnelissIcons.Unarchive, stringResource(R.string.selection_short_unarchive), count > 0, onUnarchive)
                     }
+                    extra()
                     SelectionAction(
                         OgnelissIcons.Delete, stringResource(R.string.selection_delete), count > 0, onDelete,
                         tint = MaterialTheme.colorScheme.error
@@ -145,7 +151,7 @@ fun SelectionBottomBar(
 }
 
 @Composable
-private fun RowScope.SelectionAction(
+internal fun RowScope.SelectionAction(
     icon: ImageVector,
     label: String,
     enabled: Boolean,

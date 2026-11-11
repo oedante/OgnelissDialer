@@ -179,6 +179,13 @@ fun MessagesScreen(
     var composeNew by rememberSaveable { mutableStateOf(false) }
     var composeQuery by rememberSaveable { mutableStateOf("") }
     val closeCompose = { composeNew = false; composeQuery = "" }
+    // Закрыли «Кому» сами — и пересылка отменена (2.2.0, SmsForward)
+    val cancelCompose = { closeCompose(); SmsForward.pending = null }
+    // «Переслать» из переписки — сразу «Кому» с текстом пересылки
+    val forwarding = SmsForward.pending
+    LaunchedEffect(forwarding, state.isDefaultSms) {
+        if (forwarding != null && state.isDefaultSms) composeNew = true
+    }
     /*
      * Удаление (2.1.0): сразу из списка, «Отменить» — в общем поле с кольцом
      * (DialerViewModel.notifyWithUndo), из хранилища — когда оно погаснет.
@@ -353,7 +360,7 @@ fun MessagesScreen(
     // «Назад»: сперва снять выбор, потом выйти из архива
     BackHandler(enabled = showArchive && !selection.isActive) { showArchive = false }
     BackHandler(enabled = selection.isActive) { selection.clear() }
-    BackHandler(enabled = composeNew) { closeCompose() }
+    BackHandler(enabled = composeNew) { cancelCompose() }
 
     // Подсказки «Кому»: недавние переписки и контакты под запрос (NewMessage)
     val composeRecents = remember(composeNew, state.threads, byNumber) {
@@ -428,7 +435,7 @@ fun MessagesScreen(
                 onValueChange = { composeQuery = it },
                 canGo = NewMessage.target(composeQuery, composeMatches) != null,
                 onGo = { NewMessage.target(composeQuery, composeMatches)?.let(pickRecipient) },
-                onClose = closeCompose
+                onClose = cancelCompose
             )
             // В архиве панели разделов нет: из него возвращаются стрелкой
             else if (!showArchive) ListPanel(
@@ -485,14 +492,18 @@ fun MessagesScreen(
         }
     ) { pad ->
         if (composeNew) {
-            // Подсказки — снизу вверх, первая — у поля (NewMessagePicker.kt)
-            NewMessageSuggestions(
-                query = composeQuery,
-                suggestions = composeMatches,
-                recents = composeRecents,
-                onPick = pickRecipient,
-                modifier = Modifier.fillMaxSize().padding(pad)
-            )
+            Column(Modifier.fillMaxSize().padding(pad)) {
+                // Что пересылается — строкой сверху (2.2.0)
+                forwarding?.let { ForwardPreview(it) }
+                // Подсказки — снизу вверх, первая — у поля (NewMessagePicker.kt)
+                NewMessageSuggestions(
+                    query = composeQuery,
+                    suggestions = composeMatches,
+                    recents = composeRecents,
+                    onPick = pickRecipient,
+                    modifier = Modifier.weight(1f).fillMaxWidth()
+                )
+            }
         } else {
             Column(Modifier.fillMaxSize().padding(pad)) {
                 /*

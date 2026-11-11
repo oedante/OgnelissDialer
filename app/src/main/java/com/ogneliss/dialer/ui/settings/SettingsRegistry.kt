@@ -479,6 +479,52 @@ object SettingsRegistry {
          * Свайпы раздела «SMS» (2.1.0) — свои, отдельно от журнала
          * (автор, 07.11.2026). По умолчанию вправо «SMS», влево «Удалить».
          */
+        /*
+         * 2.2.0: отправка и переписка — отмена отправки, звонки в ленте,
+         * автоудаление кодов; папки и резервная копия — действия.
+         */
+        SettingEntry(
+            "sms_undo_send", SettingsCategory.MESSAGES,
+            R.string.settings_sms_undo_send, R.string.settings_sms_undo_send_text,
+            SettingKind.Choice("sms_undo_send"),
+            keywordsRes = R.string.keywords_sms,
+            groupRes = R.string.settings_group_messages
+        ),
+        SettingEntry(
+            "sms_calls_in_thread", SettingsCategory.MESSAGES,
+            R.string.settings_sms_calls_in_thread, R.string.settings_sms_calls_in_thread_text,
+            SettingKind.Switch("sms_calls_in_thread"),
+            keywordsRes = R.string.keywords_sms,
+            groupRes = R.string.settings_group_messages
+        ),
+        SettingEntry(
+            "sms_otp_cleanup", SettingsCategory.MESSAGES,
+            R.string.settings_sms_otp_cleanup, R.string.settings_sms_otp_cleanup_text,
+            SettingKind.Choice("sms_otp_cleanup"),
+            keywordsRes = R.string.keywords_sms,
+            groupRes = R.string.settings_group_messages
+        ),
+        SettingEntry(
+            "sms_folders", SettingsCategory.MESSAGES,
+            R.string.settings_sms_folders, R.string.settings_sms_folders_text,
+            SettingKind.Action("sms_folders"),
+            keywordsRes = R.string.keywords_sms,
+            groupRes = R.string.settings_group_messages
+        ),
+        SettingEntry(
+            "sms_backup", SettingsCategory.MESSAGES,
+            R.string.settings_sms_backup, R.string.settings_sms_backup_text,
+            SettingKind.Action("sms_backup"),
+            keywordsRes = R.string.keywords_sms,
+            groupRes = R.string.settings_group_sms_backup
+        ),
+        SettingEntry(
+            "sms_restore", SettingsCategory.MESSAGES,
+            R.string.settings_sms_restore, R.string.settings_sms_restore_text,
+            SettingKind.Action("sms_restore"),
+            keywordsRes = R.string.keywords_sms,
+            groupRes = R.string.settings_group_sms_backup
+        ),
         SettingEntry(
             "sms_swipe_right", SettingsCategory.MESSAGES,
             R.string.settings_sms_swipe_right, R.string.settings_sms_swipe_text,

@@ -1082,7 +1082,9 @@ fun RootScreen(
                     com.ogneliss.dialer.ui.conversation.MessagesScreen(
                         vm = vm,
                         onOpenConversation = { number ->
-                            nav.navigate(com.ogneliss.dialer.ui.conversation.ConversationRequest(number, null, null).route())
+                            // Пересылка (2.2.0): текст ждёт в SmsForward — уходит в поле переписки
+                            val forwarded = com.ogneliss.dialer.ui.conversation.SmsForward.take()
+                            nav.navigate(com.ogneliss.dialer.ui.conversation.ConversationRequest(number, forwarded, null).route())
                         },
                         onOpenSection = openSection,
                         onOpenDialpad = {
@@ -1116,7 +1118,13 @@ fun RootScreen(
                         onOpenCard = { number ->
                             nav.navigate("subscriber/" + android.net.Uri.encode("number:$number"))
                         },
-                        onCall = { number -> vm.call(number) }
+                        onCall = { number -> vm.call(number) },
+                        // «Переслать» (2.2.0): раздел SMS, режим «Кому» с этим текстом
+                        onForward = { text ->
+                            com.ogneliss.dialer.ui.conversation.SmsForward.pending = text
+                            nav.popBackStack()
+                            openSection(MainSection.MESSAGES)
+                        }
                     )
                 }
 

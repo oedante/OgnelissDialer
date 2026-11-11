@@ -166,10 +166,12 @@ class SettingsStateSource @Inject constructor(
     private val sms: Flow<Sms> = combine(
         prefs.smsDeliveryReports,
         prefs.smsSwipeRight,
-        prefs.smsSwipeLeft
-    ) { reports, right, left ->
-        Sms(reports, right, left)
-    }
+        prefs.smsSwipeLeft,
+        prefs.smsUndoSend,
+        prefs.smsCallsInThread
+    ) { reports, right, left, undo, calls ->
+        Sms(reports, right, left, undo, calls)
+    }.combine(prefs.smsOtpCleanup) { s, otp -> s.copy(otpCleanup = otp) }
 
     /**
      * Итоговый снимок.
@@ -247,6 +249,9 @@ class SettingsStateSource @Inject constructor(
             smsDeliveryReports = m.deliveryReports,
             smsSwipeRight = m.swipeRight,
             smsSwipeLeft = m.swipeLeft,
+            smsUndoSend = m.undoSend,
+            smsCallsInThread = m.callsInThread,
+            smsOtpCleanup = m.otpCleanup,
 
             fileLogging = true
         )
@@ -323,7 +328,10 @@ class SettingsStateSource @Inject constructor(
     private data class Sms(
         val deliveryReports: Boolean,
         val swipeRight: SwipeAction,
-        val swipeLeft: SwipeAction
+        val swipeLeft: SwipeAction,
+        val undoSend: UndoSend,
+        val callsInThread: Boolean,
+        val otpCleanup: OtpCleanup = OtpCleanup.OFF
     )
 
     private data class CallHelp(

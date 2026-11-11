@@ -45,9 +45,12 @@ import javax.inject.Singleton
         ContactCacheEntity::class,
         ReminderEntity::class,
         SpamMarkEntity::class,
-        NetworkNameEntity::class
+        NetworkNameEntity::class,
+        SmsDraftEntity::class,
+        ScheduledSmsEntity::class,
+        StarredSmsEntity::class
     ],
-    version = 8,
+    version = 9,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -62,6 +65,9 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun reminders(): ReminderDao
     abstract fun spamMarks(): SpamMarkDao
     abstract fun networkNames(): NetworkNameDao
+    abstract fun smsDrafts(): SmsDraftDao
+    abstract fun scheduledSms(): ScheduledSmsDao
+    abstract fun starredSms(): StarredSmsDao
 
     companion object {
         /**
@@ -71,8 +77,34 @@ abstract class AppDatabase : RoomDatabase() {
         val MIGRATIONS: Array<Migration>
             get() = arrayOf(
                 MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
-                MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8
+                MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9
             )
+
+        /**
+         * ВЕРСИЯ 8 → 9: ЧЕРНОВИКИ, ОЧЕРЕДЬ И ИЗБРАННОЕ SMS (2.2.0).
+         *
+         * Три новые таблицы; существующие не трогаются. Сами сообщения
+         * по-прежнему только в общем хранилище телефона — здесь лишь то,
+         * чего в нём нет: недописанное, ещё не отправленное и отмеченное.
+         */
+        val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `sms_drafts` (`address` TEXT NOT NULL, `body` TEXT NOT NULL, " +
+                        "`updatedAt` INTEGER NOT NULL, PRIMARY KEY(`address`))"
+                )
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `sms_scheduled` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`address` TEXT NOT NULL, `addressKey` TEXT NOT NULL, `body` TEXT NOT NULL, `subId` INTEGER, " +
+                        "`atMillis` INTEGER NOT NULL, `scheduled` INTEGER NOT NULL)"
+                )
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `sms_starred` (`msgKey` TEXT NOT NULL, `address` TEXT NOT NULL, " +
+                        "`body` TEXT NOT NULL, `date` INTEGER NOT NULL, `outgoing` INTEGER NOT NULL, " +
+                        "`starredAt` INTEGER NOT NULL, PRIMARY KEY(`msgKey`))"
+                )
+            }
+        }
 
         /**
          * ВЕРСИЯ 7 → 8: ИМЕНА ОТ ОПЕРАТОРА (1.8.0).
@@ -379,4 +411,7 @@ object DatabaseModule {
     @Provides fun provideContactCacheDao(db: AppDatabase) = db.contactCache()
     @Provides fun provideSimPreferenceDao(db: AppDatabase) = db.simPreferences()
     @Provides fun provideNetworkNameDao(db: AppDatabase) = db.networkNames()
+    @Provides fun provideSmsDraftDao(db: AppDatabase) = db.smsDrafts()
+    @Provides fun provideScheduledSmsDao(db: AppDatabase) = db.scheduledSms()
+    @Provides fun provideStarredSmsDao(db: AppDatabase) = db.starredSms()
 }

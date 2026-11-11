@@ -68,7 +68,7 @@ fun <T> Modifier.dragSelect(
     /** Строка под пальцем и все между ней и прошлой — в состояние жеста. */
     fun applyAt(y: Float) {
         val info = listState.layoutInfo
-        val local = y + info.viewportStartOffset
+        val local = logical(info, y)
         val hit = info.visibleItemsInfo.firstOrNull { local >= it.offset && local < it.offset + it.size } ?: return
         val from = if (session.lastIndex < 0) hit.index else session.lastIndex
         val range = minOf(from, hit.index)..maxOf(from, hit.index)
@@ -112,7 +112,7 @@ fun <T> Modifier.dragSelect(
             if (!started) return@awaitEachGesture
 
             val info = listState.layoutInfo
-            val startLocal = down.position.y + info.viewportStartOffset
+            val startLocal = logical(info, down.position.y)
             val first = info.visibleItemsInfo.firstOrNull { startLocal >= it.offset && startLocal < it.offset + it.size }
             // С отмеченной строки жест снимает, с остальных — отмечает. После
             // долгого нажатия строка только что отмечена им же — тогда отмечаем
@@ -127,9 +127,11 @@ fun <T> Modifier.dragSelect(
                     change.consume()
                     if (!change.pressed) break
                     lastY = change.position.y
+                    // Перевёрнутый список (переписка, 2.2.0): вперёд — это вверх
+                    val toward = if (listState.layoutInfo.reverseLayout) -1f else 1f
                     autoScroll = when {
-                        lastY < edgePx -> -stepPx
-                        lastY > size.height - edgePx -> stepPx
+                        lastY < edgePx -> -stepPx * toward
+                        lastY > size.height - edgePx -> stepPx * toward
                         else -> 0f
                     }
                     applyAt(lastY)
@@ -141,6 +143,15 @@ fun <T> Modifier.dragSelect(
         }
     }
 }
+
+/**
+ * Точка касания → отступ в координатах списка (offset элементов).
+ * У перевёрнутого списка (reverseLayout, переписка — 2.2.0) отступы
+ * считаются от нижнего края.
+ */
+private fun logical(info: androidx.compose.foundation.lazy.LazyListLayoutInfo, y: Float): Float =
+    if (info.reverseLayout) info.viewportSize.height - y + info.viewportStartOffset
+    else y + info.viewportStartOffset
 
 /** Ближе этого к краю списка — подкрутка. */
 private val EDGE = 56.dp

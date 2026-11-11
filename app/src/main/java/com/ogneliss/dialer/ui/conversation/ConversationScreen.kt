@@ -88,6 +88,16 @@ import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import com.ogneliss.dialer.ui.theme.Space
 import com.ogneliss.dialer.ui.components.listSheetContainerColor
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.CircleShape
+import com.ogneliss.dialer.data.CallType
+import com.ogneliss.dialer.ui.components.SelectionAction
+import com.ogneliss.dialer.ui.components.SelectionBottomBar
+import com.ogneliss.dialer.ui.components.SelectionMark
+import com.ogneliss.dialer.ui.components.SelectionState
+import com.ogneliss.dialer.ui.components.dragSelect
+import com.ogneliss.dialer.ui.components.rememberSelectionState
 
 /**
  * ЭКРАН ПЕРЕПИСКИ SMS (2.0.0).
@@ -119,6 +129,18 @@ import com.ogneliss.dialer.ui.components.listSheetContainerColor
  * • Подсказки «разрешите автозапуск» здесь нет — она в списке SMS
  *   и только там, где нужна (SmsHealth).
  * • «MMS не загружено» — касание скачивает (MmsDownloads).
+ *
+ * ── 2.2.0 ──────────────────────────────────────────────────────────────────
+ * • Долгое нажатие — выбор сообщений (как в журнале и списке SMS):
+ *   касания отмечают, протягивание по кружкам слева — подряд. Внизу —
+ *   копировать, переслать, в избранное, удалить. Копировать одно —
+ *   прежняя шторка: код, номера из текста, выделение части.
+ * • Избранное — звёздочка у времени.
+ * • Звонки с собеседником — строками между сообщениями, с SIM.
+ * • Очередь: пузырь «Отправляется · Отменить» на время окна отмены,
+ *   «Запланировано на …» — для отложенного. Ничего не всплывает поверх.
+ * • Долгое нажатие на «Отправить» — «Отправить позже» (время — то же
+ *   окно, что у напоминаний).
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -126,6 +148,8 @@ fun ConversationScreen(
     onBack: () -> Unit,
     onOpenCard: (String) -> Unit,
     onCall: (String) -> Unit,
+    /** Переслать текст (2.2.0): выбор получателя — в разделе SMS. */
+    onForward: (String) -> Unit = {},
     vm: ConversationViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -146,6 +170,11 @@ fun ConversationScreen(
     var actionsFor by remember { mutableStateOf<Message?>(null) }
     var selectTextOf by remember { mutableStateOf<Message?>(null) }
     var viewing by rememberSaveable { mutableStateOf<String?>(null) }
+    // 2.2.0: выбор сообщений и «Отправить позже»
+    val selection = rememberSelectionState<String>()
+    var scheduling by remember { mutableStateOf(false) }
+    BackHandler(enabled = selection.isActive) { selection.clear() }
+    val selected = { state.messages.filter { selection.isSelected(it.key) } }
 
     // Вернулись на экран — перечитать; на экране — без уведомлений о неотправленном здесь
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -231,7 +260,47 @@ fun ConversationScreen(
             }
         },
         bottomBar = {
-            ComposeBar(
+            if (selection.isActive) {
+                val allStarred = selection.selected.isNotEmpty() && selection.selected.all { it in state.starred }
+                SelectionBottomBar(
+                    count = selection.count,
+                    onClose = { selection.clear() },
+                    onSelectAll = null,
+                    extra = {
+                        SelectionAction(
+                            OgnelissIcons.ContentCopy, stringResource(R.string.action_copy), selection.count > 0,
+                            {
+                                val chosen = selected()
+                                // Одно — шторка: код, номера из текста, выделение части; несколько — текстом подряд
+                                if (chosen.size == 1) actionsFor = chosen.first()
+                                else SmsClipboard.copy(context, joinForCopy(chosen), SmsClipboard.Kind.TEXT)
+                                if (chosen.size != 1) selection.clear()
+                            }
+                        )
+                        SelectionAction(
+                            OgnelissIcons.Forward, stringResource(R.string.sms_forward), selection.count > 0,
+                            {
+                                val text = joinForCopy(selected())
+                                selection.clear()
+                                if (text.isNotBlank()) onForward(text)
+                            }
+                        )
+                        SelectionAction(
+                            if (allStarred) OgnelissIcons.StarBorder else OgnelissIcons.Star,
+                            stringResource(if (allStarred) R.string.sms_unstar else R.string.sms_star),
+                            selection.count > 0,
+                            {
+                                vm.star(selected(), on = !allStarred)
+                                selection.clear()
+                            }
+                        )
+                    },
+                    onDelete = {
+                        vm.deleteMany(selected())
+                        selection.clear()
+                    }
+                )
+            } else ComposeBar(
                 state = state,
                 onDraft = vm::onDraft,
                 onPickImages = {
@@ -239,12 +308,13 @@ fun ConversationScreen(
                 },
                 onRemoveImage = vm::removeImage,
                 onSelectSim = vm::selectSim,
-                onSend = vm::send
+                onSend = vm::send,
+                onSendLater = { scheduling = true }
             )
         }
     ) { pad ->
         Column(Modifier.fillMaxSize().padding(pad)) {
-            if (state.messages.isEmpty() && !state.loading) {
+            if (state.messages.isEmpty() && state.queued.isEmpty() && !state.loading) {
                 Box(Modifier.weight(1f).fillMaxWidth().padding(Space.xl), contentAlignment = Alignment.Center) {
                     Text(
                         stringResource(R.string.sms_empty),
@@ -270,16 +340,29 @@ fun ConversationScreen(
                     )
                 }
                 MessageList(
-                    messages = state.messages,
+                    state = state,
                     incomingColor = incomingColor,
+                    selection = selection,
                     modifier = Modifier.weight(1f),
-                    onLongPress = { actionsFor = it },
                     onRetry = vm::retry,
                     onDownload = vm::downloadMms,
-                    onOpenImage = { viewing = it }
+                    onOpenImage = { viewing = it },
+                    onCancelQueued = vm::cancelQueued,
+                    onSendQueuedNow = vm::sendQueuedNow
                 )
             }
         }
+    }
+
+    if (scheduling) {
+        com.ogneliss.dialer.ui.components.ReminderTimeDialog(
+            displayName = state.title,
+            initialMillis = System.currentTimeMillis() + SCHEDULE_DEFAULT_MS,
+            onSave = { at -> vm.sendLater(at); scheduling = false },
+            onDismiss = { scheduling = false },
+            title = stringResource(R.string.sms_send_later),
+            icon = OgnelissIcons.Schedule
+        )
     }
 
     actionsFor?.let { message ->
@@ -290,7 +373,7 @@ fun ConversationScreen(
             onSelectText = { selectTextOf = message },
             onRetry = { vm.retry(message) },
             onDelete = { vm.delete(message) },
-            onDismiss = { actionsFor = null }
+            onDismiss = { actionsFor = null; selection.clear() }
         )
     }
 
@@ -323,54 +406,244 @@ fun ConversationScreen(
  * как в любой переписке, и клавиатура не прячет последнее сообщение.
  * Подпись дня ставится над первым сообщением дня; в перевёрнутом списке
  * это значит — следующим элементом после него.
+ *
+ * 2.2.0: в ленте и звонки (по дате, между сообщениями), а ниже всех —
+ * очередь отправки. В режиме выбора слева у сообщений — кружки,
+ * протягивание по ним отмечает подряд (dragSelect).
  */
 @Composable
 private fun MessageList(
-    messages: List<Message>,
+    state: ConversationViewModel.UiState,
     /** Заливка входящих — тон собеседника (2.1.3). */
     incomingColor: Color,
+    selection: SelectionState<String>,
     modifier: Modifier,
-    onLongPress: (Message) -> Unit,
     onRetry: (Message) -> Unit,
     onDownload: (Message) -> Unit,
-    onOpenImage: (String) -> Unit
+    onOpenImage: (String) -> Unit,
+    onCancelQueued: (Long) -> Unit,
+    onSendQueuedNow: (Long) -> Unit
 ) {
+    val messages = state.messages
     val listState = rememberLazyListState()
     // Новое сообщение — список у нижнего края (reverseLayout: нулевой — самый новый)
-    LaunchedEffect(messages.size) { if (messages.isNotEmpty()) listState.animateScrollToItem(0) }
-    val newestFirst = remember(messages) { messages.asReversed() }
+    LaunchedEffect(messages.size, state.queued.size) {
+        if (messages.isNotEmpty() || state.queued.isNotEmpty()) listState.animateScrollToItem(0)
+    }
+    // Сообщения и звонки — одной лентой по времени, новые первыми
+    val newestFirst: List<Any> = remember(messages, state.calls) {
+        if (state.calls.isEmpty()) messages.asReversed()
+        else (messages + state.calls).sortedByDescending { if (it is Message) it.date else (it as ConversationViewModel.CallEvent).date }
+    }
+    val messageKeys = remember(messages) { messages.mapTo(HashSet()) { it.key } }
     LazyColumn(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .dragSelect(selection, listState) { key -> (key as? String)?.takeIf { it in messageKeys } },
         state = listState,
         reverseLayout = true,
         contentPadding = androidx.compose.foundation.layout.PaddingValues(
             horizontal = FlowUi.screenPadding, vertical = Space.m
         )
     ) {
-        newestFirst.forEachIndexed { index, message ->
-            /*
-             * ВРЕМЯ — ОДНО НА СООБЩЕНИЯ ПОДРЯД (2.1.3, обзор интерфейса).
-             * Было: строка времени под каждым пузырём — три сообщения за
-             * минуту давали три одинаковых «05:37», и лента наполовину
-             * состояла из подписей. Стало: время — под последним из идущих
-             * подряд (та же сторона, тот же день, не дальше [TIME_GROUP_MS]
-             * от следующего); состояние («Не отправлено», «Доставлено»)
-             * показывается всегда.
-             */
-            val newer = newestFirst.getOrNull(index - 1)
-            val showTime = newer == null || newer.outgoing != message.outgoing ||
-                newer.date - message.date > TIME_GROUP_MS || !sameDay(newer.date, message.date)
-            item(key = message.key) {
-                Bubble(message, incomingColor, showTime, onLongPress, onRetry, onDownload, onOpenImage)
+        // Очередь — ниже всего: позже последнего сообщения (в перевёрнутом списке — первой)
+        state.queued.asReversed().forEach { queued ->
+            item(key = "queued:" + queued.id) { QueuedBubble(queued, onCancelQueued, onSendQueuedNow) }
+        }
+        newestFirst.forEachIndexed { index, entry ->
+            val date = if (entry is Message) entry.date else (entry as ConversationViewModel.CallEvent).date
+            if (entry is Message) {
+                /*
+                 * ВРЕМЯ — ОДНО НА СООБЩЕНИЯ ПОДРЯД (2.1.3, обзор интерфейса).
+                 * Было: строка времени под каждым пузырём — три сообщения за
+                 * минуту давали три одинаковых «05:37», и лента наполовину
+                 * состояла из подписей. Стало: время — под последним из идущих
+                 * подряд (та же сторона, тот же день, не дальше [TIME_GROUP_MS]
+                 * от следующего); состояние («Не отправлено», «Доставлено»)
+                 * показывается всегда.
+                 */
+                val newer = newestFirst.getOrNull(index - 1) as? Message
+                val showTime = newer == null || newer.outgoing != entry.outgoing ||
+                    newer.date - entry.date > TIME_GROUP_MS || !sameDay(newer.date, entry.date)
+                item(key = entry.key) {
+                    SelectableRow(selection, entry.key) {
+                        Bubble(
+                            message = entry,
+                            incomingColor = incomingColor,
+                            showTime = showTime,
+                            starred = entry.key in state.starred,
+                            onLongPress = { m ->
+                                if (selection.isActive) selection.toggle(m.key) else selection.start(m.key)
+                            },
+                            onClick = if (selection.isActive) { m -> selection.toggle(m.key) } else null,
+                            onRetry = onRetry,
+                            onDownload = onDownload,
+                            onOpenImage = onOpenImage
+                        )
+                    }
+                }
+            } else if (entry is ConversationViewModel.CallEvent) {
+                item(key = entry.key) { CallLine(entry) }
             }
             // Подпись дня — над первым сообщением дня (в перевёрнутом списке — после)
             val older = newestFirst.getOrNull(index + 1)
-            if (older == null || !sameDay(older.date, message.date)) {
-                item(key = "day:" + message.key) { DayCaption(message.date) }
+            val olderDate = when (older) {
+                is Message -> older.date
+                is ConversationViewModel.CallEvent -> older.date
+                else -> null
+            }
+            if (olderDate == null || !sameDay(olderDate, date)) {
+                val key = if (entry is Message) entry.key else (entry as ConversationViewModel.CallEvent).key
+                item(key = "day:$key") { DayCaption(date) }
             }
         }
     }
 }
+
+/**
+ * Строка ленты в режиме выбора (2.2.0): кружок слева, отмеченное — подсветкой.
+ * Вне режима — только содержимое, без отступа под кружок.
+ */
+@Composable
+private fun SelectableRow(selection: SelectionState<String>, key: String, content: @Composable () -> Unit) {
+    if (!selection.isActive) {
+        content()
+        return
+    }
+    val on = selection.isSelected(key)
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.medium)
+            .background(if (on) MaterialTheme.colorScheme.primary.copy(alpha = 0.10f) else Color.Transparent)
+            .clickable(onClickLabel = stringResource(R.string.sms_message_actions)) { selection.toggle(key) },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        SelectionMark(on)
+        Box(Modifier.weight(1f)) { content() }
+    }
+}
+
+/**
+ * Звонок в ленте переписки (2.2.0): тип значком (пропущенный — красным),
+ * словом, длительность, время и SIM при двух картах. Строкой по центру,
+ * мельче сообщений: это контекст переписки, а не её часть.
+ */
+@Composable
+private fun CallLine(event: ConversationViewModel.CallEvent) {
+    val context = LocalContext.current
+    val typeRes = when (event.type) {
+        CallType.INCOMING -> R.string.call_incoming
+        CallType.OUTGOING -> R.string.call_outgoing
+        CallType.MISSED -> R.string.call_missed
+        CallType.REJECTED -> R.string.call_rejected
+        CallType.BLOCKED -> R.string.call_blocked
+        CallType.VOICEMAIL -> R.string.call_voicemail
+    }
+    val icon = when (event.type) {
+        CallType.OUTGOING -> OgnelissIcons.CallMade
+        CallType.MISSED -> OgnelissIcons.CallMissed
+        CallType.REJECTED, CallType.BLOCKED -> OgnelissIcons.Block
+        else -> OgnelissIcons.CallReceived
+    }
+    val missed = event.type == CallType.MISSED
+    val color = if (missed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
+    val time = remember(event.date) { DateUtils.formatDateTime(context, event.date, DateUtils.FORMAT_SHOW_TIME) }
+    val duration = if (event.durationSec > 0) {
+        String.format(java.util.Locale.ROOT, "%d:%02d", event.durationSec / 60, event.durationSec % 60)
+    } else null
+    Row(
+        Modifier.fillMaxWidth().padding(vertical = Space.xs),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(FlowUi.iconSizeInline))
+        Spacer(Modifier.width(Space.xs))
+        Text(
+            listOfNotNull(stringResource(typeRes), duration, time).joinToString(" · "),
+            style = MaterialTheme.typography.labelMedium,
+            color = color
+        )
+        event.simSlot?.let { slot ->
+            Spacer(Modifier.width(Space.xs))
+            com.ogneliss.dialer.ui.components.SimBadge(slot)
+        }
+    }
+}
+
+/**
+ * SMS в очереди (2.2.0): свой пузырь бледнее отправленного, под ним —
+ * «Отправляется» или «Запланировано на …» и действия словами.
+ * Ничего не всплывает поверх ленты и строки ввода — автор: «отмена
+ * отправки, только чтобы не сильно мешало и не перекрывало интерфейс».
+ */
+@Composable
+private fun QueuedBubble(queued: ConversationViewModel.Queued, onCancel: (Long) -> Unit, onSendNow: (Long) -> Unit) {
+    val context = LocalContext.current
+    val whenText = remember(queued.atMillis) {
+        DateUtils.formatDateTime(
+            context, queued.atMillis,
+            DateUtils.FORMAT_SHOW_TIME or (if (DateUtils.isToday(queued.atMillis)) 0 else DateUtils.FORMAT_SHOW_DATE)
+        )
+    }
+    Column(
+        Modifier.fillMaxWidth().padding(vertical = Space.xxs),
+        horizontalAlignment = Alignment.End
+    ) {
+        Surface(
+            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            shape = MaterialTheme.shapes.large,
+            modifier = Modifier.widthIn(max = 320.dp)
+        ) {
+            Text(
+                queued.body,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(horizontal = Space.m, vertical = Space.s)
+            )
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (queued.scheduled) {
+                Icon(
+                    OgnelissIcons.Schedule, contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(FlowUi.iconSizeInline)
+                )
+            }
+            Text(
+                if (queued.scheduled) stringResource(R.string.sms_scheduled_for, whenText)
+                else stringResource(R.string.sms_status_sending),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = Space.xs)
+            )
+            if (queued.scheduled) QueueLink(stringResource(R.string.sms_send_now)) { onSendNow(queued.id) }
+            QueueLink(stringResource(R.string.sms_undo)) { onCancel(queued.id) }
+        }
+    }
+}
+
+/** Действие под пузырём очереди — словом, цветом действия; касание не меньше 48 dp по высоте. */
+@Composable
+private fun QueueLink(label: String, onClick: () -> Unit) {
+    Text(
+        label,
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier
+            .clip(MaterialTheme.shapes.small)
+            .clickable(onClick = onClick)
+            .heightIn(min = 48.dp)
+            .padding(horizontal = Space.s, vertical = Space.m)
+    )
+}
+
+/** Текст выбранных для копирования и пересылки: по порядку, через пустую строку. */
+private fun joinForCopy(messages: List<Message>): String =
+    messages.sortedBy { it.date }.map { it.body }.filter { it.isNotBlank() }.joinToString("\n\n")
+
+/** «Отправить позже» — по умолчанию через час: окно сразу предлагает разумное. */
+private const val SCHEDULE_DEFAULT_MS = 60 * 60_000L
 
 /** «Сегодня», «Вчера», «ср, 4 нояб.» — как группы давности в журнале. */
 @Composable
@@ -413,7 +686,11 @@ private fun Bubble(
     incomingColor: Color,
     /** Время под пузырём: у идущих подряд — только под последним (2.1.3). */
     showTime: Boolean,
+    /** В избранном — звёздочка у времени (2.2.0). */
+    starred: Boolean,
     onLongPress: (Message) -> Unit,
+    /** Режим выбора (2.2.0): касание отмечает; null — обычное касание. */
+    onClick: ((Message) -> Unit)?,
     onRetry: (Message) -> Unit,
     onDownload: (Message) -> Unit,
     onOpenImage: (String) -> Unit
@@ -455,6 +732,7 @@ private fun Bubble(
                     // Касание: не отправлено — повтор; MMS не загружено — скачать (2.1.0)
                     onClick = {
                         when {
+                            onClick != null -> onClick(message)
                             failed -> onRetry(message)
                             notDownloaded -> onDownload(message)
                         }
@@ -497,21 +775,39 @@ private fun Bubble(
                 modifier = Modifier.padding(top = Space.xs)
             )
         }
-        if (showTime || statusText != null) Text(
-            listOfNotNull(time, statusText).joinToString(" · "),
-            style = MaterialTheme.typography.labelSmall,
-            color = when {
-                failed -> MaterialTheme.colorScheme.error
-                notDownloaded -> MaterialTheme.colorScheme.primary
-                else -> MaterialTheme.colorScheme.onSurfaceVariant
-            },
-            modifier = Modifier.padding(horizontal = Space.xs, vertical = Space.xxs)
-        )
+        if (showTime || statusText != null || starred) Row(
+            Modifier.padding(horizontal = Space.xs, vertical = Space.xxs),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (starred) {
+                Icon(
+                    OgnelissIcons.Star,
+                    contentDescription = stringResource(R.string.sms_starred),
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(STAR_SIZE).padding(end = Space.xxs)
+                )
+            }
+            if (showTime || statusText != null) Text(
+                listOfNotNull(time, statusText).joinToString(" · "),
+                style = MaterialTheme.typography.labelSmall,
+                color = when {
+                    failed -> MaterialTheme.colorScheme.error
+                    notDownloaded -> MaterialTheme.colorScheme.primary
+                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                }
+            )
+        }
     }
 }
 
+/** Звёздочка избранного у времени — по высоте строки времени. */
+private val STAR_SIZE = 14.dp
+
 /** Портрет в шапке переписки — меньше строки списка: шапка ниже. */
 private val HEADER_AVATAR = 36.dp
+
+/** Кнопка «Отправить» — размер стандартной кнопки-значка. */
+private val SEND_BUTTON = 48.dp
 
 /** Сообщения одной стороны не дальше этого друг от друга — под одним временем. */
 private const val TIME_GROUP_MS = 3 * 60_000L
@@ -535,7 +831,9 @@ private fun ComposeBar(
     onPickImages: () -> Unit,
     onRemoveImage: (Uri) -> Unit,
     onSelectSim: (Int) -> Unit,
-    onSend: () -> Unit
+    onSend: () -> Unit,
+    /** Долгое нажатие на «Отправить» — «Отправить позже» (2.2.0); с картинками нет. */
+    onSendLater: () -> Unit
 ) {
     val canSendNow = !state.sending && (state.draft.isNotBlank() || state.images.isNotEmpty())
     Surface(
@@ -606,17 +904,38 @@ private fun ComposeBar(
                 if (state.sims.size > 1) SimPicker(state, onSelectSim)
                 // 2.1.0: отправить нельзя (нет SIM, режим полёта) — кнопка серая
                 val canSms = com.ogneliss.dialer.util.LocalCallAvailability.current.canSms
-                FilledIconButton(
-                    onClick = onSend,
-                    enabled = canSendNow,
-                    colors = if (canSms) IconButtonDefaults.filledIconButtonColors()
-                    else IconButtonDefaults.filledIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                        contentColor = MaterialTheme.colorScheme.outline
-                    ),
-                    modifier = Modifier.padding(start = Space.xs)
+                /*
+                 * «Отправить» — касание; долгое нажатие — «Отправить позже»
+                 * (2.2.0, как в мессенджерах). Своей кнопкой, а не
+                 * FilledIconButton: у той нет долгого нажатия. Вид — тот же.
+                 */
+                val container = when {
+                    !canSendNow -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+                    canSms -> MaterialTheme.colorScheme.primary
+                    else -> MaterialTheme.colorScheme.surfaceContainerHighest
+                }
+                val content = when {
+                    !canSendNow -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                    canSms -> MaterialTheme.colorScheme.onPrimary
+                    else -> MaterialTheme.colorScheme.outline
+                }
+                val laterLabel = stringResource(R.string.sms_send_later)
+                Box(
+                    Modifier
+                        .padding(start = Space.xs)
+                        .size(SEND_BUTTON)
+                        .clip(CircleShape)
+                        .background(container)
+                        .combinedClickable(
+                            enabled = canSendNow,
+                            role = androidx.compose.ui.semantics.Role.Button,
+                            onClick = onSend,
+                            onLongClick = if (state.images.isEmpty()) onSendLater else null,
+                            onLongClickLabel = laterLabel
+                        ),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Icon(OgnelissIcons.Send, contentDescription = stringResource(R.string.sms_send))
+                    Icon(OgnelissIcons.Send, contentDescription = stringResource(R.string.sms_send), tint = content)
                 }
             }
         }

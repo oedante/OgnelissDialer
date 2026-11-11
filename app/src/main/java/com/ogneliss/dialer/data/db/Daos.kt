@@ -234,3 +234,62 @@ interface NetworkNameDao {
     @Query("DELETE FROM network_names WHERE seenAt < :before")
     suspend fun deleteOlderThan(before: Long)
 }
+
+/** Черновики SMS (2.2.0). Ключ — smsPinKey(адрес). */
+@Dao
+interface SmsDraftDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsert(draft: SmsDraftEntity)
+
+    @Query("SELECT * FROM sms_drafts WHERE address = :key LIMIT 1")
+    suspend fun get(key: String): SmsDraftEntity?
+
+    @Query("DELETE FROM sms_drafts WHERE address = :key")
+    suspend fun delete(key: String)
+
+    /** Все — для строки «Черновик: …» в списке SMS. */
+    @Query("SELECT * FROM sms_drafts")
+    fun all(): Flow<List<SmsDraftEntity>>
+}
+
+/** Очередь отправки SMS (2.2.0): отложенные и окно «Отменить». */
+@Dao
+interface ScheduledSmsDao {
+
+    @Insert
+    suspend fun insert(entry: ScheduledSmsEntity): Long
+
+    @Query("SELECT * FROM sms_scheduled WHERE id = :id LIMIT 1")
+    suspend fun get(id: Long): ScheduledSmsEntity?
+
+    @Query("SELECT * FROM sms_scheduled ORDER BY atMillis")
+    fun all(): Flow<List<ScheduledSmsEntity>>
+
+    @Query("SELECT * FROM sms_scheduled ORDER BY atMillis")
+    suspend fun snapshot(): List<ScheduledSmsEntity>
+
+    /** Число удалённых строк: 0 — уже отправлено или отменено в другом месте. */
+    @Query("DELETE FROM sms_scheduled WHERE id = :id")
+    suspend fun delete(id: Long): Int
+
+    @Query("UPDATE sms_scheduled SET atMillis = :at WHERE id = :id")
+    suspend fun reschedule(id: Long, at: Long)
+}
+
+/** Избранные сообщения (2.2.0). */
+@Dao
+interface StarredSmsDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsert(entries: List<StarredSmsEntity>)
+
+    @Query("DELETE FROM sms_starred WHERE msgKey IN (:keys)")
+    suspend fun delete(keys: List<String>)
+
+    @Query("SELECT * FROM sms_starred ORDER BY date DESC")
+    fun all(): Flow<List<StarredSmsEntity>>
+
+    @Query("SELECT * FROM sms_starred ORDER BY date DESC")
+    suspend fun snapshot(): List<StarredSmsEntity>
+}

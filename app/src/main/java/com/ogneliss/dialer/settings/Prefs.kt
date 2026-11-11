@@ -235,6 +235,30 @@ enum class WidgetShape(val corner: Float?) {
     }
 }
 
+/**
+ * ОТМЕНА ОТПРАВКИ SMS (2.2.0): сколько секунд после «Отправить» сообщение
+ * ждёт в очереди с «Отменить» под пузырём (SmsQueue). OFF — сразу.
+ */
+enum class UndoSend(val seconds: Int) {
+    OFF(0), S3(3), S5(5), S10(10);
+
+    companion object {
+        fun from(name: String?): UndoSend = entries.firstOrNull { it.name == name } ?: S5
+    }
+}
+
+/**
+ * АВТОУДАЛЕНИЕ КОДОВ (2.2.0): входящие с кодом подтверждения удаляются
+ * через [hours] после прихода (OtpCleanup в sms). OFF — не удалять.
+ */
+enum class OtpCleanup(val hours: Int) {
+    OFF(0), H1(1), H24(24);
+
+    companion object {
+        fun from(name: String?): OtpCleanup = entries.firstOrNull { it.name == name } ?: OFF
+    }
+}
+
 enum class AnswerMode {
     TAP,
     SLIDE;
@@ -560,6 +584,10 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
          * «sms_in_app» убран в 2.1.0 — сохранённое значение больше не читается.
          */
         val SMS_DELIVERY_REPORTS = booleanPreferencesKey("sms_delivery_reports")
+        // 2.2.0
+        val SMS_UNDO_SEND = stringPreferencesKey("sms_undo_send")
+        val SMS_CALLS_IN_THREAD = booleanPreferencesKey("sms_calls_in_thread")
+        val SMS_OTP_CLEANUP = stringPreferencesKey("sms_otp_cleanup")
         val NOTES_RETENTION = stringPreferencesKey("notes_retention")
         val NOTES_RETENTION_SCOPE = stringPreferencesKey("notes_retention_scope")
         // Экран после звонка
@@ -954,6 +982,15 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      */
     val smsDeliveryReports: Flow<Boolean> = data.map { it[Keys.SMS_DELIVERY_REPORTS] ?: false }
 
+    /** Отмена отправки SMS (2.2.0): по умолчанию 5 секунд. */
+    val smsUndoSend: Flow<UndoSend> = data.map { UndoSend.from(it[Keys.SMS_UNDO_SEND]) }
+
+    /** Звонки в ленте переписки (2.2.0): по умолчанию показываются. */
+    val smsCallsInThread: Flow<Boolean> = data.map { it[Keys.SMS_CALLS_IN_THREAD] ?: true }
+
+    /** Автоудаление кодов (2.2.0): по умолчанию выключено — удаление без спроса. */
+    val smsOtpCleanup: Flow<OtpCleanup> = data.map { OtpCleanup.from(it[Keys.SMS_OTP_CLEANUP]) }
+
     /**
      * Открывать клавиатуру сразу при запуске.
      *
@@ -1241,6 +1278,17 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setSmsDeliveryReports(v: Boolean) {
         edit("sms_delivery_reports", v) { it[Keys.SMS_DELIVERY_REPORTS] = v }
         com.ogneliss.dialer.sms.SmsSettings.put(context, com.ogneliss.dialer.sms.SmsSettings.KEY_DELIVERY_REPORTS, v)
+    }
+    // 2.2.0: копия в SmsSettings — для приёмника SMS и очереди без корутин
+    suspend fun setSmsUndoSend(v: UndoSend) {
+        edit("sms_undo_send", v.name) { it[Keys.SMS_UNDO_SEND] = v.name }
+        com.ogneliss.dialer.sms.SmsSettings.putInt(context, com.ogneliss.dialer.sms.SmsSettings.KEY_UNDO_SECONDS, v.seconds)
+    }
+    suspend fun setSmsCallsInThread(v: Boolean) =
+        edit("sms_calls_in_thread", v) { it[Keys.SMS_CALLS_IN_THREAD] = v }
+    suspend fun setSmsOtpCleanup(v: OtpCleanup) {
+        edit("sms_otp_cleanup", v.name) { it[Keys.SMS_OTP_CLEANUP] = v.name }
+        com.ogneliss.dialer.sms.SmsSettings.putInt(context, com.ogneliss.dialer.sms.SmsSettings.KEY_OTP_HOURS, v.hours)
     }
     suspend fun setQuietHours(v: QuietHours) =
         edit("quiet_hours", v.name) { it[Keys.QUIET_HOURS] = v.name }
