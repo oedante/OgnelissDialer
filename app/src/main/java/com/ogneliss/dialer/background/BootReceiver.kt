@@ -15,6 +15,9 @@ class BootReceiver : BroadcastReceiver() {
     @javax.inject.Inject
     lateinit var reminders: com.ogneliss.dialer.data.RemindersRepository
 
+    @javax.inject.Inject
+    lateinit var smsQueue: com.ogneliss.dialer.sms.SmsQueue
+
     override fun onReceive(context: Context, intent: Intent) {
         // 2.1.0: и после обновления приложения — состояние приёмника
         // пропущенных сверяется с разрешением уведомлений
@@ -23,6 +26,8 @@ class BootReceiver : BroadcastReceiver() {
         ) return
 
         CallNotifications.ensureChannels(context)
+        // Виджет «Закреплённые» (2.2.0): после обновления приложения — новая разметка
+        com.ogneliss.dialer.widget.PinnedWidget.update(context)
         // Уведомления запрещены — пропущенные рисует система (MissedCallsNotifier.syncReceiver)
         com.ogneliss.dialer.call.MissedCallsNotifier.syncReceiver(context)
 
@@ -43,6 +48,8 @@ class BootReceiver : BroadcastReceiver() {
             kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.IO
         ).launch {
             suspendRunCatching { reminders.restoreAfterBoot() }
+            // Отложенные SMS (2.2.0): пришедшее за время выключения — сейчас, остальное — будильником
+            suspendRunCatching { smsQueue.sendDue() }
             pending.finish()
         }
     }

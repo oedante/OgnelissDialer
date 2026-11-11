@@ -410,6 +410,36 @@ object OgnelissIcons {
         }
     }
 
+    /** «Переслать» (2.2.0): стрелка вперёд — зеркало ArrowBack. */
+    val Forward: ImageVector by lazy {
+        rounded("Forward", autoMirror = true) {
+            moveTo(647f, -440f)
+            lineTo(451f, -244f)
+            quadTo(439f, -232f, 439.5f, -216f)
+            quadTo(440f, -200f, 452f, -188f)
+            quadTo(464f, -177f, 480f, -176.5f)
+            quadTo(496f, -176f, 508f, -188f)
+            lineTo(772f, -452f)
+            quadTo(778f, -458f, 780.5f, -465f)
+            quadTo(783f, -472f, 783f, -480f)
+            quadTo(783f, -488f, 780.5f, -495f)
+            quadTo(778f, -502f, 772f, -508f)
+            lineTo(508f, -772f)
+            quadTo(497f, -783f, 480.5f, -783f)
+            quadTo(464f, -783f, 452f, -772f)
+            quadTo(440f, -760f, 440f, -743.5f)
+            quadTo(440f, -727f, 452f, -715f)
+            lineTo(647f, -520f)
+            lineTo(200f, -520f)
+            quadTo(183f, -520f, 171.5f, -508.5f)
+            quadTo(160f, -497f, 160f, -480f)
+            quadTo(160f, -463f, 171.5f, -451.5f)
+            quadTo(183f, -440f, 200f, -440f)
+            lineTo(647f, -440f)
+            close()
+        }
+    }
+
     val ArrowBack: ImageVector by lazy {
         rounded("ArrowBack", autoMirror = true) {
             moveTo(313f, -440f)

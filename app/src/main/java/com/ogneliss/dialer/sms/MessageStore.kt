@@ -79,6 +79,30 @@ object MessageStore {
         return (sms + mms).sortedByDescending { it.date }.take(limit)
     }
 
+    /**
+     * ПОИСК ПО ТЕКСТУ ВСЕХ SMS (2.2.0): от новых к старым, не больше [limit].
+     *
+     * LIKE в SQLite без регистра только для латиницы: «Привет» и «привет»
+     * для него разные слова. Поэтому ищутся три написания запроса — как
+     * набрано, строчными и с заглавной первой буквы: так находится почти
+     * всё, что люди пишут, без чтения всех сообщений в память.
+     * MMS не ищутся: их текст — в частях, отдельной таблицей.
+     */
+    fun search(context: Context, query: String, limit: Int = 100): List<Message> {
+        val q = query.trim()
+        if (!SmsRole.canRead(context) || q.length < 2) return emptyList()
+        val variants = linkedSetOf(q, q.lowercase(), q.lowercase().replaceFirstChar { it.uppercase() })
+            .map { "%" + it.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%" }
+        val selection = variants.joinToString(" OR ") { "body LIKE ? ESCAPE '\\'" }
+        return querySms(context, selection, variants.toTypedArray(), limit)
+    }
+
+    /** Входящие SMS старше [before], новые первыми — для автоудаления кодов (2.2.0). */
+    fun incomingBefore(context: Context, before: Long, limit: Int): List<Message> {
+        if (!SmsRole.canRead(context)) return emptyList()
+        return querySms(context, "type = $SMS_INBOX AND date < ?", arrayOf(before.toString()), limit)
+    }
+
     /** Переписка с номером [address]: последние [limit] сообщений, от старых к новым. */
     fun conversation(context: Context, address: String, limit: Int = 500): List<Message> {
         if (!SmsRole.canRead(context)) return emptyList()

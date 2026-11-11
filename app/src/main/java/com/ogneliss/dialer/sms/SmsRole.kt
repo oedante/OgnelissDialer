@@ -312,6 +312,20 @@ object SmsSettings {
         prefs(context).edit().putBoolean(key, value).apply()
     }
 
+    fun putInt(context: Context, key: String, value: Int) {
+        prefs(context).edit().putInt(key, value).apply()
+    }
+
+    /** Отмена отправки, секунды (2.2.0; по умолчанию 5 — как UndoSend.S5). */
+    const val KEY_UNDO_SECONDS = "sms_undo_seconds"
+
+    fun undoSeconds(context: Context): Int = prefs(context).getInt(KEY_UNDO_SECONDS, 5)
+
+    /** Автоудаление кодов, часы (2.2.0; 0 — выключено). */
+    const val KEY_OTP_HOURS = "sms_otp_hours"
+
+    fun otpCleanupHours(context: Context): Int = prefs(context).getInt(KEY_OTP_HOURS, 0)
+
     /**
      * SMS открываются в диалере (2.1.0): только когда он — приложение SMS
      * по умолчанию. Было: ещё и при роли телефона с «Писать SMS в диалере» —

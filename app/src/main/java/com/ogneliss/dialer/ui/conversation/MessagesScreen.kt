@@ -61,6 +61,8 @@ import com.ogneliss.dialer.ui.components.dragSelect
 import com.ogneliss.dialer.ui.components.SelectionBottomBar
 import com.ogneliss.dialer.ui.components.rememberSelectionState
 import com.ogneliss.dialer.sms.smsPinKey
+import com.ogneliss.dialer.sms.SmsFolder
+import com.ogneliss.dialer.sms.SmsFolders
 import com.ogneliss.dialer.ui.components.FloatingDatePill
 import com.ogneliss.dialer.ui.components.GroupPosition
 import com.ogneliss.dialer.ui.components.RowDivider
@@ -142,6 +144,10 @@ fun MessagesScreen(
     /** Карточка абонента по ключу (contact:… / number:…) — из карточек действий. */
     onOpenCard: (String) -> Unit,
     onOpenBlockLists: () -> Unit,
+    /** Найденное поиском сообщение (2.2.0): адрес и Message.key. */
+    onOpenMessage: (String, String) -> Unit = { address, _ -> onOpenConversation(address) },
+    /** Порядок и показ папок (2.2.0): долгое нажатие на вкладки. */
+    onOpenFolders: () -> Unit = {},
     messagesVm: MessagesViewModel = hiltViewModel()
 ) {
     // Переписки — свой ViewModel; книга и настройки — общие с журналом
@@ -179,6 +185,19 @@ fun MessagesScreen(
     var composeNew by rememberSaveable { mutableStateOf(false) }
     var composeQuery by rememberSaveable { mutableStateOf("") }
     val closeCompose = { composeNew = false; composeQuery = "" }
+    // Папка (2.2.0): скрытая в настройках — снова «Все»
+    var folderName by rememberSaveable { mutableStateOf(SmsFolder.ALL.name) }
+    val visibleFolders = remember(state.folders) { state.folders.filter { it.second }.map { it.first } }
+    val folder = SmsFolder.entries.firstOrNull { it.name == folderName }?.takeIf { it in visibleFolders } ?: SmsFolder.ALL
+    // Поиск по тексту всех SMS (2.2.0) — модель ищет сообщения, экран — переписки
+    LaunchedEffect(query) { messagesVm.search(query) }
+    // Закрыли «Кому» сами — и пересылка отменена (2.2.0, SmsForward)
+    val cancelCompose = { closeCompose(); SmsForward.pending = null }
+    // «Переслать» из переписки — сразу «Кому» с текстом пересылки
+    val forwarding = SmsForward.pending
+    LaunchedEffect(forwarding, state.isDefaultSms) {
+        if (forwarding != null && state.isDefaultSms) composeNew = true
+    }
     /*
      * Удаление (2.1.0): сразу из списка, «Отменить» — в общем поле с кольцом
      * (DialerViewModel.notifyWithUndo), из хранилища — когда оно погаснет.
@@ -287,7 +306,20 @@ fun MessagesScreen(
     val (archivedThreads, activeThreads) = remember(visibleThreads, archive) {
         visibleThreads.partition { ArchiveRules.isSmsArchived(smsPinKey(it.address), it.last.date, archive) }
     }
-    val source = if (showArchive) archivedThreads else activeThreads
+    // Непрочитанные по папкам — числом справа в списке папок (2.2.0)
+    val folderUnread = remember(activeThreads, visibleFolders, byNumber) {
+        visibleFolders.associateWith { f ->
+            if (f == SmsFolder.STARRED || f == SmsFolder.ALL) 0
+            else activeThreads.count { t -> t.unread > 0 && SmsFolders.matches(f, t.address, contactOf(t.address) != null, t.unread) }
+        }
+    }
+    // Папка — только у общего списка; в архиве и при поиске — все переписки
+    val inFolder = if (showArchive || query.isNotBlank() || folder == SmsFolder.ALL) null else folder
+    val source = remember(showArchive, archivedThreads, activeThreads, inFolder, byNumber) {
+        val base = if (showArchive) archivedThreads else activeThreads
+        if (inFolder == null) base
+        else base.filter { SmsFolders.matches(inFolder, it.address, contactOf(it.address) != null, it.unread) }
+    }
     val shown = remember(source, query, byNumber) {
         val q = query.trim().lowercase()
         if (q.isEmpty()) source
@@ -353,7 +385,7 @@ fun MessagesScreen(
     // «Назад»: сперва снять выбор, потом выйти из архива
     BackHandler(enabled = showArchive && !selection.isActive) { showArchive = false }
     BackHandler(enabled = selection.isActive) { selection.clear() }
-    BackHandler(enabled = composeNew) { closeCompose() }
+    BackHandler(enabled = composeNew) { cancelCompose() }
 
     // Подсказки «Кому»: недавние переписки и контакты под запрос (NewMessage)
     val composeRecents = remember(composeNew, state.threads, byNumber) {
@@ -428,7 +460,7 @@ fun MessagesScreen(
                 onValueChange = { composeQuery = it },
                 canGo = NewMessage.target(composeQuery, composeMatches) != null,
                 onGo = { NewMessage.target(composeQuery, composeMatches)?.let(pickRecipient) },
-                onClose = closeCompose
+                onClose = cancelCompose
             )
             // В архиве панели разделов нет: из него возвращаются стрелкой
             else if (!showArchive) ListPanel(
@@ -478,21 +510,37 @@ fun MessagesScreen(
                         onHelp = { menuOpen = false; onOpenHelp() },
                         // 2.1.0: значок «SMS» со счётчиком на главный экран (SectionWidgets)
                         onPinToHome = pinToHome,
-                        onArchive = { menuOpen = false; selection.clear(); showArchive = true }
+                        onArchive = { menuOpen = false; selection.clear(); showArchive = true },
+                        // Папки (2.2.0) — над плитками, как «Папки» в меню почты
+                        header = if (state.isDefaultSms && visibleFolders.size > 1) {
+                            {
+                                SmsFolderRows(
+                                    folders = visibleFolders,
+                                    current = folder,
+                                    unread = folderUnread,
+                                    onSelect = { menuOpen = false; selection.clear(); folderName = it.name },
+                                    onEdit = { menuOpen = false; onOpenFolders() }
+                                )
+                            }
+                        } else null
                     )
                 }
             )
         }
     ) { pad ->
         if (composeNew) {
-            // Подсказки — снизу вверх, первая — у поля (NewMessagePicker.kt)
-            NewMessageSuggestions(
-                query = composeQuery,
-                suggestions = composeMatches,
-                recents = composeRecents,
-                onPick = pickRecipient,
-                modifier = Modifier.fillMaxSize().padding(pad)
-            )
+            Column(Modifier.fillMaxSize().padding(pad)) {
+                // Что пересылается — строкой сверху (2.2.0)
+                forwarding?.let { ForwardPreview(it) }
+                // Подсказки — снизу вверх, первая — у поля (NewMessagePicker.kt)
+                NewMessageSuggestions(
+                    query = composeQuery,
+                    suggestions = composeMatches,
+                    recents = composeRecents,
+                    onPick = pickRecipient,
+                    modifier = Modifier.weight(1f).fillMaxWidth()
+                )
+            }
         } else {
             Column(Modifier.fillMaxSize().padding(pad)) {
                 /*
@@ -518,6 +566,10 @@ fun MessagesScreen(
                         }
                     }
                 }
+            // Открытая папка — названием над списком, как папка в почте (2.2.0)
+            if (state.isDefaultSms && !showArchive && !selection.isActive && query.isBlank() && folder != SmsFolder.ALL) {
+                FolderTitleRow(folder) { folderName = SmsFolder.ALL.name }
+            }
             Box(Modifier.weight(1f).fillMaxWidth()) {
                 /*
                  * Три состояния: нет роли SMS — приложение SMS человека и роль
@@ -531,9 +583,20 @@ fun MessagesScreen(
                         onOpenCompanion = { com.ogneliss.dialer.sms.SmsRole.openCompanionApp(context) },
                         onUseHere = requestRole
                     )
-                } else if (shown.isEmpty() && !state.loading && (showArchive || archivedThreads.isEmpty() || query.isNotBlank())) {
+                } else if (folder == SmsFolder.STARRED && !showArchive && query.isBlank()) {
+                    // Избранное (2.2.0): не переписки, а отмеченные сообщения
+                    StarredList(
+                        starred = state.starred,
+                        titleOf = { address -> contactOf(address)?.displayName ?: PhoneFormatter.format(address) },
+                        onOpen = { e -> onOpenMessage(e.address, e.msgKey) },
+                        onUnstar = { e -> messagesVm.unstar(e.msgKey) }
+                    )
+                } else if (shown.isEmpty() && state.found.isEmpty() && !state.loading &&
+                    (showArchive || archivedThreads.isEmpty() || query.isNotBlank() || inFolder != null)
+                ) {
                     // Пустой общий список при непустом архиве — не «пусто»: сверху строка «Архив · N»
-                    if (query.isBlank()) {
+                    // Пустая папка — без надписи (тихий интерфейс): вкладки внизу и так говорят, где человек
+                    if (query.isBlank() && inFolder == null) {
                         MessagesEmpty(if (showArchive) R.string.archive_empty else R.string.messages_empty)
                     }
                 } else {
@@ -586,6 +649,7 @@ fun MessagesScreen(
                             ) {
                                 ThreadRow(
                                     thread = thread,
+                                    draft = state.drafts[smsPinKey(thread.address)],
                                     title = contact?.displayName ?: PhoneFormatter.format(thread.address),
                                     photoUri = contact?.photoUri,
                                     initialsFrom = contact?.displayName,
@@ -635,7 +699,7 @@ fun MessagesScreen(
                         contentPadding = PaddingValues(top = Space.xs, bottom = Space.l)
                     ) {
                         // «Архив · N» — первой строкой, только когда архив не пуст (2.1.0)
-                        if (!showArchive && !selection.isActive && query.isBlank() && archivedThreads.isNotEmpty()) {
+                        if (!showArchive && !selection.isActive && query.isBlank() && inFolder == null && archivedThreads.isNotEmpty()) {
                             item(key = "archive_row", contentType = "archive_row") {
                                 ArchiveEntryRow(archivedThreads.size) { showArchive = true }
                             }
@@ -656,6 +720,20 @@ fun MessagesScreen(
                             }
                             itemsIndexed(list, key = { _, t -> threadKey(t) }, contentType = { _, _ -> "thread" }) { i, t ->
                                 ThreadItem(t, threadKey(t), GroupPosition.of(i, list.size))
+                            }
+                        }
+                        // Поиск по тексту (2.2.0): найденные сообщения — под переписками
+                        if (query.isNotBlank() && state.found.isNotEmpty() && !selection.isActive) {
+                            item(key = "found_header", contentType = "date_header") {
+                                LetterHeader(stringResource(R.string.messages_found_header))
+                            }
+                            itemsIndexed(state.found, key = { _, m -> "found_" + m.key }, contentType = { _, _ -> "found" }) { _, m ->
+                                FoundMessageRow(
+                                    message = m,
+                                    title = contactOf(m.address)?.displayName ?: PhoneFormatter.format(m.address),
+                                    query = query,
+                                    onClick = { onOpenMessage(m.address, m.key) }
+                                )
                             }
                         }
                     }
@@ -705,6 +783,8 @@ private fun threadKey(t: MessagesViewModel.Thread): String = t.key
 @Composable
 private fun ThreadRow(
     thread: MessagesViewModel.Thread,
+    /** Недописанное (2.2.0): «Черновик: …» вместо последнего сообщения. */
+    draft: String? = null,
     title: String,
     photoUri: String?,
     initialsFrom: String?,
@@ -800,8 +880,18 @@ private fun ThreadRow(
             }
             Spacer(Modifier.height(Space.xxs))
             Row(verticalAlignment = Alignment.CenterVertically) {
+                val draftLabel = stringResource(R.string.sms_draft_label)
+                val shownLine: androidx.compose.ui.text.AnnotatedString = if (!draft.isNullOrBlank()) {
+                    androidx.compose.ui.text.buildAnnotatedString {
+                        pushStyle(androidx.compose.ui.text.SpanStyle(color = MaterialTheme.colorScheme.error))
+                        append(draftLabel)
+                        pop()
+                        append(" ")
+                        append(draft.replace('\n', ' ').trim())
+                    }
+                } else androidx.compose.ui.text.AnnotatedString(line)
                 Text(
-                    line,
+                    shownLine,
                     style = MaterialTheme.typography.bodySmall,
                     color = if (unread) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,

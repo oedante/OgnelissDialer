@@ -229,3 +229,58 @@ data class NetworkNameEntity(
     /** Когда пришло последний раз, RTC: для срока хранения. */
     val seenAt: Long
 )
+
+/**
+ * ЧЕРНОВИК SMS (2.2.0).
+ *
+ * Недописанный текст переписки переживает закрытие экрана и перезапуск:
+ * в списке SMS переписка показывает «Черновик: …», при входе текст
+ * возвращается в поле. Ключ — smsPinKey(адрес): «8 912…» и «+7 912…» —
+ * одна переписка. Пустой текст строку удаляет.
+ */
+@Entity(tableName = "sms_drafts")
+data class SmsDraftEntity(
+    @PrimaryKey val address: String,
+    val body: String,
+    val updatedAt: Long
+)
+
+/**
+ * SMS В ОЧЕРЕДИ (2.2.0): отложенная отправка и «Отменить» после «Отправить».
+ *
+ * Одна очередь на оба случая: «отмена отправки» — то же отложенное SMS,
+ * только на несколько секунд. Строка удаляется перед отправкой (SmsQueue):
+ * повторный будильник не отправит её второй раз.
+ */
+@Entity(tableName = "sms_scheduled")
+data class ScheduledSmsEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    /** Адрес как набран — на него уйдёт SMS. */
+    val address: String,
+    /** smsPinKey(address) — какой переписке показывать. */
+    val addressKey: String,
+    val body: String,
+    val subId: Int?,
+    /** Когда отправить, RTC. */
+    val atMillis: Long,
+    /** true — человек выбрал время; false — окно «Отменить» в несколько секунд. */
+    val scheduled: Boolean
+)
+
+/**
+ * ИЗБРАННОЕ СООБЩЕНИЕ (2.2.0).
+ *
+ * Хранится копия текста, а не только ключ: сообщение могут удалить
+ * из переписки (или автоудаление кодов), а отмеченное нужно сохранить —
+ * ради этого его и отмечают.
+ */
+@Entity(tableName = "sms_starred")
+data class StarredSmsEntity(
+    /** Message.key: «sms:15» / «mms:3». */
+    @PrimaryKey val msgKey: String,
+    val address: String,
+    val body: String,
+    val date: Long,
+    val outgoing: Boolean,
+    val starredAt: Long
+)

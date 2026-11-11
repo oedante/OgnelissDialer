@@ -388,3 +388,31 @@ internal fun NewMessageBar(
 
 /** Подпись переключателя на цифровую клавиатуру — цифры, перевода не требует. */
 private const val DIGITS_LABEL = "123"
+
+/**
+ * Пересылаемый текст над подсказками «Кому» (2.2.0): видно, что выбор
+ * получателя — для пересылки, и что именно уйдёт. Две строки, дальше
+ * многоточие: целиком текст будет в поле переписки.
+ */
+@Composable
+internal fun ForwardPreview(text: String) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = FlowUi.screenPadding, vertical = Space.s),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            OgnelissIcons.Forward, contentDescription = stringResource(R.string.sms_forward),
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(Modifier.width(Space.m))
+        Text(
+            text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 2,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+        )
+    }
+}

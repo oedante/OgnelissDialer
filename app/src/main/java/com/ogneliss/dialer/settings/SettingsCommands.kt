@@ -112,6 +112,7 @@ class SettingsCommands @Inject constructor(
             "block_tagged" -> prefs.setBlockTaggedSpam(value)
             "scam_memo" -> prefs.setScamMemo(value)
             "sms_delivery_reports" -> prefs.setSmsDeliveryReports(value)
+            "sms_calls_in_thread" -> prefs.setSmsCallsInThread(value)
             "file_logging" -> {
                 prefs.setFileLogging(value)
                 Logger.setFileLogging(value)
@@ -156,6 +157,9 @@ class SettingsCommands @Inject constructor(
             // 2.1.0: свайпы раздела «SMS» — свои
             "sms_swipe_right" -> prefs.setSmsSwipeRight(SwipeAction.from(value))
             "sms_swipe_left" -> prefs.setSmsSwipeLeft(SwipeAction.from(value))
+            // 2.2.0
+            "sms_undo_send" -> prefs.setSmsUndoSend(UndoSend.from(value))
+            "sms_otp_cleanup" -> prefs.setSmsOtpCleanup(OtpCleanup.from(value))
             "grouping" -> prefs.setGroupingMode(
                 runCatching { GroupingMode.valueOf(value) }
                     .getOrDefault(GroupingMode.BY_CONTACT)
@@ -175,6 +179,7 @@ class SettingsCommands @Inject constructor(
                 prefs.setWidgetShape(WidgetShape.from(value))
                 // Значки на главном экране перерисовываются сразу — выбор виден без ожидания
                 com.ogneliss.dialer.widget.SectionWidgets.updateAll(appContext)
+                com.ogneliss.dialer.widget.PinnedWidget.update(appContext)
             }
             "contact_name_format" -> prefs.setContactNameFormat(ContactNameFormat.from(value))
             "contact_sort" -> prefs.setContactSort(ContactSort.from(value))
@@ -223,6 +228,8 @@ class SettingsCommands @Inject constructor(
         "swipe_left" -> state.swipeLeft.key
         "sms_swipe_right" -> state.smsSwipeRight.key
         "sms_swipe_left" -> state.smsSwipeLeft.key
+        "sms_undo_send" -> state.smsUndoSend.name
+        "sms_otp_cleanup" -> state.smsOtpCleanup.name
         "grouping" -> state.groupingMode.name
         "sort_order" -> state.sortOrder.name
         "swipe_sim" -> state.swipeSimMode.name
@@ -283,6 +290,8 @@ class SettingsCommands @Inject constructor(
         "swipe_left" -> context.getString(swipeActionLabelRes(state.swipeLeft))
         "sms_swipe_right" -> context.getString(swipeActionLabelRes(state.smsSwipeRight, forSms = true))
         "sms_swipe_left" -> context.getString(swipeActionLabelRes(state.smsSwipeLeft, forSms = true))
+        "sms_undo_send" -> context.getString(undoSendLabelRes(state.smsUndoSend))
+        "sms_otp_cleanup" -> context.getString(otpCleanupLabelRes(state.smsOtpCleanup))
 
         "grouping" -> context.getString(
             when (state.groupingMode) {
@@ -379,6 +388,8 @@ class SettingsCommands @Inject constructor(
             "swipe_left" -> R.string.settings_swipe_left
             "sms_swipe_right" -> R.string.settings_sms_swipe_right
             "sms_swipe_left" -> R.string.settings_sms_swipe_left
+            "sms_undo_send" -> R.string.settings_sms_undo_send
+            "sms_otp_cleanup" -> R.string.settings_sms_otp_cleanup
             "grouping" -> R.string.settings_grouping
             "sort_order" -> R.string.settings_sort_order
             "swipe_sim" -> R.string.settings_swipe_sim
@@ -493,6 +504,21 @@ class SettingsCommands @Inject constructor(
             AnswerMode.SLIDE -> R.string.answer_mode_slide
         }
 
+        /** Отмена отправки SMS (2.2.0). */
+        fun undoSendLabelRes(v: UndoSend): Int = when (v) {
+            UndoSend.OFF -> R.string.undo_send_off
+            UndoSend.S3 -> R.string.undo_send_3
+            UndoSend.S5 -> R.string.undo_send_5
+            UndoSend.S10 -> R.string.undo_send_10
+        }
+
+        /** Автоудаление кодов (2.2.0). */
+        fun otpCleanupLabelRes(v: OtpCleanup): Int = when (v) {
+            OtpCleanup.OFF -> R.string.otp_cleanup_off
+            OtpCleanup.H1 -> R.string.otp_cleanup_1h
+            OtpCleanup.H24 -> R.string.otp_cleanup_24h
+        }
+
         /** Подпись формы значков-виджетов (2.1.3). */
         fun widgetShapeLabelRes(shape: WidgetShape): Int = when (shape) {
             WidgetShape.AUTO -> R.string.widget_shape_auto
@@ -581,7 +607,9 @@ class SettingsCommands @Inject constructor(
             // 1.8.0
             "scam_memo",
             // 2.0.0
-            "sms_delivery_reports"
+            "sms_delivery_reports",
+            // 2.2.0
+            "sms_calls_in_thread"
         )
 
         /** Ключи, которые обрабатывает setChoice. */
@@ -589,6 +617,8 @@ class SettingsCommands @Inject constructor(
             "language", "theme", "swipe_right", "swipe_left", "grouping", "sort_order",
             // 2.1.0
             "sms_swipe_right", "sms_swipe_left",
+            // 2.2.0
+            "sms_undo_send", "sms_otp_cleanup",
             "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info",
             "call_photo_style", "call_photo_size", "answer_mode", "ui_scale",
             "contact_name_format", "contact_sort",

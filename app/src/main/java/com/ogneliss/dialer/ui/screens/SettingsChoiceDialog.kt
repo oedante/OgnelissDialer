@@ -111,6 +111,12 @@ fun SettingsChoiceDialog(
         "answer_mode" -> com.ogneliss.dialer.settings.AnswerMode.entries.map {
             it.name to stringResource(SettingsCommands.answerModeLabelRes(it))
         }
+        "sms_undo_send" -> com.ogneliss.dialer.settings.UndoSend.entries.map {
+            it.name to stringResource(SettingsCommands.undoSendLabelRes(it))
+        }
+        "sms_otp_cleanup" -> com.ogneliss.dialer.settings.OtpCleanup.entries.map {
+            it.name to stringResource(SettingsCommands.otpCleanupLabelRes(it))
+        }
         "widget_shape" -> com.ogneliss.dialer.settings.WidgetShape.entries.map {
             it.name to stringResource(SettingsCommands.widgetShapeLabelRes(it))
         }
