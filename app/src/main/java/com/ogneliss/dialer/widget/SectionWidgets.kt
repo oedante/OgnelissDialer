@@ -16,6 +16,15 @@ import androidx.core.graphics.drawable.IconCompat
 import com.ogneliss.dialer.MainActivity
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.log.Logger
+import com.ogneliss.dialer.settings.Prefs
+import com.ogneliss.dialer.settings.WidgetShape
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import com.ogneliss.dialer.sms.SmsRole
 import com.ogneliss.dialer.ui.components.MainSection
 import java.util.concurrent.Executors
@@ -88,7 +97,7 @@ object SectionWidgets {
         val label = context.getString(section.labelRes)
         val iconRes = if (sms) R.drawable.ic_shortcut_sms else R.drawable.ic_shortcut_contacts
         val views = RemoteViews(context.packageName, R.layout.widget_section).apply {
-            val bitmap = runCatching { WidgetIcon.draw(context, iconRes, unread ?: 0) }
+            val bitmap = runCatching { WidgetIcon.draw(context, iconRes, unread ?: 0, shape(context)) }
                 .onFailure { Logger.w(TAG, "Значок виджета не нарисован — ставлю ресурс", it) }
                 .getOrNull()
             if (bitmap != null) setImageViewBitmap(R.id.widget_icon, bitmap)
@@ -102,6 +111,24 @@ object SectionWidgets {
             setOnClickPendingIntent(R.id.widget_root, openIntent(context, section))
         }
         manager.updateAppWidget(ids, views)
+    }
+
+    /**
+     * Форма значков из настроек (2.1.3, WidgetShape). Читается здесь, в фоновом
+     * потоке значков; настройки не ответили за секунду — «Авто».
+     */
+    private fun shape(context: Context): WidgetShape = runCatching {
+        val prefs = EntryPointAccessors
+            .fromApplication(context.applicationContext, WidgetEntryPoint::class.java).prefs()
+        runBlocking { withTimeoutOrNull(1_000L) { prefs.widgetShape.first() } }
+    }.onFailure { Logger.w(TAG, "Форма значка не прочитана — «Авто»", it) }
+        .getOrNull() ?: WidgetShape.AUTO
+
+    /** Настройки для значков: объект живёт вне графа Hilt, берёт их через точку входа. */
+    @EntryPoint
+    @InstallIn(SingletonComponent::class)
+    interface WidgetEntryPoint {
+        fun prefs(): Prefs
     }
 
     /**

@@ -1,0 +1,189 @@
+<ru-RU>
+• Новое SMS: поле «Кому» внизу, над клавиатурой; подсказки и недавние собеседники — рядом с ним.
+• «Написать» и «Создать контакт» — в центре нижней панели.
+• Входящие сообщения — цветными пузырями, в тоне собеседника.
+• Выбор нескольких строк — протягиванием по кружкам.
+• Форму значков «SMS» и «Контакты» на главном экране можно выбрать в настройках.
+</ru-RU>
+<ar>
+• رسالة جديدة: حقل «إلى» في الأسفل فوق لوحة المفاتيح، وبجواره الاقتراحات وآخر من راسلتهم.
+• «اكتب» و«جهة اتصال جديدة» في وسط الشريط السفلي.
+• الرسائل الواردة في فقاعات ملوّنة بلون المرسِل.
+• حدِّد عدة صفوف بالسحب فوق الدوائر.
+• اختر شكل أيقونتي الرسائل وجهات الاتصال على الشاشة الرئيسية من الإعدادات.
+</ar>
+<cs-CZ>
+• Nová SMS: pole „Komu“ je dole nad klávesnicí, hned vedle návrhy a poslední kontakty.
+• „Napsat“ a „Nový kontakt“ uprostřed spodní lišty.
+• Příchozí zprávy v barevných bublinách, v odstínu odesílatele.
+• Více řádků vyberete tažením po kroužcích.
+• Tvar ikon SMS a Kontakty na ploše si zvolíte v nastavení.
+</cs-CZ>
+<da-DK>
+• Ny sms: feltet „Til“ står nederst, over tastaturet, med forslag og seneste kontakter lige ved siden af.
+• „Skriv“ og „Ny kontakt“ midt i den nederste bjælke.
+• Indgående beskeder i farvede bobler, i afsenderens tone.
+• Vælg flere rækker ved at trække hen over cirklerne.
+• Vælg formen på startskærmens ikoner Sms og Kontakter i indstillingerne.
+</da-DK>
+<de-DE>
+• Neue SMS: Das Feld „An“ steht unten über der Tastatur; Vorschläge und letzte Kontakte direkt daneben.
+• „Schreiben“ und „Neuer Kontakt“ in der Mitte der unteren Leiste.
+• Eingehende Nachrichten in farbigen Blasen – im Farbton des Absenders.
+• Mehrere Zeilen durch Ziehen über die Kreise auswählen.
+• Form der Startbildschirm-Symbole „SMS“ und „Kontakte“ in den Einstellungen wählbar.
+</de-DE>
+<en-US>
+• New SMS: the To field sits at the bottom, above the keyboard, with suggestions and recent people next to it.
+• Write and New contact are now in the centre of the bottom bar.
+• Incoming messages appear in coloured bubbles, in the sender’s tone.
+• Select several rows by dragging along the circles.
+• Choose the shape of the SMS and Contacts home-screen icons in Settings.
+</en-US>
+<es-ES>
+• Nuevo SMS: el campo «Para» está abajo, sobre el teclado, con sugerencias y contactos recientes al lado.
+• «Escribir» y «Nuevo contacto», en el centro de la barra inferior.
+• Mensajes recibidos en burbujas de color, con el tono del remitente.
+• Selecciona varias filas deslizando por los círculos.
+• Elige la forma de los iconos de SMS y Contactos de la pantalla de inicio en Ajustes.
+</es-ES>
+<fi-FI>
+• Uusi tekstiviesti: Vastaanottaja-kenttä on alhaalla näppäimistön yllä, ehdotukset ja viimeisimmät sen vieressä.
+• ”Kirjoita” ja ”Uusi yhteystieto” alapalkin keskellä.
+• Saapuneet viestit värillisissä kuplissa, lähettäjän sävyssä.
+• Valitse useita rivejä vetämällä ympyröiden yli.
+• Valitse aloitusnäytön Viestit- ja Yhteystiedot-kuvakkeiden muoto asetuksista.
+</fi-FI>
+<fr-FR>
+• Nouveau SMS : le champ « À » est en bas, au-dessus du clavier ; suggestions et contacts récents juste à côté.
+• « Écrire » et « Nouveau contact » au centre de la barre inférieure.
+• Messages reçus dans des bulles colorées, à la teinte de l’expéditeur.
+• Sélection de plusieurs lignes en glissant sur les cercles.
+• Forme des icônes « SMS » et « Contacts » de l’écran d’accueil au choix dans les réglages.
+</fr-FR>
+<hi-IN>
+• नया SMS: “प्रति” फ़ील्ड नीचे, कीबोर्ड के ऊपर है; सुझाव और हाल के संपर्क उसी के पास.
+• “लिखें” और “नया संपर्क” निचली पट्टी के बीच में.
+• आने वाले संदेश भेजने वाले के रंग वाले बबल में.
+• गोलों पर उँगली खींचकर कई पंक्तियाँ चुनें.
+• होम स्क्रीन के SMS और संपर्क आइकन का आकार सेटिंग में चुनें.
+</hi-IN>
+<hu-HU>
+• Új SMS: a „Címzett” mező lent van, a billentyűzet fölött, mellette a javaslatok és a legutóbbi partnerek.
+• Az „Írás” és az „Új névjegy” az alsó sáv közepén.
+• A bejövő üzenetek színes buborékban, a feladó árnyalatában.
+• Több sor kijelölése a körökön végighúzva.
+• A kezdőképernyő SMS- és Névjegyek-ikonjának formája a beállításokban választható.
+</hu-HU>
+<id>
+• SMS baru: kolom «Kepada» ada di bawah, di atas keyboard, dengan saran dan kontak terbaru di sebelahnya.
+• «Tulis» dan «Kontak baru» di tengah bilah bawah.
+• Pesan masuk tampil dalam balon berwarna sesuai warna pengirim.
+• Pilih beberapa baris dengan menggeser di atas lingkaran.
+• Pilih bentuk ikon SMS dan Kontak di layar utama lewat pengaturan.
+</id>
+<it-IT>
+• Nuovo SMS: il campo «A» è in basso, sopra la tastiera, con suggerimenti e contatti recenti accanto.
+• «Scrivi» e «Nuovo contatto» al centro della barra inferiore.
+• Messaggi ricevuti in fumetti colorati, nella tinta del mittente.
+• Seleziona più righe trascinando sui cerchi.
+• Scegli la forma delle icone SMS e Contatti della schermata Home nelle impostazioni.
+</it-IT>
+<iw-IL>
+• הודעה חדשה: השדה «אל» נמצא למטה, מעל המקלדת, ולצידו הצעות ואנשי קשר אחרונים.
+• «כתיבה» ו«איש קשר חדש» במרכז הסרגל התחתון.
+• הודעות נכנסות בבועות צבעוניות, בגוון של השולח.
+• בחירת כמה שורות בגרירה על העיגולים.
+• צורת הסמלים SMS ואנשי קשר במסך הבית ניתנת לבחירה בהגדרות.
+</iw-IL>
+<ja-JP>
+• 新規SMS：宛先欄がキーボードのすぐ上に固定され、候補と最近の相手がその近くに表示されます。
+• 「作成」と「連絡先を追加」を下部バーの中央に配置。
+• 受信メッセージは相手ごとの色の吹き出しで表示。
+• 丸印をなぞって複数行を選択できます。
+• ホーム画面のSMS・連絡先アイコンの形を設定で選べます。
+</ja-JP>
+<ko-KR>
+• 새 SMS: ‘받는 사람’ 입력란이 키보드 바로 위에 고정되고, 추천과 최근 대화 상대가 그 옆에 표시됩니다.
+• ‘작성’과 ‘새 연락처’가 하단 바 가운데로 이동했습니다.
+• 받은 메시지는 상대방 색상의 말풍선으로 표시됩니다.
+• 원을 따라 드래그해 여러 줄을 선택할 수 있습니다.
+• 홈 화면의 SMS·연락처 아이콘 모양을 설정에서 고를 수 있습니다.
+</ko-KR>
+<nl-NL>
+• Nieuwe sms: het veld ‘Aan’ staat onderaan, boven het toetsenbord, met suggesties en recente contacten ernaast.
+• ‘Schrijven’ en ‘Nieuw contact’ in het midden van de onderbalk.
+• Ontvangen berichten in gekleurde ballonnen, in de tint van de afzender.
+• Selecteer meerdere rijen door over de cirkels te slepen.
+• Kies de vorm van de startschermpictogrammen Sms en Contacten in de instellingen.
+</nl-NL>
+<no-NO>
+• Ny SMS: feltet «Til» står nederst, over tastaturet, med forslag og nylige kontakter like ved.
+• «Skriv» og «Ny kontakt» midt på den nederste linjen.
+• Innkommende meldinger i fargede bobler, i avsenderens tone.
+• Velg flere rader ved å dra over sirklene.
+• Velg formen på startskjermikonene SMS og Kontakter i innstillingene.
+</no-NO>
+<pl-PL>
+• Nowy SMS: pole „Do” jest na dole, nad klawiaturą, a obok podpowiedzi i ostatni rozmówcy.
+• „Napisz” i „Nowy kontakt” na środku dolnego paska.
+• Wiadomości przychodzące w kolorowych dymkach, w odcieniu nadawcy.
+• Zaznaczaj wiele wierszy, przeciągając po kółkach.
+• Kształt ikon SMS i Kontakty na ekranie głównym do wyboru w ustawieniach.
+</pl-PL>
+<pt-BR>
+• Novo SMS: o campo «Para» fica embaixo, acima do teclado, com sugestões e contatos recentes ao lado.
+• «Escrever» e «Novo contato» no centro da barra inferior.
+• Mensagens recebidas em balões coloridos, no tom do remetente.
+• Selecione várias linhas arrastando pelos círculos.
+• Escolha o formato dos ícones de SMS e Contatos da tela inicial nas configurações.
+</pt-BR>
+<ro>
+• SMS nou: câmpul „Către” este jos, deasupra tastaturii, cu sugestii și contacte recente alături.
+• „Scrie” și „Contact nou” în centrul barei de jos.
+• Mesajele primite apar în baloane colorate, în nuanța expeditorului.
+• Selectați mai multe rânduri glisând peste cercuri.
+• Alegeți forma pictogramelor SMS și Contacte de pe ecranul de pornire din setări.
+</ro>
+<sk>
+• Nová SMS: pole „Komu“ je dole nad klávesnicou, hneď vedľa návrhy a poslední adresáti.
+• „Napísať“ a „Nový kontakt“ v strede spodnej lišty.
+• Prichádzajúce správy vo farebných bublinách, v odtieni odosielateľa.
+• Viac riadkov vyberiete ťahaním po krúžkoch.
+• Tvar ikon SMS a Kontakty na ploche si zvolíte v nastaveniach.
+</sk>
+<sv-SE>
+• Nytt sms: fältet ”Till” ligger längst ner, ovanför tangentbordet, med förslag och senaste kontakter intill.
+• ”Skriv” och ”Ny kontakt” i mitten av det nedre fältet.
+• Inkommande meddelanden i färgade bubblor, i avsändarens ton.
+• Markera flera rader genom att dra över cirklarna.
+• Välj form på hemskärmens ikoner Sms och Kontakter i inställningarna.
+</sv-SE>
+<th>
+• SMS ใหม่: ช่อง “ถึง” อยู่ด้านล่างเหนือแป้นพิมพ์ พร้อมคำแนะนำและผู้ติดต่อล่าสุดอยู่ข้างๆ
+• “เขียน” และ “รายชื่อใหม่” อยู่กลางแถบด้านล่าง
+• ข้อความขาเข้าแสดงในบอลลูนสีตามโทนของผู้ส่ง
+• เลือกหลายแถวด้วยการลากผ่านวงกลม
+• เลือกรูปทรงไอคอน SMS และรายชื่อบนหน้าจอหลักได้ในการตั้งค่า
+</th>
+<tr-TR>
+• Yeni SMS: «Kime» alanı altta, klavyenin üstünde; öneriler ve son yazışılanlar hemen yanında.
+• «Yaz» ve «Yeni kişi» alt çubuğun ortasında.
+• Gelen mesajlar, gönderenin tonunda renkli balonlarda.
+• Dairelerin üzerinden sürükleyerek birden çok satır seçin.
+• Ana ekrandaki SMS ve Kişiler simgelerinin şeklini ayarlardan seçin.
+</tr-TR>
+<vi>
+• SMS mới: ô «Đến» nằm ở dưới, ngay trên bàn phím, kèm gợi ý và người nhắn gần đây.
+• «Viết» và «Liên hệ mới» nằm giữa thanh dưới.
+• Tin nhắn đến hiển thị trong bong bóng màu theo tông của người gửi.
+• Chọn nhiều dòng bằng cách kéo qua các vòng tròn.
+• Chọn hình dạng biểu tượng SMS và Danh bạ trên màn hình chính trong phần cài đặt.
+</vi>
+<zh-CN>
+• 新短信：“收件人”栏固定在键盘上方，建议和最近联系人就在旁边。
+• “写短信”和“新建联系人”移到底栏中央。
+• 收到的消息以彩色气泡显示，颜色与联系人对应。
+• 沿圆圈拖动即可选择多行。
+• 可在设置中选择主屏幕“短信”和“联系人”图标的形状。
+</zh-CN>

@@ -1019,4 +1019,19 @@
     <string name="settings_swap_answer">Answer on the left</string>
     <string name="settings_swap_answer_text">Swaps the Answer and Decline buttons on the call screen; slide left to answer</string>
     <string name="keywords_swap_answer">swap answer decline buttons left right order incoming</string>
+    <string name="messages_new_to_number">Write to %1$s</string>
+    <string name="messages_new_recent">Recent</string>
+    <string name="messages_new_letters">Letter keyboard</string>
+    <string name="messages_new_digits">Number keyboard</string>
+    <string name="messages_new_letters_short">ABC</string>
+    <string name="settings_group_home_screen">Home screen</string>
+    <string name="settings_widget_shape">Icon shape</string>
+    <string name="settings_widget_shape_text">For the SMS and Contacts icons on the home screen — match your launcher’s icons</string>
+    <string name="keywords_widget_shape">widget icon shape round rounded square circle corner home screen sms contacts launcher</string>
+    <string name="widget_shape_auto">Automatic</string>
+    <string name="widget_shape_circle">Circle</string>
+    <string name="widget_shape_round_large">Strongly rounded</string>
+    <string name="widget_shape_round_medium">Rounded</string>
+    <string name="widget_shape_round_small">Slightly rounded</string>
+    <string name="widget_shape_square">Square</string>
 </resources>

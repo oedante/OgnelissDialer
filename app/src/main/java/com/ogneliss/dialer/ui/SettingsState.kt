@@ -65,6 +65,8 @@ data class SettingsState(
     val callPhotoSize: CallPhotoSize = CallPhotoSize.LARGE,
     /** Ответ на вызов: касанием или сдвигом (1.5.8). */
     val answerMode: AnswerMode = AnswerMode.TAP,
+    /** Форма значков «SMS» и «Контакты» на главном экране (2.1.3). */
+    val widgetShape: com.ogneliss.dialer.settings.WidgetShape = com.ogneliss.dialer.settings.WidgetShape.AUTO,
     /** Имя контакта: «Имя Фамилия» или «Фамилия Имя» (1.6.2). */
     val contactNameFormat: ContactNameFormat = ContactNameFormat.GIVEN_FIRST,
     /** Порядок списка контактов: по имени или по фамилии (1.6.2). */

@@ -210,6 +210,31 @@ enum class CallPhotoSize {
  * По умолчанию — касанием, как было: менять привычку без спроса нельзя.
  * Сдвиг — по выбору; разбор жеста — в call/SlideToAnswer.kt.
  */
+/**
+ * ФОРМА ЗНАЧКОВ «SMS» И «КОНТАКТЫ» НА ГЛАВНОМ ЭКРАНЕ (2.1.3).
+ *
+ * Автор, 11.11.2026 (значок-виджет вышел кругом среди скруглённых квадратов
+ * набора значков): «хотелось бы адаптивный виджет SMS и контактов — чтобы
+ * по форме можно было выбрать скругление». Виджет рисует приложение, а не
+ * лаунчер: ни формы соседних значков, ни темы значков лаунчер не сообщает,
+ * и угадать её удаётся не всегда (WidgetIcon). Поэтому форму можно выбрать:
+ * AUTO — как у системы (прежнее поведение), иначе — доля стороны под
+ * скругление угла ([corner]): 0,5 — круг, 0 — квадрат.
+ */
+enum class WidgetShape(val corner: Float?) {
+    AUTO(null),
+    CIRCLE(0.5f),
+    ROUND_LARGE(0.34f),
+    ROUND_MEDIUM(0.25f),
+    ROUND_SMALL(0.16f),
+    SQUARE(0f);
+
+    companion object {
+        fun from(name: String?): WidgetShape =
+            entries.firstOrNull { it.name == name } ?: AUTO
+    }
+}
+
 enum class AnswerMode {
     TAP,
     SLIDE;
@@ -498,6 +523,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val CALL_PHOTO_SIZE = stringPreferencesKey("call_photo_size")
         /** Ответ на вызов: касанием или сдвигом (1.5.8). */
         val ANSWER_MODE = stringPreferencesKey("answer_mode")
+        val WIDGET_SHAPE = stringPreferencesKey("widget_shape")
         /** Имя контакта: «Имя Фамилия» или «Фамилия Имя» (1.6.2). */
         val CONTACT_NAME_FORMAT = stringPreferencesKey("contact_name_format")
         /** Порядок контактов: по имени или по фамилии (1.6.2). */
@@ -836,6 +862,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     /** Ответ на вызов (1.5.8): разбор в AnswerMode. */
     val answerMode: Flow<AnswerMode> = data.map { AnswerMode.from(it[Keys.ANSWER_MODE]) }
 
+    /** Форма значков-виджетов «SMS» и «Контакты» (2.1.3): разбор в WidgetShape. */
+    val widgetShape: Flow<WidgetShape> = data.map { WidgetShape.from(it[Keys.WIDGET_SHAPE]) }
+
     /** Как показывать имя контакта (1.6.2): разбор в ContactNameFormat. */
     val contactNameFormat: Flow<ContactNameFormat> =
         data.map { ContactNameFormat.from(it[Keys.CONTACT_NAME_FORMAT]) }
@@ -1170,6 +1199,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("call_photo_size", v.name) { it[Keys.CALL_PHOTO_SIZE] = v.name }
     suspend fun setAnswerMode(v: AnswerMode) =
         edit("answer_mode", v.name) { it[Keys.ANSWER_MODE] = v.name }
+    suspend fun setWidgetShape(v: WidgetShape) =
+        edit("widget_shape", v.name) { it[Keys.WIDGET_SHAPE] = v.name }
     suspend fun setContactNameFormat(v: ContactNameFormat) =
         edit("contact_name_format", v.name) { it[Keys.CONTACT_NAME_FORMAT] = v.name }
     suspend fun setContactSort(v: ContactSort) =
