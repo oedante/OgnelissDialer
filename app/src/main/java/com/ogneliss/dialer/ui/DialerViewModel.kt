@@ -168,6 +168,9 @@ class DialerViewModel @Inject constructor(
 
     val actions = CallActions(app, simRepo)
 
+    /** Слот SIM записи журнала — для истории карточки (2.1.3); null — карта одна. */
+    fun simSlotForAccount(accountId: String?): Int? = simRepo.slotForAccountId(accountId)
+
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state
 

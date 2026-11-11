@@ -759,6 +759,8 @@ fun SubscriberScreen(
      * долгого нажатия нет.
      */
     val multiSim = state.sims.size > 1
+    // Слот SIM по аккаунту записи журнала — считается один раз на аккаунт (2.1.3)
+    val callSlots = remember(state.sims) { HashMap<String?, Int?>() }
     // В меню места много — полные подписи, а не «Блок» / «Разблок.»
     val blockLabelRes = when {
         isBlocked || blockingMask != null -> R.string.action_unblock
@@ -2574,12 +2576,18 @@ fun SubscriberScreen(
                                 is HistoryItem.Call -> CallHistoryRow(
                                     item.entry,
                                     showNumber = historyNumbers.size > 1,
-                                    timeOnly = timeOnly
+                                    timeOnly = timeOnly,
+                                    // 2.1.3: через какую SIM (при двух и больше)
+                                    simSlot = callSlots.getOrPut(item.entry.phoneAccountId) {
+                                        vm.simSlotForAccount(item.entry.phoneAccountId)
+                                    }
                                 )
                                 is HistoryItem.Sms -> SmsHistoryRow(
                                     item.message,
                                     showNumber = historyNumbers.size > 1,
                                     timeOnly = timeOnly,
+                                    simSlot = item.message.subId?.takeIf { state.sims.size > 1 }
+                                        ?.let { id -> state.sims.firstOrNull { it.subscriptionId == id }?.slotIndex },
                                     onOpen = { vm.openSms(item.message.address) }
                                 )
                             }

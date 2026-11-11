@@ -340,9 +340,28 @@ class InCallActivity : ComponentActivity() {
                  * Но remember при этом остаётся жив: портрет, заметка
                  * и имя переживают ответ на вызов.
                  */
+                /*
+                 * НА КАКУЮ SIM ВЫЗОВ (2.1.3, просьба пользователя: «на экране
+                 * входящего и исходящего вызова нет информации о том, на какую
+                 * сим-карту вызов»). Карта — из аккаунта вызова; при одной SIM
+                 * подписи нет (slotForAccountId вернёт null). Читается вне
+                 * главного потока: список карт — запрос к системе.
+                 */
+                val primaryCall = CallManager.primary
+                val callSim by androidx.compose.runtime.produceState<Pair<Int, String>?>(null, primaryCall, revision) {
+                    value = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                        runCatching {
+                            primaryCall?.details?.accountHandle?.id
+                                ?.let { simRepo.slotForAccountId(it) }
+                                ?.let { slot -> slot to simRepo.labelForSlot(slot) }
+                        }.getOrNull()
+                    }
+                }
                 InCallScreen(
                     numberingPlan = numberingPlan,
                     carrierInfo = carrierInfo,
+                    simSlot = callSim?.first,
+                    simName = callSim?.second,
                     call = CallManager.primary,
                     secondary = CallManager.secondary,
                     revision = revision,
@@ -439,6 +458,9 @@ private fun InCallScreen(
     numberingPlan: com.ogneliss.dialer.data.NumberingPlan,
     /** Настройка «Оператор и регион»: та же, что в журнале. */
     carrierInfo: CarrierInfoMode,
+    /** Слот SIM вызова и её название (2.1.3); null — карта одна или ещё не выбрана. */
+    simSlot: Int? = null,
+    simName: String? = null,
     call: Call?,
     secondary: Call?,
     /**
@@ -1021,6 +1043,8 @@ private fun InCallScreen(
                         display = callerDisplay,
                         number = number,
                         carrierLine = carrierLine,
+                        simSlot = simSlot,
+                        simName = simName,
                         numberLine = numberLine,
                         danger = isDangerTagged,
                         titleSize = FlowUi.callNameSizeLandscape,
@@ -1337,6 +1361,8 @@ private fun InCallScreen(
                     display = callerDisplay,
                     number = number,
                     carrierLine = carrierLine,
+                    simSlot = simSlot,
+                    simName = simName,
                     numberLine = numberLine,
                     danger = isDangerTagged,
                     titleSize = FlowUi.callNameSize,
@@ -2273,6 +2299,9 @@ private fun CallerIdentity(
     /** «Билайн · Москва и Московская область» или null. */
     carrierLine: String?,
     titleSize: TextUnit,
+    /** Слот и название SIM вызова (2.1.3); null — подписи нет. */
+    simSlot: Int? = null,
+    simName: String? = null,
     /** Вместо номера под именем — например, тип номера. null — номер. */
     numberLine: String? = null,
     /**
@@ -2375,6 +2404,28 @@ private fun CallerIdentity(
             color = MaterialTheme.colorScheme.outline,
             textAlign = TextAlign.Center
         )
+    }
+
+    /*
+     * Через какую SIM идёт вызов (2.1.3) — последней строкой, цветом карты
+     * (SimColors), как пометки SIM в журнале: «▯ SIM 1» или «▯ SIM 2 ·
+     * Рабочая», если карте дано своё название. При одной SIM строки нет.
+     */
+    simSlot?.let { slot ->
+        val ordinal = "SIM ${slot + 1}"
+        val label = if (simName.isNullOrBlank() || simName == ordinal) ordinal else "$ordinal · $simName"
+        val simColor = com.ogneliss.dialer.ui.theme.SimColors.of(slot)
+        Spacer(Modifier.height(Space.xs))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                OgnelissIcons.SimCard,
+                contentDescription = null,
+                tint = simColor,
+                modifier = Modifier.size(FlowUi.iconSizeInline)
+            )
+            Spacer(Modifier.width(Space.xs))
+            Text(label, style = MaterialTheme.typography.bodyMedium, color = simColor)
+        }
     }
 }
 
