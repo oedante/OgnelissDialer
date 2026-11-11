@@ -65,6 +65,7 @@ class SettingsStateSource @Inject constructor(
         .combine(prefs.callAnimation) { a, v -> a.copy(callAnimation = v) }
         .combine(prefs.callPhotoStyle) { a, v -> a.copy(callPhotoStyle = v) }
         .combine(prefs.uiScale) { a, v -> a.copy(uiScale = v) }
+        .combine(prefs.fontScale) { a, v -> a.copy(fontScale = v) }
         .combine(prefs.themePreset) { a, v -> a.copy(themePreset = v) }
         // 1.9.0: свой акцент, скругление, плотность, шрифт — как в Ogneliss Mail
         .combine(prefs.accentColor) { a, v -> a.copy(accentColor = v) }
@@ -199,6 +200,7 @@ class SettingsStateSource @Inject constructor(
             callAnimation = a.callAnimation,
             callPhotoStyle = a.callPhotoStyle,
             uiScale = a.uiScale,
+            fontScale = a.fontScale,
             themePreset = a.themePreset,
             accentColor = a.accentColor,
             cornerSize = a.cornerSize,
@@ -271,6 +273,7 @@ class SettingsStateSource @Inject constructor(
         val callAnimation: Boolean = true,
         val callPhotoStyle: CallPhotoStyle = CallPhotoStyle.CIRCLE,
         val uiScale: UiScale = UiScale.DEFAULT,
+        val fontScale: Float = 1f,
         val themePreset: ThemePreset = ThemePreset.CLASSIC,
         val accentColor: Int? = null,
         val cornerSize: CornerSize = CornerSize.MEDIUM,

@@ -158,15 +158,11 @@ sealed interface SettingKind {
     data class Switch(val key: String) : SettingKind
     /** Выбор из списка вариантов (открывает диалог). */
     data class Choice(val key: String) : SettingKind
-    /** Числовой ползунок. */
-    /*
-     * Ползунка среди видов настроек больше нет.
-     *
-     * Единственным был порог оценки риска, а оценка убрана. Оставлять
-     * неиспользуемый вид нельзя: when по видам обязан покрывать все,
-     * и ветка «ползунок» осталась бы в экране категорий как мёртвый
-     * код, который однажды кто-нибудь оживит по ошибке.
+    /**
+     * Числовой ползунок (2.2.1): «Размер шрифта», как в Ogneliss Mail.
+     * Был убран вместе с порогом оценки риска; вернулся с настоящим делом.
      */
+    data class Slider(val key: String) : SettingKind
     /** Действие: переход, экспорт, очистка. */
     data class Action(val key: String) : SettingKind
     /** Ссылка в системные настройки Android. */
@@ -238,10 +234,21 @@ object SettingsRegistry {
             R.string.settings_dynamic_color, R.string.settings_dynamic_color_text,
             SettingKind.Switch("dynamic_color")
         ),
-        // 1.5.6: масштаб интерфейса под экран — разбор в ui/theme/UiScale.kt
+        /*
+         * 2.2.1: размер шрифта и масштаб — как в настройках Ogneliss Mail:
+         * ползунок 80–160 % и варианты масштаба в ряд, под ними — «Сейчас: N %»
+         * (рисуются на месте, без окна выбора: SettingsCategoryScreen).
+         */
+        SettingEntry(
+            "font_scale", SettingsCategory.APPEARANCE,
+            R.string.settings_font_scale, null,
+            SettingKind.Slider("font_scale"),
+            keywordsRes = R.string.keywords_accessibility
+        ),
         SettingEntry(
             "ui_scale", SettingsCategory.APPEARANCE,
-            R.string.settings_ui_scale, R.string.settings_ui_scale_text,
+            // Пояснение — под вариантами, с подстановкой «Сейчас: N %» (UiScaleRow)
+            R.string.settings_ui_scale, null,
             SettingKind.Choice("ui_scale"),
             keywordsRes = R.string.keywords_accessibility
         ),

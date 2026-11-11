@@ -220,6 +220,9 @@ class SettingsCommands @Inject constructor(
 
     suspend fun resetAll() = prefs.resetAll()
 
+    /** Размер шрифта (2.2.1): множитель 0,8…1,6. */
+    suspend fun setFontScale(value: Float) = prefs.setFontScale(value)
+
     /** Текущее значение варианта — для отметки в диалоге выбора. */
     fun currentChoice(key: String, state: SettingsState): String = when (key) {
         "language" -> state.language
@@ -328,13 +331,7 @@ class SettingsCommands @Inject constructor(
 
         // «Авто» — с тем, что выбрано для этого экрана: видно, что оно делает
         "ui_scale" -> if (state.uiScale == UiScale.AUTO) {
-            val config = context.resources.configuration
-            val percent = Math.round(
-                com.ogneliss.dialer.ui.theme.UiScaleMath.autoFactor(
-                    config.smallestScreenWidthDp, config.densityDpi
-                ) * 100
-            )
-            context.getString(R.string.ui_scale_auto_now, percent)
+            context.getString(R.string.ui_scale_auto_now, currentScalePercent(context, state))
         } else {
             context.getString(uiScaleLabelRes(state.uiScale))
         }
@@ -476,13 +473,26 @@ class SettingsCommands @Inject constructor(
             UiFont.CONDENSED -> R.string.ui_font_condensed
         }
 
+        /**
+         * Масштаб, с которым приложение рисуется сейчас, в процентах —
+         * для подписи «Сейчас: N %» под выбором (как в настройках почты).
+         */
+        fun currentScalePercent(context: Context, state: SettingsState): Int {
+            val config = context.resources.configuration
+            val text = com.ogneliss.dialer.ui.theme.UiScaleMath.textScale(config.fontScale, state.fontScale)
+            return Math.round(
+                com.ogneliss.dialer.ui.theme.UiScaleMath.factor(state.uiScale, config.smallestScreenWidthDp, text) * 100
+            )
+        }
+
         /** Подпись варианта масштаба — для строки настройки и диалога. */
         fun uiScaleLabelRes(scale: UiScale): Int = when (scale) {
             UiScale.AUTO -> R.string.ui_scale_auto
+            UiScale.S85 -> R.string.ui_scale_85
             UiScale.S90 -> R.string.ui_scale_90
+            UiScale.S95 -> R.string.ui_scale_95
             UiScale.S100 -> R.string.ui_scale_100
             UiScale.S110 -> R.string.ui_scale_110
-            UiScale.S125 -> R.string.ui_scale_125
         }
 
         /** Подпись варианта фото на экране вызова — для строки настройки и диалога. */

@@ -141,27 +141,51 @@ enum class CarrierInfoMode {
  * там всегда портрет; квадрат и круг там выбираются этой настройкой.
  */
 /**
- * МАСШТАБ ИНТЕРФЕЙСА (1.5.6): «Авто» — по ширине экрана, остальное —
- * постоянный множитель. Разбор — ui/theme/UiScale.kt.
+ * МАСШТАБ ИНТЕРФЕЙСА — КАК В OGNELISS MAIL (2.2.1).
  *
- * ПО УМОЛЧАНИЮ — 90 % (1.8.0, автор: «при 90 % смотрится отлично и нужно
- * это брать по умолчанию»). Было — «Авто». Кто масштаб не выбирал, получит
- * 90 % сам; кто выбрал «Авто» или другой — останется со своим: выбор
- * хранится в настройках, а умолчание действует только без него.
+ * Автор, 11.11.2026: «масштаб давай тоже оттуда возьмём и изменение
+ * масштаба» (за образец интерфейса взята почта). Значения те же, что
+ * в `UiZoom.manual` почты: «Авто» (по умолчанию) и 85, 90, 95, 100, 110 %.
+ * Разбор и расчёт «Авто» — ui/theme/UiScale.kt.
+ *
+ * Было (1.5.6–2.2.0): «Авто», 90, 100, 110, 125 %, по умолчанию 90 %.
+ * Выбранное человеком значение сохраняется; 125 % нет в почте — становится
+ * 110 %. Кто не выбирал (жил на прежнем умолчании 90 %) — получает «Авто».
  */
 enum class UiScale(val fixed: Float?) {
     AUTO(null),
+    S85(0.85f),
     S90(0.9f),
+    S95(0.95f),
     S100(1f),
-    S110(1.1f),
-    S125(1.25f);
+    S110(1.1f);
 
     companion object {
         /** Масштаб, пока человек его не выбрал. */
-        val DEFAULT = S90
+        val DEFAULT = AUTO
 
-        fun from(name: String?): UiScale = entries.firstOrNull { it.name == name } ?: DEFAULT
+        /** Имя из настроек; «S125» прежних версий — ближайшее из нынешних. */
+        fun from(name: String?): UiScale = when (name) {
+            "S125" -> S110
+            else -> entries.firstOrNull { it.name == name } ?: DEFAULT
+        }
     }
+}
+
+/**
+ * РАЗМЕР ШРИФТА (2.2.1) — как «Размер шрифта» в Ogneliss Mail: множитель
+ * 0,8…1,6 с шагом 0,1 поверх размера шрифта Android. Разбор — UiScale.kt.
+ */
+object FontScale {
+    const val MIN = 0.8f
+    const val MAX = 1.6f
+    const val DEFAULT = 1f
+
+    /** Шагов ползунка между краями: 0,8 · 0,9 · … · 1,6. */
+    const val STEPS = 7
+
+    /** К шагу 0,1 и в пределы: из настроек может прийти что угодно. */
+    fun clamp(v: Float): Float = (Math.round(v.coerceIn(MIN, MAX) * 10f) / 10f)
 }
 
 enum class CallPhotoStyle {
@@ -556,6 +580,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val CONTACT_ACCOUNT = stringPreferencesKey("contact_account")
         /** Масштаб интерфейса (1.5.6). */
         val UI_SCALE = stringPreferencesKey("ui_scale")
+        // 2.2.1: размер шрифта, как в Ogneliss Mail
+        val FONT_SCALE = floatPreferencesKey("font_scale")
         // Поведение
         val HAPTIC = booleanPreferencesKey("haptic")
         val KEY_TONES = booleanPreferencesKey("key_tones")
@@ -881,6 +907,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     /** Масштаб интерфейса (1.5.6): по умолчанию 90 % с 1.8.0 (было «Авто») — разбор в ui/theme/UiScale.kt. */
     val uiScale: Flow<UiScale> = data.map { UiScale.from(it[Keys.UI_SCALE]) }
+
+    /** Размер шрифта (2.2.1): множитель поверх системного, 0,8…1,6. */
+    val fontScale: Flow<Float> = data.map { FontScale.clamp(it[Keys.FONT_SCALE] ?: FontScale.DEFAULT) }
 
     /** Фото звонящего на экране вызова (1.5.5): разбор в CallPhotoStyle. */
     val callPhotoStyle: Flow<CallPhotoStyle> = data.map { CallPhotoStyle.from(it[Keys.CALL_PHOTO_STYLE]) }
@@ -1235,6 +1264,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("call_hide_contact_number", v) { it[Keys.CALL_HIDE_CONTACT_NUMBER] = v }
     suspend fun setCallAnimation(v: Boolean) =
         edit("call_animation", v) { it[Keys.CALL_ANIMATION] = v }
+    suspend fun setFontScale(v: Float) =
+        edit("font_scale", v) { it[Keys.FONT_SCALE] = FontScale.clamp(v) }
     suspend fun setUiScale(v: UiScale) =
         edit("ui_scale", v.name) { it[Keys.UI_SCALE] = v.name }
     suspend fun setCallPhotoStyle(v: CallPhotoStyle) =

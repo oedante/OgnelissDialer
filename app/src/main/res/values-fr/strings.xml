@@ -615,13 +615,12 @@
     <string name="call_photo_circle">Cercle</string>
     <string name="call_photo_square">Carré</string>
     <string name="settings_ui_scale">Échelle de l’interface</string>
-    <string name="settings_ui_scale_text">Taille des boutons, des marges et du texte. Par défaut : 90 %. « Auto » s’adapte à la largeur de l’écran : un peu plus compact sur les téléphones étroits, inchangé sur les larges</string>
-    <string name="ui_scale_auto">Auto (selon l’écran)</string>
+    <string name="settings_ui_scale_text">« Auto » réduit l’interface sur les écrans étroits et avec un grand texte pour que les boutons et les lignes tiennent. Actuellement : %1$d %%</string>
+    <string name="ui_scale_auto">Auto</string>
     <string name="ui_scale_auto_now">Auto — actuellement %1$d %%</string>
-    <string name="ui_scale_90" formatted="false">Plus petit — 90 %</string>
-    <string name="ui_scale_100" formatted="false">Normal — 100 %</string>
-    <string name="ui_scale_110" formatted="false">Plus grand — 110 %</string>
-    <string name="ui_scale_125" formatted="false">Grand — 125 %</string>
+    <string name="ui_scale_90" formatted="false">90 %</string>
+    <string name="ui_scale_100" formatted="false">100 %</string>
+    <string name="ui_scale_110" formatted="false">110 %</string>
     <string name="settings_home_group_main">Général</string>
     <string name="settings_hide_contact_number_text">Sur l’écran d’appel, les contacts enregistrés affichent « Mobile », « Travail », etc. au lieu des chiffres. Les numéros inconnus restent toujours visibles</string>
     <string name="language_search_hint">Rechercher une langue</string>
@@ -1044,4 +1043,8 @@
     <string name="widget_pinned_description">Appeler les numéros épinglés d’une touche</string>
     <string name="widget_pinned_call">Appeler %1$s</string>
     <string name="sms_folders_edit">Modifier les dossiers</string>
+    <string name="settings_font_scale">Taille de police</string>
+    <string name="settings_value_percent">%1$s · %2$d %%</string>
+    <string name="ui_scale_85" formatted="false">85 %</string>
+    <string name="ui_scale_95" formatted="false">95 %</string>
 </resources>

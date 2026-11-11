@@ -646,13 +646,12 @@
     <string name="call_photo_circle">Circle</string>
     <string name="call_photo_square">Square</string>
     <string name="settings_ui_scale">Interface scale</string>
-    <string name="settings_ui_scale_text">Size of buttons, spacing and text. Default is 90%. “Auto” adapts to the screen width: a little denser on narrow phones, unchanged on wide ones</string>
-    <string name="ui_scale_auto">Auto (by screen)</string>
-    <string name="ui_scale_auto_now">Auto — now %1$d %%</string>
-    <string name="ui_scale_90" formatted="false">Smaller — 90 %</string>
-    <string name="ui_scale_100" formatted="false">Normal — 100 %</string>
-    <string name="ui_scale_110" formatted="false">Larger — 110 %</string>
-    <string name="ui_scale_125" formatted="false">Large — 125 %</string>
+    <string name="settings_ui_scale_text">“Auto” shrinks the interface on narrow screens and with large text so that buttons and lines fit. Now: %1$d%%</string>
+    <string name="ui_scale_auto">Auto</string>
+    <string name="ui_scale_auto_now">Auto — now %1$d%%</string>
+    <string name="ui_scale_90" formatted="false">90%</string>
+    <string name="ui_scale_100" formatted="false">100%</string>
+    <string name="ui_scale_110" formatted="false">110%</string>
     <string name="settings_home_group_main">General</string>
     <string name="settings_hide_contact_number_text">On the call screen, saved contacts show Mobile, Work and so on instead of digits. Unknown numbers are always shown</string>
     <string name="language_search_hint">Search languages</string>
@@ -1074,4 +1073,8 @@
     <string name="widget_pinned_description">Call pinned numbers with one tap</string>
     <string name="widget_pinned_call">Call %1$s</string>
     <string name="sms_folders_edit">Edit folders</string>
+    <string name="settings_font_scale">Font size</string>
+    <string name="settings_value_percent">%1$s · %2$d%%</string>
+    <string name="ui_scale_85" formatted="false">85%</string>
+    <string name="ui_scale_95" formatted="false">95%</string>
 </resources>

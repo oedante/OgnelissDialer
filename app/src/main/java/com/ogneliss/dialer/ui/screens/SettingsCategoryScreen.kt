@@ -19,6 +19,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.ogneliss.dialer.ui.SettingsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.ogneliss.dialer.BuildConfig
@@ -142,6 +143,7 @@ fun SettingsCategoryScreen(
     val isChanged: (SettingEntry) -> Boolean = { entry ->
         when (val k = entry.kind) {
             is SettingKind.Switch -> state.switchValue(k.key) != defaults.switchValue(k.key)
+            is SettingKind.Slider -> state.fontScale != defaults.fontScale
             is SettingKind.Choice -> k.key !in NOT_RESETTABLE && (
                 vm.choiceValueOf(k.key, state) != vm.choiceValueOf(k.key, defaults) ||
                     (k.key == "swipe_right" && rightExtra.isNotEmpty()) ||
@@ -232,7 +234,22 @@ fun SettingsCategoryScreen(
                         }
                     }
 
-                    is SettingKind.Choice -> SettingsChoiceRow(
+                    // Размер шрифта (2.2.1) — ползунком на месте, как в настройках почты
+                    is SettingKind.Slider -> FontScaleRow(
+                        title = title,
+                        value = state.fontScale,
+                        changed = isChanged(entry),
+                        onChange = vm::setFontScale
+                    )
+
+                    // Масштаб (2.2.1) — вариантами в ряд на месте, как в настройках почты
+                    is SettingKind.Choice -> if (kind.key == "ui_scale") UiScaleRow(
+                        title = title,
+                        current = state.uiScale,
+                        nowPercent = com.ogneliss.dialer.settings.SettingsCommands.currentScalePercent(ctx, state),
+                        changed = isChanged(entry),
+                        onSelect = { vm.setChoice("ui_scale", it.name) }
+                    ) else SettingsChoiceRow(
                         title = title,
                         currentValue = vm.choiceLabel(ctx, kind.key),
                         changed = isChanged(entry),
@@ -344,6 +361,7 @@ fun SettingsCategoryScreen(
                     changedEntries.forEach { entry ->
                         when (val k = entry.kind) {
                             is SettingKind.Switch -> vm.setSwitch(k.key, defaults.switchValue(k.key))
+                            is SettingKind.Slider -> vm.setFontScale(defaults.fontScale)
                             // Вместе с дополнительными действиями свайпа
                             is SettingKind.Choice -> vm.resetChoice(k.key)
                             else -> Unit
@@ -423,3 +441,72 @@ private const val REVEAL_HOLD_MS = 600L
 private const val REVEAL_FADE_MS = 900
 private const val REVEAL_HIGHLIGHT_ALPHA = 0.16f
 
+/**
+ * РАЗМЕР ШРИФТА — ПОЛЗУНКОМ (2.2.1), как «Размер шрифта · 100 %» в настройках
+ * Ogneliss Mail: 80…160 % с шагом 10 %, значение — в заголовке. Меняется
+ * сразу, пока палец ведёт: видно, каким станет текст вокруг.
+ */
+@Composable
+private fun FontScaleRow(title: String, value: Float, changed: Boolean, onChange: (Float) -> Unit) {
+    val percent = Math.round(value * 100)
+    androidx.compose.foundation.layout.Column(
+        Modifier.fillMaxWidth().padding(horizontal = Space.l, vertical = Space.s)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                stringResource(R.string.settings_value_percent, title, percent),
+                style = MaterialTheme.typography.bodyLarge
+            )
+            if (changed) com.ogneliss.dialer.ui.components.ChangedDot()
+        }
+        androidx.compose.material3.Slider(
+            value = value,
+            onValueChange = { onChange(com.ogneliss.dialer.settings.FontScale.clamp(it)) },
+            valueRange = com.ogneliss.dialer.settings.FontScale.MIN..com.ogneliss.dialer.settings.FontScale.MAX,
+            steps = com.ogneliss.dialer.settings.FontScale.STEPS
+        )
+    }
+}
+
+/**
+ * МАСШТАБ ИНТЕРФЕЙСА — ВАРИАНТАМИ В РЯД (2.2.1), как в настройках Ogneliss
+ * Mail: «Авто · 85 % · 90 % · 95 % · 100 % · 110 %», под ними — что делает
+ * «Авто» и с каким масштабом приложение рисуется сейчас. Без окна выбора:
+ * нажал — и сразу видно на этом же экране.
+ */
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+private fun UiScaleRow(
+    title: String,
+    current: com.ogneliss.dialer.settings.UiScale,
+    nowPercent: Int,
+    changed: Boolean,
+    onSelect: (com.ogneliss.dialer.settings.UiScale) -> Unit
+) {
+    androidx.compose.foundation.layout.Column(
+        Modifier.fillMaxWidth().padding(horizontal = Space.l, vertical = Space.s)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(title, style = MaterialTheme.typography.bodyLarge)
+            if (changed) com.ogneliss.dialer.ui.components.ChangedDot()
+        }
+        androidx.compose.foundation.layout.FlowRow(
+            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(Space.s),
+            modifier = Modifier.padding(top = Space.xs)
+        ) {
+            com.ogneliss.dialer.settings.UiScale.entries.forEach { option ->
+                androidx.compose.material3.FilterChip(
+                    selected = option == current,
+                    onClick = { onSelect(option) },
+                    label = { Text(stringResource(com.ogneliss.dialer.settings.SettingsCommands.uiScaleLabelRes(option))) }
+                )
+            }
+        }
+        Text(
+            stringResource(R.string.settings_ui_scale_text, nowPercent),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = Space.xs)
+        )
+    }
+}
