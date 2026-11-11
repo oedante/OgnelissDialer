@@ -1336,7 +1336,17 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      */
     suspend fun resetAll() {
         runCatching { context.dataStore.edit { it.clear() } }
-            .onSuccess { Logger.i(TAG, "Настройки сброшены к значениям по умолчанию") }
+            .onSuccess {
+                Logger.i(TAG, "Настройки сброшены к значениям по умолчанию")
+                // Копия настроек SMS для мест без корутин (2.2.0) — тоже к умолчаниям,
+                // иначе отмена отправки и автоудаление кодов остались бы прежними
+                com.ogneliss.dialer.sms.SmsSettings.putInt(
+                    context, com.ogneliss.dialer.sms.SmsSettings.KEY_UNDO_SECONDS, UndoSend.from(null).seconds
+                )
+                com.ogneliss.dialer.sms.SmsSettings.putInt(
+                    context, com.ogneliss.dialer.sms.SmsSettings.KEY_OTP_HOURS, OtpCleanup.from(null).hours
+                )
+            }
             .onFailure { Logger.e(TAG, "Не удалось сбросить настройки", it) }
     }
 

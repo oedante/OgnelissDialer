@@ -106,7 +106,11 @@ class SmsQueue @Inject constructor(
     suspend fun sendDue() {
         mutex.withLock {
             val now = System.currentTimeMillis()
-            val due = withContext(io) { dao.snapshot() }.filter { it.atMillis <= now + EARLY_MS }
+            // Запас «чуть раньше» — только отложенным: неточный будильник приходит
+            // с разбросом. Окно «Отменить» выдерживается целиком — иначе второе
+            // сообщение подряд ушло бы вместе с первым, не дав себя отменить
+            val due = withContext(io) { dao.snapshot() }
+                .filter { it.atMillis <= now + (if (it.scheduled) EARLY_MS else 0L) }
             due.forEach { entry ->
                 val mine = withContext(io) { dao.delete(entry.id) } > 0
                 if (!mine) return@forEach
