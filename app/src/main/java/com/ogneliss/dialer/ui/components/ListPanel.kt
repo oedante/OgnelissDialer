@@ -53,6 +53,8 @@ internal fun ListPanel(
     /** Перелистывание свайпом по панели — к соседним разделам (журнал · SMS · контакты · заметки). */
     onSwipeRight: (() -> Unit)? = null,
     onSwipeLeft: (() -> Unit)? = null,
+    /** Главное действие раздела в центре (2.1.3, PanelCenter); null — клавиатура набора. */
+    center: PanelCenter? = null,
     menuContent: @Composable () -> Unit
 ) {
     Surface(
@@ -88,6 +90,7 @@ internal fun ListPanel(
                     filterActive = filterActive,
                     onToggleExpanded = onDialpad,
                     onOpenSection = onOpenSection,
+                    center = center,
                     onMenu = onMenu,
                     menuContent = menuContent
                 )

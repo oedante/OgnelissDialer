@@ -111,6 +111,9 @@ fun SettingsChoiceDialog(
         "answer_mode" -> com.ogneliss.dialer.settings.AnswerMode.entries.map {
             it.name to stringResource(SettingsCommands.answerModeLabelRes(it))
         }
+        "widget_shape" -> com.ogneliss.dialer.settings.WidgetShape.entries.map {
+            it.name to stringResource(SettingsCommands.widgetShapeLabelRes(it))
+        }
         "contact_name_format" -> com.ogneliss.dialer.settings.ContactNameFormat.entries.map {
             it.name to stringResource(SettingsCommands.contactNameFormatLabelRes(it))
         }

@@ -989,4 +989,19 @@
     <string name="settings_swap_answer">« Répondre » à gauche</string>
     <string name="settings_swap_answer_text">Inverse « Répondre » et « Refuser » sur l’écran d’appel ; glissez vers la gauche pour répondre</string>
     <string name="keywords_swap_answer">inverser répondre refuser boutons gauche droite ordre entrant</string>
+    <string name="messages_new_to_number">Écrire au %1$s</string>
+    <string name="messages_new_recent">Récents</string>
+    <string name="messages_new_letters">Clavier alphabétique</string>
+    <string name="messages_new_digits">Clavier numérique</string>
+    <string name="messages_new_letters_short">ABC</string>
+    <string name="settings_group_home_screen">Écran d’accueil</string>
+    <string name="settings_widget_shape">Forme des icônes</string>
+    <string name="settings_widget_shape_text">Pour les icônes « SMS » et « Contacts » de l’écran d’accueil — assortissez-les aux icônes du lanceur</string>
+    <string name="keywords_widget_shape">widget icône forme rond arrondi carré cercle coin écran d’accueil sms contacts lanceur</string>
+    <string name="widget_shape_auto">Automatique</string>
+    <string name="widget_shape_circle">Cercle</string>
+    <string name="widget_shape_round_large">Très arrondi</string>
+    <string name="widget_shape_round_medium">Arrondi</string>
+    <string name="widget_shape_round_small">Légèrement arrondi</string>
+    <string name="widget_shape_square">Carré</string>
 </resources>

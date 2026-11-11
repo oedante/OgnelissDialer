@@ -73,6 +73,7 @@ class SettingsStateSource @Inject constructor(
         .combine(prefs.uiFont) { a, v -> a.copy(uiFont = v) }
         .combine(prefs.callPhotoSize) { a, v -> a.copy(callPhotoSize = v) }
         .combine(prefs.answerMode) { a, v -> a.copy(answerMode = v) }
+        .combine(prefs.widgetShape) { a, v -> a.copy(widgetShape = v) }
         .combine(prefs.contactNameFormat) { a, v -> a.copy(contactNameFormat = v) }
         .combine(prefs.contactSort) { a, v -> a.copy(contactSort = v) }
         .combine(prefs.messengersAnyNumber) { a, v -> a.copy(messengersAnyNumber = v) }
@@ -203,6 +204,7 @@ class SettingsStateSource @Inject constructor(
             uiFont = a.uiFont,
             callPhotoSize = a.callPhotoSize,
             answerMode = a.answerMode,
+            widgetShape = a.widgetShape,
             contactNameFormat = a.contactNameFormat,
             contactSort = a.contactSort,
             messengersAnyNumber = a.messengersAnyNumber,
@@ -271,6 +273,7 @@ class SettingsStateSource @Inject constructor(
         val uiFont: UiFont = UiFont.SYSTEM,
         val callPhotoSize: CallPhotoSize = CallPhotoSize.LARGE,
         val answerMode: AnswerMode = AnswerMode.TAP,
+        val widgetShape: WidgetShape = WidgetShape.AUTO,
         val messengersAnyNumber: Boolean = false,
         val contactNameFormat: ContactNameFormat = ContactNameFormat.GIVEN_FIRST,
         val contactSort: ContactSort = ContactSort.GIVEN

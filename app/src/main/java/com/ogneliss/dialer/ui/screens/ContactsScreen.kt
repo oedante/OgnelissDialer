@@ -683,6 +683,10 @@ fun ContactsScreen(
                 val toJournal: () -> Unit = { onOpenSection(MainSection.MESSAGES) }
                 ListPanel(
                     section = MainSection.CONTACTS,
+                    // «Создать контакт» — в центре панели (2.1.3, PanelCenter)
+                    center = com.ogneliss.dialer.ui.components.PanelCenter(
+                        OgnelissIcons.PersonAdd, R.string.action_create_contact
+                    ) { vm.createContact("") },
                     onOpenSection = onOpenSection,
                     filterActive = contactFilter != ContactFilter.ALL,
                     onDialpad = onOpenDialpad,
@@ -726,7 +730,8 @@ fun ContactsScreen(
                             onNotes = { menuOpen = false; onOpenNotes() },
                             onReminders = { menuOpen = false; onOpenReminders() },
                             onStartSelection = null,
-                            onAddContact = { menuOpen = false; vm.createContact("") },
+                            // 2.1.3: «Создать контакт» — в центре панели, в меню не дублируется
+                            onAddContact = null,
                             onHelp = { menuOpen = false; onOpenHelp() },
                             // 2.1.0: значок «Контакты» на главный экран (SectionWidgets)
                             onPinToHome = pinToHome

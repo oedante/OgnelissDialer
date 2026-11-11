@@ -36,4 +36,23 @@ object AvatarPalette {
             else -> lerp(Color.White, base, 0.16f) to lerp(base, Color.Black, 0.25f)
         }
     }
+
+    /**
+     * ЗАЛИВКА ВХОДЯЩЕГО СООБЩЕНИЯ (2.1.3).
+     *
+     * Автор, 11.11.2026: «в диалогах SMS принятые сообщения белым по белому.
+     * Можно ли их как-то раскрасить — по принципу, например, почтовика?».
+     * Было: входящие — на surfaceContainerHigh, а он в светлой теме белый,
+     * как страница: пузыря не видно, текст висит в воздухе. Стало, как
+     * в почте, где у каждого человека свой цвет: входящие — в тоне
+     * собеседника, том же, что у его портрета в списке ([key] — имя
+     * из книги). Номер не из книги и буквенный отправитель — нейтральная
+     * серая заливка [neutral], заметная на странице. Текст остаётся
+     * основным цветом: тон — подложка, а не краска букв.
+     */
+    fun bubble(key: String?, dark: Boolean, highContrast: Boolean, surface: Color, neutral: Color): Color = when {
+        key.isNullOrBlank() || highContrast -> neutral
+        dark -> lerp(surface, tone(key), 0.30f)
+        else -> lerp(Color.White, tone(key), 0.16f)
+    }
 }

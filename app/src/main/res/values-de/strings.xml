@@ -990,4 +990,19 @@
     <string name="settings_swap_answer">„Annehmen“ links</string>
     <string name="settings_swap_answer_text">Tauscht „Annehmen“ und „Ablehnen“ auf dem Anrufbildschirm; zum Annehmen nach links wischen</string>
     <string name="keywords_swap_answer">tauschen annehmen ablehnen tasten links rechts reihenfolge eingehend</string>
+    <string name="messages_new_to_number">An %1$s schreiben</string>
+    <string name="messages_new_recent">Zuletzt</string>
+    <string name="messages_new_letters">Buchstabentastatur</string>
+    <string name="messages_new_digits">Zifferntastatur</string>
+    <string name="messages_new_letters_short">ABC</string>
+    <string name="settings_group_home_screen">Startbildschirm</string>
+    <string name="settings_widget_shape">Symbolform</string>
+    <string name="settings_widget_shape_text">Für die Symbole „SMS“ und „Kontakte“ auf dem Startbildschirm – passend zu den Symbolen Ihres Launchers</string>
+    <string name="keywords_widget_shape">widget symbol form rund abgerundet quadrat kreis ecke startbildschirm sms kontakte launcher</string>
+    <string name="widget_shape_auto">Automatisch</string>
+    <string name="widget_shape_circle">Kreis</string>
+    <string name="widget_shape_round_large">Stark abgerundet</string>
+    <string name="widget_shape_round_medium">Abgerundet</string>
+    <string name="widget_shape_round_small">Leicht abgerundet</string>
+    <string name="widget_shape_square">Quadrat</string>
 </resources>

@@ -60,6 +60,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
@@ -92,7 +93,7 @@ import com.ogneliss.dialer.ui.components.listSheetContainerColor
  * ── Вид ─────────────────────────────────────────────────────────────────────
  * Как переписка в Ogneliss Mail и принятые правила UI диалера:
  * • свои сообщения — справа на primaryContainer, чужие — слева
- *   на surfaceContainerHigh; скругление — shapes.large (настройка
+ *   в тоне собеседника (2.1.3); скругление — shapes.large (настройка
  *   «Углы» его масштабирует);
  * • над первым сообщением дня — подпись дня, как в журнале;
  * • под сообщением — время и состояние («Не отправлено» — цветом ошибки,
@@ -218,8 +219,23 @@ fun ConversationScreen(
                     )
                 }
             } else {
+                // Входящие — в тоне собеседника (2.1.3, AvatarPalette.bubble):
+                // имя из книги есть, когда под заголовком стоит номер (subtitle)
+                val scheme = MaterialTheme.colorScheme
+                val highContrast = com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.outlined
+                val incomingColor = remember(state.title, state.subtitle, scheme, highContrast) {
+                    com.ogneliss.dialer.ui.theme.AvatarPalette.bubble(
+                        key = state.title.takeIf { state.subtitle != null },
+                        dark = scheme.surface.luminance() < 0.5f,
+                        highContrast = highContrast,
+                        surface = scheme.surface,
+                        // В светлой теме surfaceContainerHigh белый, как страница, — берём серый
+                        neutral = if (highContrast) scheme.surfaceContainerHigh else scheme.surfaceContainerHighest
+                    )
+                }
                 MessageList(
                     messages = state.messages,
+                    incomingColor = incomingColor,
                     modifier = Modifier.weight(1f),
                     onLongPress = { actionsFor = it },
                     onRetry = vm::retry,
@@ -275,6 +291,8 @@ fun ConversationScreen(
 @Composable
 private fun MessageList(
     messages: List<Message>,
+    /** Заливка входящих — тон собеседника (2.1.3). */
+    incomingColor: Color,
     modifier: Modifier,
     onLongPress: (Message) -> Unit,
     onRetry: (Message) -> Unit,
@@ -295,7 +313,7 @@ private fun MessageList(
     ) {
         newestFirst.forEachIndexed { index, message ->
             item(key = message.key) {
-                Bubble(message, onLongPress, onRetry, onDownload, onOpenImage)
+                Bubble(message, incomingColor, onLongPress, onRetry, onDownload, onOpenImage)
             }
             // Подпись дня — над первым сообщением дня (в перевёрнутом списке — после)
             val older = newestFirst.getOrNull(index + 1)
@@ -333,8 +351,9 @@ private fun DayCaption(date: Long) {
 /**
  * Пузырь сообщения.
  *
- * Своё — справа, на primaryContainer; чужое — слева, на
- * surfaceContainerHigh: цвет, а не только сторона, — для тех, кто
+ * Своё — справа, на primaryContainer; чужое — слева, в тоне собеседника
+ * (2.1.3, AvatarPalette.bubble; было — surfaceContainerHigh, в светлой
+ * теме белое на белом): цвет, а не только сторона, — для тех, кто
  * читает переписку крупным шрифтом, где пузыри во всю ширину.
  * Касание неотправленного — повтор; долгое нажатие — шторка действий.
  * Картинки MMS — квадратом 220 dp, касание открывает просмотр.
@@ -343,6 +362,7 @@ private fun DayCaption(date: Long) {
 @Composable
 private fun Bubble(
     message: Message,
+    incomingColor: Color,
     onLongPress: (Message) -> Unit,
     onRetry: (Message) -> Unit,
     onDownload: (Message) -> Unit,
@@ -356,8 +376,7 @@ private fun Bubble(
     val code = remember(message.key, message.body) {
         if (mine) null else OtpDetector.code(message.body)
     }
-    val container = if (mine) MaterialTheme.colorScheme.primaryContainer
-    else MaterialTheme.colorScheme.surfaceContainerHigh
+    val container = if (mine) MaterialTheme.colorScheme.primaryContainer else incomingColor
     val onContainer = if (mine) MaterialTheme.colorScheme.onPrimaryContainer
     else MaterialTheme.colorScheme.onSurface
     val time = remember(message.date) {

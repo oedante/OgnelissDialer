@@ -171,6 +171,11 @@ class SettingsCommands @Inject constructor(
             "call_photo_style" -> prefs.setCallPhotoStyle(CallPhotoStyle.from(value))
             "call_photo_size" -> prefs.setCallPhotoSize(CallPhotoSize.from(value))
             "answer_mode" -> prefs.setAnswerMode(AnswerMode.from(value))
+            "widget_shape" -> {
+                prefs.setWidgetShape(WidgetShape.from(value))
+                // Значки на главном экране перерисовываются сразу — выбор виден без ожидания
+                com.ogneliss.dialer.widget.SectionWidgets.updateAll(appContext)
+            }
             "contact_name_format" -> prefs.setContactNameFormat(ContactNameFormat.from(value))
             "contact_sort" -> prefs.setContactSort(ContactSort.from(value))
             "ui_scale" -> prefs.setUiScale(UiScale.from(value))
@@ -225,6 +230,7 @@ class SettingsCommands @Inject constructor(
         "call_photo_style" -> state.callPhotoStyle.name
         "call_photo_size" -> state.callPhotoSize.name
         "answer_mode" -> state.answerMode.name
+        "widget_shape" -> state.widgetShape.name
         "contact_name_format" -> state.contactNameFormat.name
         "contact_sort" -> state.contactSort.name
         "ui_scale" -> state.uiScale.name
@@ -304,6 +310,7 @@ class SettingsCommands @Inject constructor(
         "call_photo_style" -> context.getString(callPhotoStyleLabelRes(state.callPhotoStyle))
         "call_photo_size" -> context.getString(callPhotoSizeLabelRes(state.callPhotoSize))
         "answer_mode" -> context.getString(answerModeLabelRes(state.answerMode))
+        "widget_shape" -> context.getString(widgetShapeLabelRes(state.widgetShape))
         "contact_name_format" -> context.getString(contactNameFormatLabelRes(state.contactNameFormat))
         "contact_sort" -> context.getString(contactSortLabelRes(state.contactSort))
         "auto_redial" -> context.getString(autoRedialLabelRes(state.autoRedialMode))
@@ -379,6 +386,7 @@ class SettingsCommands @Inject constructor(
             "call_photo_style" -> R.string.settings_call_photo
             "call_photo_size" -> R.string.settings_call_photo_size
             "answer_mode" -> R.string.settings_answer_mode
+            "widget_shape" -> R.string.settings_widget_shape
             "contact_name_format" -> R.string.settings_contact_name_format
             "contact_sort" -> R.string.settings_contact_sort
             "ui_scale" -> R.string.settings_ui_scale
@@ -485,6 +493,16 @@ class SettingsCommands @Inject constructor(
             AnswerMode.SLIDE -> R.string.answer_mode_slide
         }
 
+        /** Подпись формы значков-виджетов (2.1.3). */
+        fun widgetShapeLabelRes(shape: WidgetShape): Int = when (shape) {
+            WidgetShape.AUTO -> R.string.widget_shape_auto
+            WidgetShape.CIRCLE -> R.string.widget_shape_circle
+            WidgetShape.ROUND_LARGE -> R.string.widget_shape_round_large
+            WidgetShape.ROUND_MEDIUM -> R.string.widget_shape_round_medium
+            WidgetShape.ROUND_SMALL -> R.string.widget_shape_round_small
+            WidgetShape.SQUARE -> R.string.widget_shape_square
+        }
+
         /** Подпись формата имени контакта (1.6.2). */
         fun contactNameFormatLabelRes(format: ContactNameFormat): Int = when (format) {
             ContactNameFormat.GIVEN_FIRST -> R.string.contact_name_given_first
@@ -574,6 +592,8 @@ class SettingsCommands @Inject constructor(
             "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info",
             "call_photo_style", "call_photo_size", "answer_mode", "ui_scale",
             "contact_name_format", "contact_sort",
+            // 2.1.3
+            "widget_shape",
             // 1.8.4
             "theme_preset",
             // 1.9.0

@@ -2,6 +2,7 @@ package com.ogneliss.dialer.ui.screens
 
 import com.ogneliss.dialer.ui.components.scrollEdgeFade
 import com.ogneliss.dialer.ui.components.SelectionBottomBar
+import com.ogneliss.dialer.ui.components.dragSelect
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -1707,10 +1708,18 @@ fun MainDialerScreen(
                     GroupPosition.of(i, n)
                 }
 
+                val selectableKeys = remember(list) { list.mapTo(HashSet()) { it.key } }
                 LazyColumn(
                     state = listState,
                     // Тень у края прокрутки (2.1.2, Д7 — как в Mail)
-                    modifier = Modifier.padding(padding).fillMaxSize().scrollEdgeFade(listState),
+                    modifier = Modifier.padding(padding).fillMaxSize().scrollEdgeFade(listState)
+                        // Выбор протягиванием по кружкам (2.1.3, DragSelect): ключи строк —
+                        // с приставками закреплённых и найденных
+                        .dragSelect(selection, listState) { key ->
+                            (key as? String)
+                                ?.removePrefix("found_")?.removePrefix("pin_only_")?.removePrefix("pin_")
+                                ?.takeIf { it in selectableKeys }
+                        },
                     /*
                      * Под кнопкой псевдозвонка — запас (1.5.7): круглая кнопка
                      * висит над правым краем списка и закрывала кнопку вызова

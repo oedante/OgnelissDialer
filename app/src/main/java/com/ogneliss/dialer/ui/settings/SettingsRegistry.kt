@@ -543,6 +543,17 @@ object SettingsRegistry {
             SettingKind.Action("speed_dial"),
             groupRes = R.string.settings_group_at_hand
         ),
+        /*
+         * Форма значков «SMS» и «Контакты» на главном экране (2.1.3, автор:
+         * «чтобы по форме можно было выбрать скругление»). Разбор — WidgetShape.
+         */
+        SettingEntry(
+            "widget_shape", SettingsCategory.QUICK_ACCESS,
+            R.string.settings_widget_shape, R.string.settings_widget_shape_text,
+            SettingKind.Choice("widget_shape"),
+            keywordsRes = R.string.keywords_widget_shape,
+            groupRes = R.string.settings_group_home_screen
+        ),
         // 1.5.8, обзор интерфейса (У6): ответ сдвигом — от случайного касания
         /*
          * Входящий поверх приложений (2.1.0, вопрос пользователя 07.11.2026):

@@ -69,6 +69,12 @@ class SelectionState<T> {
 
     }
 
+    /** Отметить или снять без переключения — для выбора протягиванием (2.1.3, DragSelect). */
+    fun set(item: T, on: Boolean) {
+        if ((item in selected) == on) return
+        selected = if (on) selected + item else selected - item
+    }
+
     fun selectAll(items: Collection<T>) {
         selected = items.toSet()
         isActive = selected.isNotEmpty()

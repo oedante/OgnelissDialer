@@ -581,6 +581,8 @@ internal fun ActionRow(
     onStartSelection: (() -> Unit)? = null,
     /** Режим выбора включён: на месте «Контактов» — «Выйти». */
     selectionActive: Boolean = false,
+    /** Главное действие раздела в центре (2.1.3); null — клавиатура набора. */
+    center: PanelCenter? = null,
     onMenu: () -> Unit,
     menuContent: @Composable () -> Unit
 ) {
@@ -617,7 +619,7 @@ internal fun ActionRow(
         }
 
         FloatingActionButton(
-            onClick = onToggleExpanded,
+            onClick = center?.onClick ?: onToggleExpanded,
             shape = OgnelissShapeTokens.callButton,
             containerColor = com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.navIndicator,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -634,12 +636,16 @@ internal fun ActionRow(
                     onSwipeDown = if (expanded) onToggleExpanded else null
                 )
         ) {
-            Icon(
-                if (expanded) OgnelissIcons.KeyboardArrowDown else OgnelissIcons.Dialpad,
-                contentDescription = stringResource(
-                    if (expanded) R.string.dialpad_hide else R.string.dialpad_show
+            if (center != null) {
+                Icon(center.icon, contentDescription = stringResource(center.descriptionRes))
+            } else {
+                Icon(
+                    if (expanded) OgnelissIcons.KeyboardArrowDown else OgnelissIcons.Dialpad,
+                    contentDescription = stringResource(
+                        if (expanded) R.string.dialpad_hide else R.string.dialpad_show
+                    )
                 )
-            )
+            }
         }
 
         Row(
@@ -670,6 +676,23 @@ internal fun ActionRow(
         }
     }
 }
+
+/**
+ * ГЛАВНОЕ ДЕЙСТВИЕ РАЗДЕЛА — В ЦЕНТРЕ ПАНЕЛИ (2.1.3, дизайн-система Д6).
+ *
+ * Автор, 11.11.2026: «в окне SMS кнопку „Написать“ лучше менять на
+ * клавиатуру, а не сбоку. А в контактах вместо клавиатуры — „Создать
+ * контакт“». Как в Ogneliss Mail, где в центре панели — «Создать»:
+ * журнал — клавиатура набора, SMS — «Написать», контакты — «Создать
+ * контакт». Плавающей кнопки над списком больше нет — она закрывала
+ * время последней строки. Клавиатура набора из SMS и контактов —
+ * сдвигом вверх по центральной кнопке (как в журнале) или через «Журнал».
+ */
+internal class PanelCenter(
+    val icon: androidx.compose.ui.graphics.vector.ImageVector,
+    val descriptionRes: Int,
+    val onClick: () -> Unit
+)
 
 /** Кнопка раздела на нижней панели: открытый раздел подсвечен. */
 @Composable

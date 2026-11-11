@@ -44,4 +44,21 @@ class WidgetIconTest {
         assertEquals(255, Color.alpha(b.getPixel(b.width / 2, b.height / 2)))
         assertTrue(!red(b.getPixel(b.width - 18, 18)))
     }
+
+    // ── 2.1.3: форма из настроек (WidgetShape) ─────────────────────────────
+
+    @Test
+    fun `форма из настроек — круг, скругление, квадрат`() {
+        val res = R.drawable.ic_shortcut_contacts
+        fun cornerAlpha(shape: com.ogneliss.dialer.settings.WidgetShape, at: Int) =
+            Color.alpha(WidgetIcon.draw(context, res, 0, shape).getPixel(at, at))
+        // Квадрат закрашен до самого угла, круг — нет
+        assertEquals(255, cornerAlpha(com.ogneliss.dialer.settings.WidgetShape.SQUARE, 2))
+        assertEquals(0, cornerAlpha(com.ogneliss.dialer.settings.WidgetShape.CIRCLE, 2))
+        // Точка (20, 20) из 192: у круга снаружи, у слабого скругления — внутри
+        assertEquals(0, cornerAlpha(com.ogneliss.dialer.settings.WidgetShape.CIRCLE, 20))
+        assertEquals(255, cornerAlpha(com.ogneliss.dialer.settings.WidgetShape.ROUND_SMALL, 20))
+        // Сильное скругление срезает больше слабого
+        assertEquals(0, cornerAlpha(com.ogneliss.dialer.settings.WidgetShape.ROUND_LARGE, 8))
+    }
 }
