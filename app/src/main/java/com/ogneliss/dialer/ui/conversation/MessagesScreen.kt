@@ -306,6 +306,13 @@ fun MessagesScreen(
     val (archivedThreads, activeThreads) = remember(visibleThreads, archive) {
         visibleThreads.partition { ArchiveRules.isSmsArchived(smsPinKey(it.address), it.last.date, archive) }
     }
+    // Непрочитанные по папкам — числом справа в списке папок (2.2.0)
+    val folderUnread = remember(activeThreads, visibleFolders, byNumber) {
+        visibleFolders.associateWith { f ->
+            if (f == SmsFolder.STARRED || f == SmsFolder.ALL) 0
+            else activeThreads.count { t -> t.unread > 0 && SmsFolders.matches(f, t.address, contactOf(t.address) != null, t.unread) }
+        }
+    }
     // Папка — только у общего списка; в архиве и при поиске — все переписки
     val inFolder = if (showArchive || query.isNotBlank() || folder == SmsFolder.ALL) null else folder
     val source = remember(showArchive, archivedThreads, activeThreads, inFolder, byNumber) {
@@ -503,7 +510,19 @@ fun MessagesScreen(
                         onHelp = { menuOpen = false; onOpenHelp() },
                         // 2.1.0: значок «SMS» со счётчиком на главный экран (SectionWidgets)
                         onPinToHome = pinToHome,
-                        onArchive = { menuOpen = false; selection.clear(); showArchive = true }
+                        onArchive = { menuOpen = false; selection.clear(); showArchive = true },
+                        // Папки (2.2.0) — над плитками, как «Папки» в меню почты
+                        header = if (state.isDefaultSms && visibleFolders.size > 1) {
+                            {
+                                SmsFolderRows(
+                                    folders = visibleFolders,
+                                    current = folder,
+                                    unread = folderUnread,
+                                    onSelect = { menuOpen = false; selection.clear(); folderName = it.name },
+                                    onEdit = { menuOpen = false; onOpenFolders() }
+                                )
+                            }
+                        } else null
                     )
                 }
             )
@@ -547,6 +566,10 @@ fun MessagesScreen(
                         }
                     }
                 }
+            // Открытая папка — названием над списком, как папка в почте (2.2.0)
+            if (state.isDefaultSms && !showArchive && !selection.isActive && query.isBlank() && folder != SmsFolder.ALL) {
+                FolderTitleRow(folder) { folderName = SmsFolder.ALL.name }
+            }
             Box(Modifier.weight(1f).fillMaxWidth()) {
                 /*
                  * Три состояния: нет роли SMS — приложение SMS человека и роль
@@ -722,28 +745,6 @@ fun MessagesScreen(
                         modifier = Modifier.align(Alignment.TopCenter).padding(top = Space.s)
                     )
                 }
-            }
-            /*
-             * ПАПКИ (2.2.0) — вкладками внизу, над панелью раздела: переключение
-             * у пальца, как всё в приложении. Не видны в архиве, при выборе
-             * и поиске. Долгое нажатие — порядок и показ (SmsFoldersScreen).
-             */
-            if (state.isDefaultSms && !showArchive && !selection.isActive && query.isBlank() && visibleFolders.size > 1) {
-                val unreadIn = remember(activeThreads, visibleFolders, byNumber) {
-                    visibleFolders.associateWith { f ->
-                        if (f == SmsFolder.STARRED || f == SmsFolder.ALL) 0
-                        else activeThreads.count { t ->
-                            t.unread > 0 && SmsFolders.matches(f, t.address, contactOf(t.address) != null, t.unread)
-                        }
-                    }
-                }
-                FolderTabs(
-                    folders = visibleFolders,
-                    current = folder,
-                    unread = unreadIn,
-                    onSelect = { folderName = it.name },
-                    onEdit = onOpenFolders
-                )
             }
         }
         }

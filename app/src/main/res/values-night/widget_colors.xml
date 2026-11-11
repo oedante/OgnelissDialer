@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 2.2.0: виджет «Закреплённые» — подложка и подписи в светлой и тёмной теме -->
+<resources>
+    <color name="widget_pinned_bg">#E61F2024</color>
+    <color name="widget_pinned_text">#FFE4E2E6</color>
+</resources>

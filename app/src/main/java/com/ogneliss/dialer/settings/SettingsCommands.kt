@@ -179,6 +179,7 @@ class SettingsCommands @Inject constructor(
                 prefs.setWidgetShape(WidgetShape.from(value))
                 // Значки на главном экране перерисовываются сразу — выбор виден без ожидания
                 com.ogneliss.dialer.widget.SectionWidgets.updateAll(appContext)
+                com.ogneliss.dialer.widget.PinnedWidget.update(appContext)
             }
             "contact_name_format" -> prefs.setContactNameFormat(ContactNameFormat.from(value))
             "contact_sort" -> prefs.setContactSort(ContactSort.from(value))

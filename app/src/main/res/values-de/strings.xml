@@ -1019,7 +1019,7 @@
     <string name="otp_cleanup_1h">Nach 1 Stunde</string>
     <string name="otp_cleanup_24h">Nach 24 Stunden</string>
     <string name="settings_sms_folders">Ordner</string>
-    <string name="settings_sms_folders_text">Reihenfolge und Anzeige der Ordner-Tabs in SMS</string>
+    <string name="settings_sms_folders_text">Reihenfolge und Anzeige der Ordner im Menü „Mehr“ von SMS</string>
     <string name="settings_sms_backup">SMS in Datei sichern</string>
     <string name="settings_sms_backup_text">Alle SMS in eine XML-Datei im Format von SMS Backup &amp; Restore</string>
     <string name="settings_sms_restore">SMS aus Datei wiederherstellen</string>
@@ -1041,4 +1041,8 @@
     <string name="sms_folder_starred">Markiert</string>
     <string name="messages_found_header">Nachrichten</string>
     <string name="sms_draft_label">Entwurf:</string>
+    <string name="widget_pinned_label">Angeheftet</string>
+    <string name="widget_pinned_description">Angeheftete Nummern mit einem Tippen anrufen</string>
+    <string name="widget_pinned_call">%1$s anrufen</string>
+    <string name="sms_folders_edit">Ordner anpassen</string>
 </resources>

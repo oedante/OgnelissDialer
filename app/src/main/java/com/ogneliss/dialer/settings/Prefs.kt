@@ -1175,10 +1175,13 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     suspend fun setSwipeRight(v: SwipeAction) = edit("swipe_right", v.key) { it[Keys.SWIPE_RIGHT] = v.key }
     suspend fun setSwipeLeft(v: SwipeAction) = edit("swipe_left", v.key) { it[Keys.SWIPE_LEFT] = v.key }
-    suspend fun setPinnedNumbers(numbers: List<String>) =
+    suspend fun setPinnedNumbers(numbers: List<String>) {
         edit("pinned_numbers", numbers.size) {
             it[Keys.PINNED_NUMBERS] = numbers.joinToString(",")
         }
+        // Виджет «Закреплённые» (2.2.0) — сразу с новым списком
+        com.ogneliss.dialer.widget.PinnedWidget.update(context)
+    }
 
     suspend fun setPanelSwipeNav(v: Boolean) =
         edit("panel_swipe_nav", v) { it[Keys.PANEL_SWIPE_NAV] = v }

@@ -1018,7 +1018,7 @@
     <string name="otp_cleanup_1h">Après 1 heure</string>
     <string name="otp_cleanup_24h">Après 24 heures</string>
     <string name="settings_sms_folders">Dossiers</string>
-    <string name="settings_sms_folders_text">Ordre et affichage des onglets de dossiers dans SMS</string>
+    <string name="settings_sms_folders_text">Ordre et affichage des dossiers dans le menu « Plus » des SMS</string>
     <string name="settings_sms_backup">Sauvegarder les SMS dans un fichier</string>
     <string name="settings_sms_backup_text">Tous les SMS dans un fichier XML au format SMS Backup &amp; Restore</string>
     <string name="settings_sms_restore">Restaurer les SMS depuis un fichier</string>
@@ -1040,4 +1040,8 @@
     <string name="sms_folder_starred">Favoris</string>
     <string name="messages_found_header">Messages</string>
     <string name="sms_draft_label">Brouillon :</string>
+    <string name="widget_pinned_label">Épinglés</string>
+    <string name="widget_pinned_description">Appeler les numéros épinglés d’une touche</string>
+    <string name="widget_pinned_call">Appeler %1$s</string>
+    <string name="sms_folders_edit">Modifier les dossiers</string>
 </resources>

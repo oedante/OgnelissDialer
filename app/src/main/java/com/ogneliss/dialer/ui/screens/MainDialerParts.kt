@@ -7,6 +7,8 @@ import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.settings.ThemeMode
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import com.ogneliss.dialer.ui.theme.CallGreen
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -109,7 +111,12 @@ internal fun OverflowMenu(
      * «Значок на главный экран» (2.1.0): значок раздела со счётчиком —
      * widget/SectionWidgets. null — пункта нет (журнал; лаунчер не умеет).
      */
-    onPinToHome: (() -> Unit)? = null
+    onPinToHome: (() -> Unit)? = null,
+    /**
+     * Своё над плитками (2.2.0): папки SMS — как «Папки» над «Избранным»
+     * в меню Ogneliss Mail. null — только плитки.
+     */
+    header: (@Composable ColumnScope.() -> Unit)? = null
 ) {
     /*
      * ПОРЯДОК ПУНКТОВ МЕНЮ.
@@ -221,7 +228,15 @@ internal fun OverflowMenu(
             if (onHelp != null) add(MenuTile(MenuGroup.APP, OgnelissIcons.Help, helpLabel, onHelp))
             if (onPinToHome != null) add(MenuTile(MenuGroup.APP, OgnelissIcons.AddToHomeScreen, stringResource(R.string.menu_pin_home), onPinToHome))
         }
-        OverflowMenuBody(tiles, clearLabel, onClearLog)
+        if (header == null) {
+            OverflowMenuBody(tiles, clearLabel, onClearLog)
+        } else {
+            // С папками шторка выше экрана телефона — листается целиком
+            Column(Modifier.verticalScroll(rememberScrollState())) {
+                header()
+                OverflowMenuBody(tiles, clearLabel, onClearLog)
+            }
+        }
     }
 }
 

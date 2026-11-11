@@ -427,6 +427,18 @@
             непрочитанных и «Контакты» (widget/SectionWidgets.kt). Виджеты
             1 × 1 рисует приложение само; обновления — от приложения.
         -->
+        <!-- 2.2.0: виджет «Закреплённые» — звонок в одно касание (widget/PinnedWidget.kt) -->
+        <receiver
+            android:name=".widget.PinnedWidgetProvider"
+            android:exported="false"
+            android:label="@string/widget_pinned_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_pinned_info" />
+        </receiver>
         <receiver
             android:name=".widget.SmsWidgetProvider"
             android:exported="false"

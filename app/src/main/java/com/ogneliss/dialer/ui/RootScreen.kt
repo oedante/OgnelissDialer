@@ -1565,6 +1565,8 @@ private fun runSettingAction(
             com.ogneliss.dialer.backup.SmsBackup.fileName()
         )
         "sms_folders" -> nav.navigate("sms_folders")
+        // Окно выбора файла копии — у раздела настроек (SettingsCategoryHost, restoreLauncher)
+        "sms_restore" -> Unit
         "stats" -> nav.navigate("stats")
         /*
          * Приложение SMS по умолчанию (2.0.0). Уже по умолчанию — системный

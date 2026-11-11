@@ -26,6 +26,8 @@ class BootReceiver : BroadcastReceiver() {
         ) return
 
         CallNotifications.ensureChannels(context)
+        // Виджет «Закреплённые» (2.2.0): после обновления приложения — новая разметка
+        com.ogneliss.dialer.widget.PinnedWidget.update(context)
         // Уведомления запрещены — пропущенные рисует система (MissedCallsNotifier.syncReceiver)
         com.ogneliss.dialer.call.MissedCallsNotifier.syncReceiver(context)
 

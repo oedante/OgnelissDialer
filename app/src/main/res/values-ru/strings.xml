@@ -1028,7 +1028,7 @@
     <string name="otp_cleanup_1h">Через 1 час</string>
     <string name="otp_cleanup_24h">Через 24 часа</string>
     <string name="settings_sms_folders">Папки</string>
-    <string name="settings_sms_folders_text">Порядок и показ вкладок папок в SMS</string>
+    <string name="settings_sms_folders_text">Порядок и показ папок в меню «Ещё» раздела SMS</string>
     <string name="settings_sms_backup">Резервная копия SMS в файл</string>
     <string name="settings_sms_backup_text">Все SMS в файл XML формата SMS Backup &amp; Restore</string>
     <string name="settings_sms_restore">Восстановить SMS из файла</string>
@@ -1050,4 +1050,8 @@
     <string name="sms_folder_starred">Избранное</string>
     <string name="messages_found_header">Сообщения</string>
     <string name="sms_draft_label">Черновик:</string>
+    <string name="widget_pinned_label">Закреплённые</string>
+    <string name="widget_pinned_description">Звонок закреплённым в одно касание</string>
+    <string name="widget_pinned_call">Позвонить: %1$s</string>
+    <string name="sms_folders_edit">Настроить папки</string>
 </resources>

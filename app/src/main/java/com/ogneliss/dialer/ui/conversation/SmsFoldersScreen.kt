@@ -41,7 +41,7 @@ import javax.inject.Inject
  *
  * Как экран закреплённых контактов: стрелки «выше» и «ниже», переключатель
  * показа. «Все» не скрывается (SmsFolders). Изменения — сразу, без
- * «Сохранить»: вкладки в разделе SMS перестраиваются сами.
+ * «Сохранить»: список папок в «Ещё» раздела SMS перестраивается сам.
  */
 @Composable
 fun SmsFoldersScreen(onBack: () -> Unit, vm: SmsFoldersViewModel = hiltViewModel()) {
@@ -51,6 +51,7 @@ fun SmsFoldersScreen(onBack: () -> Unit, vm: SmsFoldersViewModel = hiltViewModel
         onBack = onBack,
         pinnedTopBar = true
     ) { pad ->
+        // Строки — в порядке вкладок: первая здесь — первая слева в разделе SMS
         LazyColumn(Modifier.padding(pad)) {
             itemsIndexed(folders, key = { _, f -> f.first.name }) { i, (folder, visible) ->
                 ListItem(
@@ -63,6 +64,7 @@ fun SmsFoldersScreen(onBack: () -> Unit, vm: SmsFoldersViewModel = hiltViewModel
                             IconButton(onClick = { vm.move(folders, i, 1) }, enabled = i < folders.lastIndex) {
                                 Icon(OgnelissIcons.ArrowDownward, contentDescription = stringResource(R.string.pinned_move_down))
                             }
+                            // «Все» не скрыть: иначе часть переписок пропала бы из виду
                             Switch(
                                 checked = visible,
                                 enabled = folder != SmsFolder.ALL,
@@ -88,6 +90,11 @@ internal fun smsFolderLabel(folder: SmsFolder): Int = when (folder) {
     SmsFolder.STARRED -> R.string.sms_folder_starred
 }
 
+/**
+ * Порядок и показ папок — строкой в настройках (SmsFolders.encode).
+ * Своя модель, а не MessagesViewModel: той для работы нужен весь список
+ * переписок, а здесь — одна строка настроек.
+ */
 @HiltViewModel
 class SmsFoldersViewModel @Inject constructor(private val prefs: Prefs) : ViewModel() {
 
@@ -95,6 +102,7 @@ class SmsFoldersViewModel @Inject constructor(private val prefs: Prefs) : ViewMo
         .map(SmsFolders::parse)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_MS), SmsFolders.DEFAULT)
 
+    /** Сдвинуть папку на [delta] (−1 — выше, +1 — ниже); за край — ничего. */
     fun move(list: List<Pair<SmsFolder, Boolean>>, index: Int, delta: Int) {
         val target = index + delta
         if (target !in list.indices) return
@@ -102,6 +110,7 @@ class SmsFoldersViewModel @Inject constructor(private val prefs: Prefs) : ViewMo
         save(next)
     }
 
+    /** Показать или скрыть вкладку; выбранная скрытая — раздел вернётся на «Все». */
     fun setVisible(list: List<Pair<SmsFolder, Boolean>>, index: Int, visible: Boolean) {
         save(list.toMutableList().apply { this[index] = this[index].first to visible })
     }
@@ -111,6 +120,7 @@ class SmsFoldersViewModel @Inject constructor(private val prefs: Prefs) : ViewMo
     }
 
     private companion object {
+        // Поворот экрана не обрывает подписку на настройки
         const val STOP_MS = 5_000L
     }
 }

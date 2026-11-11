@@ -1,11 +1,8 @@
 package com.ogneliss.dialer.ui.conversation
 
 import android.text.format.DateUtils
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,15 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -43,92 +37,130 @@ import com.ogneliss.dialer.R
 import com.ogneliss.dialer.data.db.StarredSmsEntity
 import com.ogneliss.dialer.sms.Message
 import com.ogneliss.dialer.sms.SmsFolder
-import com.ogneliss.dialer.ui.components.OgnelissDivider
+import com.ogneliss.dialer.ui.components.SheetGroup
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import com.ogneliss.dialer.ui.theme.Space
 
 /**
- * ВКЛАДКИ ПАПОК SMS (2.2.0) — строкой над нижней панелью раздела.
+ * ПАПКИ SMS В ШТОРКЕ «ЕЩЁ» (2.2.0) — как «Папки» в меню Ogneliss Mail
+ * (автор, 11.11.2026: «за референс UI возьмём Ogneliss Mail»).
  *
- * Внизу, у пальца, как переключение разделов во всём приложении (просьба
- * автора). Выбранная — заливкой, у остальных — число непрочитанных.
- * Не помещаются — строка листается вбок. Долгое нажатие — порядок и показ.
+ * Было в первой версии: вкладки строкой над панелью. В почте папки — список
+ * над «Избранным» в меню, которое открывается нижней кнопкой: там же,
+ * у пальца, и без лишней строки над списком всегда. Строка папки — значок,
+ * название и число непрочитанных; открытая — заливкой, как выбранный
+ * раздел. Последняя строка — порядок и показ (SmsFoldersScreen).
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun FolderTabs(
+internal fun SmsFolderRows(
     folders: List<SmsFolder>,
     current: SmsFolder,
     unread: Map<SmsFolder, Int>,
     onSelect: (SmsFolder) -> Unit,
     onEdit: () -> Unit
 ) {
-    val editLabel = stringResource(R.string.settings_sms_folders)
-    Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
-        Column(Modifier.fillMaxWidth()) {
-            OgnelissDivider()
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
-                    .padding(horizontal = Space.s, vertical = Space.xs),
-                horizontalArrangement = Arrangement.spacedBy(Space.xs),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                folders.forEach { folder ->
-                    val on = folder == current
-                    val count = unread[folder] ?: 0
-                    Surface(
-                        color = if (on) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainerLow,
-                        contentColor = if (on) MaterialTheme.colorScheme.onSecondaryContainer
-                        else MaterialTheme.colorScheme.onSurfaceVariant,
-                        shape = MaterialTheme.shapes.extraLarge,
-                        modifier = Modifier
-                            .clip(MaterialTheme.shapes.extraLarge)
-                            .combinedClickable(
-                                role = Role.Tab,
-                                onClick = { onSelect(folder) },
-                                onLongClick = onEdit,
-                                onLongClickLabel = editLabel
-                            )
-                            .semantics { selected = on }
-                    ) {
-                        Row(
-                            Modifier
-                                .heightIn(min = TAB_HEIGHT)
-                                .padding(horizontal = Space.m),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            if (folder == SmsFolder.STARRED) {
-                                Icon(
-                                    OgnelissIcons.Star, contentDescription = null,
-                                    modifier = Modifier.padding(end = Space.xxs).size(FlowUi.iconSizeInline)
-                                )
-                            }
-                            Text(
-                                stringResource(smsFolderLabel(folder)),
-                                style = MaterialTheme.typography.labelLarge,
-                                fontWeight = if (on) FontWeight.SemiBold else null
-                            )
-                            if (count > 0) {
-                                Text(
-                                    count.toString(),
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.padding(start = Space.xs)
-                                )
-                            }
-                        }
-                    }
-                }
+    SheetGroup(title = stringResource(R.string.settings_sms_folders), first = true) {
+        Column(Modifier.padding(vertical = Space.xs)) {
+            folders.forEach { folder ->
+                FolderRow(
+                    icon = smsFolderIcon(folder),
+                    label = stringResource(smsFolderLabel(folder)),
+                    count = unread[folder] ?: 0,
+                    selected = folder == current,
+                    onClick = { onSelect(folder) }
+                )
             }
+            // Как «настроить» у «Избранного» в почте — порядок и показ папок
+            FolderRow(
+                icon = OgnelissIcons.Settings,
+                label = stringResource(R.string.sms_folders_edit),
+                count = 0,
+                selected = false,
+                onClick = onEdit
+            )
         }
     }
 }
 
-/** Высота вкладки — не меньше цели касания. */
-private val TAB_HEIGHT = 48.dp
+/** Строка папки: значок, название, справа — непрочитанные; выбранная — заливкой. */
+@Composable
+private fun FolderRow(
+    icon: ImageVector,
+    label: String,
+    count: Int,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Space.xs)
+            .clip(MaterialTheme.shapes.extraLarge)
+            .background(if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent)
+            .clickable(role = Role.Tab, onClick = onClick)
+            .semantics { this.selected = selected }
+            .heightIn(min = ROW_HEIGHT)
+            .padding(horizontal = Space.m),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            icon, contentDescription = null,
+            tint = if (selected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(Modifier.width(Space.l))
+        Text(
+            label,
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = if (selected) FontWeight.SemiBold else null,
+            modifier = Modifier.weight(1f)
+        )
+        // Число — только непрочитанные: всего переписок человеку не нужно
+        if (count > 0) {
+            Text(count.toString(), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+        }
+    }
+}
+
+/** Высота строки папки — как строки меню почты. */
+private val ROW_HEIGHT = 52.dp
+
+/** Значок папки — по смыслу, как значки папок почты. */
+internal fun smsFolderIcon(folder: SmsFolder): ImageVector = when (folder) {
+    SmsFolder.ALL -> OgnelissIcons.Forum
+    SmsFolder.PERSONAL -> OgnelissIcons.Person
+    SmsFolder.UNKNOWN -> OgnelissIcons.PersonOff
+    SmsFolder.SERVICE -> OgnelissIcons.Article
+    SmsFolder.UNREAD -> OgnelissIcons.Textsms
+    SmsFolder.STARRED -> OgnelissIcons.Star
+}
+
+/**
+ * Название открытой папки над списком (2.2.0) — как заголовок папки в почте
+ * («Вся почта»): видно, что список отобран. Крестик — снова «Все».
+ */
+@Composable
+internal fun FolderTitleRow(folder: SmsFolder, onClear: () -> Unit) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(start = FlowUi.screenPadding, end = Space.xs, top = Space.xs),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(smsFolderIcon(folder), contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+        Spacer(Modifier.width(Space.m))
+        Text(
+            stringResource(smsFolderLabel(folder)),
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.weight(1f)
+        )
+        IconButton(onClick = onClear) {
+            Icon(OgnelissIcons.Close, contentDescription = stringResource(R.string.sms_folder_all))
+        }
+    }
+}
 
 /**
  * ИЗБРАННОЕ (2.2.0) — отмеченные сообщения, новые первыми: от кого, когда,
@@ -143,8 +175,10 @@ internal fun StarredList(
     onUnstar: (StarredSmsEntity) -> Unit
 ) {
     val context = LocalContext.current
+    // Пусто — пустой список без надписи (тихий интерфейс): вкладка и так подписана
     LazyColumn(Modifier.fillMaxSize()) {
         items(starred, key = { it.msgKey }) { e ->
+            // Дата полностью: избранное хранится долго, «вчера» здесь ни о чём не скажет
             val date = remember(e.date) {
                 DateUtils.formatDateTime(
                     context, e.date,
@@ -160,6 +194,7 @@ internal fun StarredList(
             ) {
                 Column(Modifier.weight(1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
+                        // Своё — «Вы: имя», как последнее сообщение в списке переписок
                         Text(
                             if (e.outgoing) stringResource(R.string.sms_you, titleOf(e.address)) else titleOf(e.address),
                             style = MaterialTheme.typography.titleSmall,
@@ -170,6 +205,7 @@ internal fun StarredList(
                         Spacer(Modifier.width(Space.s))
                         Text(date, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
+                    // Четыре строки: избранное читают здесь же, не открывая переписку
                     Text(
                         e.body,
                         style = MaterialTheme.typography.bodyMedium,
@@ -199,8 +235,9 @@ internal fun FoundMessageRow(message: Message, title: String, query: String, onC
     val date = remember(message.date) {
         DateUtils.formatDateTime(context, message.date, DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_ABBREV_MONTH)
     }
+    // Совпадение — цветом действия: глаз находит слово в куске текста сразу
     val accent = MaterialTheme.colorScheme.primary
-    val snippet = remember(message.key, query, accent) { highlight(message.body, query, accent) }
+    val snippet = remember(message.key, query, accent) { snippetWithMatch(message.body, query, accent) }
     Column(
         Modifier
             .fillMaxWidth()
@@ -228,10 +265,12 @@ internal fun FoundMessageRow(message: Message, title: String, query: String, onC
 }
 
 /** Кусок текста с совпадением ближе к началу строки; совпадение — цветом и жирным. */
-private fun highlight(body: String, query: String, color: androidx.compose.ui.graphics.Color): AnnotatedString {
+private fun snippetWithMatch(body: String, query: String, color: Color): AnnotatedString {
+    // Переводы строк — пробелами: в строке результата две строки текста, не абзацы
     val text = body.replace('\n', ' ')
     val q = query.trim()
     val at = if (q.isEmpty()) -1 else text.indexOf(q, ignoreCase = true)
+    // Не нашлось (совпадение было в другом написании регистра) — текст как есть
     if (at < 0) return AnnotatedString(text)
     val from = if (at > SNIPPET_LEAD) at - SNIPPET_LEAD else 0
     val shown = (if (from > 0) "…" else "") + text.substring(from)
