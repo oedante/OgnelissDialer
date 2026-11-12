@@ -582,6 +582,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val UI_SCALE = stringPreferencesKey("ui_scale")
         // 2.2.1: размер шрифта, как в Ogneliss Mail
         val FONT_SCALE = floatPreferencesKey("font_scale")
+        // 2.2.2: подсказка о свайпах в журнале показана
+        val SWIPE_HINT_DONE = booleanPreferencesKey("swipe_hint_done")
         // Поведение
         val HAPTIC = booleanPreferencesKey("haptic")
         val KEY_TONES = booleanPreferencesKey("key_tones")
@@ -908,6 +910,19 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     /** Масштаб интерфейса (1.5.6): по умолчанию 90 % с 1.8.0 (было «Авто») — разбор в ui/theme/UiScale.kt. */
     val uiScale: Flow<UiScale> = data.map { UiScale.from(it[Keys.UI_SCALE]) }
 
+    /**
+     * ПОДСКАЗКА О СВАЙПАХ — ОДИН РАЗ (2.2.2).
+     *
+     * Форум, 12.11.2026: «не знал про свайп, я видел, что плашки двигаются,
+     * но для чего, не понял, а там дальше чуть надо выдвинуть и отпустить».
+     * Автор: «наверное, надо краткое обучение добавить. Я ради свайпов
+     * и делал приложение». Полоса над журналом — пока человек не нажмёт
+     * «Понятно» или не выполнит первый свайп; сброс настроек её возвращает.
+     */
+    val swipeHintDone: Flow<Boolean> = data.map { it[Keys.SWIPE_HINT_DONE] ?: false }
+
+    suspend fun setSwipeHintDone() = edit("swipe_hint_done", true) { it[Keys.SWIPE_HINT_DONE] = true }
+
     /** Размер шрифта (2.2.1): множитель поверх системного, 0,8…1,6. */
     val fontScale: Flow<Float> = data.map { FontScale.clamp(it[Keys.FONT_SCALE] ?: FontScale.DEFAULT) }
 
@@ -1045,7 +1060,18 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      * не продержаться (IncomingScreen.bannerSafe) — экран вызова целиком
      * и при включённой настройке.
      */
-    val incomingBanner: Flow<Boolean> = data.map { it[Keys.INCOMING_BANNER] ?: true }
+    /*
+     * 2.2.2 (форум, realme XT: «не работает плашка сверху при звонке… какие-то
+     * разрешения дать?»). С 2.1.0 на MIUI/HyperOS, vivo и ColorOS (OPPO,
+     * realme, OnePlus) плашка не показывалась вовсе — прошивка может её
+     * не пропустить, — а переключатель при этом стоял включённым и ничего
+     * не делал. Теперь на этих прошивках он по умолчанию ВЫКЛЮЧЕН (вид
+     * соответствует делу), а включённый рукой — работает: человек решил
+     * сам, и под переключателем сказано, что разрешить в телефоне.
+     */
+    val incomingBanner: Flow<Boolean> = data.map {
+        it[Keys.INCOMING_BANNER] ?: !com.ogneliss.dialer.util.IncomingCallAccess.restrictiveShell
+    }
 
     suspend fun setIncomingBanner(v: Boolean) = edit("incoming_banner", v) { it[Keys.INCOMING_BANNER] = v }
 

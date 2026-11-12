@@ -92,8 +92,10 @@ object IncomingCallAccess {
 
     /**
      * Оболочка со своими запретами на окна из фона и всплытие (MIUI/HyperOS,
-     * vivo, ColorOS) — там плашку входящего не показываем (2.1.0,
-     * IncomingScreen.bannerSafe).
+     * vivo, ColorOS). 2.1.0: плашку входящего там не показывали вовсе.
+     * 2.2.2: там она выключена по умолчанию (Prefs.incomingBanner), но
+     * включённая человеком — показывается: настройка больше не «включена,
+     * но не работает» (форум, realme XT).
      */
     val restrictiveShell: Boolean get() = shell != Shell.OTHER
 

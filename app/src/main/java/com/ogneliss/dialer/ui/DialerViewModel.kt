@@ -2885,6 +2885,8 @@ class DialerViewModel @Inject constructor(
         group: CallLogGroup,
         onBeforeDialog: () -> Unit = {}
     ) {
+        // Первый свайп сделан — подсказка о свайпах больше не нужна (2.2.2)
+        if (action != SwipeAction.NONE) viewModelScope.launch { prefs.setSwipeHintDone() }
         val needsSim = action == SwipeAction.CALL
         val sims = state.value.sims
 

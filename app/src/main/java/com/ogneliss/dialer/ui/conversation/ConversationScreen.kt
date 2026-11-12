@@ -233,7 +233,13 @@ fun ConversationScreen(
                 )
                 Spacer(Modifier.width(Space.m))
                 Column {
-                    Text(state.title, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    // Имя — titleMedium, как заголовок беседы в почте (не крупный заголовок экрана)
+                    Text(
+                        state.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                     state.subtitle?.let {
                         Text(
                             it,
@@ -711,13 +717,22 @@ private fun DayCaption(date: Long) {
             )
         }
     }
-    Text(
-        label,
-        Modifier.fillMaxWidth().padding(vertical = Space.m),
-        style = MaterialTheme.typography.labelMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        textAlign = TextAlign.Center
-    )
+    /*
+     * Подпись дня — плашкой по центру, как в беседе Ogneliss Mail (2.2.2,
+     * `_DayChip`): фон surfaceContainerHighest, радиус плашки (12 dp),
+     * поля 12 × 4. Было: текстом без подложки — в цветной ленте пузырей
+     * терялся между сообщениями.
+     */
+    Box(Modifier.fillMaxWidth().padding(vertical = Space.s), contentAlignment = Alignment.Center) {
+        Surface(color = MaterialTheme.colorScheme.surfaceContainerHighest, shape = MaterialTheme.shapes.small) {
+            Text(
+                label,
+                Modifier.padding(horizontal = Space.m, vertical = Space.xs),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
 }
 
 /**

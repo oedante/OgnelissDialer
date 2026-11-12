@@ -1077,4 +1077,12 @@
     <string name="ui_scale_85" formatted="false">85%</string>
     <string name="ui_scale_95" formatted="false">95%</string>
     <string name="topbar_list_actions">List actions</string>
+    <string name="journal_folder_all">All calls</string>
+    <string name="journal_folder_missed">Missed</string>
+    <string name="journal_folder_incoming">Incoming</string>
+    <string name="journal_folder_outgoing">Outgoing</string>
+    <string name="contacts_folder_all">All contacts</string>
+    <string name="settings_incoming_banner_text_shell">On this phone the system may block the banner. If you turn it on, allow pop-up notifications (banners) for the app in the phone’s notification settings. If the banner doesn’t appear, turn this off: incoming calls will open full screen</string>
+    <string name="swipe_hint_text">Swipe a row right — %1$s, left — %2$s. Drag it all the way and release</string>
+    <string name="swipe_hint_ok">Got it</string>
 </resources>

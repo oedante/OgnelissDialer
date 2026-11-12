@@ -1,0 +1,237 @@
+<ru-RU>
+• Интерфейс как в Ogneliss Mail: шапка раздела с поиском и фильтром, меню справа с папками, масштаб и размер шрифта в «Оформлении».
+• SMS: черновики, отмена отправки и «Отправить позже» (удерживайте «Отправить»).
+• Выбор нескольких сообщений: копировать, переслать, в избранное, удалить.
+• Звонки с собеседником в переписке, с номером SIM.
+• Поиск по тексту всех сообщений.
+• Виджет «Закреплённые»: звонок в одно касание.
+</ru-RU>
+<ar>
+• واجهة مثل Ogneliss Mail: شريط علوي للبحث والتصفية، قائمة جانبية بالمجلدات، وحجم الواجهة والخط في «المظهر».
+• الرسائل: المسودات، وإلغاء الإرسال، و«الإرسال لاحقًا» (اضغط مطولًا على «إرسال»).
+• تحديد عدة رسائل: نسخ، إعادة توجيه، إضافة إلى المفضلة، حذف.
+• المكالمات مع جهة الاتصال داخل المحادثة مع رقم الشريحة.
+• البحث في نص جميع الرسائل.
+• المجلدات: شخصية، غير معروفة، خدمات، غير مقروءة، المفضلة — في قائمة «المزيد».
+• أداة «المثبّتة»: اتصال بلمسة واحدة.
+</ar>
+<cs-CZ>
+• Rozhraní jako v Ogneliss Mail: horní lišta s hledáním a filtrem, nabídka vpravo se složkami, měřítko a velikost písma ve Vzhledu.
+• SMS: koncepty, zrušení odeslání a „Odeslat později“ (podržte „Odeslat“).
+• Výběr více zpráv: kopírovat, přeposlat, označit hvězdičkou, smazat.
+• Hovory s kontaktem přímo v konverzaci, s číslem SIM.
+• Hledání v textu všech zpráv.
+• Složky: osobní, neznámé, služby, nepřečtené, označené — v nabídce „Více“.
+• Widget „Připnuté“: hovor jedním klepnutím.
+</cs-CZ>
+<da-DK>
+• Brugerflade som i Ogneliss Mail: toplinje med søgning og filter, menu til højre med mapper, skalering og skriftstørrelse under Udseende.
+• SMS: kladder, fortryd afsendelse og „Send senere“ (hold „Send“ nede).
+• Vælg flere beskeder: kopiér, videresend, stjernemarkér, slet.
+• Opkald med kontakten i samtalen, med SIM-nummer.
+• Søg i teksten i alle beskeder.
+• Mapper: personlige, ukendte, tjenester, ulæste, stjernemarkerede — i menuen „Mere“.
+• Widget „Fastgjorte“: ring med ét tryk.
+</da-DK>
+<de-DE>
+• Oberfläche wie in Ogneliss Mail: Kopfzeile mit Suche und Filter, Menü rechts mit Ordnern, Skalierung und Schriftgröße unter „Darstellung“.
+• SMS: Entwürfe, Senden rückgängig machen und „Später senden“ („Senden“ gedrückt halten).
+• Mehrere Nachrichten auswählen: kopieren, weiterleiten, markieren, löschen.
+• Anrufe mit dem Kontakt im Chatverlauf, mit SIM-Nummer.
+• Suche im Text aller Nachrichten.
+• Widget „Angeheftet“: Anruf mit einem Tippen.
+</de-DE>
+<en-US>
+• Interface like Ogneliss Mail: a top bar with search and filter, a menu on the right with folders, interface scale and font size in Appearance.
+• SMS: drafts, undo send and Send later (hold Send).
+• Select several messages: copy, forward, star, delete.
+• Calls with the contact right in the conversation, with the SIM.
+• Search the text of all messages.
+• Folders: Personal, Unknown, Services, Unread, Starred — in the Menu.
+• Pinned widget: call with one tap.
+</en-US>
+<es-ES>
+• Interfaz como en Ogneliss Mail: barra superior con búsqueda y filtro, menú a la derecha con carpetas, escala y tamaño de letra en «Apariencia».
+• SMS: borradores, deshacer envío y «Enviar más tarde» (mantén pulsado «Enviar»).
+• Selecciona varios mensajes: copiar, reenviar, destacar, eliminar.
+• Llamadas con el contacto dentro de la conversación, con la SIM.
+• Búsqueda en el texto de todos los mensajes.
+• Widget «Fijados»: llama con un toque.
+</es-ES>
+<fi-FI>
+• Käyttöliittymä kuten Ogneliss Mailissa: yläpalkki, jossa haku ja suodatin, valikko oikealla kansioineen, skaalaus ja fonttikoko Ulkoasussa.
+• Tekstiviestit: luonnokset, lähetyksen peruminen ja ”Lähetä myöhemmin” (pidä ”Lähetä” painettuna).
+• Valitse useita viestejä: kopioi, välitä, tähdellä, poista.
+• Puhelut yhteyshenkilön kanssa keskustelussa SIM-tiedolla.
+• Haku kaikkien viestien tekstistä.
+• Kiinnitetyt-widget: soita yhdellä napautuksella.
+</fi-FI>
+<fr-FR>
+• Interface comme Ogneliss Mail : barre supérieure avec recherche et filtre, menu à droite avec dossiers, échelle et taille de police dans « Apparence ».
+• SMS : brouillons, annulation de l’envoi et « Envoyer plus tard » (maintenez « Envoyer »).
+• Sélection de plusieurs messages : copier, transférer, favori, supprimer.
+• Appels avec le contact dans la conversation, avec la SIM.
+• Recherche dans le texte de tous les messages.
+• Widget « Épinglés » : appel d’une touche.
+</fr-FR>
+<hi-IN>
+• Ogneliss Mail जैसा इंटरफ़ेस: खोज और फ़िल्टर वाली ऊपरी पट्टी, दाईं ओर फ़ोल्डर वाला मेन्यू, «रूप» में स्केल और फ़ॉन्ट आकार।
+• SMS: ड्राफ़्ट, भेजना रद्द करें और «बाद में भेजें» («भेजें» दबाकर रखें)।
+• कई संदेश चुनें: कॉपी, आगे भेजें, तारांकित, हटाएँ।
+• बातचीत में ही संपर्क के साथ कॉल, SIM के साथ।
+• सभी संदेशों के टेक्स्ट में खोज।
+• फ़ोल्डर: व्यक्तिगत, अनजान, सेवाएँ, अपठित, तारांकित — «अधिक» मेन्यू में।
+• कोड अपने-आप हटाना और SMS का फ़ाइल में बैकअप।
+• «पिन किए गए» विजेट: एक टैप में कॉल।
+</hi-IN>
+<hu-HU>
+• Felület, mint az Ogneliss Mailben: felső sáv kereséssel és szűrővel, jobb oldali menü mappákkal, méretezés és betűméret a Megjelenésben.
+• SMS: piszkozatok, küldés visszavonása és „Küldés később” (tartsa nyomva a „Küldés” gombot).
+• Több üzenet kijelölése: másolás, továbbítás, csillagozás, törlés.
+• Hívások a partnerrel a beszélgetésben, SIM-mel.
+• Keresés az összes üzenet szövegében.
+• „Rögzített” widget: hívás egy érintéssel.
+</hu-HU>
+<id>
+• Antarmuka seperti Ogneliss Mail: bilah atas dengan cari dan filter, menu di kanan dengan folder, skala dan ukuran font di Tampilan.
+• SMS: draf, batalkan kirim, dan "Kirim nanti" (tahan "Kirim").
+• Pilih beberapa pesan: salin, teruskan, bintangi, hapus.
+• Panggilan dengan kontak langsung di percakapan, dengan SIM.
+• Cari di teks semua pesan.
+• Folder: Pribadi, Tak dikenal, Layanan, Belum dibaca, Berbintang — di menu Lainnya.
+• Widget Disematkan: telepon dengan satu ketukan.
+</id>
+<it-IT>
+• Interfaccia come Ogneliss Mail: barra in alto con ricerca e filtro, menu a destra con cartelle, scala e dimensione del testo in «Aspetto».
+• SMS: bozze, annulla invio e «Invia più tardi» (tieni premuto «Invia»).
+• Seleziona più messaggi: copia, inoltra, aggiungi ai preferiti, elimina.
+• Chiamate con il contatto nella conversazione, con la SIM.
+• Ricerca nel testo di tutti i messaggi.
+• Widget «Fissati»: chiama con un tocco.
+</it-IT>
+<iw-IL>
+• ממשק כמו ב-Ogneliss Mail: סרגל עליון עם חיפוש וסינון, תפריט בצד עם תיקיות, קנה מידה וגודל גופן ב«מראה».
+• SMS: טיוטות, ביטול שליחה ו«שליחה מאוחר יותר» (לחיצה ארוכה על «שליחה»).
+• בחירת כמה הודעות: העתקה, העברה, סימון בכוכב, מחיקה.
+• שיחות עם איש הקשר בתוך השיחה, עם מספר ה-SIM.
+• חיפוש בטקסט של כל ההודעות.
+• תיקיות: אישיות, לא מוכרים, שירותים, לא נקראו, מסומנות — בתפריט «עוד».
+• מחיקה אוטומטית של קודים וגיבוי SMS לקובץ.
+• ווידג'ט «מוצמדים»: שיחה בנגיעה אחת.
+</iw-IL>
+<ja-JP>
+• Ogneliss Mail と同じ画面構成：検索とフィルタのある上部バー、フォルダ付きの右メニュー、「外観」で表示倍率と文字サイズ。
+• SMS：下書き、送信の取り消し、「後で送信」（「送信」を長押し）。
+• 複数のメッセージを選択：コピー、転送、スター、削除。
+• 相手との通話を会話の中に SIM 付きで表示。
+• すべてのメッセージの本文を検索。
+• フォルダ：個人、不明、サービス、未読、スター付き —「その他」メニューから。
+• 認証コードの自動削除と SMS のファイルへのバックアップ。
+• 「固定」ウィジェット：ワンタップで発信。
+</ja-JP>
+<ko-KR>
+• Ogneliss Mail과 같은 화면: 검색·필터가 있는 상단 바, 폴더가 있는 오른쪽 메뉴, '모양'에서 화면 배율과 글자 크기.
+• SMS: 임시 저장, 보내기 취소, '나중에 보내기'('보내기' 길게 누르기).
+• 여러 메시지 선택: 복사, 전달, 별표, 삭제.
+• 대화 안에 상대와의 통화를 SIM과 함께 표시.
+• 모든 메시지 본문 검색.
+• 폴더: 개인, 모르는 번호, 서비스, 읽지 않음, 별표 — '더보기' 메뉴에서.
+• 인증 코드 자동 삭제와 SMS 파일 백업.
+• '고정됨' 위젯: 한 번 탭으로 전화.
+</ko-KR>
+<nl-NL>
+• Interface zoals Ogneliss Mail: bovenbalk met zoeken en filter, menu rechts met mappen, schaal en lettergrootte bij Weergave.
+• Sms: concepten, verzenden ongedaan maken en ‘Later verzenden’ (houd ‘Verzenden’ ingedrukt).
+• Meerdere berichten selecteren: kopiëren, doorsturen, ster, verwijderen.
+• Gesprekken met het contact in de conversatie, met de simkaart.
+• Zoeken in de tekst van alle berichten.
+• Widget ‘Vastgezet’: bellen met één tik.
+</nl-NL>
+<no-NO>
+• Grensesnitt som i Ogneliss Mail: topplinje med søk og filter, meny til høyre med mapper, skalering og skriftstørrelse under Utseende.
+• SMS: utkast, angre sending og «Send senere» (hold inne «Send»).
+• Velg flere meldinger: kopier, videresend, stjernemerk, slett.
+• Anrop med kontakten rett i samtalen, med SIM.
+• Søk i teksten i alle meldinger.
+• Mapper: personlige, ukjente, tjenester, uleste, stjernemerkede – i «Mer»-menyen.
+• Widgeten «Festet»: ring med ett trykk.
+</no-NO>
+<pl-PL>
+• Interfejs jak w Ogneliss Mail: górny pasek z wyszukiwaniem i filtrem, menu po prawej z folderami, skala i rozmiar czcionki w „Wyglądzie”.
+• SMS: wersje robocze, cofanie wysyłki i „Wyślij później” (przytrzymaj „Wyślij”).
+• Zaznaczanie wielu wiadomości: kopiuj, przekaż, oznacz gwiazdką, usuń.
+• Połączenia z rozmówcą w wątku, z numerem SIM.
+• Wyszukiwanie w treści wszystkich wiadomości.
+• Widżet „Przypięte”: połączenie jednym dotknięciem.
+</pl-PL>
+<pt-BR>
+• Interface como no Ogneliss Mail: barra superior com busca e filtro, menu à direita com pastas, escala e tamanho da fonte em "Aparência".
+• SMS: rascunhos, desfazer envio e "Enviar mais tarde" (toque e segure "Enviar").
+• Selecione várias mensagens: copiar, encaminhar, favoritar, excluir.
+• Ligações com o contato dentro da conversa, com o chip.
+• Pesquisa no texto de todas as mensagens.
+• Widget "Fixados": ligue com um toque.
+</pt-BR>
+<ro>
+• Interfață ca în Ogneliss Mail: bară sus cu căutare și filtru, meniu în dreapta cu dosare, scară și mărimea fontului în „Aspect”.
+• SMS: ciorne, anularea trimiterii și „Trimite mai târziu” (ține apăsat „Trimite”).
+• Selectează mai multe mesaje: copiază, redirecționează, marchează cu stea, șterge.
+• Apelurile cu persoana direct în conversație, cu SIM-ul.
+• Căutare în textul tuturor mesajelor.
+• Widgetul „Fixate”: apel cu o atingere.
+</ro>
+<sk>
+• Rozhranie ako v Ogneliss Mail: horná lišta s hľadaním a filtrom, ponuka vpravo s priečinkami, mierka a veľkosť písma vo Vzhľade.
+• SMS: koncepty, zrušenie odoslania a „Odoslať neskôr“ (podržte „Odoslať“).
+• Výber viacerých správ: kopírovať, preposlať, označiť hviezdičkou, odstrániť.
+• Hovory s kontaktom priamo v konverzácii, s číslom SIM.
+• Vyhľadávanie v texte všetkých správ.
+• Miniaplikácia „Pripnuté“: hovor jedným ťuknutím.
+</sk>
+<sv-SE>
+• Gränssnitt som i Ogneliss Mail: toppfält med sök och filter, meny till höger med mappar, skala och textstorlek under Utseende.
+• SMS: utkast, ångra skicka och ”Skicka senare” (håll in ”Skicka”).
+• Markera flera meddelanden: kopiera, vidarebefordra, stjärnmärk, radera.
+• Samtal med kontakten direkt i konversationen, med SIM.
+• Sök i texten i alla meddelanden.
+• Mappar: personliga, okända, tjänster, olästa, stjärnmärkta – i menyn ”Mer”.
+• Widgeten ”Fästa”: ring med ett tryck.
+</sv-SE>
+<th>
+• หน้าตาเหมือน Ogneliss Mail: แถบบนมีค้นหาและตัวกรอง เมนูด้านขวาพร้อมโฟลเดอร์ ปรับสเกลและขนาดตัวอักษรใน «รูปลักษณ์»
+• SMS: ฉบับร่าง เลิกส่ง และ «ส่งภายหลัง» (กดค้างที่ «ส่ง»)
+• เลือกหลายข้อความ: คัดลอก ส่งต่อ ติดดาว ลบ
+• สายสนทนากับผู้ติดต่อแสดงในแชทพร้อม SIM
+• ค้นหาในข้อความทั้งหมด
+• โฟลเดอร์: ส่วนตัว ไม่รู้จัก บริการ ยังไม่อ่าน ติดดาว — ในเมนู «เพิ่มเติม»
+• ลบรหัสอัตโนมัติ และสำรอง SMS เป็นไฟล์
+• วิดเจ็ต «ที่ปักหมุด»: โทรด้วยการแตะครั้งเดียว
+</th>
+<tr-TR>
+• Ogneliss Mail gibi arayüz: arama ve filtreli üst çubuk, sağda klasörlü menü, "Görünüm"de ölçek ve yazı boyutu.
+• SMS: taslaklar, gönderimi geri alma ve "Sonra gönder" ("Gönder"e basılı tutun).
+• Birden çok mesaj seçin: kopyala, ilet, yıldızla, sil.
+• Kişiyle yapılan aramalar sohbetin içinde, SIM bilgisiyle.
+• Tüm mesajların metninde arama.
+• Klasörler: kişisel, bilinmeyen, hizmetler, okunmamış, yıldızlı — "Diğer" menüsünde.
+• "Sabitlenenler" widget'ı: tek dokunuşla arama.
+</tr-TR>
+<vi>
+• Giao diện như Ogneliss Mail: thanh trên có tìm kiếm và bộ lọc, menu bên phải có thư mục, tỉ lệ và cỡ chữ trong «Giao diện».
+• SMS: bản nháp, hủy gửi và «Gửi sau» (nhấn giữ «Gửi»).
+• Chọn nhiều tin nhắn: sao chép, chuyển tiếp, gắn sao, xóa.
+• Cuộc gọi với người liên hệ ngay trong cuộc trò chuyện, kèm SIM.
+• Tìm trong nội dung mọi tin nhắn.
+• Thư mục: cá nhân, không xác định, dịch vụ, chưa đọc, gắn sao — trong menu «Thêm».
+• Tiện ích «Đã ghim»: gọi bằng một chạm.
+</vi>
+<zh-CN>
+• 界面与 Ogneliss Mail 一致：带搜索和筛选的顶栏、右侧带文件夹的菜单，“外观”中可调界面缩放和字号。
+• 短信：草稿、撤销发送和“稍后发送”（长按“发送”）。
+• 多选消息：复制、转发、加星标、删除。
+• 在对话中显示与联系人的通话，并标明 SIM 卡。
+• 搜索所有消息的内容。
+• 文件夹：个人、陌生号码、服务、未读、星标 ——在“更多”菜单中。
+• 自动删除验证码，短信备份到文件。
+• “已固定”小组件：一键拨号。
+</zh-CN>

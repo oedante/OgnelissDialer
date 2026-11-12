@@ -92,7 +92,7 @@ class OgnelissInCallService : InCallService() {
     /** Настройка «Предлагать напоминание после сброса» — копия, как у автодозвона. */
     @Volatile private var callbackSuggestionOn = true
     /** «Входящий плашкой сверху», когда телефоном пользуются (2.1.0, Prefs.incomingBanner). */
-    @Volatile private var incomingBannerOn = true
+    @Volatile private var incomingBannerOn = !com.ogneliss.dialer.util.IncomingCallAccess.restrictiveShell
     /** Значение плашки уже пришло из настроек — до того решает [incomingBannerWanted]. */
     @Volatile private var incomingBannerKnown = false
 

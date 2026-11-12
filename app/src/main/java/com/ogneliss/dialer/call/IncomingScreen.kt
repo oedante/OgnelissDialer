@@ -235,7 +235,9 @@ internal object IncomingScreen {
             Settings.Global.getInt(context.contentResolver, HEADS_UP_SETTING, 1) != 0
         }.getOrDefault(true)
         val allowed = CallScreenRules.incomingBannerAllowed(
-            restrictiveShell = IncomingCallAccess.restrictiveShell,
+            // 2.2.2: на прошивках со своими запретами плашка выключена по умолчанию
+            // настройкой (Prefs.incomingBanner); раз человек включил её сам — пробуем
+            restrictiveShell = false,
             notificationsEnabled = NotificationManagerCompat.from(context).areNotificationsEnabled(),
             channelImportance = importance,
             interruptionFilterAll = nm.currentInterruptionFilter == NotificationManager.INTERRUPTION_FILTER_ALL,

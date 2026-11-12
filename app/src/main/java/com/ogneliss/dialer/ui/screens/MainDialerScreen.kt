@@ -1,5 +1,8 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.data.JournalFolder
+import com.ogneliss.dialer.ui.components.MenuFolder
+import com.ogneliss.dialer.ui.components.MenuFolderRows
 import com.ogneliss.dialer.ui.components.SectionTopBar
 import com.ogneliss.dialer.ui.components.TopBarMenuItem
 import com.ogneliss.dialer.ui.components.scrollEdgeFade
@@ -152,6 +155,8 @@ fun MainDialerScreen(
     val filteredByChips by vm.filteredLog.collectAsStateWithLifecycle()
     val loadingMore by vm.loadingMore.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+    // Подсказка о свайпах (2.2.2): до чтения настроек считаем показанной — без мелькания
+    val swipeHintDone by vm.prefs.swipeHintDone.collectAsStateWithLifecycle(true)
     val context = LocalContext.current
 
 
@@ -1527,7 +1532,28 @@ fun MainDialerScreen(
                     onFakeCall = { menuOpen = false; fakeCallOpen = true },
                     onNotes = { menuOpen = false; onOpenNotes() },
                     onReminders = { menuOpen = false; onOpenReminders() },
-                    onHelp = { menuOpen = false; onOpenHelp() }
+                    onHelp = { menuOpen = false; onOpenHelp() },
+                    /*
+                     * «Папки» журнала (2.2.2) — как папки в меню почты и SMS:
+                     * готовые наборы фильтра (JournalFolder) и «Архив».
+                     * Свой набор условий из «Фильтров» папкой не считается —
+                     * тогда в списке ничего не выделено.
+                     */
+                    header = {
+                        val current = JournalFolder.of(activeFilter)
+                        MenuFolderRows(
+                            title = stringResource(R.string.settings_sms_folders),
+                            folders = JournalFolder.entries.map { f ->
+                                MenuFolder(journalFolderIcon(f), stringResource(journalFolderLabel(f)), selected = f == current) {
+                                    menuOpen = false
+                                    vm.setFilter(f.filter())
+                                }
+                            } + MenuFolder(OgnelissIcons.Archive, stringResource(R.string.archive_title)) {
+                                menuOpen = false
+                                onOpenArchive()
+                            }
+                        )
+                    }
                 )
             }
         )
@@ -1603,11 +1629,15 @@ fun MainDialerScreen(
              * С раскрытой клавиатурой набора шапки нет: список и так занимает
              * меньше половины экрана. Клавиатура сбоку (планшет) — шапка есть.
              */
+            // Открыта «папка» (пропущенные, входящие…) — её название, раздел — строкой ниже, как в SMS
+            val journalFolder = JournalFolder.of(activeFilter)?.takeIf { it != JournalFolder.ALL }
             if (!dialpadExpanded || sideDialpad) SectionTopBar(
-                title = stringResource(R.string.nav_journal),
-                subtitle = if (activeFilter.isActive) {
-                    stringResource(R.string.filter_title) + " · " + activeFilter.activeCount
-                } else null,
+                title = stringResource(journalFolder?.let { journalFolderLabel(it) } ?: R.string.nav_journal),
+                subtitle = when {
+                    journalFolder != null -> stringResource(R.string.nav_journal)
+                    activeFilter.isActive -> stringResource(R.string.filter_title) + " · " + activeFilter.activeCount
+                    else -> null
+                },
                 onSearch = startSearch,
                 onFilter = { filtersOpen = true },
                 filterActive = activeFilter.isActive,
@@ -1745,6 +1775,32 @@ fun MainDialerScreen(
                      * а сегодняшние должны быть на виду. Только когда они есть
                      * и журнал показан целиком — не при поиске, отборе и выборе.
                      */
+                    /*
+                     * ПОДСКАЗКА О СВАЙПАХ — ОДИН РАЗ (2.2.2, форум и автор:
+                     * «надо краткое обучение добавить»). Говорит, что сделают
+                     * свайпы СЕЙЧАС (действия из настроек) и что строку нужно
+                     * довести и отпустить. Уходит по «Понятно» и после первого
+                     * свайпа (DialerViewModel.performSwipe).
+                     */
+                    if (!swipeHintDone && state.query.isEmpty() && !selection.isActive &&
+                        (settings.swipeRight != com.ogneliss.dialer.settings.SwipeAction.NONE ||
+                            settings.swipeLeft != com.ogneliss.dialer.settings.SwipeAction.NONE)
+                    ) {
+                        item(key = "swipe_hint", contentType = "swipe_hint") {
+                            com.ogneliss.dialer.ui.conversation.Strip(
+                                text = stringResource(
+                                    R.string.swipe_hint_text,
+                                    stringResource(com.ogneliss.dialer.settings.SettingsCommands.swipeActionLabelRes(settings.swipeRight)),
+                                    stringResource(com.ogneliss.dialer.settings.SettingsCommands.swipeActionLabelRes(settings.swipeLeft))
+                                ),
+                                icon = OgnelissIcons.Swipe,
+                                action = stringResource(R.string.swipe_hint_ok),
+                                onAction = { scope.launch { vm.prefs.setSwipeHintDone() } },
+                                critical = false
+                            )
+                        }
+                    }
+
                     if (todayReminders.isNotEmpty() && state.query.isEmpty() &&
                         !activeFilter.isActive && !selection.isActive
                     ) {

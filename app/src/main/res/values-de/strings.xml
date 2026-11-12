@@ -1048,4 +1048,12 @@
     <string name="ui_scale_85" formatted="false">85 %</string>
     <string name="ui_scale_95" formatted="false">95 %</string>
     <string name="topbar_list_actions">Listenaktionen</string>
+    <string name="journal_folder_all">Alle Anrufe</string>
+    <string name="journal_folder_missed">Verpasst</string>
+    <string name="journal_folder_incoming">Eingehend</string>
+    <string name="journal_folder_outgoing">Ausgehend</string>
+    <string name="contacts_folder_all">Alle Kontakte</string>
+    <string name="settings_incoming_banner_text_shell">Auf diesem Telefon kann das System das Banner blockieren. Erlauben Sie der App beim Einschalten Pop-up-Benachrichtigungen (Banner) in den Benachrichtigungseinstellungen. Erscheint das Banner nicht, schalten Sie dies aus: Anrufe öffnen sich im Vollbild</string>
+    <string name="swipe_hint_text">Zeile nach rechts wischen – %1$s, nach links – %2$s. Bis zum Ende ziehen und loslassen</string>
+    <string name="swipe_hint_ok">Verstanden</string>
 </resources>
