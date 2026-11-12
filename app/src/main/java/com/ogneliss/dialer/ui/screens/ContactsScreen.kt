@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.MenuFolder
+import com.ogneliss.dialer.ui.components.MenuFolderRows
 import com.ogneliss.dialer.ui.components.SectionTopBar
 import com.ogneliss.dialer.ui.components.scrollEdgeFade
 import com.ogneliss.dialer.ui.components.ActionIconButton
@@ -627,7 +629,12 @@ fun ContactsScreen(
         topBar = {
             // Шапка раздела — как в Ogneliss Mail (2.2.1, SectionTopBar): поиск и фильтр — у списка
             if (!pickForPinning) SectionTopBar(
-                title = stringResource(R.string.nav_contacts),
+                // Открыт отбор («Избранные», «С заметкой»…) — его название, раздел — строкой ниже
+                title = stringResource(
+                    CONTACT_FOLDERS.firstOrNull { it.first == contactFilter && contactFilter != ContactFilter.ALL }?.second
+                        ?: R.string.nav_contacts
+                ),
+                subtitle = if (contactFilter != ContactFilter.ALL) stringResource(R.string.nav_contacts) else null,
                 onSearch = { searching = true },
                 onFilter = { contactFiltersOpen = true },
                 filterActive = contactFilter != ContactFilter.ALL
@@ -733,6 +740,18 @@ fun ContactsScreen(
                             onNotes = { menuOpen = false; onOpenNotes() },
                             onReminders = { menuOpen = false; onOpenReminders() },
                             onHelp = { menuOpen = false; onOpenHelp() },
+                            // «Папки» контактов (2.2.2) — как папки в меню почты: те же отборы, что в «Фильтре»
+                            header = {
+                                MenuFolderRows(
+                                    title = stringResource(R.string.settings_sms_folders),
+                                    folders = CONTACT_FOLDERS.map { (filter, labelRes, icon) ->
+                                        MenuFolder(icon, stringResource(labelRes), selected = filter == contactFilter) {
+                                            menuOpen = false
+                                            contactFilter = filter
+                                        }
+                                    }
+                                )
+                            },
                             // 2.1.0: значок «Контакты» на главный экран (SectionWidgets)
                             onPinToHome = pinToHome
                         )
@@ -1410,3 +1429,18 @@ private fun contactAsGroup(contact: Contact): CallLogGroup {
         subscriptionLabel = null, subscriptionId = null
     )
 }
+
+/**
+ * «Папки» контактов в меню (2.2.2): отбор, подпись и значок. Те же отборы
+ * и подписи, что в окне «Фильтр» (ContactFilterSheet), — одно и то же,
+ * двумя входами: из шапки и из меню, как папки и фильтр в почте.
+ */
+private val CONTACT_FOLDERS: List<Triple<ContactFilter, Int, androidx.compose.ui.graphics.vector.ImageVector>> = listOf(
+    Triple(ContactFilter.ALL, R.string.contacts_folder_all, OgnelissIcons.Contacts),
+    Triple(ContactFilter.FAVOURITES, R.string.contacts_favourites, OgnelissIcons.Star),
+    Triple(ContactFilter.FREQUENT, R.string.contacts_filter_frequent, OgnelissIcons.History),
+    Triple(ContactFilter.STALE_HALF_YEAR, R.string.contacts_filter_half_year, OgnelissIcons.Schedule),
+    Triple(ContactFilter.STALE_YEAR, R.string.contacts_filter_year, OgnelissIcons.CalendarMonth),
+    Triple(ContactFilter.WITH_NOTE, R.string.filter_with_note, OgnelissIcons.StickyNote2),
+    Triple(ContactFilter.WITH_REMINDER, R.string.filter_with_reminder, OgnelissIcons.Alarm)
+)

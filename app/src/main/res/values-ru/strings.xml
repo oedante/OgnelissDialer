@@ -1057,4 +1057,9 @@
     <string name="ui_scale_85" formatted="false">85 %</string>
     <string name="ui_scale_95" formatted="false">95 %</string>
     <string name="topbar_list_actions">Действия со списком</string>
+    <string name="journal_folder_all">Все вызовы</string>
+    <string name="journal_folder_missed">Пропущенные</string>
+    <string name="journal_folder_incoming">Входящие</string>
+    <string name="journal_folder_outgoing">Исходящие</string>
+    <string name="contacts_folder_all">Все контакты</string>
 </resources>

@@ -288,6 +288,27 @@ internal enum class MenuGroup {
     APP
 }
 
+/** Название «папки» журнала (2.2.2) — для меню и шапки раздела. */
+internal fun journalFolderLabel(folder: com.ogneliss.dialer.data.JournalFolder): Int = when (folder) {
+    com.ogneliss.dialer.data.JournalFolder.ALL -> R.string.journal_folder_all
+    com.ogneliss.dialer.data.JournalFolder.MISSED -> R.string.journal_folder_missed
+    com.ogneliss.dialer.data.JournalFolder.AWAITING -> R.string.filter_awaiting
+    com.ogneliss.dialer.data.JournalFolder.INCOMING -> R.string.journal_folder_incoming
+    com.ogneliss.dialer.data.JournalFolder.OUTGOING -> R.string.journal_folder_outgoing
+    com.ogneliss.dialer.data.JournalFolder.UNKNOWN -> R.string.filter_unknown
+}
+
+/** Значок «папки» журнала — те же значки типов вызовов, что в строках. */
+internal fun journalFolderIcon(folder: com.ogneliss.dialer.data.JournalFolder): androidx.compose.ui.graphics.vector.ImageVector =
+    when (folder) {
+        com.ogneliss.dialer.data.JournalFolder.ALL -> OgnelissIcons.History
+        com.ogneliss.dialer.data.JournalFolder.MISSED -> OgnelissIcons.CallMissed
+        com.ogneliss.dialer.data.JournalFolder.AWAITING -> OgnelissIcons.PhoneCallback
+        com.ogneliss.dialer.data.JournalFolder.INCOMING -> OgnelissIcons.CallReceived
+        com.ogneliss.dialer.data.JournalFolder.OUTGOING -> OgnelissIcons.CallMade
+        com.ogneliss.dialer.data.JournalFolder.UNKNOWN -> OgnelissIcons.PersonOff
+    }
+
 /** Плитка меню (2.1.0): группа, значок или фото, подпись, действие. */
 internal class MenuTile(
     val group: MenuGroup,
