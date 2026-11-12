@@ -155,6 +155,10 @@ fun MessagesScreen(
     // Переписки — свой ViewModel; книга и настройки — общие с журналом
     val state by messagesVm.state.collectAsStateWithLifecycle()
     val dialer by vm.state.collectAsStateWithLifecycle()
+    // «Мой контакт» в меню — как в журнале и контактах (2.4.0)
+    val ownContact = com.ogneliss.dialer.ui.screens.rememberOwnContactEntry(vm, dialer.contacts) {
+        onOpenCard(com.ogneliss.dialer.ui.screens.OWN_CARD_KEY)
+    }
     val settings by vm.settingsState.collectAsStateWithLifecycle()
     val pinnedKeys by vm.smsPinned.collectAsStateWithLifecycle()
     /*
@@ -514,7 +518,10 @@ fun MessagesScreen(
                         expanded = menuOpen,
                         onDismiss = { menuOpen = false },
                         settings = settings,
-                        onOwnNumber = null,
+                        // «Мой контакт» — как в журнале и контактах (2.4.0): плитки одни во всех разделах
+                        ownNumber = ownContact.number,
+                        ownPhotoUri = ownContact.photoUri,
+                        onOwnNumber = { menuOpen = false; ownContact.open() },
                         onThemeToggle = {
                             vm.setChoice(
                                 "theme",

@@ -1,0 +1,108 @@
+<ru-RU>
+• Выбор номера: звонок — зелёный, SMS — синяя, номер SIM — как в журнале.
+• Меню раздела плотнее и одинаковое везде: поиск, папки и инструменты подряд, «Мой контакт» во всех разделах.
+</ru-RU>
+<ar>
+• اختيار الرقم: الاتصال أخضر والرسائل زرقاء ورقم الشريحة كما في السجل.
+• قائمة القسم أكثر إحكامًا ومتماثلة في كل مكان: البحث والمجلدات والأدوات متتالية، و«جهة اتصالي» في كل الأقسام.
+</ar>
+<cs-CZ>
+• Výběr čísla: hovor zeleně, SMS modře, číslo SIM jako v historii.
+• Nabídka sekce je kompaktnější a všude stejná: hledání, složky a nástroje za sebou, „Můj kontakt“ ve všech sekcích.
+</cs-CZ>
+<da-DK>
+• Valg af nummer: opkald er grønt, SMS blå, SIM-nummeret vises som i loggen.
+• Sektionsmenuen er mere kompakt og ens overalt: søgning, mapper og værktøjer i rækkefølge, „Min kontakt“ i alle sektioner.
+</da-DK>
+<de-DE>
+• Nummernauswahl: Anruf grün, SMS blau, SIM-Nummer wie in der Anrufliste.
+• Das Bereichsmenü ist kompakter und überall gleich: Suche, Ordner und Werkzeuge direkt untereinander, „Mein Kontakt“ in allen Bereichen.
+</de-DE>
+<en-US>
+• Number picker: calls are green, SMS blue, and the SIM is marked as in the call log.
+• The side menu is more compact and the same everywhere: search, folders and tools in one column, "My contact" in every section.
+</en-US>
+<es-ES>
+• Elegir número: llamada en verde, SMS en azul y la SIM marcada como en el registro.
+• El menú lateral es más compacto e igual en todas partes: búsqueda, carpetas y herramientas seguidas, «Mi contacto» en todas las secciones.
+</es-ES>
+<fi-FI>
+• Numeron valinta: puhelu vihreä, tekstiviesti sininen, SIM merkitty kuten lokissa.
+• Sivuvalikko on tiiviimpi ja sama kaikkialla: haku, kansiot ja työkalut peräkkäin, ”Oma yhteystieto” kaikissa osioissa.
+</fi-FI>
+<fr-FR>
+• Choix du numéro : appel en vert, SMS en bleu, SIM indiquée comme dans le journal.
+• Le menu latéral est plus compact et identique partout : recherche, dossiers et outils à la suite, « Mon contact » dans chaque section.
+</fr-FR>
+<hi-IN>
+• नंबर चुनना: कॉल हरा, SMS नीला, और SIM लॉग की तरह दिखाई गई।
+• साइड मेनू अब ज़्यादा सघन और हर जगह एक जैसा: खोज, फ़ोल्डर और टूल एक साथ, हर सेक्शन में «मेरा संपर्क»।
+</hi-IN>
+<hu-HU>
+• Számválasztás: a hívás zöld, az SMS kék, a SIM jelölése olyan, mint a hívásnaplóban.
+• Az oldalmenü tömörebb és mindenhol egyforma: keresés, mappák és eszközök egymás alatt, „Saját névjegy” minden részben.
+</hu-HU>
+<id>
+• Pilih nomor: panggilan hijau, SMS biru, dan SIM ditandai seperti di log.
+• Menu samping lebih ringkas dan sama di mana saja: pencarian, folder, dan alat berurutan, «Kontak saya» di semua bagian.
+</id>
+<it-IT>
+• Scelta del numero: chiamata in verde, SMS in blu, SIM indicata come nel registro.
+• Il menu laterale è più compatto e uguale ovunque: ricerca, cartelle e strumenti di seguito, «Il mio contatto» in ogni sezione.
+</it-IT>
+<iw-IL>
+• בחירת מספר: שיחה בירוק, SMS בכחול, וה־SIM מסומן כמו ביומן.
+• תפריט הצד צפוף יותר וזהה בכל מקום: חיפוש, תיקיות וכלים ברצף, «איש הקשר שלי» בכל המקטעים.
+</iw-IL>
+<ja-JP>
+• 番号の選択：通話は緑、SMS は青、SIM は履歴と同じ表示に。
+• サイドメニューをコンパクトにし、どこでも同じ構成に：検索・フォルダ・ツールを続けて表示、「自分の連絡先」を全画面に。
+</ja-JP>
+<ko-KR>
+• 번호 선택: 전화는 초록, SMS는 파랑, SIM은 통화 기록과 같은 방식으로 표시.
+• 사이드 메뉴가 더 촘촘하고 어디서나 동일: 검색, 폴더, 도구를 연이어 배치하고 모든 화면에 «내 연락처».
+</ko-KR>
+<nl-NL>
+• Nummer kiezen: bellen groen, sms blauw, simkaart aangegeven zoals in de oproeplijst.
+• Het zijmenu is compacter en overal gelijk: zoeken, mappen en hulpmiddelen achter elkaar, „Mijn contact” in elke sectie.
+</nl-NL>
+<no-NO>
+• Valg av nummer: anrop er grønt, SMS blå, SIM vises som i loggen.
+• Sidemenyen er mer kompakt og lik overalt: søk, mapper og verktøy etter hverandre, «Min kontakt» i alle deler.
+</no-NO>
+<pl-PL>
+• Wybór numeru: połączenie na zielono, SMS na niebiesko, karta SIM oznaczona jak w rejestrze.
+• Menu boczne jest bardziej zwarte i wszędzie takie samo: wyszukiwanie, foldery i narzędzia jedno pod drugim, „Mój kontakt” w każdej sekcji.
+</pl-PL>
+<pt-BR>
+• Escolha do número: chamada em verde, SMS em azul e o chip indicado como no registro.
+• O menu lateral ficou mais compacto e igual em todo lugar: busca, pastas e ferramentas em sequência, «Meu contato» em todas as seções.
+</pt-BR>
+<ro>
+• Alegerea numărului: apelul verde, SMS albastru, SIM-ul marcat ca în jurnal.
+• Meniul lateral este mai compact și la fel peste tot: căutare, dosare și instrumente una după alta, „Contactul meu” în toate secțiunile.
+</ro>
+<sk>
+• Výber čísla: hovor zelenou, SMS modrou, SIM označená ako v histórii.
+• Bočná ponuka je kompaktnejšia a všade rovnaká: vyhľadávanie, priečinky a nástroje za sebou, „Môj kontakt“ vo všetkých sekciách.
+</sk>
+<sv-SE>
+• Välj nummer: samtal är grönt, sms blått och SIM-kortet märkt som i samtalsloggen.
+• Sidomenyn är kompaktare och likadan överallt: sök, mappar och verktyg i följd, ”Min kontakt” i alla delar.
+</sv-SE>
+<th>
+• เลือกหมายเลข: โทรเป็นสีเขียว SMS เป็นสีน้ำเงิน และแสดงซิมแบบเดียวกับในประวัติ
+• เมนูด้านข้างกระชับขึ้นและเหมือนกันทุกที่: ค้นหา โฟลเดอร์ และเครื่องมือเรียงต่อกัน มี «รายชื่อของฉัน» ทุกส่วน
+</th>
+<tr-TR>
+• Numara seçimi: arama yeşil, SMS mavi, SIM kaydı arama geçmişindeki gibi gösterilir.
+• Yan menü daha derli toplu ve her yerde aynı: arama, klasörler ve araçlar art arda, her bölümde «Kişim».
+</tr-TR>
+<vi>
+• Chọn số: cuộc gọi màu xanh lá, SMS màu xanh dương, SIM hiển thị như trong nhật ký.
+• Menu bên gọn hơn và giống nhau ở mọi nơi: tìm kiếm, thư mục và công cụ liền nhau, «Liên hệ của tôi» ở mọi mục.
+</vi>
+<zh-CN>
+• 选择号码：通话为绿色，短信为蓝色，SIM 卡标记与通话记录一致。
+• 侧边菜单更紧凑且处处一致：搜索、文件夹和工具依次排列，各部分都有「我的联系人」。
+</zh-CN>

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -40,6 +41,12 @@ import com.ogneliss.dialer.ui.theme.Space
  * значок, название и число (непрочитанные); открытая — заливкой, как
  * выбранный раздел нижней панели. [onEdit] — значок справа от подписи
  * (порядок и показ папок), как «настроить» у «Избранного» почты.
+ *
+ * ── Плотнее и одинаково во всех разделах (2.4.0) ───────────────────────────
+ * Автор, по снимкам меню журнала, SMS и контактов: «слишком много пустого
+ * места и всегда разное расположение элементов». Подпись — MenuBand
+ * постоянной высоты: значок «настроить» у SMS больше не сдвигает строки
+ * вниз; строка папки — 48 dp (было 52).
  */
 @Composable
 internal fun MenuFolderRows(
@@ -49,7 +56,7 @@ internal fun MenuFolderRows(
     editLabel: String? = null
 ) {
     Column(Modifier.fillMaxWidth()) {
-        SectionBand(
+        MenuBand(
             title,
             action = if (onEdit != null) {
                 {
@@ -63,11 +70,31 @@ internal fun MenuFolderRows(
                 }
             } else null
         )
-        Column(Modifier.padding(vertical = Space.xs)) {
-            folders.forEach { folder -> FolderRow(folder) }
-        }
+        folders.forEach { folder -> FolderRow(folder) }
     }
 }
+
+/**
+ * Подпись части меню («Папки», «Инструменты») — одной высоты, со значком
+ * действия справа или без: части меню стоят на одних и тех же местах
+ * во всех разделах.
+ */
+@Composable
+internal fun MenuBand(title: String, action: (@Composable () -> Unit)? = null) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .height(BAND_HEIGHT)
+            .padding(start = Space.l, end = Space.xs),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        SectionCaption(title, Modifier.weight(1f))
+        action?.invoke()
+    }
+}
+
+/** Высота подписи части меню — как у кнопки-значка справа (48 dp). */
+private val BAND_HEIGHT = 48.dp
 
 /** Папка меню: значок, название, число справа (0 — не показывается), открыта ли, действие. */
 internal class MenuFolder(
@@ -115,5 +142,5 @@ private fun FolderRow(folder: MenuFolder) {
     }
 }
 
-/** Высота строки папки — как строки меню почты. */
-private val ROW_HEIGHT = 52.dp
+/** Высота строки папки — по пальцу (48 dp): плотнее, чем 52 dp прежде. */
+private val ROW_HEIGHT = 48.dp
