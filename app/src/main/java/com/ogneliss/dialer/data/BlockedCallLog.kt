@@ -83,7 +83,9 @@ class BlockedCallLog @Inject constructor(
      *        по индексу времени
      */
     suspend fun snapshot(limit: Int = DEFAULT_LIMIT): Map<String, Entry> =
-        runCatching {
+        // Отмена (экран закрыли, пока читалось) — не сбой: в журнале с телефона она шла
+        // предупреждением при каждом запуске (2.2.3)
+        com.ogneliss.dialer.concurrency.suspendRunCatching {
             dao.recent(limit).associate { row ->
                 row.e164 to Entry(
                     e164 = row.e164,

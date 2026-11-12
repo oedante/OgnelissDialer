@@ -51,6 +51,9 @@ class CallEndWorker @AssistedInject constructor(
             // прямо из экрана после звонка
             T9IndexWorker.enqueue(applicationContext)
             Result.success()
+        } catch (c: kotlinx.coroutines.CancellationException) {
+            // Работу остановила система (перезапустит сама) — это не ошибка постобработки (2.2.3)
+            throw c
         } catch (t: Throwable) {
             Logger.e("CallEnd", "Ошибка постобработки вызова", t)
             // Не retry: повторять анализ завершённого звонка бессмысленно

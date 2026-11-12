@@ -370,6 +370,11 @@ internal object IncomingScreen {
         val call = ringing() ?: return
         if (visible || everShown || bannerOnly || call in quietCalls) return
         if (!alerting) notify(context, call, alert = true)
+        // Второй вызов во время разговора — прошивка ни при чём (2.2.3, разбор у duringAnotherCall)
+        if (duringAnotherCall()) {
+            Logger.i(TAG, "Второй входящий во время разговора — кнопки уведомлением, прошивку не виню")
+            return
+        }
         if (created) {
             val app = context.applicationContext
             main.postDelayed({ reportIfStillHidden(app) }, SLOW_START_RECHECK_MS)
@@ -386,8 +391,31 @@ internal object IncomingScreen {
 
     private fun reportIfStillHidden(context: Context) {
         val call = ringing() ?: return
-        if (visible || everShown || bannerOnly || call in quietCalls) return
+        if (visible || everShown || bannerOnly || call in quietCalls || duringAnotherCall()) return
         report(context)
+    }
+
+    /**
+     * ВТОРОЙ ВХОДЯЩИЙ ВО ВРЕМЯ РАЗГОВОРА (2.2.3, журнал с realme RMX1851,
+     * 11.11.2026 15:23).
+     *
+     * Человек говорит, телефон у уха, экран погашен датчиком приближения —
+     * и приходит второй вызов. Окно вызова уже есть (в нём полоса
+     * ожидающего), но оно не «на виду»: экран выключен. Проверка «экран
+     * вызова не появился» срабатывала дважды, и в приложении появлялась
+     * полоса «Телефон не дал показать экран вызова» с кнопкой в настройки —
+     * хотя прошивка ничего не запрещала (в журнале: «оболочка COLOR_OS:
+     * GRANTED»), и человек шёл чинить то, что не сломано.
+     *
+     * Идёт, удержан, набирается или соединяется другой вызов — прошивку
+     * не виним и экран не будим; кнопки второго вызова — уведомлением.
+     */
+    fun duringAnotherCall(): Boolean = CallManager.calls.value.any {
+        @Suppress("DEPRECATION")
+        when (it.state) {
+            Call.STATE_ACTIVE, Call.STATE_HOLDING, Call.STATE_DIALING, Call.STATE_CONNECTING -> true
+            else -> false
+        }
     }
 
     private fun report(context: Context) {
