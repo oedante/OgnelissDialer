@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.R
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ogneliss.dialer.log.Logger
 import com.ogneliss.dialer.data.CallLogDateGroup
 import com.ogneliss.dialer.data.CallLogGroup
@@ -118,13 +119,28 @@ internal fun OverflowMenu(
     val helpLabel = stringResource(R.string.faq_title)
 
     EndDrawer(onDismiss = onDismiss) {
-        val tiles = buildList {
-            // Инструменты: своё и вспомогательные разделы
+        /*
+         * ОДИНАКОВО ВО ВСЕХ РАЗДЕЛАХ (2.4.0). Автор, по снимкам меню журнала,
+         * SMS и контактов: «слишком много пустого места и всегда разное
+         * расположение элементов». Было: папки сверху, плитки прижаты к низу
+         * — между ними пустота; набор плиток в разделах разный («Мой контакт»
+         * только в журнале, «Значок на главный экран» — только в SMS
+         * и контактах); плитки с подписью — по одной в ряд (разбор у
+         * OverflowMenuBody). Стало: поиск, папки и сразу под ними плитки —
+         * подряд, свободное место только внизу; плитки одни и те же и на тех
+         * же местах в каждом разделе.
+         */
+        val tools = buildList {
             if (onOwnNumber != null) add(MenuTile(MenuGroup.TOOLS, OgnelissIcons.Person, ownLabel, onOwnNumber, photoUri = ownPhotoUri))
             add(MenuTile(MenuGroup.TOOLS, OgnelissIcons.PhoneCallback, fakeCallLabel, onFakeCall))
             add(MenuTile(MenuGroup.TOOLS, OgnelissIcons.StickyNote2, notesLabel, onNotes))
             add(MenuTile(MenuGroup.TOOLS, OgnelissIcons.Alarm, remindersLabel, onReminders))
-            // Приложение
+        }
+        // Значки: постоянные — первыми, необязательный («на главный экран») — последним,
+        // чтобы его отсутствие (журнал) не сдвигало остальные
+        val app = buildList {
+            add(MenuTile(MenuGroup.APP, OgnelissIcons.Settings, settingsLabel, onSettings))
+            if (onHelp != null) add(MenuTile(MenuGroup.APP, OgnelissIcons.Help, helpLabel, onHelp))
             add(
                 MenuTile(
                     MenuGroup.APP,
@@ -133,17 +149,71 @@ internal fun OverflowMenu(
                     onThemeToggle
                 )
             )
-            add(MenuTile(MenuGroup.APP, OgnelissIcons.Settings, settingsLabel, onSettings))
-            if (onHelp != null) add(MenuTile(MenuGroup.APP, OgnelissIcons.Help, helpLabel, onHelp))
             if (onPinToHome != null) add(MenuTile(MenuGroup.APP, OgnelissIcons.AddToHomeScreen, stringResource(R.string.menu_pin_home), onPinToHome))
         }
-        if (onSearch != null) MenuSearchPill(onSearch)
-        // Папки — сверху и листаются, если не помещаются; плитки — у нижнего края
-        Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+        // Всё подряд и листается целиком, если не помещается (низкий экран, лёжа)
+        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+            if (onSearch != null) MenuSearchPill(onSearch)
             if (header != null) header()
+            OverflowMenuBody(tools + app)
         }
-        OverflowMenuBody(tiles)
     }
+}
+
+/**
+ * «МОЙ КОНТАКТ» В МЕНЮ ЛЮБОГО РАЗДЕЛА (2.4.0).
+ *
+ * Было: плитка только в меню журнала — в SMS и контактах её не было,
+ * и плитки стояли в разных разделах на разных местах (автор: «всегда
+ * разное расположение элементов»). Теперь одно и то же везде: номер
+ * не указан — окно своего номера, указан — своя карточка (OWN_CARD_KEY).
+ */
+internal class OwnContactEntry(val number: String, val photoUri: String?, val open: () -> Unit)
+
+@Composable
+internal fun rememberOwnContactEntry(
+    vm: DialerViewModel,
+    contacts: List<com.ogneliss.dialer.data.Contact>,
+    onOpenOwnCard: () -> Unit
+): OwnContactEntry {
+    val ownNumber by vm.ownNumber.collectAsStateWithLifecycle()
+    var askNumber by remember { mutableStateOf(false) }
+    if (askNumber) {
+        OwnNumberDialog(
+            current = ownNumber,
+            onDetect = { vm.detectOwnNumber() },
+            onSave = { vm.setOwnNumber(it) },
+            onDismiss = { askNumber = false }
+        )
+    }
+    val photo = remember(ownNumber, contacts) { ownPhotoUriOf(ownNumber, contacts) }
+    return OwnContactEntry(ownNumber, photo) { if (ownNumber.isBlank()) askNumber = true else onOpenOwnCard() }
+}
+
+/*
+ * ФОТО СВОЕГО КОНТАКТА В МЕНЮ (2.0.1).
+ *
+ * Свой номер часто записан в нескольких контактах: полный (два номера,
+ * почта, фото) и короткие дубли — с SIM-карты, из мессенджера, «Мой
+ * номер». В 2.0.0 брался первый попавшийся, и «Мой контакт» открывал
+ * дубль с одним номером. Теперь фото берётся у самого полного из них
+ * (больше номеров и почты, с фото — выше). Карточка — по ключу
+ * OWN_CARD_KEY (2.1.0).
+ */
+internal fun ownPhotoUriOf(ownNumber: String, contacts: List<com.ogneliss.dialer.data.Contact>): String? {
+    if (ownNumber.isBlank()) return null
+    val e164 = PhoneFormatter.toE164(ownNumber)
+    val tail = com.ogneliss.dialer.data.CallLogGrouper.tailKey(e164)
+    return contacts
+        .filter { c ->
+            c.numbers.any { it.e164 == e164 || (tail != null && com.ogneliss.dialer.data.CallLogGrouper.tailKey(it.e164) == tail) }
+        }
+        .sortedWith(
+            compareByDescending<com.ogneliss.dialer.data.Contact> { !it.photoUri.isNullOrBlank() }
+                .thenByDescending { it.numbers.size + it.emails.size }
+        )
+        .firstOrNull()
+        ?.photoUri
 }
 
 /**
@@ -248,35 +318,48 @@ private val DRAWER_CORNER = 28.dp
  *
  * Сетка в четыре колонки, зазор 6 dp, высота плитки 56 dp, скругление 8 dp:
  * плитка с подписью занимает две колонки (значок сверху слева, подпись снизу),
- * плитка-значок — одну. Сначала инструменты с подписями, затем значки
- * приложения (тема, настройки, вопросы, значок на главный экран) — у почты
- * так же: разделы с подписями и ряд значков под ними.
+ * плитка-значок — одну. Сначала инструменты с подписями по две в ряд
+ * («Мой контакт», «Псевдозвонок», «Заметки», «Напоминания»), затем ряд
+ * значков (настройки, вопросы, тема, значок на главный экран) — у почты
+ * так же: разделы с подписями и ряд значков под ними. Набор и порядок —
+ * одни во всех разделах (2.4.0).
  *
  * Было (2.1.0–2.2.0): круги с подписью под ними, по группам в белых карточках.
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun OverflowMenuBody(tiles: List<MenuTile>) {
     Column(Modifier.fillMaxWidth()) {
         // Линия над плитками — граница частей меню, как над «Избранным» почты
-        com.ogneliss.dialer.ui.components.OgnelissDivider()
-        com.ogneliss.dialer.ui.components.SectionBand(stringResource(R.string.menu_section_tools))
-        BoxWithConstraints(
-            Modifier.fillMaxWidth().padding(start = Space.m, end = Space.m, top = Space.xs, bottom = Space.m)
+        com.ogneliss.dialer.ui.components.OgnelissDivider(Modifier.padding(top = Space.s))
+        com.ogneliss.dialer.ui.components.MenuBand(stringResource(R.string.menu_section_tools))
+        /*
+         * РЯДАМИ, А НЕ ПОТОКОМ (2.4.0). Было: FlowRow с шириной плитки
+         * «две клетки + зазор», посчитанной в dp. Две такие плитки
+         * с зазором — ровно ширина ряда, и при округлении до пикселей
+         * вторая не помещалась на долю пикселя и уходила на следующий ряд:
+         * плитки с подписью стояли по одной, справа пустота (снимки автора).
+         * Стало: ряды с весами — с подписью две на ряд (вес 2), значки
+         * по четыре (вес 1); ширины делит Row, без округления. Неполный
+         * ряд добивается пустым местом того же веса: плитка не растягивается.
+         */
+        Column(
+            Modifier.fillMaxWidth().padding(start = Space.m, end = Space.m, top = Space.xxs, bottom = Space.m),
+            verticalArrangement = Arrangement.spacedBy(TILE_GAP)
         ) {
-            val cell = (maxWidth - TILE_GAP * (MENU_COLUMNS - 1)) / MENU_COLUMNS
-            // Сначала с подписями, потом значки — порядок внутри групп сохраняется
-            val ordered = tiles.sortedBy { it.group.ordinal }
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TILE_GAP),
-                verticalArrangement = Arrangement.spacedBy(TILE_GAP)
-            ) {
-                ordered.forEach { tile ->
-                    val iconOnly = tile.group == MenuGroup.APP
-                    MenuTileBox(tile, iconOnly, Modifier.size(if (iconOnly) cell else cell * 2 + TILE_GAP, TILE_HEIGHT))
-                }
-            }
+            tiles.filter { it.group == MenuGroup.TOOLS }.chunked(2).forEach { row -> TileRow(row, perRow = 2, weight = 2f) }
+            tiles.filter { it.group == MenuGroup.APP }.chunked(MENU_COLUMNS).forEach { row -> TileRow(row, perRow = MENU_COLUMNS, weight = 1f) }
         }
+    }
+}
+
+/** Ряд плиток одного размера; недостающие — пустым местом того же веса. */
+@Composable
+private fun TileRow(row: List<MenuTile>, perRow: Int, weight: Float) {
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(TILE_GAP)) {
+        row.forEach { tile ->
+            MenuTileBox(tile, iconOnly = tile.group == MenuGroup.APP, Modifier.weight(weight).height(TILE_HEIGHT))
+        }
+        repeat(perRow - row.size) { Spacer(Modifier.weight(weight)) }
     }
 }
 

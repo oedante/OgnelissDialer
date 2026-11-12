@@ -20,10 +20,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.data.SimSlot
+import com.ogneliss.dialer.ui.theme.CallGreen
 import com.ogneliss.dialer.ui.theme.Dimens
+import com.ogneliss.dialer.ui.theme.MessageBlue
 import com.ogneliss.dialer.util.PhoneFormatter
 
 /**
@@ -47,6 +50,16 @@ import com.ogneliss.dialer.util.PhoneFormatter
  * картах — выбор SIM для сообщения ([onChooseSmsSim]).
  *
  * Последний использованный номер помечается — обычно звонят на него же.
+ *
+ * ── Цвета и SIM — как во всём приложении (2.4.0) ───────────────────────────
+ * Автор, по снимку: «панель удобная, но лучше соблюдать цвета (звонки
+ * зелёные, а SMS синие) и указывать сим-карту привычным образом». Было:
+ * все кнопки цветом акцента, номер SIM — красным кружком в углу, как
+ * счётчик непрочитанных. Стало: звонок — CallGreen, SMS — MessageBlue
+ * (как свайпы, кнопки карточки и выбор SIM), мессенджер — тоновый, чтобы
+ * не путать с SMS; под кнопкой звонка — пометка SIM, как в журнале
+ * (SimBadge: значок карты и номер её цветом). Звонить или писать нельзя
+ * (нет SIM, режим полёта) — кнопка серая, как в карточке.
  */
 @Composable
 fun NumberPickerSheet(
@@ -163,13 +176,22 @@ private fun NumberRow(
 
         Spacer(Modifier.height(Space.s))
 
-        Row(horizontalArrangement = Arrangement.spacedBy(Space.m)) {
+        val availability = com.ogneliss.dialer.util.LocalCallAvailability.current
+        val scheme = MaterialTheme.colorScheme
+        // Нельзя — серая, но нажимается (экстренный номер наберётся и так), как CallButtons
+        val unavailable = scheme.surfaceContainerHighest to scheme.onSurfaceVariant
+        val call = if (availability.canCall) CallGreen to Color.White else unavailable
+        val sms = if (availability.canSms) MessageBlue to Color.White else unavailable
+
+        // Сверху по краю: пометка SIM под звонком не сдвигает соседние кнопки
+        Row(horizontalArrangement = Arrangement.spacedBy(Space.m), verticalAlignment = Alignment.Top) {
             if (sims.size > 1) {
-                // Две SIM — две кнопки вызова с номером карты
+                // Две SIM — две кнопки вызова, под каждой — пометка карты
                 sims.forEach { sim ->
                     ActionButton(
                         icon = OgnelissIcons.Call,
-                        badge = (sim.slotIndex + 1).toString(),
+                        colors = call,
+                        simSlot = sim.slotIndex,
                         description = stringResource(
                             R.string.a11y_call_with_sim, sim.label, option.number.takeLast(4)
                         )
@@ -180,46 +202,51 @@ private fun NumberRow(
             } else {
                 ActionButton(
                     icon = OgnelissIcons.Call,
-                    badge = null,
+                    colors = call,
                     description = stringResource(R.string.action_call)
                 ) { onCall(option.number, -1) }
             }
 
             ActionButton(
                 icon = OgnelissIcons.Message,
-                badge = null,
+                colors = sms,
                 description = stringResource(R.string.action_sms),
                 onLongClick = if (sims.size > 1) onChooseSmsSim?.let { choose -> { choose(option.number) } } else null,
                 onLongClickLabel = stringResource(R.string.a11y_choose_sim_sms)
             ) { onSms(option.number) }
 
+            // Мессенджер — тоновый: синим он сливался с SMS (значки похожи)
             ActionButton(
                 icon = OgnelissIcons.Chat,
-                badge = null,
+                colors = scheme.secondaryContainer to scheme.onSecondaryContainer,
                 description = stringResource(R.string.action_whatsapp)
             ) { onMessenger(option.number) }
         }
     }
 }
 
-/** Кнопка действия с необязательным номером SIM в углу. */
+/**
+ * Кнопка действия: круг цвета действия [colors] (фон, значок); [simSlot] —
+ * пометка карты под кругом, как в журнале (SimBadge).
+ */
 @Composable
 private fun ActionButton(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
-    badge: String?,
+    colors: Pair<Color, Color>,
     description: String,
+    simSlot: Int? = null,
     /** Долгое нажатие (1.8.0) — выбор SIM у SMS; null — только касание. */
     onLongClick: (() -> Unit)? = null,
     onLongClickLabel: String? = null,
     onClick: () -> Unit
 ) {
-    Box {
-        // Круг цвета кнопки FilledIconButton, но с долгим нажатием: у Material его нет
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        // Круг как FilledIconButton, но с долгим нажатием: у Material его нет
         Box(
             Modifier
                 .size(Dimens.MIN_TOUCH_TARGET)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary)
+                .background(colors.first)
                 .then(
                     if (onLongClick != null) {
                         Modifier.combinedClickableCompat(
@@ -234,14 +261,11 @@ private fun ActionButton(
                 .semantics { role = Role.Button; contentDescription = description },
             contentAlignment = Alignment.Center
         ) {
-            Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary)
+            Icon(icon, contentDescription = null, tint = colors.second)
         }
-        if (badge != null) {
-            Badge(
-                Modifier
-                    .align(Alignment.TopEnd)
-                    .offset(x = 2.dp, y = (-2).dp)
-            ) { Text(badge) }
+        if (simSlot != null) {
+            Spacer(Modifier.height(Space.xs))
+            SimBadge(simSlot)
         }
     }
 }

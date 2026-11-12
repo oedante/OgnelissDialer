@@ -1354,33 +1354,8 @@ fun MainDialerScreen(
         searching = true
     }
 
-    /*
-     * ФОТО СВОЕГО КОНТАКТА В МЕНЮ (2.0.1).
-     *
-     * Свой номер часто записан в нескольких контактах: полный (два номера,
-     * почта, фото) и короткие дубли — с SIM-карты, из мессенджера, «Мой
-     * номер». В 2.0.0 брался первый попавшийся, и «Мой контакт» открывал
-     * дубль с одним номером. Теперь фото берётся у самого полного из них
-     * (больше номеров и почты, с фото — выше). Карточка — по ключу
-     * OWN_CARD_KEY (2.1.0): по номеру она собирала только один контакт,
-     * а не всё, что есть в книге (было ошибочно написано обратное).
-     */
-    val ownPhotoUri = remember(ownNumber, state.contacts) {
-        if (ownNumber.isBlank()) null else {
-            val e164 = PhoneFormatter.toE164(ownNumber)
-            val tail = com.ogneliss.dialer.data.CallLogGrouper.tailKey(e164)
-            state.contacts
-                .filter { c ->
-                    c.numbers.any { it.e164 == e164 || (tail != null && com.ogneliss.dialer.data.CallLogGrouper.tailKey(it.e164) == tail) }
-                }
-                .sortedWith(
-                    compareByDescending<com.ogneliss.dialer.data.Contact> { !it.photoUri.isNullOrBlank() }
-                        .thenByDescending { it.numbers.size + it.emails.size }
-                )
-                .firstOrNull()
-                ?.photoUri
-        }
-    }
+    // Фото своего контакта в меню — разбор у ownPhotoUriOf (MainDialerParts)
+    val ownPhotoUri = remember(ownNumber, state.contacts) { ownPhotoUriOf(ownNumber, state.contacts) }
 
     val controlPanel: @Composable (Modifier, Boolean, Dp?, Boolean) -> Unit = { panelModifier, side, keyHeight, rail ->
         BottomControlPanel(

@@ -142,9 +142,13 @@ fun ContactsScreen(
     /** «Вопросы и ответы» из меню (1.6.0). */
     onOpenHelp: () -> Unit = {},
     /** «Закреплённые» — при полном списке закреплённых (2.1.0, RecordActionCards). */
-    onOpenPinned: () -> Unit = {}
+    onOpenPinned: () -> Unit = {},
+    /** Своя карточка — «Мой контакт» в меню (2.4.0, как в журнале). */
+    onOpenOwnCard: () -> Unit = {}
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
+    // «Мой контакт» в меню — как в журнале и SMS (2.4.0)
+    val ownContact = rememberOwnContactEntry(vm, state.contacts, onOpenOwnCard)
 
     /*
      * «Разрешить» в пустых контактах (2.1.0, ошибка): было — кнопка
@@ -722,9 +726,10 @@ fun ContactsScreen(
                             expanded = menuOpen,
                             onDismiss = { menuOpen = false },
                             settings = settings,
-                            // Своего номера, очистки журнала и выбора нескольких
-                            // у контактов нет — пункты журнала
-                            onOwnNumber = null,
+                            // «Мой контакт» — как в журнале и SMS (2.4.0): плитки одни во всех разделах
+                            ownNumber = ownContact.number,
+                            ownPhotoUri = ownContact.photoUri,
+                            onOwnNumber = { menuOpen = false; ownContact.open() },
                             onThemeToggle = {
                                 vm.setChoice(
                                     "theme",

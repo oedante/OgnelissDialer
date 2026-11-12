@@ -856,6 +856,8 @@ fun RootScreen(
                     ContactsScreen(
                         vm = vm,
                         onOpenNotes = { openSection(MainSection.NOTES) },
+                        // «Мой контакт» из меню (2.4.0) — своя карточка, как из журнала
+                        onOpenOwnCard = { openCard(com.ogneliss.dialer.ui.screens.OWN_CARD_KEY) },
                         // Псевдозвонок с экрана контактов запускается сразу,
                         // без выбора времени: окно с вариантами живёт
                         // в журнале, а здесь нужна та же кнопка «сейчас»
