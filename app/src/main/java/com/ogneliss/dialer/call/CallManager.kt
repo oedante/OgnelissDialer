@@ -43,7 +43,11 @@ object CallManager {
         internal set
 
     private val callback = object : Call.Callback() {
-        override fun onStateChanged(call: Call, state: Int) { _revision.value++ }
+        override fun onStateChanged(call: Call, state: Int) {
+            // «Завершить и ответить» (2.3.0): ответ — когда прежний вызов действительно завершён
+            if (state == Call.STATE_DISCONNECTED) answerAfterRelease(call)
+            _revision.value++
+        }
         override fun onDetailsChanged(call: Call, details: Call.Details) { _revision.value++ }
         override fun onChildrenChanged(call: Call, children: MutableList<Call>) { _revision.value++ }
 
@@ -162,7 +166,13 @@ object CallManager {
         _revision.value++
     }
 
+    /** Telecom сообщил, можно ли сейчас добавить вызов (InCallService.onCanAddCallChanged). */
+    internal fun canAddCallChanged() {
+        _revision.value++
+    }
+
     internal fun remove(call: Call) {
+        answerAfterRelease(call)
         call.unregisterCallback(callback)
         // Вызов ушёл, не дождавшись «Отправить», — кнопку снимаем (2.1.0)
         if (_postDialWait.value?.call == call) _postDialWait.value = null
@@ -290,10 +300,50 @@ object CallManager {
     }
 
     /** Ответить на второй вызов, первый — завершить. */
+    /*
+     * «ЗАВЕРШИТЬ И ОТВЕТИТЬ» — ОТВЕТ ПОСЛЕ ЗАВЕРШЕНИЯ (2.3.0, проверка логики
+     * двух линий по просьбе автора).
+     *
+     * Было: disconnect() текущего и сразу answer() второго. Завершение идёт
+     * не мгновенно, и Telecom, отвечая на второй, видел первый ещё живым —
+     * и пытался поставить его на удержание. На части сетей это давало
+     * «удержание не удалось» и второй вызов не принимался. Так же, как
+     * в системном диалере Android (AnswerOnDisconnected): завершаем текущий,
+     * а отвечаем, когда он перешёл в «завершён»; не дождались за
+     * [RELEASE_ANSWER_TIMEOUT_MS] — отвечаем всё равно.
+     */
+    @Volatile private var releaseThenAnswer: Pair<Call, Call>? = null
+    private val main = android.os.Handler(android.os.Looper.getMainLooper())
+
     fun answerWaitingEndCurrent() {
         val incoming = waiting ?: return
-        primary?.disconnect()
-        incoming.answer(VideoProfile.STATE_AUDIO_ONLY)
+        val current = primary
+        if (current == null || current == incoming) {
+            incoming.answer(VideoProfile.STATE_AUDIO_ONLY)
+            return
+        }
+        Logger.i("Call", "Завершить и ответить: жду завершения текущего")
+        releaseThenAnswer = current to incoming
+        current.disconnect()
+        main.postDelayed({
+            val pending = releaseThenAnswer ?: return@postDelayed
+            if (pending.second == incoming) {
+                Logger.w("Call", "Текущий не завершился вовремя — отвечаю на второй")
+                releaseThenAnswer = null
+                runCatching { incoming.answer(VideoProfile.STATE_AUDIO_ONLY) }
+            }
+        }, RELEASE_ANSWER_TIMEOUT_MS)
+    }
+
+    private fun answerAfterRelease(released: Call) {
+        val pending = releaseThenAnswer ?: return
+        if (pending.first != released) return
+        releaseThenAnswer = null
+        @Suppress("DEPRECATION")
+        if (pending.second.state == Call.STATE_RINGING) {
+            runCatching { pending.second.answer(VideoProfile.STATE_AUDIO_ONLY) }
+                .onFailure { Logger.w("Call", "Ответ после завершения не выполнен", it) }
+        }
     }
 
     fun rejectWaiting() {
@@ -317,13 +367,18 @@ object CallManager {
      * Уже удержанный вызов снять с удержания можно всегда: иначе человек
      * застрял бы с вызовом, который нельзя вернуть.
      */
+    /*
+     * 2.3.0: только CAPABILITY_HOLD. Было — ещё и CAPABILITY_SUPPORT_HOLD,
+     * а он значит «сеть удержание умеет, но СЕЙЧАС нельзя» (например,
+     * у участника конференции): плитка «Удержать» горела, а нажатие ничего
+     * не делало. Системный диалер в этом случае плитку гасит.
+     */
     @Suppress("DEPRECATION")
     val canHold: Boolean
         get() {
             val c = primary ?: return false
             if (c.state == Call.STATE_HOLDING) return true
-            return c.details.can(Call.Details.CAPABILITY_HOLD) ||
-                c.details.can(Call.Details.CAPABILITY_SUPPORT_HOLD)
+            return c.details.can(Call.Details.CAPABILITY_HOLD)
         }
 
     @Suppress("DEPRECATION")
@@ -342,15 +397,24 @@ object CallManager {
      * вторая линия живёт внутри конференции. Иначе — вручную: текущий
      * на удержание, удержанный обратно.
      */
+    /*
+     * ПЕРЕКЛЮЧИТЬ ЛИНИИ (2.3.0).
+     *
+     * Было: hold() текущего и сразу unhold() удержанного. Но Telecom,
+     * снимая вызов с удержания, сам ставит на удержание активный
+     * (CallsManager.unholdCall) — и выходило два запроса удержания подряд.
+     * На IMS (VoLTE) второй отклоняется («удержание уже идёт»), и обе линии
+     * могли остаться на удержании. Теперь — только unhold(): удержание
+     * текущего и «обмен» для сети делает Telecom, как в системном диалере.
+     */
     fun swapCalls() {
-        val main = primary
-        if (main != null && main.details.can(Call.Details.CAPABILITY_SWAP_CONFERENCE)) {
-            main.swapConference()
+        val current = primary
+        if (current != null && current.details.can(Call.Details.CAPABILITY_SWAP_CONFERENCE)) {
+            current.swapConference()
             return
         }
-        val hold = secondary ?: return
-        main?.hold()
-        hold.unhold()
+        val held = secondary ?: return
+        held.unhold()
     }
 
     /**
@@ -404,11 +468,17 @@ object CallManager {
      * удержать — иначе новому вызову некуда деть первый — и второй линии
      * ещё нет: большинство сетей держат две линии, третью не дают.
      */
+    /*
+     * 2.3.0: и ответ Telecom (InCallService.canAddCall): он учитывает
+     * экстренный вызов, предел вызовов и ограничения сети — без этого
+     * «Добавить» горело, а набранный номер Telecom отклонял.
+     */
     @Suppress("DEPRECATION")
     val canAddCall: Boolean
         get() {
             val c = primary ?: return false
-            return c.state == Call.STATE_ACTIVE && canHold && secondary == null && waiting == null
+            val telecomAllows = runCatching { service?.canAddCall() }.getOrNull() ?: true
+            return telecomAllows && c.state == Call.STATE_ACTIVE && canHold && secondary == null && waiting == null
         }
 
     // ── Конференция ─────────────────────────────────────────────────────────
@@ -466,6 +536,9 @@ object CallManager {
             CallAudioState.ROUTE_BLUETOOTH != 0
 
     /** Состояния набираемого вызова: разбор у primary. */
+    /** «Завершить и ответить»: сколько ждать завершения текущего. */
+    private const val RELEASE_ANSWER_TIMEOUT_MS = 2_000L
+
     @Suppress("DEPRECATION")
     private val OUTGOING_STATES = setOf(
         Call.STATE_DIALING,
