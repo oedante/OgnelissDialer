@@ -5,7 +5,6 @@ import com.ogneliss.dialer.ui.theme.Space
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 
 import androidx.compose.ui.res.pluralStringResource
-import com.ogneliss.dialer.ui.theme.NoteTeal
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.navigationBars
@@ -71,21 +70,16 @@ fun FilterSheet(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = FlowUi.sheetBottomPadding)
         ) {
-            Row(
-                Modifier.padding(horizontal = FlowUi.sheetPadding),
-                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-            ) {
-                Text(
-                    stringResource(R.string.filter_title),
-                    Modifier.weight(1f),
-                    style = MaterialTheme.typography.titleLarge
-                )
-                if (filter.isActive) {
-                    TextButton(onClick = { onFilterChange(CallLogFilter()) }) {
-                        Text(stringResource(R.string.filter_reset))
+            SheetTitle(
+                stringResource(R.string.filter_title),
+                trailing = if (filter.isActive) {
+                    {
+                        TextButton(onClick = { onFilterChange(CallLogFilter()) }) {
+                            Text(stringResource(R.string.filter_reset))
+                        }
                     }
-                }
-            }
+                } else null
+            )
 
             /*
              * Группы — как разделы журнала (1.6.1, автор: «фильтры сделаем
@@ -197,7 +191,8 @@ fun FilterSheet(
                                 OgnelissIcons.StickyNote2,
                                 contentDescription = null,
                                 modifier = Modifier.size(FlowUi.iconSizeInline),
-                                tint = NoteTeal
+                                // Как остальные значки фильтров (2.3.1): свой бирюзовый выбивался
+                                tint = LocalContentColor.current
                             )
                         }
                     )

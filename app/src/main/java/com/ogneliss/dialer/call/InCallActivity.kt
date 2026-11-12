@@ -2097,11 +2097,7 @@ private fun QuickReplySheet(
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss, containerColor = com.ogneliss.dialer.ui.components.sheetContainerColor()) {
         Column(Modifier.padding(bottom = Space.xxl)) {
-            Text(
-                stringResource(R.string.quick_reply_title),
-                Modifier.padding(horizontal = Space.xl, vertical = Space.s),
-                style = MaterialTheme.typography.titleLarge
-            )
+            com.ogneliss.dialer.ui.components.SheetTitle(stringResource(R.string.quick_reply_title))
             // Ответы — в скруглённой панели, как строки остальных шторок (1.2.2)
             com.ogneliss.dialer.ui.components.SheetGroup {
                 templates.forEachIndexed { index, template ->

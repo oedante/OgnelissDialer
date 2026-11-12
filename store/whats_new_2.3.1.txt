@@ -1,0 +1,239 @@
+<ru-RU>
+• Единое оформление: одинаковые заголовки, меню и подписи во всех окнах.
+• Интерфейс как в Ogneliss Mail: шапка раздела с поиском и фильтром, меню справа с папками, масштаб и размер шрифта в «Оформлении».
+• Второй вызов, удержание и конференция работают надёжнее.
+• SMS: черновики, отмена отправки и «Отправить позже» (удерживайте «Отправить»).
+• Выбор нескольких сообщений: копировать, переслать, в избранное, удалить.
+• Виджет «Закреплённые»: звонок в одно касание.
+</ru-RU>
+<ar>
+• تصميم موحّد: عناوين وقوائم وتسميات متماثلة في كل النوافذ.
+• واجهة مثل Ogneliss Mail: شريط علوي للبحث والتصفية، قائمة جانبية بالمجلدات، وحجم الواجهة والخط في «المظهر».
+• المكالمة الثانية والانتظار والمكالمة الجماعية تعمل بموثوقية أكبر.
+• الرسائل: المسودات، وإلغاء الإرسال، و«الإرسال لاحقًا» (اضغط مطولًا على «إرسال»).
+• تحديد عدة رسائل: نسخ، إعادة توجيه، إضافة إلى المفضلة، حذف.
+• المكالمات مع جهة الاتصال داخل المحادثة مع رقم الشريحة.
+• أداة «المثبّتة»: اتصال بلمسة واحدة.
+</ar>
+<cs-CZ>
+• Jednotný vzhled: stejné nadpisy, nabídky a popisky ve všech oknech.
+• Rozhraní jako v Ogneliss Mail: horní lišta s hledáním a filtrem, nabídka vpravo se složkami, měřítko a velikost písma ve Vzhledu.
+• Druhý hovor, přidržení a konference fungují spolehlivěji.
+• SMS: koncepty, zrušení odeslání a „Odeslat později“ (podržte „Odeslat“).
+• Výběr více zpráv: kopírovat, přeposlat, označit hvězdičkou, smazat.
+• Widget „Připnuté“: hovor jedním klepnutím.
+</cs-CZ>
+<da-DK>
+• Ensartet udseende: samme overskrifter, menuer og etiketter overalt.
+• Brugerflade som i Ogneliss Mail: toplinje med søgning og filter, menu til højre med mapper, skalering og skriftstørrelse under Udseende.
+• Andet opkald, parkering og konference virker mere pålideligt.
+• SMS: kladder, fortryd afsendelse og „Send senere“ (hold „Send“ nede).
+• Vælg flere beskeder: kopiér, videresend, stjernemarkér, slet.
+• Widget „Fastgjorte“: ring med ét tryk.
+</da-DK>
+<de-DE>
+• Einheitliches Design: gleiche Titel, Menüs und Beschriftungen überall.
+• Oberfläche wie in Ogneliss Mail: Kopfzeile mit Suche und Filter, Menü rechts mit Ordnern, Skalierung und Schriftgröße unter „Darstellung“.
+• Zweiter Anruf, Halten und Konferenz funktionieren zuverlässiger.
+• SMS: Entwürfe, Senden rückgängig machen und „Später senden“ („Senden“ gedrückt halten).
+• Mehrere Nachrichten auswählen: kopieren, weiterleiten, markieren, löschen.
+• Widget „Angeheftet“: Anruf mit einem Tippen.
+</de-DE>
+<en-US>
+• Unified look: the same titles, menus and labels in every window.
+• Interface like Ogneliss Mail: a top bar with search and filter, a menu on the right with folders, interface scale and font size in Appearance.
+• Second call, hold and conference work more reliably.
+• SMS: drafts, undo send and Send later (hold Send).
+• Select several messages: copy, forward, star, delete.
+• Calls with the contact right in the conversation, with the SIM.
+• Pinned widget: call with one tap.
+</en-US>
+<es-ES>
+• Diseño unificado: mismos títulos, menús y etiquetas en todas las ventanas.
+• Interfaz como en Ogneliss Mail: barra superior con búsqueda y filtro, menú a la derecha con carpetas, escala y tamaño de letra en «Apariencia».
+• La segunda llamada, la espera y la conferencia funcionan mejor.
+• SMS: borradores, deshacer envío y «Enviar más tarde» (mantén pulsado «Enviar»).
+• Selecciona varios mensajes: copiar, reenviar, destacar, eliminar.
+• Widget «Fijados»: llama con un toque.
+</es-ES>
+<fi-FI>
+• Yhtenäinen ulkoasu: samat otsikot, valikot ja nimet kaikkialla.
+• Käyttöliittymä kuten Ogneliss Mailissa: yläpalkki, jossa haku ja suodatin, valikko oikealla kansioineen, skaalaus ja fonttikoko Ulkoasussa.
+• Toinen puhelu, pito ja neuvottelu toimivat luotettavammin.
+• Tekstiviestit: luonnokset, lähetyksen peruminen ja ”Lähetä myöhemmin” (pidä ”Lähetä” painettuna).
+• Valitse useita viestejä: kopioi, välitä, tähdellä, poista.
+• Kiinnitetyt-widget: soita yhdellä napautuksella.
+</fi-FI>
+<fr-FR>
+• Apparence unifiée : mêmes titres, menus et libellés partout.
+• Interface comme Ogneliss Mail : barre supérieure avec recherche et filtre, menu à droite avec dossiers, échelle et taille de police dans « Apparence ».
+• Double appel, mise en attente et conférence plus fiables.
+• SMS : brouillons, annulation de l’envoi et « Envoyer plus tard » (maintenez « Envoyer »).
+• Sélection de plusieurs messages : copier, transférer, favori, supprimer.
+• Widget « Épinglés » : appel d’une touche.
+</fr-FR>
+<hi-IN>
+• एक जैसा रूप: हर विंडो में एक जैसे शीर्षक, मेन्यू और लेबल।
+• Ogneliss Mail जैसा इंटरफ़ेस: खोज और फ़िल्टर वाली ऊपरी पट्टी, दाईं ओर फ़ोल्डर वाला मेन्यू, «रूप» में स्केल और फ़ॉन्ट आकार।
+• दूसरी कॉल, होल्ड और कॉन्फ़्रेंस अब ज़्यादा भरोसेमंद।
+• SMS: ड्राफ़्ट, भेजना रद्द करें और «बाद में भेजें» («भेजें» दबाकर रखें)।
+• कई संदेश चुनें: कॉपी, आगे भेजें, तारांकित, हटाएँ।
+• बातचीत में ही संपर्क के साथ कॉल, SIM के साथ।
+• सभी संदेशों के टेक्स्ट में खोज।
+• «पिन किए गए» विजेट: एक टैप में कॉल।
+</hi-IN>
+<hu-HU>
+• Egységes megjelenés: azonos címek, menük és feliratok mindenhol.
+• Felület, mint az Ogneliss Mailben: felső sáv kereséssel és szűrővel, jobb oldali menü mappákkal, méretezés és betűméret a Megjelenésben.
+• A második hívás, tartás és konferencia megbízhatóbb.
+• SMS: piszkozatok, küldés visszavonása és „Küldés később” (tartsa nyomva a „Küldés” gombot).
+• Több üzenet kijelölése: másolás, továbbítás, csillagozás, törlés.
+• „Rögzített” widget: hívás egy érintéssel.
+</hu-HU>
+<id>
+• Tampilan seragam: judul, menu, dan label yang sama di semua jendela.
+• Antarmuka seperti Ogneliss Mail: bilah atas dengan cari dan filter, menu di kanan dengan folder, skala dan ukuran font di Tampilan.
+• Panggilan kedua, tahan dan konferensi lebih andal.
+• SMS: draf, batalkan kirim, dan "Kirim nanti" (tahan "Kirim").
+• Pilih beberapa pesan: salin, teruskan, bintangi, hapus.
+• Panggilan dengan kontak langsung di percakapan, dengan SIM.
+• Widget Disematkan: telepon dengan satu ketukan.
+</id>
+<it-IT>
+• Aspetto uniforme: stessi titoli, menu ed etichette ovunque.
+• Interfaccia come Ogneliss Mail: barra in alto con ricerca e filtro, menu a destra con cartelle, scala e dimensione del testo in «Aspetto».
+• Seconda chiamata, attesa e conferenza più affidabili.
+• SMS: bozze, annulla invio e «Invia più tardi» (tieni premuto «Invia»).
+• Seleziona più messaggi: copia, inoltra, aggiungi ai preferiti, elimina.
+• Widget «Fissati»: chiama con un tocco.
+</it-IT>
+<iw-IL>
+• מראה אחיד: אותן כותרות, תפריטים ותוויות בכל החלונות.
+• ממשק כמו ב-Ogneliss Mail: סרגל עליון עם חיפוש וסינון, תפריט בצד עם תיקיות, קנה מידה וגודל גופן ב«מראה».
+• שיחה שנייה, המתנה ושיחת ועידה עובדות בצורה אמינה יותר.
+• SMS: טיוטות, ביטול שליחה ו«שליחה מאוחר יותר» (לחיצה ארוכה על «שליחה»).
+• בחירת כמה הודעות: העתקה, העברה, סימון בכוכב, מחיקה.
+• שיחות עם איש הקשר בתוך השיחה, עם מספר ה-SIM.
+• חיפוש בטקסט של כל ההודעות.
+• ווידג'ט «מוצמדים»: שיחה בנגיעה אחת.
+</iw-IL>
+<ja-JP>
+• 統一デザイン：すべての画面で見出し・メニュー・ラベルを統一。
+• Ogneliss Mail と同じ画面構成：検索とフィルタのある上部バー、フォルダ付きの右メニュー、「外観」で表示倍率と文字サイズ。
+• 2本目の通話・保留・電話会議がより確実に動作。
+• SMS：下書き、送信の取り消し、「後で送信」（「送信」を長押し）。
+• 複数のメッセージを選択：コピー、転送、スター、削除。
+• 相手との通話を会話の中に SIM 付きで表示。
+• すべてのメッセージの本文を検索。
+• フォルダ：個人、不明、サービス、未読、スター付き —「その他」メニューから。
+• 認証コードの自動削除と SMS のファイルへのバックアップ。
+• 「固定」ウィジェット：ワンタップで発信。
+</ja-JP>
+<ko-KR>
+• 통일된 디자인: 모든 창에서 같은 제목, 메뉴, 라벨.
+• Ogneliss Mail과 같은 화면: 검색·필터가 있는 상단 바, 폴더가 있는 오른쪽 메뉴, '모양'에서 화면 배율과 글자 크기.
+• 두 번째 통화, 보류, 다자간 통화가 더 안정적으로 작동합니다.
+• SMS: 임시 저장, 보내기 취소, '나중에 보내기'('보내기' 길게 누르기).
+• 여러 메시지 선택: 복사, 전달, 별표, 삭제.
+• 대화 안에 상대와의 통화를 SIM과 함께 표시.
+• 모든 메시지 본문 검색.
+• 폴더: 개인, 모르는 번호, 서비스, 읽지 않음, 별표 — '더보기' 메뉴에서.
+• 인증 코드 자동 삭제와 SMS 파일 백업.
+• '고정됨' 위젯: 한 번 탭으로 전화.
+</ko-KR>
+<nl-NL>
+• Eenheidsuiterlijk: overal dezelfde titels, menu’s en labels.
+• Interface zoals Ogneliss Mail: bovenbalk met zoeken en filter, menu rechts met mappen, schaal en lettergrootte bij Weergave.
+• Tweede gesprek, in de wacht en vergaderen werken betrouwbaarder.
+• Sms: concepten, verzenden ongedaan maken en ‘Later verzenden’ (houd ‘Verzenden’ ingedrukt).
+• Meerdere berichten selecteren: kopiëren, doorsturen, ster, verwijderen.
+• Widget ‘Vastgezet’: bellen met één tik.
+</nl-NL>
+<no-NO>
+• Enhetlig utseende: like titler, menyer og etiketter overalt.
+• Grensesnitt som i Ogneliss Mail: topplinje med søk og filter, meny til høyre med mapper, skalering og skriftstørrelse under Utseende.
+• Andre samtale, venting og konferanse fungerer mer pålitelig.
+• SMS: utkast, angre sending og «Send senere» (hold inne «Send»).
+• Velg flere meldinger: kopier, videresend, stjernemerk, slett.
+• Anrop med kontakten rett i samtalen, med SIM.
+• Widgeten «Festet»: ring med ett trykk.
+</no-NO>
+<pl-PL>
+• Jednolity wygląd: te same tytuły, menu i etykiety we wszystkich oknach.
+• Interfejs jak w Ogneliss Mail: górny pasek z wyszukiwaniem i filtrem, menu po prawej z folderami, skala i rozmiar czcionki w „Wyglądzie”.
+• Drugie połączenie, zawieszanie i konferencja działają pewniej.
+• SMS: wersje robocze, cofanie wysyłki i „Wyślij później” (przytrzymaj „Wyślij”).
+• Zaznaczanie wielu wiadomości: kopiuj, przekaż, oznacz gwiazdką, usuń.
+• Widżet „Przypięte”: połączenie jednym dotknięciem.
+</pl-PL>
+<pt-BR>
+• Visual unificado: mesmos títulos, menus e rótulos em todas as telas.
+• Interface como no Ogneliss Mail: barra superior com busca e filtro, menu à direita com pastas, escala e tamanho da fonte em "Aparência".
+• Segunda chamada, espera e conferência funcionam melhor.
+• SMS: rascunhos, desfazer envio e "Enviar mais tarde" (toque e segure "Enviar").
+• Selecione várias mensagens: copiar, encaminhar, favoritar, excluir.
+• Widget "Fixados": ligue com um toque.
+</pt-BR>
+<ro>
+• Aspect unitar: aceleași titluri, meniuri și etichete peste tot.
+• Interfață ca în Ogneliss Mail: bară sus cu căutare și filtru, meniu în dreapta cu dosare, scară și mărimea fontului în „Aspect”.
+• Al doilea apel, așteptarea și conferința funcționează mai sigur.
+• SMS: ciorne, anularea trimiterii și „Trimite mai târziu” (ține apăsat „Trimite”).
+• Selectează mai multe mesaje: copiază, redirecționează, marchează cu stea, șterge.
+• Widgetul „Fixate”: apel cu o atingere.
+</ro>
+<sk>
+• Jednotný vzhľad: rovnaké nadpisy, ponuky a popisy vo všetkých oknách.
+• Rozhranie ako v Ogneliss Mail: horná lišta s hľadaním a filtrom, ponuka vpravo s priečinkami, mierka a veľkosť písma vo Vzhľade.
+• Druhý hovor, podržanie a konferencia fungujú spoľahlivejšie.
+• SMS: koncepty, zrušenie odoslania a „Odoslať neskôr“ (podržte „Odoslať“).
+• Výber viacerých správ: kopírovať, preposlať, označiť hviezdičkou, odstrániť.
+• Miniaplikácia „Pripnuté“: hovor jedným ťuknutím.
+</sk>
+<sv-SE>
+• Enhetligt utseende: samma rubriker, menyer och etiketter överallt.
+• Gränssnitt som i Ogneliss Mail: toppfält med sök och filter, meny till höger med mappar, skala och textstorlek under Utseende.
+• Andra samtal, parkering och konferens fungerar mer pålitligt.
+• SMS: utkast, ångra skicka och ”Skicka senare” (håll in ”Skicka”).
+• Markera flera meddelanden: kopiera, vidarebefordra, stjärnmärk, radera.
+• Widgeten ”Fästa”: ring med ett tryck.
+</sv-SE>
+<th>
+• หน้าตาเป็นหนึ่งเดียว: หัวข้อ เมนู และป้ายกำกับเหมือนกันทุกหน้าต่าง
+• หน้าตาเหมือน Ogneliss Mail: แถบบนมีค้นหาและตัวกรอง เมนูด้านขวาพร้อมโฟลเดอร์ ปรับสเกลและขนาดตัวอักษรใน «รูปลักษณ์»
+• สายที่สอง การพักสาย และการประชุมสายทำงานได้ดีขึ้น
+• SMS: ฉบับร่าง เลิกส่ง และ «ส่งภายหลัง» (กดค้างที่ «ส่ง»)
+• เลือกหลายข้อความ: คัดลอก ส่งต่อ ติดดาว ลบ
+• สายสนทนากับผู้ติดต่อแสดงในแชทพร้อม SIM
+• ค้นหาในข้อความทั้งหมด
+• วิดเจ็ต «ที่ปักหมุด»: โทรด้วยการแตะครั้งเดียว
+</th>
+<tr-TR>
+• Tutarlı görünüm: tüm pencerelerde aynı başlıklar, menüler ve etiketler.
+• Ogneliss Mail gibi arayüz: arama ve filtreli üst çubuk, sağda klasörlü menü, "Görünüm"de ölçek ve yazı boyutu.
+• İkinci arama, bekletme ve konferans daha güvenilir çalışıyor.
+• SMS: taslaklar, gönderimi geri alma ve "Sonra gönder" ("Gönder"e basılı tutun).
+• Birden çok mesaj seçin: kopyala, ilet, yıldızla, sil.
+• "Sabitlenenler" widget'ı: tek dokunuşla arama.
+</tr-TR>
+<vi>
+• Giao diện thống nhất: tiêu đề, menu và nhãn giống nhau ở mọi cửa sổ.
+• Giao diện như Ogneliss Mail: thanh trên có tìm kiếm và bộ lọc, menu bên phải có thư mục, tỉ lệ và cỡ chữ trong «Giao diện».
+• Cuộc gọi thứ hai, giữ máy và hội nghị hoạt động ổn định hơn.
+• SMS: bản nháp, hủy gửi và «Gửi sau» (nhấn giữ «Gửi»).
+• Chọn nhiều tin nhắn: sao chép, chuyển tiếp, gắn sao, xóa.
+• Cuộc gọi với người liên hệ ngay trong cuộc trò chuyện, kèm SIM.
+• Tiện ích «Đã ghim»: gọi bằng một chạm.
+</vi>
+<zh-CN>
+• 统一外观：所有窗口的标题、菜单和标签一致。
+• 界面与 Ogneliss Mail 一致：带搜索和筛选的顶栏、右侧带文件夹的菜单，“外观”中可调界面缩放和字号。
+• 第二路通话、保持和电话会议更加可靠。
+• 短信：草稿、撤销发送和“稍后发送”（长按“发送”）。
+• 多选消息：复制、转发、加星标、删除。
+• 在对话中显示与联系人的通话，并标明 SIM 卡。
+• 搜索所有消息的内容。
+• 文件夹：个人、陌生号码、服务、未读、星标 ——在“更多”菜单中。
+• 自动删除验证码，短信备份到文件。
+• “已固定”小组件：一键拨号。
+</zh-CN>

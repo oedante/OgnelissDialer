@@ -58,7 +58,8 @@ fun GestureHintSheet(onDismiss: () -> Unit) {
         Column(Modifier.padding(horizontal = Space.xl).padding(bottom = Space.xl)) {
             Text(
                 stringResource(R.string.gesture_hint_title),
-                style = MaterialTheme.typography.headlineSmall
+                // Заголовок окна — titleMedium, как у всех окон и шторок (2.3.1)
+                style = MaterialTheme.typography.titleMedium
             )
 
             Spacer(Modifier.height(Space.s))

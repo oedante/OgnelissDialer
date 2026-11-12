@@ -414,7 +414,7 @@ internal fun StatCell(value: Int, labelRes: Int, highlight: Boolean = false) {
             value.toString(),
             // headlineSmall вместо числа: то же начертание, но из шкалы,
             // и при системном крупном шрифте оно масштабируется вместе
-            // со всем остальным
+            // со всем остальным. ui-roles: содержимое (число, не заголовок окна)
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Medium,
             color = if (highlight && value > 0) MaterialTheme.colorScheme.error
@@ -539,13 +539,14 @@ internal fun NumberRow(
             contentDescription = null,
             tint = com.ogneliss.dialer.util.LocalCallAvailability.current.callTint(com.ogneliss.dialer.ui.theme.CallGreen)
         )
-        Spacer(Modifier.width(Space.m))
+        // Отступ и вторая строка — как у строк настроек (2.3.1)
+        Spacer(Modifier.width(Space.l))
         Column(Modifier.weight(1f)) {
             Text(formatted, style = MaterialTheme.typography.bodyLarge)
             label?.let {
                 Text(
                     it,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -742,18 +743,24 @@ internal fun DetailRow(
             .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        /*
+         * Строка сведений — как строка настроек (2.3.1, единый вид): значок
+         * цветом акцента, отступ 16, вторая строка — bodyMedium. Было: серый
+         * значок, отступ 12 и мелкая вторая строка — карточка выглядела
+         * собранной по другим правилам, чем настройки рядом.
+         */
         Icon(
             icon,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
+            tint = MaterialTheme.colorScheme.primary
         )
-        Spacer(Modifier.width(Space.m))
+        Spacer(Modifier.width(Space.l))
         Column(Modifier.weight(1f)) {
             Text(value, style = MaterialTheme.typography.bodyLarge)
             label?.let {
                 Text(
                     it,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }

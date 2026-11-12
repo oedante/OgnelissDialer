@@ -1058,7 +1058,8 @@ private fun SimPicker(state: ConversationViewModel.UiState, onSelectSim: (Int) -
                 DropdownMenuItem(
                     text = {
                         Column {
-                            Text(simOrdinalName(sim))
+                            // Пункт меню — bodyLarge, как во всех меню (2.3.1)
+                            Text(simOrdinalName(sim), style = MaterialTheme.typography.bodyLarge)
                             if (second != null) {
                                 Text(
                                     second,

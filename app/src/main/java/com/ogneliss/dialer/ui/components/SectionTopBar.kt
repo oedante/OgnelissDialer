@@ -71,10 +71,16 @@ internal fun SectionTopBar(
     TopAppBar(
         title = {
             Column {
-                // Название — titleMedium, как в шапке почты (не titleLarge заголовка экрана)
+                /*
+                 * Заголовок экрана — как на всех экранах (2.3.1, единый вид):
+                 * одной строкой — titleLarge, как «Настройки»; с подписью ниже —
+                 * titleMedium (две строки в той же высоте шапки), как
+                 * в шапке ленты почты. Было: всегда titleMedium — «Журнал»
+                 * выглядел мельче соседних «Настройки» и «Архив».
+                 */
                 Text(
                     title,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = if (subtitle == null) MaterialTheme.typography.titleLarge else MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -112,9 +118,16 @@ internal fun SectionTopBar(
                         menu.forEach { item ->
                             val color = if (item.destructive) MaterialTheme.colorScheme.error
                             else MaterialTheme.colorScheme.onSurface
+                            // Пункт меню — как строка меню «Папки» и меню почты: bodyLarge, значок
+                            // onSurfaceVariant, необратимое — цветом ошибки (2.3.1)
                             DropdownMenuItem(
-                                text = { Text(item.label, color = color) },
-                                leadingIcon = { Icon(item.icon, contentDescription = null, tint = color) },
+                                text = { Text(item.label, color = color, style = MaterialTheme.typography.bodyLarge) },
+                                leadingIcon = {
+                                    Icon(
+                                        item.icon, contentDescription = null,
+                                        tint = if (item.destructive) color else MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                },
                                 onClick = { menuOpen = false; item.onClick() },
                                 modifier = Modifier.heightIn(min = FlowUi.menuItemHeight)
                             )

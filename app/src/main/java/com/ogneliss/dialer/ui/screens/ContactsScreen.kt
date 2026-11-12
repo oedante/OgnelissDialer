@@ -1137,8 +1137,14 @@ internal fun sectionLetter(name: String): Char {
 
 @Composable
 fun LetterHeader(letter: String) {
-    // Полоса раздела во всю ширину (сплошной список, 1.5.3)
-    SectionBand(letter)
+    /*
+     * Подпись в ленте — прописными, как «СЕГОДНЯ» и «ВЧЕРА» рядом (2.3.1,
+     * единый вид). Было: «Закреплённые», «Избранные», «Сообщения» обычным
+     * регистром над «СЕГОДНЯ» — две разные подписи в одном списке.
+     * TalkBack читает обычным регистром.
+     */
+    val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0] ?: java.util.Locale.getDefault()
+    SectionBand(letter.uppercase(locale), description = letter)
 }
 
 /**

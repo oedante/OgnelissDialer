@@ -319,11 +319,7 @@ fun ContactEditScreen(
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         ) {
             Column(Modifier.padding(bottom = FlowUi.sheetBottomPadding)) {
-                Text(
-                    stringResource(R.string.contact_edit_account_title),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(horizontal = FlowUi.sheetPadding, vertical = Space.s)
-                )
+                com.ogneliss.dialer.ui.components.SheetTitle(stringResource(R.string.contact_edit_account_title))
                 ListSheetGroup {
                     state.accounts.forEachIndexed { index, account ->
                         SheetChoiceRow(
@@ -705,10 +701,8 @@ private fun TypeSheet(isPhone: Boolean, current: EditableValue, onSelect: (Int) 
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ) {
         Column(Modifier.padding(bottom = FlowUi.sheetBottomPadding)) {
-            Text(
-                stringResource(if (isPhone) R.string.contact_edit_phone_type else R.string.contact_edit_email_type),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = FlowUi.sheetPadding, vertical = Space.s)
+            com.ogneliss.dialer.ui.components.SheetTitle(
+                stringResource(if (isPhone) R.string.contact_edit_phone_type else R.string.contact_edit_email_type)
             )
             ListSheetGroup {
                 // Свой тип строки (например, «Дача») — первым и отмеченным

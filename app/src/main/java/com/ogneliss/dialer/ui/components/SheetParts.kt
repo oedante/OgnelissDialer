@@ -21,6 +21,8 @@ import com.ogneliss.dialer.ui.theme.LocalPageTone
 import com.ogneliss.dialer.ui.theme.OgnelissTheme
 import com.ogneliss.dialer.ui.theme.PageTone
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -232,3 +234,37 @@ fun SheetChoiceRow(selected: Boolean, label: String, onClick: () -> Unit) {
 
 /** Фото в строке шторки — размером со значок с запасом. */
 private val SHEET_PHOTO = 28.dp
+
+/**
+ * ЗАГОЛОВОК ОКНА — ОДИН НА ВСЕ ШТОРКИ (2.3.1, единый вид).
+ *
+ * Автор, 12.11.2026: «в разных окнах, панелях, выпадающих списках разные
+ * размеры шрифтов… как будто приложение сшито из разных кусков». Заголовки
+ * шторок были titleMedium, titleLarge и headlineSmall с тремя разными полями.
+ * Теперь — titleMedium (как у OgnelissDialog и карточек действий), поля —
+ * поля шторки; справа — необязательное действие («Сбросить»).
+ */
+@Composable
+fun SheetTitle(
+    text: String,
+    modifier: Modifier = Modifier,
+    trailing: (@Composable () -> Unit)? = null
+) {
+    androidx.compose.foundation.layout.Row(
+        modifier
+            .fillMaxWidth()
+            .heightIn(min = Dimens.MIN_TOUCH_TARGET)
+            .padding(horizontal = FlowUi.sheetPadding),
+        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+    ) {
+        Text(
+            text,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier
+                .weight(1f)
+                // Заголовок окна — «заголовок» для TalkBack: переход по заголовкам находит его
+                .semantics { heading() }
+        )
+        trailing?.invoke()
+    }
+}

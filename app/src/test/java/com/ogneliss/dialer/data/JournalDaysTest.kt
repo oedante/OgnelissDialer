@@ -44,13 +44,13 @@ class JournalDaysTest {
 
     @Test
     fun `этот год — число, месяц и день недели`() {
-        assertEquals("29 октября · ЧЕТВЕРГ", label(at(2026, 10, 29, 12)))
-        assertEquals("1 января · ЧЕТВЕРГ", label(at(2026, 1, 1, 9)))
+        assertEquals("29 ОКТЯБРЯ · ЧЕТВЕРГ", label(at(2026, 10, 29, 12)))
+        assertEquals("1 ЯНВАРЯ · ЧЕТВЕРГ", label(at(2026, 1, 1, 9)))
     }
 
     @Test
     fun `прошлый год — с годом и без дня недели`() {
-        assertEquals("29 октября 2025", label(at(2025, 10, 29, 12)))
+        assertEquals("29 ОКТЯБРЯ 2025", label(at(2025, 10, 29, 12)))
     }
 
     @Test
@@ -61,7 +61,7 @@ class JournalDaysTest {
     @Test
     fun `порядок числа и месяца — по языку`() {
         assertEquals(
-            "October 29 · THURSDAY",
+            "OCTOBER 29 · THURSDAY",
             label(at(2026, 10, 29, 12), locale = Locale.US, dayMonth = "MMMM d")
         )
     }
