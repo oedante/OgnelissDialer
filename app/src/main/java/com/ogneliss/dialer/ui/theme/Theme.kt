@@ -317,6 +317,8 @@ fun OgnelissDialerTheme(
     dynamicColor: Boolean = false,
     /** Масштаб интерфейса (1.5.6): разбор в UiScale.kt. */
     uiScale: UiScale = UiScale.DEFAULT,
+    /** Размер шрифта (2.2.1): множитель поверх системного, как в Ogneliss Mail. */
+    fontScale: Float = 1f,
     /**
      * Цветовая тема, свой акцент, скругление и шрифт — как «Оформление»
      * Ogneliss Mail (1.8.4 — тема, 1.9.0 — остальное). По умолчанию —
@@ -406,17 +408,22 @@ fun OgnelissDialerTheme(
     }
 
     /*
-     * МАСШТАБ ИНТЕРФЕЙСА ПОД ЭКРАН (1.5.6) — разбор в UiScale.kt.
-     * Подменяется плотность для всего, что внутри темы: размеры в dp
-     * умножаются на коэффициент, текст — мягче (корень коэффициента
-     * при уменьшении), чтобы не стать мелким.
+     * МАСШТАБ ИНТЕРФЕЙСА И РАЗМЕР ШРИФТА (2.2.1, как в Ogneliss Mail) —
+     * разбор в UiScale.kt. Подменяется плотность для всего, что внутри
+     * темы: размеры в dp и текст умножаются на масштаб; текст — ещё
+     * и на «Размер шрифта» (поверх системного, итог не больше 1,6).
      */
     val baseDensity = LocalDensity.current
     val configuration = LocalConfiguration.current
-    val scaleFactor = remember(uiScale, configuration.smallestScreenWidthDp, configuration.densityDpi) {
-        UiScaleMath.factor(uiScale, configuration.smallestScreenWidthDp, configuration.densityDpi)
+    val scaleFactor = remember(uiScale, fontScale, configuration.smallestScreenWidthDp, configuration.fontScale) {
+        UiScaleMath.factor(
+            uiScale, configuration.smallestScreenWidthDp,
+            UiScaleMath.textScale(configuration.fontScale, fontScale)
+        )
     }
-    val density = remember(baseDensity, scaleFactor) { UiScaleMath.scaledDensity(baseDensity, scaleFactor) }
+    val density = remember(baseDensity, scaleFactor, fontScale) {
+        UiScaleMath.scaledDensity(baseDensity, scaleFactor, fontScale)
+    }
 
     /*
      * УДЕРЖАНИЕ 250 МС (2.1.2, дизайн-система Д5 — как в Ogneliss Mail).

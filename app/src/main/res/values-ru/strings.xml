@@ -588,7 +588,7 @@
     <string name="settings_group_diagnostics">Диагностика</string>
     <string name="settings_group_reset">Сброс</string>
     <!-- Короткие подписи под кнопками нижней панели -->
-    <string name="bar_menu">Ещё</string>
+    <string name="bar_menu">Меню</string>
     <string name="bar_exit">Выйти</string>
     <!-- Вторая линия и конференция на экране вызова -->
     <string name="incall_add_call">Добавить вызов</string>
@@ -618,13 +618,12 @@
     <string name="call_photo_circle">Круг</string>
     <string name="call_photo_square">Квадрат</string>
     <string name="settings_ui_scale">Масштаб интерфейса</string>
-    <string name="settings_ui_scale_text">Размер кнопок, отступов и текста. По умолчанию — 90 %. «Авто» подстраивает под ширину экрана: на узких телефонах — чуть плотнее, на широких — без изменений</string>
-    <string name="ui_scale_auto">Авто (по экрану)</string>
+    <string name="settings_ui_scale_text">«Авто» уменьшает интерфейс на узком экране и с крупным шрифтом, чтобы кнопки и строки помещались. Сейчас: %1$d %%</string>
+    <string name="ui_scale_auto">Авто</string>
     <string name="ui_scale_auto_now">Авто — сейчас %1$d %%</string>
-    <string name="ui_scale_90" formatted="false">Мельче — 90 %</string>
-    <string name="ui_scale_100" formatted="false">Обычный — 100 %</string>
-    <string name="ui_scale_110" formatted="false">Крупнее — 110 %</string>
-    <string name="ui_scale_125" formatted="false">Крупный — 125 %</string>
+    <string name="ui_scale_90" formatted="false">90 %</string>
+    <string name="ui_scale_100" formatted="false">100 %</string>
+    <string name="ui_scale_110" formatted="false">110 %</string>
     <string name="settings_home_group_main">Основное</string>
     <string name="settings_hide_contact_number_text">На экране вызова у сохранённых контактов — «Мобильный», «Рабочий» вместо цифр. Незнакомые номера показываются всегда</string>
     <string name="language_search_hint">Поиск языка</string>
@@ -991,7 +990,6 @@
     <string name="menu_pin_home">На главный экран</string>
     <string name="widget_sms_description">Значок SMS с числом непрочитанных</string>
     <string name="widget_contacts_description">Открывает «Контакты» в Ogneliss Dialer</string>
-    <string name="menu_section_list">Список</string>
     <string name="menu_section_tools">Инструменты</string>
     <string name="selection_short_all">Все</string>
     <string name="selection_short_block">Блокировать</string>
@@ -1054,4 +1052,9 @@
     <string name="widget_pinned_description">Звонок закреплённым в одно касание</string>
     <string name="widget_pinned_call">Позвонить: %1$s</string>
     <string name="sms_folders_edit">Настроить папки</string>
+    <string name="settings_font_scale">Размер шрифта</string>
+    <string name="settings_value_percent">%1$s · %2$d %%</string>
+    <string name="ui_scale_85" formatted="false">85 %</string>
+    <string name="ui_scale_95" formatted="false">95 %</string>
+    <string name="topbar_list_actions">Действия со списком</string>
 </resources>

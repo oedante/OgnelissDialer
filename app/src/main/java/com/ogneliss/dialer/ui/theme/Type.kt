@@ -77,7 +77,7 @@ val OgnelissTypography = Typography(
         fontSize = 22.sp, lineHeight = 28.sp, fontWeight = FontWeight.Normal
     ),
     titleMedium = TextStyle(
-        fontSize = 17.sp, lineHeight = 24.sp,
+        fontSize = 16.sp, lineHeight = 24.sp,
         fontWeight = FontWeight.Medium, letterSpacing = 0.15.sp
     ),
     titleSmall = TextStyle(
@@ -85,24 +85,30 @@ val OgnelissTypography = Typography(
         fontWeight = FontWeight.Medium, letterSpacing = 0.1.sp
     ),
 
-    // Основной текст чуть крупнее стандарта Material: диалером
-    // пользуются в спешке и на ходу
+    /*
+     * РАЗМЕРЫ — КАК В OGNELISS MAIL (2.2.1, дизайн-система Д1).
+     * Было: основной текст и подписи на 1 sp крупнее Material (17/15/13)
+     * при масштабе 90 % по умолчанию — на экране тот же текст, что в почте.
+     * Масштаб теперь считается как в почте (UiScale.kt), поэтому и размеры
+     * те же, что у неё — умолчания Material 3 (16/14/12): одинаковые числа
+     * × одинаковый масштаб. Кому мелко — «Оформление → Размер шрифта».
+     */
     bodyLarge = TextStyle(
-        fontSize = 17.sp, lineHeight = 24.sp, letterSpacing = 0.5.sp
+        fontSize = 16.sp, lineHeight = 24.sp, letterSpacing = 0.5.sp
     ),
     bodyMedium = TextStyle(
-        fontSize = 15.sp, lineHeight = 21.sp, letterSpacing = 0.25.sp
+        fontSize = 14.sp, lineHeight = 20.sp, letterSpacing = 0.25.sp
     ),
     bodySmall = TextStyle(
-        fontSize = 13.sp, lineHeight = 18.sp, letterSpacing = 0.4.sp
+        fontSize = 12.sp, lineHeight = 16.sp, letterSpacing = 0.4.sp
     ),
 
     labelLarge = TextStyle(
-        fontSize = 15.sp, lineHeight = 20.sp,
+        fontSize = 14.sp, lineHeight = 20.sp,
         fontWeight = FontWeight.Medium, letterSpacing = 0.1.sp
     ),
     labelMedium = TextStyle(
-        fontSize = 13.sp, lineHeight = 16.sp,
+        fontSize = 12.sp, lineHeight = 16.sp,
         fontWeight = FontWeight.Medium, letterSpacing = 0.5.sp
     ),
     labelSmall = TextStyle(
@@ -124,9 +130,12 @@ val OgnelissTypography = Typography(
  * 15 sp при масштабе 90 % — те же 13,5 sp на экране, что 14 sp почты при 96 %.
  * Строки под именем (тип вызова, дата, оператор — bodySmall) с почтой
  * уже совпадали.
+ *
+ * 2.2.1: масштаб считается как в почте — и имя то же, что у неё:
+ * 14 sp Medium (titleSmall), без пересчёта через свой масштаб.
  */
 val Typography.listName: TextStyle
-    get() = titleMedium.copy(fontSize = 15.sp, lineHeight = 21.sp, letterSpacing = 0.1.sp)
+    get() = titleMedium.copy(fontSize = 14.sp, lineHeight = 20.sp, letterSpacing = 0.1.sp)
 
 /**
  * ШРИФТ ИНТЕРФЕЙСА НА ВЫБОР (1.9.0, как «Шрифт интерфейса» Ogneliss Mail).

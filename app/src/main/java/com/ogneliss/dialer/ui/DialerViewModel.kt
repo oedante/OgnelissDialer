@@ -2097,6 +2097,9 @@ class DialerViewModel @Inject constructor(
 
     fun onLocaleChangeHandled() = settingsCommands.onLocaleChangeHandled()
 
+    /** Размер шрифта (2.2.1): ползунок «Оформления». */
+    fun setFontScale(value: Float) = viewModelScope.launch { settingsCommands.setFontScale(value) }
+
     fun setChoice(key: String, value: String) = viewModelScope.launch {
         settingsCommands.setChoice(key, value)
         when (key) {

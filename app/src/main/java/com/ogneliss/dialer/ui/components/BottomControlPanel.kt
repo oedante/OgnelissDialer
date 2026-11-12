@@ -667,10 +667,8 @@ internal fun ActionRow(
             }
             Box {
                 LabeledIconButton(OgnelissIcons.MoreVert, R.string.bar_menu, onMenu)
-                when {
-                    menuBadge != null -> Badge(Modifier.align(Alignment.TopEnd)) { Text(menuBadge) }
-                    filterActive -> Badge(Modifier.align(Alignment.TopEnd))
-                }
+                // Отметка включённого фильтра — на значке фильтра в шапке раздела (2.2.1, SectionTopBar)
+                if (menuBadge != null) Badge(Modifier.align(Alignment.TopEnd)) { Text(menuBadge) }
                 menuContent()
             }
         }

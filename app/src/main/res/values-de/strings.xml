@@ -587,7 +587,7 @@
     <string name="settings_group_diagnostics">Diagnose</string>
     <string name="settings_group_reset">Zurücksetzen</string>
     <!-- Короткие подписи под кнопками нижней панели -->
-    <string name="bar_menu">Mehr</string>
+    <string name="bar_menu">Menü</string>
     <string name="bar_exit">Beenden</string>
     <!-- Вторая линия и конференция на экране вызова -->
     <string name="incall_add_call">Anruf hinzufügen</string>
@@ -617,13 +617,12 @@
     <string name="call_photo_circle">Kreis</string>
     <string name="call_photo_square">Quadrat</string>
     <string name="settings_ui_scale">Skalierung der Oberfläche</string>
-    <string name="settings_ui_scale_text">Größe von Schaltflächen, Abständen und Text. Standard: 90 %. „Auto“ passt sich der Bildschirmbreite an: auf schmalen Telefonen etwas kompakter, auf breiten unverändert</string>
-    <string name="ui_scale_auto">Auto (nach Bildschirm)</string>
+    <string name="settings_ui_scale_text">„Auto“ verkleinert die Oberfläche auf schmalen Bildschirmen und bei großer Schrift, damit Schaltflächen und Zeilen passen. Jetzt: %1$d %%</string>
+    <string name="ui_scale_auto">Auto</string>
     <string name="ui_scale_auto_now">Auto – jetzt %1$d %%</string>
-    <string name="ui_scale_90" formatted="false">Kleiner – 90 %</string>
-    <string name="ui_scale_100" formatted="false">Normal – 100 %</string>
-    <string name="ui_scale_110" formatted="false">Größer – 110 %</string>
-    <string name="ui_scale_125" formatted="false">Groß – 125 %</string>
+    <string name="ui_scale_90" formatted="false">90 %</string>
+    <string name="ui_scale_100" formatted="false">100 %</string>
+    <string name="ui_scale_110" formatted="false">110 %</string>
     <string name="settings_home_group_main">Allgemein</string>
     <string name="settings_hide_contact_number_text">Im Anrufbildschirm zeigen gespeicherte Kontakte „Mobil“, „Arbeit“ usw. statt Ziffern. Unbekannte Nummern werden immer angezeigt</string>
     <string name="language_search_hint">Sprache suchen</string>
@@ -982,7 +981,6 @@
     <string name="menu_pin_home">Auf den Startbildschirm</string>
     <string name="widget_sms_description">SMS-Symbol mit Anzahl ungelesener Nachrichten</string>
     <string name="widget_contacts_description">Öffnet „Kontakte“ in Ogneliss Dialer</string>
-    <string name="menu_section_list">Liste</string>
     <string name="menu_section_tools">Werkzeuge</string>
     <string name="selection_short_all">Alle</string>
     <string name="selection_short_block">Sperren</string>
@@ -1045,4 +1043,9 @@
     <string name="widget_pinned_description">Angeheftete Nummern mit einem Tippen anrufen</string>
     <string name="widget_pinned_call">%1$s anrufen</string>
     <string name="sms_folders_edit">Ordner anpassen</string>
+    <string name="settings_font_scale">Schriftgröße</string>
+    <string name="settings_value_percent">%1$s · %2$d %%</string>
+    <string name="ui_scale_85" formatted="false">85 %</string>
+    <string name="ui_scale_95" formatted="false">95 %</string>
+    <string name="topbar_list_actions">Listenaktionen</string>
 </resources>

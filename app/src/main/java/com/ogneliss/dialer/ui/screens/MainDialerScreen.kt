@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.SectionTopBar
+import com.ogneliss.dialer.ui.components.TopBarMenuItem
 import com.ogneliss.dialer.ui.components.scrollEdgeFade
 import com.ogneliss.dialer.ui.components.SelectionBottomBar
 import com.ogneliss.dialer.ui.components.dragSelect
@@ -1481,9 +1483,6 @@ fun MainDialerScreen(
                     // карточкой
                     ownNumber = ownNumber,
                     ownPhotoUri = ownPhotoUri,
-                    onSearch = { menuOpen = false; startSearch() },
-                    onFilters = { menuOpen = false; filtersOpen = true },
-                    filterBadge = activeFilter.activeCount.toString().takeIf { activeFilter.isActive },
                     onOwnNumber = {
                         menuOpen = false
 
@@ -1524,21 +1523,11 @@ fun MainDialerScreen(
                         )
                         menuOpen = false
                     },
-                    // Только после подтверждения: очистка необратима и стирает
-                    // и системный журнал (разбор у confirmClearLog)
-                    onClearLog = { menuOpen = false; confirmClearLog = true },
                     onSettings = { menuOpen = false; onOpenSettings() },
                     onFakeCall = { menuOpen = false; fakeCallOpen = true },
                     onNotes = { menuOpen = false; onOpenNotes() },
                     onReminders = { menuOpen = false; onOpenReminders() },
-                    onStartSelection = {
-                        menuOpen = false
-                        if (selection.isActive) selection.clear()
-                        else selection.startEmpty()
-                    },
-                    selectionActive = selection.isActive,
-                    onHelp = { menuOpen = false; onOpenHelp() },
-                    onArchive = { menuOpen = false; onOpenArchive() }
+                    onHelp = { menuOpen = false; onOpenHelp() }
                 )
             }
         )
@@ -1601,21 +1590,40 @@ fun MainDialerScreen(
         },
         topBar = {
             /*
-             * Панели выбора сверху нет (2.1.1): она сдвигала весь журнал
-             * на свою высоту (автор, 09.11.2026). Действия выбора — внизу,
-             * на месте панели разделов (SelectionBottomBar, Д2).
-             */
-            /*
-             * Заголовка сверху нет намеренно.
+             * ШАПКА РАЗДЕЛА — КАК В OGNELISS MAIL (2.2.1, SectionTopBar).
              *
-             * Он занимал строку на каждом экране, а отвечал на вопрос,
-             * который возникает редко: и так понятно, что перед тобой
-             * журнал вызовов — по содержимому.
+             * С 1.6.0 заголовка сверху не было («понятно и так, что перед
+             * тобой журнал»), а поиск, фильтры и действия над списком лежали
+             * плитками в «Ещё». Автор, 11.11.2026: «за референс UI возьмём
+             * Ogneliss Mail… полностью похожи по организации элементов» —
+             * в почте над лентой шапка: что открыто и действия над списком.
              *
-             * Поиск и фильтры живут в нижней панели: там до них
-             * дотягивается большой палец, а верх экрана требует
-             * перехватывать телефон.
+             * Шапка не появляется и не исчезает при выборе (2.1.1: панель
+             * выбора сверху «сдвигала весь журнал» — она постоянная).
+             * С раскрытой клавиатурой набора шапки нет: список и так занимает
+             * меньше половины экрана. Клавиатура сбоку (планшет) — шапка есть.
              */
+            if (!dialpadExpanded || sideDialpad) SectionTopBar(
+                title = stringResource(R.string.nav_journal),
+                subtitle = if (activeFilter.isActive) {
+                    stringResource(R.string.filter_title) + " · " + activeFilter.activeCount
+                } else null,
+                onSearch = startSearch,
+                onFilter = { filtersOpen = true },
+                filterActive = activeFilter.isActive,
+                menu = listOf(
+                    TopBarMenuItem(
+                        if (selection.isActive) OgnelissIcons.Close else OgnelissIcons.Checklist,
+                        stringResource(if (selection.isActive) R.string.selection_exit else R.string.selection_start)
+                    ) { if (selection.isActive) selection.clear() else selection.startEmpty() },
+                    TopBarMenuItem(OgnelissIcons.Archive, stringResource(R.string.archive_title)) { onOpenArchive() },
+                    // Только после подтверждения: очистка необратима и стирает
+                    // и системный журнал (разбор у confirmClearLog)
+                    TopBarMenuItem(
+                        OgnelissIcons.DeleteSweep, stringResource(R.string.log_clear_all), destructive = true
+                    ) { confirmClearLog = true }
+                )
+            )
         },
         bottomBar = {
             // Внизу — только когда клавиатура не стоит сбоку: разбор у sideDialpad

@@ -37,7 +37,7 @@ import com.ogneliss.dialer.R
 import com.ogneliss.dialer.data.db.StarredSmsEntity
 import com.ogneliss.dialer.sms.Message
 import com.ogneliss.dialer.sms.SmsFolder
-import com.ogneliss.dialer.ui.components.SheetGroup
+import com.ogneliss.dialer.ui.components.SectionBand
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.ogneliss.dialer.ui.theme.FlowUi
@@ -52,7 +52,7 @@ import com.ogneliss.dialer.ui.theme.Space
  * над «Избранным» в меню, которое открывается нижней кнопкой: там же,
  * у пальца, и без лишней строки над списком всегда. Строка папки — значок,
  * название и число непрочитанных; открытая — заливкой, как выбранный
- * раздел. Последняя строка — порядок и показ (SmsFoldersScreen).
+ * раздел. Значок справа от подписи — порядок и показ (SmsFoldersScreen).
  */
 @Composable
 internal fun SmsFolderRows(
@@ -62,7 +62,21 @@ internal fun SmsFolderRows(
     onSelect: (SmsFolder) -> Unit,
     onEdit: () -> Unit
 ) {
-    SheetGroup(title = stringResource(R.string.settings_sms_folders), first = true) {
+    // Без карточки: подпись раздела и строки прямо на странице меню — как «Папки» в меню почты
+    Column(Modifier.fillMaxWidth()) {
+        // Порядок и показ папок — значком справа от подписи, как «настроить» у «Избранного» почты
+        SectionBand(
+            stringResource(R.string.settings_sms_folders),
+            action = {
+                IconButton(onClick = onEdit) {
+                    Icon(
+                        OgnelissIcons.Settings,
+                        contentDescription = stringResource(R.string.sms_folders_edit),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        )
         Column(Modifier.padding(vertical = Space.xs)) {
             folders.forEach { folder ->
                 FolderRow(
@@ -73,14 +87,6 @@ internal fun SmsFolderRows(
                     onClick = { onSelect(folder) }
                 )
             }
-            // Как «настроить» у «Избранного» в почте — порядок и показ папок
-            FolderRow(
-                icon = OgnelissIcons.Settings,
-                label = stringResource(R.string.sms_folders_edit),
-                count = 0,
-                selected = false,
-                onClick = onEdit
-            )
         }
     }
 }
@@ -135,31 +141,6 @@ internal fun smsFolderIcon(folder: SmsFolder): ImageVector = when (folder) {
     SmsFolder.SERVICE -> OgnelissIcons.Article
     SmsFolder.UNREAD -> OgnelissIcons.Textsms
     SmsFolder.STARRED -> OgnelissIcons.Star
-}
-
-/**
- * Название открытой папки над списком (2.2.0) — как заголовок папки в почте
- * («Вся почта»): видно, что список отобран. Крестик — снова «Все».
- */
-@Composable
-internal fun FolderTitleRow(folder: SmsFolder, onClear: () -> Unit) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .padding(start = FlowUi.screenPadding, end = Space.xs, top = Space.xs),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(smsFolderIcon(folder), contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-        Spacer(Modifier.width(Space.m))
-        Text(
-            stringResource(smsFolderLabel(folder)),
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.weight(1f)
-        )
-        IconButton(onClick = onClear) {
-            Icon(OgnelissIcons.Close, contentDescription = stringResource(R.string.sms_folder_all))
-        }
-    }
 }
 
 /**
