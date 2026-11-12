@@ -418,7 +418,7 @@ fun MessagesScreen(
                 !showArchive && !composeNew -> SectionTopBar(
                     title = stringResource(if (folder == SmsFolder.ALL) R.string.nav_messages else smsFolderLabel(folder)),
                     subtitle = if (folder == SmsFolder.ALL) null else stringResource(R.string.nav_messages),
-                    onSearch = if (state.isDefaultSms) { { searching = true } } else null,
+                    // Поиск — в меню (2.4.0, как в журнале и контактах)
                     menu = if (state.isDefaultSms) listOf(
                         TopBarMenuItem(
                             if (selection.isActive) OgnelissIcons.Close else OgnelissIcons.Checklist,
@@ -540,7 +540,8 @@ fun MessagesScreen(
                                     onEdit = { menuOpen = false; onOpenFolders() }
                                 )
                             }
-                        } else null
+                        } else null,
+                        onSearch = if (state.isDefaultSms) { { menuOpen = false; searching = true } } else null
                     )
                 }
             )

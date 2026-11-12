@@ -1,0 +1,162 @@
+<ru-RU>
+• Единое оформление: одинаковые заголовки, меню и подписи во всех окнах.
+• Масштаб и размер шрифта теперь действуют везде: в шторках, меню, диалогах, календаре и часах.
+• Поиск и фильтры — в боковом меню; в шапке раздела только название и «⋮».
+• Календарь и часы напоминаний — в теме и цветах приложения.
+</ru-RU>
+<ar>
+• تصميم موحّد: العناوين والقوائم والتسميات نفسها في كل النوافذ.
+• حجم الواجهة وحجم الخط يسريان الآن في كل مكان: اللوحات والقوائم ونوافذ الحوار والتقويم والساعة.
+• البحث والتصفية انتقلا إلى القائمة الجانبية؛ ويعرض الشريط العلوي العنوان و⋮ فقط.
+• تقويم التذكيرات وساعتها يتبعان سمة التطبيق وألوانه.
+</ar>
+<cs-CZ>
+• Jednotný vzhled: stejné nadpisy, nabídky a popisky ve všech oknech.
+• Měřítko rozhraní a velikost písma nyní platí všude: v panelech, nabídkách, dialozích, kalendáři i hodinách.
+• Hledání a filtry jsou nyní v postranní nabídce; v záhlaví je jen název a ⋮.
+• Kalendář a hodiny připomínek mají motiv a barvy aplikace.
+</cs-CZ>
+<da-DK>
+• Ensartet design: samme titler, menuer og etiketter i alle vinduer.
+• Skalering og skriftstørrelse gælder nu overalt: paneler, menuer, dialoger, kalender og ur.
+• Søgning og filtre er flyttet til sidemenuen; overskriften viser kun titel og ⋮.
+• Kalender og ur til påmindelser følger appens tema og farver.
+</da-DK>
+<de-DE>
+• Einheitliches Design: gleiche Titel, Menüs und Beschriftungen in allen Fenstern.
+• Oberflächen- und Schriftgröße gelten jetzt überall: in Leisten, Menüs, Dialogen, Kalender und Uhr.
+• Suche und Filter sind jetzt im Seitenmenü; die Kopfzeile zeigt nur Titel und ⋮.
+• Kalender und Uhr für Erinnerungen folgen Design und Farben der App.
+</de-DE>
+<en-US>
+• Consistent design: the same titles, menus and labels in every window.
+• Interface scale and font size now apply everywhere: sheets, menus, dialogs, calendar and clock.
+• Search and filters moved to the side menu; the section header shows just the title and ⋮.
+• The reminder calendar and clock follow the app's theme and colors.
+</en-US>
+<es-ES>
+• Diseño unificado: los mismos títulos, menús y etiquetas en todas las ventanas.
+• La escala de la interfaz y el tamaño de letra se aplican en todas partes: paneles, menús, diálogos, calendario y reloj.
+• La búsqueda y los filtros pasan al menú lateral; la cabecera muestra solo el título y ⋮.
+• El calendario y el reloj de los recordatorios siguen el tema y los colores de la app.
+</es-ES>
+<fi-FI>
+• Yhtenäinen ulkoasu: samat otsikot, valikot ja tekstit kaikissa ikkunoissa.
+• Käyttöliittymän skaalaus ja tekstin koko toimivat nyt kaikkialla: paneeleissa, valikoissa, valintaikkunoissa, kalenterissa ja kellossa.
+• Haku ja suodattimet ovat nyt sivuvalikossa; otsikkorivillä vain otsikko ja ⋮.
+• Muistutusten kalenteri ja kello noudattavat sovelluksen teemaa ja värejä.
+</fi-FI>
+<fr-FR>
+• Design unifié : mêmes titres, menus et libellés dans toutes les fenêtres.
+• L'échelle de l'interface et la taille du texte s'appliquent partout : panneaux, menus, dialogues, calendrier et horloge.
+• Recherche et filtres passent dans le menu latéral ; l'en-tête n'affiche que le titre et ⋮.
+• Le calendrier et l'horloge des rappels suivent le thème et les couleurs de l'app.
+</fr-FR>
+<hi-IN>
+• एक जैसा डिज़ाइन: हर विंडो में एक जैसे शीर्षक, मेनू और लेबल।
+• इंटरफ़ेस स्केल और फ़ॉन्ट आकार अब हर जगह लागू: पैनल, मेनू, डायलॉग, कैलेंडर और घड़ी।
+• खोज और फ़िल्टर अब साइड मेनू में; हेडर में केवल शीर्षक और ⋮।
+• रिमाइंडर का कैलेंडर और घड़ी ऐप की थीम और रंगों में।
+</hi-IN>
+<hu-HU>
+• Egységes megjelenés: ugyanazok a címek, menük és feliratok minden ablakban.
+• A felület mérete és a betűméret most mindenhol érvényes: paneleken, menükben, párbeszédablakokban, a naptárban és az órában.
+• A keresés és a szűrők az oldalsó menübe kerültek; a fejlécben csak a cím és a ⋮ látszik.
+• Az emlékeztetők naptára és órája az alkalmazás témáját és színeit követi.
+</hu-HU>
+<id>
+• Tampilan seragam: judul, menu, dan label yang sama di semua jendela.
+• Skala antarmuka dan ukuran huruf kini berlaku di mana saja: panel, menu, dialog, kalender, dan jam.
+• Pencarian dan filter pindah ke menu samping; kepala bagian hanya menampilkan judul dan ⋮.
+• Kalender dan jam pengingat mengikuti tema dan warna aplikasi.
+</id>
+<it-IT>
+• Design uniforme: stessi titoli, menu ed etichette in tutte le finestre.
+• Scala dell'interfaccia e dimensione del testo ora valgono ovunque: pannelli, menu, finestre di dialogo, calendario e orologio.
+• Ricerca e filtri sono ora nel menu laterale; l'intestazione mostra solo il titolo e ⋮.
+• Calendario e orologio dei promemoria seguono il tema e i colori dell'app.
+</it-IT>
+<iw-IL>
+• עיצוב אחיד: אותן כותרות, תפריטים ותוויות בכל החלונות.
+• קנה המידה של הממשק וגודל הגופן חלים עכשיו בכל מקום: לוחות, תפריטים, חלוניות, לוח שנה ושעון.
+• החיפוש והמסננים עברו לתפריט הצד; בכותרת מוצגים רק השם ו־⋮.
+• לוח השנה והשעון של התזכורות תואמים את ערכת הנושא והצבעים של האפליקציה.
+</iw-IL>
+<ja-JP>
+• デザインを統一：すべての画面で同じタイトル、メニュー、ラベル。
+• 表示倍率と文字サイズがどこでも有効に：パネル、メニュー、ダイアログ、カレンダー、時計。
+• 検索とフィルタはサイドメニューへ。ヘッダーはタイトルと ⋮ のみ。
+• リマインダーのカレンダーと時計がアプリのテーマと色に。
+</ja-JP>
+<ko-KR>
+• 통일된 디자인: 모든 창에서 같은 제목, 메뉴, 레이블.
+• 화면 배율과 글꼴 크기가 이제 어디서나 적용: 패널, 메뉴, 대화상자, 달력, 시계.
+• 검색과 필터는 사이드 메뉴로 이동, 헤더에는 제목과 ⋮만 표시.
+• 알림의 달력과 시계가 앱의 테마와 색상을 따릅니다.
+</ko-KR>
+<nl-NL>
+• Eenduidig ontwerp: dezelfde titels, menu's en labels in elk venster.
+• Interfaceschaal en tekstgrootte gelden nu overal: panelen, menu's, dialogen, kalender en klok.
+• Zoeken en filters staan nu in het zijmenu; de kop toont alleen de titel en ⋮.
+• Kalender en klok voor herinneringen volgen het thema en de kleuren van de app.
+</nl-NL>
+<no-NO>
+• Enhetlig design: samme titler, menyer og etiketter i alle vinduer.
+• Skalering og skriftstørrelse gjelder nå overalt: paneler, menyer, dialoger, kalender og klokke.
+• Søk og filtre er flyttet til sidemenyen; overskriften viser bare tittel og ⋮.
+• Kalender og klokke for påminnelser følger appens tema og farger.
+</no-NO>
+<pl-PL>
+• Spójny wygląd: te same tytuły, menu i etykiety we wszystkich oknach.
+• Skala interfejsu i rozmiar czcionki działają teraz wszędzie: w panelach, menu, oknach dialogowych, kalendarzu i zegarze.
+• Wyszukiwanie i filtry są teraz w menu bocznym; w nagłówku tylko tytuł i ⋮.
+• Kalendarz i zegar przypomnień mają motyw i kolory aplikacji.
+</pl-PL>
+<pt-BR>
+• Visual unificado: os mesmos títulos, menus e rótulos em todas as janelas.
+• A escala da interface e o tamanho da fonte agora valem em todo lugar: painéis, menus, diálogos, calendário e relógio.
+• Busca e filtros foram para o menu lateral; o cabeçalho mostra só o título e ⋮.
+• Calendário e relógio dos lembretes seguem o tema e as cores do app.
+</pt-BR>
+<ro>
+• Aspect unitar: aceleași titluri, meniuri și etichete în toate ferestrele.
+• Scara interfeței și mărimea textului se aplică acum peste tot: panouri, meniuri, dialoguri, calendar și ceas.
+• Căutarea și filtrele sunt acum în meniul lateral; antetul afișează doar titlul și ⋮.
+• Calendarul și ceasul mementourilor urmează tema și culorile aplicației.
+</ro>
+<sk>
+• Jednotný vzhľad: rovnaké nadpisy, ponuky a popisy vo všetkých oknách.
+• Mierka rozhrania a veľkosť písma teraz platia všade: v paneloch, ponukách, dialógoch, kalendári aj hodinách.
+• Vyhľadávanie a filtre sú teraz v bočnej ponuke; v hlavičke je len názov a ⋮.
+• Kalendár a hodiny pripomienok majú motív a farby aplikácie.
+</sk>
+<sv-SE>
+• Enhetlig design: samma rubriker, menyer och etiketter i alla fönster.
+• Skalning och textstorlek gäller nu överallt: paneler, menyer, dialoger, kalender och klocka.
+• Sök och filter finns nu i sidomenyn; rubriken visar bara titel och ⋮.
+• Kalender och klocka för påminnelser följer appens tema och färger.
+</sv-SE>
+<th>
+• ดีไซน์เดียวกันทั้งแอป: หัวข้อ เมนู และป้ายกำกับเหมือนกันทุกหน้าต่าง
+• ขนาดอินเทอร์เฟซและขนาดตัวอักษรมีผลทุกที่แล้ว: แผง เมนู กล่องโต้ตอบ ปฏิทิน และนาฬิกา
+• การค้นหาและตัวกรองย้ายไปอยู่ในเมนูด้านข้าง ส่วนหัวแสดงเพียงชื่อและ ⋮
+• ปฏิทินและนาฬิกาของการเตือนใช้ธีมและสีของแอป
+</th>
+<tr-TR>
+• Tutarlı tasarım: tüm pencerelerde aynı başlıklar, menüler ve etiketler.
+• Arayüz ölçeği ve yazı boyutu artık her yerde geçerli: paneller, menüler, iletişim kutuları, takvim ve saat.
+• Arama ve filtreler yan menüye taşındı; başlıkta yalnızca ad ve ⋮ var.
+• Hatırlatıcı takvimi ve saati uygulamanın temasını ve renklerini kullanır.
+</tr-TR>
+<vi>
+• Giao diện thống nhất: tiêu đề, menu và nhãn giống nhau ở mọi cửa sổ.
+• Tỷ lệ giao diện và cỡ chữ giờ áp dụng ở mọi nơi: bảng, menu, hộp thoại, lịch và đồng hồ.
+• Tìm kiếm và bộ lọc chuyển sang menu bên; thanh tiêu đề chỉ còn tên và ⋮.
+• Lịch và đồng hồ nhắc nhở theo chủ đề và màu của ứng dụng.
+</vi>
+<zh-CN>
+• 统一设计：所有窗口使用相同的标题、菜单和标签。
+• 界面缩放和字体大小现已全面生效：面板、菜单、对话框、日历和时钟。
+• 搜索和筛选移至侧边菜单；标题栏仅显示名称和 ⋮。
+• 提醒的日历和时钟采用应用的主题和颜色。
+</zh-CN>

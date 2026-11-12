@@ -2,7 +2,11 @@ package com.ogneliss.dialer.ui.theme
 
 import com.ogneliss.dialer.settings.FontScale
 import com.ogneliss.dialer.settings.UiScale
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertSame
 import org.junit.Test
 
 /**
@@ -74,5 +78,35 @@ class UiScaleMathTest {
         assertEquals(1.2f, FontScale.clamp(1.23f), 0.0001f)
         assertEquals(FontScale.MIN, FontScale.clamp(0.1f), 0.0001f)
         assertEquals(FontScale.MAX, FontScale.clamp(3f), 0.0001f)
+    }
+
+    // ── Окно постоянной ширины (календарь 360 dp, 2.4.0) ─────────────────────
+
+    @Test
+    fun `окно календаря — помещается в масштабе, плотность та же`() {
+        val base = Density(2.75f, 1f)
+        val scaled = UiScaleMath.scaledDensity(base, 1.1f)
+        // 360 × 1,1 = 396 ≤ 412 — без уменьшения
+        assertSame(scaled, UiScaleMath.fitted(scaled, base.density, 360.dp, 412))
+    }
+
+    @Test
+    fun `окно календаря — на узком экране уменьшается до ширины экрана`() {
+        val base = Density(3f, 1f)
+        val scaled = UiScaleMath.scaledDensity(base, 1.1f)
+        // 360 × 1,1 = 396 > 360 — окно уменьшается ровно до экрана
+        val fitted = UiScaleMath.fitted(scaled, base.density, 360.dp, 360)
+        assertEquals(base.density, fitted.density, 0.0001f)
+        // Текст — в той же пропорции, что и размеры
+        val ratio = with(fitted) { 16.sp.toPx() } / with(scaled) { 16.sp.toPx() }
+        assertEquals(fitted.density / scaled.density, ratio, 0.0001f)
+    }
+
+    @Test
+    fun `окно календаря — не меньше системного размера`() {
+        val base = Density(3f, 1f)
+        // Масштаб 85 %: окно и так меньше системного — не трогаем
+        val scaled = UiScaleMath.scaledDensity(base, 0.85f)
+        assertSame(scaled, UiScaleMath.fitted(scaled, base.density, 360.dp, 320))
     }
 }

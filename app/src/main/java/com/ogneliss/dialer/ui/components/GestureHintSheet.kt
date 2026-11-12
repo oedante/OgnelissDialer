@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.ScaledSheetContent
 import com.ogneliss.dialer.ui.theme.FlowUi
 
 import com.ogneliss.dialer.ui.theme.Space
@@ -55,67 +56,69 @@ fun GestureHintSheet(onDismiss: () -> Unit) {
         sheetState = sheetState,
         contentWindowInsets = { WindowInsets.navigationBars }
     ) {
-        Column(Modifier.padding(horizontal = Space.xl).padding(bottom = Space.xl)) {
-            Text(
-                stringResource(R.string.gesture_hint_title),
-                // Заголовок окна — titleMedium, как у всех окон и шторок (2.3.1)
-                style = MaterialTheme.typography.titleMedium
-            )
+        ScaledSheetContent {
+            Column(Modifier.padding(horizontal = Space.xl).padding(bottom = Space.xl)) {
+                Text(
+                    stringResource(R.string.gesture_hint_title),
+                    // Заголовок окна — titleMedium, как у всех окон и шторок (2.4.0)
+                    style = MaterialTheme.typography.titleMedium
+                )
 
-            Spacer(Modifier.height(Space.s))
+                Spacer(Modifier.height(Space.s))
 
-            Text(
-                stringResource(R.string.gesture_hint_subtitle),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+                Text(
+                    stringResource(R.string.gesture_hint_subtitle),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
 
-            Spacer(Modifier.height(FlowUi.sheetPadding))
+                Spacer(Modifier.height(FlowUi.sheetPadding))
 
-            HintRow(
-                icon = OgnelissIcons.Call,
-                text = stringResource(R.string.gesture_hint_swipe_right)
-            )
-            HintRow(
-                icon = OgnelissIcons.Message,
-                text = stringResource(R.string.gesture_hint_swipe_left)
-            )
-            HintRow(
-                icon = OgnelissIcons.SwipeLeft,
-                text = stringResource(R.string.gesture_hint_panel)
-            )
+                HintRow(
+                    icon = OgnelissIcons.Call,
+                    text = stringResource(R.string.gesture_hint_swipe_right)
+                )
+                HintRow(
+                    icon = OgnelissIcons.Message,
+                    text = stringResource(R.string.gesture_hint_swipe_left)
+                )
+                HintRow(
+                    icon = OgnelissIcons.SwipeLeft,
+                    text = stringResource(R.string.gesture_hint_panel)
+                )
 
-            /*
-             * Жест клавиатуры — четвёртым.
-             *
-             * Он менее нужен, чем остальные: клавиатуру можно открыть
-             * и кнопкой. Но человек, попробовав свайп по панели,
-             * закономерно попробует и вертикальный — лучше сразу
-             * сказать, что он есть, чем оставить догадываться.
-             */
-            HintRow(
-                icon = OgnelissIcons.SwipeUp,
-                text = stringResource(R.string.gesture_hint_keyboard)
-            )
+                /*
+                 * Жест клавиатуры — четвёртым.
+                 *
+                 * Он менее нужен, чем остальные: клавиатуру можно открыть
+                 * и кнопкой. Но человек, попробовав свайп по панели,
+                 * закономерно попробует и вертикальный — лучше сразу
+                 * сказать, что он есть, чем оставить догадываться.
+                 */
+                HintRow(
+                    icon = OgnelissIcons.SwipeUp,
+                    text = stringResource(R.string.gesture_hint_keyboard)
+                )
 
-            Spacer(Modifier.height(Space.l))
+                Spacer(Modifier.height(Space.l))
 
-            // Оговорка про настройки: человек должен знать, что жесты
-            // можно поменять или выключить — иначе непривычный свайп
-            // читается как навязанный
-            Text(
-                stringResource(R.string.gesture_hint_settings),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.outline
-            )
+                // Оговорка про настройки: человек должен знать, что жесты
+                // можно поменять или выключить — иначе непривычный свайп
+                // читается как навязанный
+                Text(
+                    stringResource(R.string.gesture_hint_settings),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.outline
+                )
 
-            Spacer(Modifier.height(FlowUi.sheetPadding))
+                Spacer(Modifier.height(FlowUi.sheetPadding))
 
-            Button(
-                onClick = onDismiss,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.gesture_hint_got_it))
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(stringResource(R.string.gesture_hint_got_it))
+                }
             }
         }
     }

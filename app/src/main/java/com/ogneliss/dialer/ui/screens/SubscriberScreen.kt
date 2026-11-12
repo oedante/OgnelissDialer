@@ -2196,7 +2196,7 @@ fun SubscriberScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                                 // «Добавить заметку» — как строка сведений: значок цветом акцента,
-                                // полного размера, отступ 16 (2.3.1; был мелкий бирюзовый)
+                                // полного размера, отступ 16 (2.4.0; был мелкий бирюзовый)
                                 if (noteEmpty) {
                                     Icon(
                                         OgnelissIcons.StickyNote2,

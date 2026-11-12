@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.ScaledWindow
 import com.ogneliss.dialer.ui.theme.Space
 
 import androidx.compose.foundation.layout.Arrangement
@@ -51,44 +52,46 @@ fun OgnelissDialog(
     content: @Composable () -> Unit
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
-        Surface(
-            shape = MaterialTheme.shapes.extraLarge,
-            // Без tonalElevation (1.4.0): с цветом surfaceContainerHigh
-            // он ничего не менял, а читался как намерение подкрасить
-            color = MaterialTheme.colorScheme.surfaceContainerHigh,
-            modifier = modifier.fillMaxWidth()
-        ) {
-            Column(Modifier.padding(FlowUi.sheetPadding)) {
-                Text(
-                    title,
-                    /*
-                     * titleMedium, а не headlineSmall.
-                     *
-                     * Заголовок диалога — не заголовок экрана. Крупный
-                     * спорит с содержимым, ради которого диалог открыли,
-                     * и съедает строку в маленьком окне.
-                     */
-                    style = MaterialTheme.typography.titleMedium
-                )
+        ScaledWindow {
+            Surface(
+                shape = MaterialTheme.shapes.extraLarge,
+                // Без tonalElevation (1.4.0): с цветом surfaceContainerHigh
+                // он ничего не менял, а читался как намерение подкрасить
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                modifier = modifier.fillMaxWidth()
+            ) {
+                Column(Modifier.padding(FlowUi.sheetPadding)) {
+                    Text(
+                        title,
+                        /*
+                         * titleMedium, а не headlineSmall.
+                         *
+                         * Заголовок диалога — не заголовок экрана. Крупный
+                         * спорит с содержимым, ради которого диалог открыли,
+                         * и съедает строку в маленьком окне.
+                         */
+                        style = MaterialTheme.typography.titleMedium
+                    )
 
-                Column(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(top = Space.m, bottom = Space.s),
-                    // 8 dp между элементами: как между карточками
-                    // в списках, только чуть свободнее
-                    verticalArrangement = Arrangement.spacedBy(Space.s)
-                ) {
-                    content()
-                }
+                    Column(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = Space.m, bottom = Space.s),
+                        // 8 dp между элементами: как между карточками
+                        // в списках, только чуть свободнее
+                        verticalArrangement = Arrangement.spacedBy(Space.s)
+                    ) {
+                        content()
+                    }
 
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    dismissButton?.invoke()
-                    confirmButton()
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        dismissButton?.invoke()
+                        confirmButton()
+                    }
                 }
             }
         }

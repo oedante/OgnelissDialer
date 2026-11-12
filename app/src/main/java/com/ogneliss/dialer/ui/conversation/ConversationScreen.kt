@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.conversation
 
+import com.ogneliss.dialer.ui.theme.ScaledSheetContent
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import android.net.Uri
@@ -1053,29 +1054,31 @@ private fun SimPicker(state: ConversationViewModel.UiState, onSelectSim: (Int) -
             }
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-            state.sims.forEach { sim ->
-                val second = simSecondLine(sim)
-                DropdownMenuItem(
-                    text = {
-                        Column {
-                            // Пункт меню — bodyLarge, как во всех меню (2.3.1)
-                            Text(simOrdinalName(sim), style = MaterialTheme.typography.bodyLarge)
-                            if (second != null) {
-                                Text(
-                                    second,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
+            ScaledSheetContent {
+                state.sims.forEach { sim ->
+                    val second = simSecondLine(sim)
+                    DropdownMenuItem(
+                        text = {
+                            Column {
+                                // Пункт меню — bodyLarge, как во всех меню (2.4.0)
+                                Text(simOrdinalName(sim), style = MaterialTheme.typography.bodyLarge)
+                                if (second != null) {
+                                    Text(
+                                        second,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
                             }
-                        }
-                    },
-                    onClick = { onSelectSim(sim.subscriptionId); open = false },
-                    modifier = Modifier.heightIn(min = FlowUi.menuItemHeight),
-                    leadingIcon = { com.ogneliss.dialer.ui.components.SimIcon(sim.slotIndex, Modifier.size(FlowUi.iconSizeInline)) },
-                    trailingIcon = if (sim.subscriptionId == state.subId) {
-                        { Icon(OgnelissIcons.Check, contentDescription = null) }
-                    } else null
-                )
+                        },
+                        onClick = { onSelectSim(sim.subscriptionId); open = false },
+                        modifier = Modifier.heightIn(min = FlowUi.menuItemHeight),
+                        leadingIcon = { com.ogneliss.dialer.ui.components.SimIcon(sim.slotIndex, Modifier.size(FlowUi.iconSizeInline)) },
+                        trailingIcon = if (sim.subscriptionId == state.subId) {
+                            { Icon(OgnelissIcons.Check, contentDescription = null) }
+                        } else null
+                    )
+                }
             }
         }
     }
@@ -1113,39 +1116,41 @@ private fun MessageActionsSheet(
     val phones = remember(message.key) { OtpDetector.phones(message.body).take(3) }
     val itemColors = ListItemDefaults.colors(containerColor = Color.Transparent)
     ModalBottomSheet(onDismissRequest = onDismiss, containerColor = listSheetContainerColor()) {
-        Column(Modifier.padding(bottom = FlowUi.sheetBottomPadding)) {
-            val row: @Composable (String, androidx.compose.ui.graphics.vector.ImageVector, () -> Unit) -> Unit =
-                { label, icon, action ->
-                    ListItem(
-                        headlineContent = { Text(label) },
-                        leadingContent = { Icon(icon, contentDescription = null) },
-                        colors = itemColors,
-                        modifier = Modifier.clickable { action(); onDismiss() }
-                    )
+        ScaledSheetContent {
+            Column(Modifier.padding(bottom = FlowUi.sheetBottomPadding)) {
+                val row: @Composable (String, androidx.compose.ui.graphics.vector.ImageVector, () -> Unit) -> Unit =
+                    { label, icon, action ->
+                        ListItem(
+                            headlineContent = { Text(label) },
+                            leadingContent = { Icon(icon, contentDescription = null) },
+                            colors = itemColors,
+                            modifier = Modifier.clickable { action(); onDismiss() }
+                        )
+                    }
+                if (code != null) {
+                    row(stringResource(R.string.sms_copy_code_action, code), OgnelissIcons.ContentCopy) {
+                        onCopy(code, SmsClipboard.Kind.CODE)
+                    }
                 }
-            if (code != null) {
-                row(stringResource(R.string.sms_copy_code_action, code), OgnelissIcons.ContentCopy) {
-                    onCopy(code, SmsClipboard.Kind.CODE)
+                if (message.body.isNotBlank()) {
+                    row(stringResource(R.string.sms_copy_text), OgnelissIcons.ContentCopy) {
+                        onCopy(message.body, SmsClipboard.Kind.TEXT)
+                    }
                 }
-            }
-            if (message.body.isNotBlank()) {
-                row(stringResource(R.string.sms_copy_text), OgnelissIcons.ContentCopy) {
-                    onCopy(message.body, SmsClipboard.Kind.TEXT)
+                phones.forEach { phone ->
+                    row(stringResource(R.string.sms_copy_number, phone), OgnelissIcons.ContentCopy) {
+                        onCopy(phone, SmsClipboard.Kind.NUMBER)
+                    }
                 }
-            }
-            phones.forEach { phone ->
-                row(stringResource(R.string.sms_copy_number, phone), OgnelissIcons.ContentCopy) {
-                    onCopy(phone, SmsClipboard.Kind.NUMBER)
+                if (message.body.isNotBlank()) {
+                    row(stringResource(R.string.sms_select_text), OgnelissIcons.SelectAll, onSelectText)
                 }
-            }
-            if (message.body.isNotBlank()) {
-                row(stringResource(R.string.sms_select_text), OgnelissIcons.SelectAll, onSelectText)
-            }
-            if (message.status == Message.Status.FAILED && !message.isMms) {
-                row(stringResource(R.string.sms_retry), OgnelissIcons.Send, onRetry)
-            }
-            if (canDelete) {
-                row(stringResource(R.string.sms_delete), OgnelissIcons.Delete, onDelete)
+                if (message.status == Message.Status.FAILED && !message.isMms) {
+                    row(stringResource(R.string.sms_retry), OgnelissIcons.Send, onRetry)
+                }
+                if (canDelete) {
+                    row(stringResource(R.string.sms_delete), OgnelissIcons.Delete, onDelete)
+                }
             }
         }
     }

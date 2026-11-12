@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.ScaledWindow
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.tween
@@ -208,19 +209,21 @@ private fun SectionsPopup(
         // Фокус — у списка: «Назад» и касание мимо закрывают его
         properties = PopupProperties(focusable = true)
     ) {
-        val appear = remember { MutableTransitionState(false) }.apply { targetState = true }
-        AnimatedVisibility(
-            visibleState = appear,
-            enter = fadeIn(tween(Motion.QUICK_MS)) +
-                expandVertically(tween(Motion.QUICK_MS), expandFrom = Alignment.Bottom)
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(Space.s),
-                // Поле — под тени кнопок: без него их обрезал бы край окна
-                modifier = Modifier.padding(Space.xs)
+        ScaledWindow {
+            val appear = remember { MutableTransitionState(false) }.apply { targetState = true }
+            AnimatedVisibility(
+                visibleState = appear,
+                enter = fadeIn(tween(Motion.QUICK_MS)) +
+                    expandVertically(tween(Motion.QUICK_MS), expandFrom = Alignment.Bottom)
             ) {
-                MainSection.entries.reversed().forEach { section ->
-                    SectionChip(section, selected = section == current) { onPick(section) }
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(Space.s),
+                    // Поле — под тени кнопок: без него их обрезал бы край окна
+                    modifier = Modifier.padding(Space.xs)
+                ) {
+                    MainSection.entries.reversed().forEach { section ->
+                        SectionChip(section, selected = section == current) { onPick(section) }
+                    }
                 }
             }
         }

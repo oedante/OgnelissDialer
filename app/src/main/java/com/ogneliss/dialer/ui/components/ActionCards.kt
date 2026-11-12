@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.ScaledWindow
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
@@ -277,75 +278,77 @@ internal fun CardsOverlay(
             decorFitsSystemWindows = false
         )
     ) {
-        // Своё затемнение вместо системного: оно проявляется вместе
-        // с карточками, а не вспышкой до них
-        val view = LocalView.current
-        SideEffect { (view.parent as? DialogWindowProvider)?.window?.setDimAmount(0f) }
+        ScaledWindow {
+            // Своё затемнение вместо системного: оно проявляется вместе
+            // с карточками, а не вспышкой до них
+            val view = LocalView.current
+            SideEffect { (view.parent as? DialogWindowProvider)?.window?.setDimAmount(0f) }
 
-        var stackHeight by remember { mutableIntStateOf(0) }
-        var rootScreenTop by remember { mutableStateOf<Float?>(null) }
+            var stackHeight by remember { mutableIntStateOf(0) }
+            var rootScreenTop by remember { mutableStateOf<Float?>(null) }
 
-        val density = LocalDensity.current
-        val insets = WindowInsets.safeDrawing
-        BoxWithConstraints(
-            Modifier
-                .fillMaxSize()
-                .onGloballyPositioned { rootScreenTop = it.positionOnScreen().y }
-                .background(Color.Black.copy(alpha = SCRIM_ALPHA * appear.value))
-                .pointerInput(Unit) { detectTapGestures { close() } }
-        ) {
-            val screenH = constraints.maxHeight
-            val topInset = insets.getTop(density)
-            val bottomInset = insets.getBottom(density)
-            val margin = with(density) { STACK_MARGIN.roundToPx() }
-            val minTop = topInset + margin
-            val stackMaxHeight = (screenH - topInset - bottomInset - 2 * margin).coerceAtLeast(0)
-            val origin = rootScreenTop
-            val desiredTop = if (anchorY != null && origin != null) {
-                (anchorY - origin - with(density) { ANCHOR_LIFT.toPx() }).roundToInt()
-            } else {
-                (screenH * 0.2f).roundToInt()
-            }
-            val maxTop = (screenH - bottomInset - margin - stackHeight).coerceAtLeast(minTop)
-            val targetTop = desiredTop.coerceIn(minTop, maxTop)
-
-            // Первое место — сразу, дальше (раскрыли «Ещё») — плавно
-            val top = remember { Animatable(0f) }
-            var placed by remember { mutableStateOf(false) }
-            LaunchedEffect(targetTop, stackHeight, origin) {
-                if (stackHeight == 0 || (anchorY != null && origin == null)) return@LaunchedEffect
-                if (!placed) {
-                    top.snapTo(targetTop.toFloat())
-                    placed = true
-                } else {
-                    top.animateTo(targetTop.toFloat(), tween(Motion.NORMAL_MS))
-                }
-            }
-            LaunchedEffect(placed) {
-                if (placed && !closing) appear.animateTo(1f, tween(Motion.QUICK_MS))
-            }
-
-            Column(
+            val density = LocalDensity.current
+            val insets = WindowInsets.safeDrawing
+            BoxWithConstraints(
                 Modifier
-                    .fillMaxWidth()
-                    .offset { IntOffset(0, top.value.roundToInt()) }
-                    .heightIn(max = with(density) { stackMaxHeight.toDp() })
-                    .onSizeChanged { stackHeight = it.height }
-                    .graphicsLayer {
-                        // До первой расстановки стопка невидима: иначе на кадр
-                        // мелькнула бы у верхнего края
-                        val shown = if (placed) appear.value else 0f
-                        alpha = shown
-                        val scale = 0.94f + 0.06f * shown
-                        scaleX = scale
-                        scaleY = scale
-                        transformOrigin = TransformOrigin(0.5f, 0f)
-                    }
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = CARD_INSET),
-                verticalArrangement = Arrangement.spacedBy(CARD_GAP)
+                    .fillMaxSize()
+                    .onGloballyPositioned { rootScreenTop = it.positionOnScreen().y }
+                    .background(Color.Black.copy(alpha = SCRIM_ALPHA * appear.value))
+                    .pointerInput(Unit) { detectTapGestures { close() } }
             ) {
-                content(close)
+                val screenH = constraints.maxHeight
+                val topInset = insets.getTop(density)
+                val bottomInset = insets.getBottom(density)
+                val margin = with(density) { STACK_MARGIN.roundToPx() }
+                val minTop = topInset + margin
+                val stackMaxHeight = (screenH - topInset - bottomInset - 2 * margin).coerceAtLeast(0)
+                val origin = rootScreenTop
+                val desiredTop = if (anchorY != null && origin != null) {
+                    (anchorY - origin - with(density) { ANCHOR_LIFT.toPx() }).roundToInt()
+                } else {
+                    (screenH * 0.2f).roundToInt()
+                }
+                val maxTop = (screenH - bottomInset - margin - stackHeight).coerceAtLeast(minTop)
+                val targetTop = desiredTop.coerceIn(minTop, maxTop)
+
+                // Первое место — сразу, дальше (раскрыли «Ещё») — плавно
+                val top = remember { Animatable(0f) }
+                var placed by remember { mutableStateOf(false) }
+                LaunchedEffect(targetTop, stackHeight, origin) {
+                    if (stackHeight == 0 || (anchorY != null && origin == null)) return@LaunchedEffect
+                    if (!placed) {
+                        top.snapTo(targetTop.toFloat())
+                        placed = true
+                    } else {
+                        top.animateTo(targetTop.toFloat(), tween(Motion.NORMAL_MS))
+                    }
+                }
+                LaunchedEffect(placed) {
+                    if (placed && !closing) appear.animateTo(1f, tween(Motion.QUICK_MS))
+                }
+
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .offset { IntOffset(0, top.value.roundToInt()) }
+                        .heightIn(max = with(density) { stackMaxHeight.toDp() })
+                        .onSizeChanged { stackHeight = it.height }
+                        .graphicsLayer {
+                            // До первой расстановки стопка невидима: иначе на кадр
+                            // мелькнула бы у верхнего края
+                            val shown = if (placed) appear.value else 0f
+                            alpha = shown
+                            val scale = 0.94f + 0.06f * shown
+                            scaleX = scale
+                            scaleY = scale
+                            transformOrigin = TransformOrigin(0.5f, 0f)
+                        }
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = CARD_INSET),
+                    verticalArrangement = Arrangement.spacedBy(CARD_GAP)
+                ) {
+                    content(close)
+                }
             }
         }
     }
