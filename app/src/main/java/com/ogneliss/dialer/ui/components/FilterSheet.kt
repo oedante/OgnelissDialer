@@ -1,11 +1,11 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.ScaledSheetContent
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 
 import androidx.compose.ui.res.pluralStringResource
-import com.ogneliss.dialer.ui.theme.NoteTeal
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.navigationBars
@@ -66,202 +66,200 @@ fun FilterSheet(
         sheetState = sheetState,
         contentWindowInsets = { WindowInsets.navigationBars }
     ) {
-        Column(
-            Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = FlowUi.sheetBottomPadding)
-        ) {
-            Row(
-                Modifier.padding(horizontal = FlowUi.sheetPadding),
-                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+        ScaledSheetContent {
+            Column(
+                Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = FlowUi.sheetBottomPadding)
             ) {
-                Text(
+                SheetTitle(
                     stringResource(R.string.filter_title),
-                    Modifier.weight(1f),
-                    style = MaterialTheme.typography.titleLarge
+                    trailing = if (filter.isActive) {
+                        {
+                            TextButton(onClick = { onFilterChange(CallLogFilter()) }) {
+                                Text(stringResource(R.string.filter_reset))
+                            }
+                        }
+                    } else null
                 )
-                if (filter.isActive) {
-                    TextButton(onClick = { onFilterChange(CallLogFilter()) }) {
-                        Text(stringResource(R.string.filter_reset))
-                    }
-                }
-            }
 
-            /*
-             * Группы — как разделы журнала (1.6.1, автор: «фильтры сделаем
-             * как в журнале»): скруглённая полоса с подписью, как «СЕГОДНЯ»
-             * над записями, фишки — под ней на белой странице.
-             */
-            FilterGroup(stringResource(R.string.filter_group_type)) {
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
-                    TypeChip(filter, CallType.MISSED, R.string.call_missed, onFilterChange)
-                    TypeChip(filter, CallType.INCOMING, R.string.call_incoming, onFilterChange)
-                    TypeChip(filter, CallType.OUTGOING, R.string.call_outgoing, onFilterChange)
-                }
-            }
-
-            FilterGroup(stringResource(R.string.filter_group_period)) {
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
-                    CallLogFilter.Period.entries.forEach { period ->
-                        FilterChip(
-                            selected = filter.period == period,
-                            onClick = { onFilterChange(filter.copy(period = period)) },
-                            label = { Text(stringResource(periodLabel(period))) },
-                            // Галочка у выбранного: период — выбор одного
-                            // из нескольких, и видно, какой действует
-                            leadingIcon = if (filter.period == period) {
-                                {
-                                    Icon(
-                                        OgnelissIcons.Check,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(FlowUi.iconSizeInline)
-                                    )
-                                }
-                            } else null
-                        )
-                    }
-                }
-            }
-
-            // SIM показываем только при двух картах: мёртвый фильтр
-            // занимает место и сбивает с толку
-            if (simCount > 1) {
-                FilterGroup(stringResource(R.string.filter_group_sim)) {
+                /*
+                 * Группы — как разделы журнала (1.6.1, автор: «фильтры сделаем
+                 * как в журнале»): скруглённая полоса с подписью, как «СЕГОДНЯ»
+                 * над записями, фишки — под ней на белой странице.
+                 */
+                FilterGroup(stringResource(R.string.filter_group_type)) {
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
-                        repeat(simCount) { slot ->
+                        TypeChip(filter, CallType.MISSED, R.string.call_missed, onFilterChange)
+                        TypeChip(filter, CallType.INCOMING, R.string.call_incoming, onFilterChange)
+                        TypeChip(filter, CallType.OUTGOING, R.string.call_outgoing, onFilterChange)
+                    }
+                }
+
+                FilterGroup(stringResource(R.string.filter_group_period)) {
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
+                        CallLogFilter.Period.entries.forEach { period ->
                             FilterChip(
-                                selected = filter.simSlot == slot,
-                                onClick = {
-                                    onFilterChange(
-                                        filter.copy(
-                                            simSlot = if (filter.simSlot == slot) null else slot
+                                selected = filter.period == period,
+                                onClick = { onFilterChange(filter.copy(period = period)) },
+                                label = { Text(stringResource(periodLabel(period))) },
+                                // Галочка у выбранного: период — выбор одного
+                                // из нескольких, и видно, какой действует
+                                leadingIcon = if (filter.period == period) {
+                                    {
+                                        Icon(
+                                            OgnelissIcons.Check,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(FlowUi.iconSizeInline)
                                         )
-                                    )
-                                },
-                                label = { Text("SIM ${slot + 1}") }
+                                    }
+                                } else null
                             )
                         }
                     }
                 }
-            }
 
-            FilterGroup(stringResource(R.string.filter_group_other)) {
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
-                    FilterChip(
-                        selected = filter.unknownOnly,
-                        onClick = { onFilterChange(filter.copy(unknownOnly = !filter.unknownOnly)) },
-                        label = { Text(stringResource(R.string.filter_unknown)) },
-                        leadingIcon = {
-                            Icon(
-                                OgnelissIcons.PersonOff,
-                                contentDescription = null,
-                                modifier = Modifier.size(FlowUi.iconSizeInline)
-                            )
-                        }
-                    )
-                    /*
-                     * «Ожидают ответа» — первой фишкой в ряду.
-                     *
-                     * Это единственный отбор, который отвечает на вопрос
-                     * «что я должен сделать», а не «что было». Им пользуются
-                     * чаще остальных, и ставить его после «спама» значило бы
-                     * прятать нужное за редким.
-                     */
-                    FilterChip(
-                        selected = filter.awaitingCallbackOnly,
-                        onClick = {
-                            onFilterChange(
-                                filter.copy(
-                                    awaitingCallbackOnly = !filter.awaitingCallbackOnly
+                // SIM показываем только при двух картах: мёртвый фильтр
+                // занимает место и сбивает с толку
+                if (simCount > 1) {
+                    FilterGroup(stringResource(R.string.filter_group_sim)) {
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
+                            repeat(simCount) { slot ->
+                                FilterChip(
+                                    selected = filter.simSlot == slot,
+                                    onClick = {
+                                        onFilterChange(
+                                            filter.copy(
+                                                simSlot = if (filter.simSlot == slot) null else slot
+                                            )
+                                        )
+                                    },
+                                    label = { Text("SIM ${slot + 1}") }
                                 )
+                            }
+                        }
+                    }
+                }
+
+                FilterGroup(stringResource(R.string.filter_group_other)) {
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
+                        FilterChip(
+                            selected = filter.unknownOnly,
+                            onClick = { onFilterChange(filter.copy(unknownOnly = !filter.unknownOnly)) },
+                            label = { Text(stringResource(R.string.filter_unknown)) },
+                            leadingIcon = {
+                                Icon(
+                                    OgnelissIcons.PersonOff,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(FlowUi.iconSizeInline)
+                                )
+                            }
+                        )
+                        /*
+                         * «Ожидают ответа» — первой фишкой в ряду.
+                         *
+                         * Это единственный отбор, который отвечает на вопрос
+                         * «что я должен сделать», а не «что было». Им пользуются
+                         * чаще остальных, и ставить его после «спама» значило бы
+                         * прятать нужное за редким.
+                         */
+                        FilterChip(
+                            selected = filter.awaitingCallbackOnly,
+                            onClick = {
+                                onFilterChange(
+                                    filter.copy(
+                                        awaitingCallbackOnly = !filter.awaitingCallbackOnly
+                                    )
+                                )
+                            },
+                            label = { Text(stringResource(R.string.filter_awaiting)) },
+                            leadingIcon = {
+                                Icon(
+                                    OgnelissIcons.CallMissed,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(FlowUi.iconSizeInline),
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        )
+                        FilterChip(
+                            selected = filter.withNoteOnly,
+                            onClick = {
+                                onFilterChange(filter.copy(withNoteOnly = !filter.withNoteOnly))
+                            },
+                            label = { Text(stringResource(R.string.filter_with_note)) },
+                            leadingIcon = {
+                                Icon(
+                                    OgnelissIcons.StickyNote2,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(FlowUi.iconSizeInline),
+                                    // Как остальные значки фильтров (2.4.0): свой бирюзовый выбивался
+                                    tint = LocalContentColor.current
+                                )
+                            }
+                        )
+                        FilterChip(
+                            selected = filter.withReminderOnly,
+                            onClick = {
+                                onFilterChange(
+                                    filter.copy(withReminderOnly = !filter.withReminderOnly)
+                                )
+                            },
+                            label = { Text(stringResource(R.string.filter_with_reminder)) },
+                            leadingIcon = {
+                                Icon(
+                                    OgnelissIcons.Alarm,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(FlowUi.iconSizeInline)
+                                )
+                            }
+                        )
+                        FilterChip(
+                            selected = filter.spamOnly,
+                            onClick = { onFilterChange(filter.copy(spamOnly = !filter.spamOnly)) },
+                            label = { Text(stringResource(R.string.filter_spam)) },
+                            leadingIcon = {
+                                Icon(
+                                    OgnelissIcons.Block,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(FlowUi.iconSizeInline),
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        )
+                    }
+                }
+
+                /*
+                 * СКОЛЬКО ЗАПИСЕЙ ОТОБРАНО.
+                 *
+                 * ── Зачем ──────────────────────────────────────────────────────
+                 * Шторка закрывает список, и результат отбора не виден:
+                 * человек выбирает условия вслепую и закрывает её, чтобы
+                 * проверить. Если ничего не нашлось — открывает снова.
+                 *
+                 * Счётчик показывает итог сразу. Ноль при этом не ошибка,
+                 * а ответ: с такими условиями записей нет, и менять надо
+                 * условия, а не искать поломку.
+                 */
+                if (filter.isActive) {
+                    Text(
+                        if (matchCount == 0) {
+                            stringResource(R.string.filter_no_matches)
+                        } else {
+                            pluralStringResource(
+                                R.plurals.filter_match_count, matchCount, matchCount
                             )
                         },
-                        label = { Text(stringResource(R.string.filter_awaiting)) },
-                        leadingIcon = {
-                            Icon(
-                                OgnelissIcons.CallMissed,
-                                contentDescription = null,
-                                modifier = Modifier.size(FlowUi.iconSizeInline),
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    )
-                    FilterChip(
-                        selected = filter.withNoteOnly,
-                        onClick = {
-                            onFilterChange(filter.copy(withNoteOnly = !filter.withNoteOnly))
-                        },
-                        label = { Text(stringResource(R.string.filter_with_note)) },
-                        leadingIcon = {
-                            Icon(
-                                OgnelissIcons.StickyNote2,
-                                contentDescription = null,
-                                modifier = Modifier.size(FlowUi.iconSizeInline),
-                                tint = NoteTeal
-                            )
-                        }
-                    )
-                    FilterChip(
-                        selected = filter.withReminderOnly,
-                        onClick = {
-                            onFilterChange(
-                                filter.copy(withReminderOnly = !filter.withReminderOnly)
-                            )
-                        },
-                        label = { Text(stringResource(R.string.filter_with_reminder)) },
-                        leadingIcon = {
-                            Icon(
-                                OgnelissIcons.Alarm,
-                                contentDescription = null,
-                                modifier = Modifier.size(FlowUi.iconSizeInline)
-                            )
-                        }
-                    )
-                    FilterChip(
-                        selected = filter.spamOnly,
-                        onClick = { onFilterChange(filter.copy(spamOnly = !filter.spamOnly)) },
-                        label = { Text(stringResource(R.string.filter_spam)) },
-                        leadingIcon = {
-                            Icon(
-                                OgnelissIcons.Block,
-                                contentDescription = null,
-                                modifier = Modifier.size(FlowUi.iconSizeInline),
-                                tint = MaterialTheme.colorScheme.error
-                            )
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(horizontal = FlowUi.sheetPadding, vertical = Space.m),
+                        color = if (matchCount == 0) {
+                            MaterialTheme.colorScheme.error
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
                         }
                     )
                 }
-            }
-
-            /*
-             * СКОЛЬКО ЗАПИСЕЙ ОТОБРАНО.
-             *
-             * ── Зачем ──────────────────────────────────────────────────────
-             * Шторка закрывает список, и результат отбора не виден:
-             * человек выбирает условия вслепую и закрывает её, чтобы
-             * проверить. Если ничего не нашлось — открывает снова.
-             *
-             * Счётчик показывает итог сразу. Ноль при этом не ошибка,
-             * а ответ: с такими условиями записей нет, и менять надо
-             * условия, а не искать поломку.
-             */
-            if (filter.isActive) {
-                Text(
-                    if (matchCount == 0) {
-                        stringResource(R.string.filter_no_matches)
-                    } else {
-                        pluralStringResource(
-                            R.plurals.filter_match_count, matchCount, matchCount
-                        )
-                    },
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(horizontal = FlowUi.sheetPadding, vertical = Space.m),
-                    color = if (matchCount == 0) {
-                        MaterialTheme.colorScheme.error
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    }
-                )
             }
         }
     }

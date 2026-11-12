@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.contactedit
 
+import com.ogneliss.dialer.ui.theme.ScaledWindow
 import android.graphics.Bitmap
 import android.graphics.Rect
 import androidx.compose.foundation.Canvas
@@ -67,27 +68,29 @@ fun PhotoCropDialog(
         onDismissRequest = onCancel,
         properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false)
     ) {
-        Column(
-            Modifier
-                .fillMaxSize()
-                .background(Color.Black)
-                .statusBarsPadding()
-                .navigationBarsPadding()
-        ) {
-            // 2.1.0: без подсказки «Сдвиньте и увеличьте снимок…» — правило автора
-            // 07.11.2026, пояснений не показываем; рамка обрезки говорит сама
-            Spacer(Modifier.height(Space.l))
-            var crop by remember { mutableStateOf<Rect?>(null) }
-            CropArea(source, Modifier.weight(1f).fillMaxWidth()) { crop = it }
-            Row(
-                Modifier.fillMaxWidth().padding(Space.m),
-                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween
+        ScaledWindow {
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Black)
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
             ) {
-                TextButton(onClick = onCancel) {
-                    Text(stringResource(R.string.nav_cancel), color = Color.White)
-                }
-                TextButton(onClick = { crop?.let(onDone) }) {
-                    Text(stringResource(R.string.contact_edit_crop_done), color = Color.White)
+                // 2.1.0: без подсказки «Сдвиньте и увеличьте снимок…» — правило автора
+                // 07.11.2026, пояснений не показываем; рамка обрезки говорит сама
+                Spacer(Modifier.height(Space.l))
+                var crop by remember { mutableStateOf<Rect?>(null) }
+                CropArea(source, Modifier.weight(1f).fillMaxWidth()) { crop = it }
+                Row(
+                    Modifier.fillMaxWidth().padding(Space.m),
+                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween
+                ) {
+                    TextButton(onClick = onCancel) {
+                        Text(stringResource(R.string.nav_cancel), color = Color.White)
+                    }
+                    TextButton(onClick = { crop?.let(onDone) }) {
+                        Text(stringResource(R.string.contact_edit_crop_done), color = Color.White)
+                    }
                 }
             }
         }

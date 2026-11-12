@@ -1,6 +1,12 @@
 package com.ogneliss.dialer.ui.theme
 
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -53,6 +59,53 @@ import kotlin.math.floor
  */
 val LocalUiScaleFactor = staticCompositionLocalOf { 1f }
 
+/*
+ * МАСШТАБ — И В ОТДЕЛЬНЫХ ОКНАХ (2.4.0).
+ *
+ * Автор, 12.11.2026: «масштаб не всегда действует… в разных окнах, панелях,
+ * выпадающих списках разные размеры шрифтов». Причина: шторка
+ * (ModalBottomSheet), диалог (Dialog), выпадающее меню и Popup открываются
+ * отдельным окном Android, и корень этого окна заново задаёт LocalDensity —
+ * системную. Масштаб интерфейса и «Размер шрифта» темы туда не доходили:
+ * на экране 85–95 %, в шторке рядом — 100 %, и текст «прыгал» между окнами.
+ *
+ * Тема кладёт свою плотность сюда, а содержимое каждого окна оборачивается
+ * в [ScaledWindow] (или [ScaledSheetContent] для шторок и меню — там нужен
+ * ColumnScope). Проверка: scripts/ui_roles_check.py ищет окна без обёртки.
+ */
+val LocalScaledDensity = staticCompositionLocalOf<Density?> { null }
+
+/**
+ * Содержимое отдельного окна (Dialog, Popup) — в масштабе приложения.
+ *
+ * [fitWidth] — для окон постоянной ширины (календарь и часы Material —
+ * 360 dp): при масштабе больше 100 % на узком экране они не поместились
+ * бы и обрезались по краям. Тогда окно уменьшается целиком, ровно
+ * до ширины экрана, — текст и размеры в той же пропорции.
+ */
+@Composable
+fun ScaledWindow(fitWidth: Dp = Dp.Unspecified, content: @Composable () -> Unit) {
+    val scaled = LocalScaledDensity.current
+    if (scaled == null) {
+        content()
+        return
+    }
+    // Внутри окна LocalDensity — системная: от неё и считается доля экрана
+    val base = LocalDensity.current
+    val screenWidthDp = LocalConfiguration.current.screenWidthDp
+    val density = remember(scaled, base, fitWidth, screenWidthDp) {
+        UiScaleMath.fitted(scaled, base.density, fitWidth, screenWidthDp)
+    }
+    CompositionLocalProvider(LocalDensity provides density, content = content)
+}
+
+/** Содержимое шторки и выпадающего меню (ColumnScope) — в масштабе приложения. */
+@Composable
+fun ColumnScope.ScaledSheetContent(content: @Composable ColumnScope.() -> Unit) {
+    val scope = this
+    ScaledWindow { scope.content() }
+}
+
 object UiScaleMath {
     /** Ширина, под которую сверстан интерфейс (dp, обычный шрифт) — как `UiZoom.referenceWidth` почты. */
     const val REFERENCE_WIDTH_DP = 412f
@@ -95,11 +148,39 @@ object UiScaleMath {
      * Плотность с масштабом [layout] и «Размером шрифта» [fontSetting];
      * оба по единице и системный шрифт в пределах — исходная, без обёртки.
      */
+    /**
+     * Плотность для окна шириной [fitWidth] (dp приложения) на экране
+     * [screenWidthDp] (системные dp): поместилось в масштабе — [scaled],
+     * нет — уменьшенная до ширины экрана. Меньше системной не бывает:
+     * окно, которое не помещается и без масштаба, — забота самого окна.
+     */
+    fun fitted(scaled: Density, baseDensity: Float, fitWidth: Dp, screenWidthDp: Int): Density {
+        if (fitWidth == Dp.Unspecified || screenWidthDp <= 0 || baseDensity <= 0f) return scaled
+        val layout = scaled.density / baseDensity
+        if (fitWidth.value * layout <= screenWidthDp) return scaled
+        val shrink = (screenWidthDp / (fitWidth.value * layout)).coerceAtLeast(1f / layout)
+        return if (shrink >= 1f) scaled else ShrunkDensity(scaled, shrink)
+    }
+
     fun scaledDensity(base: Density, layout: Float, fontSetting: Float = 1f): Density {
         // Во сколько раз текст отличается от системного: настройка и предел 1,6
         val ratio = if (base.fontScale > 0f) textScale(base.fontScale, fontSetting) / base.fontScale else fontSetting
         return if (layout == 1f && ratio == 1f) base else ScaledDensity(base, layout, layout * ratio)
     }
+}
+
+/**
+ * Плотность масштаба, уменьшенная в [shrink] раз целиком — и размеры,
+ * и текст (окно постоянной ширины на узком экране, [ScaledWindow]).
+ * Перевод sp ↔ dp — как у масштаба: тот же текст в dp, меньше пикселей.
+ */
+private class ShrunkDensity(private val scaled: Density, shrink: Float) : Density {
+    override val density: Float = scaled.density * shrink
+    override val fontScale: Float = scaled.fontScale
+
+    override fun TextUnit.toDp(): Dp = with(scaled) { this@toDp.toDp() }
+
+    override fun Dp.toSp(): TextUnit = with(scaled) { this@toSp.toSp() }
 }
 
 /**

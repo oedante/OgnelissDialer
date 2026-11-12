@@ -1548,12 +1548,22 @@ fun MainDialerScreen(
                                     menuOpen = false
                                     vm.setFilter(f.filter())
                                 }
+                            } + MenuFolder(
+                                // Свой набор условий (карта, период, заметка…) — «Фильтры · N» (2.4.0)
+                                OgnelissIcons.FilterList,
+                                stringResource(R.string.filter_title),
+                                count = if (activeFilter.isActive && current == null) activeFilter.activeCount else 0,
+                                selected = activeFilter.isActive && current == null
+                            ) {
+                                menuOpen = false
+                                filtersOpen = true
                             } + MenuFolder(OgnelissIcons.Archive, stringResource(R.string.archive_title)) {
                                 menuOpen = false
                                 onOpenArchive()
                             }
                         )
-                    }
+                    },
+                    onSearch = { menuOpen = false; startSearch() }
                 )
             }
         )
@@ -1638,15 +1648,15 @@ fun MainDialerScreen(
                     activeFilter.isActive -> stringResource(R.string.filter_title) + " · " + activeFilter.activeCount
                     else -> null
                 },
-                onSearch = startSearch,
-                onFilter = { filtersOpen = true },
-                filterActive = activeFilter.isActive,
+                // Поиск и фильтры — в меню (2.4.0, автор: «уберём из верхней панели
+                // фильтр (он есть в боковой панели) и перенесём в боковую панель поиск»)
                 menu = listOf(
                     TopBarMenuItem(
                         if (selection.isActive) OgnelissIcons.Close else OgnelissIcons.Checklist,
                         stringResource(if (selection.isActive) R.string.selection_exit else R.string.selection_start)
                     ) { if (selection.isActive) selection.clear() else selection.startEmpty() },
-                    TopBarMenuItem(OgnelissIcons.Archive, stringResource(R.string.archive_title)) { onOpenArchive() },
+                    // «Архив» — только папкой в «Меню» (2.4.0, автор: «оставим только
+                    // в панели»): одно место для одного перехода
                     // Только после подтверждения: очистка необратима и стирает
                     // и системный журнал (разбор у confirmClearLog)
                     TopBarMenuItem(

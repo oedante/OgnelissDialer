@@ -634,10 +634,8 @@ fun ContactsScreen(
                     CONTACT_FOLDERS.firstOrNull { it.first == contactFilter && contactFilter != ContactFilter.ALL }?.second
                         ?: R.string.nav_contacts
                 ),
-                subtitle = if (contactFilter != ContactFilter.ALL) stringResource(R.string.nav_contacts) else null,
-                onSearch = { searching = true },
-                onFilter = { contactFiltersOpen = true },
-                filterActive = contactFilter != ContactFilter.ALL
+                subtitle = if (contactFilter != ContactFilter.ALL) stringResource(R.string.nav_contacts) else null
+                // Поиск — в меню, отборы — папками в меню (2.4.0)
             )
             if (pickForPinning) TopAppBar(
                 // Заголовок остаётся заголовком: поле поиска переехало
@@ -752,6 +750,7 @@ fun ContactsScreen(
                                     }
                                 )
                             },
+                            onSearch = { menuOpen = false; searching = true },
                             // 2.1.0: значок «Контакты» на главный экран (SectionWidgets)
                             onPinToHome = pinToHome
                         )
@@ -1137,8 +1136,14 @@ internal fun sectionLetter(name: String): Char {
 
 @Composable
 fun LetterHeader(letter: String) {
-    // Полоса раздела во всю ширину (сплошной список, 1.5.3)
-    SectionBand(letter)
+    /*
+     * Подпись в ленте — прописными, как «СЕГОДНЯ» и «ВЧЕРА» рядом (2.4.0,
+     * единый вид). Было: «Закреплённые», «Избранные», «Сообщения» обычным
+     * регистром над «СЕГОДНЯ» — две разные подписи в одном списке.
+     * TalkBack читает обычным регистром.
+     */
+    val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0] ?: java.util.Locale.getDefault()
+    SectionBand(letter.uppercase(locale), description = letter)
 }
 
 /**

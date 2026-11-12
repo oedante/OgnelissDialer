@@ -2195,14 +2195,15 @@ fun SubscriberScreen(
                             Modifier.heightIn(min = NUMBER_ROW_HEIGHT),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                                // «Добавить заметку» — как строка сведений: значок цветом акцента,
+                                // полного размера, отступ 16 (2.4.0; был мелкий бирюзовый)
                                 if (noteEmpty) {
                                     Icon(
                                         OgnelissIcons.StickyNote2,
                                         contentDescription = null,
-                                        tint = NoteTeal,
-                                        modifier = Modifier.size(FlowUi.iconSizeInline)
+                                        tint = MaterialTheme.colorScheme.primary
                                     )
-                                    Spacer(Modifier.width(Space.m))
+                                    Spacer(Modifier.width(Space.l))
                                 }
                                 Text(
                                     note?.note?.takeIf { it.isNotBlank() }

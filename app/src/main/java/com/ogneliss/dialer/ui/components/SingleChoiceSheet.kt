@@ -1,13 +1,11 @@
 package com.ogneliss.dialer.ui.components
 
-import com.ogneliss.dialer.ui.theme.Space
 
+import com.ogneliss.dialer.ui.theme.ScaledSheetContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -59,32 +57,27 @@ fun <T> SingleChoiceSheet(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState, containerColor = listSheetContainerColor()) {
-        Column(Modifier.padding(bottom = FlowUi.sheetBottomPadding)) {
-            Text(
-                stringResource(titleRes),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(
-                    horizontal = FlowUi.sheetPadding,
-                    vertical = Space.s
-                )
-            )
+        ScaledSheetContent {
+            Column(Modifier.padding(bottom = FlowUi.sheetBottomPadding)) {
+                SheetTitle(stringResource(titleRes))
 
-            /*
-             * Варианты — строками во всю ширину на белом, как записи
-             * журнала (1.6.1, автор: «фильтры сделаем как в журнале»):
-             * та же форма, что у фильтров журнала (ListSheetGroup).
-             */
-            ListSheetGroup {
-                options.forEachIndexed { index, (value, labelRes) ->
-                    SheetChoiceRow(
-                        selected = current == value,
-                        label = stringResource(labelRes),
-                        onClick = {
-                            onSelect(value)
-                            onDismiss()
-                        }
-                    )
-                    if (index < options.lastIndex) SheetDivider()
+                /*
+                 * Варианты — строками во всю ширину на белом, как записи
+                 * журнала (1.6.1, автор: «фильтры сделаем как в журнале»):
+                 * та же форма, что у фильтров журнала (ListSheetGroup).
+                 */
+                ListSheetGroup {
+                    options.forEachIndexed { index, (value, labelRes) ->
+                        SheetChoiceRow(
+                            selected = current == value,
+                            label = stringResource(labelRes),
+                            onClick = {
+                                onSelect(value)
+                                onDismiss()
+                            }
+                        )
+                        if (index < options.lastIndex) SheetDivider()
+                    }
                 }
             }
         }

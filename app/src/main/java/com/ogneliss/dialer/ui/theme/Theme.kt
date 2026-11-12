@@ -442,6 +442,8 @@ fun OgnelissDialerTheme(
     CompositionLocalProvider(
         LocalDensity provides density,
         LocalUiScaleFactor provides scaleFactor,
+        // Для отдельных окон — шторок, диалогов, меню (2.4.0, ScaledWindow)
+        LocalScaledDensity provides density,
         LocalOgnelissSurfaces provides surfaces,
         androidx.compose.ui.platform.LocalViewConfiguration provides viewConfiguration
     ) {

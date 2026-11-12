@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.contactedit
 
+import com.ogneliss.dialer.ui.theme.ScaledSheetContent
 import android.graphics.BitmapFactory
 import android.provider.ContactsContract.CommonDataKinds.Email
 import android.provider.ContactsContract.CommonDataKinds.Phone
@@ -31,7 +32,6 @@ import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -299,14 +299,16 @@ fun ContactEditScreen(
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             contentWindowInsets = { WindowInsets.navigationBars }
         ) {
-            Column(Modifier.padding(bottom = Space.l)) {
-                SheetGroup {
-                    SheetRow(
-                        OgnelissIcons.OpenInNew,
-                        stringResource(R.string.contact_edit_open_system),
-                        supporting = stringResource(R.string.contact_edit_open_system_text),
-                        onClick = { menuOpen = false; vm.openInSystem() }
-                    )
+            ScaledSheetContent {
+                Column(Modifier.padding(bottom = Space.l)) {
+                    SheetGroup {
+                        SheetRow(
+                            OgnelissIcons.OpenInNew,
+                            stringResource(R.string.contact_edit_open_system),
+                            supporting = stringResource(R.string.contact_edit_open_system_text),
+                            onClick = { menuOpen = false; vm.openInSystem() }
+                        )
+                    }
                 }
             }
         }
@@ -318,20 +320,18 @@ fun ContactEditScreen(
             containerColor = listSheetContainerColor(),
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         ) {
-            Column(Modifier.padding(bottom = FlowUi.sheetBottomPadding)) {
-                Text(
-                    stringResource(R.string.contact_edit_account_title),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(horizontal = FlowUi.sheetPadding, vertical = Space.s)
-                )
-                ListSheetGroup {
-                    state.accounts.forEachIndexed { index, account ->
-                        SheetChoiceRow(
-                            selected = account.key == state.account?.key,
-                            label = accountLabel(account),
-                            onClick = { vm.chooseAccount(account); accountSheet = false }
-                        )
-                        if (index < state.accounts.lastIndex) SheetDivider()
+            ScaledSheetContent {
+                Column(Modifier.padding(bottom = FlowUi.sheetBottomPadding)) {
+                    com.ogneliss.dialer.ui.components.SheetTitle(stringResource(R.string.contact_edit_account_title))
+                    ListSheetGroup {
+                        state.accounts.forEachIndexed { index, account ->
+                            SheetChoiceRow(
+                                selected = account.key == state.account?.key,
+                                label = accountLabel(account),
+                                onClick = { vm.chooseAccount(account); accountSheet = false }
+                            )
+                            if (index < state.accounts.lastIndex) SheetDivider()
+                        }
                     }
                 }
             }
@@ -656,22 +656,23 @@ private fun BirthdayDialog(raw: String, onDone: (String) -> Unit, onDismiss: () 
     }
     val picker = rememberDatePickerState(initialSelectedDateMillis = initial)
     var noYear by rememberSaveable { mutableStateOf(parts != null && parts.year == null) }
-    DatePickerDialog(
+    // Окно календаря приложения (2.4.0, PickerDialog): DatePickerDialog Material
+    // рисовал рамку и кнопки сам, в системном масштабе, — мимо масштаба приложения
+    com.ogneliss.dialer.ui.components.PickerDialog(
         onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = {
-                val millis = picker.selectedDateMillis
-                if (millis == null) onDismiss() else {
-                    val date = Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
-                    onDone(
-                        ContactBirthday.format(
-                            ContactBirthday.Parts(if (noYear) null else date.year, date.monthValue, date.dayOfMonth)
-                        )
+        confirmLabel = stringResource(R.string.contact_edit_pick),
+        onConfirm = {
+            val millis = picker.selectedDateMillis
+            if (millis == null) onDismiss() else {
+                val date = Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
+                onDone(
+                    ContactBirthday.format(
+                        ContactBirthday.Parts(if (noYear) null else date.year, date.monthValue, date.dayOfMonth)
                     )
-                }
-            }) { Text(stringResource(R.string.contact_edit_pick)) }
+                )
+            }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.nav_cancel)) } }
+        dismissLabel = stringResource(R.string.nav_cancel)
     ) {
         DatePicker(state = picker, title = null)
         Row(
@@ -704,22 +705,22 @@ private fun TypeSheet(isPhone: Boolean, current: EditableValue, onSelect: (Int) 
         containerColor = listSheetContainerColor(),
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ) {
-        Column(Modifier.padding(bottom = FlowUi.sheetBottomPadding)) {
-            Text(
-                stringResource(if (isPhone) R.string.contact_edit_phone_type else R.string.contact_edit_email_type),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = FlowUi.sheetPadding, vertical = Space.s)
-            )
-            ListSheetGroup {
-                // Свой тип строки (например, «Дача») — первым и отмеченным
-                val extra = current.type !in options.map { it.first }
-                if (extra) {
-                    SheetChoiceRow(selected = true, label = if (isPhone) phoneTypeLabel(current) else emailTypeLabel(current), onClick = onDismiss)
-                    SheetDivider()
-                }
-                options.forEachIndexed { index, (type, label) ->
-                    SheetChoiceRow(selected = !extra && current.type == type, label = stringResource(label), onClick = { onSelect(type) })
-                    if (index < options.lastIndex) SheetDivider()
+        ScaledSheetContent {
+            Column(Modifier.padding(bottom = FlowUi.sheetBottomPadding)) {
+                com.ogneliss.dialer.ui.components.SheetTitle(
+                    stringResource(if (isPhone) R.string.contact_edit_phone_type else R.string.contact_edit_email_type)
+                )
+                ListSheetGroup {
+                    // Свой тип строки (например, «Дача») — первым и отмеченным
+                    val extra = current.type !in options.map { it.first }
+                    if (extra) {
+                        SheetChoiceRow(selected = true, label = if (isPhone) phoneTypeLabel(current) else emailTypeLabel(current), onClick = onDismiss)
+                        SheetDivider()
+                    }
+                    options.forEachIndexed { index, (type, label) ->
+                        SheetChoiceRow(selected = !extra && current.type == type, label = stringResource(label), onClick = { onSelect(type) })
+                        if (index < options.lastIndex) SheetDivider()
+                    }
                 }
             }
         }

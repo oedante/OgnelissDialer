@@ -134,8 +134,8 @@ android {
          * Перед публикацией в открытый доступ сменить на 1.0.0
          * и поднять versionCode.
          */
-        versionCode = 65
-        versionName = "2.3.0"
+        versionCode = 67
+        versionName = "2.4.0"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -397,6 +397,16 @@ android {
         unitTests {
             isIncludeAndroidResources = true
             isReturnDefaultValues = true
+            /*
+             * ТЕСТЫ ПАРАЛЛЕЛЬНО (2.4.0, автор: «давай вести тесты параллельно»).
+             * Модульные тесты независимы друг от друга (Robolectric поднимает
+             * свою песочницу в каждом процессе), поэтому идут в нескольких
+             * процессах — по половине ядер: вторая половина остаётся сборке
+             * и lint, которые Gradle гонит одновременно (org.gradle.parallel).
+             */
+            all { test ->
+                test.maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
+            }
         }
     }
 

@@ -67,9 +67,11 @@ object JournalDays {
 
         val date = Date(dayStart)
         val sameYear = year(dayStart, zone) == year(nowMillis, zone)
-        if (!sameYear) return format(dayMonthYear, locale, zone, date)
-        val weekday = format("EEEE", locale, zone, date).uppercase(locale)
-        return format(dayMonth, locale, zone, date) + " · " + weekday
+        // Вся подпись прописными (2.4.0): было «29 октября · ЧЕТВЕРГ» — два
+        // регистра в одной подписи, рядом с «СЕГОДНЯ» и «ВЧЕРА»
+        if (!sameYear) return format(dayMonthYear, locale, zone, date).uppercase(locale)
+        val weekday = format("EEEE", locale, zone, date)
+        return (format(dayMonth, locale, zone, date) + " · " + weekday).uppercase(locale)
     }
 
     private fun format(pattern: String, locale: Locale, zone: TimeZone, date: Date): String =

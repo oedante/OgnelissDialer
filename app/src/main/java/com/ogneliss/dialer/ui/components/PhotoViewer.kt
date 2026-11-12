@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.ScaledWindow
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -67,86 +68,88 @@ internal fun PhotoViewerDialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false)
     ) {
-        // Системное «Убрать анимацию» Compose учитывает сам: появление — сразу
-        val appear = remember { Animatable(0f) }
-        LaunchedEffect(Unit) { appear.animateTo(1f, tween(Motion.QUICK_MS)) }
-        // Приближение и сдвиг — состояние окна: закрыли и открыли снова —
-        // снимок опять целиком
-        var scale by remember { mutableFloatStateOf(1f) }
-        var offset by remember { mutableStateOf(Offset.Zero) }
-        // Размер области снимка: graphicsLayer приближает вокруг её середины,
-        // а пальцы могут стоять где угодно
-        var area by remember { mutableStateOf(IntSize.Zero) }
-        val transform = rememberTransformableState { centroid, zoom, pan, _ ->
-            val next = (scale * zoom).coerceIn(1f, MAX_ZOOM)
-            // Без приближения снимок стоит по центру: сдвигать нечего
-            offset = if (next <= 1f) Offset.Zero else {
-                // Точка снимка между пальцами остаётся под пальцами: приближение
-                // идёт вокруг них, а не вокруг середины экрана
-                val fromCenter = centroid - Offset(area.width / 2f, area.height / 2f)
-                fromCenter + pan - (fromCenter - offset) * (next / scale)
+        ScaledWindow {
+            // Системное «Убрать анимацию» Compose учитывает сам: появление — сразу
+            val appear = remember { Animatable(0f) }
+            LaunchedEffect(Unit) { appear.animateTo(1f, tween(Motion.QUICK_MS)) }
+            // Приближение и сдвиг — состояние окна: закрыли и открыли снова —
+            // снимок опять целиком
+            var scale by remember { mutableFloatStateOf(1f) }
+            var offset by remember { mutableStateOf(Offset.Zero) }
+            // Размер области снимка: graphicsLayer приближает вокруг её середины,
+            // а пальцы могут стоять где угодно
+            var area by remember { mutableStateOf(IntSize.Zero) }
+            val transform = rememberTransformableState { centroid, zoom, pan, _ ->
+                val next = (scale * zoom).coerceIn(1f, MAX_ZOOM)
+                // Без приближения снимок стоит по центру: сдвигать нечего
+                offset = if (next <= 1f) Offset.Zero else {
+                    // Точка снимка между пальцами остаётся под пальцами: приближение
+                    // идёт вокруг них, а не вокруг середины экрана
+                    val fromCenter = centroid - Offset(area.width / 2f, area.height / 2f)
+                    fromCenter + pan - (fromCenter - offset) * (next / scale)
+                }
+                scale = next
             }
-            scale = next
-        }
-        /*
-         * Касания — у подложки, а не у снимка: касание мимо снимка (по чёрным
-         * полям) тоже закрывает, как в почте. Сведение пальцами снимок
-         * забирает себе (transformable), и касанием оно не считается.
-         */
-        Box(
-            Modifier
-                .fillMaxSize()
-                .graphicsLayer { alpha = appear.value }
-                .background(Color.Black.copy(alpha = BACKDROP_ALPHA))
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onTap = { onDismiss() },
-                        onDoubleTap = {
-                            scale = if (scale > 1f) 1f else DOUBLE_TAP_ZOOM
-                            offset = Offset.Zero
+            /*
+             * Касания — у подложки, а не у снимка: касание мимо снимка (по чёрным
+             * полям) тоже закрывает, как в почте. Сведение пальцами снимок
+             * забирает себе (transformable), и касанием оно не считается.
+             */
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .graphicsLayer { alpha = appear.value }
+                    .background(Color.Black.copy(alpha = BACKDROP_ALPHA))
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onTap = { onDismiss() },
+                            onDoubleTap = {
+                                scale = if (scale > 1f) 1f else DOUBLE_TAP_ZOOM
+                                offset = Offset.Zero
+                            }
+                        )
+                    }
+            ) {
+                // Снимок целиком (Fit), в пределах безопасной области: вырез
+                // камеры и панель навигации его не закрывают
+                AsyncImage(
+                    model = uri,
+                    contentDescription = stringResource(R.string.a11y_contact_photo, title),
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .windowInsetsPadding(WindowInsets.safeDrawing)
+                        .onSizeChanged { area = it }
+                        .transformable(transform)
+                        .graphicsLayer {
+                            val lift = APPEAR_FROM + (1f - APPEAR_FROM) * appear.value
+                            scaleX = scale * lift
+                            scaleY = scale * lift
+                            translationX = offset.x
+                            translationY = offset.y
                         }
+                )
+                // Сверху — «Закрыть» и имя: белым, фон под ними всегда тёмный
+                Row(
+                    Modifier
+                        .align(Alignment.TopStart)
+                        .fillMaxWidth()
+                        .windowInsetsPadding(WindowInsets.safeDrawing)
+                        .padding(start = Space.xs, end = Space.l, top = Space.xs),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = onDismiss) {
+                        Icon(OgnelissIcons.Close, contentDescription = stringResource(R.string.nav_close), tint = Color.White)
+                    }
+                    Spacer(Modifier.width(Space.xs))
+                    Text(
+                        title,
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
-        ) {
-            // Снимок целиком (Fit), в пределах безопасной области: вырез
-            // камеры и панель навигации его не закрывают
-            AsyncImage(
-                model = uri,
-                contentDescription = stringResource(R.string.a11y_contact_photo, title),
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .windowInsetsPadding(WindowInsets.safeDrawing)
-                    .onSizeChanged { area = it }
-                    .transformable(transform)
-                    .graphicsLayer {
-                        val lift = APPEAR_FROM + (1f - APPEAR_FROM) * appear.value
-                        scaleX = scale * lift
-                        scaleY = scale * lift
-                        translationX = offset.x
-                        translationY = offset.y
-                    }
-            )
-            // Сверху — «Закрыть» и имя: белым, фон под ними всегда тёмный
-            Row(
-                Modifier
-                    .align(Alignment.TopStart)
-                    .fillMaxWidth()
-                    .windowInsetsPadding(WindowInsets.safeDrawing)
-                    .padding(start = Space.xs, end = Space.l, top = Space.xs),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onDismiss) {
-                    Icon(OgnelissIcons.Close, contentDescription = stringResource(R.string.nav_close), tint = Color.White)
-                }
-                Spacer(Modifier.width(Space.xs))
-                Text(
-                    title,
-                    color = Color.White,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
             }
         }
     }

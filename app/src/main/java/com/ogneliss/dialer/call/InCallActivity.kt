@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.call
 
+import com.ogneliss.dialer.ui.theme.ScaledSheetContent
 import com.ogneliss.dialer.settings.ContactNameFormat
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -2096,21 +2097,19 @@ private fun QuickReplySheet(
     onDismiss: () -> Unit
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss, containerColor = com.ogneliss.dialer.ui.components.sheetContainerColor()) {
-        Column(Modifier.padding(bottom = Space.xxl)) {
-            Text(
-                stringResource(R.string.quick_reply_title),
-                Modifier.padding(horizontal = Space.xl, vertical = Space.s),
-                style = MaterialTheme.typography.titleLarge
-            )
-            // Ответы — в скруглённой панели, как строки остальных шторок (1.2.2)
-            com.ogneliss.dialer.ui.components.SheetGroup {
-                templates.forEachIndexed { index, template ->
-                    com.ogneliss.dialer.ui.components.SheetRow(
-                        OgnelissIcons.Message,
-                        template,
-                        onClick = { onSend(template) }
-                    )
-                    if (index < templates.lastIndex) com.ogneliss.dialer.ui.components.SheetDivider()
+        ScaledSheetContent {
+            Column(Modifier.padding(bottom = Space.xxl)) {
+                com.ogneliss.dialer.ui.components.SheetTitle(stringResource(R.string.quick_reply_title))
+                // Ответы — в скруглённой панели, как строки остальных шторок (1.2.2)
+                com.ogneliss.dialer.ui.components.SheetGroup {
+                    templates.forEachIndexed { index, template ->
+                        com.ogneliss.dialer.ui.components.SheetRow(
+                            OgnelissIcons.Message,
+                            template,
+                            onClick = { onSend(template) }
+                        )
+                        if (index < templates.lastIndex) com.ogneliss.dialer.ui.components.SheetDivider()
+                    }
                 }
             }
         }

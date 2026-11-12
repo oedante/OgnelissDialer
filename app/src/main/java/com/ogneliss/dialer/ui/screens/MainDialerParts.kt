@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.ScaledWindow
 import com.ogneliss.dialer.ui.theme.Space
 import com.ogneliss.dialer.ui.theme.listName
 
@@ -95,7 +96,12 @@ internal fun OverflowMenu(
      */
     onPinToHome: (() -> Unit)? = null,
     /** Своё над плитками (2.2.0): «Папки» раздела SMS. null — только плитки. */
-    header: (@Composable ColumnScope.() -> Unit)? = null
+    header: (@Composable ColumnScope.() -> Unit)? = null,
+    /**
+     * «Поиск» — строкой-пилюлей в самом верху панели (2.4.0, автор: «перенесём
+     * в боковую панель поиск»). Было: значок в шапке раздела. null — нет.
+     */
+    onSearch: (() -> Unit)? = null
 ) {
     if (!expanded) return
 
@@ -131,6 +137,7 @@ internal fun OverflowMenu(
             if (onHelp != null) add(MenuTile(MenuGroup.APP, OgnelissIcons.Help, helpLabel, onHelp))
             if (onPinToHome != null) add(MenuTile(MenuGroup.APP, OgnelissIcons.AddToHomeScreen, stringResource(R.string.menu_pin_home), onPinToHome))
         }
+        if (onSearch != null) MenuSearchPill(onSearch)
         // Папки — сверху и листаются, если не помещаются; плитки — у нижнего края
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
             if (header != null) header()
@@ -138,6 +145,42 @@ internal fun OverflowMenu(
         OverflowMenuBody(tiles)
     }
 }
+
+/**
+ * ПОИСК — ПИЛЮЛЕЙ ВВЕРХУ МЕНЮ (2.4.0).
+ *
+ * Как поле поиска в шапке почты на широком окне: пилюля во всю ширину
+ * панели, значок и слово «Поиск». Касание закрывает меню и открывает поле
+ * поиска внизу, над клавиатурой, — там, где его ищет большой палец.
+ */
+@Composable
+private fun MenuSearchPill(onSearch: () -> Unit) {
+    Surface(
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = SEARCH_PILL_ALPHA),
+        shape = androidx.compose.foundation.shape.CircleShape,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Space.m, vertical = Space.s)
+            .clip(androidx.compose.foundation.shape.CircleShape)
+            .clickable(role = androidx.compose.ui.semantics.Role.Button, onClick = onSearch)
+    ) {
+        Row(
+            Modifier.heightIn(min = Dimens.MIN_TOUCH_TARGET).padding(horizontal = Space.l),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(OgnelissIcons.Search, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            Spacer(Modifier.width(Space.l))
+            Text(
+                stringResource(R.string.nav_search),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+/** Подложка пилюли поиска — как у поиска в шапке почты (6 % цвета текста). */
+private const val SEARCH_PILL_ALPHA = 0.06f
 
 /**
  * Панель у правого края во всю высоту — как выдвижное меню почты (endDrawer):
@@ -152,39 +195,41 @@ private fun EndDrawer(onDismiss: () -> Unit, content: @Composable ColumnScope.()
         onDismissRequest = onDismiss,
         properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false)
     ) {
-        Box(
-            Modifier
-                .fillMaxSize()
-                .clickable(
-                    interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
-                    indication = null,
-                    onClickLabel = stringResource(R.string.nav_close),
-                    onClick = onDismiss
-                ),
-            contentAlignment = Alignment.CenterEnd
-        ) {
-            androidx.compose.animation.AnimatedVisibility(
-                visibleState = shown,
-                enter = androidx.compose.animation.slideInHorizontally { it }
-            ) {
-                Surface(
-                    color = com.ogneliss.dialer.ui.components.sheetContainerColor(),
-                    // Скруглён левый край — тот, которым панель «выезжает»
-                    shape = androidx.compose.foundation.shape.RoundedCornerShape(
-                        topStart = DRAWER_CORNER, bottomStart = DRAWER_CORNER
+        ScaledWindow {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .clickable(
+                        interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
+                        indication = null,
+                        onClickLabel = stringResource(R.string.nav_close),
+                        onClick = onDismiss
                     ),
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(DRAWER_WIDTH_FRACTION)
-                        .widthIn(max = DRAWER_MAX_WIDTH)
-                        // Касание по панели её не закрывает
-                        .clickable(
-                            interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
-                            indication = null,
-                            onClick = {}
-                        )
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                androidx.compose.animation.AnimatedVisibility(
+                    visibleState = shown,
+                    enter = androidx.compose.animation.slideInHorizontally { it }
                 ) {
-                    Column(Modifier.windowInsetsPadding(WindowInsets.safeDrawing), content = content)
+                    Surface(
+                        color = com.ogneliss.dialer.ui.components.sheetContainerColor(),
+                        // Скруглён левый край — тот, которым панель «выезжает»
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(
+                            topStart = DRAWER_CORNER, bottomStart = DRAWER_CORNER
+                        ),
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth(DRAWER_WIDTH_FRACTION)
+                            .widthIn(max = DRAWER_MAX_WIDTH)
+                            // Касание по панели её не закрывает
+                            .clickable(
+                                interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
+                                indication = null,
+                                onClick = {}
+                            )
+                    ) {
+                        Column(Modifier.windowInsetsPadding(WindowInsets.safeDrawing), content = content)
+                    }
                 }
             }
         }

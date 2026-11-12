@@ -1,14 +1,19 @@
 package com.ogneliss.dialer.ui.components
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SelectableDates
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -18,6 +23,10 @@ import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import com.ogneliss.dialer.ui.theme.Space
 import java.text.DateFormat as JavaDateFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.util.Calendar
 import java.util.Date
 
@@ -44,11 +53,15 @@ import java.util.Date
  * Было: окно посередине с серыми плитками даты и времени. Стало — стопка
  * карточек, как у всех окон выбора (CardsOverlay, CardSheetParts.kt).
  *
- * ── Почему системные окна выбора, а не свои ────────────────────────────────
- * Календарь и часы Material 3 занимают почти весь экран и требуют
- * согласия на экспериментальный API. Системные окна человек уже видел
- * в будильнике и календаре, они учитывают 12- или 24-часовой формат
- * и работают с чтением с экрана без нашей помощи.
+ * ── Календарь и часы — окна приложения (2.4.0) ─────────────────────────────
+ * Было: системные окна Android — «их человек уже видел в будильнике».
+ * Но они живут по теме системы, а не приложения (тёмное приложение —
+ * светлый календарь), со своим акцентом, и масштаб приложения на них
+ * не действует вовсе: это не Compose. Автор, 12.11.2026: «не на все
+ * действует масштаб», «как будто приложение сшито из разных кусков».
+ * Стало: календарь и часы Material в нашем окне (PickerDialog) — тема,
+ * акцент и масштаб как везде. 12- или 24-часовой формат — по системе,
+ * как и было; чтение с экрана у них своё, Material.
  */
 @Composable
 fun ReminderTimeDialog(
@@ -64,10 +77,11 @@ fun ReminderTimeDialog(
     title: String? = null,
     icon: androidx.compose.ui.graphics.vector.ImageVector = OgnelissIcons.Alarm
 ) {
-    val context = LocalContext.current
-
     // Прошедшее предзаполнение — сразу на завтра (2.1.0, разбор у CardButtons ниже)
     var target by remember(initialMillis) { mutableLongStateOf(notInPast(initialMillis)) }
+
+    // Открытое окно выбора: календарь или часы; null — ни одного
+    var picking by remember { mutableStateOf<Picking?>(null) }
 
     val dateFormat = remember { JavaDateFormat.getDateInstance(JavaDateFormat.FULL) }
     val timeFormat = remember { JavaDateFormat.getTimeInstance(JavaDateFormat.SHORT) }
@@ -76,7 +90,7 @@ fun ReminderTimeDialog(
      * 1.8.0 — КАРТОЧКАМИ, как выбор варианта перед ним и действия по долгому
      * нажатию (автор: «привести окна напоминаний и заметок к одному UI»).
      * Шапка — что и с кем; дата и время — строками, нажатие открывает
-     * системный календарь или часы; «Сохранить» — заливкой справа внизу,
+     * календарь или часы (2.4.0 — окна приложения, PickerDialog); «Сохранить» — заливкой справа внизу,
      * у большого пальца.
      */
     CardsOverlay(anchorY = LocalTouchAnchor.current?.screenY, onDismiss = onDismiss) { close ->
@@ -94,53 +108,13 @@ fun ReminderTimeDialog(
                     label = dateFormat.format(Date(target)),
                     trailing = null,
                     icon = OgnelissIcons.CalendarMonth,
-                    onClick = {
-                        val c = Calendar.getInstance().apply { timeInMillis = target }
-                        DatePickerDialog(
-                            context,
-                            { _, year, month, day ->
-                                // Без сдвига на завтра: следом обычно выбирают время,
-                                // и «сегодня в 18:00» не должно стать завтрашним
-                                target = Calendar.getInstance().apply {
-                                    timeInMillis = target
-                                    set(Calendar.YEAR, year)
-                                    set(Calendar.MONTH, month)
-                                    set(Calendar.DAY_OF_MONTH, day)
-                                }.timeInMillis
-                            },
-                            c.get(Calendar.YEAR),
-                            c.get(Calendar.MONTH),
-                            c.get(Calendar.DAY_OF_MONTH)
-                        ).apply {
-                            // Прошедшую дату выбрать нельзя: напоминание в прошлом
-                            // не сработает никогда, а понять это по молчанию телефона
-                            // невозможно
-                            datePicker.minDate = System.currentTimeMillis()
-                        }.show()
-                    }
+                    onClick = { picking = Picking.DATE }
                 )
                 CardChoiceRow(
                     label = timeFormat.format(Date(target)),
                     trailing = null,
                     icon = OgnelissIcons.Schedule,
-                    onClick = {
-                        val c = Calendar.getInstance().apply { timeInMillis = target }
-                        TimePickerDialog(
-                            context,
-                            { _, hour, minute ->
-                                target = notInPast(Calendar.getInstance().apply {
-                                    timeInMillis = target
-                                    set(Calendar.HOUR_OF_DAY, hour)
-                                    set(Calendar.MINUTE, minute)
-                                    set(Calendar.SECOND, 0)
-                                    set(Calendar.MILLISECOND, 0)
-                                }.timeInMillis)
-                            },
-                            c.get(Calendar.HOUR_OF_DAY),
-                            c.get(Calendar.MINUTE),
-                            DateFormat.is24HourFormat(context)
-                        ).show()
-                    }
+                    onClick = { picking = Picking.TIME }
                 )
 
                 /*
@@ -163,6 +137,106 @@ fun ReminderTimeDialog(
                 )
             }
         }
+    }
+    when (picking) {
+        Picking.DATE -> ReminderDatePicker(
+            target = target,
+            onPick = { target = it; picking = null },
+            onDismiss = { picking = null }
+        )
+        Picking.TIME -> ReminderTimePicker(
+            target = target,
+            onPick = { target = it; picking = null },
+            onDismiss = { picking = null }
+        )
+        null -> Unit
+    }
+}
+
+/** Какое окно выбора открыто поверх карточек. */
+private enum class Picking { DATE, TIME }
+
+/**
+ * Календарь (2.4.0). Календарь Material считает в UTC: день из него —
+ * по UTC, время суток остаётся прежним, местным. Прошедшие дни
+ * не выбираются: напоминание в прошлом не сработает никогда.
+ * Без сдвига на завтра: следом обычно выбирают время, и «сегодня
+ * в 18:00» не должно стать завтрашним.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ReminderDatePicker(target: Long, onPick: (Long) -> Unit, onDismiss: () -> Unit) {
+    val zone = ZoneId.systemDefault()
+    val today = remember { LocalDate.now(zone) }
+    val state = rememberDatePickerState(
+        initialSelectedDateMillis = Instant.ofEpochMilli(target).atZone(zone).toLocalDate()
+            .atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli(),
+        selectableDates = remember(today) {
+            object : SelectableDates {
+                override fun isSelectableDate(utcTimeMillis: Long): Boolean =
+                    !Instant.ofEpochMilli(utcTimeMillis).atZone(ZoneOffset.UTC).toLocalDate().isBefore(today)
+
+                override fun isSelectableYear(year: Int): Boolean = year >= today.year
+            }
+        }
+    )
+    PickerDialog(
+        onDismissRequest = onDismiss,
+        confirmLabel = stringResource(R.string.contact_edit_pick),
+        onConfirm = {
+            val millis = state.selectedDateMillis
+            if (millis == null) onDismiss() else {
+                val day = Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
+                onPick(
+                    Calendar.getInstance().apply {
+                        timeInMillis = target
+                        set(Calendar.YEAR, day.year)
+                        set(Calendar.MONTH, day.monthValue - 1)
+                        set(Calendar.DAY_OF_MONTH, day.dayOfMonth)
+                    }.timeInMillis
+                )
+            }
+        },
+        dismissLabel = stringResource(R.string.nav_cancel)
+    ) {
+        DatePicker(state = state, title = null)
+    }
+}
+
+/**
+ * Часы (2.4.0): 12- или 24-часовой формат — как в системе. Прошедшее
+ * время сегодня — то же время завтра (notInPast), как и было.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ReminderTimePicker(target: Long, onPick: (Long) -> Unit, onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    val start = remember(target) { Calendar.getInstance().apply { timeInMillis = target } }
+    val state = rememberTimePickerState(
+        initialHour = start.get(Calendar.HOUR_OF_DAY),
+        initialMinute = start.get(Calendar.MINUTE),
+        is24Hour = DateFormat.is24HourFormat(context)
+    )
+    PickerDialog(
+        onDismissRequest = onDismiss,
+        confirmLabel = stringResource(R.string.contact_edit_pick),
+        onConfirm = {
+            onPick(
+                notInPast(
+                    Calendar.getInstance().apply {
+                        timeInMillis = target
+                        set(Calendar.HOUR_OF_DAY, state.hour)
+                        set(Calendar.MINUTE, state.minute)
+                        set(Calendar.SECOND, 0)
+                        set(Calendar.MILLISECOND, 0)
+                    }.timeInMillis
+                )
+            )
+        },
+        dismissLabel = stringResource(R.string.nav_cancel)
+    ) {
+        // Часы уже календаря: по краям — воздух, как в окне часов Material
+        TimePicker(state = state, modifier = Modifier.padding(start = Space.l, end = Space.l, top = Space.l))
     }
 }
 
