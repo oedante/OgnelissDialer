@@ -587,7 +587,7 @@
     <string name="settings_group_diagnostics">Diagnose</string>
     <string name="settings_group_reset">Zurücksetzen</string>
     <!-- Короткие подписи под кнопками нижней панели -->
-    <string name="bar_menu">Mehr</string>
+    <string name="bar_menu">Menü</string>
     <string name="bar_exit">Beenden</string>
     <!-- Вторая линия и конференция на экране вызова -->
     <string name="incall_add_call">Anruf hinzufügen</string>
@@ -981,7 +981,6 @@
     <string name="menu_pin_home">Auf den Startbildschirm</string>
     <string name="widget_sms_description">SMS-Symbol mit Anzahl ungelesener Nachrichten</string>
     <string name="widget_contacts_description">Öffnet „Kontakte“ in Ogneliss Dialer</string>
-    <string name="menu_section_list">Liste</string>
     <string name="menu_section_tools">Werkzeuge</string>
     <string name="selection_short_all">Alle</string>
     <string name="selection_short_block">Sperren</string>
@@ -1048,4 +1047,5 @@
     <string name="settings_value_percent">%1$s · %2$d %%</string>
     <string name="ui_scale_85" formatted="false">85 %</string>
     <string name="ui_scale_95" formatted="false">95 %</string>
+    <string name="topbar_list_actions">Listenaktionen</string>
 </resources>

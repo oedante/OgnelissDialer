@@ -6,6 +6,8 @@ import com.ogneliss.dialer.ui.theme.listName
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.settings.ThemeMode
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -45,14 +47,24 @@ import androidx.compose.ui.text.withStyle
  */
 
 /**
- * Главное меню.
+ * МЕНЮ — ПАНЕЛЬЮ СПРАВА, КАК В OGNELISS MAIL (2.2.1).
  *
- * Выпадающее от своей кнопки, а не диалог по центру экрана.
- * Разрушительное действие внизу и отделено чертой.
- * Переключение темы находится внутри меню.
+ * ══════════════════════════════════════════════════════════════════════════
+ * ЧТО И ПОЧЕМУ
+ * ══════════════════════════════════════════════════════════════════════════
+ * Автор, 11.11.2026: «за референс UI возьмём Ogneliss Mail… чтобы эти два
+ * приложения были полностью похожи по UI и организации элементов и данных».
+ * В почте правая кнопка нижней панели — «Меню»: панель выезжает справа,
+ * сверху — «Папки» списком, ниже — «Избранное» плитками. Здесь то же:
+ * • [header] — «Папки» раздела SMS (в журнале и контактах папок нет);
+ * • плитки — «Инструменты» и «Приложение», прижаты к низу: под большим
+ *   пальцем, как «Избранное» в почте.
+ *
+ * Было (2.1.0–2.2.0): шторка снизу с тремя группами плиток. Группа «Список»
+ * (поиск, фильтры, выбор, архив, очистка журнала) переехала в шапку раздела
+ * (SectionTopBar), как в почте: действия над списком — у списка, а меню —
+ * про то, куда перейти.
  */
-// ModalBottomSheet в Material 3 1.3 ещё помечен как экспериментальный
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun OverflowMenu(
     expanded: Boolean,
@@ -62,25 +74,9 @@ internal fun OverflowMenu(
     onOwnNumber: (() -> Unit)? = {},
     /** Фото своего контакта из книги (2.0.0); null — значок. */
     ownPhotoUri: String? = null,
-    /**
-     * Поиск и фильтры списка (2.0.0): переехали с нижней панели, где
-     * теперь разделы. null — пункта нет.
-     */
-    onSearch: (() -> Unit)? = null,
-    onFilters: (() -> Unit)? = null,
-    /** Число включённых условий фильтра; null — фильтр выключен. */
-    filterBadge: String? = null,
     onDismiss: () -> Unit,
-    /**
-     * Фильтры журнала.
-     *
-     * Переехали сюда с нижней панели: значок занимал там место
-     * постоянно, а включают их несколько раз в неделю.
-     */
     settings: com.ogneliss.dialer.ui.SettingsState,
     onThemeToggle: () -> Unit,
-    /** Очистить журнал; null — пункта нет (меню контактов, 1.6.0). */
-    onClearLog: (() -> Unit)?,
     onSettings: () -> Unit,
     /** Псевдозвонок: выбор, когда «позвонить». */
     onFakeCall: () -> Unit,
@@ -88,75 +84,20 @@ internal fun OverflowMenu(
     onNotes: () -> Unit,
     /** Экран напоминаний. */
     onReminders: () -> Unit,
-    /** Выбрать несколько; null — пункта нет (меню контактов, 1.6.0). */
-    onStartSelection: (() -> Unit)?,
-    selectionActive: Boolean = false,
-    /**
-     * «Создать контакт» — в меню контактов (1.6.0): кнопка «Добавить»
-     * стояла в их верхней строке, а верхней строки больше нет.
-     * null — пункта нет (журнал).
-     */
-    onAddContact: (() -> Unit)? = null,
     /**
      * «Вопросы и ответы» (1.6.0) — после «Настроек»: с вопросом идут
      * в меню, и ответ должен быть там же, а не на сайте.
      */
     onHelp: (() -> Unit)? = null,
     /**
-     * «Архив» (2.1.0): записи, убранные из журнала или SMS режимом выбора.
-     * null — пункта нет.
-     */
-    onArchive: (() -> Unit)? = null,
-    /**
      * «Значок на главный экран» (2.1.0): значок раздела со счётчиком —
      * widget/SectionWidgets. null — пункта нет (журнал; лаунчер не умеет).
      */
     onPinToHome: (() -> Unit)? = null,
-    /**
-     * Своё над плитками (2.2.0): папки SMS — как «Папки» над «Избранным»
-     * в меню Ogneliss Mail. null — только плитки.
-     */
+    /** Своё над плитками (2.2.0): «Папки» раздела SMS. null — только плитки. */
     header: (@Composable ColumnScope.() -> Unit)? = null
 ) {
-    /*
-     * ПОРЯДОК ПУНКТОВ МЕНЮ.
-     *
-     * ══════════════════════════════════════════════════════════════════════
-     * ПО ЧАСТОТЕ И ПО СМЫСЛУ, А НЕ ПО ИСТОРИИ ДОБАВЛЕНИЯ
-     * ══════════════════════════════════════════════════════════════════════
-     * Раньше пункты лежали в том порядке, в каком появлялись в коде.
-     * Теперь сгруппированы, и группы разделены линиями:
-     *
-     *   1. Псевдозвонок — единственный пункт, который нажимают
-     *      в спешке и не глядя. Первым, под большим пальцем.
-     *   2. Тема — переключатель, которым пользуются чаще прочего.
-     *   3. Мой контакт, заметки, напоминания — переходы к своим
-     *      данным.
-     *   4. Выбрать несколько, настройки — режимы и управление.
-     *   5. Очистить журнал — необратимое, отдельно и красным.
-     *
-     * ⚠️ «Очистить журнал» остаётся последним и за линией: пункт,
-     * который нельзя отменить, не должен оказаться рядом с тем,
-     * что нажимают часто.
-     */
-    /*
-     * ══════════════════════════════════════════════════════════════════════
-     * «ЕЩЁ» — ШТОРКА С ГРУППАМИ, А НЕ ВЫПАДАЮЩЕЕ МЕНЮ (1.2.1)
-     * ══════════════════════════════════════════════════════════════════════
-     * Было стандартное выпадающее меню: углы 4 dp и тень — единственный
-     * такой элемент в приложении, где скругления крупные, а теней нет.
-     * Выпадало от кнопки внизу, а выглядело как меню верхней строки.
-     *
-     * Теперь — шторка снизу, как у меню долгого нажатия: появляется
-     * там, где палец, и выглядит так же. Порядок и смысл групп прежние:
-     *
-     *   1. Псевдозвонок и свой номер — быстрые действия;
-     *   2. заметки, напоминания, выбор нескольких — свои данные и режимы;
-     *   3. тема и настройки — управление;
-     *   4. очистить журнал — необратимое, отдельно и красным.
-     */
     if (!expanded) return
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val fakeCallLabel = stringResource(R.string.fake_call_title)
     val ownLabel = stringResource(
@@ -164,52 +105,14 @@ internal fun OverflowMenu(
     )
     val notesLabel = stringResource(R.string.nav_notes)
     val remindersLabel = stringResource(R.string.nav_reminders)
-    val selectionLabel = stringResource(
-        if (selectionActive) R.string.selection_exit else R.string.selection_start
-    )
     val themeLabel = stringResource(
         if (settings.theme == ThemeMode.DARK) R.string.menu_theme_light else R.string.menu_theme_dark
     )
     val settingsLabel = stringResource(R.string.nav_settings)
     val helpLabel = stringResource(R.string.faq_title)
-    val clearLabel = stringResource(R.string.log_clear_all)
 
-    ModalBottomSheet(
-        // Страница настроек, группы — белыми карточками (1.6.1, SheetGroup)
-        containerColor = com.ogneliss.dialer.ui.components.sheetContainerColor(),
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        contentWindowInsets = { WindowInsets.navigationBars }
-    ) {
-        /*
-         * «ЕЩЁ» — ПЛИТКАМИ (2.1.0). Автор, 08.11.2026: «меню „Ещё“ сделаем
-         * не списком, а панелями — несколько в одном ряду, а то очень
-         * большое меню». Было: 12 строк по 56 dp в четырёх группах — шторка
-         * во весь экран. Стало: круглые кнопки с подписью, как быстрые
-         * действия карточек долгого нажатия (ActionCircle), по 4 в ряд
-         * (на широком экране — больше), одной карточкой. Порядок — по частоте:
-         * список (поиск, фильтры), свои данные и разделы, приложение.
-         * «Очистить журнал» — по-прежнему отдельной красной строкой внизу:
-         * необратимое не стоит в одном ряду с частым.
-         */
+    EndDrawer(onDismiss = onDismiss) {
         val tiles = buildList {
-            // Список: что сделать с этим списком
-            if (onAddContact != null) add(MenuTile(MenuGroup.LIST, OgnelissIcons.PersonAdd, stringResource(R.string.action_create_contact), onAddContact))
-            if (onSearch != null) add(MenuTile(MenuGroup.LIST, OgnelissIcons.Search, stringResource(R.string.nav_search), onSearch))
-            if (onFilters != null) add(
-                MenuTile(
-                    MenuGroup.LIST,
-                    OgnelissIcons.FilterList,
-                    // «Фильтры · 2» — коротко: подпись плитки в две строки
-                    stringResource(R.string.filter_title) + (filterBadge?.let { " · $it" } ?: ""),
-                    onFilters,
-                    selected = filterBadge != null
-                )
-            )
-            if (onStartSelection != null) add(
-                MenuTile(MenuGroup.LIST, if (selectionActive) OgnelissIcons.Close else OgnelissIcons.Checklist, selectionLabel, onStartSelection)
-            )
-            if (onArchive != null) add(MenuTile(MenuGroup.LIST, OgnelissIcons.Archive, stringResource(R.string.archive_title), onArchive))
             // Инструменты: своё и вспомогательные разделы
             if (onOwnNumber != null) add(MenuTile(MenuGroup.TOOLS, OgnelissIcons.Person, ownLabel, onOwnNumber, photoUri = ownPhotoUri))
             add(MenuTile(MenuGroup.TOOLS, OgnelissIcons.PhoneCallback, fakeCallLabel, onFakeCall))
@@ -228,78 +131,164 @@ internal fun OverflowMenu(
             if (onHelp != null) add(MenuTile(MenuGroup.APP, OgnelissIcons.Help, helpLabel, onHelp))
             if (onPinToHome != null) add(MenuTile(MenuGroup.APP, OgnelissIcons.AddToHomeScreen, stringResource(R.string.menu_pin_home), onPinToHome))
         }
-        if (header == null) {
-            OverflowMenuBody(tiles, clearLabel, onClearLog)
-        } else {
-            // С папками шторка выше экрана телефона — листается целиком
-            Column(Modifier.verticalScroll(rememberScrollState())) {
-                header()
-                OverflowMenuBody(tiles, clearLabel, onClearLog)
+        // Папки — сверху и листаются, если не помещаются; плитки — у нижнего края
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+            if (header != null) header()
+        }
+        OverflowMenuBody(tiles)
+    }
+}
+
+/**
+ * Панель у правого края во всю высоту — как выдвижное меню почты (endDrawer):
+ * выезжает справа, остальной экран затемнён, касание по затемнению или
+ * «Назад» закрывает. Ширина — как у почты: не шире 360 dp и не шире 86 %
+ * экрана (слева остаётся полоса списка — видно, куда вернёшься).
+ */
+@Composable
+private fun EndDrawer(onDismiss: () -> Unit, content: @Composable ColumnScope.() -> Unit) {
+    val shown = remember { androidx.compose.animation.core.MutableTransitionState(false).apply { targetState = true } }
+    androidx.compose.ui.window.Dialog(
+        onDismissRequest = onDismiss,
+        properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .clickable(
+                    interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
+                    indication = null,
+                    onClickLabel = stringResource(R.string.nav_close),
+                    onClick = onDismiss
+                ),
+            contentAlignment = Alignment.CenterEnd
+        ) {
+            androidx.compose.animation.AnimatedVisibility(
+                visibleState = shown,
+                enter = androidx.compose.animation.slideInHorizontally { it }
+            ) {
+                Surface(
+                    color = com.ogneliss.dialer.ui.components.sheetContainerColor(),
+                    // Скруглён левый край — тот, которым панель «выезжает»
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(
+                        topStart = DRAWER_CORNER, bottomStart = DRAWER_CORNER
+                    ),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(DRAWER_WIDTH_FRACTION)
+                        .widthIn(max = DRAWER_MAX_WIDTH)
+                        // Касание по панели её не закрывает
+                        .clickable(
+                            interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
+                            indication = null,
+                            onClick = {}
+                        )
+                ) {
+                    Column(Modifier.windowInsetsPadding(WindowInsets.safeDrawing), content = content)
+                }
             }
         }
     }
 }
 
-/** Содержимое «Ещё» (2.1.0): плитки одной карточкой и «Очистить журнал» отдельно. */
+/** Ширина меню: доля экрана и предел — как у выдвижного меню почты. */
+private const val DRAWER_WIDTH_FRACTION = 0.86f
+private val DRAWER_MAX_WIDTH = 360.dp
+
+/** Скругление выезжающего края — радиус шторки (28 dp). */
+private val DRAWER_CORNER = 28.dp
+
+/**
+ * ПЛИТКИ МЕНЮ — КАК «ИЗБРАННОЕ» В МЕНЮ OGNELISS MAIL (2.2.1, `tile_grid.dart`).
+ *
+ * Сетка в четыре колонки, зазор 6 dp, высота плитки 56 dp, скругление 8 dp:
+ * плитка с подписью занимает две колонки (значок сверху слева, подпись снизу),
+ * плитка-значок — одну. Сначала инструменты с подписями, затем значки
+ * приложения (тема, настройки, вопросы, значок на главный экран) — у почты
+ * так же: разделы с подписями и ряд значков под ними.
+ *
+ * Было (2.1.0–2.2.0): круги с подписью под ними, по группам в белых карточках.
+ */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-internal fun OverflowMenuBody(tiles: List<MenuTile>, clearLabel: String, onClearLog: (() -> Unit)?) {
-    // Колонок — по ширине: 4 на телефоне, больше на широком окне (плитка ≈ 88 dp)
-    val columns = (androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp / 88).coerceIn(4, 6)
-    Column(Modifier.padding(bottom = Space.l)) {
-        /*
-         * Категории (автор, 08.11.2026: «разбивать по категориям, а внутри
-         * плитки — иначе люди запутаются»). Каждая — подпись и, как правило,
-         * ОДИН ряд из четырёх: колонки совпадают между категориями,
-         * у пункта постоянное место — меню запоминается «по месту».
-         */
-        MenuGroup.entries.forEach { group ->
-            val groupTiles = tiles.filter { it.group == group }
-            if (groupTiles.isEmpty()) return@forEach
-            SheetGroup(title = stringResource(group.titleRes), first = group.ordinal == 0) {
-                Column(Modifier.padding(horizontal = Space.xs, vertical = Space.s)) {
-                    groupTiles.chunked(columns).forEach { row ->
-                        Row(Modifier.fillMaxWidth().padding(vertical = Space.xxs)) {
-                            row.forEach { tile ->
-                                com.ogneliss.dialer.ui.components.ActionCircle(
-                                    com.ogneliss.dialer.ui.components.CardAction(
-                                        tile.icon, tile.label, onClick = tile.onClick,
-                                        tint = if (tile.selected) MaterialTheme.colorScheme.primary else null
-                                    ),
-                                    Modifier.weight(1f),
-                                    selected = tile.selected,
-                                    circleContent = tile.photoUri?.takeIf { it.isNotBlank() }?.let { uri ->
-                                        { RowAvatar(uri, size = 48.dp) }
-                                    },
-                                    onClick = tile.onClick
-                                )
-                            }
-                            repeat(columns - row.size) { Spacer(Modifier.weight(1f)) }
-                        }
-                    }
+internal fun OverflowMenuBody(tiles: List<MenuTile>) {
+    Column(Modifier.fillMaxWidth()) {
+        // Линия над плитками — граница частей меню, как над «Избранным» почты
+        com.ogneliss.dialer.ui.components.OgnelissDivider()
+        com.ogneliss.dialer.ui.components.SectionBand(stringResource(R.string.menu_section_tools))
+        BoxWithConstraints(
+            Modifier.fillMaxWidth().padding(start = Space.m, end = Space.m, top = Space.xs, bottom = Space.m)
+        ) {
+            val cell = (maxWidth - TILE_GAP * (MENU_COLUMNS - 1)) / MENU_COLUMNS
+            // Сначала с подписями, потом значки — порядок внутри групп сохраняется
+            val ordered = tiles.sortedBy { it.group.ordinal }
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(TILE_GAP),
+                verticalArrangement = Arrangement.spacedBy(TILE_GAP)
+            ) {
+                ordered.forEach { tile ->
+                    val iconOnly = tile.group == MenuGroup.APP
+                    MenuTileBox(tile, iconOnly, Modifier.size(if (iconOnly) cell else cell * 2 + TILE_GAP, TILE_HEIGHT))
                 }
             }
         }
-        if (onClearLog != null) {
-            SheetGroup {
-                SheetRow(
-                    OgnelissIcons.DeleteSweep,
-                    clearLabel,
-                    color = MaterialTheme.colorScheme.error,
-                    onClick = onClearLog
+    }
+}
+
+/** Одна плитка меню: с подписью (значок сверху, подпись снизу) или только значок по центру. */
+@Composable
+private fun MenuTileBox(tile: MenuTile, iconOnly: Boolean, modifier: Modifier) {
+    val scheme = MaterialTheme.colorScheme
+    val fg = if (tile.selected) scheme.primary else scheme.onSurface.copy(alpha = 0.85f)
+    Surface(
+        color = if (tile.selected) scheme.secondaryContainer else scheme.surfaceContainerHigh,
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(TILE_CORNER),
+        modifier = modifier
+            .clip(androidx.compose.foundation.shape.RoundedCornerShape(TILE_CORNER))
+            // Значок без подписи — подпись читает TalkBack
+            .clickable(onClickLabel = tile.label, role = androidx.compose.ui.semantics.Role.Button, onClick = tile.onClick)
+    ) {
+        if (iconOnly) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(tile.icon, contentDescription = tile.label, tint = fg)
+            }
+        } else {
+            Column(
+                Modifier.padding(start = Space.s + Space.xxs, end = Space.s, top = Space.s - Space.xxs, bottom = Space.s - Space.xxs),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Своё фото — на месте значка «Мой контакт»
+                val photo = tile.photoUri?.takeIf { it.isNotBlank() }
+                if (photo != null) RowAvatar(photo, size = TILE_ICON)
+                else Icon(tile.icon, contentDescription = null, tint = fg, modifier = Modifier.size(TILE_ICON))
+                Text(
+                    tile.label,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = fg,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
     }
 }
 
-/** Категории «Ещё» (2.1.0) — в этом порядке, у каждой своя подпись. */
-internal enum class MenuGroup(@androidx.annotation.StringRes val titleRes: Int) {
-    LIST(R.string.menu_section_list),
-    TOOLS(R.string.menu_section_tools),
-    APP(R.string.menu_section_app)
+/** Колонок в сетке плиток, зазор, высота, скругление и значок — числа `TileGrid` почты. */
+private const val MENU_COLUMNS = 4
+private val TILE_GAP = 6.dp
+private val TILE_HEIGHT = 56.dp
+private val TILE_CORNER = 8.dp
+private val TILE_ICON = 20.dp
+
+/**
+ * Группы плиток меню: TOOLS — с подписью (две колонки), APP — значком (одна).
+ */
+internal enum class MenuGroup {
+    TOOLS,
+    APP
 }
 
-/** Плитка «Ещё» (2.1.0): категория, значок или фото, подпись, действие. */
+/** Плитка меню (2.1.0): группа, значок или фото, подпись, действие. */
 internal class MenuTile(
     val group: MenuGroup,
     val icon: androidx.compose.ui.graphics.vector.ImageVector,

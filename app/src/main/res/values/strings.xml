@@ -615,7 +615,7 @@
     <string name="settings_group_diagnostics">Diagnostics</string>
     <string name="settings_group_reset">Reset</string>
     <!-- Короткие подписи под кнопками нижней панели -->
-    <string name="bar_menu">More</string>
+    <string name="bar_menu">Menu</string>
     <string name="bar_exit">Exit</string>
     <!-- Вторая линия и конференция на экране вызова -->
     <string name="incall_add_call">Add call</string>
@@ -1010,7 +1010,6 @@
     <string name="menu_pin_home">To home screen</string>
     <string name="widget_sms_description">SMS icon with the number of unread messages</string>
     <string name="widget_contacts_description">Opens Contacts in Ogneliss Dialer</string>
-    <string name="menu_section_list">List</string>
     <string name="menu_section_tools">Tools</string>
     <string name="selection_short_all">All</string>
     <string name="selection_short_block">Block</string>
@@ -1077,4 +1076,5 @@
     <string name="settings_value_percent">%1$s · %2$d%%</string>
     <string name="ui_scale_85" formatted="false">85%</string>
     <string name="ui_scale_95" formatted="false">95%</string>
+    <string name="topbar_list_actions">List actions</string>
 </resources>

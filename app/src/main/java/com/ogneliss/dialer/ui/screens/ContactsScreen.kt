@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.SectionTopBar
 import com.ogneliss.dialer.ui.components.scrollEdgeFade
 import com.ogneliss.dialer.ui.components.ActionIconButton
 import com.ogneliss.dialer.ui.theme.listName
@@ -624,6 +625,13 @@ fun ContactsScreen(
          * и заголовок с задачей там на месте.
          */
         topBar = {
+            // Шапка раздела — как в Ogneliss Mail (2.2.1, SectionTopBar): поиск и фильтр — у списка
+            if (!pickForPinning) SectionTopBar(
+                title = stringResource(R.string.nav_contacts),
+                onSearch = { searching = true },
+                onFilter = { contactFiltersOpen = true },
+                filterActive = contactFilter != ContactFilter.ALL
+            )
             if (pickForPinning) TopAppBar(
                 // Заголовок остаётся заголовком: поле поиска переехало
                 // в нижнюю панель, где до него дотягивается большой палец
@@ -712,10 +720,6 @@ fun ContactsScreen(
                             // Своего номера, очистки журнала и выбора нескольких
                             // у контактов нет — пункты журнала
                             onOwnNumber = null,
-                            // Поиск и фильтры контактов — здесь (2.0.0)
-                            onSearch = { menuOpen = false; searching = true },
-                            onFilters = { menuOpen = false; contactFiltersOpen = true },
-                            filterBadge = "1".takeIf { contactFilter != ContactFilter.ALL },
                             onThemeToggle = {
                                 vm.setChoice(
                                     "theme",
@@ -724,14 +728,10 @@ fun ContactsScreen(
                                 )
                                 menuOpen = false
                             },
-                            onClearLog = null,
                             onSettings = { menuOpen = false; onOpenSettings() },
                             onFakeCall = { menuOpen = false; onFakeCall() },
                             onNotes = { menuOpen = false; onOpenNotes() },
                             onReminders = { menuOpen = false; onOpenReminders() },
-                            onStartSelection = null,
-                            // 2.1.3: «Создать контакт» — в центре панели, в меню не дублируется
-                            onAddContact = null,
                             onHelp = { menuOpen = false; onOpenHelp() },
                             // 2.1.0: значок «Контакты» на главный экран (SectionWidgets)
                             onPinToHome = pinToHome

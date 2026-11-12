@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.conversation
 
+import com.ogneliss.dialer.ui.components.SectionTopBar
+import com.ogneliss.dialer.ui.components.TopBarMenuItem
 import com.ogneliss.dialer.ui.components.scrollEdgeFade
 import android.text.format.DateUtils
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -407,6 +409,26 @@ fun MessagesScreen(
         contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
             when {
+                /*
+                 * Шапка раздела — как в Ogneliss Mail (2.2.1, SectionTopBar):
+                 * название открытой папки («SMS» — все), поиск и действия над
+                 * списком. Папку меняют в «Меню» — как в почте. В режиме
+                 * «Кому» шапки нет: экран занят подсказками.
+                 */
+                !showArchive && !composeNew -> SectionTopBar(
+                    title = stringResource(if (folder == SmsFolder.ALL) R.string.nav_messages else smsFolderLabel(folder)),
+                    subtitle = if (folder == SmsFolder.ALL) null else stringResource(R.string.nav_messages),
+                    onSearch = if (state.isDefaultSms) { { searching = true } } else null,
+                    menu = if (state.isDefaultSms) listOf(
+                        TopBarMenuItem(
+                            if (selection.isActive) OgnelissIcons.Close else OgnelissIcons.Checklist,
+                            stringResource(if (selection.isActive) R.string.selection_exit else R.string.selection_start)
+                        ) { if (selection.isActive) selection.clear() else selection.startEmpty() },
+                        TopBarMenuItem(OgnelissIcons.Archive, stringResource(R.string.archive_title)) {
+                            selection.clear(); showArchive = true
+                        }
+                    ) else emptyList()
+                )
                 // Архив — своей строкой заголовка со стрелкой назад
                 showArchive -> TopAppBar(
                     title = { Text(stringResource(R.string.archive_title)) },
@@ -493,7 +515,6 @@ fun MessagesScreen(
                         onDismiss = { menuOpen = false },
                         settings = settings,
                         onOwnNumber = null,
-                        onSearch = { menuOpen = false; searching = true },
                         onThemeToggle = {
                             vm.setChoice(
                                 "theme",
@@ -501,16 +522,13 @@ fun MessagesScreen(
                             )
                             menuOpen = false
                         },
-                        onClearLog = null,
                         onSettings = { menuOpen = false; onOpenSettings() },
                         onFakeCall = { menuOpen = false; onFakeCall() },
                         onNotes = { menuOpen = false; onOpenNotes() },
                         onReminders = { menuOpen = false; onOpenReminders() },
-                        onStartSelection = null,
                         onHelp = { menuOpen = false; onOpenHelp() },
                         // 2.1.0: значок «SMS» со счётчиком на главный экран (SectionWidgets)
                         onPinToHome = pinToHome,
-                        onArchive = { menuOpen = false; selection.clear(); showArchive = true },
                         // Папки (2.2.0) — над плитками, как «Папки» в меню почты
                         header = if (state.isDefaultSms && visibleFolders.size > 1) {
                             {
@@ -566,10 +584,6 @@ fun MessagesScreen(
                         }
                     }
                 }
-            // Открытая папка — названием над списком, как папка в почте (2.2.0)
-            if (state.isDefaultSms && !showArchive && !selection.isActive && query.isBlank() && folder != SmsFolder.ALL) {
-                FolderTitleRow(folder) { folderName = SmsFolder.ALL.name }
-            }
             Box(Modifier.weight(1f).fillMaxWidth()) {
                 /*
                  * Три состояния: нет роли SMS — приложение SMS человека и роль

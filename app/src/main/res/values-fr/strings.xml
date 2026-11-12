@@ -585,7 +585,7 @@
     <string name="settings_group_diagnostics">Diagnostic</string>
     <string name="settings_group_reset">Réinitialisation</string>
     <!-- Короткие подписи под кнопками нижней панели -->
-    <string name="bar_menu">Plus</string>
+    <string name="bar_menu">Menu</string>
     <string name="bar_exit">Quitter</string>
     <!-- Вторая линия и конференция на экране вызова -->
     <string name="incall_add_call">Ajouter un appel</string>
@@ -980,7 +980,6 @@
     <string name="menu_pin_home">Sur l’écran d’accueil</string>
     <string name="widget_sms_description">Icône SMS avec le nombre de messages non lus</string>
     <string name="widget_contacts_description">Ouvre « Contacts » dans Ogneliss Dialer</string>
-    <string name="menu_section_list">Liste</string>
     <string name="menu_section_tools">Outils</string>
     <string name="selection_short_all">Tout</string>
     <string name="selection_short_block">Bloquer</string>
@@ -1047,4 +1046,5 @@
     <string name="settings_value_percent">%1$s · %2$d %%</string>
     <string name="ui_scale_85" formatted="false">85 %</string>
     <string name="ui_scale_95" formatted="false">95 %</string>
+    <string name="topbar_list_actions">Actions sur la liste</string>
 </resources>
