@@ -292,8 +292,9 @@ class OgnelissInCallService : InCallService() {
         else Logger.i(TAG, "Входящий: экран ${if (screenOff) "выключен" else "включён"}${if (locked) ", заблокирован" else ""}")
         if (ringing && !com.ogneliss.dialer.util.IncomingCallAccess.fullScreenAllowed(this)) Logger.w(TAG, "Полноэкранные уведомления запрещены — на блокировке входящий будет только плашкой")
         if (ringing) IncomingScreen.startRinging(this)
-        // Во время разговора экран погашен датчиком у уха — не будим (2.2.3, IncomingScreen.duringAnotherCall)
-        if (screenOff && !IncomingScreen.duringAnotherCall()) IncomingScreen.wake(this, number)
+        // Во время разговора экран погашен датчиком у уха — не будим (2.2.3, IncomingScreen.talkingNow);
+        // первый вызов на удержании (телефон отложен) — будим, как обычно (2.3.0)
+        if (screenOff && !IncomingScreen.talkingNow()) IncomingScreen.wake(this, number)
 
         /*
          * ИСХОДЯЩИЙ И ИДУЩИЙ ВЫЗОВ — СРАЗУ ЭКРАН (служба и уведомление
@@ -446,6 +447,12 @@ class OgnelissInCallService : InCallService() {
         val e164 = PhoneFormatter.toE164(CallDetailsCompat.number(details).orEmpty())
         if (e164.isBlank()) return
         appScope.launch(Dispatchers.IO) { networkNames.remember(e164, name) }
+    }
+
+    /** Можно ли добавить вызов — плитка «Добавить» на экране вызова (2.3.0, CallManager.canAddCall). */
+    override fun onCanAddCallChanged(canAddCall: Boolean) {
+        super.onCanAddCallChanged(canAddCall)
+        CallManager.canAddCallChanged()
     }
 
     override fun onCallRemoved(call: Call) {

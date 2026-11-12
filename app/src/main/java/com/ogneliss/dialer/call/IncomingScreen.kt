@@ -418,6 +418,20 @@ internal object IncomingScreen {
         }
     }
 
+    /**
+     * Идёт разговор или набор — телефон, скорее всего, у уха (2.3.0).
+     * Отличие от [duringAnotherCall]: удержанный вызов не в счёт — на
+     * удержании телефон обычно отложен, и второй входящий должен включить
+     * экран (в 2.2.3 не включал).
+     */
+    fun talkingNow(): Boolean = CallManager.calls.value.any {
+        @Suppress("DEPRECATION")
+        when (it.state) {
+            Call.STATE_ACTIVE, Call.STATE_DIALING, Call.STATE_CONNECTING -> true
+            else -> false
+        }
+    }
+
     private fun report(context: Context) {
         if (doNotDisturb(context)) {
             Logger.i(TAG, "Экран вызова не появился в «Не беспокоить» — прошивку не виню")

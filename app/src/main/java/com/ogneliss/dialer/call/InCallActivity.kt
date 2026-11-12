@@ -1375,18 +1375,32 @@ private fun InCallScreen(
                     CallStatusLine(state, call)
                     redialAttempt?.let { RedialAttemptLine(it) }
                 }
+                /*
+                 * ВТОРАЯ ЛИНИЯ НА УДЕРЖАНИИ — ПЛАШКОЙ (2.3.0, как в системном
+                 * диалере): касание переключает на неё. Было: мелкая серая
+                 * строка «На удержании: …», которую легко не заметить, —
+                 * а забытый на удержании собеседник ждёт.
+                 */
                 secondary?.let {
                     Spacer(Modifier.height(Space.s))
-                    Text(
-                        stringResource(
-                            R.string.incall_secondary,
-                            CallDetailsCompat.contactDisplayName(it.details)
-                                ?: PhoneFormatter.format(
-                                    CallDetailsCompat.number(it.details).orEmpty()
-                                )
-                        ),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.outline
+                    androidx.compose.material3.AssistChip(
+                        onClick = { CallManager.swapCalls() },
+                        leadingIcon = {
+                            Icon(OgnelissIcons.Pause, contentDescription = null, modifier = Modifier.size(FlowUi.iconSizeInline))
+                        },
+                        label = {
+                            Text(
+                                stringResource(
+                                    R.string.incall_secondary,
+                                    CallDetailsCompat.contactDisplayName(it.details)
+                                        ?: PhoneFormatter.format(
+                                            CallDetailsCompat.number(it.details).orEmpty()
+                                        )
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     )
                 }
                 }
@@ -1916,7 +1930,7 @@ private fun ControlsRow(
      * по три (3 + 2, 3 + 3).
      */
     val buttonCount = 3 +
-        (if (canHold) 1 else 0) +
+        (if (canHold && !hasSecondary) 1 else 0) +
         (if (canAddCall) 1 else 0) +
         (if (btAvailable) 1 else 0) +
         (if (hasSecondary) 1 + (if (canMerge) 1 else 0) else 0)
@@ -1946,7 +1960,13 @@ private fun ControlsRow(
             ToggleTile(false, OgnelissIcons.Dialpad, stringResource(R.string.incall_keypad), onDialpad)
 
             // Только если сеть умеет: иначе кнопка молча не работала бы
-            if (canHold) {
+            /*
+             * Есть вторая линия на удержании — «Удержать» не показываем, её
+             * дело делает «Переключить» (2.3.0, как в системном диалере).
+             * Было: обе плитки; «Удержать» ставило на удержание обе линии,
+             * и какая станет главной, было не угадать.
+             */
+            if (canHold && !hasSecondary) {
                 ToggleTile(isHolding, OgnelissIcons.Pause, stringResource(R.string.incall_hold), onHold)
             }
 
