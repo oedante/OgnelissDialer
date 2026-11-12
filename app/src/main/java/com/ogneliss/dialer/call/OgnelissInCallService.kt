@@ -292,7 +292,8 @@ class OgnelissInCallService : InCallService() {
         else Logger.i(TAG, "Входящий: экран ${if (screenOff) "выключен" else "включён"}${if (locked) ", заблокирован" else ""}")
         if (ringing && !com.ogneliss.dialer.util.IncomingCallAccess.fullScreenAllowed(this)) Logger.w(TAG, "Полноэкранные уведомления запрещены — на блокировке входящий будет только плашкой")
         if (ringing) IncomingScreen.startRinging(this)
-        if (screenOff) IncomingScreen.wake(this, number)
+        // Во время разговора экран погашен датчиком у уха — не будим (2.2.3, IncomingScreen.duringAnotherCall)
+        if (screenOff && !IncomingScreen.duringAnotherCall()) IncomingScreen.wake(this, number)
 
         /*
          * ИСХОДЯЩИЙ И ИДУЩИЙ ВЫЗОВ — СРАЗУ ЭКРАН (служба и уведомление

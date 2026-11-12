@@ -35,7 +35,21 @@ import com.ogneliss.dialer.R
  */
 object CallNotifications {
 
-    const val CHANNEL_ONGOING = "call_ongoing"
+    /*
+     * «ТЕКУЩИЙ ВЫЗОВ» — НОВЫЙ КАНАЛ БЕЗ ЗВУКА (2.2.3).
+     *
+     * Журнал с realme RMX1851 (ColorOS, Android 10): «Канал call_ongoing
+     * со звуком: content://settings/system/notification_sound, важность 3».
+     * Канал создавался с важностью «низкая» (без звука), но прошивка держит
+     * его как обычный, со звуком уведомления, — и при начале каждого вызова
+     * могло звякать. Свойства существующего канала приложение изменить не
+     * может, поэтому, как в 1.8.1 с каналом входящих, — новый номер канала
+     * с явным «без звука и вибрации», прежний удаляется. Уведомление вызова
+     * к тому же помечено тихим (setSilent) — на случай, если прошивка
+     * вернёт звук и новому каналу.
+     */
+    const val CHANNEL_ONGOING = "call_ongoing_quiet"
+    private const val CHANNEL_ONGOING_OLD = "call_ongoing"
     /*
      * ВХОДЯЩИЕ — КАНАЛ БЕЗ ЗВУКА (1.8.1).
      *
@@ -99,7 +113,12 @@ object CallNotifications {
         runCatching { nm.deleteNotificationChannel(CHANNEL_INCOMING_OLD) }
         nm.createNotificationChannel(
             NotificationChannel(CHANNEL_ONGOING, context.getString(R.string.incall_ongoing), NotificationManager.IMPORTANCE_LOW)
+                .apply {
+                    setSound(null, null)
+                    enableVibration(false)
+                }
         )
+        runCatching { nm.deleteNotificationChannel(CHANNEL_ONGOING_OLD) }
         nm.createNotificationChannel(
             NotificationChannel(CHANNEL_MISSED, context.getString(R.string.call_missed), NotificationManager.IMPORTANCE_DEFAULT)
         )
@@ -232,6 +251,8 @@ object CallNotifications {
             // (входящий → разговор): не озвучивать повторно, даже если
             // звук каналу включили в настройках (1.8.3)
             .setOnlyAlertOnce(true)
+            // И в первый раз — без звука: мелодию играет система, а не уведомление (2.2.3)
+            .setSilent(true)
             .setContentIntent(pending(context, InCallActivity::class.java, 1))
             .addPerson(person)
         val hangup = actionIntent(context, CallControlReceiver.ACTION_HANGUP)

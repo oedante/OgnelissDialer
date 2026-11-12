@@ -117,7 +117,9 @@ class BackupManager @Inject constructor(
             Logger.i(TAG, "Резервная копия восстановлена (схема $version)")
             true
         }.getOrElse {
-            Logger.e(TAG, "Ошибка при восстановлении резервной копии", it)
+            // Выбран не тот файл (архив, APK) — не сбой приложения: одной строкой, без разбора (2.2.3)
+            if (it is org.json.JSONException) Logger.w(TAG, "Выбранный файл — не резервная копия приложения")
+            else Logger.e(TAG, "Ошибка при восстановлении резервной копии", it)
             false
         }
     }
