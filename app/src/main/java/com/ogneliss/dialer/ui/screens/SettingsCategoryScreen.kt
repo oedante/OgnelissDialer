@@ -209,6 +209,8 @@ fun SettingsCategoryScreen(
                     }
                 }
 
+                // Значок строки — как в настройках почты (2.2.2, SettingIcons.kt)
+                val rowIcon = com.ogneliss.dialer.ui.settings.settingIcon(entry.id)
                 // Строка-цель поиска: к ней прокручивают и её подсвечивают
                 val lit = entry.id == highlightedId
                 Box(
@@ -226,7 +228,8 @@ fun SettingsCategoryScreen(
                             summary = summary,
                             checked = checked,
                             dangerous = entry.dangerous,
-                            changed = isChanged(entry)
+                            changed = isChanged(entry),
+                            icon = rowIcon
                         ) { newValue ->
                             // Подтверждение только при включении опасной настройки
                             if (newValue && entry.dangerous) pendingDangerous = entry
@@ -236,6 +239,7 @@ fun SettingsCategoryScreen(
 
                     // Размер шрифта (2.2.1) — ползунком на месте, как в настройках почты
                     is SettingKind.Slider -> FontScaleRow(
+                        icon = rowIcon,
                         title = title,
                         value = state.fontScale,
                         changed = isChanged(entry),
@@ -244,6 +248,7 @@ fun SettingsCategoryScreen(
 
                     // Масштаб (2.2.1) — вариантами в ряд на месте, как в настройках почты
                     is SettingKind.Choice -> if (kind.key == "ui_scale") UiScaleRow(
+                        icon = rowIcon,
                         title = title,
                         current = state.uiScale,
                         nowPercent = com.ogneliss.dialer.settings.SettingsCommands.currentScalePercent(ctx, state),
@@ -253,6 +258,7 @@ fun SettingsCategoryScreen(
                         title = title,
                         currentValue = vm.choiceLabel(ctx, kind.key),
                         changed = isChanged(entry),
+                        icon = rowIcon,
                         onClick = { openChoice = kind.key }
                     )
 
@@ -260,6 +266,7 @@ fun SettingsCategoryScreen(
                         title = title,
                         summary = summary,
                         dangerous = entry.dangerous,
+                        icon = rowIcon,
                         onClick = {
                             when {
                                 entry.dangerous -> pendingDangerous = entry
@@ -270,6 +277,7 @@ fun SettingsCategoryScreen(
                     )
 
                     is SettingKind.SystemLink -> SettingsActionRow(
+                        icon = rowIcon,
                         title = title,
                         summary = summary ?: stringResource(R.string.settings_system_settings),
                         onClick = { onAction("system:${kind.key}") }
@@ -447,12 +455,22 @@ private const val REVEAL_HIGHLIGHT_ALPHA = 0.16f
  * сразу, пока палец ведёт: видно, каким станет текст вокруг.
  */
 @Composable
-private fun FontScaleRow(title: String, value: Float, changed: Boolean, onChange: (Float) -> Unit) {
+private fun FontScaleRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector?,
+    title: String,
+    value: Float,
+    changed: Boolean,
+    onChange: (Float) -> Unit
+) {
     val percent = Math.round(value * 100)
     androidx.compose.foundation.layout.Column(
         Modifier.fillMaxWidth().padding(horizontal = Space.l, vertical = Space.s)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
+            if (icon != null) {
+                com.ogneliss.dialer.ui.components.SettingLeadingIcon(icon)
+                androidx.compose.foundation.layout.Spacer(Modifier.padding(start = Space.l))
+            }
             Text(
                 stringResource(R.string.settings_value_percent, title, percent),
                 style = MaterialTheme.typography.bodyLarge
@@ -477,6 +495,7 @@ private fun FontScaleRow(title: String, value: Float, changed: Boolean, onChange
 @OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 private fun UiScaleRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector?,
     title: String,
     current: com.ogneliss.dialer.settings.UiScale,
     nowPercent: Int,
@@ -487,6 +506,10 @@ private fun UiScaleRow(
         Modifier.fillMaxWidth().padding(horizontal = Space.l, vertical = Space.s)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
+            if (icon != null) {
+                com.ogneliss.dialer.ui.components.SettingLeadingIcon(icon)
+                androidx.compose.foundation.layout.Spacer(Modifier.padding(start = Space.l))
+            }
             Text(title, style = MaterialTheme.typography.bodyLarge)
             if (changed) com.ogneliss.dialer.ui.components.ChangedDot()
         }

@@ -91,6 +91,8 @@ fun SettingsSwitchRow(
     dangerous: Boolean = false,
     /** Значение отличается от исходного — точка после заголовка (1.5.8). */
     changed: Boolean = false,
+    /** Значок слева, цветом акцента — как в настройках Ogneliss Mail (2.2.2). */
+    icon: ImageVector? = null,
     onChange: (Boolean) -> Unit
 ) {
     val stateText = stringResource(
@@ -114,6 +116,7 @@ fun SettingsSwitchRow(
             }
         },
         supporting = summary?.let { { Text(it) } },
+        leading = icon?.let { { SettingLeadingIcon(it) } },
         trailing = {
             // null: нажатие ловит вся строка, отдельная цель не нужна
             Switch(checked = checked, onCheckedChange = null)
@@ -134,12 +137,14 @@ fun SettingsChoiceRow(
     currentValue: String,
     /** Значение отличается от исходного — точка после заголовка (1.5.8). */
     changed: Boolean = false,
+    icon: ImageVector? = null,
     onClick: () -> Unit
 ) {
     if (!changed) {
         OgnelissListRow(
             headline = title,
             supporting = currentValue,
+            leading = icon?.let { { SettingLeadingIcon(it) } },
             onClick = onClick,
             modifier = Modifier.semantics(mergeDescendants = true) { role = Role.Button }
         )
@@ -154,6 +159,7 @@ fun SettingsChoiceRow(
             }
         },
         supporting = { Text(currentValue) },
+        leading = icon?.let { { SettingLeadingIcon(it) } },
         modifier = Modifier
             .clickable(onClick = onClick)
             .semantics(mergeDescendants = true) { role = Role.Button }
@@ -189,11 +195,14 @@ fun SettingsActionRow(
     title: String,
     summary: String?,
     dangerous: Boolean = false,
+    icon: ImageVector? = null,
     onClick: () -> Unit
 ) {
     OgnelissListRow(
         headline = title,
         supporting = summary,
+        // У разрушительного действия и значок красный — как заголовок
+        leading = icon?.let { { SettingLeadingIcon(it, if (dangerous) BlockRed else null) } },
         // Красный у разрушительных действий — тот же цвет, что
         // у блокировки: разбор в Color.kt
         headlineColor = if (dangerous) BlockRed else null,
@@ -260,3 +269,12 @@ private fun Modifier.toggleableRow(
             androidx.compose.ui.state.ToggleableState.On
         else androidx.compose.ui.state.ToggleableState.Off
     }
+
+/**
+ * Значок строки настроек — слева, цветом акцента, как `SettingsItem` почты
+ * (2.2.2). Чисто украшение: смысл несёт заголовок, TalkBack значок не читает.
+ */
+@Composable
+fun SettingLeadingIcon(icon: ImageVector, tint: androidx.compose.ui.graphics.Color? = null) {
+    Icon(icon, contentDescription = null, tint = tint ?: MaterialTheme.colorScheme.primary)
+}
