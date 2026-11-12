@@ -155,6 +155,8 @@ fun MainDialerScreen(
     val filteredByChips by vm.filteredLog.collectAsStateWithLifecycle()
     val loadingMore by vm.loadingMore.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+    // Подсказка о свайпах (2.2.2): до чтения настроек считаем показанной — без мелькания
+    val swipeHintDone by vm.prefs.swipeHintDone.collectAsStateWithLifecycle(true)
     val context = LocalContext.current
 
 
@@ -1773,6 +1775,32 @@ fun MainDialerScreen(
                      * а сегодняшние должны быть на виду. Только когда они есть
                      * и журнал показан целиком — не при поиске, отборе и выборе.
                      */
+                    /*
+                     * ПОДСКАЗКА О СВАЙПАХ — ОДИН РАЗ (2.2.2, форум и автор:
+                     * «надо краткое обучение добавить»). Говорит, что сделают
+                     * свайпы СЕЙЧАС (действия из настроек) и что строку нужно
+                     * довести и отпустить. Уходит по «Понятно» и после первого
+                     * свайпа (DialerViewModel.performSwipe).
+                     */
+                    if (!swipeHintDone && state.query.isEmpty() && !selection.isActive &&
+                        (settings.swipeRight != com.ogneliss.dialer.settings.SwipeAction.NONE ||
+                            settings.swipeLeft != com.ogneliss.dialer.settings.SwipeAction.NONE)
+                    ) {
+                        item(key = "swipe_hint", contentType = "swipe_hint") {
+                            com.ogneliss.dialer.ui.conversation.Strip(
+                                text = stringResource(
+                                    R.string.swipe_hint_text,
+                                    stringResource(com.ogneliss.dialer.settings.SettingsCommands.swipeActionLabelRes(settings.swipeRight)),
+                                    stringResource(com.ogneliss.dialer.settings.SettingsCommands.swipeActionLabelRes(settings.swipeLeft))
+                                ),
+                                icon = OgnelissIcons.Swipe,
+                                action = stringResource(R.string.swipe_hint_ok),
+                                onAction = { scope.launch { vm.prefs.setSwipeHintDone() } },
+                                critical = false
+                            )
+                        }
+                    }
+
                     if (todayReminders.isNotEmpty() && state.query.isEmpty() &&
                         !activeFilter.isActive && !selection.isActive
                     ) {

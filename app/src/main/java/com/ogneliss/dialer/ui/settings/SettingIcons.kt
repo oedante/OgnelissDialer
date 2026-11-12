@@ -93,6 +93,7 @@ internal fun settingIcon(id: String): ImageVector? = when (id) {
     "sys_default_apps" -> OgnelissIcons.PhoneAndroid
     "battery" -> OgnelissIcons.BatteryAlert
     "incoming_screen" -> OgnelissIcons.Smartphone
+    "permissions" -> OgnelissIcons.Lock
     // Защита
     "spam_overview" -> OgnelissIcons.Shield
     "block_tagged" -> OgnelissIcons.Report

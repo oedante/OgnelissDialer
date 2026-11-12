@@ -205,6 +205,10 @@ fun SettingsCategoryScreen(
                         // Выдано — «Уже разрешено» вместо пояснения (2.1.0, разбор выше)
                         entry.id == "battery" && batteryAllowed ->
                             stringResource(R.string.settings_battery_already)
+                        // Прошивка может не пропустить плашку (2.2.2) — что разрешить в телефоне
+                        entry.id == "incoming_banner" &&
+                            com.ogneliss.dialer.util.IncomingCallAccess.restrictiveShell ->
+                            stringResource(R.string.settings_incoming_banner_text_shell)
                         else -> stringResource(res)
                     }
                 }

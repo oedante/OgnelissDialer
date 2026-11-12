@@ -1062,4 +1062,7 @@
     <string name="journal_folder_incoming">Входящие</string>
     <string name="journal_folder_outgoing">Исходящие</string>
     <string name="contacts_folder_all">Все контакты</string>
+    <string name="settings_incoming_banner_text_shell">На этом телефоне плашку может не пропустить прошивка. Включая, разрешите приложению всплывающие уведомления (баннеры) в настройках уведомлений телефона. Плашка не появляется — выключите: входящий будет на весь экран</string>
+    <string name="swipe_hint_text">Проведите по строке вправо — %1$s, влево — %2$s. Доведите до конца и отпустите</string>
+    <string name="swipe_hint_ok">Понятно</string>
 </resources>

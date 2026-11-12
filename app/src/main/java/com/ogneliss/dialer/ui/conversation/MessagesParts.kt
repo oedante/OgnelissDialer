@@ -153,7 +153,7 @@ internal fun AutostartHintStrip(onOpen: () -> Unit, onDismiss: () -> Unit) {
 
 /** Полоса во всю ширину над списком: значок, строка, кнопка, крестик (по желанию). */
 @Composable
-private fun Strip(
+internal fun Strip(
     text: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     action: String,
