@@ -215,9 +215,14 @@ private fun NumberRow(
                 onLongClickLabel = stringResource(R.string.a11y_choose_sim_sms)
             ) { onSms(option.number) }
 
-            // Мессенджер — тоновый: синим он сливался с SMS (значки похожи)
+            /*
+             * Мессенджер — тоновый и своим значком (2.4.2): у Chat и Message
+             * одинаковый рисунок (облачко со строками), и рядом две кнопки
+             * читались как две SMS. Forum — два облачка, «переписка
+             * в мессенджере»; цвет отделяет его от синей SMS.
+             */
             ActionButton(
-                icon = OgnelissIcons.Chat,
+                icon = OgnelissIcons.Forum,
                 colors = scheme.secondaryContainer to scheme.onSecondaryContainer,
                 description = stringResource(R.string.action_whatsapp)
             ) { onMessenger(option.number) }

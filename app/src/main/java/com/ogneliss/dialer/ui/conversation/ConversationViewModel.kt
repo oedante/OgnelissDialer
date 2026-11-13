@@ -202,7 +202,9 @@ class ConversationViewModel @Inject constructor(
         }
         viewModelScope.launch {
             queue.all().map { list ->
-                list.filter { it.addressKey == draftKey }.map { Queued(it.id, it.body, it.atMillis, it.scheduled) }
+                // Отправляемые (пометка, 2.4.2) не показываются: они уже уходят, отменить нельзя
+                com.ogneliss.dialer.sms.SmsQueueRules.waiting(list)
+                    .filter { it.addressKey == draftKey }.map { Queued(it.id, it.body, it.atMillis, it.scheduled) }
             }.collect { q -> _state.update { it.copy(queued = q) } }
         }
         viewModelScope.launch {

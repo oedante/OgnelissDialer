@@ -1,0 +1,162 @@
+<ru-RU>
+• Отложенное SMS не теряется при сбое: если не ушло — уведомление, текст ждёт в черновике.
+• В выборе номера у мессенджера свой значок.
+• Выбор номера: звонок — зелёный, SMS — синяя, номер SIM — как в журнале.
+• Меню раздела плотнее и одинаковое везде: поиск, папки и инструменты подряд, «Мой контакт» во всех разделах.
+</ru-RU>
+<ar>
+• لا تضيع الرسالة المجدولة عند حدوث خلل: إن لم تُرسل يصلك إشعار ويبقى النص في المسودة.
+• زر المراسلة في اختيار الرقم بأيقونة خاصة به.
+• اختيار الرقم: الاتصال أخضر والرسائل زرقاء ورقم الشريحة كما في السجل.
+• قائمة القسم أكثر إحكامًا ومتماثلة في كل مكان: البحث والمجلدات والأدوات متتالية، و«جهة اتصالي» في كل الأقسام.
+</ar>
+<cs-CZ>
+• Naplánovaná SMS se při chybě neztratí: když neodejde, přijde oznámení a text čeká v konceptu.
+• Tlačítko messengeru ve výběru čísla má vlastní ikonu.
+• Výběr čísla: hovor zeleně, SMS modře, číslo SIM jako v historii.
+• Nabídka sekce je kompaktnější a všude stejná: hledání, složky a nástroje za sebou, „Můj kontakt“ ve všech sekcích.
+</cs-CZ>
+<da-DK>
+• Planlagt SMS går ikke tabt ved fejl: bliver den ikke sendt, får du en notifikation, og teksten venter i kladden.
+• Messenger-knappen i valg af nummer har sit eget ikon.
+• Valg af nummer: opkald er grønt, SMS blå, SIM-nummeret vises som i loggen.
+• Sektionsmenuen er mere kompakt og ens overalt: søgning, mapper og værktøjer i rækkefølge, „Min kontakt“ i alle sektioner.
+</da-DK>
+<de-DE>
+• Geplante SMS gehen bei Fehlern nicht verloren: Wird sie nicht gesendet, kommt eine Benachrichtigung und der Text wartet im Entwurf.
+• Der Messenger-Knopf in der Nummernauswahl hat ein eigenes Symbol.
+• Nummernauswahl: Anruf grün, SMS blau, SIM-Nummer wie in der Anrufliste.
+• Das Bereichsmenü ist kompakter und überall gleich: Suche, Ordner und Werkzeuge direkt untereinander, „Mein Kontakt“ in allen Bereichen.
+</de-DE>
+<en-US>
+• A scheduled SMS is no longer lost on a failure: if it isn't sent, you get a notification and the text waits in the draft.
+• The messenger button in the number picker has its own icon.
+• Number picker: calls are green, SMS blue, and the SIM is marked as in the call log.
+• The side menu is more compact and the same everywhere: search, folders and tools in one column, "My contact" in every section.
+</en-US>
+<es-ES>
+• Un SMS programado ya no se pierde por un fallo: si no se envía, recibes un aviso y el texto queda en el borrador.
+• El botón de mensajería al elegir número tiene su propio icono.
+• Elegir número: llamada en verde, SMS en azul y la SIM marcada como en el registro.
+• El menú lateral es más compacto e igual en todas partes: búsqueda, carpetas y herramientas seguidas, «Mi contacto» en todas las secciones.
+</es-ES>
+<fi-FI>
+• Ajastettu tekstiviesti ei katoa virheessä: jos se ei lähde, saat ilmoituksen ja teksti odottaa luonnoksessa.
+• Viestisovelluksen painikkeella on numeron valinnassa oma kuvake.
+• Numeron valinta: puhelu vihreä, tekstiviesti sininen, SIM merkitty kuten lokissa.
+• Sivuvalikko on tiiviimpi ja sama kaikkialla: haku, kansiot ja työkalut peräkkäin, ”Oma yhteystieto” kaikissa osioissa.
+</fi-FI>
+<fr-FR>
+• Un SMS programmé ne se perd plus en cas d’erreur : s’il ne part pas, une notification s’affiche et le texte attend dans le brouillon.
+• Le bouton messagerie du choix du numéro a sa propre icône.
+• Choix du numéro : appel en vert, SMS en bleu, SIM indiquée comme dans le journal.
+• Le menu latéral est plus compact et identique partout : recherche, dossiers et outils à la suite, « Mon contact » dans chaque section.
+</fr-FR>
+<hi-IN>
+• शेड्यूल किया गया SMS गड़बड़ी में खोता नहीं: न भेजा जाए तो सूचना मिलेगी और टेक्स्ट ड्राफ़्ट में रहेगा।
+• नंबर चुनने में मैसेंजर बटन का अपना आइकन।
+• नंबर चुनना: कॉल हरा, SMS नीला, और SIM लॉग की तरह दिखाई गई।
+• साइड मेनू अब ज़्यादा सघन और हर जगह एक जैसा: खोज, फ़ोल्डर और टूल एक साथ, हर सेक्शन में «मेरा संपर्क»।
+</hi-IN>
+<hu-HU>
+• Az ütemezett SMS hiba esetén sem vész el: ha nem megy el, értesítést kapsz, és a szöveg a piszkozatban vár.
+• A számválasztásban a csevegő gombjának saját ikonja van.
+• Számválasztás: a hívás zöld, az SMS kék, a SIM jelölése olyan, mint a hívásnaplóban.
+• Az oldalmenü tömörebb és mindenhol egyforma: keresés, mappák és eszközök egymás alatt, „Saját névjegy” minden részben.
+</hu-HU>
+<id>
+• SMS terjadwal tidak hilang saat gagal: jika tidak terkirim, ada notifikasi dan teksnya menunggu di draf.
+• Tombol messenger di pemilihan nomor punya ikon sendiri.
+• Pilih nomor: panggilan hijau, SMS biru, dan SIM ditandai seperti di log.
+• Menu samping lebih ringkas dan sama di mana saja: pencarian, folder, dan alat berurutan, «Kontak saya» di semua bagian.
+</id>
+<it-IT>
+• Un SMS programmato non va più perso in caso di errore: se non parte, arriva una notifica e il testo resta nella bozza.
+• Il pulsante messaggistica nella scelta del numero ha la sua icona.
+• Scelta del numero: chiamata in verde, SMS in blu, SIM indicata come nel registro.
+• Il menu laterale è più compatto e uguale ovunque: ricerca, cartelle e strumenti di seguito, «Il mio contatto» in ogni sezione.
+</it-IT>
+<iw-IL>
+• SMS מתוזמן לא הולך לאיבוד בתקלה: אם לא נשלח, תקבלו התראה והטקסט ימתין בטיוטה.
+• לכפתור המסנג׳ר בבחירת המספר יש סמל משלו.
+• בחירת מספר: שיחה בירוק, SMS בכחול, וה־SIM מסומן כמו ביומן.
+• תפריט הצד צפוף יותר וזהה בכל מקום: חיפוש, תיקיות וכלים ברצף, «איש הקשר שלי» בכל המקטעים.
+</iw-IL>
+<ja-JP>
+• 予約SMSが不具合で失われなくなりました：送信できないときは通知が届き、本文は下書きに残ります。
+• 番号選択のメッセンジャーボタンに専用アイコン。
+• 番号の選択：通話は緑、SMS は青、SIM は履歴と同じ表示に。
+• サイドメニューをコンパクトにし、どこでも同じ構成に：検索・フォルダ・ツールを続けて表示、「自分の連絡先」を全画面に。
+</ja-JP>
+<ko-KR>
+• 예약 SMS가 오류로 사라지지 않음: 보내지 못하면 알림이 오고 내용은 임시 저장에 남습니다.
+• 번호 선택의 메신저 버튼에 전용 아이콘.
+• 번호 선택: 전화는 초록, SMS는 파랑, SIM은 통화 기록과 같은 방식으로 표시.
+• 사이드 메뉴가 더 촘촘하고 어디서나 동일: 검색, 폴더, 도구를 연이어 배치하고 모든 화면에 «내 연락처».
+</ko-KR>
+<nl-NL>
+• Een geplande sms gaat niet meer verloren bij een fout: wordt hij niet verstuurd, dan krijg je een melding en wacht de tekst in het concept.
+• De messengerknop bij nummerkeuze heeft een eigen pictogram.
+• Nummer kiezen: bellen groen, sms blauw, simkaart aangegeven zoals in de oproeplijst.
+• Het zijmenu is compacter en overal gelijk: zoeken, mappen en hulpmiddelen achter elkaar, „Mijn contact” in elke sectie.
+</nl-NL>
+<no-NO>
+• Planlagt SMS går ikke tapt ved feil: blir den ikke sendt, får du et varsel og teksten venter i utkastet.
+• Meldingsapp-knappen i nummervalget har eget ikon.
+• Valg av nummer: anrop er grønt, SMS blå, SIM vises som i loggen.
+• Sidemenyen er mer kompakt og lik overalt: søk, mapper og verktøy etter hverandre, «Min kontakt» i alle deler.
+</no-NO>
+<pl-PL>
+• Zaplanowany SMS nie ginie przy błędzie: jeśli nie zostanie wysłany, pojawi się powiadomienie, a tekst czeka w wersji roboczej.
+• Przycisk komunikatora przy wyborze numeru ma własną ikonę.
+• Wybór numeru: połączenie na zielono, SMS na niebiesko, karta SIM oznaczona jak w rejestrze.
+• Menu boczne jest bardziej zwarte i wszędzie takie samo: wyszukiwanie, foldery i narzędzia jedno pod drugim, „Mój kontakt” w każdej sekcji.
+</pl-PL>
+<pt-BR>
+• SMS agendado não se perde em caso de falha: se não for enviado, você recebe uma notificação e o texto fica no rascunho.
+• O botão de mensageiro na escolha do número tem ícone próprio.
+• Escolha do número: chamada em verde, SMS em azul e o chip indicado como no registro.
+• O menu lateral ficou mais compacto e igual em todo lugar: busca, pastas e ferramentas em sequência, «Meu contato» em todas as seções.
+</pt-BR>
+<ro>
+• SMS-ul programat nu se mai pierde la o eroare: dacă nu pleacă, primești o notificare și textul așteaptă în ciornă.
+• Butonul de mesagerie de la alegerea numărului are propria pictogramă.
+• Alegerea numărului: apelul verde, SMS albastru, SIM-ul marcat ca în jurnal.
+• Meniul lateral este mai compact și la fel peste tot: căutare, dosare și instrumente una după alta, „Contactul meu” în toate secțiunile.
+</ro>
+<sk>
+• Naplánovaná SMS sa pri chybe nestratí: keď neodíde, príde upozornenie a text čaká v koncepte.
+• Tlačidlo messengera vo výbere čísla má vlastnú ikonu.
+• Výber čísla: hovor zelenou, SMS modrou, SIM označená ako v histórii.
+• Bočná ponuka je kompaktnejšia a všade rovnaká: vyhľadávanie, priečinky a nástroje za sebou, „Môj kontakt“ vo všetkých sekciách.
+</sk>
+<sv-SE>
+• Schemalagda sms går inte förlorade vid fel: skickas det inte får du en avisering och texten väntar i utkastet.
+• Meddelandeknappen i nummervalet har en egen ikon.
+• Välj nummer: samtal är grönt, sms blått och SIM-kortet märkt som i samtalsloggen.
+• Sidomenyn är kompaktare och likadan överallt: sök, mappar och verktyg i följd, ”Min kontakt” i alla delar.
+</sv-SE>
+<th>
+• SMS ที่ตั้งเวลาไว้จะไม่หายเมื่อมีข้อผิดพลาด หากส่งไม่ได้จะมีการแจ้งเตือนและข้อความรออยู่ในฉบับร่าง
+• ปุ่มแชทในหน้าการเลือกหมายเลขมีไอคอนของตัวเอง
+• เลือกหมายเลข: โทรเป็นสีเขียว SMS เป็นสีน้ำเงิน และแสดงซิมแบบเดียวกับในประวัติ
+• เมนูด้านข้างกระชับขึ้นและเหมือนกันทุกที่: ค้นหา โฟลเดอร์ และเครื่องมือเรียงต่อกัน มี «รายชื่อของฉัน» ทุกส่วน
+</th>
+<tr-TR>
+• Zamanlanmış SMS hata durumunda kaybolmaz: gönderilemezse bildirim gelir ve metin taslakta bekler.
+• Numara seçimindeki mesajlaşma düğmesinin kendi simgesi var.
+• Numara seçimi: arama yeşil, SMS mavi, SIM kaydı arama geçmişindeki gibi gösterilir.
+• Yan menü daha derli toplu ve her yerde aynı: arama, klasörler ve araçlar art arda, her bölümde «Kişim».
+</tr-TR>
+<vi>
+• SMS hẹn giờ không còn bị mất khi có lỗi: nếu chưa gửi được, bạn sẽ nhận thông báo và nội dung nằm trong bản nháp.
+• Nút nhắn tin trong phần chọn số có biểu tượng riêng.
+• Chọn số: cuộc gọi màu xanh lá, SMS màu xanh dương, SIM hiển thị như trong nhật ký.
+• Menu bên gọn hơn và giống nhau ở mọi nơi: tìm kiếm, thư mục và công cụ liền nhau, «Liên hệ của tôi» ở mọi mục.
+</vi>
+<zh-CN>
+• 定时短信遇到故障不再丢失：未发出时会通知，正文留在草稿中。
+• 选择号码时，聊天应用按钮有专属图标。
+• 选择号码：通话为绿色，短信为蓝色，SIM 卡标记与通话记录一致。
+• 侧边菜单更紧凑且处处一致：搜索、文件夹和工具依次排列，各部分都有「我的联系人」。
+</zh-CN>

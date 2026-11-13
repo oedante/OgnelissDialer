@@ -24,10 +24,18 @@ jobs:
 
       # Статические проверки: ловят ошибки компиляции за секунды,
       # не дожидаясь загрузки зависимостей и полной сборки
+      # 2.4.2: все проверки scripts/ — и здесь, а не только у разработчика:
+      # роли оформления и масштаб в окнах (ui_roles_check), импорты,
+      # числа дизайн-системы в коде против документа (без почты: её
+      # репозитория в этой сборке нет — сверка двух приложений локально).
+      # Разрешение INTERNET проверяется ниже отдельным шагом (merged manifest)
       - name: Проверки перед сборкой
         run: |
           python3 scripts/prebuild_check.py
           python3 scripts/audit.py
+          python3 scripts/import_check.py
+          python3 scripts/ui_roles_check.py
+          python3 scripts/design_tokens_check.py
 
       - name: Статический анализ (Android Lint)
         run: ./gradlew lintDebug
