@@ -36,6 +36,21 @@ package com.ogneliss.dialer.call
  */
 object SmartSpeakerPolicy {
 
+    /**
+     * БЛИЗКО ЛИ — КАК РЕШАЕТ САМ ANDROID (2.4.4, проверка датчика).
+     *
+     * Было: «меньше максимума датчика». Но у части датчиков максимум больше
+     * значения, которое они сообщают «вдали» (максимум 8–10 см, «далеко» —
+     * 5 см): телефон всегда считался у лица, и авто-динамик не включался.
+     * Стало — как в Android (DisplayPowerController, PROXIMITY_THRESHOLD):
+     * близко — неотрицательное расстояние меньше максимума и меньше 5 см.
+     */
+    fun isNear(distanceCm: Float, maxRangeCm: Float): Boolean =
+        distanceCm >= 0f && distanceCm < minOf(maxRangeCm, NEAR_THRESHOLD_CM)
+
+    /** Порог «близко» в Android — 5 см. */
+    const val NEAR_THRESHOLD_CM = 5f
+
     /** Куда направить звук. */
     enum class Route { EARPIECE, SPEAKER, UNCHANGED }
 

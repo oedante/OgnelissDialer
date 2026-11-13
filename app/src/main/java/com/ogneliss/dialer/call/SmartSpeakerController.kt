@@ -140,11 +140,9 @@ class SmartSpeakerController(
         when (event.sensor.type) {
             Sensor.TYPE_ACCELEROMETER -> accelerationZ = event.values[2]
             Sensor.TYPE_PROXIMITY -> {
-                // У датчиков разный максимум: у одних 5 см, у других 1.
-                // Поэтому сравниваем с максимальным значением самого датчика,
-                // а не с фиксированным порогом
-                val max = event.sensor.maximumRange
-                proximityNear = event.values[0] < max
+                // У датчиков разный максимум: у одних 1 см, у других 10.
+                // Правило — как у самого Android (разбор у SmartSpeakerPolicy.isNear)
+                proximityNear = SmartSpeakerPolicy.isNear(event.values[0], event.sensor.maximumRange)
             }
             else -> return
         }

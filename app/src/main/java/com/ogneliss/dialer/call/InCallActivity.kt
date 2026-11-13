@@ -198,6 +198,27 @@ class InCallActivity : ComponentActivity() {
          * вызова и звуку. Разбор — ProximityLock.
          */
         proximity = ProximityLock(this)
+        /*
+         * ДАТЧИК — И КОГДА ЭКРАН ВЫЗОВА НЕ НА ВИДУ (2.4.4, проверка датчика).
+         *
+         * Было: решение принималось в композиции, а состояние вызова и звука
+         * она получает, только пока экран вызова на виду (collectAsState-
+         * WithLifecycle). Ушли в журнал посреди разговора и включили громкую
+         * связь из уведомления — блокировка оставалась, и экран гас от пальца
+         * у верхнего края. Стало: подписка живёт, пока живёт экран вызова,
+         * на виду он или нет. Держится блокировка, как в системном диалере,
+         * пока трубка «снята» и звук в разговорном динамике.
+         */
+        lifecycleScope.launch {
+            kotlinx.coroutines.flow.combine(
+                CallManager.revision, CallManager.audioState, prefs.proximityScreenOff
+            ) { _, audio, on -> audio to on }.collect { (audio, on) ->
+                @Suppress("DEPRECATION")
+                val state = CallManager.primary?.state
+                // Датчик — только у уха (1.8.1): разбор в ProximityLock
+                proximity?.hold(on && CallScreenRules.proximityWanted(state, audio?.route))
+            }
+        }
 
         // Авто-громкая связь: подписка на датчики только если функция
         // включена, иначе разговор час жёг бы батарею впустую
@@ -293,15 +314,13 @@ class InCallActivity : ComponentActivity() {
                 // «Назад» между попытками — остановить автодозвон; экран закроется сам
                 BackHandler(enabled = calls.isEmpty() && redial != null) { AutoRedial.stop() }
 
-                // Датчики должны знать о состоянии вызова и аудиомаршрута
-                val proximityOn by prefs.proximityScreenOff.collectAsStateWithLifecycle(initialValue = false)
-                LaunchedEffect(revision, audio, proximityOn, redial, calls) {
+                // Авто-динамик должен знать о состоянии вызова и звука;
+                // датчик приближения — подпиской в onCreate (2.4.4)
+                LaunchedEffect(revision, audio, redial, calls) {
                     val primary = CallManager.primary
                     smartSpeaker?.updateCallState(primary, audio)
                     @Suppress("DEPRECATION")
                     val callState = primary?.state
-                    // Датчик — только у уха (1.8.1): разбор в ProximityLock
-                    proximity?.hold(proximityOn && CallScreenRules.proximityWanted(callState, audio?.route))
                     /*
                      * Экран не гаснет, пока звонит и пока идёт отсчёт автодозвона
                      * (1.8.1): на экране блокировки система гасит его через
@@ -436,7 +455,8 @@ class InCallActivity : ComponentActivity() {
 
     override fun onDestroy() {
         smartSpeaker?.stop()
-        proximity?.release()
+        // Телефон ещё у уха — экран загорится, когда отнимут (2.4.4, разбор в ProximityLock)
+        proximity?.release(waitForFar = true)
         /*
          * Экран убрали сами — смахнули задачу, закрыла система, — а вызовов
          * нет: автодозвон без экрана не продолжаем (1.8.0). Обычное закрытие

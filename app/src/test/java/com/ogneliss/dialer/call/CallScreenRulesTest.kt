@@ -39,7 +39,7 @@ class CallScreenRulesTest {
     fun `датчик у уха — в разговоре и при наборе`() {
         assertTrue(CallScreenRules.proximityWanted(Call.STATE_ACTIVE, CallAudioState.ROUTE_EARPIECE))
         assertTrue(CallScreenRules.proximityWanted(Call.STATE_DIALING, CallAudioState.ROUTE_EARPIECE))
-        assertTrue(CallScreenRules.proximityWanted(Call.STATE_HOLDING, CallAudioState.ROUTE_WIRED_HEADSET))
+        assertTrue(CallScreenRules.proximityWanted(Call.STATE_HOLDING, CallAudioState.ROUTE_EARPIECE))
         // Маршрут ещё неизвестен — как у уха: так безопаснее для щеки
         assertTrue(CallScreenRules.proximityWanted(Call.STATE_CONNECTING, null))
     }
@@ -50,6 +50,8 @@ class CallScreenRulesTest {
         assertFalse(CallScreenRules.proximityWanted(Call.STATE_RINGING, CallAudioState.ROUTE_EARPIECE))
         assertFalse(CallScreenRules.proximityWanted(Call.STATE_ACTIVE, CallAudioState.ROUTE_SPEAKER))
         assertFalse(CallScreenRules.proximityWanted(Call.STATE_ACTIVE, CallAudioState.ROUTE_BLUETOOTH))
+        // 2.4.4: с проводной гарнитурой телефон не у уха — как в системном диалере
+        assertFalse(CallScreenRules.proximityWanted(Call.STATE_ACTIVE, CallAudioState.ROUTE_WIRED_HEADSET))
         assertFalse(CallScreenRules.proximityWanted(Call.STATE_DISCONNECTED, CallAudioState.ROUTE_EARPIECE))
         // Вызова нет — между попытками автодозвона
         assertFalse(CallScreenRules.proximityWanted(null, CallAudioState.ROUTE_EARPIECE))

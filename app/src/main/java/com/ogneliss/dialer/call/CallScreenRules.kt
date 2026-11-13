@@ -43,18 +43,21 @@ internal object CallScreenRules {
     /**
      * ДАТЧИК ПРИБЛИЖЕНИЯ — ТОЛЬКО У УХА (разбор в ProximityLock).
      *
-     * Набор или разговор, и звук в разговорном динамике или проводной
-     * гарнитуре. Звонит, громкая связь, Bluetooth — экран не гасится:
-     * так в системном диалере.
+     * Набор или разговор, и звук в разговорном динамике. Звонит, громкая
+     * связь, Bluetooth, проводная гарнитура — экран не гасится: так
+     * в системном диалере.
+     *
+     * 2.4.4: проводная гарнитура — тоже без датчика. Было: с ней экран гас,
+     * как у уха, хотя с наушниками телефон держат в руке или в кармане:
+     * палец у верхнего края гасил экран посреди разговора, а карман
+     * и так защищает тайм-аут экрана.
      *
      * @param state состояние главного вызова (Call.STATE_*), null — вызова нет
      * @param route маршрут звука (CallAudioState.ROUTE_*), null — ещё неизвестен
      */
     @Suppress("DEPRECATION")
     fun proximityWanted(state: Int?, route: Int?): Boolean {
-        val atEar = route == null ||
-            route == CallAudioState.ROUTE_EARPIECE ||
-            route == CallAudioState.ROUTE_WIRED_HEADSET
+        val atEar = route == null || route == CallAudioState.ROUTE_EARPIECE
         val offHook = state == Call.STATE_DIALING ||
             state == Call.STATE_CONNECTING ||
             state == Call.STATE_ACTIVE ||
