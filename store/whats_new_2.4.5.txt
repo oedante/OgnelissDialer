@@ -1,0 +1,162 @@
+<ru-RU>
+• Звонки в переписке — по сторонам, как сообщения: исходящие справа, входящие слева.
+• Датчик приближения: экран у уха гаснет и в разговорах дольше часа, и в псевдозвонке.
+• Второй вызов и конференция: на экране и в уведомлении — тот, с кем вы говорите сейчас.
+• Отложенное SMS не теряется при сбое: если не ушло — уведомление, текст ждёт в черновике.
+</ru-RU>
+<ar>
+• المكالمات في المحادثة على الجانبين مثل الرسائل: الصادرة بجانب رسائلك والواردة بجانب رسائل الطرف الآخر.
+• حساس القرب: تنطفئ الشاشة عند الأذن أيضًا في المكالمات الأطول من ساعة وفي المكالمة الوهمية.
+• المكالمة الثانية والمكالمة الجماعية: الشاشة والإشعار يعرضان من تتحدث معه الآن؛ وإن لم تسمح الشبكة بالانتظار يظهر «إنهاء والرد».
+• لا تضيع الرسالة المجدولة عند حدوث خلل: إن لم تُرسل يصلك إشعار ويبقى النص في المسودة.
+</ar>
+<cs-CZ>
+• Hovory v konverzaci jsou po stranách jako zprávy: odchozí vpravo, příchozí vlevo.
+• Senzor přiblížení: obrazovka u ucha zhasne i v hovorech delších než hodina a při falešném hovoru.
+• Druhý hovor a konference: obrazovka i oznámení ukazují, s kým právě mluvíte.
+• Naplánovaná SMS se při chybě neztratí: když neodejde, přijde oznámení a text čeká v konceptu.
+</cs-CZ>
+<da-DK>
+• Opkald i samtalen står i siderne som beskeder: udgående til højre, indgående til venstre.
+• Nærhedssensor: skærmen slukker ved øret også i opkald over en time og ved falske opkald.
+• Andet opkald og konference: skærm og notifikation viser, hvem du taler med nu.
+• Planlagt SMS går ikke tabt ved fejl: bliver den ikke sendt, får du en notifikation, og teksten venter i kladden.
+</da-DK>
+<de-DE>
+• Anrufe im Chatverlauf stehen wie Nachrichten seitlich: ausgehende rechts, eingehende links.
+• Näherungssensor: Der Bildschirm geht am Ohr auch bei Gesprächen über eine Stunde und beim Scheinanruf aus.
+• Zweiter Anruf und Konferenz: Bildschirm und Benachrichtigung zeigen Ihren aktuellen Gesprächspartner.
+• Geplante SMS gehen bei Fehlern nicht verloren: Wird sie nicht gesendet, kommt eine Benachrichtigung und der Text wartet im Entwurf.
+</de-DE>
+<en-US>
+• Calls in a conversation sit on the sides like messages: outgoing on the right, incoming on the left.
+• Proximity sensor: the screen turns off at your ear in calls longer than an hour and in fake calls too.
+• Second calls and conferences: the screen and notification show who you're talking to now.
+• A scheduled SMS is no longer lost on a failure: if it isn't sent, you get a notification and the text waits in the draft.
+</en-US>
+<es-ES>
+• Las llamadas en la conversación van a los lados como los mensajes: salientes a la derecha, entrantes a la izquierda.
+• Sensor de proximidad: la pantalla se apaga junto a la oreja también en llamadas de más de una hora y en la llamada falsa.
+• Segunda llamada y conferencia: la pantalla y la notificación muestran con quién hablas ahora.
+• Un SMS programado ya no se pierde por un fallo: si no se envía, recibes un aviso y el texto queda en el borrador.
+</es-ES>
+<fi-FI>
+• Puhelut keskustelussa ovat sivuilla kuten viestit: lähtevät oikealla, saapuvat vasemmalla.
+• Läheisyysanturi: näyttö sammuu korvalla myös yli tunnin puheluissa ja valepuhelussa.
+• Toinen puhelu ja neuvottelu: näyttö ja ilmoitus kertovat, kenen kanssa puhut nyt.
+• Ajastettu tekstiviesti ei katoa virheessä: jos se ei lähde, saat ilmoituksen ja teksti odottaa luonnoksessa.
+</fi-FI>
+<fr-FR>
+• Les appels dans la conversation sont placés comme les messages : sortants à droite, entrants à gauche.
+• Capteur de proximité : l’écran s’éteint à l’oreille aussi après une heure d’appel et pendant un faux appel.
+• Double appel et conférence : l’écran et la notification montrent votre interlocuteur actuel.
+• Un SMS programmé ne se perd plus en cas d’erreur : s’il ne part pas, une notification s’affiche et le texte attend dans le brouillon.
+</fr-FR>
+<hi-IN>
+• बातचीत में कॉल संदेशों की तरह किनारों पर: आउटगोइंग दाईं ओर, इनकमिंग बाईं ओर।
+• निकटता सेंसर: एक घंटे से लंबी कॉल और नकली कॉल में भी कान के पास स्क्रीन बंद होती है।
+• दूसरी कॉल और कॉन्फ़्रेंस: स्क्रीन और सूचना में वही दिखता है जिससे अभी बात हो रही है।
+• शेड्यूल किया गया SMS गड़बड़ी में खोता नहीं: न भेजा जाए तो सूचना मिलेगी और टेक्स्ट ड्राफ़्ट में रहेगा।
+</hi-IN>
+<hu-HU>
+• A hívások a beszélgetésben oldalt állnak, mint az üzenetek: kimenő jobbra, bejövő balra.
+• Közelségérzékelő: a képernyő a fülnél egy óránál hosszabb hívásban és álhívásnál is kikapcsol.
+• Második hívás és konferencia: a képernyő és az értesítés azt mutatja, akivel most beszél.
+• Az ütemezett SMS hiba esetén sem vész el: ha nem megy el, értesítést kapsz, és a szöveg a piszkozatban vár.
+</hu-HU>
+<id>
+• Panggilan dalam percakapan ada di sisi seperti pesan: keluar di kanan, masuk di kiri.
+• Sensor jarak: layar mati di telinga juga pada panggilan lebih dari sejam dan panggilan palsu.
+• Panggilan kedua dan konferensi: layar dan notifikasi menampilkan lawan bicara saat ini.
+• SMS terjadwal tidak hilang saat gagal: jika tidak terkirim, ada notifikasi dan teksnya menunggu di draf.
+</id>
+<it-IT>
+• Le chiamate nella conversazione stanno ai lati come i messaggi: in uscita a destra, in arrivo a sinistra.
+• Sensore di prossimità: lo schermo si spegne all’orecchio anche dopo un’ora di chiamata e nelle finte chiamate.
+• Seconda chiamata e conferenza: schermo e notifica mostrano con chi stai parlando ora.
+• Un SMS programmato non va più perso in caso di errore: se non parte, arriva una notifica e il testo resta nella bozza.
+</it-IT>
+<iw-IL>
+• השיחות בצ׳אט מוצגות בצדדים כמו הודעות: יוצאות בצד ההודעות שלכם, נכנסות בצד של איש הקשר.
+• חיישן קרבה: המסך כבה ליד האוזן גם בשיחות ארוכות משעה ובשיחה מדומה.
+• שיחה שנייה ושיחת ועידה: המסך וההתראה מציגים עם מי אתם מדברים עכשיו.
+• SMS מתוזמן לא הולך לאיבוד בתקלה: אם לא נשלח, תקבלו התראה והטקסט ימתין בטיוטה.
+</iw-IL>
+<ja-JP>
+• 会話内の通話をメッセージと同じく左右に表示：発信は右、着信は左。
+• 近接センサー：1時間を超える通話や偽の着信でも、耳に当てると画面が消えます。
+• 2本目の通話と電話会議：画面と通知に今話している相手を表示。
+• 予約SMSが不具合で失われなくなりました：送信できないときは通知が届き、本文は下書きに残ります。
+</ja-JP>
+<ko-KR>
+• 대화 속 통화를 메시지처럼 양쪽에 표시: 발신은 오른쪽, 수신은 왼쪽.
+• 근접 센서: 1시간 넘는 통화와 가짜 전화에서도 귀에 대면 화면이 꺼집니다.
+• 두 번째 통화와 전화 회의: 화면과 알림에 지금 통화 중인 상대를 표시.
+• 예약 SMS가 오류로 사라지지 않음: 보내지 못하면 알림이 오고 내용은 임시 저장에 남습니다.
+</ko-KR>
+<nl-NL>
+• Oproepen in een gesprek staan aan de zijkant zoals berichten: uitgaand rechts, inkomend links.
+• Nabijheidssensor: het scherm gaat bij je oor ook na een uur bellen en bij een nepoproep uit.
+• Tweede oproep en conferentie: scherm en melding tonen met wie je nu praat.
+• Een geplande sms gaat niet meer verloren bij een fout: wordt hij niet verstuurd, dan krijg je een melding en wacht de tekst in het concept.
+</nl-NL>
+<no-NO>
+• Anrop i samtalen står på sidene som meldinger: utgående til høyre, innkommende til venstre.
+• Nærhetssensor: skjermen slås av ved øret også i samtaler over en time og ved falske anrop.
+• Andre samtale og konferanse: skjerm og varsel viser hvem du snakker med nå.
+• Planlagt SMS går ikke tapt ved feil: blir den ikke sendt, får du et varsel og teksten venter i utkastet.
+</no-NO>
+<pl-PL>
+• Połączenia w rozmowie są po bokach jak wiadomości: wychodzące po prawej, przychodzące po lewej.
+• Czujnik zbliżeniowy: ekran gaśnie przy uchu także w rozmowach dłuższych niż godzina i w fałszywym połączeniu.
+• Drugie połączenie i konferencja: ekran i powiadomienie pokazują, z kim teraz rozmawiasz.
+• Zaplanowany SMS nie ginie przy błędzie: jeśli nie zostanie wysłany, pojawi się powiadomienie, a tekst czeka w wersji roboczej.
+</pl-PL>
+<pt-BR>
+• Chamadas na conversa ficam nos lados como as mensagens: efetuadas à direita, recebidas à esquerda.
+• Sensor de proximidade: a tela apaga no ouvido também em chamadas de mais de uma hora e em chamadas falsas.
+• Segunda chamada e conferência: a tela e a notificação mostram com quem você fala agora.
+• SMS agendado não se perde em caso de falha: se não for enviado, você recebe uma notificação e o texto fica no rascunho.
+</pt-BR>
+<ro>
+• Apelurile din conversație stau pe laterale ca mesajele: efectuate la dreapta, primite la stânga.
+• Senzor de proximitate: ecranul se stinge la ureche și în apelurile de peste o oră, și în apelul fals.
+• Al doilea apel și conferința: ecranul și notificarea arată cu cine vorbești acum.
+• SMS-ul programat nu se mai pierde la o eroare: dacă nu pleacă, primești o notificare și textul așteaptă în ciornă.
+</ro>
+<sk>
+• Hovory v konverzácii sú po stranách ako správy: odchádzajúce vpravo, prichádzajúce vľavo.
+• Senzor priblíženia: obrazovka pri uchu zhasne aj v hovoroch dlhších ako hodina a pri falošnom hovore.
+• Druhý hovor a konferencia: obrazovka aj upozornenie ukazujú, s kým práve hovoríte.
+• Naplánovaná SMS sa pri chybe nestratí: keď neodíde, príde upozornenie a text čaká v koncepte.
+</sk>
+<sv-SE>
+• Samtal i konversationen står på sidorna som meddelanden: utgående till höger, inkommande till vänster.
+• Närhetssensor: skärmen släcks vid örat även i samtal över en timme och vid låtsassamtal.
+• Andra samtal och konferens: skärm och avisering visar vem du pratar med nu.
+• Schemalagda sms går inte förlorade vid fel: skickas det inte får du en avisering och texten väntar i utkastet.
+</sv-SE>
+<th>
+• สายในการสนทนาอยู่ด้านข้างเหมือนข้อความ: สายโทรออกทางขวา สายเข้าทางซ้าย
+• เซนเซอร์ระยะใกล้: หน้าจอดับเมื่อแนบหูแม้ในสายที่นานกว่าหนึ่งชั่วโมงและในสายปลอม
+• สายที่สองและการประชุมสาย: หน้าจอและการแจ้งเตือนแสดงคนที่คุณคุยอยู่ตอนนี้
+• SMS ที่ตั้งเวลาไว้จะไม่หายเมื่อมีข้อผิดพลาด หากส่งไม่ได้จะมีการแจ้งเตือนและข้อความรออยู่ในฉบับร่าง
+</th>
+<tr-TR>
+• Sohbetteki aramalar mesajlar gibi yanlarda: giden sağda, gelen solda.
+• Yakınlık sensörü: ekran, bir saatten uzun aramalarda ve sahte aramada da kulakta kapanır.
+• İkinci arama ve konferans: ekran ve bildirim şu an kiminle konuştuğunuzu gösterir.
+• Zamanlanmış SMS hata durumunda kaybolmaz: gönderilemezse bildirim gelir ve metin taslakta bekler.
+</tr-TR>
+<vi>
+• Cuộc gọi trong cuộc trò chuyện nằm hai bên như tin nhắn: gọi đi bên phải, gọi đến bên trái.
+• Cảm biến tiệm cận: màn hình tắt khi áp tai cả trong cuộc gọi dài hơn một giờ và cuộc gọi giả.
+• Cuộc gọi thứ hai và hội nghị: màn hình và thông báo hiển thị người bạn đang nói chuyện.
+• SMS hẹn giờ không còn bị mất khi có lỗi: nếu chưa gửi được, bạn sẽ nhận thông báo và nội dung nằm trong bản nháp.
+</vi>
+<zh-CN>
+• 对话中的通话像消息一样分列两侧：呼出在右，呼入在左。
+• 距离传感器：通话超过一小时或假来电时，贴近耳朵也会熄屏。
+• 第二通来电与电话会议：屏幕和通知显示当前通话对象。
+• 定时短信遇到故障不再丢失：未发出时会通知，正文留在草稿中。
+</zh-CN>

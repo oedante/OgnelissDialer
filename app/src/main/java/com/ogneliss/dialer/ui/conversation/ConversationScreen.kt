@@ -559,8 +559,16 @@ private fun SelectableRow(
 
 /**
  * Звонок в ленте переписки (2.2.0): тип значком (пропущенный — красным),
- * словом, длительность, время и SIM при двух картах. Строкой по центру,
- * мельче сообщений: это контекст переписки, а не её часть.
+ * словом, длительность, время и SIM при двух картах. Строкой мельче
+ * сообщений: это контекст переписки, а не её часть.
+ *
+ * ── По сторонам, как сообщения (2.4.5) ─────────────────────────────────────
+ * Автор, по снимку переписки: «может входящий и исходящий, как и текст,
+ * по разным сторонам экрана разнести?». Было: все звонки по центру —
+ * столбик «Исходящий · 10:18» посередине, и кто кому звонил, видно только
+ * по слову. Стало: исходящий — справа, как свои сообщения; входящий,
+ * пропущенный, отклонённый — слева, как сообщения собеседника. Поля —
+ * как у строки времени под пузырём: края звонков и пузырей на одной линии.
  */
 @Composable
 private fun CallLine(event: ConversationViewModel.CallEvent) {
@@ -585,9 +593,11 @@ private fun CallLine(event: ConversationViewModel.CallEvent) {
     val duration = if (event.durationSec > 0) {
         String.format(java.util.Locale.ROOT, "%d:%02d", event.durationSec / 60, event.durationSec % 60)
     } else null
+    // Свой звонок — справа, звонок собеседника (и пропущенный) — слева
+    val mine = event.type == CallType.OUTGOING
     Row(
-        Modifier.fillMaxWidth().padding(vertical = Space.xs),
-        horizontalArrangement = Arrangement.Center,
+        Modifier.fillMaxWidth().padding(horizontal = Space.xs, vertical = Space.xs),
+        horizontalArrangement = if (mine) Arrangement.End else Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(FlowUi.iconSizeInline))
