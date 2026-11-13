@@ -572,15 +572,34 @@ private fun InCallScreen(
      * по ключу number, а number больше не обнуляется — значит, и портрет
      * остаётся на месте.
      */
-    val liveNumber = remember(revision, call) {
-        call?.details?.handle?.schemeSpecificPart.orEmpty()
+    /*
+     * ЗАЛИПАНИЕ — В ПРЕДЕЛАХ ОДНОЙ ЛИНИИ (2.4.3, обзор логики звонков).
+     *
+     * Было: имя и номер держались между ЛЮБЫМИ вызовами. Переключили линию
+     * («Переключить», ответ на второй входящий, «поговорить отдельно»)
+     * на незнакомый номер — номер на экране новый, а имя прежнего
+     * собеседника: «Мама» над чужим номером. Собрали конференцию — у неё
+     * нет ни номера, ни имени, и экран так и показывал последнего
+     * собеседника. Стало: состояние привязано к линии ([identityCall] —
+     * текущий вызов, а в миг, когда его нет, — последний); новая линия —
+     * новое имя, номер и портрет. Конференция — «Конференция», без номера
+     * (участники — в панели ниже).
+     */
+    val lastCall = remember { arrayOfNulls<Call>(1) }
+    if (call != null) lastCall[0] = call
+    val identityCall = lastCall[0]
+    val conference = remember(revision, identityCall) { identityCall?.let { CallManager.isConference(it) } == true }
+    // Заголовок — просто «Конференция»: число и имена участников — в панели ниже
+    val conferenceTitle = if (conference) stringResource(R.string.incall_conference) else null
+    val liveNumber = remember(revision, call, conference) {
+        if (conference) "" else call?.details?.handle?.schemeSpecificPart.orEmpty()
     }
-    val liveName = remember(revision, call) {
-        CallDetailsCompat.contactDisplayName(call?.details)
+    val liveName = remember(revision, call, conferenceTitle) {
+        conferenceTitle ?: CallDetailsCompat.contactDisplayName(call?.details)
     }
 
-    var number by remember { mutableStateOf(liveNumber) }
-    var name by remember { mutableStateOf(liveName) }
+    var number by remember(identityCall) { mutableStateOf(liveNumber) }
+    var name by remember(identityCall) { mutableStateOf(liveName) }
 
     /*
      * ИМЯ ОТ ОПЕРАТОРА (1.8.0, «маркировка звонков»): название организации,
@@ -588,7 +607,7 @@ private fun InCallScreen(
      * пропал вызов — держим последнее. Разбор — CallDetailsCompat.networkName.
      */
     val liveNetworkName = remember(revision, call) { CallDetailsCompat.networkName(call?.details) }
-    var networkName by remember { mutableStateOf(liveNetworkName) }
+    var networkName by remember(identityCall) { mutableStateOf(liveNetworkName) }
     LaunchedEffect(liveNetworkName) {
         if (!liveNetworkName.isNullOrBlank()) networkName = liveNetworkName
     }
@@ -1077,6 +1096,7 @@ private fun InCallScreen(
                 val canHold = remember(revision, call) { CallManager.canHold }
                 val canMerge = remember(revision, call, secondary) { CallManager.canMerge }
                 val canAddCall = remember(revision, call, secondary) { CallManager.canAddCall }
+                val canSwap = remember(revision, call, secondary) { CallManager.canSwap }
                 val context = androidx.compose.ui.platform.LocalContext.current
 
                 ControlsRow(
@@ -1091,6 +1111,7 @@ private fun InCallScreen(
                     canHold = canHold,
                     canMerge = canMerge,
                     canAddCall = canAddCall,
+                    canSwap = canSwap,
                     onAddCall = { openDialerForSecondCall(context) }
                 )
             }
@@ -1386,6 +1407,8 @@ private fun InCallScreen(
                     Spacer(Modifier.height(Space.s))
                     androidx.compose.material3.AssistChip(
                         onClick = { CallManager.swapCalls() },
+                        // Пока второй номер набирается — не нажимается (2.4.3, CallLines.swap)
+                        enabled = remember(revision, call, it) { CallManager.canSwap },
                         leadingIcon = {
                             Icon(OgnelissIcons.Pause, contentDescription = null, modifier = Modifier.size(FlowUi.iconSizeInline))
                         },
@@ -1393,7 +1416,9 @@ private fun InCallScreen(
                             Text(
                                 stringResource(
                                     R.string.incall_secondary,
-                                    CallDetailsCompat.contactDisplayName(it.details)
+                                    // Конференция на удержании — «Конференция», а не пустое место (2.4.3)
+                                    if (CallManager.isConference(it)) stringResource(R.string.incall_conference)
+                                    else CallDetailsCompat.contactDisplayName(it.details)
                                         ?: PhoneFormatter.format(
                                             CallDetailsCompat.number(it.details).orEmpty()
                                         )
@@ -1466,8 +1491,12 @@ private fun InCallScreen(
                     }
 
                     val waitingCall = remember(revision) { CallManager.waiting }
+                    // Удержать текущий нельзя — только «Завершить и ответить» (2.4.3, CallLines.waitingAnswer)
+                    val holdPossible = remember(revision) {
+                        CallManager.waitingAnswer != com.ogneliss.dialer.call.CallLines.WaitingAnswer.END_CURRENT
+                    }
                     waitingCall?.let { incoming ->
-                        WaitingCallBanner(incoming, contactsRepo, onReplyWithText = { showQuickReply = true })
+                        WaitingCallBanner(incoming, contactsRepo, holdPossible, onReplyWithText = { showQuickReply = true })
                         Spacer(Modifier.height(Space.m))
                     }
 
@@ -1554,7 +1583,8 @@ private fun InCallScreen(
                      * Показывается только на активном вызове: во время
                      * гудков записывать нечего.
                      */
-                    if (state == Call.STATE_ACTIVE) {
+                    // У конференции номера нет — и заметки к ней тоже (2.4.3)
+                    if (state == Call.STATE_ACTIVE && number.isNotBlank()) {
                         // Подпись — по настройке «Подписи под кнопками»
                         // (1.3.2, отзыв в Google Play); без подписи значок
                         // описан для TalkBack
@@ -1575,7 +1605,7 @@ private fun InCallScreen(
                         }
                     }
 
-                    AnimatedVisibility(showNote && redialSession == null) {
+                    AnimatedVisibility(showNote && redialSession == null && number.isNotBlank()) {
                         InCallNoteField(
                             text = noteState.text,
                             onTextChange = { noteState.onTextChange(it) },
@@ -1757,7 +1787,9 @@ private fun CallStatusLine(state: Int, call: Call?) {
     val active = state == Call.STATE_ACTIVE
 
     val text = if (active) {
-        val connectTime = call?.details?.connectTimeMillis ?: System.currentTimeMillis()
+        // Нет времени от сети — от момента, когда экран увидел разговор (2.4.3, CallScreenRules.connectedSince)
+        val seenActiveAt = remember(call, active) { System.currentTimeMillis() }
+        val connectTime = CallScreenRules.connectedSince(call?.details?.connectTimeMillis, seenActiveAt)
         var elapsed by remember { mutableLongStateOf(0L) }
         LaunchedEffect(connectTime) {
             while (true) {
@@ -1773,7 +1805,7 @@ private fun CallStatusLine(state: Int, call: Call?) {
          * разговора превращался в набор незнакомых знаков.
          * ROOT — потому что это часы и минуты, а не текст.
          */
-        String.format(java.util.Locale.ROOT, "%02d:%02d", elapsed / 60, elapsed % 60)
+        CallScreenRules.timer(elapsed)
     } else {
         when (state) {
             Call.STATE_RINGING -> stringResource(R.string.incall_incoming)
@@ -1897,6 +1929,8 @@ private fun ControlsRow(
     canMerge: Boolean = true,
     /** Можно набрать ещё номер, не прерывая разговор. */
     canAddCall: Boolean = false,
+    /** Обе линии соединены — «Переключить» (2.4.3, CallLines.swap). */
+    canSwap: Boolean = true,
     onAddCall: () -> Unit = {}
 ) {
     val muted = audioState?.isMuted == true
@@ -1934,7 +1968,7 @@ private fun ControlsRow(
         (if (canHold && !hasSecondary) 1 else 0) +
         (if (canAddCall) 1 else 0) +
         (if (btAvailable) 1 else 0) +
-        (if (hasSecondary) 1 + (if (canMerge) 1 else 0) else 0)
+        (if (hasSecondary) (if (canSwap) 1 else 0) + (if (canMerge) 1 else 0) else 0)
     val perRow = controlsPerRow(buttonCount)
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(controlsGap(perRow), Alignment.CenterHorizontally),
@@ -1992,7 +2026,8 @@ private fun ControlsRow(
                 }
             }
             if (hasSecondary) {
-                ToggleTile(false, OgnelissIcons.SwapCalls, stringResource(R.string.incall_swap), onSwap)
+                // Пока второй номер набирается — без «Переключить» (2.4.3)
+                if (canSwap) ToggleTile(false, OgnelissIcons.SwapCalls, stringResource(R.string.incall_swap), onSwap)
                 if (canMerge) {
                     ToggleTile(false, OgnelissIcons.MergeType, stringResource(R.string.incall_merge), onMerge)
                 }
@@ -2692,6 +2727,12 @@ private fun rememberCallerLabel(
 private fun WaitingCallBanner(
     call: Call,
     contactsRepo: com.ogneliss.dialer.data.ContactsRepository,
+    /**
+     * Текущий можно удержать (2.4.3). Нельзя — главная кнопка «Завершить
+     * и ответить», а «Ответить и удержать» не показывается: Telecom всё
+     * равно завершил бы неудерживаемый вызов (CallLines.waitingAnswer).
+     */
+    holdPossible: Boolean,
     onReplyWithText: () -> Unit
 ) {
     val label = rememberCallerLabel(call, contactsRepo)
@@ -2727,16 +2768,23 @@ private fun WaitingCallBanner(
 
             Spacer(Modifier.height(Space.m))
 
+            // Главная — зелёная: удержать, если можно, иначе завершить и ответить
             Button(
-                onClick = { CallManager.answerWaitingHoldCurrent() },
+                onClick = {
+                    if (holdPossible) CallManager.answerWaitingHoldCurrent() else CallManager.answerWaitingEndCurrent()
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = CallGreen),
                 modifier = Modifier.fillMaxWidth()
-            ) { Text(stringResource(R.string.incall_waiting_hold_answer)) }
+            ) {
+                Text(
+                    stringResource(if (holdPossible) R.string.incall_waiting_hold_answer else R.string.incall_waiting_end_answer)
+                )
+            }
 
             Spacer(Modifier.height(Space.s))
 
             Row(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
-                OutlinedButton(
+                if (holdPossible) OutlinedButton(
                     onClick = { CallManager.answerWaitingEndCurrent() },
                     modifier = Modifier.weight(1f)
                 ) {

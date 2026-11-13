@@ -89,4 +89,24 @@ class CallScreenRulesTest {
         // Участник конференции — к ней ведёт сама конференция
         assertFalse(CallScreenRules.returnable(Call.STATE_ACTIVE, true))
     }
+
+    // ── Таймер разговора (2.4.3) ───────────────────────────────────────────
+
+    @Test
+    fun `таймер — минуты и секунды, с часа — часы`() {
+        assertEquals("00:00", CallScreenRules.timer(0))
+        assertEquals("05:07", CallScreenRules.timer(307))
+        assertEquals("59:59", CallScreenRules.timer(3599))
+        assertEquals("1:00:00", CallScreenRules.timer(3600))
+        assertEquals("1:05:07", CallScreenRules.timer(3907))
+        assertEquals("00:00", CallScreenRules.timer(-5))
+    }
+
+    @Test
+    fun `нет времени соединения от сети — считать с момента, когда увидели разговор`() {
+        assertEquals(1_000L, CallScreenRules.connectedSince(1_000L, 5_000L))
+        // 0 — не «1970 год», а «не сообщили»
+        assertEquals(5_000L, CallScreenRules.connectedSince(0L, 5_000L))
+        assertEquals(5_000L, CallScreenRules.connectedSince(null, 5_000L))
+    }
 }

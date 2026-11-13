@@ -1060,4 +1060,5 @@
     <string name="sms_queue_maybe_unsent">Geplante SMS wurde eventuell nicht gesendet</string>
     <string name="sms_queue_in_draft">%1$s: Der Text ist wieder im Entwurf</string>
     <string name="sms_maybe_unsent">Nachricht wurde eventuell nicht gesendet</string>
+    <string name="incall_conference">Konferenz</string>
 </resources>

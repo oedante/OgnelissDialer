@@ -55,7 +55,6 @@ import com.ogneliss.dialer.util.PhoneFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
-import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -405,8 +404,8 @@ private fun FakeCallScreen(
                     text = when {
                         !answered -> stringResource(R.string.incall_incoming)
                         holding -> stringResource(R.string.incall_on_hold)
-                        // Формат и Locale — как у настоящего таймера (CallStatusLine)
-                        else -> String.format(Locale.ROOT, "%02d:%02d", seconds / 60, seconds % 60)
+                        // Формат — как у настоящего таймера (CallScreenRules.timer): с часа — «1:05:07» (2.4.3)
+                        else -> CallScreenRules.timer(seconds.toLong())
                     }
                 )
                 }
