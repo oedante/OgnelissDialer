@@ -1059,4 +1059,5 @@
     <string name="sms_queue_maybe_unsent">Le SMS programmé n’est peut-être pas parti</string>
     <string name="sms_queue_in_draft">%1$s : le texte est revenu dans le brouillon</string>
     <string name="sms_maybe_unsent">Le message n’est peut-être pas parti</string>
+    <string name="incall_conference">Conférence</string>
 </resources>

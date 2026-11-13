@@ -115,6 +115,61 @@ class OgnelissInCallService : InCallService() {
                 incomingBannerKnown = true
             }
         }
+        // Уведомление разговора — за текущей линией (2.4.3, разбор у followCurrentLine)
+        serviceScope.launch { CallManager.revision.collect { followCurrentLine() } }
+    }
+
+    /*
+     * УВЕДОМЛЕНИЕ РАЗГОВОРА — ЗА ТЕКУЩЕЙ ЛИНИЕЙ (2.4.3, обзор логики звонков).
+     *
+     * Было: уведомление пересобиралось при появлении вызова, при первом
+     * ответе и после ухода вызова. «Переключить» на вторую линию, «поговорить
+     * отдельно» с участником, сборка конференции — в шторке оставалось имя
+     * прежнего собеседника, а у конференции — «Неизвестный номер» (своего
+     * номера у неё нет). Стало: на каждое событие телефонии (CallManager.
+     * revision) уведомление сверяется с текущим вызовом и пересобирается,
+     * только если изменились подпись или начало разговора. Пока кто-то
+     * звонит — не трогаем: там уведомление входящего с «Ответить».
+     */
+    /** Что сейчас в уведомлении разговора: подпись и начало; null — там не разговор. */
+    private var shownOngoing: String? = null
+
+    @Suppress("DEPRECATION")
+    private fun followCurrentLine() {
+        val calls = CallManager.calls.value
+        if (calls.isEmpty()) return
+        if (calls.any { it.state == Call.STATE_RINGING }) {
+            shownOngoing = null
+            return
+        }
+        val primary = CallManager.primary ?: return
+        if (primary.state != Call.STATE_ACTIVE && primary.state != Call.STATE_HOLDING) return
+        postOngoing(primary)
+    }
+
+    /** Подпись вызова в уведомлении: у конференции — «Конференция» и число участников. */
+    private fun ongoingLabel(call: Call): String = if (CallManager.isConference(call)) {
+        val n = call.children.size
+        if (n > 0) getString(com.ogneliss.dialer.R.string.incall_conference_title, n)
+        else getString(com.ogneliss.dialer.R.string.incall_conference)
+    } else CallDetailsCompat.displayLabel(
+        call.details,
+        getString(com.ogneliss.dialer.R.string.call_unknown_number)
+    )
+
+    /** Уведомление разговора по [call]; то же самое второй раз не ставится. */
+    private fun postOngoing(call: Call) {
+        val label = ongoingLabel(call)
+        val connectedAt = call.details?.connectTimeMillis ?: 0L
+        val signature = "$label|$connectedAt"
+        if (signature == shownOngoing) return
+        shownOngoing = signature
+        CallForegroundService.start(
+            this, label,
+            if (CallManager.isConference(call)) null else CallDetailsCompat.number(call.details),
+            incoming = false,
+            connectedAt = connectedAt
+        )
     }
 
     override fun onDestroy() {
@@ -135,6 +190,22 @@ class OgnelissInCallService : InCallService() {
         super.onCallAdded(call)
         CallManager.service = this
         CallManager.add(call)
+
+        /*
+         * КОНФЕРЕНЦИЯ — НЕ НОВЫЙ ВЫЗОВ (2.4.3). Её создаёт сеть, когда две
+         * линии объединили: номера и направления у неё нет. Было: она шла
+         * путём входящего — «Неизвестный номер» в уведомлении, отметка
+         * «входящий» для пропущенных. Экран вызова уже открыт; уведомление —
+         * по текущей линии.
+         */
+        if (CallManager.isConference(call)) {
+            Logger.i(TAG, "Конференция собрана")
+            followCurrentLine()
+            return
+        }
+        // Новый вызов ставит своё уведомление (набор, входящий) — прежнего
+        // разговора в шторке больше нет: вернуться к нему — пересобрать
+        shownOngoing = null
 
         // Исходящий звонок — человек у телефона: пропущенные увидены,
         // счётчик на значке сбрасываем (MissedCallsNotifier)
@@ -199,18 +270,11 @@ class OgnelissInCallService : InCallService() {
                      */
                     // Имя берём из самого вызова: переменная выше
                     // объявляется позже этого обработчика
-                    val label = CallDetailsCompat.displayLabel(
-                        c.details,
-                        getString(com.ogneliss.dialer.R.string.call_unknown_number)
-                    )
                     // Ошибку запуска служба разбирает сама: экран разговора
-                    // откроется в любом случае (2.1.0)
-                    CallForegroundService.start(
-                        this@OgnelissInCallService, label, CallDetailsCompat.number(c.details),
-                        incoming = false,
-                        // 2.1.0: таймер — от соединения, а не от показа уведомления
-                        connectedAt = c.details?.connectTimeMillis ?: 0L
-                    )
+                    // откроется в любом случае (2.1.0). Таймер — от соединения;
+                    // подпись — по текущей линии (2.4.3, postOngoing)
+                    shownOngoing = null
+                    postOngoing(CallManager.primary ?: c)
                     openCallScreen()
                     c.unregisterCallback(this)
                 }
@@ -325,7 +389,12 @@ class OgnelissInCallService : InCallService() {
         if (!screenOff && !locked && incomingBannerWanted() && IncomingScreen.bannerSafe(this)) {
             Logger.i(TAG, "Входящий: плашкой сверху (настройка)")
             IncomingScreen.bannerOnly = true
-            IncomingScreen.notify(this, call, alert = true)
+            /*
+             * Второй входящий, а экран вызова на виду (2.4.3): там уже плашка
+             * второго вызова с тремя кнопками — всплывающее уведомление поверх
+             * неё дублировало бы кнопки и закрывало экран. Тихо, в шторке.
+             */
+            IncomingScreen.notify(this, call, alert = !IncomingScreen.visible)
             return
         }
         IncomingScreen.bannerOnly = false
@@ -479,14 +548,17 @@ class OgnelissInCallService : InCallService() {
          * (REJECTED; на части прошивок — LOCAL) и только при включённой настройке.
          */
         val cause = details?.disconnectCause?.code ?: RedialPolicy.CAUSE_UNKNOWN
-        val wasRejected = details != null &&
+        // Конференция (2.4.3): итоги разговора, «Перезвонить?» и автодозвон —
+        // у её участников, у неё самой номера нет
+        val conference = CallManager.isConference(call)
+        val wasRejected = !conference && details != null &&
             !wasOutgoing &&
             details.connectTimeMillis <= 0 &&
             (cause == RedialPolicy.CAUSE_REJECTED || cause == RedialPolicy.CAUSE_LOCAL) &&
             callbackSuggestionOn
 
         // Итоги разговора — для экрана заметки
-        if (details != null) {
+        if (details != null && !conference) {
             val connectTime = details.connectTimeMillis
             val duration = if (connectTime > 0)
                 (System.currentTimeMillis() - connectTime) / 1000 else 0L
@@ -537,7 +609,7 @@ class OgnelissInCallService : InCallService() {
          * закрывается, когда список пуст и сеанса нет, и сеанс должен
          * появиться раньше, чем опустеет список. Разбор — в AutoRedial.
          */
-        AutoRedial.onCallEnded(
+        if (!conference) AutoRedial.onCallEnded(
             context = this,
             number = CallDetailsCompat.number(details),
             displayName = CallDetailsCompat.contactDisplayName(details),
@@ -580,24 +652,15 @@ class OgnelissInCallService : InCallService() {
     @Suppress("DEPRECATION")
     private fun refreshNotificationFor(call: Call?) {
         call ?: return
-        // У конференции своего номера нет — подпись по числу участников
-        val label = if (call.children.isNotEmpty()) {
-            getString(com.ogneliss.dialer.R.string.incall_conference_title, call.children.size)
-        } else CallDetailsCompat.displayLabel(
-            call.details,
-            getString(com.ogneliss.dialer.R.string.call_unknown_number)
-        )
         // Остался звонящий — входящее с кнопками: всплывающее, если экрана
         // вызова не видно (2.1.0, IncomingScreen.notify)
         if (call.state == Call.STATE_RINGING) {
+            shownOngoing = null
             IncomingScreen.notify(this, call, alert = !IncomingScreen.visible)
             return
         }
-        CallForegroundService.start(
-            this, label, CallDetailsCompat.number(call.details),
-            incoming = false,
-            connectedAt = call.details?.connectTimeMillis ?: 0L
-        )
+        // Подпись (у конференции — по числу участников) и таймер — postOngoing (2.4.3)
+        postOngoing(call)
     }
 
     /*

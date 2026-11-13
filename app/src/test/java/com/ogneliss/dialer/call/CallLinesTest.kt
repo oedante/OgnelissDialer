@@ -203,4 +203,46 @@ class CallLinesTest {
         assertEquals("конференция", CallLines.secondary(lines)?.key)
         assertEquals(CallLines.Swap.Unhold("конференция"), CallLines.swap(lines))
     }
+
+    // ── Ответ на второй входящий (2.4.3) ───────────────────────────────────
+
+    @Test
+    fun `второй входящий — «Ответить и удержать», когда текущий можно удержать`() {
+        val lines = listOf(active("мама", caps = hold), ringing("работа"))
+        assertEquals(CallLines.WaitingAnswer.HOLD_CURRENT, CallLines.waitingAnswer(lines))
+    }
+
+    @Test
+    fun `второй входящий — только «Завершить и ответить», когда удержать нельзя`() {
+        // Сеть не держит удержание или «сейчас нельзя»: Telecom завершил бы текущий сам
+        assertEquals(CallLines.WaitingAnswer.END_CURRENT, CallLines.waitingAnswer(listOf(active("мама", caps = 0), ringing("работа"))))
+        assertEquals(CallLines.WaitingAnswer.END_CURRENT, CallLines.waitingAnswer(listOf(active("мама", caps = supportHold), ringing("работа"))))
+        // Набирается исходящий — удерживать нечего
+        assertEquals(CallLines.WaitingAnswer.END_CURRENT, CallLines.waitingAnswer(listOf(dialing("мама"), ringing("работа"))))
+    }
+
+    @Test
+    fun `ждущего нет — решать нечего`() {
+        assertNull(CallLines.waitingAnswer(listOf(active("мама"))))
+        assertNull(CallLines.waitingAnswer(listOf(ringing("работа"))))
+    }
+
+    @Test
+    fun `идёт конференция, звонит третий — «Ответить и удержать» по её возможностям`() {
+        val lines = listOf(
+            Line("мама", Call.STATE_ACTIVE, hasParent = true),
+            Line("конференция", Call.STATE_ACTIVE, capabilities = hold, conference = true),
+            ringing("сосед")
+        )
+        assertEquals("конференция", CallLines.primary(lines)?.key)
+        assertEquals(CallLines.WaitingAnswer.HOLD_CURRENT, CallLines.waitingAnswer(lines))
+    }
+
+    @Test
+    fun `«Переключить» — не пока второй номер набирается`() {
+        val lines = listOf(held("мама"), dialing("работа"))
+        assertNull(CallLines.swap(lines))
+        assertFalse(CallLines.canSwap(lines))
+        assertTrue(CallLines.canSwap(listOf(active("работа"), held("мама"))))
+    }
 }

@@ -205,9 +205,19 @@ object CallManager {
                 state = c.state,
                 hasParent = c.parent != null,
                 capabilities = c.details?.callCapabilities ?: 0,
-                conferenceable = c.conferenceableCalls.toSet()
+                conferenceable = c.conferenceableCalls.toSet(),
+                conference = isConference(c)
             )
         }
+
+    /**
+     * Вызов — сама конференция (2.4.3): у неё нет своего номера, на экране
+     * и в уведомлении — «Конференция», а не имя последнего собеседника.
+     * Свойство PROPERTY_CONFERENCE ставит сеть; участники могут прийти
+     * позже самого вызова, поэтому и по ним.
+     */
+    fun isConference(call: Call): Boolean =
+        call.details?.hasProperty(Call.Details.PROPERTY_CONFERENCE) == true || call.children.isNotEmpty()
 
     /** Текущий вызов: разбор порядка — у CallLines.primary. */
     val primary: Call?
@@ -255,6 +265,22 @@ object CallManager {
      */
     fun answerWaitingHoldCurrent() {
         waiting?.answer(VideoProfile.STATE_AUDIO_ONLY)
+    }
+
+    /** Как отвечать на второй входящий — удержать или завершить текущий (разбор у CallLines.waitingAnswer). */
+    val waitingAnswer: CallLines.WaitingAnswer?
+        get() = CallLines.waitingAnswer(lines)
+
+    /**
+     * Ответить на второй входящий так, как позволяет сеть (2.4.3): кнопка
+     * «Ответить» уведомления. Удержать текущий нельзя — завершить и ответить.
+     */
+    fun answerWaiting() {
+        when (waitingAnswer) {
+            CallLines.WaitingAnswer.END_CURRENT -> answerWaitingEndCurrent()
+            CallLines.WaitingAnswer.HOLD_CURRENT -> answerWaitingHoldCurrent()
+            null -> Unit
+        }
     }
 
     /** Ответить на второй вызов, первый — завершить. */
@@ -364,6 +390,10 @@ object CallManager {
      * могли остаться на удержании. Теперь — только unhold(): удержание
      * текущего и «обмен» для сети делает Telecom, как в системном диалере.
      */
+    /** Переключить можно: обе линии соединены (разбор у CallLines.swap). */
+    val canSwap: Boolean
+        get() = CallLines.canSwap(lines)
+
     fun swapCalls() {
         when (val action = CallLines.swap(lines)) {
             is CallLines.Swap.Conference -> action.key.swapConference()

@@ -111,4 +111,25 @@ internal object CallScreenRules {
     @Suppress("DEPRECATION")
     fun returnable(state: Int, isConferenceChild: Boolean): Boolean =
         !isConferenceChild && state != Call.STATE_DISCONNECTED && state != Call.STATE_DISCONNECTING
+
+    /**
+     * ТАЙМЕР РАЗГОВОРА (2.4.3): «05:07», с часа — «1:05:07». Было «%02d:%02d»
+     * всегда: после часа — «65:07». Locale.ROOT — цифры латинские в любой
+     * локали (в арабской %02d рисовался местными цифрами).
+     */
+    fun timer(seconds: Long): String {
+        val s = seconds.coerceAtLeast(0)
+        return if (s >= 3600) String.format(java.util.Locale.ROOT, "%d:%02d:%02d", s / 3600, s / 60 % 60, s % 60)
+        else String.format(java.util.Locale.ROOT, "%02d:%02d", s / 60, s % 60)
+    }
+
+    /**
+     * С какого времени считать разговор (2.4.3): время соединения от сети,
+     * а если его нет (0 — у конференции на части сетей, на части прошивок
+     * в первые мгновения) — когда экран увидел разговор [seenActiveAt].
+     * Было: «connectTimeMillis ?: сейчас» ловило только null, а 0 давал
+     * таймер от 1970 года — «29384756:12».
+     */
+    fun connectedSince(connectTimeMillis: Long?, seenActiveAt: Long): Long =
+        connectTimeMillis?.takeIf { it > 0 } ?: seenActiveAt
 }

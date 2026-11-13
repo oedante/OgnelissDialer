@@ -31,8 +31,9 @@ class CallControlReceiver : BroadcastReceiver() {
              * на текущий, то есть на уже идущий разговор, — и ничего
              * не происходило, а второй звонок продолжал звонить.
              */
+            // 2.4.3: текущий нельзя удержать — завершить и ответить (CallLines.waitingAnswer)
             ACTION_ANSWER ->
-                if (CallManager.waiting != null) CallManager.answerWaitingHoldCurrent()
+                if (CallManager.waiting != null) CallManager.answerWaiting()
                 else CallManager.answer()
             ACTION_REJECT ->
                 if (CallManager.waiting != null) CallManager.rejectWaiting()

@@ -32,7 +32,9 @@ data class Line<K>(
     /** Call.Details.getCallCapabilities(). */
     val capabilities: Int = 0,
     /** С какими вызовами сеть разрешает объединить (Call.getConferenceableCalls). */
-    val conferenceable: Set<K> = emptySet()
+    val conferenceable: Set<K> = emptySet(),
+    /** Сама конференция (PROPERTY_CONFERENCE или есть участники), 2.4.3. */
+    val conference: Boolean = false
 ) {
     fun can(capability: Int): Boolean = capabilities and capability == capability
 }
@@ -133,10 +135,20 @@ object CallLines {
      */
     fun <K> swap(lines: List<Line<K>>): Swap<K>? {
         val current = primary(lines)
+        /*
+         * Только между соединёнными линиями (2.4.3): пока второй номер
+         * набирается, снять удержание с первого значит дать Telecom повод
+         * сбросить набор — на части сетей так и выходит. Системный диалер
+         * в это время «Переключить» гасит.
+         */
+        if (current != null && current.state != Call.STATE_ACTIVE && current.state != Call.STATE_HOLDING) return null
         if (current != null && current.can(Call.Details.CAPABILITY_SWAP_CONFERENCE)) return Swap.Conference(current.key)
         val held = secondary(lines) ?: return null
         return Swap.Unhold(held.key)
     }
+
+    /** Можно ли переключить линии сейчас (плитка «Переключить», плашка удержанной). */
+    fun <K> canSwap(lines: List<Line<K>>): Boolean = swap(lines) != null
 
     /** Можно ли объединить: сеть указала их друг другу или вызов сам собирает конференцию. */
     fun <K> canMerge(lines: List<Line<K>>): Boolean {
@@ -177,6 +189,24 @@ object CallLines {
         return if (current == null || current.key == incoming.key) EndAndAnswer.AnswerNow(incoming.key)
         else EndAndAnswer.ReleaseFirst(current.key, incoming.key)
     }
+
+    /**
+     * КАК ОТВЕТИТЬ НА ВТОРОЙ ВХОДЯЩИЙ (2.4.3, обзор логики звонков).
+     *
+     * Текущий можно удержать (CAPABILITY_HOLD) — «Ответить и удержать».
+     * Нельзя (сеть не держит удержание, набирается исходящий, экстренный) —
+     * только «Завершить и ответить»: Telecom, отвечая, сам завершил бы
+     * неудерживаемый вызов, и кнопка «Ответить и удержать» обещала бы
+     * не то, что произойдёт. Так же делает системный диалер. Ждущего
+     * нет — null.
+     */
+    fun <K> waitingAnswer(lines: List<Line<K>>): WaitingAnswer? {
+        waiting(lines) ?: return null
+        val current = primary(lines) ?: return WaitingAnswer.HOLD_CURRENT
+        return if (current.can(Call.Details.CAPABILITY_HOLD)) WaitingAnswer.HOLD_CURRENT else WaitingAnswer.END_CURRENT
+    }
+
+    enum class WaitingAnswer { HOLD_CURRENT, END_CURRENT }
 
     /**
      * Ответить ли теперь: завершился именно тот вызов, которого ждали,
