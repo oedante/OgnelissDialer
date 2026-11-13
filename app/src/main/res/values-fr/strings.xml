@@ -1055,4 +1055,8 @@
     <string name="settings_incoming_banner_text_shell">Sur ce téléphone, le système peut bloquer la bannière. En l’activant, autorisez les notifications pop-up (bannières) de l’appli dans les réglages de notifications. Si la bannière n’apparaît pas, désactivez : l’appel s’ouvrira en plein écran</string>
     <string name="swipe_hint_text">Glissez une ligne à droite — %1$s, à gauche — %2$s. Tirez jusqu’au bout et relâchez</string>
     <string name="swipe_hint_ok">Compris</string>
+    <string name="sms_queue_unsent">SMS programmé non envoyé</string>
+    <string name="sms_queue_maybe_unsent">Le SMS programmé n’est peut-être pas parti</string>
+    <string name="sms_queue_in_draft">%1$s : le texte est revenu dans le brouillon</string>
+    <string name="sms_maybe_unsent">Le message n’est peut-être pas parti</string>
 </resources>

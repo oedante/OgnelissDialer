@@ -273,8 +273,24 @@ interface ScheduledSmsDao {
     @Query("DELETE FROM sms_scheduled WHERE id = :id")
     suspend fun delete(id: Long): Int
 
-    @Query("UPDATE sms_scheduled SET atMillis = :at WHERE id = :id")
+    /**
+     * Удалить, только пока SMS ждёт (2.4.2): отправляемое (atMillis < 0,
+     * SmsQueueRules) не отменить — оно уже ушло в сеть или уходит.
+     */
+    @Query("DELETE FROM sms_scheduled WHERE id = :id AND atMillis >= 0")
+    suspend fun deleteWaiting(id: Long): Int
+
+    /** Новый срок — только ждущему (отправляемое не трогается). */
+    @Query("UPDATE sms_scheduled SET atMillis = :at WHERE id = :id AND atMillis >= 0")
     suspend fun reschedule(id: Long, at: Long)
+
+    /**
+     * Взять SMS в отправку (2.4.2): срок меняется на пометку «отправляется
+     * с такого-то времени» (отрицательное число, SmsQueueRules.claimMark).
+     * Число изменённых строк: 0 — его уже взял другой будильник или отменили.
+     */
+    @Query("UPDATE sms_scheduled SET atMillis = :mark WHERE id = :id AND atMillis >= 0")
+    suspend fun claim(id: Long, mark: Long): Int
 }
 
 /** Избранные сообщения (2.2.0). */

@@ -49,7 +49,7 @@ class BootReceiver : BroadcastReceiver() {
         ).launch {
             suspendRunCatching { reminders.restoreAfterBoot() }
             // Отложенные SMS (2.2.0): пришедшее за время выключения — сейчас, остальное — будильником
-            suspendRunCatching { smsQueue.sendDue() }
+            suspendRunCatching { smsQueue.sendDue(com.ogneliss.dialer.sms.SmsQueue.RECEIVER_BUDGET_MS) }
             pending.finish()
         }
     }

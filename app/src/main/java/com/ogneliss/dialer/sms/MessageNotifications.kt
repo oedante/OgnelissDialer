@@ -72,6 +72,9 @@ object MessageNotifications {
     private const val ID_RANGE = 100_000
     private const val ID_SEND_FAILED = 3999
     /** Не скачанные MMS (2.1.0) — своё окно номеров, по одному на сообщение. */
+    // Отложенные SMS, вернувшиеся в черновик (2.4.2): своё окно номеров
+    private const val ID_QUEUE_BASE = 800_000
+    private const val ID_QUEUE_RANGE = 10_000
     private const val ID_MMS_BASE = 900_000
     private const val ID_MMS_RANGE = 10_000
     /** Ярлыки переписок — после ярлыков звонков в меню значка (ContactShortcuts). */
@@ -378,6 +381,51 @@ object MessageNotifications {
             .setAutoCancel(true)
             .build()
         NotificationPermission.notify(context, ID_SEND_FAILED, n, "не отправлено")
+    }
+
+    // ── Отложенное SMS вернулось в черновик (2.4.2) ─────────────────────────
+
+    private fun idForQueued(address: String) = ID_QUEUE_BASE + Math.floorMod(smsPinKey(address).hashCode(), ID_QUEUE_RANGE)
+
+    /**
+     * Отложенное SMS (или ждавшее окна «Отменить») не ушло, текст — в черновике
+     * переписки (SmsQueue). Критично по правилу автора: человек уверен, что
+     * сообщение отправлено, а без его действия оно не уйдёт никогда. Было
+     * (2.2.0–2.4.1) — молча. [interrupted] — процесс закрыли посреди отправки:
+     * ушло ли SMS, неизвестно, поэтому «могло не уйти». [scheduled] — время
+     * выбирал человек («Отложенное SMS…»); иначе это окно «Отменить» после
+     * «Отправить» («Сообщение…»). Открыта эта переписка — без уведомления:
+     * текст и так появился в поле.
+     */
+    fun queuedToDraft(context: Context, address: String, interrupted: Boolean, scheduled: Boolean) {
+        if (isConversationVisible(address)) {
+            Logger.i(TAG, "SMS из очереди в черновике — переписка открыта, без уведомления")
+            return
+        }
+        ensureChannel(context)
+        val id = idForQueued(address)
+        val who = contactInfo(context, address)?.name ?: PhoneFormatter.format(address)
+        val open = PendingIntent.getActivity(
+            context, id, openIntent(context, address),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val n = NotificationCompat.Builder(context, CHANNEL)
+            .setSmallIcon(R.drawable.ic_stat_message)
+            .setContentTitle(
+                context.getString(
+                    when {
+                        interrupted && scheduled -> R.string.sms_queue_maybe_unsent
+                        interrupted -> R.string.sms_maybe_unsent
+                        scheduled -> R.string.sms_queue_unsent
+                        else -> R.string.sms_send_failed
+                    }
+                )
+            )
+            .setContentText(context.getString(R.string.sms_queue_in_draft, who))
+            .setContentIntent(open)
+            .setAutoCancel(true)
+            .build()
+        NotificationPermission.notify(context, id, n, "отложенное SMS в черновике")
     }
 
     // ── MMS не скачано ─────────────────────────────────────────────────────

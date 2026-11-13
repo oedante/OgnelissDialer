@@ -105,7 +105,7 @@ object CallManager {
      */
     @Suppress("DEPRECATION")
     val awaitingAccount: Call?
-        get() = topLevel.firstOrNull { it.state == Call.STATE_SELECT_PHONE_ACCOUNT }
+        get() = CallLines.topLevel(lines).firstOrNull { it.state == Call.STATE_SELECT_PHONE_ACCOUNT }?.key
 
     /**
      * Аккаунты, которые Telecom предложил для выбора; пусто — взять все свои.
@@ -193,81 +193,39 @@ object CallManager {
     }
 
     /*
-     * ══════════════════════════════════════════════════════════════════════
-     * ВЫЗОВЫ ВЕРХНЕГО УРОВНЯ
-     * ══════════════════════════════════════════════════════════════════════
-     * Когда два вызова объединяют в конференцию, Telecom создаёт третий
-     * объект — саму конференцию, — а два прежних становятся её
-     * участниками (у них появляется parent). Все три при этом лежат
-     * в общем списке.
-     *
-     * Раньше выбор «текущего вызова» смотрел на весь список и мог выбрать
-     * участника вместо конференции: у участников тоже состояние ACTIVE.
-     * Экран показывал одного собеседника, а «Завершить» клал трубку
-     * только ему. Теперь выбираем только среди вызовов без родителя.
+     * ЛИНИИ (2.4.2): все решения о текущем, удержанном и ждущем вызове —
+     * в CallLines, без Telecom, с проверками по сценариям (CallLinesTest).
+     * Здесь — только перевод объектов Telecom в линии и обратно.
      */
     @Suppress("DEPRECATION")
-    private val topLevel: List<Call>
-        get() = _calls.value.filter {
-            it.parent == null &&
-                it.state != Call.STATE_DISCONNECTED &&
-                it.state != Call.STATE_DISCONNECTING
+    private val lines: List<Line<Call>>
+        get() = _calls.value.map { c ->
+            Line(
+                key = c,
+                state = c.state,
+                hasParent = c.parent != null,
+                capabilities = c.details?.callCapabilities ?: 0,
+                conferenceable = c.conferenceableCalls.toSet()
+            )
         }
 
-    /**
-     * Текущий вызов — тот, с которым человек сейчас имеет дело.
-     *
-     * ── Порядок выбора ─────────────────────────────────────────────────────
-     * 1. Идущий разговор (ACTIVE).
-     * 2. Набираемый (DIALING, CONNECTING и соседние): человек только что
-     *    нажал «Добавить вызов», первый ушёл на удержание, и экран должен
-     *    показывать новый — тот, что сейчас дозванивается.
-     * 3. Звонящий (RINGING): входящий, когда других нет.
-     * 4. Удержанный — если больше ничего не осталось.
-     *
-     * Раньше было «активный, иначе первый живой», и во время набора
-     * второго номера первым живым оказывался удержанный — экран показывал
-     * не тот вызов.
-     *
-     * @Suppress("DEPRECATION") — про Call.state. Замена,
-     * Call.getDetails().getState(), появилась в API 31, а minSdk у нас 26.
-     */
-    @Suppress("DEPRECATION")
+    /** Текущий вызов: разбор порядка — у CallLines.primary. */
     val primary: Call?
-        get() {
-            val live = topLevel
-            return live.firstOrNull { it.state == Call.STATE_ACTIVE }
-                ?: live.firstOrNull { it.state in OUTGOING_STATES }
-                ?: live.firstOrNull { it.state == Call.STATE_RINGING }
-                ?: live.firstOrNull()
-        }
+        get() = CallLines.primary(lines)?.key
 
     /** Вторая линия — вызов на удержании, пока говорим по первой. */
-    @Suppress("DEPRECATION")
     val secondary: Call?
-        get() {
-            val main = primary
-            return topLevel.firstOrNull { it != main && it.state == Call.STATE_HOLDING }
-        }
+        get() = CallLines.secondary(lines)?.key
 
     /**
-     * ВТОРОЙ ВХОДЯЩИЙ ВО ВРЕМЯ РАЗГОВОРА.
-     *
-     * Раньше его не было видно вовсе: текущим оставался идущий разговор,
-     * а звонящий вызов на экране не показывался — ответить на него можно
-     * было только из шторки уведомлений, если повезёт. Теперь экран вызова
-     * показывает его отдельной плашкой с выбором, что делать с первым.
+     * ВТОРОЙ ВХОДЯЩИЙ ВО ВРЕМЯ РАЗГОВОРА: экран вызова показывает его
+     * отдельной плашкой с выбором, что делать с первым.
      */
-    @Suppress("DEPRECATION")
     val waiting: Call?
-        get() {
-            val main = primary
-            return topLevel.firstOrNull { it != main && it.state == Call.STATE_RINGING }
-        }
+        get() = CallLines.waiting(lines)?.key
 
-    @Suppress("DEPRECATION")
     val hasIncoming: Boolean
-        get() = topLevel.any { it.state == Call.STATE_RINGING }
+        get() = CallLines.hasIncoming(lines)
 
     fun answer() = primary?.answer(VideoProfile.STATE_AUDIO_ONLY)
     /*
@@ -316,23 +274,24 @@ object CallManager {
     private val main = android.os.Handler(android.os.Looper.getMainLooper())
 
     fun answerWaitingEndCurrent() {
-        val incoming = waiting ?: return
-        val current = primary
-        if (current == null || current == incoming) {
-            incoming.answer(VideoProfile.STATE_AUDIO_ONLY)
-            return
-        }
-        Logger.i("Call", "Завершить и ответить: жду завершения текущего")
-        releaseThenAnswer = current to incoming
-        current.disconnect()
-        main.postDelayed({
-            val pending = releaseThenAnswer ?: return@postDelayed
-            if (pending.second == incoming) {
-                Logger.w("Call", "Текущий не завершился вовремя — отвечаю на второй")
-                releaseThenAnswer = null
-                runCatching { incoming.answer(VideoProfile.STATE_AUDIO_ONLY) }
+        when (val decision = CallLines.endAndAnswer(lines)) {
+            null -> return
+            is CallLines.EndAndAnswer.AnswerNow -> decision.incoming.answer(VideoProfile.STATE_AUDIO_ONLY)
+            is CallLines.EndAndAnswer.ReleaseFirst -> {
+                val incoming = decision.incoming
+                Logger.i("Call", "Завершить и ответить: жду завершения текущего")
+                releaseThenAnswer = decision.current to incoming
+                decision.current.disconnect()
+                main.postDelayed({
+                    val pending = releaseThenAnswer ?: return@postDelayed
+                    if (pending.second == incoming) {
+                        Logger.w("Call", "Текущий не завершился вовремя — отвечаю на второй")
+                        releaseThenAnswer = null
+                        runCatching { incoming.answer(VideoProfile.STATE_AUDIO_ONLY) }
+                    }
+                }, RELEASE_ANSWER_TIMEOUT_MS)
             }
-        }, RELEASE_ANSWER_TIMEOUT_MS)
+        }
     }
 
     private fun answerAfterRelease(released: Call) {
@@ -340,7 +299,7 @@ object CallManager {
         if (pending.first != released) return
         releaseThenAnswer = null
         @Suppress("DEPRECATION")
-        if (pending.second.state == Call.STATE_RINGING) {
+        if (CallLines.answerAfterRelease(pending, released, pending.second.state)) {
             runCatching { pending.second.answer(VideoProfile.STATE_AUDIO_ONLY) }
                 .onFailure { Logger.w("Call", "Ответ после завершения не выполнен", it) }
         }
@@ -373,18 +332,16 @@ object CallManager {
      * у участника конференции): плитка «Удержать» горела, а нажатие ничего
      * не делало. Системный диалер в этом случае плитку гасит.
      */
-    @Suppress("DEPRECATION")
+    /** Разбор — у CallLines.canHold. */
     val canHold: Boolean
-        get() {
-            val c = primary ?: return false
-            if (c.state == Call.STATE_HOLDING) return true
-            return c.details.can(Call.Details.CAPABILITY_HOLD)
-        }
+        get() = CallLines.canHold(lines)
 
-    @Suppress("DEPRECATION")
     fun toggleHold() {
-        val c = primary ?: return
-        if (c.state == Call.STATE_HOLDING) c.unhold() else c.hold()
+        when (val action = CallLines.holdAction(lines)) {
+            is CallLines.HoldAction.Hold -> action.key.hold()
+            is CallLines.HoldAction.Unhold -> action.key.unhold()
+            null -> Unit
+        }
     }
 
     // ── Две линии ───────────────────────────────────────────────────────────
@@ -408,13 +365,11 @@ object CallManager {
      * текущего и «обмен» для сети делает Telecom, как в системном диалере.
      */
     fun swapCalls() {
-        val current = primary
-        if (current != null && current.details.can(Call.Details.CAPABILITY_SWAP_CONFERENCE)) {
-            current.swapConference()
-            return
+        when (val action = CallLines.swap(lines)) {
+            is CallLines.Swap.Conference -> action.key.swapConference()
+            is CallLines.Swap.Unhold -> action.key.unhold()
+            null -> Unit
         }
-        val held = secondary ?: return
-        held.unhold()
     }
 
     /**
@@ -425,37 +380,18 @@ object CallManager {
      * две, и на сети без конференций молча не работала.
      */
     val canMerge: Boolean
-        get() {
-            val a = primary ?: return false
-            val b = secondary ?: return false
-            return b in a.conferenceableCalls ||
-                a.details.can(Call.Details.CAPABILITY_MERGE_CONFERENCE) ||
-                b.details.can(Call.Details.CAPABILITY_MERGE_CONFERENCE)
-        }
+        get() = CallLines.canMerge(lines)
 
     /**
-     * Объединить в конференцию.
-     *
-     * Порядок — по документации Telecom:
-     *
-     * 1. вызовы указаны друг у друга как «можно объединить» — просим
-     *    объединить именно их (так работает большинство сетей GSM);
-     * 2. иначе, если вызов сам умеет собрать конференцию (сети CDMA
-     *    и часть IMS) — mergeConference().
-     *
-     * Раньше был только первый путь, и на сетях второго типа кнопка
-     * ничего не делала.
+     * Объединить в конференцию. Порядок — по документации Telecom, разбор
+     * у CallLines.merge: указаны друг у друга — conference(); вызов сам
+     * собирает конференцию — mergeConference(); иначе всё равно conference().
      */
     fun merge() {
-        val a = primary ?: return
-        val b = secondary ?: return
-        when {
-            b in a.conferenceableCalls -> a.conference(b)
-            a.details.can(Call.Details.CAPABILITY_MERGE_CONFERENCE) -> a.mergeConference()
-            b.details.can(Call.Details.CAPABILITY_MERGE_CONFERENCE) -> b.mergeConference()
-            // Последняя попытка: часть прошивок не заполняет список, но
-            // объединение принимает
-            else -> a.conference(b)
+        when (val action = CallLines.merge(lines)) {
+            is CallLines.Merge.Conference -> action.key.conference(action.with)
+            is CallLines.Merge.MergeConference -> action.key.mergeConference()
+            null -> Unit
         }
     }
 
@@ -473,12 +409,10 @@ object CallManager {
      * экстренный вызов, предел вызовов и ограничения сети — без этого
      * «Добавить» горело, а набранный номер Telecom отклонял.
      */
-    @Suppress("DEPRECATION")
     val canAddCall: Boolean
         get() {
-            val c = primary ?: return false
             val telecomAllows = runCatching { service?.canAddCall() }.getOrNull() ?: true
-            return telecomAllows && c.state == Call.STATE_ACTIVE && canHold && secondary == null && waiting == null
+            return CallLines.canAddCall(lines, telecomAllows)
         }
 
     // ── Конференция ─────────────────────────────────────────────────────────
@@ -535,16 +469,6 @@ object CallManager {
         get() = (_audioState.value?.supportedRouteMask ?: 0) and
             CallAudioState.ROUTE_BLUETOOTH != 0
 
-    /** Состояния набираемого вызова: разбор у primary. */
     /** «Завершить и ответить»: сколько ждать завершения текущего. */
     private const val RELEASE_ANSWER_TIMEOUT_MS = 2_000L
-
-    @Suppress("DEPRECATION")
-    private val OUTGOING_STATES = setOf(
-        Call.STATE_DIALING,
-        Call.STATE_CONNECTING,
-        Call.STATE_SELECT_PHONE_ACCOUNT,
-        Call.STATE_NEW,
-        Call.STATE_PULLING_CALL
-    )
 }

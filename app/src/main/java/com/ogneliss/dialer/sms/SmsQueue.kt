@@ -44,17 +44,32 @@ import javax.inject.Singleton
  *   разрешает, иначе ступенчатый неточный, как у напоминаний
  *   (CallbackReminder.inexactWake).
  *
- * ── Не дважды ──────────────────────────────────────────────────────────────
- * Таймер и будильник могут сработать оба. Отправка под замком, и строка
- * удаляется ДО отправки: кто удалил (delete вернул 1), тот и отправляет.
+ * ── Не дважды и не потерять (2.4.2) ────────────────────────────────────────
+ * Таймер и будильник могут сработать оба. Отправка под замком; перед
+ * отправкой строка помечается «отправляется» (SmsQueueRules.claimMark):
+ * кто пометил (claim вернул 1), тот и отправляет; удаляется строка после
+ * отправки. Было: удалялась ДО отправки, и закрытый в этот миг процесс
+ * терял SMS без следа. Прерванная отправка (пометка старше двух минут)
+ * возвращает текст в черновик — разбор в SmsQueueRules.
  *
  * ── Не ушло ────────────────────────────────────────────────────────────────
- * SmsSender записывает исходящее в хранилище; не ушло — пузырь
+ * SmsSender записывает исходящее в хранилище; не ушло в сети — пузырь
  * «Не отправлено» с повтором, как у обычной отправки. Если отправить
  * нельзя вовсе (роль SMS ушла другому приложению), текст возвращается
- * в черновик переписки — не теряется молча. Просроченное больше чем
- * на сутки (телефон был выключен) тоже уходит в черновик: «с днём
- * рождения» на следующий день хуже, чем не отправленное.
+ * в черновик переписки. Просроченное больше чем на сутки (телефон был
+ * выключен) тоже уходит в черновик: «с днём рождения» на следующий день
+ * хуже, чем не отправленное.
+ *
+ * 2.4.2: в любом из этих случаев — одно уведомление (MessageNotifications.
+ * queuedToDraft). Было молча: человек был уверен, что поздравление ушло.
+ * По правилу автора это критично — нужно его действие.
+ *
+ * ── Время будильника (2.4.2) ───────────────────────────────────────────────
+ * Приёмник будильника работает считаные секунды (goAsync). Отправка
+ * из него — с запасом [RECEIVER_BUDGET_MS]: не успел — оставшееся ждёт
+ * следующего будильника, который ставится сразу же (rearm). Почему не
+ * WorkManager: срочная задача на Android 8–11 требует видимого
+ * уведомления на каждую отправку, а интерфейс у приложения тихий.
  */
 @Singleton
 class SmsQueue @Inject constructor(
@@ -90,10 +105,13 @@ class SmsQueue @Inject constructor(
         return id
     }
 
-    /** Убрать из очереди; вернуть строку — её текст пойдёт обратно в поле. null — уже ушло. */
+    /**
+     * Убрать из очереди; вернуть строку — её текст пойдёт обратно в поле.
+     * null — уже ушло или уходит (отправляемое не отменить, 2.4.2).
+     */
     suspend fun cancel(id: Long): ScheduledSmsEntity? = withContext(io) {
-        val entry = dao.get(id) ?: return@withContext null
-        if (dao.delete(id) > 0) entry else null
+        val entry = dao.get(id)?.takeUnless { SmsQueueRules.isClaimed(it) } ?: return@withContext null
+        if (dao.deleteWaiting(id) > 0) entry else null
     }.also { if (it != null) rearm() }
 
     /** Отправить сейчас, не дожидаясь срока. */
@@ -102,48 +120,83 @@ class SmsQueue @Inject constructor(
         sendDue()
     }
 
-    /** Отправить всё, чему пришёл срок, и поставить будильник на следующее. */
-    suspend fun sendDue() {
+    /**
+     * Отправить всё, чему пришёл срок, и поставить будильник на следующее.
+     * [budgetMs] — сколько можно работать (приёмник будильника): не успел —
+     * оставшееся отправит следующий будильник, он ставится сразу.
+     */
+    suspend fun sendDue(budgetMs: Long = Long.MAX_VALUE) {
+        val started = android.os.SystemClock.elapsedRealtime()
         mutex.withLock {
             val now = System.currentTimeMillis()
-            // Запас «чуть раньше» — только отложенным: неточный будильник приходит
-            // с разбросом. Окно «Отменить» выдерживается целиком — иначе второе
-            // сообщение подряд ушло бы вместе с первым, не дав себя отменить
-            val due = withContext(io) { dao.snapshot() }
-                .filter { it.atMillis <= now + (if (it.scheduled) EARLY_MS else 0L) }
-            due.forEach { entry ->
-                val mine = withContext(io) { dao.delete(entry.id) } > 0
-                if (!mine) return@forEach
-                if (now - entry.atMillis > STALE_MS) {
-                    Logger.w(TAG, "Отложенное SMS просрочено больше чем на сутки — в черновик")
-                    toDraft(entry)
-                    return@forEach
+            val rows = withContext(io) { dao.snapshot() }
+
+            // Прерванные отправки (процесс закрыли посреди): ушло или нет — неизвестно
+            SmsQueueRules.interrupted(rows, now).forEach { entry ->
+                Logger.w(TAG, "Отправка SMS из очереди прервана — текст в черновик")
+                toDraft(entry)
+                withContext(io) { dao.delete(entry.id) }
+                MessageNotifications.queuedToDraft(context, entry.address, interrupted = true, scheduled = entry.scheduled)
+            }
+
+            val due = SmsQueueRules.due(rows, now)
+            // Будильник на проверку прерванной отправки — до того, как отправлять
+            if (due.isNotEmpty()) arm(now + SmsQueueRules.RECOVER_MS + 1_000L)
+            for (entry in due) {
+                if (android.os.SystemClock.elapsedRealtime() - started > budgetMs) {
+                    Logger.i(TAG, "Время приёмника вышло — остальное следующим будильником")
+                    break
                 }
-                val ok = withContext(io) { SmsSender.send(context, entry.address, entry.body, entry.subId) }
-                if (!ok) {
+                val mine = withContext(io) { dao.claim(entry.id, SmsQueueRules.claimMark(now)) } > 0
+                if (!mine) continue
+                if (SmsQueueRules.isStale(entry, now)) {
+                    Logger.w(TAG, "Отложенное SMS просрочено больше чем на сутки — в черновик")
+                    returnToDraft(entry)
+                    continue
+                }
+                val ok = withContext(io) {
+                    runCatching { SmsSender.send(context, entry.address, entry.body, entry.subId) }.getOrDefault(false)
+                }
+                if (ok) {
+                    withContext(io) { dao.delete(entry.id) }
+                } else {
                     Logger.w(TAG, "SMS из очереди не отправить — текст возвращён в черновик")
-                    toDraft(entry)
+                    returnToDraft(entry)
                 }
             }
         }
         rearm()
     }
 
-    /** Будильник на ближайшее в очереди; очередь пуста — снять. */
+    /** Будильник на ближайшее в очереди (и проверку отправляемых); очередь пуста — снять. */
     suspend fun rearm() {
-        val next = withContext(io) { dao.snapshot() }.minOfOrNull { it.atMillis }
-        val am = context.getSystemService(AlarmManager::class.java) ?: return
-        val pi = pending(context)
+        val next = SmsQueueRules.nextWake(withContext(io) { dao.snapshot() })
         if (next == null) {
-            am.cancel(pi)
+            context.getSystemService(AlarmManager::class.java)?.cancel(pending(context))
             return
         }
+        arm(next)
+    }
+
+    /** Будильник очереди на [at]: точный, если система разрешает, иначе ступенчатый неточный. */
+    private fun arm(at: Long) {
+        val am = context.getSystemService(AlarmManager::class.java) ?: return
         val now = System.currentTimeMillis()
         if (CallbackReminder.canScheduleExact(context)) {
-            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, maxOf(next, now), pi)
+            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, maxOf(at, now), pending(context))
         } else {
-            am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, CallbackReminder.inexactWake(now, next), pi)
+            am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, CallbackReminder.inexactWake(now, at), pending(context))
         }
+    }
+
+    /**
+     * Не ушло: текст — в черновик, ПОТОМ строку из очереди (сбой между ними
+     * даст текст в черновике дважды, но не потеряет его) и одно уведомление.
+     */
+    private suspend fun returnToDraft(entry: ScheduledSmsEntity) {
+        toDraft(entry)
+        withContext(io) { dao.delete(entry.id) }
+        MessageNotifications.queuedToDraft(context, entry.address, interrupted = false, scheduled = entry.scheduled)
     }
 
     private fun armTimer(atMillis: Long) {
@@ -174,7 +227,8 @@ class SmsQueue @Inject constructor(
             kotlinx.coroutines.CoroutineScope(
                 kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.IO
             ).launch {
-                suspendRunCatching { queue.sendDue() }
+                // С запасом до предела приёмника: остальное — следующим будильником
+                suspendRunCatching { queue.sendDue(RECEIVER_BUDGET_MS) }
                 pending.finish()
             }
         }
@@ -183,14 +237,14 @@ class SmsQueue @Inject constructor(
     companion object {
         private const val TAG = "SmsQueue"
 
-        /** Неточный будильник может прийти чуть раньше — не ждать ради секунд. */
-        private const val EARLY_MS = 15_000L
-
         /** Таймер в процессе — только на короткое ожидание (окно «Отменить»). */
         private const val TIMER_MAX_MS = 60_000L
 
-        /** Просрочено больше чем на сутки — не отправлять, вернуть в черновик. */
-        private const val STALE_MS = 24 * 60 * 60_000L
+        /**
+         * Сколько отправлять из приёмника будильника (2.4.2): приёмник с goAsync
+         * система ждёт не дольше 10 секунд — с запасом на запись в базу.
+         */
+        const val RECEIVER_BUDGET_MS = 6_000L
 
         private const val REQUEST_CODE = 0x534d53
 

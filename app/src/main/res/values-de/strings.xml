@@ -1056,4 +1056,8 @@
     <string name="settings_incoming_banner_text_shell">Auf diesem Telefon kann das System das Banner blockieren. Erlauben Sie der App beim Einschalten Pop-up-Benachrichtigungen (Banner) in den Benachrichtigungseinstellungen. Erscheint das Banner nicht, schalten Sie dies aus: Anrufe öffnen sich im Vollbild</string>
     <string name="swipe_hint_text">Zeile nach rechts wischen – %1$s, nach links – %2$s. Bis zum Ende ziehen und loslassen</string>
     <string name="swipe_hint_ok">Verstanden</string>
+    <string name="sms_queue_unsent">Geplante SMS nicht gesendet</string>
+    <string name="sms_queue_maybe_unsent">Geplante SMS wurde eventuell nicht gesendet</string>
+    <string name="sms_queue_in_draft">%1$s: Der Text ist wieder im Entwurf</string>
+    <string name="sms_maybe_unsent">Nachricht wurde eventuell nicht gesendet</string>
 </resources>

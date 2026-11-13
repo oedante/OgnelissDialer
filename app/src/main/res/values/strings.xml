@@ -1085,4 +1085,8 @@
     <string name="settings_incoming_banner_text_shell">On this phone the system may block the banner. If you turn it on, allow pop-up notifications (banners) for the app in the phone’s notification settings. If the banner doesn’t appear, turn this off: incoming calls will open full screen</string>
     <string name="swipe_hint_text">Swipe a row right — %1$s, left — %2$s. Drag it all the way and release</string>
     <string name="swipe_hint_ok">Got it</string>
+    <string name="sms_queue_unsent">Scheduled SMS not sent</string>
+    <string name="sms_queue_maybe_unsent">Scheduled SMS may not have been sent</string>
+    <string name="sms_queue_in_draft">%1$s: the text is back in the draft</string>
+    <string name="sms_maybe_unsent">Message may not have been sent</string>
 </resources>
