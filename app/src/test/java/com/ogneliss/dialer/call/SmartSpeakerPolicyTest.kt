@@ -146,4 +146,29 @@ class SmartSpeakerPolicyTest {
     fun `при включённой функции без гарнитуры датчики нужны`() {
         assertTrue(SmartSpeakerPolicy.shouldObserveSensors(true, false))
     }
+
+    // ── «Близко» — как у самого Android (2.4.4) ────────────────────────────
+
+    @Test
+    fun `датчик с максимумом 5 см — 0 близко, 5 далеко`() {
+        assertTrue(SmartSpeakerPolicy.isNear(0f, 5f))
+        assertFalse(SmartSpeakerPolicy.isNear(5f, 5f))
+    }
+
+    @Test
+    fun `датчик с максимумом больше 5 см — «далеко» 5 см не считается близко`() {
+        // Было: 5 < 8 — «близко» всегда, авто-динамик не включался
+        assertFalse(SmartSpeakerPolicy.isNear(5f, 8f))
+        assertFalse(SmartSpeakerPolicy.isNear(8f, 8f))
+        assertTrue(SmartSpeakerPolicy.isNear(0f, 8f))
+        assertTrue(SmartSpeakerPolicy.isNear(3f, 10f))
+    }
+
+    @Test
+    fun `датчик с максимумом 1 см — близко только 0`() {
+        assertTrue(SmartSpeakerPolicy.isNear(0f, 1f))
+        assertFalse(SmartSpeakerPolicy.isNear(1f, 1f))
+        // Отрицательное значение — сбой датчика, не «близко»
+        assertFalse(SmartSpeakerPolicy.isNear(-1f, 5f))
+    }
 }

@@ -88,6 +88,13 @@ class FakeCallActivity : ComponentActivity() {
     @Inject lateinit var contactsRepo: ContactsRepository
 
     private var ringtone: Ringtone? = null
+
+    /**
+     * Датчик приближения (2.4.4, проверка датчика): «ответили» и поднесли
+     * к уху — экран гаснет, как у настоящего вызова. Было: не гас, и щека
+     * могла нажать «Завершить» посреди «разговора» — розыгрыш раскрывался.
+     */
+    private var proximity: ProximityLock? = null
     private var vibrator: Vibrator? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -116,8 +123,14 @@ class FakeCallActivity : ComponentActivity() {
 
         startRinging()
 
+        proximity = ProximityLock(this)
+
         setContent {
             val theme by prefs.theme.collectAsStateWithLifecycle(ThemeMode.SYSTEM)
+            // Гасить экран у уха — та же настройка, что у настоящего вызова
+            val proximityOn by prefs.proximityScreenOff.collectAsStateWithLifecycle(true)
+            var atEar by remember { mutableStateOf(false) }
+            LaunchedEffect(atEar, proximityOn) { proximity?.hold(proximityOn && atEar) }
             val dynamic by prefs.dynamicColor.collectAsStateWithLifecycle(false)
             val uiScale by prefs.uiScale.collectAsStateWithLifecycle(com.ogneliss.dialer.settings.UiScale.DEFAULT)
             // Живой фон — как у настоящего вызова (1.5.1)
@@ -195,7 +208,8 @@ class FakeCallActivity : ComponentActivity() {
                     slideToAnswer = answerMode == AnswerMode.SLIDE,
                     swapAnswer = swapAnswer,
                     onAnswer = { stopRinging() },
-                    onHangUp = { finish() }
+                    onHangUp = { finish() },
+                    onAtEarChanged = { atEar = it }
                 )
             }
             }
@@ -243,6 +257,8 @@ class FakeCallActivity : ComponentActivity() {
 
     override fun onDestroy() {
         stopRinging()
+        // Ещё у уха — экран загорится, когда отнимут (как у настоящего вызова)
+        proximity?.release(waitForFar = true)
         super.onDestroy()
     }
 }
@@ -265,7 +281,9 @@ private fun FakeCallScreen(
     /** «Ответить» слева (2.1.1), как у настоящего. */
     swapAnswer: Boolean = false,
     onAnswer: () -> Unit,
-    onHangUp: () -> Unit
+    onHangUp: () -> Unit,
+    /** «Трубка у уха» (2.4.4): ответили, не на удержании, без громкой связи — датчик гасит экран. */
+    onAtEarChanged: (Boolean) -> Unit = {}
 ) {
     val slideAnswer = useSlideToAnswer(slideToAnswer)
     var answered by remember { mutableStateOf(false) }
@@ -291,6 +309,18 @@ private fun FakeCallScreen(
     var holding by remember { mutableStateOf(false) }
     var showDialpad by remember { mutableStateOf(false) }
     var dtmf by remember { mutableStateOf("") }
+
+    // Правило — как у настоящего вызова (CallScreenRules.proximityWanted)
+    LaunchedEffect(answered, holding, speaker) {
+        @Suppress("DEPRECATION")
+        val state = when {
+            !answered -> android.telecom.Call.STATE_RINGING
+            holding -> android.telecom.Call.STATE_HOLDING
+            else -> android.telecom.Call.STATE_ACTIVE
+        }
+        val route = if (speaker) android.telecom.CallAudioState.ROUTE_SPEAKER else android.telecom.CallAudioState.ROUTE_EARPIECE
+        onAtEarChanged(CallScreenRules.proximityWanted(state, route))
+    }
 
     LaunchedEffect(answered, holding) {
         if (!answered || holding) return@LaunchedEffect
