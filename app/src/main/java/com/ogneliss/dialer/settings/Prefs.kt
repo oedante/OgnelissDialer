@@ -619,6 +619,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val SMS_CALLS_IN_THREAD = booleanPreferencesKey("sms_calls_in_thread")
         val SMS_OTP_CLEANUP = stringPreferencesKey("sms_otp_cleanup")
         val SMS_FOLDERS = stringPreferencesKey("sms_folders")
+        /** Порядок и показ папок журнала и контактов (2.5.0, FolderOrder) — формат как у SMS. */
+        val JOURNAL_FOLDERS = stringPreferencesKey("journal_folders")
+        val CONTACT_FOLDERS = stringPreferencesKey("contact_folders")
         val NOTES_RETENTION = stringPreferencesKey("notes_retention")
         val NOTES_RETENTION_SCOPE = stringPreferencesKey("notes_retention_scope")
         // Экран после звонка
@@ -1362,6 +1365,14 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         com.ogneliss.dialer.sms.SmsSettings.putInt(context, com.ogneliss.dialer.sms.SmsSettings.KEY_UNDO_SECONDS, v.seconds)
     }
     suspend fun setSmsFolders(v: String) = edit("sms_folders", v) { it[Keys.SMS_FOLDERS] = v }
+
+    /** Папки журнала и контактов в «Меню»: порядок и показ (2.5.0, разбор в FolderOrder). */
+    val journalFolders: Flow<String?> = data.map { it[Keys.JOURNAL_FOLDERS] }
+    val contactFolders: Flow<String?> = data.map { it[Keys.CONTACT_FOLDERS] }
+
+    suspend fun setJournalFolders(v: String) = edit("journal_folders", v) { it[Keys.JOURNAL_FOLDERS] = v }
+
+    suspend fun setContactFolders(v: String) = edit("contact_folders", v) { it[Keys.CONTACT_FOLDERS] = v }
     suspend fun setSmsCallsInThread(v: Boolean) =
         edit("sms_calls_in_thread", v) { it[Keys.SMS_CALLS_IN_THREAD] = v }
     suspend fun setSmsOtpCleanup(v: OtpCleanup) {

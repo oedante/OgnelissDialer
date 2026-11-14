@@ -786,6 +786,8 @@ fun RootScreen(
                     ListDetailHost(vm = vm, nav = nav) { openCard ->
                         MainDialerScreen(
                             vm = vm,
+                            // Папки журнала: порядок и показ (2.5.0)
+                            onOpenFolders = { nav.navigate("journal_folders") },
                             prefilledNumber = prefilledNumber,
                             prefillToken = prefillToken,
                             openDialpad = openDialpad,
@@ -856,6 +858,8 @@ fun RootScreen(
                     ContactsScreen(
                         vm = vm,
                         onOpenNotes = { openSection(MainSection.NOTES) },
+                        // Папки контактов: порядок и показ (2.5.0)
+                        onOpenFolders = { nav.navigate("contact_folders") },
                         // «Мой контакт» из меню (2.4.0) — своя карточка, как из журнала
                         onOpenOwnCard = { openCard(com.ogneliss.dialer.ui.screens.OWN_CARD_KEY) },
                         // Псевдозвонок с экрана контактов запускается сразу,
@@ -1147,6 +1151,30 @@ fun RootScreen(
                 // Папки SMS (2.2.0): порядок и показ вкладок
                 composable("sms_folders") {
                     com.ogneliss.dialer.ui.conversation.SmsFoldersScreen(onBack = { nav.popBackStack() })
+                }
+
+                // Папки журнала и контактов (2.5.0): порядок и показ — как у SMS (MenuFoldersScreen)
+                composable("journal_folders") {
+                    val raw by vm.prefs.journalFolders.collectAsStateWithLifecycle(null)
+                    val folderScope = rememberCoroutineScope()
+                    com.ogneliss.dialer.ui.screens.MenuFoldersScreen(
+                        title = stringResource(R.string.journal_folders_title),
+                        folders = com.ogneliss.dialer.ui.screens.journalFolderItems(),
+                        raw = raw,
+                        onSave = { v -> folderScope.launch { vm.prefs.setJournalFolders(v) } },
+                        onBack = { nav.popBackStack() }
+                    )
+                }
+                composable("contact_folders") {
+                    val raw by vm.prefs.contactFolders.collectAsStateWithLifecycle(null)
+                    val folderScope = rememberCoroutineScope()
+                    com.ogneliss.dialer.ui.screens.MenuFoldersScreen(
+                        title = stringResource(R.string.contact_folders_title),
+                        folders = com.ogneliss.dialer.ui.screens.CONTACT_FOLDERS.map { (f, label, icon) -> Triple(f.name, label, icon) },
+                        raw = raw,
+                        onSave = { v -> folderScope.launch { vm.prefs.setContactFolders(v) } },
+                        onBack = { nav.popBackStack() }
+                    )
                 }
 
                 composable("swipe_tuning") {
