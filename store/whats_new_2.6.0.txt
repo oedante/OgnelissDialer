@@ -1,0 +1,162 @@
+<ru-RU>
+• Скрытый номер подписан «Номер скрыт» — без кнопок, которым нужен номер.
+• Поиск по контактам всегда внизу экрана: по имени, номеру и организации.
+• Фото на экране вызова можно показать по ширине экрана — целиком.
+• Отдельные значки «SMS» и «Контакты» — для нижнего ряда и папок (Настройки → Быстрый доступ).
+</ru-RU>
+<ar>
+• الرقم المخفي يظهر الآن باسم «رقم خاص» دون أزرار تحتاج إلى رقم.
+• البحث في جهات الاتصال دائمًا أسفل الشاشة: بالاسم والرقم والمؤسسة.
+• يمكن عرض صورة المتصل بعرض الشاشة كاملة دون قصّ.
+• أيقونات منفصلة لـ SMS وجهات الاتصال للشريط السفلي والمجلدات (الإعدادات ← الوصول السريع).
+</ar>
+<cs-CZ>
+• Skryté číslo je označeno „Soukromé číslo“ – bez tlačítek, která potřebují číslo.
+• Hledání v kontaktech je vždy dole: podle jména, čísla i organizace.
+• Fotku volajícího lze zobrazit na šířku obrazovky – celou.
+• Samostatné ikony SMS a Kontakty pro dok a složky (Nastavení → Rychlý přístup).
+</cs-CZ>
+<da-DK>
+• Skjulte numre vises som „Privat nummer“ – uden knapper, der kræver et nummer.
+• Kontaktsøgning altid nederst: efter navn, nummer og firma.
+• Opkaldsbilledet kan vises i skærmens fulde bredde – helt.
+• Separate SMS- og Kontakter-ikoner til dock og mapper (Indstillinger → Hurtig adgang).
+</da-DK>
+<de-DE>
+• Unterdrückte Nummern heißen jetzt „Unterdrückte Nummer“ – ohne Tasten, die eine Nummer brauchen.
+• Kontaktsuche immer unten: nach Name, Nummer und Firma.
+• Anruferfoto auf Wunsch über die ganze Bildschirmbreite – vollständig.
+• Eigene Symbole für SMS und Kontakte für Dock und Ordner (Einstellungen → Schnellzugriff).
+</de-DE>
+<en-US>
+• Private numbers are now labelled “Private number”, without buttons that need a number.
+• Contact search is always at the bottom: by name, number and company.
+• The caller photo can fill the screen width, shown in full.
+• Separate SMS and Contacts icons for the dock and folders (Settings → Quick access).
+</en-US>
+<es-ES>
+• Los números ocultos aparecen como «Número privado», sin botones que necesitan un número.
+• Búsqueda de contactos siempre abajo: por nombre, número y empresa.
+• La foto de quien llama puede ocupar todo el ancho, completa.
+• Iconos separados de SMS y Contactos para el dock y carpetas (Ajustes → Acceso rápido).
+</es-ES>
+<fi-FI>
+• Piilotettu numero näkyy nyt tekstinä ”Yksityinen numero” ilman numeroa vaativia painikkeita.
+• Yhteystietohaku aina alhaalla: nimellä, numerolla ja yrityksellä.
+• Soittajan kuva voi täyttää näytön leveyden kokonaan.
+• Erilliset SMS- ja Yhteystiedot-kuvakkeet telakkaan ja kansioihin (Asetukset → Pikakäyttö).
+</fi-FI>
+<fr-FR>
+• Les numéros masqués s’affichent « Numéro masqué », sans boutons qui exigent un numéro.
+• Recherche de contacts toujours en bas : par nom, numéro et société.
+• La photo de l’appelant peut occuper toute la largeur, en entier.
+• Icônes SMS et Contacts séparées pour le dock et les dossiers (Paramètres → Accès rapide).
+</fr-FR>
+<hi-IN>
+• छिपा नंबर अब «निजी नंबर» दिखता है — नंबर वाले बटन के बिना।
+• संपर्क खोज हमेशा नीचे: नाम, नंबर और संस्था से।
+• कॉल करने वाले की फ़ोटो स्क्रीन की पूरी चौड़ाई में, पूरी दिख सकती है।
+• डॉक और फ़ोल्डर के लिए अलग SMS और संपर्क आइकन (सेटिंग्स → त्वरित पहुँच)।
+</hi-IN>
+<hu-HU>
+• A rejtett szám „Privát szám” felirattal jelenik meg, számot igénylő gombok nélkül.
+• Névjegykeresés mindig alul: név, szám és cég szerint.
+• A hívó fotója a képernyő teljes szélességében, egészben is látható.
+• Külön SMS és Névjegyek ikon a dokkhoz és mappákhoz (Beállítások → Gyors elérés).
+</hu-HU>
+<id>
+• Nomor tersembunyi kini bertuliskan “Nomor pribadi”, tanpa tombol yang butuh nomor.
+• Pencarian kontak selalu di bawah: menurut nama, nomor, dan perusahaan.
+• Foto penelepon bisa memenuhi lebar layar, utuh.
+• Ikon SMS dan Kontak terpisah untuk dok dan folder (Setelan → Akses cepat).
+</id>
+<it-IT>
+• I numeri nascosti appaiono come «Numero privato», senza pulsanti che richiedono un numero.
+• Ricerca contatti sempre in basso: per nome, numero e azienda.
+• La foto del chiamante può occupare tutta la larghezza, intera.
+• Icone SMS e Contatti separate per dock e cartelle (Impostazioni → Accesso rapido).
+</it-IT>
+<iw-IL>
+• מספר חסוי מוצג כעת כ„מספר חסוי”, בלי כפתורים שדורשים מספר.
+• חיפוש אנשי קשר תמיד למטה: לפי שם, מספר וארגון.
+• תמונת המתקשר יכולה למלא את רוחב המסך, במלואה.
+• סמלים נפרדים ל-SMS ולאנשי קשר עבור המעגן ותיקיות (הגדרות ← גישה מהירה).
+</iw-IL>
+<ja-JP>
+• 非通知の着信は「非通知」と表示され、番号が必要なボタンは出ません。
+• 連絡先の検索は常に画面下部に。名前・番号・会社名で検索できます。
+• 発信者の写真を画面幅いっぱいに、切り取らずに表示できます。
+• ドックやフォルダ用に SMS と連絡先の個別アイコン（設定 → クイックアクセス）。
+</ja-JP>
+<ko-KR>
+• 발신번호 표시 제한 전화는 이제 '발신번호 표시 제한'으로 표시되며 번호가 필요한 버튼은 없습니다.
+• 연락처 검색은 항상 화면 아래에: 이름, 번호, 회사로 검색.
+• 발신자 사진을 화면 너비에 맞춰 잘림 없이 표시할 수 있습니다.
+• 독과 폴더용 SMS·연락처 개별 아이콘(설정 → 빠른 액세스).
+</ko-KR>
+<nl-NL>
+• Verborgen nummers heten nu ‘Privénummer’, zonder knoppen die een nummer nodig hebben.
+• Contacten zoeken altijd onderaan: op naam, nummer en bedrijf.
+• De foto van de beller kan de volle schermbreedte vullen, helemaal.
+• Aparte SMS- en Contacten-iconen voor dock en mappen (Instellingen → Snelle toegang).
+</nl-NL>
+<no-NO>
+• Skjulte numre vises nå som «Privat nummer», uten knapper som krever et nummer.
+• Kontaktsøk alltid nederst: på navn, nummer og firma.
+• Innringerbildet kan fylle hele skjermbredden, helt.
+• Egne SMS- og Kontakter-ikoner til dokk og mapper (Innstillinger → Hurtigtilgang).
+</no-NO>
+<pl-PL>
+• Ukryty numer jest teraz opisany „Numer prywatny”, bez przycisków wymagających numeru.
+• Wyszukiwanie kontaktów zawsze na dole: po nazwie, numerze i firmie.
+• Zdjęcie dzwoniącego może zająć całą szerokość ekranu, w całości.
+• Osobne ikony SMS i Kontakty do docka i folderów (Ustawienia → Szybki dostęp).
+</pl-PL>
+<pt-BR>
+• Números ocultos agora aparecem como “Número privado”, sem botões que exigem número.
+• Busca de contatos sempre embaixo: por nome, número e empresa.
+• A foto de quem liga pode ocupar toda a largura da tela, inteira.
+• Ícones separados de SMS e Contatos para o dock e pastas (Configurações → Acesso rápido).
+</pt-BR>
+<ro>
+• Numerele ascunse apar acum „Număr privat”, fără butoane care cer un număr.
+• Căutarea contactelor mereu jos: după nume, număr și companie.
+• Fotografia apelantului poate ocupa toată lățimea ecranului, întreagă.
+• Pictograme separate SMS și Contacte pentru dock și foldere (Setări → Acces rapid).
+</ro>
+<sk>
+• Skryté číslo je označené „Súkromné číslo“ – bez tlačidiel, ktoré potrebujú číslo.
+• Hľadanie kontaktov vždy dole: podľa mena, čísla aj organizácie.
+• Fotku volajúceho možno zobraziť na šírku obrazovky – celú.
+• Samostatné ikony SMS a Kontakty pre dok a priečinky (Nastavenia → Rýchly prístup).
+</sk>
+<sv-SE>
+• Dolda nummer visas nu som ”Privat nummer”, utan knappar som kräver ett nummer.
+• Kontaktsök alltid längst ned: på namn, nummer och företag.
+• Uppringarens bild kan fylla hela skärmbredden, i sin helhet.
+• Separata SMS- och Kontakter-ikoner för docka och mappar (Inställningar → Snabbåtkomst).
+</sv-SE>
+<th>
+• หมายเลขที่ซ่อนจะแสดงเป็น “หมายเลขส่วนตัว” โดยไม่มีปุ่มที่ต้องใช้หมายเลข
+• ค้นหารายชื่ออยู่ด้านล่างเสมอ: ตามชื่อ หมายเลข และบริษัท
+• รูปผู้โทรแสดงเต็มความกว้างหน้าจอได้ทั้งภาพ
+• ไอคอน SMS และรายชื่อแยกกันสำหรับแถบด้านล่างและโฟลเดอร์ (การตั้งค่า → เข้าถึงด่วน)
+</th>
+<tr-TR>
+• Gizli numaralar artık “Gizli numara” olarak görünür, numara gerektiren düğmeler olmadan.
+• Kişi araması her zaman altta: ada, numaraya ve şirkete göre.
+• Arayanın fotoğrafı ekran genişliğinde, tamamıyla gösterilebilir.
+• Dock ve klasörler için ayrı SMS ve Kişiler simgeleri (Ayarlar → Hızlı erişim).
+</tr-TR>
+<vi>
+• Số ẩn nay hiển thị “Số riêng tư”, không có nút cần số điện thoại.
+• Tìm danh bạ luôn ở dưới cùng: theo tên, số và công ty.
+• Ảnh người gọi có thể hiển thị hết chiều rộng màn hình, trọn vẹn.
+• Biểu tượng SMS và Danh bạ riêng cho dock và thư mục (Cài đặt → Truy cập nhanh).
+</vi>
+<zh-CN>
+• 隐藏号码现在显示为“私人号码”，不再出现需要号码的按钮。
+• 联系人搜索始终在屏幕底部：可按姓名、号码和公司搜索。
+• 来电照片可按屏幕宽度完整显示。
+• 为程序坞和文件夹提供单独的短信和联系人图标（设置 → 快速访问）。
+</zh-CN>

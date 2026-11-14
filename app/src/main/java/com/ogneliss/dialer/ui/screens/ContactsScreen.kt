@@ -65,7 +65,6 @@ import com.ogneliss.dialer.ui.components.ContactsBottomBar
 import com.ogneliss.dialer.ui.components.ListPanel
 import com.ogneliss.dialer.ui.components.MainSection
 import com.ogneliss.dialer.settings.ThemeMode
-import com.ogneliss.dialer.util.TextFold
 import androidx.compose.runtime.saveable.rememberSaveable
 import com.ogneliss.dialer.ui.components.EmptyReason
 import com.ogneliss.dialer.ui.components.EmptyState
@@ -513,10 +512,11 @@ fun ContactsScreen(
                 remindedNumbers = reminderNumbers
             )
 
-            // Без учёта регистра и с «ё» = «е», как в журнале (1.6.0, TextFold)
+            // Без учёта регистра и с «ё» = «е», как в журнале (1.6.0, TextFold);
+            // 2.6.0 — ещё организация, заметка и номер (ContactSearch.matchesListQuery)
             val query = search.trim()
             val filtered = if (query.isEmpty()) source
-            else source.filter { TextFold.contains(it.displayName, query) }
+            else source.filter { com.ogneliss.dialer.data.ContactSearch.matchesListQuery(it, query, state.notes) }
 
             /*
              * ПОРЯДОК БУКВ — КАК В КНИГЕ (1.5.7).
@@ -715,6 +715,9 @@ fun ContactsScreen(
                     searchHint = stringResource(R.string.contacts_search_hint),
                     onSearchChange = { search = it },
                     onCloseSearch = closeSearch,
+                    // 2.6.0: поиск всегда на виду, над кнопками (форум; разбор у PanelSearchButton)
+                    onOpenSearch = { searching = true },
+                    searchButtonLabel = stringResource(R.string.speed_dial_search),
                     onMenu = { menuOpen = true },
                     // Перелистывание по панели (настройка): вправо — SMS (2.1.0),
                     // влево — заметки, как раньше
@@ -868,18 +871,11 @@ fun ContactsScreen(
             LazyColumn(state = listState, modifier = Modifier.scrollEdgeFade(listState)) {
 
                 /*
-                 * ПОИСК — СТРОКОЙ ВВЕРХУ СПИСКА (2.5.0, форум: «нужно поле поиска
-                 * в разделе контактов, сейчас неудобно»). С 2.4.0 поиск был только
-                 * в «Меню» — на два касания дальше. Теперь и пилюлей над списком,
-                 * как в «Контактах» Android: прокручивается вместе со списком,
-                 * шапку не занимает (решение автора — в шапке только название
-                 * и «⋮»). Касание — то же поле поиска внизу, над клавиатурой.
+                 * ПОИСК (2.5.0 — пилюлей вверху списка, форум: «нужно поле поиска
+                 * в разделе контактов»). 2.6.0: пилюля уезжала вместе со списком —
+                 * форум попросил поле «постоянным и внизу экрана». Теперь оно
+                 * в нижней панели над кнопками (ListPanel, PanelSearchButton).
                  */
-                if (!searching) {
-                    item(key = "search_pill") {
-                        SearchPill(stringResource(R.string.speed_dial_search), onSearch = { searching = true })
-                    }
-                }
 
                 /*
                  * ИЗБРАННЫЕ ОТДЕЛЬНОЙ ГРУППОЙ СВЕРХУ.
@@ -1353,7 +1349,26 @@ private fun ContactRow(
                      * цветовосприятия один цвет не читается.
                      */
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        contact.numbers.firstOrNull()?.let { number ->
+                        /*
+                         * НАШЛИ ПО ОРГАНИЗАЦИИ — ОНА ВМЕСТО НОМЕРА (2.6.0).
+                         * Запрос «газпром» нашёл «Ивана Петрова»: без строки
+                         * «Газпромбанк, менеджер» непонятно, почему он здесь.
+                         * Совпадение выделено так же, как в имени.
+                         */
+                        val orgShown = query.isNotBlank() &&
+                            !com.ogneliss.dialer.util.TextFold.contains(contact.displayName, query.trim()) &&
+                            com.ogneliss.dialer.data.ContactSearch.orgMatchesText(contact, query.trim()) &&
+                            contact.organizationLine.isNotBlank()
+                        if (orgShown) {
+                            HighlightedName(
+                                name = contact.organizationLine,
+                                query = query.trim(),
+                                style = MaterialTheme.typography.bodySmall.copy(
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                ),
+                                modifier = Modifier.weight(1f, fill = false)
+                            )
+                        } else contact.numbers.firstOrNull()?.let { number ->
                             Text(
                                 PhoneFormatter.format(number.value),
                                 style = MaterialTheme.typography.bodySmall,

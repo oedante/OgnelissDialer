@@ -105,8 +105,18 @@ object MissedCallsNotifier {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         val title = context.resources.getQuantityString(R.plurals.missed_calls_title, count, count)
-        val text = number?.takeIf { it.isNotBlank() }?.let {
-            context.getString(R.string.missed_calls_last, PhoneFormatter.format(it))
+        /*
+         * Номер скрыт (2.6.0): часть прошивок передаёт вместо номера «-1», «-2»,
+         * «-3» (NumberPresentation). Это не номер: перезванивать и писать
+         * некуда, а в строке — «Номер скрыт», а не «-2».
+         */
+        val presentation = com.ogneliss.dialer.data.NumberPresentation.of(null, number)
+        val text = when {
+            !number.isNullOrBlank() && presentation.hidden ->
+                context.getString(R.string.missed_calls_last, com.ogneliss.dialer.ui.components.hiddenNumberLabel(context, presentation))
+            else -> number?.takeIf { it.isNotBlank() }?.let {
+                context.getString(R.string.missed_calls_last, PhoneFormatter.format(it))
+            }
         }
         /*
          * «ПЕРЕЗВОНИТЬ», «НАПИСАТЬ» И СМАХИВАНИЕ (2.1.0).
@@ -118,7 +128,7 @@ object MissedCallsNotifier {
          * переписка или приложение SMS, ExternalApps.smsIntent) и сброс
          * счётчика при смахивании (CallControlReceiver → clear).
          */
-        val last = number?.takeIf { it.isNotBlank() }
+        val last = number?.takeIf { it.isNotBlank() && !presentation.hidden }
         val callBack = last?.let {
             // 2.1.1: своим приложением, не общим ACTION_CALL — на Samsung оно
             // открывало выбор приложения без нас (CallNumberActivity)

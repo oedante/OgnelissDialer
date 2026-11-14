@@ -202,4 +202,23 @@ class CallLogRowMapperTest {
         }
         assertNull("Без отпечатка подписей готовые строки не берутся", CallLogRowMapper.contextOf(unknown, dateFormat))
     }
+
+    @Test
+    fun `вызов без номера — заголовок «Номер скрыт», а не пустота`() {
+        val hiddenLabels = object : CallLogRowMapper.Labels by labels {
+            override fun hiddenNumber(presentation: NumberPresentation) = when (presentation) {
+                NumberPresentation.RESTRICTED -> "Номер скрыт"
+                else -> "Номер не определён"
+            }
+        }
+        val hidden = group(9, "", at(2026, 10, 26, 10, 0)).copy(
+            key = "hidden:RESTRICTED#9", numbers = emptyList(), presentation = NumberPresentation.RESTRICTED
+        )
+        val rows = CallLogRowMapper.mapIncremental(
+            groups = listOf(hidden), previous = emptyList(), numberInfo = emptyMap(), knownNumbers = emptySet(),
+            simSlots = emptyMap(), contactPhotos = emptyMap(), notes = emptyMap(),
+            dateFormat = dateFormat, labels = hiddenLabels, days = CallLogRowMapper.Days(at(2026, 10, 26, 12, 0))
+        )
+        assertEquals("Номер скрыт", rows.single().title)
+    }
 }

@@ -508,7 +508,8 @@ fun CallLogCard(
                  * нажатие означает «отметить», и звонок посреди выбора
                  * был бы неприятной неожиданностью.
                  */
-                if (!selectionActive && onCall != null) {
+                // Номер скрыт (2.6.0) — звонить некуда: кнопки нет, как у системного диалера
+                if (!selectionActive && onCall != null && !row.group.presentation.hidden) {
                     Spacer(Modifier.width(Space.xs))
 
                     // Долгое нажатие — выбор SIM (1.8.0), как у всех кнопок звонка

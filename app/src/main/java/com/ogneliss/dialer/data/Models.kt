@@ -47,8 +47,54 @@ data class CallLogEntry(
     val date: Long,
     val durationSec: Long,
     val phoneAccountId: String?,
-    val contactId: Long?
+    val contactId: Long?,
+    /** Как сеть показала номер (2.6.0): скрытый — без номера, разбор у NumberPresentation. */
+    val presentation: NumberPresentation = NumberPresentation.ALLOWED
 )
+
+/**
+ * КАК СЕТЬ ПОКАЗАЛА НОМЕР ЗВОНЯЩЕГО (2.6.0) — CallLog.Calls.NUMBER_PRESENTATION.
+ *
+ * Автор, 14.11.2026, снимок карточки пропущенного: «Неизвестный номер никак
+ * не определяется». Было: признак не читался вовсе — у вызова со скрытого
+ * номера пустой заголовок в журнале и в карточке, пустая строка «Номера»,
+ * и кнопки «Позвонить», «Написать», «В контакты», «Отметка» — на пустоту.
+ * Системный диалер (снимок того же вызова) пишет «Номер скрыт», кнопки
+ * вызова нет, «Добавить» и «Отправить сообщение» — серые.
+ *
+ * • ALLOWED — номер есть;
+ * • RESTRICTED — звонящий скрыл номер («Номер скрыт»);
+ * • UNKNOWN — сеть номер не передала («Номер не определён»), в том числе
+ *   UNAVAILABLE (5, Android 13) и пустой номер без признака;
+ * • PAYPHONE — таксофон.
+ * Старые прошивки вместо признака пишут в номер «-1», «-2», «-3» — тоже
+ * узнаются здесь, и номер тогда считается пустым.
+ */
+enum class NumberPresentation {
+    ALLOWED, RESTRICTED, UNKNOWN, PAYPHONE;
+
+    /** Номера нет: звонить, писать, заносить в книгу и отмечать нечего. */
+    val hidden: Boolean get() = this != ALLOWED
+
+    companion object {
+        // Значения CallLog.Calls.PRESENTATION_* (без Android: проверяется тестами)
+        private const val CODE_RESTRICTED = 2
+        private const val CODE_UNKNOWN = 3
+        private const val CODE_PAYPHONE = 4
+        private const val CODE_UNAVAILABLE = 5
+
+        fun of(code: Int?, number: String?): NumberPresentation {
+            val raw = number?.trim().orEmpty()
+            return when {
+                code == CODE_RESTRICTED || raw == "-2" -> RESTRICTED
+                code == CODE_PAYPHONE || raw == "-3" -> PAYPHONE
+                code == CODE_UNKNOWN || code == CODE_UNAVAILABLE || raw == "-1" -> UNKNOWN
+                raw.isEmpty() -> UNKNOWN
+                else -> ALLOWED
+            }
+        }
+    }
+}
 
 /**
  * КАРТОЧКА ЖУРНАЛА — несколько вызовов одного абонента, объединённые вместе.
@@ -97,6 +143,8 @@ data class CallLogGroup(
     val numbers: List<String>,
     val subscriptionLabel: String?,
     val subscriptionId: String?,
+    /** Как сеть показала номер последнего вызова (2.6.0, NumberPresentation). */
+    val presentation: NumberPresentation = NumberPresentation.ALLOWED,
     /** Все записи группы — нужны для экрана истории по абоненту. */
     val entries: List<CallLogEntry> = emptyList()
 ) {
@@ -142,8 +190,28 @@ data class Contact(
      * — для настроек «Как показывать имя» и «Сортировка контактов».
      * Пусто — такое же, как displayName. Показывать — через ContactNames.
      */
-    val nameAlt: String = ""
-)
+    val nameAlt: String = "",
+    /**
+     * ОРГАНИЗАЦИЯ ИЗ КНИГИ (2.6.0, форум, oleg_p: «добавить поиск по
+     * организации — для деловых контактов это важно»): название, отдел,
+     * должность — первая заполненная запись Organization. По ним ищет
+     * ContactSearch, строку для показа даёт [organizationLine].
+     *
+     * В кэш контактов (ContactCache) не попадает: кэш показывается до
+     * первого чтения книги — доли секунды, — а лишний столбец значил бы
+     * миграцию базы ради них.
+     */
+    val company: String = "",
+    val department: String = "",
+    val jobTitle: String = ""
+) {
+    /**
+     * Организация одной строкой: «Газпромбанк, ведущий специалист». Отдел
+     * не показывается — строка вышла бы длиннее имени; искать по нему можно.
+     */
+    val organizationLine: String
+        get() = listOf(company, jobTitle).filter { it.isNotBlank() }.joinToString(", ")
+}
 
 /** Дата из карточки контакта: подпись типа и сама дата в читаемом виде. */
 @Immutable

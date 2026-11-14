@@ -295,9 +295,24 @@ fun RecordActionCards(
         )
     }
 
-    val quick = when (origin) {
-        CardsOrigin.LOG, CardsOrigin.MESSAGES -> listOf(call, sms, remind, block)
-        CardsOrigin.CONTACTS -> listOfNotNull(call, sms, favourite, remind)
+    /*
+     * НОМЕР СКРЫТ (2.6.0, NumberPresentation): звонить, писать, отмечать,
+     * заносить в книгу, копировать нечего. Остаются карточка, удаление
+     * из журнала и блокировка — всех скрытых номеров сразу (настройка
+     * «Блокировать скрытые номера»): заблокировать один скрытый нельзя.
+     */
+    val hiddenNumber = group.presentation.hidden
+    val blockHidden = CardAction(
+        OgnelissIcons.Block,
+        stringResource(if (settings.blockHidden) R.string.card_unblock_hidden else R.string.card_block_hidden),
+        onClick = { haptics(); vm.setSwitch("block_hidden", !settings.blockHidden) },
+        tint = if (settings.blockHidden) scheme.primary else BlockRed
+    )
+
+    val quick = when {
+        hiddenNumber -> listOf(blockHidden)
+        origin == CardsOrigin.CONTACTS -> listOfNotNull(call, sms, favourite, remind)
+        else -> listOf(call, sms, remind, block)
     }
 
     // ── Разделы «Ещё» ─────────────────────────────────────────────────────
@@ -450,7 +465,11 @@ fun RecordActionCards(
         }
     }
 
-    val sections = listOfNotNull(
+    val sections = if (hiddenNumber) listOfNotNull(
+        CardActionSection(stringResource(R.string.cards_section_contact), contactSection.take(1)),
+        deleteSection.takeIf { it.isNotEmpty() }
+            ?.let { CardActionSection(stringResource(R.string.cards_section_delete), it) }
+    ) else listOfNotNull(
         write.takeIf { it.isNotEmpty() }
             ?.let { CardActionSection(stringResource(R.string.cards_section_write), it) },
         CardActionSection(stringResource(R.string.cards_section_contact), contactSection),
@@ -511,7 +530,12 @@ private fun ColumnScope.RecordPreview(
     val numbers = remember(contact) {
         contact?.numbers?.distinctBy { it.e164.ifEmpty { it.value } }.orEmpty()
     }
-    val formatted = remember(group.number) { PhoneFormatter.format(group.number) }
+    val previewContext = androidx.compose.ui.platform.LocalContext.current
+    // Номер скрыт (2.6.0) — подпись вместо пустоты
+    val formatted = remember(group.number, group.presentation) {
+        if (group.presentation.hidden) com.ogneliss.dialer.ui.components.hiddenNumberLabel(previewContext, group.presentation)
+        else PhoneFormatter.format(group.number)
+    }
     val title = contact?.displayName ?: group.displayName ?: formatted
     val ownLabel = numbers.firstOrNull { it.e164 == group.e164 }?.label?.takeIf { it.isNotBlank() }
 

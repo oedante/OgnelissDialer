@@ -111,6 +111,8 @@ class ContactsRepository @Inject constructor(
 
         val emails = loadEmails()
         val events = loadEvents()
+        // 2.6.0: организация — для поиска и карточки (разбор у Contact.company)
+        val orgs = loadOrganizations()
         // 2.1.2: «Фамилия Имя» из частей имени — разбор у ContactNames.fromParts
         val parts = loadNameParts()
 
@@ -132,7 +134,10 @@ class ContactsRepository @Inject constructor(
                 // 2.1.2: сначала из частей имени, затем вторая форма книги
                 nameAlt = (parts[id]?.let { (g, mid, f) -> ContactNames.fromParts(m.first, g, mid, f) }
                     ?: altNames[id].orEmpty())
-                    .takeIf { it != m.first }.orEmpty()
+                    .takeIf { it != m.first }.orEmpty(),
+                company = orgs[id]?.company.orEmpty(),
+                department = orgs[id]?.department.orEmpty(),
+                jobTitle = orgs[id]?.title.orEmpty()
             )
         }.also { list ->
             Logger.i("Contacts", "Контактов: ${list.size}, с формой «Фамилия Имя»: ${list.count { it.nameAlt.isNotEmpty() }}")
@@ -240,6 +245,46 @@ class ContactsRepository @Inject constructor(
             Logger.w("Contacts", "Не удалось прочитать профиль «Я»", it)
             null
         }
+    }
+
+    /** Организация контакта: название, отдел, должность (2.6.0). */
+    private class Org(val company: String, val department: String, val title: String)
+
+    /**
+     * ОРГАНИЗАЦИИ КОНТАКТОВ (2.6.0, поиск по организации — разбор
+     * у Contact.company). У контакта из нескольких учётных записей
+     * Organization бывает несколько — берётся первая, где хоть что-то
+     * заполнено. Ошибка книги — без организаций: поиск по имени и номеру
+     * от этого не страдает.
+     */
+    private fun loadOrganizations(): Map<Long, Org> {
+        val out = HashMap<Long, Org>()
+        runCatching {
+            context.contentResolver.query(
+                ContactsContract.Data.CONTENT_URI,
+                arrayOf(
+                    ContactsContract.Data.CONTACT_ID,
+                    ContactsContract.CommonDataKinds.Organization.COMPANY,
+                    ContactsContract.CommonDataKinds.Organization.DEPARTMENT,
+                    ContactsContract.CommonDataKinds.Organization.TITLE
+                ),
+                "${ContactsContract.Data.MIMETYPE} = ?",
+                arrayOf(ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE),
+                null
+            )?.use { c ->
+                while (c.moveToNext()) {
+                    val id = c.getLong(0)
+                    if (id in out) continue
+                    val org = Org(
+                        c.getString(1)?.trim().orEmpty(),
+                        c.getString(2)?.trim().orEmpty(),
+                        c.getString(3)?.trim().orEmpty()
+                    )
+                    if (org.company.isNotEmpty() || org.department.isNotEmpty() || org.title.isNotEmpty()) out[id] = org
+                }
+            }
+        }.onFailure { Logger.w("Contacts", "Не удалось прочитать организации контактов", it) }
+        return out
     }
 
     private fun loadEmails(): Map<Long, List<String>> {

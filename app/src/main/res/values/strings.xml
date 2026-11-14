@@ -82,7 +82,7 @@
     <string name="contacts_all">All</string>
     <string name="contacts_favourites">Favourites</string>
     <string name="contact_blocked">Blocked</string>
-    <string name="contacts_search_hint">Name</string>
+    <string name="contacts_search_hint">Name, number or company</string>
     <string name="dial_pause">pause 2s</string>
     <string name="dial_wait">wait for you</string>
     <string name="empty_clear_search">Clear search</string>
@@ -624,7 +624,7 @@
     <string name="incall_conference_title">Conference: %1$d participants</string>
     <string name="incall_conference_split">Talk separately</string>
     <string name="incall_conference_drop">Disconnect</string>
-    <string name="incall_hidden_number">Hidden number</string>
+    <string name="incall_hidden_number">Private number</string>
     <!-- Вид журнала: разбор в JournalStyle -->
     <string name="settings_journal_style">Call log style</string>
     <string name="journal_style_cards">Cards</string>
@@ -640,7 +640,7 @@
     <string name="settings_call_animation">Live call background</string>
     <string name="settings_call_animation_text">Slow soft colors behind the call screen: from the caller’s photo, or from the theme without one. Stays still if animations are turned off in system settings</string>
     <string name="settings_call_photo">Contact photo during a call</string>
-    <string name="settings_call_photo_text">How to show the caller’s photo: as a full-screen background, or as a portrait in a circle or a square above the name</string>
+    <string name="settings_call_photo_text">How to show the caller’s photo: full screen, across the whole width with nothing cut off, or as a portrait in a circle or a square above the name</string>
     <string name="call_photo_full_screen">Full screen</string>
     <string name="call_photo_circle">Circle</string>
     <string name="call_photo_square">Square</string>
@@ -1096,4 +1096,11 @@
     <string name="settings_vibrate_on_connect_text">A short vibration when the person you call picks up</string>
     <string name="journal_folders_title">Call log folders</string>
     <string name="contact_folders_title">Contact folders</string>
+    <string name="call_photo_width">Full width</string>
+    <string name="settings_section_icons">Separate SMS and Contacts icons</string>
+    <string name="settings_section_icons_text">SMS and Contacts appear in the app list as separate icons — you can put them in the dock or a folder. The app icon then opens the call log</string>
+    <string name="keywords_section_icons">icon shortcut separate app list dock folder launcher home screen sms contacts phone</string>
+    <string name="number_payphone">Payphone</string>
+    <string name="card_block_hidden">Block private numbers</string>
+    <string name="card_unblock_hidden">Allow private numbers</string>
 </resources>

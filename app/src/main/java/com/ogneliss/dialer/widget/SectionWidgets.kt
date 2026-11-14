@@ -212,7 +212,11 @@ class ContactsWidgetProvider : AppWidgetProvider() {
 class SectionLaunchActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val route = intent?.getStringExtra(SectionWidgets.EXTRA_OPEN_SECTION) ?: MainSection.JOURNAL.route
+        // Виджет и ярлык передают раздел в намерении; значок в списке
+        // приложений (2.6.0, SectionIcons) — своим именем входа
+        val route = intent?.getStringExtra(SectionWidgets.EXTRA_OPEN_SECTION)
+            ?: SectionIcons.sectionOf(intent?.component?.className)?.route
+            ?: MainSection.JOURNAL.route
         val handedOff = route == MainSection.MESSAGES.route &&
             !SmsRole.isDefault(this) && SmsRole.openCompanionApp(this)
         if (!handedOff) {

@@ -60,7 +60,8 @@ object CallLogCsvExport {
                         dateFormat.format(moment),
                         timeFormat.format(moment),
                         entry.number,
-                        nameByNumber[entry.number].orEmpty(),
+                        // Номер скрыт (2.6.0) — пометка вместо пустого имени
+                        nameByNumber[entry.number] ?: hiddenLabel(entry.presentation).orEmpty(),
                         typeLabel(entry.type),
                         entry.durationSec.toString(),
                         formatDuration(entry.durationSec)
@@ -83,6 +84,14 @@ object CallLogCsvExport {
         } else {
             value
         }
+
+    /** Вызов без номера (2.6.0, NumberPresentation) — как он записан в столбце «Имя». */
+    private fun hiddenLabel(presentation: com.ogneliss.dialer.data.NumberPresentation): String? = when (presentation) {
+        com.ogneliss.dialer.data.NumberPresentation.RESTRICTED -> "номер скрыт"
+        com.ogneliss.dialer.data.NumberPresentation.UNKNOWN -> "номер не определён"
+        com.ogneliss.dialer.data.NumberPresentation.PAYPHONE -> "таксофон"
+        com.ogneliss.dialer.data.NumberPresentation.ALLOWED -> null
+    }
 
     private fun typeLabel(type: CallType): String = when (type) {
         CallType.INCOMING -> "входящий"

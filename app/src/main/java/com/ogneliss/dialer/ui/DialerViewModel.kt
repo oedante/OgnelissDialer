@@ -621,7 +621,10 @@ class DialerViewModel @Inject constructor(
         // Буквами (1.6.0) — то же сравнение, что в поиске: имя и заметка
         if (com.ogneliss.dialer.util.TextFold.isTextQuery(query)) {
             val text = query.trim()
-            return state.contacts.any { com.ogneliss.dialer.util.TextFold.contains(it.displayName, text) } ||
+            return state.contacts.any {
+                com.ogneliss.dialer.util.TextFold.contains(it.displayName, text) ||
+                    ContactSearch.orgMatchesText(it, text)
+            } ||
                 state.callLog.any { group ->
                     com.ogneliss.dialer.util.TextFold.contains(group.displayName, text) ||
                         com.ogneliss.dialer.util.TextFold.contains(state.notes[group.e164]?.note, text)
@@ -2887,6 +2890,15 @@ class DialerViewModel @Inject constructor(
     ) {
         // Первый свайп сделан — подсказка о свайпах больше не нужна (2.2.2)
         if (action != SwipeAction.NONE) viewModelScope.launch { prefs.setSwipeHintDone() }
+        /*
+         * Номер скрыт (2.6.0, NumberPresentation): звонить, писать, отмечать,
+         * заносить в книгу некуда — такой свайп ничего не делает. Убрать из
+         * журнала можно, как любую запись.
+         */
+        if (group.presentation.hidden && action != SwipeAction.DELETE_FROM_LOG) {
+            Logger.d(TAG, "Свайп ${action.key} по вызову без номера — пропущен")
+            return
+        }
         val needsSim = action == SwipeAction.CALL
         val sims = state.value.sims
 

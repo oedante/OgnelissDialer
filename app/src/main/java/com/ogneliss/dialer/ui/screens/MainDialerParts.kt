@@ -211,13 +211,15 @@ private fun AppActionsRow(actions: List<MenuTile>) {
             ) {
                 Icon(action.icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(Modifier.height(Space.xxs))
-                Text(
+                // Слово не рвётся посреди («Настр/ойки» при шрифте 160 %), а ужимается (2.6.0)
+                com.ogneliss.dialer.ui.components.FitText(
                     action.label,
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    // Три строки: «На главный / экран» при крупном шрифте
+                    maxLines = 3,
+                    minScale = 0.6f
                 )
             }
         }
@@ -304,7 +306,8 @@ internal fun ownPhotoUriOf(ownNumber: String, contacts: List<com.ogneliss.dialer
  */
 /**
  * Пилюля поиска: значок и подпись, касание открывает поле поиска внизу,
- * над клавиатурой. Вверху «Меню» (2.4.0) и вверху списка контактов (2.5.0).
+ * над клавиатурой. Внизу «Меню» (2.4.0; 2.5.0 — внизу). В контактах
+ * с 2.6.0 — своё поле в нижней панели (PanelSearchButton).
  */
 @Composable
 internal fun SearchPill(label: String, onSearch: () -> Unit, modifier: Modifier = Modifier) {

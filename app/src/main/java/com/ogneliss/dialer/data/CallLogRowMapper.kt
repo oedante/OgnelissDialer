@@ -405,8 +405,11 @@ object CallLogRowMapper {
         render: Render,
         signature: Int
     ): CallLogRowState = run {
-        val formatted = PhoneFormatter.format(group.number)
         val labels = render.labels
+        // 2.6.0: номера нет — «Номер скрыт», «Номер не определён», «Таксофон»
+        // (NumberPresentation): было пустое место вместо заголовка
+        val formatted = if (group.presentation.hidden) labels.hiddenNumber(group.presentation)
+        else PhoneFormatter.format(group.number)
 
         /*
          * Заголовок: имя, заметка или номер.
@@ -577,6 +580,12 @@ object CallLogRowMapper {
 
         /** Имя от оператора, когда заголовок — заметка: «Сбербанк — по данным оператора». */
         fun networkNamed(name: String): String = name
+
+        /**
+         * Заголовок вызова без номера (2.6.0): «Номер скрыт», «Номер
+         * не определён», «Таксофон». Без ресурсов — пусто, как было.
+         */
+        fun hiddenNumber(presentation: NumberPresentation): String = ""
 
         /**
          * Отпечаток подписей (1.8.0): те же тексты — то же число.

@@ -196,7 +196,14 @@ fun ContactsBottomBar(
                 ),
                 value = query,
                 onValueChange = onQueryChange,
-                placeholder = { Text(stringResource(R.string.contacts_search_hint)) },
+                // В одну строку: подсказка с 2.6.0 длиннее («Имя, номер или организация»)
+                placeholder = {
+                    Text(
+                        stringResource(R.string.contacts_search_hint),
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    )
+                },
                 leadingIcon = { Icon(OgnelissIcons.Search, contentDescription = null) },
                 trailingIcon = {
                     /*

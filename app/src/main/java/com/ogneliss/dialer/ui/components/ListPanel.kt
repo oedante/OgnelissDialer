@@ -1,18 +1,34 @@
 package com.ogneliss.dialer.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.ogneliss.dialer.ui.theme.Dimens
 import com.ogneliss.dialer.ui.theme.FlowUi
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
 import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.ui.theme.PanelReachesNavBar
+import com.ogneliss.dialer.ui.theme.Space
 
 /**
  * НИЖНЯЯ ПАНЕЛЬ КОНТАКТОВ — ТА ЖЕ, ЧТО У ЖУРНАЛА (1.6.0, вариант «Б»).
@@ -55,6 +71,14 @@ internal fun ListPanel(
     onSwipeLeft: (() -> Unit)? = null,
     /** Главное действие раздела в центре (2.1.3, PanelCenter); null — клавиатура набора. */
     center: PanelCenter? = null,
+    /**
+     * Поле поиска над кнопками — всегда на виду (2.6.0, контакты; разбор
+     * у PanelSearchButton). Касание открывает ввод (onCloseSearch закрывает).
+     * null — поля нет: поиск в «Меню», как в журнале и SMS.
+     */
+    onOpenSearch: (() -> Unit)? = null,
+    /** Подпись постоянного поля поиска («Поиск по контактам»). */
+    searchButtonLabel: String = searchHint,
     menuContent: @Composable () -> Unit
 ) {
     Surface(
@@ -75,7 +99,9 @@ internal fun ListPanel(
                 .navigationBarsPadding()
                 .imePadding()
         ) {
-            Spacer(Modifier.height(FlowUi.bottomPanelHandleHeight))
+            // С постоянным полем поиска место под полоску не нужно: панель
+            // и так выше, а поле само отделяет кнопки от списка
+            Spacer(Modifier.height(if (onOpenSearch != null && !searching) Space.s else FlowUi.bottomPanelHandleHeight))
             if (searching) {
                 PanelSearchRow(
                     value = searchQuery,
@@ -84,6 +110,13 @@ internal fun ListPanel(
                     onClose = onCloseSearch
                 )
             } else {
+                if (onOpenSearch != null) {
+                    PanelSearchButton(
+                        label = searchButtonLabel,
+                        onClick = onOpenSearch,
+                        modifier = Modifier.padding(horizontal = FlowUi.screenPadding)
+                    )
+                }
                 ActionRow(
                     section = section,
                     expanded = false,
@@ -95,6 +128,49 @@ internal fun ListPanel(
                     menuContent = menuContent
                 )
             }
+        }
+    }
+}
+
+/**
+ * ПОИСК ВНИЗУ «КОНТАКТОВ» — ВСЕГДА НА ВИДУ (2.6.0).
+ *
+ * Форум, oleg_p: «сделать на странице "Контакты" размещение поискового
+ * поля постоянным и внизу экрана: функция поиска ключевая для списка
+ * контактов и должна быть доступна всегда и с минимальным количеством
+ * телодвижений». Было (2.5.0): пилюля над списком — уезжала вверх вместе
+ * со списком, — и «Поиск» в «Меню», на два касания дальше.
+ *
+ * Теперь поле над кнопками нижней панели, у большого пальца, и не
+ * прокручивается. Вид — как у поля ввода, в которое оно превращается
+ * (PanelSearchRow): белая пилюля на панели, значок поиска, подсказка
+ * цветом подсказки. Касание — то же поле с клавиатурой.
+ */
+@Composable
+internal fun PanelSearchButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Surface(
+        color = PanelColors.key(),
+        shape = OgnelissShapeTokens.dialKey,
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(OgnelissShapeTokens.dialKey)
+            .clickable(role = Role.Button, onClick = onClick)
+    ) {
+        Row(
+            Modifier
+                .heightIn(min = Dimens.MIN_TOUCH_TARGET)
+                .padding(horizontal = Space.l),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(OgnelissIcons.Search, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            Spacer(Modifier.width(Space.l))
+            Text(
+                label,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.outline,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }

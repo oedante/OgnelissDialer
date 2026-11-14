@@ -143,19 +143,35 @@ fun LabeledIconButton(
 
             // Подписи — 12 sp, как в навигации Mail (было 11); включённая —
             // темнее и плотнее
+            val labelDensity = androidx.compose.ui.platform.LocalDensity.current
             val labelStyle = MaterialTheme.typography.labelMedium.let {
                 if (selected) it.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold) else it
+            }.let {
+                /*
+                 * ПОТОЛОК РАЗМЕРА ПОДПИСИ (2.6.0, крайние настройки). При шрифте
+                 * 160 % и масштабе 110 % на экране 360 dp подписи не помещались,
+                 * а ужатые поодиночке выходили разного размера: «SMS» крупно,
+                 * «Журнал» мелко. Подпись под значком растёт со шрифтом до
+                 * LABEL_MAX — дальше все одинаковые; значки сами говорят, что это.
+                 */
+                with(labelDensity) {
+                    if (it.fontSize.isSp && it.fontSize.toDp() > LABEL_MAX) it.copy(fontSize = LABEL_MAX.toSp(), lineHeight = (LABEL_MAX * 4 / 3).toSp())
+                    else it
+                }
             }
             val labelColor = if (selected) MaterialTheme.colorScheme.onSurface
             else MaterialTheme.colorScheme.onSurfaceVariant
             if (fitLabel) {
-                // Узкая колонка: длинное слово ужимается, а не обрезается
+                // Узкая колонка: длинное слово ужимается, а не обрезается.
+                // 2.6.0: до 60 % (было 80): при шрифте 160 % и масштабе 110 %
+                // на экране 360 dp «SMS» обрезалось до «S…», а «Меню» — до «…»;
+                // 60 % от увеличенного — обычный размер подписи
                 FitText(
                     label,
                     style = labelStyle,
                     color = labelColor,
                     maxLines = 1,
-                    minScale = 0.8f
+                    minScale = 0.6f
                 )
             } else {
                 Text(
@@ -169,6 +185,9 @@ fun LabeledIconButton(
         }
     }
 }
+
+/** Предел размера подписи под кнопкой панели (2.6.0): 12 sp при шрифте 125 %. */
+private val LABEL_MAX = 15.dp
 
 /** Размер «таблетки» боковой кнопки панели. */
 internal val PILL_WIDTH = 56.dp

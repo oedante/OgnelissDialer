@@ -156,6 +156,14 @@ class OgnelissApp : Application(), Configuration.Provider, ImageLoaderFactory {
                 .onFailure { Logger.e("App", "Не удалось прочитать настройку логирования", it) }
         }
 
+        // 2.6.0: значки «SMS» и «Контакты» — как в настройке (данные могли
+        // очистить, а Android помнит включённые значки отдельно; SectionIcons)
+        appScope.launch {
+            suspendRunCatching {
+                com.ogneliss.dialer.widget.SectionIcons.apply(this@OgnelissApp, prefs.sectionIcons.first())
+            }.onFailure { Logger.e("App", "Не удалось сверить значки разделов", it) }
+        }
+
         // Каждый шаг обёрнут отдельно: сбой одного не должен мешать
         // остальным. Приложение обязано запуститься даже если фоновая
         // индексация или каналы уведомлений почему-то не создались —

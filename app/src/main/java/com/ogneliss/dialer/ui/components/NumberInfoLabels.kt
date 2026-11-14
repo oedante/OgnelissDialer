@@ -43,11 +43,15 @@ fun rememberNumberInfoLabels(): CallLogRowMapper.Labels {
     // Имя от оператора (1.8.0): чья подпись в заголовке
     val networkLine = stringResource(R.string.cnap_source_line)
     val networkNamedFormat = stringResource(R.string.cnap_source_named)
+    // Вызов без номера (2.6.0, NumberPresentation)
+    val hiddenRestricted = stringResource(R.string.incall_hidden_number)
+    val hiddenUnknown = stringResource(R.string.call_unknown_number)
+    val hiddenPayphone = stringResource(R.string.number_payphone)
 
     return remember(
         premium, tollFree, shortCode, international,
         incoming, outgoing, missed, rejected, blocked, today, yesterday,
-        networkLine, networkNamedFormat
+        networkLine, networkNamedFormat, hiddenRestricted, hiddenUnknown, hiddenPayphone
     ) {
         object : CallLogRowMapper.Labels {
 
@@ -61,8 +65,12 @@ fun rememberNumberInfoLabels(): CallLogRowMapper.Labels {
             override val fingerprint: Int = listOf(
                 premium, tollFree, shortCode, international,
                 incoming, outgoing, missed, rejected, blocked, today, yesterday,
-                networkLine, networkNamedFormat, java.util.Locale.getDefault().toLanguageTag()
+                networkLine, networkNamedFormat, hiddenRestricted, hiddenUnknown, hiddenPayphone,
+                java.util.Locale.getDefault().toLanguageTag()
             ).hashCode().let { if (it == 0) 1 else it }
+
+            override fun hiddenNumber(presentation: com.ogneliss.dialer.data.NumberPresentation): String =
+                hiddenLabel(presentation, hiddenRestricted, hiddenUnknown, hiddenPayphone)
 
             override fun infoSummary(info: NumberInfo?): String? {
                 if (info == null) return null
@@ -144,3 +152,24 @@ fun rememberNumberInfoLabels(): CallLogRowMapper.Labels {
     }
 }
 
+/** Подпись вызова без номера (2.6.0): одна на журнал, карточку и уведомление. */
+internal fun hiddenLabel(
+    presentation: com.ogneliss.dialer.data.NumberPresentation,
+    restricted: String,
+    unknown: String,
+    payphone: String
+): String = when (presentation) {
+    com.ogneliss.dialer.data.NumberPresentation.RESTRICTED -> restricted
+    com.ogneliss.dialer.data.NumberPresentation.PAYPHONE -> payphone
+    com.ogneliss.dialer.data.NumberPresentation.UNKNOWN -> unknown
+    com.ogneliss.dialer.data.NumberPresentation.ALLOWED -> ""
+}
+
+/** То же из ресурсов — для карточки и уведомлений (2.6.0). */
+fun hiddenNumberLabel(context: android.content.Context, presentation: com.ogneliss.dialer.data.NumberPresentation): String =
+    hiddenLabel(
+        presentation,
+        context.getString(R.string.incall_hidden_number),
+        context.getString(R.string.call_unknown_number),
+        context.getString(R.string.number_payphone)
+    )

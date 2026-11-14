@@ -299,6 +299,17 @@ fun SubscriberScreen(
     }
 
     /*
+     * НОМЕР СКРЫТ (2.6.0, автор: «Неизвестный номер никак не определяется»,
+     * NumberPresentation). Заголовок — «Номер скрыт» (или «Номер не определён»,
+     * «Таксофон»); разделов «Номера», заметки и отметки нет — они по номеру;
+     * кнопки «Написать», «Напомнить», «Позвонить», «В контакты» — серые, как
+     * у системного диалера; в «Ещё» — блокировка всех скрытых номеров
+     * (настройка «Блокировать скрытые номера») и удаление истории.
+     */
+    val hiddenNumber = group.presentation.hidden
+    val hiddenContext = LocalContext.current
+
+    /*
      * История вызовов.
      *
      * Если карточка открыта из журнала, записи уже есть в группе.
@@ -763,12 +774,15 @@ fun SubscriberScreen(
     val callSlots = remember(state.sims) { HashMap<String?, Int?>() }
     // В меню места много — полные подписи, а не «Блок» / «Разблок.»
     val blockLabelRes = when {
+        // Скрытый номер — блокировка всех скрытых (2.6.0)
+        hiddenNumber -> if (settingsNow.blockHidden) R.string.card_unblock_hidden else R.string.card_block_hidden
         isBlocked || blockingMask != null -> R.string.action_unblock
         else -> R.string.action_block
     }
     val onBlockAction: () -> Unit = {
         haptics()
         when {
+            hiddenNumber -> vm.setSwitch("block_hidden", !settingsNow.blockHidden)
             isBlocked -> vm.removeRule(group.e164)
             // Под маской — в белый список с «Отменить» (2.1.0, разбор у blockingMask)
             blockingMask != null -> vm.allowNumber(group.e164)
@@ -788,7 +802,7 @@ fun SubscriberScreen(
      * если её попросили через «Ещё» → «Отметить как спам».
      */
     var markRequested by remember(group.e164) { mutableStateOf(false) }
-    val showMarkSection = knownContactId == null || spamMark != null || markRequested
+    val showMarkSection = !hiddenNumber && (knownContactId == null || spamMark != null || markRequested)
     var editingNote by remember { mutableStateOf(false) }
     var confirmDelete by remember { mutableStateOf(false) }
 
@@ -872,13 +886,20 @@ fun SubscriberScreen(
     val title = shownName?.takeIf { it.isNotBlank() }
         ?: noteTitle
         ?: operatorName
-        ?: PhoneFormatter.format(group.number)
+        ?: if (hiddenNumber) com.ogneliss.dialer.ui.components.hiddenNumberLabel(hiddenContext, group.presentation)
+        else PhoneFormatter.format(group.number)
     // Чья подпись в заголовке — видно строкой ниже, как в журнале
     val networkLineText = operatorName?.let { name ->
         if (noteTitle != null) stringResource(R.string.cnap_source_named, name)
         else listOfNotNull(stringResource(R.string.cnap_source_line), infoLine).joinToString(" · ")
     }
     val headerInfoLine = networkLineText ?: infoLine
+    /*
+     * ОРГАНИЗАЦИЯ ПОД ИМЕНЕМ (2.6.0, вместе с поиском по организации —
+     * форум, oleg_p). У делового контакта «Газпромбанк, менеджер» говорит
+     * больше имени; раньше её было видно только в редакторе.
+     */
+    val organizationLine = cardContact?.organizationLine?.takeIf { it.isNotBlank() }
 
 
     /*
@@ -1165,12 +1186,12 @@ fun SubscriberScreen(
                             onEdit = { id -> vm.editContact(id) },
                             // Номер не из книги (1.7.0): «К контакту» и «Поделиться» —
                             // в меню; «В контакты» — кнопкой в ряду
-                            onAddToExisting = if (knownContactId == null) {
+                            onAddToExisting = if (knownContactId == null && !hiddenNumber) {
                                 { vm.addNumberToExistingContact(group.number) }
                             } else null,
-                            onShare = if (knownContactId == null) shareCard else null,
+                            onShare = if (knownContactId == null && !hiddenNumber) shareCard else null,
                             onDelete = { confirmDelete = true },
-                            onMarkSpam = if (showMarkSection) null else {
+                            onMarkSpam = if (showMarkSection || hiddenNumber) null else {
                                 { markRequested = true }
                             },
                             open = moreOpen,
@@ -1267,6 +1288,7 @@ fun SubscriberScreen(
                     OgnelissIcons.Message,
                     R.string.action_write,
                     container = actionKey,
+                    enabled = !hiddenNumber,
                     onLongClick = if (multiSim) { { vm.chooseSim(group.number, DialerViewModel.SimAction.SMS, title) } } else null,
                     onLongClickLabel = stringResource(R.string.a11y_choose_sim_sms)
                 ) {
@@ -1290,7 +1312,7 @@ fun SubscriberScreen(
                  * в настройках свайпов и в названии канала
                  * уведомлений.
                  */
-                QuickAction(OgnelissIcons.Alarm, R.string.action_remind_short, container = actionKey) {
+                QuickAction(OgnelissIcons.Alarm, R.string.action_remind_short, container = actionKey, enabled = !hiddenNumber) {
                     vm.requestReminder(group)
                 }
                 /*
@@ -1316,7 +1338,8 @@ fun SubscriberScreen(
                     tint = Color.White,
                     onLongClick = if (multiSim) { { vm.chooseSim(group.number, DialerViewModel.SimAction.CALL, title) } } else null,
                     onLongClickLabel = stringResource(R.string.a11y_choose_sim),
-                    prominent = true
+                    prominent = true,
+                    enabled = !hiddenNumber
                 ) {
                     /*
                      * 2.1.0: номеров несколько — выбор номера (как в журнале,
@@ -1353,7 +1376,7 @@ fun SubscriberScreen(
                  * «Поделиться» — в «Ещё». У контакта — как было.
                  */
                 if (knownContactId == null) {
-                    QuickAction(OgnelissIcons.PersonAdd, R.string.action_add_contact, container = actionKey) {
+                    QuickAction(OgnelissIcons.PersonAdd, R.string.action_add_contact, container = actionKey, enabled = !hiddenNumber) {
                         vm.createContact(group.number, null)
                     }
                 } else {
@@ -1593,32 +1616,44 @@ fun SubscriberScreen(
                                  * ИМЯ — НА ОБЛОЖКЕ, НАД ЛИСТОМ (1.2.5; 1.8.4 —
                                  * на 14 dp выше края листа).
                                  */
-                                Text(
-                                    title,
-                                    style = MaterialTheme.typography.headlineMedium.copy(
-                                        shadow = Shadow(
-                                            color = Color.Black.copy(alpha = 0.45f),
-                                            offset = Offset(0f, 2f),
-                                            blurRadius = 8f
-                                        )
-                                    ),
-                                    // Medium, не SemiBold (1.7.0, «воздушный» вид): на фото
-                                    // тень и так держит имя, полужирное читалось плакатом
-                                    fontWeight = FontWeight.Medium,
-                                    color = Color.White,
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier
+                                val coverShadow = Shadow(
+                                    color = Color.Black.copy(alpha = 0.45f),
+                                    offset = Offset(0f, 2f),
+                                    blurRadius = 8f
+                                )
+                                Column(
+                                    Modifier
                                         .align(Alignment.BottomStart)
                                         .padding(
                                             start = FlowUi.screenPadding * 2,
                                             end = FlowUi.screenPadding * 2,
                                             bottom = sheet + COVER_NAME_GAP
                                         )
-                                        .onGloballyPositioned { coords ->
+                                ) {
+                                    Text(
+                                        title,
+                                        style = MaterialTheme.typography.headlineMedium.copy(shadow = coverShadow),
+                                        // Medium, не SemiBold (1.7.0, «воздушный» вид): на фото
+                                        // тень и так держит имя, полужирное читалось плакатом
+                                        fontWeight = FontWeight.Medium,
+                                        color = Color.White,
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.onGloballyPositioned { coords ->
                                             nameBottomInRoot = coords.positionInRoot().y + coords.size.height
                                         }
-                                )
+                                    )
+                                    // Организация — под именем, тем же белым с тенью (2.6.0)
+                                    organizationLine?.let { line ->
+                                        Text(
+                                            line,
+                                            style = MaterialTheme.typography.bodyLarge.copy(shadow = coverShadow),
+                                            color = Color.White.copy(alpha = 0.9f),
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                }
                                 // Лист страницы со скруглёнными верхними углами
                                 Box(
                                     Modifier
@@ -1853,6 +1888,14 @@ fun SubscriberScreen(
                                      * не из книги пустая»). Та же строка, что под номером
                                      * в журнале, по той же настройке «Оператор и регион».
                                      */
+                                    organizationLine?.let { line ->
+                                        Text(
+                                            line,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.fillMaxWidth().padding(top = Space.xxs)
+                                        )
+                                    }
                                     headerInfoLine?.let { line ->
                                         Text(
                                             line,
@@ -2019,7 +2062,7 @@ fun SubscriberScreen(
                  * отдельно — и на длинном экране «Номера» читались как
                  * подпись к первому же номеру, а не ко всем.
                  */
-                item {
+                if (!hiddenNumber) item {
                     OgnelissPanel(title = stringResource(R.string.subscriber_numbers)) {
                 /*
                  * НОМЕР — КАРТОЧКА С ТРЕМЯ ДЕЙСТВИЯМИ.
@@ -2113,7 +2156,8 @@ fun SubscriberScreen(
                 }
 
                 // ── Заметка и метки ────────────────────────────────────────────
-                item {
+                // Заметка — к номеру; у скрытого номера её не к чему привязать (2.6.0)
+                if (!hiddenNumber) item {
                     /*
                      * Пустая заметка — одна строка (1.3.4, 05.10.2026, задача автора).
                      * Было: целая панель с заголовком «Заметка» ради серой
@@ -2770,7 +2814,11 @@ private const val COVER_SCRIM_STEPS = 8
 /** Тон затемнения — по строкам снимка у имени (доли высоты снимка). */
 private const val COVER_TONE_FROM = 0.4f
 private const val COVER_TONE_TO = 0.75f
-/** Пока снимок читается (или не читается) — нейтральный тёмный, яркость 15 %. */
+/**
+ * Пока снимок читается (или не читается) — нейтральный тёмный, яркость 15 %.
+ * ui-roles: своё — тон затемнения фото, а не цвет темы: под белым именем
+ * на снимке он одинаков в любой теме и с любым акцентом.
+ */
 private val COVER_TONE_NEUTRAL = Color(0xFF26272A)
 
 /**

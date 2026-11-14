@@ -51,6 +51,8 @@ import com.ogneliss.dialer.settings.AnswerMode
 import com.ogneliss.dialer.settings.CallPhotoStyle
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.util.PhoneFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -336,17 +338,34 @@ private fun FakeCallScreen(
      */
     val short = LocalWindowLayout.current.isShort
     val photoBackground = photoStyle == CallPhotoStyle.FULL_SCREEN && !short && !photoUri.isNullOrBlank()
+    // Фото по ширине экрана — как у настоящего вызова (2.6.0, CallPhotoTop)
+    val photoTop = photoStyle == CallPhotoStyle.WIDTH && !short && !photoUri.isNullOrBlank()
     // Портрет над именем и волны от него — как у настоящего вызова (1.5.5)
-    val showPortrait = photoStyle != null && !photoUri.isNullOrBlank() && !photoBackground
-    val squarePortrait = photoStyle == CallPhotoStyle.SQUARE
+    val showPortrait = photoStyle != null && !photoUri.isNullOrBlank() && !photoBackground && !photoTop
+    val squarePortrait = photoStyle == CallPhotoStyle.SQUARE || photoStyle == CallPhotoStyle.WIDTH
     var portraitFocus by remember { mutableStateOf<AmbientFocus?>(null) }
     // Нет фото — волны от имени (1.8.1, разбор у AmbientFocus)
     var nameFocus by remember { mutableStateOf<AmbientFocus?>(null) }
-    LightStatusIconsOnPhoto(photoBackground)
+    LightStatusIconsOnPhoto(photoBackground || photoTop)
     // Живой фон — по тем же состояниям, что у настоящего вызова
-    val ambient = ambientBackground && !photoBackground
+    val ambient = ambientBackground && !photoBackground && !photoTop
     val bare = ambient || (bareControls && !photoBackground)
-    Box(Modifier.fillMaxSize()) {
+    // Сторона фото по ширине — как у настоящего вызова (photoTopSide)
+    var topAreaPx by remember { mutableIntStateOf(0) }
+    var identityPx by remember { mutableIntStateOf(0) }
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+    val callDensity = androidx.compose.ui.platform.LocalDensity.current
+    val statusBarTop = with(callDensity) { WindowInsets.safeDrawing.getTop(callDensity).toDp() }
+    val photoSide = if (!photoTop) 0.dp else with(callDensity) {
+        photoTopSide(
+            screenWidth = maxWidth,
+            topArea = topAreaPx.toDp(),
+            statusBar = statusBarTop,
+            identity = identityPx.toDp(),
+            gap = Space.m,
+            min = PHOTO_TOP_MIN
+        )
+    }
     if (photoBackground) CallPhotoBackground(photoUri.orEmpty())
     if (ambient) {
         CallAmbientBackground(
@@ -360,11 +379,12 @@ private fun FakeCallScreen(
         )
     }
     // Как у настоящего вызова: панели нет над живым и ровным фоном (1.6.2)
-    if (bare && !ambient) PlainCallBackground()
+    if ((bare && !ambient) || photoTop) PlainCallBackground()
+    if (photoTop) CallPhotoTop(photoUri.orEmpty(), photoSide)
     if (!bare) NavBarUnderPanel()
     Surface(
         Modifier.fillMaxSize().safeDrawingPadding(),
-        color = if (photoBackground || ambient) Color.Transparent else MaterialTheme.colorScheme.surface
+        color = if (photoBackground || ambient || photoTop) Color.Transparent else MaterialTheme.colorScheme.surface
     ) {
         Column(
             Modifier.fillMaxSize(),
@@ -377,6 +397,7 @@ private fun FakeCallScreen(
                     // 1.5.6: всё место над панелью — портрету и подписям,
                     // размер портрета по нему (как у настоящего вызова)
                     .weight(1f)
+                    .onSizeChanged { topAreaPx = it.height }
                     .fillMaxWidth()
                     .padding(top = Space.xl, start = FlowUi.contentPadding, end = FlowUi.contentPadding, bottom = Space.m),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -386,6 +407,10 @@ private fun FakeCallScreen(
                     val half = bounds.width / 2f
                     // У квадрата волна — от углов (как SQUARE_FOCUS в InCallActivity)
                     portraitFocus = AmbientFocus(bounds.center, if (squarePortrait) half * 1.25f else half)
+                }
+                // Место под фото по ширине — как у настоящего вызова (2.6.0)
+                if (photoTop && photoSide > 0.dp) {
+                    Spacer(Modifier.height((photoSide - statusBarTop - Space.xl - PHOTO_TOP_OVERLAP).coerceAtLeast(0.dp)))
                 }
                 AdaptivePortraitColumn(
                     portrait = if (showPortrait) {
@@ -403,15 +428,24 @@ private fun FakeCallScreen(
                     gap = if (short) Space.m else Space.l,
                     maxSize = FlowUi.callPortraitMaxFor(largePortrait),
                     widthFraction = FlowUi.callPortraitFractionFor(largePortrait),
-                    // Как у настоящего вызова — ближе к середине (1.7.0)
-                    verticalBias = CALL_IDENTITY_BIAS,
+                    // Как у настоящего вызова — ближе к середине (1.7.0); под фото по ширине — сразу под ним
+                    verticalBias = if (photoTop) 0f else CALL_IDENTITY_BIAS,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.onSizeChanged { identityPx = it.height }
+                ) {
+                // Как у настоящего вызова (2.6.0): слово не рвётся, имя ужимается
+                com.ogneliss.dialer.ui.components.FitText(
                     name,
-                    fontSize = FlowUi.callNameSize,
-                    fontWeight = FontWeight.Medium,
+                    style = androidx.compose.ui.text.TextStyle(
+                        fontSize = FlowUi.callNameSize,
+                        fontWeight = FontWeight.Medium,
+                        lineHeight = FlowUi.callNameSize * 1.15f
+                    ),
+                    maxLines = 3,
+                    minScale = 0.5f,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.onGloballyPositioned { coords ->
                         val bounds = coords.boundsInRoot()

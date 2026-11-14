@@ -163,6 +163,7 @@ class MainActivity : ComponentActivity() {
         // Намерение, с которым приложение открыли: дальше его меняет
         // onNewIntent
         currentIntent = intent
+        sectionRoute = sectionRouteOf(intent)
 
         setContent {
             val vm: DialerViewModel = hiltViewModel()
@@ -339,8 +340,9 @@ class MainActivity : ComponentActivity() {
                             ?.getBooleanExtra(EXTRA_OPEN_BLOCK_LISTS, false) == true,
                         // «Написать» и ссылки sms: — переписка в диалере (2.0.0)
                         openConversation = com.ogneliss.dialer.ui.conversation.ConversationRequest.from(currentIntent),
-                        // Значок раздела на главном экране (2.1.0, widget/SectionWidgets)
-                        openSectionRoute = currentIntent?.getStringExtra(com.ogneliss.dialer.widget.SectionWidgets.EXTRA_OPEN_SECTION)
+                        // Значок раздела на главном экране (2.1.0, widget/SectionWidgets);
+                        // 2.6.0 — и значок приложения при отдельных значках разделов
+                        openSectionRoute = sectionRoute
                     )
                         // Чего не выдала роль — одним системным окном, без своих страниц (2.1.0)
                         com.ogneliss.dialer.ui.screens.MissingPermissionsRequest(isDefaultDialer = isDefault)
@@ -416,7 +418,28 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         currentIntent = intent
+        sectionRoute = sectionRouteOf(intent)
         intentToken++
+    }
+
+    /** Какой раздел открыть по намерению; null — остаться, где был. */
+    private var sectionRoute by mutableStateOf<String?>(null)
+
+    /*
+     * РАЗДЕЛ ПО НАМЕРЕНИЮ.
+     * • Значок раздела (виджет 2.1.0, значок в списке приложений 2.6.0) —
+     *   раздел из намерения (SectionLaunchActivity кладёт его в EXTRA_OPEN_SECTION).
+     * • Значок самого приложения, пока включены отдельные значки «SMS»
+     *   и «Контакты» (2.6.0, SectionIcons), — журнал: значок приложения
+     *   тогда «Телефон». Без них — как было: туда, где человек был.
+     * Состояние значков спрашивается у Android здесь, а не в разметке:
+     * один раз на намерение.
+     */
+    private fun sectionRouteOf(intent: Intent?): String? {
+        intent?.getStringExtra(com.ogneliss.dialer.widget.SectionWidgets.EXTRA_OPEN_SECTION)?.let { return it }
+        return if (com.ogneliss.dialer.widget.SectionIcons.isAppIconLaunch(intent) &&
+            com.ogneliss.dialer.widget.SectionIcons.isEnabled(this)
+        ) com.ogneliss.dialer.ui.components.MainSection.JOURNAL.route else null
     }
 
     /*
