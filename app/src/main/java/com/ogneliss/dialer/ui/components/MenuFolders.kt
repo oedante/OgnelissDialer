@@ -81,9 +81,14 @@ internal fun MenuFolderRows(
  */
 @Composable
 internal fun MenuBand(title: String, action: (@Composable () -> Unit)? = null) {
-    // Прописными, как подписи в списках («ЗАКРЕПЛЁННЫЕ», «ВЧЕРА») — 2.5.0, единый вид;
-    // TalkBack читает обычным регистром
-    val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0] ?: java.util.Locale.getDefault()
+    /*
+     * Обычным регистром, как подписи групп во всём приложении (SectionCaption:
+     * прописные — только в высококонтрастной теме). В 2.5.0 подпись меню
+     * была прописной всегда, и автор заметил: «шрифт панели выглядит более
+     * жирным, чем у всего остального приложения» — «ПАПКИ» и «ИНСТРУМЕНТЫ»
+     * тем же начертанием, но прописными выглядят заметно тяжелее «Папок»
+     * в настройках.
+     */
     Row(
         Modifier
             .fillMaxWidth()
@@ -91,7 +96,7 @@ internal fun MenuBand(title: String, action: (@Composable () -> Unit)? = null) {
             .padding(start = Space.l, end = Space.xs),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        SectionCaption(title.uppercase(locale), Modifier.weight(1f), description = title)
+        SectionCaption(title, Modifier.weight(1f))
         action?.invoke()
     }
 }
@@ -111,7 +116,7 @@ internal class MenuFolder(
 )
 
 /**
- * Строки действий меню («ИНСТРУМЕНТЫ», 2.5.0) — тем же видом, что папки:
+ * Строки действий меню («Инструменты», 2.5.0) — тем же видом, что папки:
  * значок, название, 48 dp. Было: белые плитки, каких больше нигде
  * в приложении нет (автор: «вид отличается от остального приложения»).
  */
