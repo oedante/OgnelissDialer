@@ -319,4 +319,66 @@ class ContactSearchTest {
         assertTrue(result.isEmpty)
     }
 
+    // ── Организация (2.6.0, форум: «добавить поиск по организации») ─────────
+
+    private fun business(id: Long, name: String, company: String, title: String = "") =
+        contact(id, name).copy(company = company, jobTitle = title)
+
+    @Test
+    fun `буквами находит по названию организации и по должности`() {
+        val petrov = business(1, "Иван Петров", "Газпромбанк", "ведущий специалист")
+        val other = contact(2, "Андрей")
+        val byCompany = ContactSearch.search(listOf(petrov, other), emptyList(), "газпром", SortOrder.RELEVANCE, nowMillis = now)
+        assertEquals(listOf(petrov), byCompany.contacts)
+        val byTitle = ContactSearch.search(listOf(petrov, other), emptyList(), "специалист", SortOrder.RELEVANCE, nowMillis = now)
+        assertEquals(listOf(petrov), byTitle.contacts)
+    }
+
+    @Test
+    fun `совпавшие именем — раньше совпавших только организацией`() {
+        val byOrg = business(1, "Иван Петров", "Сбер")
+        val byName = contact(2, "Сбербанк Онлайн")
+        val result = ContactSearch.search(listOf(byOrg, byName), emptyList(), "сбер", SortOrder.RELEVANCE, nowMillis = now)
+        assertEquals(listOf(byName, byOrg), result.contacts)
+    }
+
+    @Test
+    fun `T9 находит организацию с начала слова, но не цифры внутри слова`() {
+        val petrov = business(1, "Иван Петров", "Газпромбанк")
+        val fromStart = ContactSearch.search(
+            listOf(petrov), emptyList(), com.ogneliss.dialer.t9.T9Engine.toDigits("газп"), SortOrder.RELEVANCE, nowMillis = now
+        )
+        assertEquals(listOf(petrov), fromStart.contacts)
+        // «промб» — середина слова: подсказкой при наборе номера не всплывает
+        val middle = ContactSearch.search(
+            listOf(petrov.copy(numbers = emptyList())), emptyList(),
+            com.ogneliss.dialer.t9.T9Engine.toDigits("промб"), SortOrder.RELEVANCE, nowMillis = now
+        )
+        assertTrue(middle.contacts.isEmpty())
+    }
+
+    @Test
+    fun `организация в одну строку — название и должность, без отдела`() {
+        val c = contact(1, "Иван").copy(company = "Газпромбанк", department = "Кредиты", jobTitle = "менеджер")
+        assertEquals("Газпромбанк, менеджер", c.organizationLine)
+        assertEquals("", contact(2, "Пётр").organizationLine)
+    }
+
+    // ── Поиск экрана «Контакты» (2.6.0) ─────────────────────────────────────
+
+    @Test
+    fun `экран контактов — имя, организация, заметка и номер`() {
+        val ivan = contact(1, "Иван", "+79001112233").copy(company = "Газпромбанк")
+        val notes = mapOf("+79001112233" to NumberNote("+79001112233", "сантехник", emptyList()))
+        assertTrue(ContactSearch.matchesListQuery(ivan, "ива"))
+        assertTrue(ContactSearch.matchesListQuery(ivan, "газпром"))
+        assertTrue(ContactSearch.matchesListQuery(ivan, "сантех", notes))
+        // Номер — подстрокой, и «8» вместо «+7» — тот же номер
+        assertTrue(ContactSearch.matchesListQuery(ivan, "2233"))
+        assertTrue(ContactSearch.matchesListQuery(ivan, "8 900 111"))
+        assertTrue(!ContactSearch.matchesListQuery(ivan, "сбер"))
+        assertTrue(!ContactSearch.matchesListQuery(ivan, "5555"))
+        // Пустой запрос — все
+        assertTrue(ContactSearch.matchesListQuery(ivan, "  "))
+    }
 }

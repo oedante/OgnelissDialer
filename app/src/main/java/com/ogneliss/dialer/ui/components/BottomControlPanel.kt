@@ -612,9 +612,17 @@ internal fun ActionRow(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            /*
+             * РАВНЫЕ ДОЛИ (2.6.0, крайние настройки: шрифт 160 %, масштаб 110 %,
+             * экран 360 dp). Было: кнопки по своей ширине — первая забирала,
+             * сколько хотела подпись, вторая получала остаток, и «SMS»
+             * обрезалось до «S…». Теперь каждой — половина своей стороны,
+             * и длинная подпись ужимается (FitText), а не отнимает место
+             * у соседа. При обычном шрифте вид тот же.
+             */
             if (!railShown) {
-                SectionButton(MainSection.JOURNAL, section, onOpenSection)
-                SectionButton(MainSection.MESSAGES, section, onOpenSection)
+                SectionButton(MainSection.JOURNAL, section, onOpenSection, Modifier.weight(1f))
+                SectionButton(MainSection.MESSAGES, section, onOpenSection, Modifier.weight(1f))
             }
         }
 
@@ -660,16 +668,21 @@ internal fun ActionRow(
                     labelRes = R.string.bar_exit,
                     onClick = onStartSelection,
                     tint = MaterialTheme.colorScheme.primary,
-                    selected = true
+                    selected = true,
+                    fitLabel = true,
+                    modifier = Modifier.weight(1f)
                 )
             } else if (!railShown) {
-                SectionButton(MainSection.CONTACTS, section, onOpenSection)
+                SectionButton(MainSection.CONTACTS, section, onOpenSection, Modifier.weight(1f))
             }
-            Box {
-                LabeledIconButton(OgnelissIcons.MoreVert, R.string.bar_menu, onMenu)
-                // Отметка включённого фильтра — на значке фильтра в шапке раздела (2.2.1, SectionTopBar)
-                if (menuBadge != null) Badge(Modifier.align(Alignment.TopEnd)) { Text(menuBadge) }
-                menuContent()
+            // Своя доля, а метка — на самой кнопке, а не в углу доли
+            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                Box {
+                    LabeledIconButton(OgnelissIcons.MoreVert, R.string.bar_menu, onMenu, fitLabel = true)
+                    // Отметка включённого фильтра — на значке фильтра в шапке раздела (2.2.1, SectionTopBar)
+                    if (menuBadge != null) Badge(Modifier.align(Alignment.TopEnd)) { Text(menuBadge) }
+                    menuContent()
+                }
             }
         }
     }
@@ -697,14 +710,16 @@ internal class PanelCenter(
 private fun SectionButton(
     target: MainSection,
     current: MainSection,
-    onOpenSection: (MainSection) -> Unit
+    onOpenSection: (MainSection) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     LabeledIconButton(
         icon = target.icon,
         labelRes = target.labelRes,
         onClick = { onOpenSection(target) },
         selected = current == target,
-        fitLabel = true
+        fitLabel = true,
+        modifier = modifier
     )
 }
 

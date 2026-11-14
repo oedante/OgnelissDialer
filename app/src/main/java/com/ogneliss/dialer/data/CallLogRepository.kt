@@ -138,16 +138,22 @@ class CallLogRepository @Inject constructor(
         CallLog.Calls.DATE,
         CallLog.Calls.DURATION,
         CallLog.Calls.PHONE_ACCOUNT_ID,
-        CallLog.Calls.CACHED_LOOKUP_URI
+        CallLog.Calls.CACHED_LOOKUP_URI,
+        // 2.6.0: скрытый номер, не определён, таксофон — NumberPresentation
+        CallLog.Calls.NUMBER_PRESENTATION
     )
 
     /** Чтение одной строки курсора. Порядок колонок задан projection(). */
     private fun readEntry(c: android.database.Cursor): CallLogEntry {
-        val number = c.getString(1).orEmpty()
+        val raw = c.getString(1).orEmpty()
+        val presentation = NumberPresentation.of(if (c.isNull(9)) null else c.getInt(9), raw)
+        // Скрытый номер — без номера: «-2» старых прошивок не должен стать «номером»
+        val number = if (presentation.hidden) "" else raw
         return CallLogEntry(
             id = c.getLong(0),
             number = number,
-            e164 = PhoneFormatter.toE164(number),
+            e164 = if (number.isEmpty()) "" else PhoneFormatter.toE164(number),
+            presentation = presentation,
             cachedName = c.getString(2),
             photoUri = c.getString(3),
             type = mapType(c.getInt(4)),

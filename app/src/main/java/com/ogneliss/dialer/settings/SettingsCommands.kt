@@ -106,6 +106,11 @@ class SettingsCommands @Inject constructor(
             "incoming_banner" -> prefs.setIncomingBanner(value)
             "swap_answer" -> prefs.setSwapAnswer(value)
             "vibrate_on_connect" -> prefs.setVibrateOnConnect(value)
+            // 2.6.0: сначала сами значки (Android), потом настройка — разбор в SectionIcons
+            "section_icons" -> {
+                com.ogneliss.dialer.widget.SectionIcons.apply(appContext, value)
+                prefs.setSectionIcons(value)
+            }
             "post_call" -> prefs.setPostCallEnabled(value)
             "post_call_unknown" -> prefs.setPostCallUnknownOnly(value)
             "block_hidden" -> prefs.setBlockHidden(value)
@@ -501,6 +506,7 @@ class SettingsCommands @Inject constructor(
             CallPhotoStyle.FULL_SCREEN -> R.string.call_photo_full_screen
             CallPhotoStyle.CIRCLE -> R.string.call_photo_circle
             CallPhotoStyle.SQUARE -> R.string.call_photo_square
+            CallPhotoStyle.WIDTH -> R.string.call_photo_width
         }
 
         /** Подпись размера портрета на экране вызова (1.5.7). */
@@ -615,6 +621,8 @@ class SettingsCommands @Inject constructor(
             "callback_suggestion", "post_call", "post_call_unknown", "incoming_banner", "swap_answer",
             // 2.5.0
             "vibrate_on_connect",
+            // 2.6.0
+            "section_icons",
             "block_hidden", "block_unknown", "block_tagged", "file_logging",
             "dialpad_open_at_start",
             // 1.8.0

@@ -83,7 +83,9 @@ object CallStatsCalculator {
             totalDurationSec = totalDuration,
             // Топ по числу вызовов, а не по времени: человек мыслит
             // категориями «с кем чаще общаюсь», а не «на кого потратил часы»
-            topContacts = groups.sortedByDescending { it.count }.take(TOP_CONTACTS_LIMIT),
+            // Скрытые номера (2.6.0) — не «собеседник»: строки без имени и номера в топе не нужны
+            topContacts = groups.filter { !it.presentation.hidden }
+                .sortedByDescending { it.count }.take(TOP_CONTACTS_LIMIT),
             coverageDays = coverageDays,
             averageDurationSec = average,
             missedRatePercent = missedRate

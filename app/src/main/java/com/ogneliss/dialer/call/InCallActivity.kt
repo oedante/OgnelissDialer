@@ -88,6 +88,7 @@ import com.ogneliss.dialer.settings.AnswerMode
 import com.ogneliss.dialer.settings.CallPhotoStyle
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import com.ogneliss.dialer.data.NoteDisplay
 import com.ogneliss.dialer.log.Logger
 import com.ogneliss.dialer.ui.components.OgnelissDivider
@@ -999,9 +1000,15 @@ private fun InCallScreen(
      */
     val photoBackground = photoStyle == CallPhotoStyle.FULL_SCREEN &&
         !landscape && !tabletop0 && !photoUri.isNullOrBlank()
+    /*
+     * 2.6.0: фото по ширине экрана — сверху, целиком (CallPhotoTop, форум).
+     * Лёжа и в позе «ноутбук» места по высоте мало — там квадратный портрет.
+     */
+    val photoTop = photoStyle == CallPhotoStyle.WIDTH &&
+        !landscape && !tabletop0 && !photoUri.isNullOrBlank()
     // Портрет над именем: фото есть, настройка прочитана, и не фон
-    val showPortrait = photoStyle != null && !photoUri.isNullOrBlank() && !photoBackground
-    val squarePortrait = photoStyle == CallPhotoStyle.SQUARE
+    val showPortrait = photoStyle != null && !photoUri.isNullOrBlank() && !photoBackground && !photoTop
+    val squarePortrait = photoStyle == CallPhotoStyle.SQUARE || photoStyle == CallPhotoStyle.WIDTH
     // Где портрет на экране — от него расходятся волны (CallAmbientBackground)
     var portraitFocus by remember { mutableStateOf<AmbientFocus?>(null) }
     /*
@@ -1020,13 +1027,33 @@ private fun InCallScreen(
         val half = bounds.width / 2f
         portraitFocus = AmbientFocus(bounds.center, if (squarePortrait) half * SQUARE_FOCUS else half)
     }
-    LightStatusIconsOnPhoto(photoBackground)
-    // Живой фон — когда нет фото на весь экран: фото само и есть фон
-    val ambient = ambientBackground && !photoBackground
+    LightStatusIconsOnPhoto(photoBackground || photoTop)
+    // Живой фон — когда нет фото на весь экран: фото само и есть фон.
+    // У фото по ширине — тоже нет: волны от квадрата во всю ширину некуда пускать
+    val ambient = ambientBackground && !photoBackground && !photoTop
     // Без панели под кнопками — везде, кроме фото на весь экран и высокого
     // контраста (1.6.2, разбор у LocalControlsOnAmbient)
     val bare = ambient || (bareControls && !photoBackground)
-    Box(Modifier.fillMaxSize()) {
+    /*
+     * Сторона фото по ширине (2.6.0, photoTopSide): ширина экрана, но не
+     * больше, чем оставляют имя и кнопки. Высоты верхней части и подписей
+     * приходят после первого измерения — до него фото нет (один кадр).
+     */
+    var topAreaPx by remember { mutableIntStateOf(0) }
+    var identityPx by remember { mutableIntStateOf(0) }
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+    val callDensity = LocalDensity.current
+    val statusBarTop = with(callDensity) { WindowInsets.safeDrawing.getTop(callDensity).toDp() }
+    val photoSide = if (!photoTop) 0.dp else with(callDensity) {
+        photoTopSide(
+            screenWidth = maxWidth,
+            topArea = topAreaPx.toDp(),
+            statusBar = statusBarTop,
+            identity = identityPx.toDp(),
+            gap = Space.m,
+            min = PHOTO_TOP_MIN
+        )
+    }
     if (photoBackground) CallPhotoBackground(photoUri.orEmpty())
     // Во весь экран, под строкой состояния тоже — как обои
     if (ambient) {
@@ -1037,14 +1064,15 @@ private fun InCallScreen(
             focus = { if (showPortrait) portraitFocus else nameFocus }
         )
     }
-    // Ровный фон без панели — до краёв экрана (1.6.2)
-    if (bare && !ambient) PlainCallBackground()
+    // Ровный фон без панели — до краёв экрана (1.6.2); под фото по ширине — тоже
+    if ((bare && !ambient) || photoTop) PlainCallBackground()
+    if (photoTop) CallPhotoTop(photoUri.orEmpty(), photoSide)
     // Полоса цвета панели под навигацией — только когда есть панель
     // (разбор у LocalControlsOnAmbient)
     if (!bare) NavBarUnderPanel()
     Surface(
         Modifier.fillMaxSize().safeDrawingPadding(),
-        color = if (photoBackground || ambient) Color.Transparent else MaterialTheme.colorScheme.surface
+        color = if (photoBackground || ambient || photoTop) Color.Transparent else MaterialTheme.colorScheme.surface
     ) {
         /*
          * Кто звонит — фото, имя, оператор, состояние вызова. Общий блок
@@ -1349,6 +1377,8 @@ private fun InCallScreen(
                     // 1.5.6: всё место над панелью — портрету и подписям;
                     // размер портрета считается от него (AdaptivePortraitColumn)
                     .weight(1f)
+                    // 2.6.0: от этой высоты — сторона фото по ширине (photoTopSide)
+                    .onSizeChanged { topAreaPx = it.height }
                     .fillMaxWidth()
                     // Места меньше, чем подписям, — они обрезаются здесь,
                     // а не ложатся на кнопки под ними (1.8.1)
@@ -1380,6 +1410,14 @@ private fun InCallScreen(
                  * ничего — силуэт одинаков у всех. Без него имя
                  * поднимается наверх, и длинному хватает места.
                  */
+                /*
+                 * ФОТО ПО ШИРИНЕ (2.6.0): само фото — фоном (CallPhotoTop), здесь
+                 * место под ним. Имя начинается на нижней полосе фото, где оно
+                 * уже растворилось в фоне (PHOTO_TOP_OVERLAP).
+                 */
+                if (photoTop && photoSide > 0.dp) {
+                    Spacer(Modifier.height((photoSide - statusBarTop - Space.xl - PHOTO_TOP_OVERLAP).coerceAtLeast(0.dp)))
+                }
                 AdaptivePortraitColumn(
                     portrait = if (showPortrait) {
                         {
@@ -1396,10 +1434,14 @@ private fun InCallScreen(
                     modifier = Modifier.fillMaxWidth(),
                     maxSize = FlowUi.callPortraitMaxFor(largePortrait),
                     widthFraction = FlowUi.callPortraitFractionFor(largePortrait),
-                    // Ближе к середине экрана (1.7.0, разбор у CALL_IDENTITY_BIAS)
-                    verticalBias = CALL_IDENTITY_BIAS
+                    // Ближе к середине экрана (1.7.0, разбор у CALL_IDENTITY_BIAS);
+                    // под фото по ширине — сразу под ним
+                    verticalBias = if (photoTop) 0f else CALL_IDENTITY_BIAS
                 ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.onSizeChanged { identityPx = it.height }
+                ) {
                 CallerIdentity(
                     display = callerDisplay,
                     number = number,
@@ -2391,11 +2433,19 @@ private fun CallerIdentity(
     /** Для заголовка: от него идут волны, когда фото нет (1.8.1). */
     titleModifier: Modifier = Modifier
 ) {
-    Text(
+    /*
+     * СЛОВО НЕ РВЁТСЯ ПОСЕРЕДИНЕ (2.6.0, крайние настройки: шрифт 160 %,
+     * экран 360 dp — «Константинопольс / кий»). FitText уменьшает имя,
+     * пока самое длинное слово не встанет в строку (не меньше 50 %).
+     */
+    com.ogneliss.dialer.ui.components.FitText(
         display.title,
         modifier = titleModifier,
-        fontSize = titleSize,
         color = if (danger) BlockRed else androidx.compose.ui.graphics.Color.Unspecified,
+        // До половины: при шрифте 160 % имя больше обычного вдвое — половина и есть обычное
+        minScale = 0.5f,
+        style = androidx.compose.ui.text.TextStyle(
+        fontSize = titleSize,
         /*
          * МЕЖСТРОЧНЫЙ ИНТЕРВАЛ ЗАДАЁТСЯ ВМЕСТЕ С РАЗМЕРОМ.
          *
@@ -2417,7 +2467,8 @@ private fun CallerIdentity(
          * не задевали друг друга, и достаточно тесно, чтобы имя
          * читалось целиком.
          */
-        lineHeight = titleSize * 1.15f,
+        lineHeight = titleSize * 1.15f
+        ),
         textAlign = TextAlign.Center,
         /*
          * Три строки — предел.
@@ -2426,8 +2477,7 @@ private fun CallerIdentity(
          * экрана. Обрыв многоточием честнее: видно, что имя длиннее,
          * и остальное на месте.
          */
-        maxLines = 3,
-        overflow = TextOverflow.Ellipsis
+        maxLines = 3
     )
 
     // Источник имени — сразу под ним, мелко и прямым начертанием:

@@ -136,6 +136,7 @@ enum class CarrierInfoMode {
  *   сделаем по умолчанию») — и для тех, кто настройку не трогал.
  * • FULL_SCREEN — фото фоном на весь экран (как в 1.3.4–1.5.4).
  * • SQUARE — то же в скруглённом квадрате.
+ * • WIDTH — во всю ширину сверху, целиком (2.6.0, разбор у WIDTH).
  *
  * Лёжа и в позе «ноутбук» фото на весь экран не помещается и раньше —
  * там всегда портрет; квадрат и круг там выбираются этой настройкой.
@@ -191,6 +192,16 @@ object FontScale {
 enum class CallPhotoStyle {
     CIRCLE,
     SQUARE,
+    /**
+     * ПО ШИРИНЕ ЭКРАНА, ЦЕЛИКОМ (2.6.0, форум, oleg_p): «фото может быть
+     * либо маленькое, либо слишком крупное (во весь экран) — масштабируется
+     * по длине экрана, и значительная часть съедается. Можно сделать режим,
+     * когда фото масштабируется по ширине экрана — будет намного крупнее
+     * и видно целиком». Фото контакта квадратное: во всю ширину сверху,
+     * под строкой состояния, ниже — имя и кнопки на фоне страницы
+     * (CallPhotoTop). Лёжа и в позе «ноутбук» — квадратный портрет.
+     */
+    WIDTH,
     FULL_SCREEN;
 
     companion object {
@@ -572,6 +583,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         /** Ответ на вызов: касанием или сдвигом (1.5.8). */
         val ANSWER_MODE = stringPreferencesKey("answer_mode")
         val WIDGET_SHAPE = stringPreferencesKey("widget_shape")
+        /** Отдельные значки «SMS» и «Контакты» в списке приложений (2.6.0, SectionIcons). */
+        val SECTION_ICONS = booleanPreferencesKey("section_icons")
         /** Имя контакта: «Имя Фамилия» или «Фамилия Имя» (1.6.2). */
         val CONTACT_NAME_FORMAT = stringPreferencesKey("contact_name_format")
         /** Порядок контактов: по имени или по фамилии (1.6.2). */
@@ -942,6 +955,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     /** Форма значков-виджетов «SMS» и «Контакты» (2.1.3): разбор в WidgetShape. */
     val widgetShape: Flow<WidgetShape> = data.map { WidgetShape.from(it[Keys.WIDGET_SHAPE]) }
+
+    /** Отдельные значки «SMS» и «Контакты» в списке приложений (2.6.0): разбор в SectionIcons. */
+    val sectionIcons: Flow<Boolean> = data.map { it[Keys.SECTION_ICONS] ?: false }
 
     /** Как показывать имя контакта (1.6.2): разбор в ContactNameFormat. */
     val contactNameFormat: Flow<ContactNameFormat> =
@@ -1318,6 +1334,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("answer_mode", v.name) { it[Keys.ANSWER_MODE] = v.name }
     suspend fun setWidgetShape(v: WidgetShape) =
         edit("widget_shape", v.name) { it[Keys.WIDGET_SHAPE] = v.name }
+    suspend fun setSectionIcons(v: Boolean) = edit("section_icons", v) { it[Keys.SECTION_ICONS] = v }
     suspend fun setContactNameFormat(v: ContactNameFormat) =
         edit("contact_name_format", v.name) { it[Keys.CONTACT_NAME_FORMAT] = v.name }
     suspend fun setContactSort(v: ContactSort) =

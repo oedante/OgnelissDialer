@@ -17,7 +17,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.disabled
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -67,6 +70,12 @@ fun RowScope.QuickAction(
      * круг приподнимается над соседями.
      */
     prominent: Boolean = false,
+    /**
+     * Действие сейчас невозможно (2.6.0): номер скрыт — звонить, писать,
+     * заносить в книгу некуда. Кнопка остаётся на месте, но бледная и не
+     * нажимается — как у системного диалера; ряд не перестраивается.
+     */
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     val label = stringResource(labelRes)
@@ -100,7 +109,9 @@ fun RowScope.QuickAction(
             .weight(1f)
             .clip(MaterialTheme.shapes.medium)
             .then(
-                if (onLongClick != null) {
+                if (!enabled) {
+                    Modifier.alpha(DISABLED_ALPHA).semantics { disabled() }
+                } else if (onLongClick != null) {
                     Modifier.combinedClickableCompat(
                         onClick = onClick,
                         onLongClick = onLongClick,
@@ -156,3 +167,6 @@ fun RowScope.QuickAction(
 /** Круг главного действия ряда: заметно крупнее соседних 48 dp. */
 private val PROMINENT_CIRCLE = 64.dp
 private val PROMINENT_ICON = 30.dp
+
+/** Прозрачность недоступной кнопки — как у выключенных элементов Material (38 %). */
+private const val DISABLED_ALPHA = 0.38f

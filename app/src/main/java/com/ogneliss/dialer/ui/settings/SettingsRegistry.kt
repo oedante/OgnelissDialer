@@ -618,6 +618,17 @@ object SettingsRegistry {
             keywordsRes = R.string.keywords_widget_shape,
             groupRes = R.string.settings_group_home_screen
         ),
+        /*
+         * 2.6.0, форум: отдельные значки «SMS» и «Контакты» в списке приложений —
+         * в док и в папку (разбор в widget/SectionIcons.kt).
+         */
+        SettingEntry(
+            "section_icons", SettingsCategory.QUICK_ACCESS,
+            R.string.settings_section_icons, R.string.settings_section_icons_text,
+            SettingKind.Switch("section_icons"),
+            keywordsRes = R.string.keywords_section_icons,
+            groupRes = R.string.settings_group_home_screen
+        ),
         // 1.5.8, обзор интерфейса (У6): ответ сдвигом — от случайного касания
         /*
          * Входящий поверх приложений (2.1.0, вопрос пользователя 07.11.2026):

@@ -105,6 +105,9 @@ object CallLogGrouper {
         entry: CallLogEntry,
         contactIdByNumber: Map<String, Long>
     ): String {
+        // 2.6.0: скрытые — своей группой по виду («Номер скрыт», «таксофон»),
+        // а не «number:» с пустым номером (NumberPresentation)
+        if (entry.presentation.hidden) return "hidden:${entry.presentation.name}"
         val resolved = contactOf(entry, contactIdByNumber)
         return resolved?.let { "contact:$it" } ?: "number:${entry.e164}"
     }
@@ -120,7 +123,10 @@ object CallLogGrouper {
      * контакт показывался без звонков.
      */
     fun contactOf(entry: CallLogEntry, contactIdByNumber: Map<String, Long>): Long? =
-        contactIdByNumber[entry.e164]
+        // Скрытый номер — ничей (2.6.0): пустой ключ мог совпасть с контактом,
+        // чей номер не разобрался в E.164
+        if (entry.presentation.hidden || entry.e164.isEmpty()) entry.contactId?.takeIf { !entry.presentation.hidden }
+        else contactIdByNumber[entry.e164]
             ?: tailKey(entry.e164)?.let { contactIdByNumber[it] }
             ?: entry.contactId
 
@@ -252,8 +258,11 @@ object CallLogGrouper {
              * из встреченных: он ближе всего к тому, как номер набирали.
              */
             numbers = sorted.map { it.number }
+                // Пустой номер (скрытый, 2.6.0) — не строка «Номеров»
+                .filter { it.isNotBlank() }
                 .distinctBy { PhoneFormatter.toE164(it).ifBlank { it } },
             subscriptionId = latest.phoneAccountId,
+            presentation = latest.presentation,
             subscriptionLabel = simLabelResolver(latest.phoneAccountId),
             entries = sorted
         )

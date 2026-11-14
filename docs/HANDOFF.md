@@ -12,6 +12,29 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 14.11.2026 — 2.6.0 (74): по форуму (oleg_p) и снимку скрытого номера
+
+Разбор — `docs/RELEASE_NOTES_2.6.0.md`. 2.5.0 опубликована на форуме.
+- Номер скрыт: `NumberPresentation` (CallLog NUMBER_PRESENTATION, «-1/-2/-3»);
+  группа `hidden:…`, ничья; подпись `hiddenNumberLabel`; строка без кнопки вызова,
+  свайпы по номеру пропускаются (`performSwipe`); карточка — серые `QuickAction(enabled)`,
+  без «Номеров», заметки, отметки; блокировка — настройка `block_hidden`.
+- Поиск по организации: `Contact.company/department/jobTitle` (в кэш не пишется),
+  `ContactSearch.orgMatchesText`, T9 — с начала слова; экран «Контакты» —
+  `ContactSearch.matchesListQuery` (имя, организация, заметка, номер); организация —
+  в строке выдачи и в карточке.
+- Фото «По ширине экрана»: `CallPhotoStyle.WIDTH`, `CallPhotoTop`, `photoTopSide`
+  (вызов и псевдозвонок).
+- «Контакты»: поле поиска в нижней панели всегда (`ListPanel.onOpenSearch`,
+  `PanelSearchButton`); пилюля над списком убрана.
+- Отдельные значки «SMS»/«Контакты»: alias `.launcher.Messages/Contacts`
+  (выключены в манифесте), настройка `section_icons`, `widget/SectionIcons.kt`;
+  значок приложения при них открывает журнал (`MainActivity.sectionRouteOf`).
+- `ui_roles_check.py`, правило 6: цвет и размер шрифта числом — только в теме.
+- Крайние настройки (шрифт 160 %, масштаб 110 %, 360 dp): кнопки панели — равными
+  долями (`ActionRow`), подпись не крупнее 15 dp (`LabeledIconButton.LABEL_MAX`),
+  `FitText` в ряду внизу «Меню» и в имени на экране вызова.
+
 ## 14.11.2026 — 2.5.0 (73): по форуму и снимку SMS
 
 Разбор — `docs/RELEASE_NOTES_2.5.0.md`. 2.4.1–2.4.5 не опубликованы — вошли в 2.5.0.

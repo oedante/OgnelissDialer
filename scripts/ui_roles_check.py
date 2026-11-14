@@ -24,6 +24,10 @@
    делает только высококонтрастная тема, внутри самой SectionCaption.
    Вызов с .uppercase() — замечание (2.5.0: «ПАПКИ» и «ИНСТРУМЕНТЫ»
    в меню выглядели жирнее остального приложения — автор заметил).
+6. Цвет числом (Color(0x…)) и размер шрифта числом (N.sp) — только в теме
+   (ui/theme/): иначе экран выпадает из тем, акцента и «Размера шрифта»
+   (2.6.0, обзор вида; было в плане после обзора надёжности 13.11.2026).
+   Осознанное исключение помечается рядом «ui-roles: своё» с причиной.
 
 Запуск: python3 scripts/ui_roles_check.py  (код выхода 1 — есть замечания)
 """
@@ -127,6 +131,24 @@ for path in sorted(ROOT.rglob("*.kt")):
         if close > 0 and ".uppercase(" in text[m.start():close]:
             line = text.count("\n", 0, m.start()) + 1
             problems.append(f"{rel}:{line}: SectionCaption прописными — подпись раздела обычным регистром (прописные — только высококонтрастная тема)")
+
+# Цвета и размеры шрифта числом — только в теме (правило 6)
+LITERAL = re.compile(r"Color\(0x[0-9A-Fa-f]+\)|(?<![\w.])\d+(?:\.\d+)?\.sp\b")
+for path in sorted(ROOT.rglob("*.kt")):
+    rel = str(path.relative_to(ROOT))
+    if rel.startswith("ui/theme/"):
+        continue
+    text = path.read_text(encoding="utf-8")
+    for m in LITERAL.finditer(text):
+        line_start = text.rfind("\n", 0, m.start()) + 1
+        line_end = text.find("\n", m.start())
+        line_text = text[line_start:line_end if line_end >= 0 else len(text)]
+        if line_text.strip().startswith(("*", "//")) or "lineHeight" in line_text or "letterSpacing" in line_text:
+            continue
+        if "ui-roles: своё" in text[max(0, m.start() - 400): m.start()]:
+            continue
+        line = text.count("\n", 0, m.start()) + 1
+        problems.append(f"{rel}:{line}: {m.group(0)} — цвет и размер шрифта числом только в теме (ui/theme/) или с пометкой «ui-roles: своё»")
 
 if problems:
     print("=" * 70)

@@ -69,6 +69,8 @@ data class SettingsState(
     val answerMode: AnswerMode = AnswerMode.TAP,
     /** Форма значков «SMS» и «Контакты» на главном экране (2.1.3). */
     val widgetShape: com.ogneliss.dialer.settings.WidgetShape = com.ogneliss.dialer.settings.WidgetShape.AUTO,
+    /** Отдельные значки «SMS» и «Контакты» в списке приложений (2.6.0, SectionIcons). */
+    val sectionIcons: Boolean = false,
     /** Имя контакта: «Имя Фамилия» или «Фамилия Имя» (1.6.2). */
     val contactNameFormat: ContactNameFormat = ContactNameFormat.GIVEN_FIRST,
     /** Порядок списка контактов: по имени или по фамилии (1.6.2). */
@@ -160,6 +162,7 @@ data class SettingsState(
         "incoming_banner" -> incomingBanner
         "swap_answer" -> swapAnswer
         "vibrate_on_connect" -> vibrateOnConnect
+        "section_icons" -> sectionIcons
         "post_call" -> postCallEnabled
         "post_call_unknown" -> postCallUnknownOnly
         "block_hidden" -> blockHidden
@@ -182,6 +185,8 @@ data class SettingsState(
             "callback_suggestion", "dialpad_open_at_start", "post_call", "post_call_unknown", "incoming_banner", "swap_answer",
             // 2.5.0
             "vibrate_on_connect",
+            // 2.6.0
+            "section_icons",
             "block_hidden", "block_unknown", "block_tagged", "file_logging",
             // 1.3.3: переключатели обрабатывались (switchValue выше), но в список
             // не попали — SettingsRegistryTest падал ещё с 1.3.0

@@ -531,5 +531,35 @@
             android:taskAffinity=""
             android:theme="@android:style/Theme.NoDisplay" />
 
+        <!-- 2.6.0, форум: отдельные значки «SMS» и «Контакты» в списке приложений —
+             их можно положить в док и в папку (виджеты 2.1.0 туда не кладутся).
+             Выключены, пока их не включат в настройках: разбор в widget/SectionIcons.kt -->
+        <activity-alias
+            android:name=".launcher.Messages"
+            android:targetActivity=".widget.SectionLaunchActivity"
+            android:enabled="false"
+            android:exported="true"
+            android:label="@string/nav_messages"
+            android:icon="@drawable/ic_shortcut_sms"
+            android:roundIcon="@drawable/ic_shortcut_sms">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".launcher.Contacts"
+            android:targetActivity=".widget.SectionLaunchActivity"
+            android:enabled="false"
+            android:exported="true"
+            android:label="@string/nav_contacts"
+            android:icon="@drawable/ic_shortcut_contacts"
+            android:roundIcon="@drawable/ic_shortcut_contacts">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
     </application>
 </manifest>

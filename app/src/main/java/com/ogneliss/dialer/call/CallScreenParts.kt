@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.BoxScope
 import android.app.Activity
@@ -68,6 +69,81 @@ internal fun CallPhotoBackground(photoUri: String) {
                 )
         )
     }
+}
+
+/**
+ * ФОТО ПО ШИРИНЕ ЭКРАНА, ЦЕЛИКОМ (2.6.0, CallPhotoStyle.WIDTH — форум,
+ * oleg_p: «на весь экран значительная часть изображения съедается»).
+ *
+ * Квадрат со стороной [side] сверху, до самого края экрана и под строкой
+ * состояния: фото контакта квадратное, и в квадрате оно видно целиком.
+ * Сверху — лёгкое затемнение под часы и значки (как у фото на весь экран),
+ * снизу фото плавно уходит в цвет страницы: края нет, и имя под ним стоит
+ * на ровном фоне, в цветах темы. Фон страницы рисует PlainCallBackground —
+ * здесь только фото. Сторону считает экран вызова (photoTopSide): ширина
+ * экрана, но не больше, чем оставляют имя и кнопки, — на низком экране
+ * квадрат меньше и стоит по центру.
+ */
+@Composable
+internal fun BoxScope.CallPhotoTop(photoUri: String, side: Dp) {
+    if (side <= 0.dp) return
+    val page = MaterialTheme.colorScheme.surface
+    Box(
+        Modifier
+            .align(Alignment.TopCenter)
+            .size(side)
+    ) {
+        AsyncImage(
+            model = photoUri,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+        Box(
+            Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        0f to Color.Black.copy(alpha = 0.45f),
+                        0.22f to Color.Transparent,
+                        0.86f to Color.Transparent,
+                        1f to page
+                    )
+                )
+        )
+    }
+}
+
+/**
+ * Сколько фото «по ширине» уходит под имя (2.6.0): нижняя полоса, где фото
+ * уже почти растворилось в фоне. Имя начинается на ней — без пустой
+ * полосы между фото и именем.
+ */
+internal val PHOTO_TOP_OVERLAP = 24.dp
+
+/** Меньше этого фото по ширине не показывается — место отдаётся имени (2.6.0). */
+internal val PHOTO_TOP_MIN = 120.dp
+
+/**
+ * Сторона фото «по ширине» (2.6.0): ширина экрана [screenWidth], но не
+ * больше места над кнопками. [topArea] — высота верхней части экрана
+ * под строкой состояния (над кнопками), [statusBar] — высота строки
+ * состояния (фото уходит под неё), [identity] — высота имени и подписей,
+ * [gap] — отступ под ними. Меньше [min] — фото не показывается: имя
+ * важнее.
+ */
+internal fun photoTopSide(
+    screenWidth: Dp,
+    topArea: Dp,
+    statusBar: Dp,
+    identity: Dp,
+    gap: Dp,
+    min: Dp
+): Dp {
+    if (topArea <= 0.dp) return 0.dp
+    val byHeight = topArea + statusBar + PHOTO_TOP_OVERLAP - identity - gap
+    val side = minOf(screenWidth, byHeight)
+    return if (side < min) 0.dp else side
 }
 
 /**

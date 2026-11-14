@@ -66,7 +66,7 @@
     <string name="contacts_all">Alle</string>
     <string name="contacts_favourites">Favoriten</string>
     <string name="contact_blocked">Gesperrt</string>
-    <string name="contacts_search_hint">Name</string>
+    <string name="contacts_search_hint">Name, Nummer oder Firma</string>
     <string name="dial_pause">Pause 2 s</string>
     <string name="dial_wait">auf Sie warten</string>
     <string name="empty_clear_search">Suche löschen</string>
@@ -611,7 +611,7 @@
     <string name="settings_call_animation">Lebendiger Anrufhintergrund</string>
     <string name="settings_call_animation_text">Hinter dem Anrufbildschirm ziehen langsam weiche Farben – aus dem Foto des Anrufers, ohne Foto in den Farben des Designs. Bleibt still, wenn Animationen in den Systemeinstellungen aus sind</string>
     <string name="settings_call_photo">Kontaktfoto beim Anruf</string>
-    <string name="settings_call_photo_text">Wie das Foto des Anrufers erscheint: als Vollbild-Hintergrund oder als Porträt im Kreis oder Quadrat über dem Namen</string>
+    <string name="settings_call_photo_text">Wie das Foto des Anrufers erscheint: als Vollbild, über die ganze Breite ohne Beschnitt oder als Porträt im Kreis oder Quadrat über dem Namen</string>
     <string name="call_photo_full_screen">Vollbild</string>
     <string name="call_photo_circle">Kreis</string>
     <string name="call_photo_square">Quadrat</string>
@@ -1067,4 +1067,11 @@
     <string name="settings_vibrate_on_connect_text">Kurze Vibration, wenn der Angerufene abnimmt</string>
     <string name="journal_folders_title">Ordner der Anrufliste</string>
     <string name="contact_folders_title">Kontaktordner</string>
+    <string name="call_photo_width">Volle Breite</string>
+    <string name="settings_section_icons">Eigene Symbole für SMS und Kontakte</string>
+    <string name="settings_section_icons_text">SMS und Kontakte erscheinen in der App-Liste als eigene Symbole – auch für Dock und Ordner. Das App-Symbol öffnet dann die Anrufliste</string>
+    <string name="keywords_section_icons">symbol verknüpfung eigene app-liste dock ordner launcher startbildschirm sms kontakte telefon</string>
+    <string name="number_payphone">Münztelefon</string>
+    <string name="card_block_hidden">Unterdrückte Nummern blockieren</string>
+    <string name="card_unblock_hidden">Unterdrückte Nummern zulassen</string>
 </resources>

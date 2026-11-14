@@ -128,6 +128,8 @@ object ContactSearch {
         notes: Map<String, NumberNote>
     ): Boolean {
         if (T9Engine.matchIndex(digits, contact.displayName) >= 0) return true
+        // 2.6.0: организация — по началу слова (разбор у orgMatchesT9)
+        if (orgMatchesT9(contact, digits)) return true
 
         return contact.numbers.any { number ->
             if (DialDigits.matches(number.value, digits)) return@any true
@@ -210,7 +212,8 @@ object ContactSearch {
 
         val matched = contacts.filter { contact ->
             TextFold.contains(contact.displayName, query) ||
-                contact.numbers.any { TextFold.contains(notes[it.e164]?.note, query) }
+                contact.numbers.any { TextFold.contains(notes[it.e164]?.note, query) } ||
+                orgMatchesText(contact, query)
         }
         val matchedLog = callLog.filter { group ->
             TextFold.contains(group.displayName, query) ||
@@ -234,4 +237,56 @@ object ContactSearch {
         )
     }
 
+    /*
+     * ══════════════════════════════════════════════════════════════════════
+     * ОРГАНИЗАЦИЯ (2.6.0)
+     * ══════════════════════════════════════════════════════════════════════
+     * Форум, oleg_p: «добавить поиск по организации — для деловых контактов
+     * это важно». Человек помнит «кто-то из Газпромбанка», а не имя
+     * менеджера. Ищутся название, отдел и должность (Contact.company).
+     *
+     * Буквами — подстрокой, как имя. Цифрами (T9 на клавиатуре набора) —
+     * только с начала слова: «4276» находит «Газпромбанк», но цифры внутри
+     * длинного названия не всплывают подсказками, пока набирают номер.
+     * Совпавшие только организацией идут после совпавших именем: у них нет
+     * прибавки за совпадение имени (SearchRanker, TextFold.rank).
+     */
+
+    /** Совпадает ли организация с запросом буквами. */
+    fun orgMatchesText(contact: Contact, query: String): Boolean =
+        TextFold.contains(contact.company, query) ||
+            TextFold.contains(contact.department, query) ||
+            TextFold.contains(contact.jobTitle, query)
+
+    private fun orgMatchesT9(contact: Contact, digits: String): Boolean =
+        sequenceOf(contact.company, contact.department, contact.jobTitle)
+            .filter { it.isNotBlank() }
+            .flatMap { it.split(NON_WORD).asSequence() }
+            .any { word -> word.isNotEmpty() && T9Engine.matchIndex(digits, word) == 0 }
+
+    private val NON_WORD = Regex("[^\\p{L}\\p{N}]+")
+
+    /**
+     * СОВПАДЕНИЕ В ПОИСКЕ ЭКРАНА «КОНТАКТЫ» (2.6.0).
+     *
+     * Было: только имя — «0512» и «сантехник» ничего не находили, хотя
+     * поиск по клавиатуре набора находит и номер, и заметку. Теперь то же,
+     * что там: имя, организация, заметка к номеру; запрос из одних цифр
+     * (и знаков набора) — ещё и номер, подстрокой, как DialDigits:
+     * «8961…» и «+7961…» — один номер.
+     */
+    fun matchesListQuery(
+        contact: Contact,
+        query: String,
+        notes: Map<String, NumberNote> = emptyMap()
+    ): Boolean {
+        val q = query.trim()
+        if (q.isEmpty()) return true
+        if (TextFold.contains(contact.displayName, q)) return true
+        if (orgMatchesText(contact, q)) return true
+        if (contact.numbers.any { TextFold.contains(notes[it.e164]?.note, q) }) return true
+        if (TextFold.isTextQuery(q)) return false
+        val digits = q.filter { it.isDigit() }
+        return digits.isNotEmpty() && contact.numbers.any { DialDigits.matches(it.value, digits) }
+    }
 }

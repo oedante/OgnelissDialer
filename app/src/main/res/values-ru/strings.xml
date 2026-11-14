@@ -35,7 +35,7 @@
     <string name="call_missed">Пропущенный</string>
     <string name="call_outgoing">Исходящий</string>
     <string name="call_rejected">Отклонён</string>
-    <string name="call_unknown_number">Неизвестный номер</string>
+    <string name="call_unknown_number">Номер не определён</string>
     <string name="call_voicemail">Голосовая почта</string>
     <string name="callback_evening">Вечером</string>
     <string name="callback_in_2h">Через 2 часа</string>
@@ -54,7 +54,7 @@
     <string name="contacts_all">Все</string>
     <string name="contacts_favourites">Избранные</string>
     <string name="contact_blocked">Заблокирован</string>
-    <string name="contacts_search_hint">Имя</string>
+    <string name="contacts_search_hint">Имя, номер или организация</string>
     <string name="dial_pause">пауза 2 с</string>
     <string name="dial_wait">ждать вас</string>
     <string name="empty_clear_search">Очистить поиск</string>
@@ -597,7 +597,7 @@
     <string name="incall_conference_title">Конференция: участников %1$d</string>
     <string name="incall_conference_split">Поговорить отдельно</string>
     <string name="incall_conference_drop">Отключить</string>
-    <string name="incall_hidden_number">Скрытый номер</string>
+    <string name="incall_hidden_number">Номер скрыт</string>
     <!-- Вид журнала: разбор в JournalStyle -->
     <string name="settings_journal_style">Вид журнала</string>
     <string name="journal_style_cards">Карточки</string>
@@ -612,7 +612,7 @@
     <string name="settings_call_animation">Живой фон вызова</string>
     <string name="settings_call_animation_text">За экраном вызова медленно плывут мягкие цвета: из фото звонящего, а без фото — цвета темы. Неподвижен, если анимация отключена в настройках системы</string>
     <string name="settings_call_photo">Фото на экране вызова</string>
-    <string name="settings_call_photo_text">Как показывать фото звонящего: фоном на весь экран или портретом в круге или квадрате над именем</string>
+    <string name="settings_call_photo_text">Как показывать фото звонящего: на весь экран, по ширине экрана целиком или портретом в круге или квадрате над именем</string>
     <string name="call_photo_full_screen">На весь экран</string>
     <string name="call_photo_circle">Круг</string>
     <string name="call_photo_square">Квадрат</string>
@@ -1076,4 +1076,11 @@
     <string name="settings_vibrate_on_connect_text">Короткая вибрация, когда собеседник снял трубку</string>
     <string name="journal_folders_title">Папки журнала</string>
     <string name="contact_folders_title">Папки контактов</string>
+    <string name="call_photo_width">По ширине экрана</string>
+    <string name="settings_section_icons">Отдельные значки «SMS» и «Контакты»</string>
+    <string name="settings_section_icons_text">В списке приложений появятся значки «SMS» и «Контакты» — их можно положить в нижний ряд или в папку. Значок приложения тогда открывает журнал</string>
+    <string name="keywords_section_icons">значок ярлык иконка отдельный список приложений док нижний ряд папка лаунчер рабочий стол смс контакты телефон</string>
+    <string name="number_payphone">Таксофон</string>
+    <string name="card_block_hidden">Блокировать скрытые номера</string>
+    <string name="card_unblock_hidden">Не блокировать скрытые номера</string>
 </resources>

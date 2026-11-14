@@ -75,6 +75,7 @@ class SettingsStateSource @Inject constructor(
         .combine(prefs.callPhotoSize) { a, v -> a.copy(callPhotoSize = v) }
         .combine(prefs.answerMode) { a, v -> a.copy(answerMode = v) }
         .combine(prefs.widgetShape) { a, v -> a.copy(widgetShape = v) }
+        .combine(prefs.sectionIcons) { a, v -> a.copy(sectionIcons = v) }
         .combine(prefs.contactNameFormat) { a, v -> a.copy(contactNameFormat = v) }
         .combine(prefs.contactSort) { a, v -> a.copy(contactSort = v) }
         .combine(prefs.messengersAnyNumber) { a, v -> a.copy(messengersAnyNumber = v) }
@@ -211,6 +212,7 @@ class SettingsStateSource @Inject constructor(
             callPhotoSize = a.callPhotoSize,
             answerMode = a.answerMode,
             widgetShape = a.widgetShape,
+            sectionIcons = a.sectionIcons,
             contactNameFormat = a.contactNameFormat,
             contactSort = a.contactSort,
             messengersAnyNumber = a.messengersAnyNumber,
@@ -285,6 +287,7 @@ class SettingsStateSource @Inject constructor(
         val callPhotoSize: CallPhotoSize = CallPhotoSize.LARGE,
         val answerMode: AnswerMode = AnswerMode.TAP,
         val widgetShape: WidgetShape = WidgetShape.AUTO,
+        val sectionIcons: Boolean = false,
         val messengersAnyNumber: Boolean = false,
         val contactNameFormat: ContactNameFormat = ContactNameFormat.GIVEN_FIRST,
         val contactSort: ContactSort = ContactSort.GIVEN
