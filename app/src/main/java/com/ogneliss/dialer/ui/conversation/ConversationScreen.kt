@@ -835,7 +835,8 @@ private fun Bubble(
                     )
                 }
                 if (message.body.isNotBlank()) {
-                    Text(message.body, style = MaterialTheme.typography.bodyLarge)
+                    // Ссылки, почта, номера и даты — нажимаются (2.5.0, MessageLinks); в режиме выбора — нет
+                    LinkedBody(message, linkColor = if (mine) onContainer else MaterialTheme.colorScheme.primary, enabled = onClick == null)
                 } else if (notDownloaded && message.subject.isNullOrBlank()) {
                     // Пустой пузырь не читается — хотя бы «MMS»
                     Text(stringResource(R.string.sms_mms), style = MaterialTheme.typography.bodyLarge)
@@ -875,6 +876,77 @@ private fun Bubble(
             )
         }
     }
+}
+
+/**
+ * ТЕКСТ СООБЩЕНИЯ СО ССЫЛКАМИ (2.5.0). Автор, по снимку переписки с банком:
+ * «в SMS не выделены ссылки и даты». Найденное (MessageLinks) — подчёркнуто,
+ * во входящих — цветом акцента; касание:
+ * • ссылка — в браузер (адрес без «http» — как https);
+ * • почта — в почтовое приложение;
+ * • номер — в наш набор с этим номером (позвонить — ещё одно касание:
+ *   номер из SMS мог прислать кто угодно);
+ * • дата — новое событие в календаре на этот день, описание — текст SMS.
+ * Нет приложения для действия — ничего не происходит (в журнал): это не
+ * критично, и окно с ошибкой здесь лишнее (правило автора 08.11.2026).
+ * Долгое нажатие по-прежнему открывает действия с сообщением.
+ */
+@Composable
+private fun LinkedBody(message: Message, linkColor: Color, enabled: Boolean) {
+    val context = LocalContext.current
+    val spans = remember(message.key, message.body) {
+        com.ogneliss.dialer.sms.MessageLinks.find(message.body, message.date)
+    }
+    if (spans.isEmpty() || !enabled) {
+        Text(message.body, style = MaterialTheme.typography.bodyLarge)
+        return
+    }
+    val styles = androidx.compose.ui.text.TextLinkStyles(
+        androidx.compose.ui.text.SpanStyle(
+            color = linkColor,
+            textDecoration = androidx.compose.ui.text.style.TextDecoration.Underline
+        )
+    )
+    val text = remember(message.body, spans, styles) {
+        androidx.compose.ui.text.buildAnnotatedString {
+            append(message.body)
+            spans.forEach { span ->
+                addLink(
+                    androidx.compose.ui.text.LinkAnnotation.Clickable(span.kind.name, styles) {
+                        openMessageLink(context, span, message.body)
+                    },
+                    span.start, span.end
+                )
+            }
+        }
+    }
+    Text(text, style = MaterialTheme.typography.bodyLarge)
+}
+
+/** Действие по касанию найденного в SMS (разбор у LinkedBody). */
+private fun openMessageLink(context: android.content.Context, span: com.ogneliss.dialer.sms.MessageLinks.Span, body: String) {
+    val intent = when (span.kind) {
+        com.ogneliss.dialer.sms.MessageLinks.Kind.URL ->
+            android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(span.target))
+        com.ogneliss.dialer.sms.MessageLinks.Kind.EMAIL ->
+            android.content.Intent(android.content.Intent.ACTION_SENDTO, android.net.Uri.parse("mailto:" + span.target))
+        // В свой набор, а не звонок сразу: номер в SMS мог прислать кто угодно
+        com.ogneliss.dialer.sms.MessageLinks.Kind.PHONE ->
+            android.content.Intent(android.content.Intent.ACTION_DIAL, android.net.Uri.fromParts("tel", span.target, null))
+                .setPackage(context.packageName)
+        com.ogneliss.dialer.sms.MessageLinks.Kind.DATE -> {
+            val date = span.date ?: return
+            // Событие на весь день: календарь ждёт полночь по UTC (CalendarContract.Events.ALL_DAY)
+            val start = date.atStartOfDay(java.time.ZoneOffset.UTC).toInstant().toEpochMilli()
+            android.content.Intent(android.content.Intent.ACTION_INSERT, android.provider.CalendarContract.Events.CONTENT_URI)
+                .putExtra(android.provider.CalendarContract.EXTRA_EVENT_BEGIN_TIME, start)
+                .putExtra(android.provider.CalendarContract.EXTRA_EVENT_END_TIME, start + 24 * 60 * 60_000L)
+                .putExtra(android.provider.CalendarContract.EXTRA_EVENT_ALL_DAY, true)
+                .putExtra(android.provider.CalendarContract.Events.DESCRIPTION, body)
+        }
+    }.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+    runCatching { context.startActivity(intent) }
+        .onFailure { com.ogneliss.dialer.log.Logger.w("SmsLinks", "Нечем открыть ${span.kind}", it) }
 }
 
 /** Звёздочка избранного у времени — по высоте строки времени. */

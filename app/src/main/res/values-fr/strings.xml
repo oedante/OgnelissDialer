@@ -59,7 +59,6 @@
     <string name="confirm_enable">Activer</string>
     <string name="confirm_reset">Tous les réglages reviennent à leurs valeurs par défaut. Les notes, les étiquettes et les listes sont conservées.</string>
     <string name="confirm_title">Confirmer ?</string>
-    <string name="contact_pin_shortcut">Ajouter un raccourci à l’écran d’accueil</string>
     <string name="contact_ringtone">Sonnerie pour ce contact</string>
     <string name="contact_silent">Renvoyer les appels vers la messagerie</string>
     <string name="contacts_all">Tous</string>
@@ -570,7 +569,7 @@
     <!-- Подзаголовки внутри разделов настроек: разбор в SettingEntry.groupRes -->
     <string name="settings_group_row_swipe">Balayage sur une ligne</string>
     <string name="settings_group_screen_swipe">Changer d’écran</string>
-    <string name="settings_group_feedback">Retour du clavier</string>
+    <string name="settings_group_feedback">Vibration et son</string>
     <string name="settings_group_log_view">Affichage du journal</string>
     <string name="settings_group_search_stats">Recherche et statistiques</string>
     <string name="settings_group_notes">Notes</string>
@@ -1060,4 +1059,9 @@
     <string name="sms_queue_in_draft">%1$s : le texte est revenu dans le brouillon</string>
     <string name="sms_maybe_unsent">Le message n’est peut-être pas parti</string>
     <string name="incall_conference">Conférence</string>
+    <string name="shortcut_direct_call">Appel direct</string>
+    <string name="shortcut_direct_sms">SMS direct</string>
+    <string name="shortcut_sms_label">SMS à %1$s</string>
+    <string name="settings_vibrate_on_connect">Vibrer à la réponse</string>
+    <string name="settings_vibrate_on_connect_text">Brève vibration quand votre correspondant décroche</string>
 </resources>

@@ -88,6 +88,8 @@ data class SettingsState(
     val incomingBanner: Boolean = true,
     /** «Ответить» слева, «Отклонить» справа (2.1.1). */
     val swapAnswer: Boolean = false,
+    /** Вибрация, когда вызываемый снял трубку (2.5.0, Prefs.vibrateOnConnect). */
+    val vibrateOnConnect: Boolean = true,
     val simLabels: Map<Int, String> = emptyMap(),
     /** Экран после звонка выключен по умолчанию — см. пояснение в Prefs. */
     val postCallEnabled: Boolean = false,
@@ -157,6 +159,7 @@ data class SettingsState(
         "callback_suggestion" -> callbackSuggestion
         "incoming_banner" -> incomingBanner
         "swap_answer" -> swapAnswer
+        "vibrate_on_connect" -> vibrateOnConnect
         "post_call" -> postCallEnabled
         "post_call_unknown" -> postCallUnknownOnly
         "block_hidden" -> blockHidden
@@ -177,6 +180,8 @@ data class SettingsState(
             "haptic", "key_tones",
             "merge_calls", "remember_sim", "smart_speaker",
             "callback_suggestion", "dialpad_open_at_start", "post_call", "post_call_unknown", "incoming_banner", "swap_answer",
+            // 2.5.0
+            "vibrate_on_connect",
             "block_hidden", "block_unknown", "block_tagged", "file_logging",
             // 1.3.3: переключатели обрабатывались (switchValue выше), но в список
             // не попали — SettingsRegistryTest падал ещё с 1.3.0

@@ -61,7 +61,6 @@
     <string name="confirm_enable">Aktivieren</string>
     <string name="confirm_reset">Alle Einstellungen kehren zu den Standardwerten zurück. Notizen, Markierungen und Listen bleiben erhalten.</string>
     <string name="confirm_title">Sind Sie sicher?</string>
-    <string name="contact_pin_shortcut">Verknüpfung auf dem Startbildschirm</string>
     <string name="contact_ringtone">Klingelton für diesen Kontakt</string>
     <string name="contact_silent">Anrufe an die Mailbox weiterleiten</string>
     <string name="contacts_all">Alle</string>
@@ -572,7 +571,7 @@
     <!-- Подзаголовки внутри разделов настроек: разбор в SettingEntry.groupRes -->
     <string name="settings_group_row_swipe">Wischen über eine Zeile</string>
     <string name="settings_group_screen_swipe">Zwischen Bildschirmen wechseln</string>
-    <string name="settings_group_feedback">Rückmeldung des Tastenfelds</string>
+    <string name="settings_group_feedback">Vibration und Ton</string>
     <string name="settings_group_log_view">Protokollansicht</string>
     <string name="settings_group_search_stats">Suche und Statistik</string>
     <string name="settings_group_notes">Notizen</string>
@@ -1061,4 +1060,9 @@
     <string name="sms_queue_in_draft">%1$s: Der Text ist wieder im Entwurf</string>
     <string name="sms_maybe_unsent">Nachricht wurde eventuell nicht gesendet</string>
     <string name="incall_conference">Konferenz</string>
+    <string name="shortcut_direct_call">Direktanruf</string>
+    <string name="shortcut_direct_sms">Direkt-SMS</string>
+    <string name="shortcut_sms_label">SMS an %1$s</string>
+    <string name="settings_vibrate_on_connect">Vibrieren bei Annahme</string>
+    <string name="settings_vibrate_on_connect_text">Kurze Vibration, wenn der Angerufene abnimmt</string>
 </resources>

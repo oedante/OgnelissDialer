@@ -592,6 +592,8 @@ internal fun SubscriberMoreMenu(
     silent: Boolean?,
     onSilent: (Long, Boolean) -> Unit,
     onShortcut: () -> Unit,
+    /** Ярлык «Прямое SMS» на главный экран (2.5.0, форум: «ярлыков прямого вызова и SMS»). */
+    onSmsShortcut: () -> Unit = {},
     onEdit: (Long) -> Unit,
     /** Номер не из книги (1.7.0): «Добавить номер к контакту»; null — пункта нет. */
     onAddToExisting: (() -> Unit)? = null,
@@ -624,7 +626,8 @@ internal fun SubscriberMoreMenu(
         val exportLabel = stringResource(R.string.subscriber_export)
         val ringtoneLabel = stringResource(R.string.contact_ringtone)
         val silentLabel = stringResource(R.string.contact_silent)
-        val shortcutLabel = stringResource(R.string.contact_pin_shortcut)
+        val shortcutLabel = stringResource(R.string.shortcut_direct_call)
+        val smsShortcutLabel = stringResource(R.string.shortcut_direct_sms)
         val editLabel = stringResource(R.string.action_edit_contact)
         ModalBottomSheet(
             // Страница настроек, группы — белыми карточками (1.6.1, SheetGroup)
@@ -679,10 +682,17 @@ internal fun SubscriberMoreMenu(
                                 onToggle = { onSilent(knownContactId, it) }
                             )
                             SheetDivider()
+                            // На главный экран — вызов и SMS (2.5.0): было только «Ярлык на рабочий стол» со звонком
                             SheetRow(
                                 OgnelissIcons.AddToHomeScreen,
                                 shortcutLabel,
                                 onClick = { onDismiss(); onShortcut() }
+                            )
+                            SheetDivider()
+                            SheetRow(
+                                OgnelissIcons.AddToHomeScreen,
+                                smsShortcutLabel,
+                                onClick = { onDismiss(); onSmsShortcut() }
                             )
                             SheetDivider()
                             SheetRow(OgnelissIcons.Edit, editLabel, onClick = { onDismiss(); onEdit(knownContactId) })

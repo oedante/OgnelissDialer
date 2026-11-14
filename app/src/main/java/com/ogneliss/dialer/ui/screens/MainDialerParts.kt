@@ -224,7 +224,14 @@ internal fun ownPhotoUriOf(ownNumber: String, contacts: List<com.ogneliss.dialer
  * поиска внизу, над клавиатурой, — там, где его ищет большой палец.
  */
 @Composable
-private fun MenuSearchPill(onSearch: () -> Unit) {
+private fun MenuSearchPill(onSearch: () -> Unit) = SearchPill(stringResource(R.string.nav_search), onSearch)
+
+/**
+ * Пилюля поиска: значок и подпись, касание открывает поле поиска внизу,
+ * над клавиатурой. Вверху «Меню» (2.4.0) и вверху списка контактов (2.5.0).
+ */
+@Composable
+internal fun SearchPill(label: String, onSearch: () -> Unit) {
     Surface(
         color = MaterialTheme.colorScheme.onSurface.copy(alpha = SEARCH_PILL_ALPHA),
         shape = androidx.compose.foundation.shape.CircleShape,
@@ -241,7 +248,7 @@ private fun MenuSearchPill(onSearch: () -> Unit) {
             Icon(OgnelissIcons.Search, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.width(Space.l))
             Text(
-                stringResource(R.string.nav_search),
+                label,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

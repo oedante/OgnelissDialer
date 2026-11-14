@@ -470,6 +470,57 @@
             android:noHistory="true"
             android:taskAffinity=""
             android:theme="@android:style/Theme.NoDisplay" />
+        <!-- «ПОЗВОНИТЬ» ИЗ ДРУГИХ ПРИЛОЖЕНИЙ (2.5.0, форум: «невозможно сделать вызов
+             в Ogneliss из другого приложения — система не предлагает Ogneliss
+             в качестве приложения для вызовов»). Чужое приложение просит
+             ACTION_CALL tel:… — в окне «Выполнить действие с помощью» теперь
+             и мы, рядом с «Телефонными вызовами» и True Phone.
+             Отдельный вход (alias), а не CallNumberActivity целиком: только он
+             открыт наружу, и только для тех, у кого есть CALL_PHONE, —
+             иначе любое приложение звонило бы нашими руками без разрешения. -->
+        <activity-alias
+            android:name=".call.CallFromOtherApp"
+            android:targetActivity=".call.CallNumberActivity"
+            android:exported="true"
+            android:permission="android.permission.CALL_PHONE">
+            <intent-filter>
+                <action android:name="android.intent.action.CALL" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="tel" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- «Прямой вызов» и «Прямое SMS» в списке ярлыков лаунчера (2.5.0, форум) —
+             разбор в widget/DirectShortcutActivity.kt. Окно без интерфейса:
+             сразу системный выбор номера, потом значок на экран. -->
+        <activity
+            android:name=".widget.DirectShortcutActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity-alias
+            android:name=".widget.DirectCall"
+            android:targetActivity=".widget.DirectShortcutActivity"
+            android:exported="true"
+            android:label="@string/shortcut_direct_call"
+            android:icon="@mipmap/ic_launcher">
+            <intent-filter>
+                <action android:name="android.intent.action.CREATE_SHORTCUT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".widget.DirectSms"
+            android:targetActivity=".widget.DirectShortcutActivity"
+            android:exported="true"
+            android:label="@string/shortcut_direct_sms"
+            android:icon="@mipmap/ic_launcher">
+            <intent-filter>
+                <action android:name="android.intent.action.CREATE_SHORTCUT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity-alias>
 
         <!-- Переходник касания по значку раздела: без окна, решает и закрывается -->
         <activity

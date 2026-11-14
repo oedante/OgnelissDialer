@@ -62,6 +62,9 @@ def kt_files(base=SRC):
 manifest = open(os.path.join(ROOT, 'app/src/main/AndroidManifest.xml'), encoding='utf-8').read()
 pkg = 'com.ogneliss.dialer'
 declared = re.findall(r'android:name="(\.[\w.$]+)"', manifest)
+# Псевдонимы (activity-alias, 2.5.0) — не классы: их класс — targetActivity, он и проверяется
+aliases = set(re.findall(r'<activity-alias[^>]*?android:name="(\.[\w.$]+)"', manifest, re.S))
+declared = [d for d in declared if d not in aliases]
 for cls in set(declared):
     # $Receiver — вложенный класс, ищем внешний
     outer = cls.lstrip('.').split('$')[0]

@@ -105,6 +105,7 @@ class SettingsCommands @Inject constructor(
             "callback_suggestion" -> prefs.setCallbackSuggestion(value)
             "incoming_banner" -> prefs.setIncomingBanner(value)
             "swap_answer" -> prefs.setSwapAnswer(value)
+            "vibrate_on_connect" -> prefs.setVibrateOnConnect(value)
             "post_call" -> prefs.setPostCallEnabled(value)
             "post_call_unknown" -> prefs.setPostCallUnknownOnly(value)
             "block_hidden" -> prefs.setBlockHidden(value)
@@ -612,6 +613,8 @@ class SettingsCommands @Inject constructor(
             "haptic", "key_tones",
             "merge_calls", "remember_sim", "smart_speaker",
             "callback_suggestion", "post_call", "post_call_unknown", "incoming_banner", "swap_answer",
+            // 2.5.0
+            "vibrate_on_connect",
             "block_hidden", "block_unknown", "block_tagged", "file_logging",
             "dialpad_open_at_start",
             // 1.8.0

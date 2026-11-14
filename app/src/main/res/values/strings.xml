@@ -77,7 +77,6 @@
     <string name="confirm_enable">Enable</string>
     <string name="confirm_reset">All settings return to their defaults. Notes, tags and lists are kept.</string>
     <string name="confirm_title">Are you sure?</string>
-    <string name="contact_pin_shortcut">Add shortcut to home screen</string>
     <string name="contact_ringtone">Ringtone for this contact</string>
     <string name="contact_silent">Send calls to voicemail</string>
     <string name="contacts_all">All</string>
@@ -600,7 +599,7 @@
     <!-- Подзаголовки внутри разделов настроек: разбор в SettingEntry.groupRes -->
     <string name="settings_group_row_swipe">Swipe on a log row</string>
     <string name="settings_group_screen_swipe">Switching screens</string>
-    <string name="settings_group_feedback">Keypad feedback</string>
+    <string name="settings_group_feedback">Vibration and sound</string>
     <string name="settings_group_log_view">Log appearance</string>
     <string name="settings_group_search_stats">Search and statistics</string>
     <string name="settings_group_notes">Notes</string>
@@ -1090,4 +1089,9 @@
     <string name="sms_queue_in_draft">%1$s: the text is back in the draft</string>
     <string name="sms_maybe_unsent">Message may not have been sent</string>
     <string name="incall_conference">Conference</string>
+    <string name="shortcut_direct_call">Direct call</string>
+    <string name="shortcut_direct_sms">Direct SMS</string>
+    <string name="shortcut_sms_label">SMS to %1$s</string>
+    <string name="settings_vibrate_on_connect">Vibrate when answered</string>
+    <string name="settings_vibrate_on_connect_text">A short vibration when the person you call picks up</string>
 </resources>

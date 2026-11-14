@@ -1,0 +1,162 @@
+<ru-RU>
+• Ссылки, даты, номера и почта в SMS нажимаются: дата — сразу в календарь.
+• Ярлыки «Прямой вызов» и «Прямое SMS» на главный экран; звонить через Ogneliss можно и из других приложений.
+• Поиск по контактам — строкой над списком; вибрация, когда собеседник снял трубку.
+• Надёжнее звонки: второй вызов и конференция, датчик приближения, звонки в переписке по сторонам.
+</ru-RU>
+<ar>
+• الروابط والتواريخ والأرقام والبريد في الرسائل قابلة للنقر: التاريخ يذهب مباشرة إلى التقويم.
+• اختصارا «اتصال مباشر» و«رسالة مباشرة» على الشاشة الرئيسية؛ ويمكن للتطبيقات الأخرى الاتصال عبر Ogneliss.
+• بحث جهات الاتصال فوق القائمة؛ اهتزاز عندما يرد الطرف الآخر.
+• مكالمات أفضل: المكالمة الثانية والجماعية، حساس القرب، المكالمات على جانبي المحادثة.
+</ar>
+<cs-CZ>
+• Odkazy, data, čísla a e-maily v SMS jdou otevřít: datum rovnou do kalendáře.
+• Zástupci „Přímý hovor“ a „Přímá SMS“ na plochu; ostatní aplikace mohou volat přes Ogneliss.
+• Hledání kontaktů nad seznamem; vibrace, když volaný zvedne telefon.
+• Lepší hovory: druhý hovor a konference, senzor přiblížení, hovory po stranách konverzace.
+</cs-CZ>
+<da-DK>
+• Links, datoer, numre og e-mails i SMS kan trykkes: en dato går direkte i kalenderen.
+• Genveje „Direkte opkald“ og „Direkte SMS“ på startskærmen; andre apps kan nu ringe via Ogneliss.
+• Kontaktsøgning over listen; vibration når den du ringer til, svarer.
+• Bedre opkald: andet opkald og konference, nærhedssensor, opkald i begge sider af samtalen.
+</da-DK>
+<de-DE>
+• Links, Daten, Nummern und E-Mails in SMS sind antippbar: ein Datum geht direkt in den Kalender.
+• Verknüpfungen „Direktanruf“ und „Direkt-SMS“ für den Startbildschirm; andere Apps können über Ogneliss anrufen.
+• Kontaktsuche direkt über der Liste; Vibration, wenn der Angerufene abnimmt.
+• Bessere Anrufe: zweiter Anruf und Konferenz, Näherungssensor, Anrufe im Chat seitlich.
+</de-DE>
+<en-US>
+• Links, dates, numbers and emails in SMS are tappable: a date goes straight to your calendar.
+• “Direct call” and “Direct SMS” home screen shortcuts; other apps can now place calls through Ogneliss.
+• Contact search right above the list; a vibration when the person you call picks up.
+• Better calls: second calls and conferences, proximity sensor, calls on both sides of a conversation.
+</en-US>
+<es-ES>
+• Enlaces, fechas, números y correos en los SMS se pueden tocar: una fecha va directa al calendario.
+• Accesos directos «Llamada directa» y «SMS directo»; otras apps ya pueden llamar a través de Ogneliss.
+• Búsqueda de contactos sobre la lista; vibración cuando contestan tu llamada.
+• Llamadas mejoradas: segunda llamada y conferencia, sensor de proximidad, llamadas a ambos lados del chat.
+</es-ES>
+<fi-FI>
+• Tekstiviestien linkit, päivämäärät, numerot ja sähköpostit ovat napautettavia: päivämäärä suoraan kalenteriin.
+• Pikakuvakkeet ”Suora puhelu” ja ”Suora tekstiviesti”; muut sovellukset voivat soittaa Ognelissin kautta.
+• Yhteystietohaku listan yläpuolella; värinä, kun soitettu vastaa.
+• Paremmat puhelut: toinen puhelu ja neuvottelu, läheisyysanturi, puhelut keskustelun molemmin puolin.
+</fi-FI>
+<fr-FR>
+• Liens, dates, numéros et e-mails dans les SMS sont cliquables : une date va directement dans l’agenda.
+• Raccourcis « Appel direct » et « SMS direct » ; les autres apps peuvent appeler via Ogneliss.
+• Recherche de contacts au-dessus de la liste ; vibration quand votre correspondant décroche.
+• Appels améliorés : double appel et conférence, capteur de proximité, appels de chaque côté de la conversation.
+</fr-FR>
+<hi-IN>
+• SMS में लिंक, तारीखें, नंबर और ईमेल टैप करने योग्य: तारीख सीधे कैलेंडर में।
+• होम स्क्रीन पर «डायरेक्ट कॉल» और «डायरेक्ट SMS» शॉर्टकट; दूसरे ऐप अब Ogneliss से कॉल कर सकते हैं।
+• सूची के ऊपर संपर्क खोज; सामने वाले के कॉल उठाने पर कंपन।
+• बेहतर कॉल: दूसरी कॉल और कॉन्फ़्रेंस, निकटता सेंसर, बातचीत में दोनों ओर कॉल।
+</hi-IN>
+<hu-HU>
+• Az SMS-ekben a linkek, dátumok, számok és e-mailek koppinthatók: a dátum egyből a naptárba kerül.
+• „Közvetlen hívás” és „Közvetlen SMS” parancsikonok; más alkalmazások is hívhatnak az Ogneliss-szel.
+• Névjegykeresés a lista felett; rezgés, amikor a hívott fél felveszi.
+• Jobb hívások: második hívás és konferencia, közelségérzékelő, hívások a beszélgetés két oldalán.
+</hu-HU>
+<id>
+• Tautan, tanggal, nomor, dan email di SMS bisa diketuk: tanggal langsung ke kalender.
+• Pintasan «Panggilan langsung» dan «SMS langsung» di layar utama; aplikasi lain kini bisa menelepon lewat Ogneliss.
+• Pencarian kontak di atas daftar; getar saat orang yang Anda telepon menjawab.
+• Panggilan lebih baik: panggilan kedua dan konferensi, sensor jarak, panggilan di kedua sisi percakapan.
+</id>
+<it-IT>
+• Link, date, numeri ed email negli SMS sono toccabili: una data va subito nel calendario.
+• Scorciatoie «Chiamata diretta» e «SMS diretto»; le altre app possono chiamare tramite Ogneliss.
+• Ricerca contatti sopra l’elenco; vibrazione quando l’altra persona risponde.
+• Chiamate migliori: seconda chiamata e conferenza, sensore di prossimità, chiamate ai lati della conversazione.
+</it-IT>
+<iw-IL>
+• קישורים, תאריכים, מספרים ומיילים ב-SMS לחיצים: תאריך נכנס ישר ליומן.
+• קיצורי דרך «חיוג ישיר» ו«SMS ישיר» במסך הבית; אפליקציות אחרות יכולות לחייג דרך Ogneliss.
+• חיפוש אנשי קשר מעל הרשימה; רטט כשהצד השני עונה.
+• שיחות טובות יותר: שיחה שנייה ושיחת ועידה, חיישן קרבה, שיחות בשני צדי הצ׳אט.
+</iw-IL>
+<ja-JP>
+• SMSのリンク・日付・番号・メールをタップ可能に。日付はそのままカレンダーへ。
+• ホーム画面に「直接発信」「直接SMS」ショートカット。他のアプリからOgneliss経由で発信可能に。
+• 連絡先リストの上に検索欄。相手が応答するとバイブ。
+• 通話を改善：2本目の通話と電話会議、近接センサー、会話内の通話を左右に表示。
+</ja-JP>
+<ko-KR>
+• SMS의 링크·날짜·번호·이메일을 탭할 수 있음: 날짜는 바로 캘린더로.
+• 홈 화면용 «바로 전화», «바로 SMS» 바로가기; 다른 앱에서도 Ogneliss로 전화 가능.
+• 연락처 목록 위 검색창; 상대가 전화를 받으면 진동.
+• 통화 개선: 두 번째 통화와 전화 회의, 근접 센서, 대화 속 통화를 양쪽에 표시.
+</ko-KR>
+<nl-NL>
+• Links, datums, nummers en e-mailadressen in sms’jes zijn aantikbaar: een datum gaat direct naar je agenda.
+• Snelkoppelingen „Direct bellen” en „Directe sms”; andere apps kunnen nu via Ogneliss bellen.
+• Contacten zoeken boven de lijst; trilling wanneer de ander opneemt.
+• Betere oproepen: tweede oproep en conferentie, nabijheidssensor, oproepen aan beide kanten van het gesprek.
+</nl-NL>
+<no-NO>
+• Lenker, datoer, numre og e-post i SMS kan trykkes på: en dato går rett i kalenderen.
+• Snarveier «Direkte anrop» og «Direkte SMS» på startskjermen; andre apper kan ringe via Ogneliss.
+• Kontaktsøk over listen; vibrasjon når den du ringer, svarer.
+• Bedre samtaler: andre samtale og konferanse, nærhetssensor, anrop på begge sider av samtalen.
+</no-NO>
+<pl-PL>
+• Linki, daty, numery i e-maile w SMS-ach są klikalne: data trafia od razu do kalendarza.
+• Skróty „Połączenie bezpośrednie” i „SMS bezpośredni”; inne aplikacje mogą dzwonić przez Ogneliss.
+• Wyszukiwanie kontaktów nad listą; wibracja, gdy rozmówca odbierze.
+• Lepsze połączenia: drugie połączenie i konferencja, czujnik zbliżeniowy, połączenia po bokach rozmowy.
+</pl-PL>
+<pt-BR>
+• Links, datas, números e e-mails nos SMS são tocáveis: uma data vai direto para a agenda.
+• Atalhos «Chamada direta» e «SMS direto» na tela inicial; outros apps já podem ligar pelo Ogneliss.
+• Busca de contatos acima da lista; vibração quando atendem sua chamada.
+• Chamadas melhores: segunda chamada e conferência, sensor de proximidade, chamadas nos lados da conversa.
+</pt-BR>
+<ro>
+• Linkurile, datele, numerele și e-mailurile din SMS se pot atinge: o dată ajunge direct în calendar.
+• Comenzi rapide „Apel direct” și „SMS direct”; alte aplicații pot suna prin Ogneliss.
+• Căutare de contacte deasupra listei; vibrație când cel apelat răspunde.
+• Apeluri mai bune: al doilea apel și conferința, senzorul de proximitate, apelurile pe laturile conversației.
+</ro>
+<sk>
+• Odkazy, dátumy, čísla a e-maily v SMS sa dajú otvoriť: dátum rovno do kalendára.
+• Skratky „Priamy hovor“ a „Priama SMS“ na plochu; ostatné aplikácie môžu volať cez Ogneliss.
+• Hľadanie kontaktov nad zoznamom; vibrácia, keď volaný zdvihne.
+• Lepšie hovory: druhý hovor a konferencia, senzor priblíženia, hovory po stranách konverzácie.
+</sk>
+<sv-SE>
+• Länkar, datum, nummer och e-post i sms går att trycka på: ett datum går direkt till kalendern.
+• Genvägar ”Direktsamtal” och ”Direkt-sms” på hemskärmen; andra appar kan ringa via Ogneliss.
+• Kontaktsökning ovanför listan; vibration när den du ringer svarar.
+• Bättre samtal: andra samtal och konferens, närhetssensor, samtal på båda sidor i konversationen.
+</sv-SE>
+<th>
+• ลิงก์ วันที่ หมายเลข และอีเมลใน SMS แตะได้ วันที่เพิ่มลงปฏิทินได้ทันที
+• ทางลัด «โทรโดยตรง» และ «SMS โดยตรง» บนหน้าจอหลัก แอปอื่นโทรผ่าน Ogneliss ได้แล้ว
+• ค้นหารายชื่อเหนือรายการ สั่นเมื่อปลายสายรับสาย
+• การโทรดีขึ้น: สายที่สองและการประชุมสาย เซนเซอร์ระยะใกล้ สายในการสนทนาแยกสองฝั่ง
+</th>
+<tr-TR>
+• SMS’lerdeki bağlantılar, tarihler, numaralar ve e-postalar dokunulabilir: tarih doğrudan takvime gider.
+• Ana ekrana «Doğrudan arama» ve «Doğrudan SMS» kısayolları; diğer uygulamalar Ogneliss ile arayabilir.
+• Listenin üstünde kişi araması; aranan kişi açınca titreşim.
+• Daha iyi aramalar: ikinci arama ve konferans, yakınlık sensörü, sohbette iki yanda aramalar.
+</tr-TR>
+<vi>
+• Liên kết, ngày, số điện thoại và email trong SMS có thể chạm: ngày được thêm thẳng vào lịch.
+• Lối tắt «Gọi trực tiếp» và «SMS trực tiếp» trên màn hình chính; ứng dụng khác có thể gọi qua Ogneliss.
+• Tìm danh bạ ngay trên danh sách; rung khi người nhận nhấc máy.
+• Cuộc gọi tốt hơn: cuộc gọi thứ hai và hội nghị, cảm biến tiệm cận, cuộc gọi ở hai bên cuộc trò chuyện.
+</vi>
+<zh-CN>
+• 短信中的链接、日期、号码和邮箱可点击：日期可直接加入日历。
+• 主屏幕“直接拨号”和“直接短信”快捷方式；其他应用现可通过 Ogneliss 拨打电话。
+• 联系人列表上方的搜索栏；对方接听时振动。
+• 通话更完善：第二通来电与电话会议、距离传感器、对话中的通话分列两侧。
+</zh-CN>

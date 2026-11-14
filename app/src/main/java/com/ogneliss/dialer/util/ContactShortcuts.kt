@@ -50,6 +50,13 @@ object ContactShortcuts {
     private const val ICON_TARGET_PX = 256
     private const val MAX_DYNAMIC = 4
 
+    /** Адаптивный значок прямого ярлыка: 108 dp при плотности xxxhdpi. */
+    private const val ADAPTIVE_PX = 432
+
+    /** Цвета метки: зелёный звонка и синий SMS — как во всём приложении (CallGreen, MessageBlue). */
+    private const val BADGE_CALL = 0xFF2E7D32.toInt()
+    private const val BADGE_SMS = 0xFF1565C0.toInt()
+
     /**
      * Обновляет динамические ярлыки.
      *
@@ -153,6 +160,92 @@ object ContactShortcuts {
             Logger.w(TAG, "Не удалось предложить закрепление", it)
             false
         }
+    }
+
+    /**
+     * «ПРЯМОЙ ВЫЗОВ» И «ПРЯМОЕ SMS» (2.5.0, форум: «не хватает ярлыков прямого
+     * вызова и SMS»). Значок на главном экране: касание — звонок своим
+     * приложением (CallNumberActivity) или переписка с этим номером. Создаёт
+     * лаунчер (виджеты → «Прямой вызов», DirectShortcutActivity) или карточка
+     * абонента (requestPinDirect).
+     *
+     * Значок — фото контакта или буквы имени в тоне собеседника, с меткой
+     * действия в углу: трубка на зелёном или облачко на синем. Без метки
+     * ярлыки вызова и SMS одного человека на экране не различить.
+     */
+    fun direct(context: Context, name: String, number: String, photoUri: String?, sms: Boolean): ShortcutInfoCompat {
+        val label = name.ifBlank { number }
+        val intent = if (sms) com.ogneliss.dialer.sms.MessageNotifications.openIntent(context, number)
+        else callIntent(context, number)
+        return ShortcutInfoCompat.Builder(context, (if (sms) "direct_sms_" else "direct_call_") + number.filter { it.isDigit() || it == '+' })
+            .setShortLabel(label)
+            .setLongLabel(context.getString(if (sms) R.string.shortcut_sms_label else R.string.shortcut_call_label, label))
+            .setIcon(IconCompat.createWithAdaptiveBitmap(directIcon(context, label, photoUri, sms)))
+            .setIntent(intent)
+            .build()
+    }
+
+    /** Предложить закрепить «прямой» ярлык (из карточки абонента); false — лаунчер не умеет. */
+    fun requestPinDirect(context: Context, name: String, number: String, photoUri: String?, sms: Boolean): Boolean {
+        if (!ShortcutManagerCompat.isRequestPinShortcutSupported(context)) return false
+        return runCatching { ShortcutManagerCompat.requestPinShortcut(context, direct(context, name, number, photoUri, sms), null) }
+            .onFailure { Logger.w(TAG, "Не удалось предложить прямой ярлык", it) }
+            .getOrDefault(false)
+    }
+
+    /**
+     * Значок прямого ярлыка — адаптивный (обрезает лаунчер по своей форме):
+     * весь квадрат — фото или тон собеседника, метка — в видимой части.
+     */
+    private fun directIcon(context: Context, label: String, photoUri: String?, sms: Boolean): android.graphics.Bitmap {
+        val size = ADAPTIVE_PX
+        val out = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.ARGB_8888)
+        val canvas = android.graphics.Canvas(out)
+        val photo = photoUri?.let { uri ->
+            runCatching {
+                val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                context.contentResolver.openInputStream(Uri.parse(uri))?.use { BitmapFactory.decodeStream(it, null, options) }
+                options.inSampleSize = sampleSizeFor(options.outWidth, options.outHeight)
+                options.inJustDecodeBounds = false
+                context.contentResolver.openInputStream(Uri.parse(uri))?.use { BitmapFactory.decodeStream(it, null, options) }
+            }.getOrNull()
+        }
+        if (photo != null) {
+            // По центру, с обрезкой по короткой стороне
+            val side = minOf(photo.width, photo.height)
+            val src = android.graphics.Rect((photo.width - side) / 2, (photo.height - side) / 2, (photo.width + side) / 2, (photo.height + side) / 2)
+            canvas.drawBitmap(photo, src, android.graphics.Rect(0, 0, size, size), android.graphics.Paint(android.graphics.Paint.FILTER_BITMAP_FLAG))
+        } else {
+            canvas.drawColor(com.ogneliss.dialer.ui.theme.AvatarPalette.tone(label).let { c ->
+                android.graphics.Color.argb((c.alpha * 255).toInt(), (c.red * 255).toInt(), (c.green * 255).toInt(), (c.blue * 255).toInt())
+            })
+            val letters = label.split(' ').filter { it.isNotBlank() }.take(2)
+                .joinToString("") { it.first().uppercase() }.ifEmpty { "#" }
+            val text = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
+                color = android.graphics.Color.WHITE
+                textSize = size * 0.22f
+                textAlign = android.graphics.Paint.Align.CENTER
+                isFakeBoldText = true
+            }
+            canvas.drawText(letters, size / 2f, size / 2f - (text.descent() + text.ascent()) / 2f, text)
+        }
+        // Метка действия: в видимой части адаптивного значка (круг 72 из 108 dp)
+        val cx = size * 0.64f
+        val r = size * 0.11f
+        val badge = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
+            color = if (sms) BADGE_SMS else BADGE_CALL
+        }
+        canvas.drawCircle(cx, cx, r, android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply { color = android.graphics.Color.WHITE })
+        canvas.drawCircle(cx, cx, r * 0.86f, badge)
+        runCatching {
+            androidx.core.content.ContextCompat.getDrawable(context, if (sms) R.drawable.ic_stat_message else R.drawable.ic_call)?.mutate()?.let { glyph ->
+                glyph.setTint(android.graphics.Color.WHITE)
+                val g = (r * 0.62f).toInt()
+                glyph.setBounds((cx - g).toInt(), (cx - g).toInt(), (cx + g).toInt(), (cx + g).toInt())
+                glyph.draw(canvas)
+            }
+        }.onFailure { Logger.w(TAG, "Метка прямого ярлыка не нарисовалась", it) }
+        return out
     }
 
     /**
