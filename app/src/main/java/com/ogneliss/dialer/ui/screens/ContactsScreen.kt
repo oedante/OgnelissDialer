@@ -46,6 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.R
+import com.ogneliss.dialer.ui.components.FolderOrder
 import com.ogneliss.dialer.data.CallLogGroup
 import com.ogneliss.dialer.data.CallType
 import com.ogneliss.dialer.data.Contact
@@ -144,7 +145,9 @@ fun ContactsScreen(
     /** «Закреплённые» — при полном списке закреплённых (2.1.0, RecordActionCards). */
     onOpenPinned: () -> Unit = {},
     /** Своя карточка — «Мой контакт» в меню (2.4.0, как в журнале). */
-    onOpenOwnCard: () -> Unit = {}
+    onOpenOwnCard: () -> Unit = {},
+    /** Порядок и показ папок контактов (2.5.0) — значок справа от «ПАПКИ» в «Меню». */
+    onOpenFolders: () -> Unit = {}
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     // «Мой контакт» в меню — как в журнале и SMS (2.4.0)
@@ -743,16 +746,24 @@ fun ContactsScreen(
                             onNotes = { menuOpen = false; onOpenNotes() },
                             onReminders = { menuOpen = false; onOpenReminders() },
                             onHelp = { menuOpen = false; onOpenHelp() },
-                            // «Папки» контактов (2.2.2) — как папки в меню почты: те же отборы, что в «Фильтре»
+                            // «Папки» контактов (2.2.2) — как папки в меню почты: те же отборы, что в «Фильтре».
+                            // 2.5.0: порядок и показ — из настроек, значок справа от «ПАПКИ» (FolderOrder)
                             header = {
+                                val raw by vm.prefs.contactFolders.collectAsStateWithLifecycle(null)
+                                val shown = remember(raw) {
+                                    val names = FolderOrder.visible(raw, CONTACT_FOLDERS.map { it.first.name }, ContactFilter.ALL.name)
+                                    names.mapNotNull { name -> CONTACT_FOLDERS.firstOrNull { it.first.name == name } }
+                                }
                                 MenuFolderRows(
                                     title = stringResource(R.string.settings_sms_folders),
-                                    folders = CONTACT_FOLDERS.map { (filter, labelRes, icon) ->
+                                    folders = shown.map { (filter, labelRes, icon) ->
                                         MenuFolder(icon, stringResource(labelRes), selected = filter == contactFilter) {
                                             menuOpen = false
                                             contactFilter = filter
                                         }
-                                    }
+                                    },
+                                    onEdit = { menuOpen = false; onOpenFolders() },
+                                    editLabel = stringResource(R.string.sms_folders_edit)
                                 )
                             },
                             onSearch = { menuOpen = false; searching = true },
@@ -866,7 +877,7 @@ fun ContactsScreen(
                  */
                 if (!searching) {
                     item(key = "search_pill") {
-                        SearchPill(stringResource(R.string.speed_dial_search)) { searching = true }
+                        SearchPill(stringResource(R.string.speed_dial_search), onSearch = { searching = true })
                     }
                 }
 
@@ -1459,7 +1470,7 @@ private fun contactAsGroup(contact: Contact): CallLogGroup {
  * и подписи, что в окне «Фильтр» (ContactFilterSheet), — одно и то же,
  * двумя входами: из шапки и из меню, как папки и фильтр в почте.
  */
-private val CONTACT_FOLDERS: List<Triple<ContactFilter, Int, androidx.compose.ui.graphics.vector.ImageVector>> = listOf(
+internal val CONTACT_FOLDERS: List<Triple<ContactFilter, Int, androidx.compose.ui.graphics.vector.ImageVector>> = listOf(
     Triple(ContactFilter.ALL, R.string.contacts_folder_all, OgnelissIcons.Contacts),
     Triple(ContactFilter.FAVOURITES, R.string.contacts_favourites, OgnelissIcons.Star),
     Triple(ContactFilter.FREQUENT, R.string.contacts_filter_frequent, OgnelissIcons.History),

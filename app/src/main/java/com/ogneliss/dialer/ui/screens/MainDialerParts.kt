@@ -102,7 +102,15 @@ internal fun OverflowMenu(
      * «Поиск» — строкой-пилюлей в самом верху панели (2.4.0, автор: «перенесём
      * в боковую панель поиск»). Было: значок в шапке раздела. null — нет.
      */
-    onSearch: (() -> Unit)? = null
+    onSearch: (() -> Unit)? = null,
+    /**
+     * «Фильтры» — кнопкой у поиска внизу (2.5.0, автор: «почему в разделе Папки
+     * находятся фильтры?»): свой набор условий — не папка. null — нет (у SMS
+     * и контактов своих фильтров нет: их отборы — сами папки).
+     */
+    onFilters: (() -> Unit)? = null,
+    /** Сколько условий фильтра включено — число на кнопке; 0 — без числа. */
+    filtersCount: Int = 0
 ) {
     if (!expanded) return
 
@@ -120,23 +128,31 @@ internal fun OverflowMenu(
 
     EndDrawer(onDismiss = onDismiss) {
         /*
-         * ОДИНАКОВО ВО ВСЕХ РАЗДЕЛАХ (2.4.0). Автор, по снимкам меню журнала,
-         * SMS и контактов: «слишком много пустого места и всегда разное
-         * расположение элементов». Было: папки сверху, плитки прижаты к низу
-         * — между ними пустота; набор плиток в разделах разный («Мой контакт»
-         * только в журнале, «Значок на главный экран» — только в SMS
-         * и контактах); плитки с подписью — по одной в ряд (разбор у
-         * OverflowMenuBody). Стало: поиск, папки и сразу под ними плитки —
-         * подряд, свободное место только внизу; плитки одни и те же и на тех
-         * же местах в каждом разделе.
+         * МЕНЮ — КАК ОСТАЛЬНОЕ ПРИЛОЖЕНИЕ (2.5.0). Автор, по снимкам меню журнала,
+         * SMS и контактов: «почему в разделе Папки находятся фильтры?», «поиск
+         * надо перенести вниз», «почему настройки панели только в SMS?», «вид
+         * отличается от остального приложения».
+         *
+         * Сверху вниз:
+         * • «ПАПКИ» — только папки; значок «Настроить папки» — у всех трёх
+         *   разделов (порядок и показ: SMS — SmsFoldersScreen, журнал и
+         *   контакты — MenuFoldersScreen);
+         * • «ИНСТРУМЕНТЫ» — строками, как папки (были белые плитки, каких
+         *   в приложении больше нигде нет);
+         * • внизу, у большого пальца и кнопки «Меню», — приложение: настройки,
+         *   справка, тема, значок на главный экран — значками с подписью, как
+         *   нижняя панель; и самым низом поиск, а в журнале рядом с ним —
+         *   «Фильтры» с числом условий.
+         * Подписи частей — прописными, как подписи в списках.
+         * Верх листается, если не помещается (низкий экран, лёжа); низ — на месте.
          */
         val tools = buildList {
-            if (onOwnNumber != null) add(MenuTile(MenuGroup.TOOLS, OgnelissIcons.Person, ownLabel, onOwnNumber, photoUri = ownPhotoUri))
-            add(MenuTile(MenuGroup.TOOLS, OgnelissIcons.PhoneCallback, fakeCallLabel, onFakeCall))
-            add(MenuTile(MenuGroup.TOOLS, OgnelissIcons.StickyNote2, notesLabel, onNotes))
-            add(MenuTile(MenuGroup.TOOLS, OgnelissIcons.Alarm, remindersLabel, onReminders))
+            if (onOwnNumber != null) add(MenuFolder(OgnelissIcons.Person, ownLabel, photoUri = ownPhotoUri, onClick = onOwnNumber))
+            add(MenuFolder(OgnelissIcons.PhoneCallback, fakeCallLabel, onClick = onFakeCall))
+            add(MenuFolder(OgnelissIcons.StickyNote2, notesLabel, onClick = onNotes))
+            add(MenuFolder(OgnelissIcons.Alarm, remindersLabel, onClick = onReminders))
         }
-        // Значки: постоянные — первыми, необязательный («на главный экран») — последним,
+        // Постоянные — первыми, необязательный («на главный экран») — последним,
         // чтобы его отсутствие (журнал) не сдвигало остальные
         val app = buildList {
             add(MenuTile(MenuGroup.APP, OgnelissIcons.Settings, settingsLabel, onSettings))
@@ -151,11 +167,73 @@ internal fun OverflowMenu(
             )
             if (onPinToHome != null) add(MenuTile(MenuGroup.APP, OgnelissIcons.AddToHomeScreen, stringResource(R.string.menu_pin_home), onPinToHome))
         }
-        // Всё подряд и листается целиком, если не помещается (низкий экран, лёжа)
-        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
-            if (onSearch != null) MenuSearchPill(onSearch)
-            if (header != null) header()
-            OverflowMenuBody(tools + app)
+        Column(Modifier.fillMaxSize()) {
+            Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())) {
+                if (header != null) header()
+                MenuActionRows(stringResource(R.string.menu_section_tools), tools)
+            }
+            com.ogneliss.dialer.ui.components.OgnelissDivider()
+            AppActionsRow(app)
+            if (onSearch != null || onFilters != null) {
+                Row(
+                    Modifier.fillMaxWidth().padding(end = Space.s, bottom = Space.xs),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (onSearch != null) SearchPill(stringResource(R.string.nav_search), onSearch, Modifier.weight(1f))
+                    else Spacer(Modifier.weight(1f))
+                    if (onFilters != null) FiltersButton(filtersCount, onFilters)
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Приложение — значками с подписью, как нижняя панель (2.5.0): настройки,
+ * справка, тема, значок на главный экран. Ровными долями по ширине.
+ */
+@Composable
+private fun AppActionsRow(actions: List<MenuTile>) {
+    Row(
+        Modifier.fillMaxWidth().padding(horizontal = Space.xs, vertical = Space.xs),
+        verticalAlignment = Alignment.Top
+    ) {
+        actions.forEach { action ->
+            Column(
+                Modifier
+                    .weight(1f)
+                    .clip(MaterialTheme.shapes.medium)
+                    .clickable(role = androidx.compose.ui.semantics.Role.Button, onClick = action.onClick)
+                    .heightIn(min = Dimens.MIN_TOUCH_TARGET)
+                    .padding(vertical = Space.xs),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(action.icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                Spacer(Modifier.height(Space.xxs))
+                Text(
+                    action.label,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
+/** «Фильтры» у поиска (журнал): число включённых условий; включены — цветом акцента. */
+@Composable
+private fun FiltersButton(count: Int, onClick: () -> Unit) {
+    val label = stringResource(R.string.filter_title)
+    IconButton(onClick = onClick) {
+        BadgedBox(badge = { if (count > 0) Badge { Text(count.toString()) } }) {
+            Icon(
+                OgnelissIcons.FilterList,
+                contentDescription = label,
+                tint = if (count > 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
@@ -223,19 +301,16 @@ internal fun ownPhotoUriOf(ownNumber: String, contacts: List<com.ogneliss.dialer
  * панели, значок и слово «Поиск». Касание закрывает меню и открывает поле
  * поиска внизу, над клавиатурой, — там, где его ищет большой палец.
  */
-@Composable
-private fun MenuSearchPill(onSearch: () -> Unit) = SearchPill(stringResource(R.string.nav_search), onSearch)
-
 /**
  * Пилюля поиска: значок и подпись, касание открывает поле поиска внизу,
  * над клавиатурой. Вверху «Меню» (2.4.0) и вверху списка контактов (2.5.0).
  */
 @Composable
-internal fun SearchPill(label: String, onSearch: () -> Unit) {
+internal fun SearchPill(label: String, onSearch: () -> Unit, modifier: Modifier = Modifier) {
     Surface(
         color = MaterialTheme.colorScheme.onSurface.copy(alpha = SEARCH_PILL_ALPHA),
         shape = androidx.compose.foundation.shape.CircleShape,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = Space.m, vertical = Space.s)
             .clip(androidx.compose.foundation.shape.CircleShape)
@@ -320,100 +395,12 @@ private val DRAWER_MAX_WIDTH = 360.dp
 /** Скругление выезжающего края — радиус шторки (28 dp). */
 private val DRAWER_CORNER = 28.dp
 
-/**
- * ПЛИТКИ МЕНЮ — КАК «ИЗБРАННОЕ» В МЕНЮ OGNELISS MAIL (2.2.1, `tile_grid.dart`).
- *
- * Сетка в четыре колонки, зазор 6 dp, высота плитки 56 dp, скругление 8 dp:
- * плитка с подписью занимает две колонки (значок сверху слева, подпись снизу),
- * плитка-значок — одну. Сначала инструменты с подписями по две в ряд
- * («Мой контакт», «Псевдозвонок», «Заметки», «Напоминания»), затем ряд
- * значков (настройки, вопросы, тема, значок на главный экран) — у почты
- * так же: разделы с подписями и ряд значков под ними. Набор и порядок —
- * одни во всех разделах (2.4.0).
- *
- * Было (2.1.0–2.2.0): круги с подписью под ними, по группам в белых карточках.
+/*
+ * ПЛИТКИ МЕНЮ (2.2.1–2.4.1, `tile_grid.dart` почты) убраны в 2.5.0: белые
+ * плитки были только здесь и выглядели чужими в приложении (автор: «вид
+ * отличается от остального приложения»). Инструменты — строками, как папки
+ * (MenuActionRows), приложение — значками с подписью (AppActionsRow).
  */
-@Composable
-internal fun OverflowMenuBody(tiles: List<MenuTile>) {
-    Column(Modifier.fillMaxWidth()) {
-        // Линия над плитками — граница частей меню, как над «Избранным» почты
-        com.ogneliss.dialer.ui.components.OgnelissDivider(Modifier.padding(top = Space.s))
-        com.ogneliss.dialer.ui.components.MenuBand(stringResource(R.string.menu_section_tools))
-        /*
-         * РЯДАМИ, А НЕ ПОТОКОМ (2.4.0). Было: FlowRow с шириной плитки
-         * «две клетки + зазор», посчитанной в dp. Две такие плитки
-         * с зазором — ровно ширина ряда, и при округлении до пикселей
-         * вторая не помещалась на долю пикселя и уходила на следующий ряд:
-         * плитки с подписью стояли по одной, справа пустота (снимки автора).
-         * Стало: ряды с весами — с подписью две на ряд (вес 2), значки
-         * по четыре (вес 1); ширины делит Row, без округления. Неполный
-         * ряд добивается пустым местом того же веса: плитка не растягивается.
-         */
-        Column(
-            Modifier.fillMaxWidth().padding(start = Space.m, end = Space.m, top = Space.xxs, bottom = Space.m),
-            verticalArrangement = Arrangement.spacedBy(TILE_GAP)
-        ) {
-            tiles.filter { it.group == MenuGroup.TOOLS }.chunked(2).forEach { row -> TileRow(row, perRow = 2, weight = 2f) }
-            tiles.filter { it.group == MenuGroup.APP }.chunked(MENU_COLUMNS).forEach { row -> TileRow(row, perRow = MENU_COLUMNS, weight = 1f) }
-        }
-    }
-}
-
-/** Ряд плиток одного размера; недостающие — пустым местом того же веса. */
-@Composable
-private fun TileRow(row: List<MenuTile>, perRow: Int, weight: Float) {
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(TILE_GAP)) {
-        row.forEach { tile ->
-            MenuTileBox(tile, iconOnly = tile.group == MenuGroup.APP, Modifier.weight(weight).height(TILE_HEIGHT))
-        }
-        repeat(perRow - row.size) { Spacer(Modifier.weight(weight)) }
-    }
-}
-
-/** Одна плитка меню: с подписью (значок сверху, подпись снизу) или только значок по центру. */
-@Composable
-private fun MenuTileBox(tile: MenuTile, iconOnly: Boolean, modifier: Modifier) {
-    val scheme = MaterialTheme.colorScheme
-    val fg = if (tile.selected) scheme.primary else scheme.onSurface.copy(alpha = 0.85f)
-    Surface(
-        color = if (tile.selected) scheme.secondaryContainer else scheme.surfaceContainerHigh,
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(TILE_CORNER),
-        modifier = modifier
-            .clip(androidx.compose.foundation.shape.RoundedCornerShape(TILE_CORNER))
-            // Значок без подписи — подпись читает TalkBack
-            .clickable(onClickLabel = tile.label, role = androidx.compose.ui.semantics.Role.Button, onClick = tile.onClick)
-    ) {
-        if (iconOnly) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(tile.icon, contentDescription = tile.label, tint = fg)
-            }
-        } else {
-            Column(
-                Modifier.padding(start = Space.s + Space.xxs, end = Space.s, top = Space.s - Space.xxs, bottom = Space.s - Space.xxs),
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                // Своё фото — на месте значка «Мой контакт»
-                val photo = tile.photoUri?.takeIf { it.isNotBlank() }
-                if (photo != null) RowAvatar(photo, size = TILE_ICON)
-                else Icon(tile.icon, contentDescription = null, tint = fg, modifier = Modifier.size(TILE_ICON))
-                Text(
-                    tile.label,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = fg,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
-    }
-}
-
-/** Колонок в сетке плиток, зазор, высота, скругление и значок — числа `TileGrid` почты. */
-private const val MENU_COLUMNS = 4
-private val TILE_GAP = 6.dp
-private val TILE_HEIGHT = 56.dp
-private val TILE_CORNER = 8.dp
-private val TILE_ICON = 20.dp
 
 /**
  * Группы плиток меню: TOOLS — с подписью (две колонки), APP — значком (одна).
@@ -432,6 +419,10 @@ internal fun journalFolderLabel(folder: com.ogneliss.dialer.data.JournalFolder):
     com.ogneliss.dialer.data.JournalFolder.OUTGOING -> R.string.journal_folder_outgoing
     com.ogneliss.dialer.data.JournalFolder.UNKNOWN -> R.string.filter_unknown
 }
+
+/** Все папки журнала для экрана порядка и показа (2.5.0): ключ, название, значок. */
+internal fun journalFolderItems(): List<Triple<String, Int, androidx.compose.ui.graphics.vector.ImageVector>> =
+    com.ogneliss.dialer.data.JournalFolder.entries.map { Triple(it.name, journalFolderLabel(it), journalFolderIcon(it)) }
 
 /** Значок «папки» журнала — те же значки типов вызовов, что в строках. */
 internal fun journalFolderIcon(folder: com.ogneliss.dialer.data.JournalFolder): androidx.compose.ui.graphics.vector.ImageVector =

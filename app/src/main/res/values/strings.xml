@@ -1094,4 +1094,6 @@
     <string name="shortcut_sms_label">SMS to %1$s</string>
     <string name="settings_vibrate_on_connect">Vibrate when answered</string>
     <string name="settings_vibrate_on_connect_text">A short vibration when the person you call picks up</string>
+    <string name="journal_folders_title">Call log folders</string>
+    <string name="contact_folders_title">Contact folders</string>
 </resources>

@@ -1065,4 +1065,6 @@
     <string name="shortcut_sms_label">SMS an %1$s</string>
     <string name="settings_vibrate_on_connect">Vibrieren bei Annahme</string>
     <string name="settings_vibrate_on_connect_text">Kurze Vibration, wenn der Angerufene abnimmt</string>
+    <string name="journal_folders_title">Ordner der Anrufliste</string>
+    <string name="contact_folders_title">Kontaktordner</string>
 </resources>

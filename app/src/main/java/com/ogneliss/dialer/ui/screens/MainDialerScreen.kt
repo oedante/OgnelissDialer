@@ -136,6 +136,8 @@ fun MainDialerScreen(
     onOpenBlockLists: () -> Unit,
     /** Архив журнала — «Ещё» → «Архив» (2.1.0). */
     onOpenArchive: () -> Unit = {},
+    /** Порядок и показ папок журнала (2.5.0) — значок справа от «ПАПКИ» в «Меню». */
+    onOpenFolders: () -> Unit = {},
     /** «Закреплённые» — при полном списке закреплённых (2.1.0, RecordActionCards). */
     onOpenPinned: () -> Unit = {}
 ) {
@@ -1516,28 +1518,37 @@ fun MainDialerScreen(
                      */
                     header = {
                         val current = JournalFolder.of(activeFilter)
+                        /*
+                         * ПАПКИ ЖУРНАЛА (2.5.0, автор: «почему в разделе Папки находятся
+                         * фильтры?» и «почему настройки панели только в SMS?»). Только
+                         * папки — виды вызовов в порядке и показе из настроек
+                         * (FolderOrder, значок справа от «ПАПКИ») — и «Архив»
+                         * последним. «Фильтры» (свой набор условий) — не папка: кнопкой
+                         * рядом с поиском внизу меню (onFilters).
+                         */
+                        val raw by vm.prefs.journalFolders.collectAsStateWithLifecycle(null)
+                        val shown = remember(raw) {
+                            FolderOrder.visible(raw, JournalFolder.entries.map { it.name }, JournalFolder.ALL.name)
+                                .mapNotNull { name -> JournalFolder.entries.firstOrNull { it.name == name } }
+                        }
                         MenuFolderRows(
                             title = stringResource(R.string.settings_sms_folders),
-                            folders = JournalFolder.entries.map { f ->
+                            folders = shown.map { f ->
                                 MenuFolder(journalFolderIcon(f), stringResource(journalFolderLabel(f)), selected = f == current) {
                                     menuOpen = false
                                     vm.setFilter(f.filter())
                                 }
-                            } + MenuFolder(
-                                // Свой набор условий (карта, период, заметка…) — «Фильтры · N» (2.4.0)
-                                OgnelissIcons.FilterList,
-                                stringResource(R.string.filter_title),
-                                count = if (activeFilter.isActive && current == null) activeFilter.activeCount else 0,
-                                selected = activeFilter.isActive && current == null
-                            ) {
-                                menuOpen = false
-                                filtersOpen = true
                             } + MenuFolder(OgnelissIcons.Archive, stringResource(R.string.archive_title)) {
                                 menuOpen = false
                                 onOpenArchive()
-                            }
+                            },
+                            onEdit = { menuOpen = false; onOpenFolders() },
+                            editLabel = stringResource(R.string.sms_folders_edit)
                         )
                     },
+                    // Свой набор условий — кнопкой у поиска, с числом условий (2.5.0)
+                    onFilters = { menuOpen = false; filtersOpen = true },
+                    filtersCount = if (activeFilter.isActive && JournalFolder.of(activeFilter) == null) activeFilter.activeCount else 0,
                     onSearch = { menuOpen = false; startSearch() }
                 )
             }

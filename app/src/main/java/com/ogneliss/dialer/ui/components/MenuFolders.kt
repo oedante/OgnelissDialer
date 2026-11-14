@@ -81,6 +81,9 @@ internal fun MenuFolderRows(
  */
 @Composable
 internal fun MenuBand(title: String, action: (@Composable () -> Unit)? = null) {
+    // Прописными, как подписи в списках («ЗАКРЕПЛЁННЫЕ», «ВЧЕРА») — 2.5.0, единый вид;
+    // TalkBack читает обычным регистром
+    val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0] ?: java.util.Locale.getDefault()
     Row(
         Modifier
             .fillMaxWidth()
@@ -88,7 +91,7 @@ internal fun MenuBand(title: String, action: (@Composable () -> Unit)? = null) {
             .padding(start = Space.l, end = Space.xs),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        SectionCaption(title, Modifier.weight(1f))
+        SectionCaption(title.uppercase(locale), Modifier.weight(1f), description = title)
         action?.invoke()
     }
 }
@@ -102,11 +105,26 @@ internal class MenuFolder(
     val label: String,
     val count: Int = 0,
     val selected: Boolean = false,
+    /** Фото вместо значка («Мой контакт», 2.5.0); пусто — значок. */
+    val photoUri: String? = null,
     val onClick: () -> Unit
 )
 
+/**
+ * Строки действий меню («ИНСТРУМЕНТЫ», 2.5.0) — тем же видом, что папки:
+ * значок, название, 48 dp. Было: белые плитки, каких больше нигде
+ * в приложении нет (автор: «вид отличается от остального приложения»).
+ */
 @Composable
-private fun FolderRow(folder: MenuFolder) {
+internal fun MenuActionRows(title: String, actions: List<MenuFolder>) {
+    Column(Modifier.fillMaxWidth()) {
+        MenuBand(title)
+        actions.forEach { FolderRow(it, role = Role.Button) }
+    }
+}
+
+@Composable
+private fun FolderRow(folder: MenuFolder, role: Role = Role.Tab) {
     val on = folder.selected
     Row(
         Modifier
@@ -114,13 +132,15 @@ private fun FolderRow(folder: MenuFolder) {
             .padding(horizontal = Space.xs)
             .clip(MaterialTheme.shapes.extraLarge)
             .background(if (on) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent)
-            .clickable(role = Role.Tab, onClick = folder.onClick)
-            .semantics { selected = on }
+            .clickable(role = role, onClick = folder.onClick)
+            .semantics { if (role == Role.Tab) selected = on }
             .heightIn(min = ROW_HEIGHT)
             .padding(horizontal = Space.m),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
+        val photo = folder.photoUri?.takeIf { it.isNotBlank() }
+        if (photo != null) RowAvatar(photo, size = PHOTO_SIZE)
+        else Icon(
             folder.icon, contentDescription = null,
             tint = if (on) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -144,3 +164,6 @@ private fun FolderRow(folder: MenuFolder) {
 
 /** Высота строки папки — по пальцу (48 dp): плотнее, чем 52 dp прежде. */
 private val ROW_HEIGHT = 48.dp
+
+/** Фото на месте значка строки — размер значка. */
+private val PHOTO_SIZE = 24.dp
