@@ -52,6 +52,9 @@ class OgnelissInCallService : InCallService() {
          * не сразу, а после вибрации (разбор у silenceRinger).
          */
         val SILENCE_RETRY_MS = longArrayOf(0L, 300L, 600L, 1_000L, 2_000L)
+
+        /** Вибрация при ответе: короткая, как касание (2.5.0). */
+        const val CONNECT_VIBRATION_MS = 120L
     }
 
     /**
@@ -95,6 +98,8 @@ class OgnelissInCallService : InCallService() {
     @Volatile private var incomingBannerOn = !com.ogneliss.dialer.util.IncomingCallAccess.restrictiveShell
     /** Значение плашки уже пришло из настроек — до того решает [incomingBannerWanted]. */
     @Volatile private var incomingBannerKnown = false
+    /** «Вибрация при ответе» (2.5.0, Prefs.vibrateOnConnect) — копия, как у автодозвона. */
+    @Volatile private var vibrateOnConnect = true
 
     override fun onCreate() {
         super.onCreate()
@@ -109,6 +114,7 @@ class OgnelissInCallService : InCallService() {
             }.collect { AutoRedial.config = it }
         }
         serviceScope.launch { prefs.callbackSuggestion.collect { callbackSuggestionOn = it } }
+        serviceScope.launch { prefs.vibrateOnConnect.collect { vibrateOnConnect = it } }
         serviceScope.launch {
             prefs.incomingBanner.collect {
                 incomingBannerOn = it
@@ -251,6 +257,8 @@ class OgnelissInCallService : InCallService() {
                 if (state == Call.STATE_ACTIVE) {
                     // Автодозвон (1.8.0): попытка соединилась — сеанс окончен
                     AutoRedial.onCallConnected(CallDetailsCompat.number(c.details))
+                    // Вызываемый снял трубку — короткая вибрация (2.5.0, Prefs.vibrateOnConnect)
+                    if (outgoing && vibrateOnConnect) vibrateConnected()
                     /*
                      * Уведомление входящего снимается при ответе.
                      *
@@ -502,6 +510,24 @@ class OgnelissInCallService : InCallService() {
                     .onFailure { Logger.w(TAG, "Не удалось заглушить звонок", it) }
             }
         }
+    }
+
+    /**
+     * ВИБРАЦИЯ ПРИ ОТВЕТЕ (2.5.0, форум: «добавить бы вибрацию при снятии трубки
+     * вызываемым абонентом»). Одна короткая — как касание: у уха её чувствуешь,
+     * а разговору она не мешает. Нет вибромотора или система отказала — молча
+     * (в журнал): это удобство, не критично.
+     */
+    @Suppress("DEPRECATION")
+    private fun vibrateConnected() {
+        runCatching {
+            val vibrator = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                getSystemService(android.os.VibratorManager::class.java)?.defaultVibrator
+            } else getSystemService(android.os.Vibrator::class.java)
+            if (vibrator?.hasVibrator() == true) {
+                vibrator.vibrate(android.os.VibrationEffect.createOneShot(CONNECT_VIBRATION_MS, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+            }
+        }.onFailure { Logger.w(TAG, "Вибрация при ответе не выполнена", it) }
     }
 
     /*

@@ -49,7 +49,6 @@
     <string name="confirm_enable">Включить</string>
     <string name="confirm_reset">Все настройки вернутся к значениям по умолчанию. Заметки, метки и списки сохранятся.</string>
     <string name="confirm_title">Вы уверены?</string>
-    <string name="contact_pin_shortcut">Ярлык на рабочий стол</string>
     <string name="contact_ringtone">Мелодия для этого контакта</string>
     <string name="contact_silent">Отправлять вызовы на голосовую почту</string>
     <string name="contacts_all">Все</string>
@@ -573,7 +572,7 @@
     <!-- Подзаголовки внутри разделов настроек: разбор в SettingEntry.groupRes -->
     <string name="settings_group_row_swipe">Свайп по строке журнала</string>
     <string name="settings_group_screen_swipe">Перелистывание экранов</string>
-    <string name="settings_group_feedback">Отклик клавиатуры</string>
+    <string name="settings_group_feedback">Вибрация и звук</string>
     <string name="settings_group_log_view">Вид журнала</string>
     <string name="settings_group_search_stats">Поиск и статистика</string>
     <string name="settings_group_notes">Заметки</string>
@@ -1070,4 +1069,9 @@
     <string name="sms_queue_in_draft">%1$s: текст вернулся в черновик</string>
     <string name="sms_maybe_unsent">Сообщение могло не уйти</string>
     <string name="incall_conference">Конференция</string>
+    <string name="shortcut_direct_call">Прямой вызов</string>
+    <string name="shortcut_direct_sms">Прямое SMS</string>
+    <string name="shortcut_sms_label">SMS: %1$s</string>
+    <string name="settings_vibrate_on_connect">Вибрация при ответе</string>
+    <string name="settings_vibrate_on_connect_text">Короткая вибрация, когда собеседник снял трубку</string>
 </resources>

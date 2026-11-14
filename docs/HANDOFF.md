@@ -12,6 +12,17 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 14.11.2026 — 2.5.0 (73): по форуму и снимку SMS
+
+Разбор — `docs/RELEASE_NOTES_2.5.0.md`. 2.4.1–2.4.5 не опубликованы — вошли в 2.5.0.
+- SMS: ссылки, почта, номера, даты нажимаются (`sms/MessageLinks.kt`, `LinkedBody`).
+- ACTION_CALL из других приложений: alias `.call.CallFromOtherApp` (только с CALL_PHONE).
+- «Прямой вызов»/«Прямое SMS»: лаунчер (`DirectShortcutActivity`, CREATE_SHORTCUT)
+  и «⋮» карточки; значок — `ContactShortcuts.direct`.
+- Контакты: пилюля поиска над списком (`SearchPill`).
+- Вибрация при ответе исходящего: `Prefs.vibrateOnConnect` (по умолчанию вкл.), «Жесты → Вибрация и звук».
+- `prebuild_check.py`: activity-alias не ищется как класс.
+
 ## 13.11.2026 — 2.4.5 (72): звонки в переписке по сторонам
 
 Автор: «входящий и исходящий, как и текст, по разным сторонам экрана». `CallLine`

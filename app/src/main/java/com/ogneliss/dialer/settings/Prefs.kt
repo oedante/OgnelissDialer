@@ -601,6 +601,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         // 2.1.0: входящий плашкой сверху, когда телефоном пользуются
         val INCOMING_BANNER = booleanPreferencesKey("incoming_banner")
         val SWAP_ANSWER = booleanPreferencesKey("swap_answer")
+        /** Вибрация, когда вызываемый снял трубку (2.5.0). */
+        val VIBRATE_ON_CONNECT = booleanPreferencesKey("vibrate_on_connect")
         /** Автодозвон (1.8.0): выключен, предлагать, сразу — разбор в RedialPolicy. */
         val AUTO_REDIAL = stringPreferencesKey("auto_redial")
         /** Сколько раз и как часто (1.8.0): готовые сочетания RedialPace. */
@@ -1087,6 +1089,17 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     val swapAnswer: Flow<Boolean> = data.map { it[Keys.SWAP_ANSWER] ?: false }
 
     suspend fun setSwapAnswer(v: Boolean) = edit("swap_answer", v) { it[Keys.SWAP_ANSWER] = v }
+
+    /**
+     * ВИБРАЦИЯ ПРИ ОТВЕТЕ (2.5.0, форум: «добавить бы вибрацию при снятии трубки
+     * вызываемым абонентом»). Исходящий соединился — короткая вибрация: телефон
+     * у уха или в кармане с гарнитурой, гудки сменились тишиной, и не всегда
+     * понятно, ответили ли уже. Включена по умолчанию: просили, а мешать ей
+     * нечему — одно короткое касание за звонок.
+     */
+    val vibrateOnConnect: Flow<Boolean> = data.map { it[Keys.VIBRATE_ON_CONNECT] ?: true }
+
+    suspend fun setVibrateOnConnect(v: Boolean) = edit("vibrate_on_connect", v) { it[Keys.VIBRATE_ON_CONNECT] = v }
 
     /** Предлагать напоминание после сброшенного вызова. */
     val callbackSuggestion: Flow<Boolean> =

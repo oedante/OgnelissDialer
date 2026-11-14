@@ -1155,8 +1155,12 @@ fun SubscriberScreen(
                                 silentContact = value
                                 vm.setSilentContact(id, value)
                             },
+                            // Значок — фото или буквы с меткой действия, как у ярлыков из лаунчера (2.5.0)
                             onShortcut = {
-                                vm.pinContactShortcut(title, group.number, group.e164)
+                                com.ogneliss.dialer.util.ContactShortcuts.requestPinDirect(appContext, title, group.number, photoUri, sms = false)
+                            },
+                            onSmsShortcut = {
+                                com.ogneliss.dialer.util.ContactShortcuts.requestPinDirect(appContext, title, group.number, photoUri, sms = true)
                             },
                             onEdit = { id -> vm.editContact(id) },
                             // Номер не из книги (1.7.0): «К контакту» и «Поделиться» —

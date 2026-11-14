@@ -162,6 +162,8 @@ class SettingsStateSource @Inject constructor(
     ) { mode, pace, memo, banner, swap ->
         CallHelp(mode, pace, memo, banner, swap)
     }
+        // Шестой поток — отдельно: у типизированного combine предел пять (2.5.0)
+        .combine(prefs.vibrateOnConnect) { h, v -> h.copy(vibrateOnConnect = v) }
 
     /** Сообщения (2.0.0). 2.1.0: без «Писать SMS в диалере» — решает роль SMS. */
     private val sms: Flow<Sms> = combine(
@@ -247,6 +249,7 @@ class SettingsStateSource @Inject constructor(
             scamMemo = h.scamMemo,
             incomingBanner = h.incomingBanner,
             swapAnswer = h.swapAnswer,
+            vibrateOnConnect = h.vibrateOnConnect,
 
             smsDeliveryReports = m.deliveryReports,
             smsSwipeRight = m.swipeRight,
@@ -342,6 +345,7 @@ class SettingsStateSource @Inject constructor(
         val autoRedialPace: RedialPace,
         val scamMemo: Boolean,
         val incomingBanner: Boolean,
-        val swapAnswer: Boolean
+        val swapAnswer: Boolean,
+        val vibrateOnConnect: Boolean = true
     )
 }

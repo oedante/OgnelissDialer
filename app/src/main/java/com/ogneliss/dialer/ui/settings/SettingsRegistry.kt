@@ -414,6 +414,17 @@ object SettingsRegistry {
             SettingKind.Switch("key_tones"),
             groupRes = R.string.settings_group_feedback
         ),
+        /*
+         * 2.5.0, форум: вибрация, когда вызываемый снял трубку (Prefs.vibrateOnConnect).
+         * Здесь, в «Отклике», рядом с вибрацией клавиш: в «Звонках» уже четырнадцать
+         * настроек — больше читают прокруткой (SettingsRegistryTest).
+         */
+        SettingEntry(
+            "vibrate_on_connect", SettingsCategory.GESTURES,
+            R.string.settings_vibrate_on_connect, R.string.settings_vibrate_on_connect_text,
+            SettingKind.Switch("vibrate_on_connect"),
+            groupRes = R.string.settings_group_feedback
+        ),
 
         // ── Вызовы ─────────────────────────────────────────────────────────
         SettingEntry(
