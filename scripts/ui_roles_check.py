@@ -20,6 +20,10 @@
    TimePickerDialog (Material и системные Android), AlertDialog,
    BasicAlertDialog: рамку и кнопки они рисуют сами, в системной плотности.
    Календарь и часы — PickerDialog, сообщение — OgnelissDialog (2.4.0).
+5. Подпись раздела (SectionCaption) — обычным регистром: прописными её
+   делает только высококонтрастная тема, внутри самой SectionCaption.
+   Вызов с .uppercase() — замечание (2.5.0: «ПАПКИ» и «ИНСТРУМЕНТЫ»
+   в меню выглядели жирнее остального приложения — автор заметил).
 
 Запуск: python3 scripts/ui_roles_check.py  (код выхода 1 — есть замечания)
 """
@@ -109,6 +113,20 @@ for path in sorted(ROOT.rglob("*.kt")):
             continue
         line = text.count("\n", 0, m.start()) + 1
         problems.append(f"{rel}:{line}: {m.group(1)} — масштаб в нём не действует; PickerDialog или OgnelissDialog")
+
+# Подпись раздела — обычным регистром (правило 5)
+for path in sorted(ROOT.rglob("*.kt")):
+    rel = str(path.relative_to(ROOT))
+    text = path.read_text(encoding="utf-8")
+    for m in re.finditer(r"(?<![\w])SectionCaption\(", text):
+        line_start = text.rfind("\n", 0, m.start()) + 1
+        prefix = text[line_start:m.start()]
+        if "fun " in prefix or "import" in prefix or prefix.strip().startswith(("*", "//")):
+            continue
+        close = closing_paren(text, text.index("(", m.start()))
+        if close > 0 and ".uppercase(" in text[m.start():close]:
+            line = text.count("\n", 0, m.start()) + 1
+            problems.append(f"{rel}:{line}: SectionCaption прописными — подпись раздела обычным регистром (прописные — только высококонтрастная тема)")
 
 if problems:
     print("=" * 70)
