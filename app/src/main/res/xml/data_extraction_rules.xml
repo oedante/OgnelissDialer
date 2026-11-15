@@ -1,5 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Ничего из приложения не уходит ни в облако, ни на новый телефон
+  (обещание приватности: заметки, метки, правила блокировки, журнал работы).
+
+  2.7.0, обзор безопасности: раньше стояло только <exclude domain="root" />.
+  «root» — это лишь файлы в корне каталога данных; базы (database),
+  настройки (sharedpref, DataStore лежит в file), файлы и журнал (file)
+  Android обходит отдельными доменами — при переносе «телефон на телефон»
+  они уходили. allowBackup="false" на Android 12+ отключает только облако,
+  перенос между устройствами идёт по этим правилам. Поэтому — каждый домен
+  явно. Перенести данные — «Резервная копия и выгрузка» в настройках (файл выбирает
+  человек).
+-->
 <data-extraction-rules>
-    <cloud-backup><exclude domain="root" /></cloud-backup>
-    <device-transfer><exclude domain="root" /></device-transfer>
+    <cloud-backup>
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+        <exclude domain="device_root" />
+        <exclude domain="device_file" />
+        <exclude domain="device_database" />
+        <exclude domain="device_sharedpref" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+        <exclude domain="device_root" />
+        <exclude domain="device_file" />
+        <exclude domain="device_database" />
+        <exclude domain="device_sharedpref" />
+    </device-transfer>
 </data-extraction-rules>

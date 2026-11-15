@@ -1297,7 +1297,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("fake_call_button", v) { it[Keys.FAKE_CALL_BUTTON] = v }
 
     suspend fun setFakeCallNumber(number: String) =
-        edit("fake_call_number", number) { it[Keys.FAKE_CALL_NUMBER] = number }
+        edit("fake_call_number", Logger.mask(number)) { it[Keys.FAKE_CALL_NUMBER] = number }
 
     suspend fun setCarrierInfo(mode: CarrierInfoMode) =
         edit("carrier_info", mode.name) { it[Keys.CARRIER_INFO] = mode.name }
@@ -1360,7 +1360,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setContactSort(v: ContactSort) =
         edit("contact_sort", v.name) { it[Keys.CONTACT_SORT] = v.name }
     suspend fun setContactAccount(key: String) =
-        edit("contact_account", key.substringBefore('\u0000')) { it[Keys.CONTACT_ACCOUNT] = key }
+        edit("contact_account", "…") { it[Keys.CONTACT_ACCOUNT] = key }
     suspend fun setHaptic(v: Boolean) = edit("haptic", v) { it[Keys.HAPTIC] = v }
     suspend fun setKeyTones(v: Boolean) = edit("key_tones", v) { it[Keys.KEY_TONES] = v }
     suspend fun setGroupingMode(v: GroupingMode) =
@@ -1368,7 +1368,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setMergeCalls(v: Boolean) = edit("merge_calls", v) { it[Keys.MERGE_CALLS] = v }
     suspend fun setSortOrder(v: SortOrder) = edit("sort_order", v.name) { it[Keys.SORT_ORDER] = v.name }
     suspend fun setDefaultSim(v: Int) = edit("default_sim", v) { it[Keys.DEFAULT_SIM] = v }
-    suspend fun setSimLabel(slotIndex: Int, label: String) = edit("sim_label", label) {
+    suspend fun setSimLabel(slotIndex: Int, label: String) = edit("sim_label", "…") {
         when (slotIndex) {
             0 -> it[Keys.SIM_LABEL_1] = label
             1 -> it[Keys.SIM_LABEL_2] = label
@@ -1401,15 +1401,15 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("sms_undo_send", v.name) { it[Keys.SMS_UNDO_SEND] = v.name }
         com.ogneliss.dialer.sms.SmsSettings.putInt(context, com.ogneliss.dialer.sms.SmsSettings.KEY_UNDO_SECONDS, v.seconds)
     }
-    suspend fun setSmsFolders(v: String) = edit("sms_folders", v) { it[Keys.SMS_FOLDERS] = v }
+    suspend fun setSmsFolders(v: String) = edit("sms_folders", "…") { it[Keys.SMS_FOLDERS] = v }
 
     /** Папки журнала и контактов в «Меню»: порядок и показ (2.5.0, разбор в FolderOrder). */
     val journalFolders: Flow<String?> = data.map { it[Keys.JOURNAL_FOLDERS] }
     val contactFolders: Flow<String?> = data.map { it[Keys.CONTACT_FOLDERS] }
 
-    suspend fun setJournalFolders(v: String) = edit("journal_folders", v) { it[Keys.JOURNAL_FOLDERS] = v }
+    suspend fun setJournalFolders(v: String) = edit("journal_folders", "…") { it[Keys.JOURNAL_FOLDERS] = v }
 
-    suspend fun setContactFolders(v: String) = edit("contact_folders", v) { it[Keys.CONTACT_FOLDERS] = v }
+    suspend fun setContactFolders(v: String) = edit("contact_folders", "…") { it[Keys.CONTACT_FOLDERS] = v }
     suspend fun setSmsCallsInThread(v: Boolean) =
         edit("sms_calls_in_thread", v) { it[Keys.SMS_CALLS_IN_THREAD] = v }
     suspend fun setSmsOtpCleanup(v: OtpCleanup) {
@@ -1443,7 +1443,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("onboarding_done", v) { it[Keys.ONBOARDING_DONE] = v }
 
     suspend fun setOwnNumber(value: String) =
-        edit("own_number", value) { it[Keys.OWN_NUMBER] = value }
+        edit("own_number", Logger.mask(value)) { it[Keys.OWN_NUMBER] = value }
 
     /**
      * Сброс всех настроек к значениям по умолчанию.
@@ -1468,10 +1468,19 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     /**
      * Общая обёртка записи: логирует изменение и не даёт исключению
      * из хранилища уронить вызывающий код.
+     *
+     * value — то, что попадёт в журнал, а не то, что записано. Номер —
+     * через Logger.mask, свои тексты человека (подпись SIM, названия папок,
+     * аккаунт — часто это почта) — «…» (2.7.0, обзор безопасности: logcat
+     * пишется и в release). Строку обёртка дополнительно пропускает через
+     * maskKey — номер, переданный по ошибке целиком, в журнал не попадёт.
      */
     private suspend fun edit(name: String, value: Any?, block: (MutablePreferences) -> Unit) {
         runCatching { context.dataStore.edit(block) }
-            .onSuccess { Logger.d(TAG, "Настройка '$name' = $value") }
+            .onSuccess {
+                val shown = if (value is String) Logger.maskKey(value) else value
+                Logger.d(TAG, "Настройка '$name' = $shown")
+            }
             .onFailure { Logger.e(TAG, "Не удалось сохранить настройку '$name'", it) }
     }
 }

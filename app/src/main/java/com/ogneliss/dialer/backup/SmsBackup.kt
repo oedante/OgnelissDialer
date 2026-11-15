@@ -153,13 +153,13 @@ object SmsBackup {
         fun attr(name: String): String? = p.getAttributeValue(null, name)?.takeIf { it != "null" }
         val address = attr("address")?.takeIf { it.isNotBlank() } ?: return null
         val date = attr("date")?.toLongOrNull() ?: return null
-        val type = attr("type")?.toIntOrNull()?.takeIf { it != TYPE_DRAFT } ?: return null
+        val type = restoredSmsType(attr("type")?.toIntOrNull()) ?: return null
         return ContentValues().apply {
             put("address", address)
             put("date", date)
             put("type", type)
             put("body", attr("body").orEmpty())
-            put("read", attr("read")?.toIntOrNull() ?: 1)
+            put("read", if (attr("read")?.toIntOrNull() == 0) 0 else 1)
             put("seen", 1)
             attr("status")?.toIntOrNull()?.let { put("status", it) }
             attr("date_sent")?.toLongOrNull()?.let { put("date_sent", it) }
@@ -183,4 +183,21 @@ object SmsBackup {
     /** Без управляющих знаков: XML 1.0 их не допускает, и файл не прочитался бы. */
     private fun clean(text: String?): String =
         text.orEmpty().filter { it == '\t' || it == '\n' || it == '\r' || it >= ' ' }
+}
+
+/**
+ * Вид сообщения из файла (2.7.0, обзор безопасности): только известные
+ * Android значения. «Исходящее» и «в очереди» (4, 6) пишутся как
+ * «не отправлено» (5): само оно не уйдёт — наша очередь живёт в своей
+ * таблице (SmsQueue), а не в хранилище, — но и висело бы вечным
+ * «Отправляется». Черновики (3) не восстанавливаются, как и раньше;
+ * чужие числа — строка пропускается.
+ *
+ * Вне SmsBackup: объект при создании разбирает Uri, а в тесте на JVM
+ * Uri.parse ничего не возвращает.
+ */
+internal fun restoredSmsType(type: Int?): Int? = when (type) {
+    1, 2, 5 -> type
+    4, 6 -> 5
+    else -> null
 }

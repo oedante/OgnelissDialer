@@ -41,6 +41,9 @@ class CallNumberActivity : Activity() {
         /** Действие ярлыков: у намерения ярлыка оно обязано быть. */
         const val ACTION = "com.ogneliss.dialer.CALL_NUMBER"
 
+        /** Вход из манифеста для чужих приложений (ACTION_CALL, по CALL_PHONE). */
+        private const val OTHER_APP_ENTRY = ".call.CallFromOtherApp"
+
         /**
          * Намерение «позвонить на [number]».
          * @param notificationId уведомление, которое снять после касания (0 — нет)
@@ -58,9 +61,16 @@ class CallNumberActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val number = intent?.getStringExtra(EXTRA_NUMBER)
+        // Чужое приложение (вход CallFromOtherApp) — номер только из tel:,
+        // наши экстры не читаются (2.7.0, обзор безопасности): иначе оно
+        // подсунуло бы номер, расходящийся с tel:, или сняло бы наше
+        // уведомление по номеру. Явное намерение на вход проходит мимо
+        // фильтра манифеста, поэтому проверка — по входу, а не по действию.
+        val own = intent?.action == ACTION &&
+            intent?.component?.className?.endsWith(OTHER_APP_ENTRY) != true
+        val number = (if (own) intent?.getStringExtra(EXTRA_NUMBER) else null)
             ?: intent?.data?.takeIf { it.scheme == "tel" }?.schemeSpecificPart
-        val notificationId = intent?.getIntExtra(EXTRA_NOTIFICATION, 0) ?: 0
+        val notificationId = if (own) intent?.getIntExtra(EXTRA_NOTIFICATION, 0) ?: 0 else 0
         if (notificationId != 0) {
             runCatching { NotificationManagerCompat.from(this).cancel(notificationId) }
         }
