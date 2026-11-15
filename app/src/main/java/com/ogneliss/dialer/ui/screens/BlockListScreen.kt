@@ -10,8 +10,6 @@ import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
@@ -19,11 +17,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.components.OgnelissListRow
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.R
-import com.ogneliss.dialer.ui.components.ReadableWidth
 import com.ogneliss.dialer.data.RuleKind
 import com.ogneliss.dialer.ui.theme.BlockRed
 import com.ogneliss.dialer.data.RulePattern
