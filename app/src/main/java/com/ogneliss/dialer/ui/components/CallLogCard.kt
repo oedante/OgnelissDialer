@@ -355,8 +355,10 @@ fun CallLogCard(
                             typeIcon(row.lastType),
                             contentDescription = null,
                             modifier = Modifier.size(FlowUi.iconSizeSmall),
-                            tint = if (row.hasMissed) MaterialTheme.colorScheme.error
-                            else MaterialTheme.colorScheme.outline
+                            // 2.7.0: цвет по типу — callArrowTint (настройка «Цветные стрелки вызовов»)
+                            tint = com.ogneliss.dialer.ui.theme.callArrowTint(
+                                row.lastType, MaterialTheme.colorScheme.outline, missed = row.hasMissed
+                            )
                         )
                         // Бейдж показывает НОМЕР СЛОТА, а не номер абонента:
                         // раньше сюда попадал ноль независимо от карты,

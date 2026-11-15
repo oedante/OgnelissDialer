@@ -149,20 +149,42 @@ fun RowScope.QuickAction(
             // Две строки: длинные подписи есть не только в русском.
             // FitText (1.3.2): слово длиннее кнопки уменьшается,
             // а не рвётся посреди («Поделитьс / я» лёжа)
+            /*
+             * ПОТОЛОК РАЗМЕРА ПОДПИСИ (2.7.0, как у нижней панели с 2.6.0).
+             * Было: при шрифте 160 % подписи рвались посреди слова («Написа / ть»,
+             * «Позвон / ить»), а короткая «Ещё» оставалась крупной — длинные
+             * ужимались, она нет, и в ряду выходили разные размеры. Стало:
+             * подпись растёт со шрифтом до LABEL_MAX, дальше все одинаковые;
+             * слово, которое всё равно не помещается, ужимается до 60 %
+             * (FitText), перенос — только между словами.
+             */
+            val density = androidx.compose.ui.platform.LocalDensity.current
+            val base = MaterialTheme.typography.labelSmall.let {
+                if (prominent) it.copy(fontWeight = FontWeight.SemiBold) else it
+            }
+            val labelStyle = with(density) {
+                if (base.fontSize.isSp && base.fontSize.toDp() > LABEL_MAX) {
+                    base.copy(fontSize = LABEL_MAX.toSp(), lineHeight = (LABEL_MAX * 4 / 3).toSp())
+                } else base
+            }
             FitText(
                 label,
-                style = if (prominent) {
-                    MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold)
-                } else {
-                    MaterialTheme.typography.labelSmall
-                },
+                style = labelStyle,
                 textAlign = TextAlign.Center,
                 maxLines = 2,
+                minScale = 0.6f,
                 color = if (prominent) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
 }
+
+/**
+ * Предел размера подписи под круглой кнопкой (2.7.0): как LABEL_MAX нижней панели,
+ * но 12 dp, а не 15: колонка кругов уже (пять на экран, 59 dp при шрифте 160 %), и при
+ * 15 «Ещё» оставалась заметно крупнее ужатых «Напомнить» и «Поделиться».
+ */
+private val LABEL_MAX = 12.dp
 
 /** Круг главного действия ряда: заметно крупнее соседних 48 dp. */
 private val PROMINENT_CIRCLE = 64.dp

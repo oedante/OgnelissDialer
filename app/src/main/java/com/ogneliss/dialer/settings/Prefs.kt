@@ -585,6 +585,12 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val WIDGET_SHAPE = stringPreferencesKey("widget_shape")
         /** Отдельные значки «SMS» и «Контакты» в списке приложений (2.6.0, SectionIcons). */
         val SECTION_ICONS = booleanPreferencesKey("section_icons")
+        /** Цветные стрелки типа вызова (2.7.0, форум, 21vasya; выкл.): разбор в CallArrowColor. */
+        val COLORED_CALL_ARROWS = booleanPreferencesKey("colored_call_arrows")
+        /** «При запуске открывать» (2.7.0, форум, oleg_p): разбор в StartSection. */
+        val START_SECTION = stringPreferencesKey("start_section")
+        /** Последний открытый главный раздел — для «Последний раздел» (2.7.0). */
+        val LAST_SECTION = stringPreferencesKey("last_section")
         /** Имя контакта: «Имя Фамилия» или «Фамилия Имя» (1.6.2). */
         val CONTACT_NAME_FORMAT = stringPreferencesKey("contact_name_format")
         /** Порядок контактов: по имени или по фамилии (1.6.2). */
@@ -651,6 +657,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val FILE_LOGGING = booleanPreferencesKey("file_logging")
         // Служебное
         val ONBOARDING_DONE = booleanPreferencesKey("onboarding_done")
+        // 2.7.0: не читается и не пишется — шторка жестов при первом запуске удалена
+        // (обзор вида 15.11.2026); ключ оставлен, у кого он уже лежит в хранилище
         val GESTURE_HINT_SHOWN = booleanPreferencesKey("gesture_hint_shown")
         val OWN_NUMBER = stringPreferencesKey("own_number")
         val CONSENT_VERSION = intPreferencesKey("consent_version")
@@ -827,7 +835,14 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     val fakeCallNumber: Flow<String> = data.map { it[Keys.FAKE_CALL_NUMBER].orEmpty() }
 
-    val fakeCallButton: Flow<Boolean> = data.map { it[Keys.FAKE_CALL_BUTTON] ?: true }
+    /*
+     * 2.7.0, обзор вида 15.11.2026: умолчание true → false. Кнопка — единственный
+     * «парящий» элемент с тенью в плоском приложении, висит над колонкой кнопок
+     * вызова; псевдозвонок есть в «Меню → Инструменты». Кто включил или выключил
+     * сам — у того в хранилище лежит значение, его выбор остаётся.
+     * Должно совпадать с SettingsState.fakeCallButton.
+     */
+    val fakeCallButton: Flow<Boolean> = data.map { it[Keys.FAKE_CALL_BUTTON] ?: false }
 
     val fakeCallAt: Flow<Long> = data.map { it[Keys.FAKE_CALL_AT] ?: 0L }
 
@@ -958,6 +973,15 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     /** Отдельные значки «SMS» и «Контакты» в списке приложений (2.6.0): разбор в SectionIcons. */
     val sectionIcons: Flow<Boolean> = data.map { it[Keys.SECTION_ICONS] ?: false }
+
+    /** Цветные стрелки вызовов (2.7.0): по умолчанию выключено. Разбор — CallArrowColor. */
+    val coloredCallArrows: Flow<Boolean> = data.map { it[Keys.COLORED_CALL_ARROWS] ?: false }
+
+    /** Что открывать при запуске значком (2.7.0): по умолчанию журнал. Разбор — StartSection. */
+    val startSection: Flow<StartChoice> = data.map { StartChoice.from(it[Keys.START_SECTION]) }
+
+    /** Последний открытый главный раздел (маршрут) или null, пока не запоминали (2.7.0). */
+    val lastSection: Flow<String?> = data.map { it[Keys.LAST_SECTION] }
 
     /** Как показывать имя контакта (1.6.2): разбор в ContactNameFormat. */
     val contactNameFormat: Flow<ContactNameFormat> =
@@ -1206,16 +1230,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     val onboardingDone: Flow<Boolean> = data.map { it[Keys.ONBOARDING_DONE] ?: false }
 
     /**
-     * ПОДСКАЗКА О ЖЕСТАХ УЖЕ ПОКАЗАНА.
-     *
-     * Отдельно от onboardingDone: тот отвечает за мастер разрешений,
-     * а его человек мог пройти в прошлой версии — до появления жестов.
-     * Общий признак означал бы, что подсказку не увидит никто из тех,
-     * кто обновился.
-     */
-    val gestureHintShown: Flow<Boolean> = data.map { it[Keys.GESTURE_HINT_SHOWN] ?: false }
-
-    /**
      * СОБСТВЕННЫЙ НОМЕР.
      *
      * Пустая строка означает «не указан» — и это обычное состояние,
@@ -1283,7 +1297,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("fake_call_button", v) { it[Keys.FAKE_CALL_BUTTON] = v }
 
     suspend fun setFakeCallNumber(number: String) =
-        edit("fake_call_number", number) { it[Keys.FAKE_CALL_NUMBER] = number }
+        edit("fake_call_number", Logger.mask(number)) { it[Keys.FAKE_CALL_NUMBER] = number }
 
     suspend fun setCarrierInfo(mode: CarrierInfoMode) =
         edit("carrier_info", mode.name) { it[Keys.CARRIER_INFO] = mode.name }
@@ -1335,12 +1349,18 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setWidgetShape(v: WidgetShape) =
         edit("widget_shape", v.name) { it[Keys.WIDGET_SHAPE] = v.name }
     suspend fun setSectionIcons(v: Boolean) = edit("section_icons", v) { it[Keys.SECTION_ICONS] = v }
+    suspend fun setColoredCallArrows(v: Boolean) =
+        edit("colored_call_arrows", v) { it[Keys.COLORED_CALL_ARROWS] = v }
+    suspend fun setStartSection(v: StartChoice) =
+        edit("start_section", v.name) { it[Keys.START_SECTION] = v.name }
+    suspend fun setLastSection(route: String) =
+        edit("last_section", route) { it[Keys.LAST_SECTION] = route }
     suspend fun setContactNameFormat(v: ContactNameFormat) =
         edit("contact_name_format", v.name) { it[Keys.CONTACT_NAME_FORMAT] = v.name }
     suspend fun setContactSort(v: ContactSort) =
         edit("contact_sort", v.name) { it[Keys.CONTACT_SORT] = v.name }
     suspend fun setContactAccount(key: String) =
-        edit("contact_account", key.substringBefore('\u0000')) { it[Keys.CONTACT_ACCOUNT] = key }
+        edit("contact_account", "…") { it[Keys.CONTACT_ACCOUNT] = key }
     suspend fun setHaptic(v: Boolean) = edit("haptic", v) { it[Keys.HAPTIC] = v }
     suspend fun setKeyTones(v: Boolean) = edit("key_tones", v) { it[Keys.KEY_TONES] = v }
     suspend fun setGroupingMode(v: GroupingMode) =
@@ -1348,7 +1368,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setMergeCalls(v: Boolean) = edit("merge_calls", v) { it[Keys.MERGE_CALLS] = v }
     suspend fun setSortOrder(v: SortOrder) = edit("sort_order", v.name) { it[Keys.SORT_ORDER] = v.name }
     suspend fun setDefaultSim(v: Int) = edit("default_sim", v) { it[Keys.DEFAULT_SIM] = v }
-    suspend fun setSimLabel(slotIndex: Int, label: String) = edit("sim_label", label) {
+    suspend fun setSimLabel(slotIndex: Int, label: String) = edit("sim_label", "…") {
         when (slotIndex) {
             0 -> it[Keys.SIM_LABEL_1] = label
             1 -> it[Keys.SIM_LABEL_2] = label
@@ -1381,15 +1401,15 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("sms_undo_send", v.name) { it[Keys.SMS_UNDO_SEND] = v.name }
         com.ogneliss.dialer.sms.SmsSettings.putInt(context, com.ogneliss.dialer.sms.SmsSettings.KEY_UNDO_SECONDS, v.seconds)
     }
-    suspend fun setSmsFolders(v: String) = edit("sms_folders", v) { it[Keys.SMS_FOLDERS] = v }
+    suspend fun setSmsFolders(v: String) = edit("sms_folders", "…") { it[Keys.SMS_FOLDERS] = v }
 
     /** Папки журнала и контактов в «Меню»: порядок и показ (2.5.0, разбор в FolderOrder). */
     val journalFolders: Flow<String?> = data.map { it[Keys.JOURNAL_FOLDERS] }
     val contactFolders: Flow<String?> = data.map { it[Keys.CONTACT_FOLDERS] }
 
-    suspend fun setJournalFolders(v: String) = edit("journal_folders", v) { it[Keys.JOURNAL_FOLDERS] = v }
+    suspend fun setJournalFolders(v: String) = edit("journal_folders", "…") { it[Keys.JOURNAL_FOLDERS] = v }
 
-    suspend fun setContactFolders(v: String) = edit("contact_folders", v) { it[Keys.CONTACT_FOLDERS] = v }
+    suspend fun setContactFolders(v: String) = edit("contact_folders", "…") { it[Keys.CONTACT_FOLDERS] = v }
     suspend fun setSmsCallsInThread(v: Boolean) =
         edit("sms_calls_in_thread", v) { it[Keys.SMS_CALLS_IN_THREAD] = v }
     suspend fun setSmsOtpCleanup(v: OtpCleanup) {
@@ -1423,10 +1443,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("onboarding_done", v) { it[Keys.ONBOARDING_DONE] = v }
 
     suspend fun setOwnNumber(value: String) =
-        edit("own_number", value) { it[Keys.OWN_NUMBER] = value }
-
-    suspend fun setGestureHintShown(v: Boolean) =
-        edit("gesture_hint_shown", v) { it[Keys.GESTURE_HINT_SHOWN] = v }
+        edit("own_number", Logger.mask(value)) { it[Keys.OWN_NUMBER] = value }
 
     /**
      * Сброс всех настроек к значениям по умолчанию.
@@ -1451,10 +1468,19 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     /**
      * Общая обёртка записи: логирует изменение и не даёт исключению
      * из хранилища уронить вызывающий код.
+     *
+     * value — то, что попадёт в журнал, а не то, что записано. Номер —
+     * через Logger.mask, свои тексты человека (подпись SIM, названия папок,
+     * аккаунт — часто это почта) — «…» (2.7.0, обзор безопасности: logcat
+     * пишется и в release). Строку обёртка дополнительно пропускает через
+     * maskKey — номер, переданный по ошибке целиком, в журнал не попадёт.
      */
     private suspend fun edit(name: String, value: Any?, block: (MutablePreferences) -> Unit) {
         runCatching { context.dataStore.edit(block) }
-            .onSuccess { Logger.d(TAG, "Настройка '$name' = $value") }
+            .onSuccess {
+                val shown = if (value is String) Logger.maskKey(value) else value
+                Logger.d(TAG, "Настройка '$name' = $shown")
+            }
             .onFailure { Logger.e(TAG, "Не удалось сохранить настройку '$name'", it) }
     }
 }

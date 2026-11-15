@@ -2,6 +2,7 @@ package com.ogneliss.dialer.ui.components
 
 import com.ogneliss.dialer.ui.theme.Space
 
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -219,16 +221,58 @@ fun SheetSwitchRow(
 /**
  * Строка выбора одного варианта из нескольких — для шторок фильтров.
  * Внутри SheetGroup, как строки действий: одна форма для всех шторок.
+ *
+ * 2.7.0 (обзор вида 15.11.2026): строка стала общей и для шторок выбора
+ * настроек (язык, тема, плотность и т. д.), поэтому добавлены [supporting]
+ * (пояснение под вариантом), [labelFont] (вариант «Шрифта» показан своим
+ * шрифтом) и роль RadioButton вместо простого нажатия: TalkBack сообщает
+ * «выбрано» / «не выбрано» на всей строке, как в прежнем диалоге
+ * (`selectable` + Role.RadioButton).
  */
 @Composable
-fun SheetChoiceRow(selected: Boolean, label: String, onClick: () -> Unit) {
+fun SheetChoiceRow(
+    selected: Boolean,
+    label: String,
+    onClick: () -> Unit,
+    supporting: String? = null,
+    labelFont: androidx.compose.ui.text.font.FontFamily? = null,
+    /** Образец перед подписью (кружок цвета темы, 2.7.0); null — только подпись. */
+    swatch: (@Composable () -> Unit)? = null
+) {
     ListItem(
         leadingContent = { androidx.compose.material3.RadioButton(selected = selected, onClick = null) },
-        headlineContent = { Text(label) },
+        headlineContent = {
+            androidx.compose.foundation.layout.Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                if (swatch != null) {
+                    swatch()
+                    androidx.compose.foundation.layout.Spacer(Modifier.width(Space.m))
+                }
+                Text(
+                    label,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontFamily = labelFont ?: MaterialTheme.typography.bodyLarge.fontFamily
+                    )
+                )
+            }
+        },
+        supportingContent = supporting?.let {
+            {
+                Text(
+                    it,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontFamily = labelFont ?: MaterialTheme.typography.bodyMedium.fontFamily
+                    )
+                )
+            }
+        },
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         modifier = Modifier
             .heightIn(min = Dimens.MIN_TOUCH_TARGET)
-            .clickable(onClick = onClick)
+            .selectable(
+                selected = selected,
+                role = androidx.compose.ui.semantics.Role.RadioButton,
+                onClick = onClick
+            )
     )
 }
 

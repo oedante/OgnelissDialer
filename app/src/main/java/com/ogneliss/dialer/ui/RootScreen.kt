@@ -39,6 +39,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
@@ -347,6 +348,24 @@ fun RootScreen(
         MainSection.entries.firstOrNull { it.route == openSectionRoute }?.let(openSection)
     }
 
+    /*
+     * ПОСЛЕДНИЙ ГЛАВНЫЙ РАЗДЕЛ (2.7.0, форум, oleg_p: «либо последний
+     * использованный») — для настройки «При запуске открывать → Последний
+     * раздел» (StartSection). Запоминаем журнал, SMS и контакты при каждом
+     * переходе; заметки, напоминания и вложенные экраны не считаются.
+     * Первый кадр пропускаем (drop(1)): это стартовый журнал, и он затёр бы
+     * сохранённый раздел раньше, чем MainActivity его прочитает и откроет.
+     * Запись в настройки — в фоне, интерфейс не ждёт.
+     */
+    LaunchedEffect(nav) {
+        nav.currentBackStackEntryFlow.drop(1).collect { entry ->
+            val route = entry.destination.route
+            if (route != null && route in com.ogneliss.dialer.settings.StartSection.MAIN_ROUTES) {
+                runCatching { vm.prefs.setLastSection(route) }
+            }
+        }
+    }
+
     LaunchedEffect(openCardForNumber) {
         openCardForNumber?.let { number ->
             nav.navigate("subscriber/" + android.net.Uri.encode("number:$number"))
@@ -425,7 +444,8 @@ fun RootScreen(
             haptic = settings.haptic,
             keyTones = settings.keyTones,
             buttonLabels = settings.buttonLabels,
-            listDensity = settings.listDensity
+            listDensity = settings.listDensity,
+            coloredCallArrows = settings.coloredCallArrows
         )
     }
 

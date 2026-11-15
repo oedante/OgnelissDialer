@@ -566,7 +566,8 @@ private fun ColumnScope.RecordPreview(
                     Icon(
                         previewTypeIcon(group.lastType),
                         contentDescription = null,
-                        tint = if (missed) scheme.error else scheme.onSurfaceVariant,
+                        // 2.7.0: цвет по типу — callArrowTint (настройка «Цветные стрелки вызовов»)
+                        tint = com.ogneliss.dialer.ui.theme.callArrowTint(group.lastType, scheme.onSurfaceVariant),
                         modifier = Modifier.size(PREVIEW_META_ICON)
                     )
                     Spacer(Modifier.width(Space.xs))

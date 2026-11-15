@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.EmptyState
+import com.ogneliss.dialer.ui.components.EmptyReason
 import android.text.format.DateUtils
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -9,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,12 +19,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -31,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ogneliss.dialer.R
@@ -44,7 +41,6 @@ import com.ogneliss.dialer.ui.components.SelectionTopBar
 import com.ogneliss.dialer.ui.components.dragSelect
 import com.ogneliss.dialer.ui.components.rememberSelectionState
 import com.ogneliss.dialer.ui.theme.LocalAppearance
-import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import com.ogneliss.dialer.ui.theme.OgnelissTheme
 import com.ogneliss.dialer.ui.theme.Space
 import com.ogneliss.dialer.ui.theme.listName
@@ -86,11 +82,13 @@ fun CallArchiveScreen(vm: DialerViewModel, onBack: () -> Unit) {
      * заменяет панель выбора (как в журнале), а ScreenScaffold строку
      * заголовка подменять не умеет. Отступ от часов — safeDrawing.
      */
-    Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing,
-        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-        topBar = {
-            if (selection.isActive) {
+    // Общий каркас (2.7.0): был свой Scaffold со своим цветом страницы и шапкой без отступа
+    com.ogneliss.dialer.ui.components.ScreenScaffold(
+        title = stringResource(R.string.archive_title),
+        onBack = onBack,
+        pinnedTopBar = true,
+        topBarOverride = if (selection.isActive) {
+            {
                 SelectionTopBar(
                     count = selection.count,
                     onClose = { selection.clear() },
@@ -112,26 +110,13 @@ fun CallArchiveScreen(vm: DialerViewModel, onBack: () -> Unit) {
                         }
                     }
                 )
-            } else {
-                TopAppBar(
-                    title = { Text(stringResource(R.string.archive_title)) },
-                    navigationIcon = {
-                        IconButton(onClick = onBack) {
-                            Icon(OgnelissIcons.ArrowBack, contentDescription = stringResource(R.string.nav_back))
-                        }
-                    }
-                )
             }
-        }
+        } else null
     ) { pad ->
         if (archived.isEmpty()) {
-            Box(Modifier.fillMaxSize().padding(pad).padding(Space.xl), contentAlignment = Alignment.Center) {
-                Text(
-                    stringResource(R.string.archive_empty),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
-                )
+            // 2.7.0: общий пустой экран (была мелкая серая строка по центру, без значка)
+            Box(Modifier.fillMaxSize().padding(pad)) {
+                EmptyState(EmptyReason.NoArchive)
             }
         } else {
             val listState = androidx.compose.foundation.lazy.rememberLazyListState()

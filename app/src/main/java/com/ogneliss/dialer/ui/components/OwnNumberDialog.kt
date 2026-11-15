@@ -61,12 +61,11 @@ fun OwnNumberDialog(
         onDismissRequest = onDismiss,
         title = stringResource(R.string.my_number_title),
         content = {
-                OutlinedTextField(
+                OgnelissTextField(
                     value = value,
                     onValueChange = { value = it },
-                    label = { Text(stringResource(R.string.my_number_title)) },
+                    label = stringResource(R.string.my_number_title),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                    singleLine = true,
                     modifier = Modifier.fillMaxWidth().focusRequester(fieldFocus)
                 )
 

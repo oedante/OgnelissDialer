@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.RowIcon
 import com.ogneliss.dialer.data.ContactNames
 import com.ogneliss.dialer.ui.theme.PanelReachesNavBar
 import com.ogneliss.dialer.ui.theme.PanelColors
@@ -34,12 +35,10 @@ import com.ogneliss.dialer.ui.components.panelTopLine
 import com.ogneliss.dialer.ui.theme.OgnelissTheme
 import com.ogneliss.dialer.ui.components.GroupedRow
 import com.ogneliss.dialer.ui.components.GroupPosition
-import androidx.compose.material3.TopAppBar
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.ui.text.style.TextOverflow
 import com.ogneliss.dialer.ui.theme.BlockRed
 import com.ogneliss.dialer.ui.theme.CallGreen
-import com.ogneliss.dialer.ui.theme.NoteTeal
 import com.ogneliss.dialer.ui.theme.FlowUi
 import androidx.compose.material3.ButtonDefaults
 import com.ogneliss.dialer.ui.components.QrCodeDialog
@@ -1077,7 +1076,11 @@ fun SubscriberScreen(
                  * Имя теперь всегда сверху и всегда видно — это главное,
                  * ради чего шапка нужна.
                  */
-                TopAppBar(
+                // Общая шапка (2.7.0, ScreenTopBar): свои здесь только цвета поверх обложки
+                com.ogneliss.dialer.ui.components.ScreenTopBar(
+                    title = title,
+                    onBack = onBack,
+                    showBack = showBack,
                     modifier = Modifier.onGloballyPositioned { coords ->
                         barBottomInRoot = coords.positionInRoot().y + coords.size.height
                     },
@@ -1086,7 +1089,7 @@ fun SubscriberScreen(
                         navigationIconContentColor = barIcons,
                         actionIconContentColor = barIcons
                     ),
-                    title = {
+                    titleContent = {
                         /*
                          * Имя — когда имени под фото уже не видно. С фото рядом
                          * маленький круглый портрет: фото «уходит» в строку
@@ -1117,16 +1120,6 @@ fun SubscriberScreen(
                                     title,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                        }
-                    },
-                    navigationIcon = {
-                        if (showBack) {
-                            IconButton(onClick = onBack) {
-                                Icon(
-                                    OgnelissIcons.ArrowBack,
-                                    contentDescription = stringResource(R.string.nav_back)
                                 )
                             }
                         }
@@ -2190,7 +2183,9 @@ fun SubscriberScreen(
                                 Icon(
                                     OgnelissIcons.StickyNote2,
                                     contentDescription = null,
-                                    tint = NoteTeal,
+                                    // 2.7.0 (обзор вида 15.11.2026): был NoteTeal; значок лишь
+                                    // обозначает заметку — общий тон строк (RowIcon)
+                                    tint = RowIcon.tint(),
                                     modifier = Modifier.size(FlowUi.iconSizeInline)
                                 )
                             }
@@ -2249,7 +2244,8 @@ fun SubscriberScreen(
                                     Icon(
                                         OgnelissIcons.StickyNote2,
                                         contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.primary
+                                        // Обозначение строки — общий тон (RowIcon, 2.7.0), был primary
+                                        tint = RowIcon.tint()
                                     )
                                     Spacer(Modifier.width(Space.l))
                                 }
@@ -2313,19 +2309,12 @@ fun SubscriberScreen(
                  * у каждого номера превратилась бы в шум.
                  */
                 if (showMarkSection) item {
-                    // Значок блокировки у заголовка: «Отметка» сама по себе
-                    // не говорит, о чём раздел, — значок сразу связывает его
-                    // с защитой от нежелательных звонков
+                    // 2.7.0: подпись — как у остальных разделов карточки. Был красный
+                    // значок блокировки перед «Отметка» — единственная подпись со
+                    // значком в приложении; о чём раздел, говорят сами фишки
+                    // «Спам» и «Мошенники»
                     OgnelissPanel(
-                        title = stringResource(R.string.spam_mark_section),
-                        icon = {
-                            Icon(
-                                OgnelissIcons.Block,
-                                contentDescription = null,
-                                tint = BlockRed,
-                                modifier = Modifier.size(FlowUi.iconSizeInline)
-                            )
-                        }
+                        title = stringResource(R.string.spam_mark_section)
                     ) {
                         FlowRow(
                             horizontalArrangement = Arrangement.spacedBy(Space.s),
@@ -2455,7 +2444,8 @@ fun SubscriberScreen(
                                 Icon(
                                     OgnelissIcons.Alarm,
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary
+                                    // Обозначение строки «Напоминание» — общий тон (RowIcon, 2.7.0), был primary
+                                    tint = RowIcon.tint()
                                 )
                                 Spacer(Modifier.width(Space.m))
                                 Column(Modifier.weight(1f)) {

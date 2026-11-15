@@ -1,41 +1,45 @@
 package com.ogneliss.dialer.ui.screens
 
-import com.ogneliss.dialer.ui.theme.Space
 
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.R
-import com.ogneliss.dialer.ui.components.swipe.RevealActionFactory
 import com.ogneliss.dialer.settings.SettingsCommands
 import com.ogneliss.dialer.settings.SwipeAction
 import com.ogneliss.dialer.settings.SwipeSimMode
 import com.ogneliss.dialer.settings.ThemeMode
 import com.ogneliss.dialer.ui.DialerViewModel
-import com.ogneliss.dialer.ui.components.OgnelissDialog
-import com.ogneliss.dialer.ui.theme.Dimens
+import com.ogneliss.dialer.ui.components.ChoiceSheet
+import com.ogneliss.dialer.ui.components.ListSheetGroup
+import com.ogneliss.dialer.ui.components.SheetChoiceRow
+import com.ogneliss.dialer.ui.components.SheetDivider
 import com.ogneliss.dialer.util.LocaleManager
 
 /**
- * ДИАЛОГ ВЫБОРА ЗНАЧЕНИЯ НАСТРОЙКИ.
+ * ВЫБОР ЗНАЧЕНИЯ НАСТРОЙКИ — С 2.7.0 ШТОРКА СНИЗУ (имя прежнее, чтобы
+ * не трогать вызовы).
  *
- * Один диалог на все настройки типа Choice — язык, тема, действия свайпов.
+ * Было окно по центру с кружками, стало шторка выбора (ChoiceSheet): обзор
+ * вида 15.11.2026, владелец: «шторка снизу не всегда удобна; где используется
+ * выбор по долгому нажатию и всплывающая форма (журнал, контакты, SMS) —
+ * оставить, остальное поменять на шторку». Настройки — «остальное».
+ * Значки у вариантов действий свайпа убраны вместе с ветвью: свайпы всегда
+ * уходили в SwipeActionsDialog раньше, и значки в этом списке не показывались.
+ *
+ * Одна шторка на все настройки типа Choice — язык, тема, действия свайпов.
  * Варианты берутся по ключу настройки.
  *
- * Доступность: используется RadioButton с `selectable` на всей строке
+ * Доступность: строка SheetChoiceRow — RadioButton с `selectable` на всей строке
  * и role = RadioButton. TalkBack тогда сообщает «выбрано» / «не выбрано»
  * и позволяет переключаться свайпами, а не только точным попаданием
  * в кружок диаметром 20 dp.
@@ -123,6 +127,10 @@ fun SettingsChoiceDialog(
         "contact_name_format" -> com.ogneliss.dialer.settings.ContactNameFormat.entries.map {
             it.name to stringResource(SettingsCommands.contactNameFormatLabelRes(it))
         }
+        // 2.7.0: «При запуске открывать» — журнал, SMS, контакты, последний раздел
+        "start_section" -> com.ogneliss.dialer.settings.StartChoice.entries.map {
+            it.name to stringResource(SettingsCommands.startChoiceLabelRes(it))
+        }
         "contact_sort" -> com.ogneliss.dialer.settings.ContactSort.entries.map {
             it.name to stringResource(SettingsCommands.contactSortLabelRes(it))
         }
@@ -195,113 +203,41 @@ fun SettingsChoiceDialog(
     }
 
     /*
-     * ОБЩИЙ КОНТЕЙНЕР ВМЕСТО AlertDialog.
+     * ШТОРКА СНИЗУ ВМЕСТО ОКНА ПО ЦЕНТРУ (2.7.0, обзор вида 15.11.2026).
      *
-     * Отступы AlertDialog (24 dp по краям) не меняются, и рядом
-     * с остальным приложением, где расстояния 4–12 dp, окно выглядело
-     * чужим. Через это окно проходят выбор языка, темы, действий
-     * свайпов и группировки — то есть почти все настройки.
+     * Было — OgnelissDialog с кружками (до этого — AlertDialog, чьи отступы
+     * 24 dp выглядели чужими). Стало — шторка выбора, как фильтр контактов
+     * и напоминания (SingleChoiceSheet): решение владельца «остальное
+     * поменять на шторку». Поведение прежнее: нажатие по варианту применяет
+     * его сразу и закрывает шторку; кнопки «Закрыть» нет — шторку смахивают.
      *
-     * ── Ограничение высоты обязательно ─────────────────────────────────────
-     * OgnelissDialog высоту не ограничивает: он ровно такой, как его
-     * содержимое. У списка языков это больше экрана, и нижние строки
-     * вместе с кнопкой «Закрыть» ушли бы за край без возможности
-     * прокрутить.
-     *
-     * 400 dp — примерно две трети экрана телефона: список заметно
-     * длиннее кнопки под ним, и понятно, что он прокручивается.
+     * Высоту ограничивать вручную не нужно: шторка не выше экрана, длинный
+     * список прокручивается внутри (weight + verticalScroll), заголовок
+     * остаётся на месте. Раньше было heightIn(max = 400.dp) в диалоге.
      */
-    OgnelissDialog(
-        onDismissRequest = onDismiss,
-        title = vm.choiceTitle(ctx, settingKey),
-        content = {
-            Column(
-                Modifier
-                    .heightIn(max = 400.dp)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                /*
-                 * У действий свайпа — значки, те же, что появляются под
-                 * строкой журнала при свайпе, в тех же цветах: список
-                 * быстрее читается, и выбранное действие потом узнаётся
-                 * в журнале с первого взгляда.
-                 */
-                val swipeIcons = settingKey in SWIPE_KEYS
-                options.forEach { (value, label) ->
-                    val visual = if (swipeIcons) {
-                        SwipeAction.entries.firstOrNull { it.key == value }
-                            ?.let { RevealActionFactory.iconOf(it) }
-                    } else null
-                    ChoiceRow(
+    ChoiceSheet(title = vm.choiceTitle(ctx, settingKey), onDismiss = onDismiss) {
+        Column(
+            Modifier
+                .weight(1f, fill = false)
+                .verticalScroll(rememberScrollState())
+        ) {
+            ListSheetGroup {
+                options.forEachIndexed { index, (value, label) ->
+                    SheetChoiceRow(
                         selected = value == current,
                         label = label,
-                        hint = choiceHint(settingKey, value),
+                        supporting = choiceHint(settingKey, value),
                         // Шрифт — каждый вариант своим шрифтом (как в почте)
                         labelFont = if (settingKey == "ui_font") {
                             com.ogneliss.dialer.ui.theme.uiFontFamily(com.ogneliss.dialer.settings.UiFont.from(value))
                         } else null,
-                        icon = visual?.first,
-                        iconTint = visual?.second,
-                        // У «Ничего» значка нет, но место под него оставлено:
-                        // иначе подпись съехала бы левее остальных
-                        reserveIconSpace = swipeIcons,
-                        onSelect = {
+                        onClick = {
                             vm.setChoice(settingKey, value)
                             onDismiss()
                         }
                     )
+                    if (index < options.lastIndex) SheetDivider()
                 }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.nav_close)) }
-        }
-    )
-}
-
-@Composable
-private fun ChoiceRow(
-    selected: Boolean,
-    label: String,
-    onSelect: () -> Unit,
-    icon: androidx.compose.ui.graphics.vector.ImageVector? = null,
-    iconTint: androidx.compose.ui.graphics.Color? = null,
-    reserveIconSpace: Boolean = false,
-    /** Пояснение под вариантом (1.9.0: плотность, шрифт). */
-    hint: String? = null,
-    /** Шрифт подписи — вариант «Шрифта» показан своим шрифтом (1.9.0). */
-    labelFont: androidx.compose.ui.text.font.FontFamily? = null
-) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .heightIn(min = Dimens.MIN_TOUCH_TARGET)
-            .selectable(selected = selected, role = Role.RadioButton, onClick = onSelect)
-            .padding(vertical = Space.xs),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // onClick = null: нажатие обрабатывает вся строка
-        RadioButton(selected = selected, onClick = null)
-        Spacer(Modifier.width(Space.m))
-        if (icon != null) {
-            Icon(
-                icon,
-                contentDescription = null,
-                tint = iconTint ?: MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(24.dp)
-            )
-            Spacer(Modifier.width(Space.m))
-        } else if (reserveIconSpace) {
-            Spacer(Modifier.width(36.dp))
-        }
-        Column {
-            Text(label, style = MaterialTheme.typography.bodyLarge.copy(fontFamily = labelFont ?: MaterialTheme.typography.bodyLarge.fontFamily))
-            hint?.let {
-                Text(
-                    it,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontFamily = labelFont ?: MaterialTheme.typography.bodyMedium.fontFamily),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             }
         }
     }

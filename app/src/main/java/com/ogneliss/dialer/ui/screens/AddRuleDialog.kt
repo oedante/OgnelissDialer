@@ -81,12 +81,11 @@ fun AddRuleDialog(
         },
         content = {
             Column {
-                OutlinedTextField(
+                com.ogneliss.dialer.ui.components.OgnelissTextField(
                     value = input,
                     onValueChange = { input = RulePattern.sanitize(it) },
-                    label = { Text(stringResource(R.string.rule_number_or_mask)) },
-                    placeholder = { Text("+7 800 *") },
-                    singleLine = true,
+                    label = stringResource(R.string.rule_number_or_mask),
+                    placeholder = "+7 800 *",
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -108,12 +107,11 @@ fun AddRuleDialog(
 
                 Spacer(Modifier.height(Space.m))
 
-                OutlinedTextField(
+                com.ogneliss.dialer.ui.components.OgnelissTextField(
                     value = comment,
                     onValueChange = { comment = it },
-                    label = { Text(stringResource(R.string.rule_comment)) },
-                    placeholder = { Text(stringResource(R.string.rule_comment_hint)) },
-                    singleLine = true,
+                    label = stringResource(R.string.rule_comment),
+                    placeholder = stringResource(R.string.rule_comment_hint),
                     modifier = Modifier.fillMaxWidth()
                 )
             }

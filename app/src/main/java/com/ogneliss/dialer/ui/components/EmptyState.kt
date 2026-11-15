@@ -77,6 +77,15 @@ sealed interface EmptyReason {
 
     /** Напоминаний не назначено. */
     data object NoReminders : EmptyReason
+
+    /** Архив пуст (2.7.0: была мелкая серая строка без значка). */
+    data object NoArchive : EmptyReason
+
+    /** Ничего не закреплено (2.7.0: был свой значок и заголовок на экране). */
+    data object NoPinned : EmptyReason
+
+    /** Переписок нет; в архиве SMS — [archive] (2.7.0: был свой блок по центру экрана). */
+    data class NoMessages(val archive: Boolean = false) : EmptyReason
 }
 
 @Composable
@@ -127,6 +136,36 @@ fun EmptyState(
      * надпись набирает плотность, данные обычно уже приходят,
      * и человек не успевает прочитать ложное сообщение.
      */
+    EmptyStateLayout(
+        icon = icon,
+        title = title,
+        modifier = modifier,
+        actions = if (actionLabel != null && onAction != null) {
+            { Button(onClick = onAction) { Text(actionLabel) } }
+        } else null
+    )
+}
+
+/**
+ * ПУСТОЙ ЭКРАН — ОДИН ВИД НА ВСЁ ПРИЛОЖЕНИЕ (2.7.0, обзор вида 15.11.2026).
+ *
+ * Было четыре вида: журнал и напоминания — значок и заголовок сверху; SMS —
+ * синий значок и кнопки по центру экрана; закреплённые — свой значок 48 dp;
+ * архив — мелкая серая строка без значка. Теперь везде: значок 72 dp
+ * приглушённым тоном, заголовок titleMedium, под ним — действия, если они
+ * нужны для работы. Стоит сверху, под шапкой, а не по центру: на высоком
+ * экране подпись по центру оказывалась далеко от заголовка раздела.
+ *
+ * [title] — null у экрана, где вместо заголовка сразу действия (SMS ведёт
+ * другое приложение: «Открыть «Сообщения»»).
+ */
+@Composable
+internal fun EmptyStateLayout(
+    icon: ImageVector,
+    title: String?,
+    modifier: Modifier = Modifier,
+    actions: (@Composable ColumnScope.() -> Unit)? = null
+) {
     val alpha by animateFloatAsState(1f, tween(Motion.QUICK_MS), label = "emptyState")
 
     Column(
@@ -138,21 +177,26 @@ fun EmptyState(
     ) {
         Icon(
             icon, null,
-            Modifier.size(72.dp),
+            Modifier.size(EMPTY_ICON_SIZE),
             tint = MaterialTheme.colorScheme.outlineVariant
         )
-        Spacer(Modifier.height(Space.l))
-        Text(
-            title,
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center
-        )
-        if (actionLabel != null && onAction != null) {
+        if (title != null) {
+            Spacer(Modifier.height(Space.l))
+            Text(
+                title,
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center
+            )
+        }
+        if (actions != null) {
             Spacer(Modifier.height(Space.xl))
-            Button(onClick = onAction) { Text(actionLabel) }
+            actions()
         }
     }
 }
+
+/** Значок пустого экрана. */
+private val EMPTY_ICON_SIZE = 72.dp
 
 private fun iconFor(reason: EmptyReason): ImageVector = when (reason) {
     EmptyReason.NoCalls -> OgnelissIcons.PhoneDisabled
@@ -162,6 +206,9 @@ private fun iconFor(reason: EmptyReason): ImageVector = when (reason) {
     EmptyReason.NoFavourites -> OgnelissIcons.StarBorder
     EmptyReason.NoNotes -> OgnelissIcons.StickyNote2
     EmptyReason.NoReminders -> OgnelissIcons.Alarm
+    EmptyReason.NoArchive -> OgnelissIcons.Archive
+    EmptyReason.NoPinned -> OgnelissIcons.PushPin
+    is EmptyReason.NoMessages -> OgnelissIcons.Textsms
 }
 
 private fun titleFor(reason: EmptyReason): Int = when (reason) {
@@ -173,6 +220,9 @@ private fun titleFor(reason: EmptyReason): Int = when (reason) {
     EmptyReason.NoFavourites -> R.string.empty_no_favourites
     EmptyReason.NoNotes -> R.string.empty_no_notes
     EmptyReason.NoReminders -> R.string.empty_no_reminders
+    EmptyReason.NoArchive -> R.string.archive_empty
+    EmptyReason.NoPinned -> R.string.pinned_empty
+    is EmptyReason.NoMessages -> if (reason.archive) R.string.archive_empty else R.string.messages_empty
 }
 
 /**

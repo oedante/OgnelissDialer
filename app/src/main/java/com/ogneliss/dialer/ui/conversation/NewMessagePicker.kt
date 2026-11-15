@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.conversation
 
+import com.ogneliss.dialer.ui.theme.RowIcon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,8 +24,6 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -58,6 +56,7 @@ import com.ogneliss.dialer.ui.theme.LocalAppearance
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
 import com.ogneliss.dialer.ui.theme.OgnelissTheme
+import com.ogneliss.dialer.ui.components.OgnelissTextField
 import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.ui.theme.PanelReachesNavBar
 import com.ogneliss.dialer.ui.theme.Space
@@ -334,21 +333,12 @@ internal fun NewMessageBar(
                 IconButton(onClick = onClose) {
                     Icon(OgnelissIcons.ArrowBack, contentDescription = stringResource(R.string.nav_close))
                 }
-                OutlinedTextField(
+                OgnelissTextField(
                     value = value,
                     onValueChange = onValueChange,
-                    // Как поле поиска панели (PanelSearchRow)
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = PanelColors.key(),
-                        unfocusedContainerColor = PanelColors.key(),
-                        unfocusedBorderColor = Color.Transparent,
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-                        unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline
-                    ),
-                    placeholder = {
-                        Text(stringResource(R.string.messages_new_hint), maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    },
+                    // Как поле поиска панели (PanelSearchRow); вид — общий (OgnelissTextField, 2.7.0)
+                    container = PanelColors.key(),
+                    placeholder = stringResource(R.string.messages_new_hint),
                     trailingIcon = {
                         // Подписью, а не значком: «123» и «АБВ» понятны без догадок
                         val toLabel = stringResource(
@@ -364,13 +354,11 @@ internal fun NewMessageBar(
                             )
                         }
                     },
-                    singleLine = true,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = if (digits) KeyboardType.Phone else KeyboardType.Text,
                         imeAction = ImeAction.Go
                     ),
                     keyboardActions = KeyboardActions(onGo = { if (canGo) onGo() }),
-                    shape = OgnelissShapeTokens.dialKey,
                     modifier = Modifier
                         .weight(1f)
                         .focusRequester(focusRequester)
@@ -404,7 +392,8 @@ internal fun ForwardPreview(text: String) {
     ) {
         Icon(
             OgnelissIcons.Forward, contentDescription = stringResource(R.string.sms_forward),
-            tint = MaterialTheme.colorScheme.primary
+            // Значок лишь обозначает строку «Пересылка» — общий тон (RowIcon, 2.7.0), а не primary
+            tint = RowIcon.tint()
         )
         Spacer(Modifier.width(Space.m))
         Text(

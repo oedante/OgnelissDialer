@@ -12,6 +12,26 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 15.11.2026 — 2.7.0 (75): единое оформление, форум, проверка безопасности
+
+Разбор — `docs/RELEASE_NOTES_2.7.0.md`. Обзор 12 пунктов по отрисовке; решение
+автора: «1–6, 9 делаем; 7 — где долгое нажатие и всплывающая форма (журнал,
+контакты, SMS) оставить, остальное шторкой; 8–12 принимается».
+- Общие куски: `ScreenTopBar`/`ScreenScaffold(topBarOverride)` — шапка;
+  `EmptyStateLayout` — пустой экран; `OgnelissTextField` — поле ввода;
+  `ChoiceSheet`/`SheetChoiceRow` — выбор; `RowIcon.tint()` — тон значка.
+  `ui_roles_check.py` правила 7–9: TopAppBar, TextField, RadioButton — только в них.
+- Тексты настроек короче (`SettingsTextLengthTest`), подробности — в FAQ.
+- Кнопка псевдозвонка по умолчанию выключена; шторка-подсказка жестов удалена.
+- Форум: «Цветные стрелки вызовов» (`CallArrowColor`), «При запуске открывать»
+  (`StartSection`, `last_section`).
+- Галерея: `ScreenGalleryTest` (Robolectric + `ui-test-junit4`, только тесты) —
+  `app/build/gallery/`; ради неё заставка снимается по чтению согласия в
+  `MainActivity` (`lifecycleScope`), а не по разметке.
+- Безопасность: `data_extraction_rules.xml` — все домены; `Prefs.edit` не пишет
+  в журнал номера и свои тексты; CSV — защита от формул; SMS из файла — только
+  известные виды; `CallFromOtherApp` — номер только из `tel:`.
+
 ## 14.11.2026 — 2.6.0 (74): по форуму (oleg_p) и снимку скрытого номера
 
 Разбор — `docs/RELEASE_NOTES_2.6.0.md`. 2.5.0 опубликована на форуме.

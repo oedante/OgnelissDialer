@@ -2,8 +2,6 @@ package com.ogneliss.dialer.ui.screens
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -69,11 +67,11 @@ fun NoteEditorDialog(
              * заметка о человеке — обычно фраза, а не два слова, и в трёх
              * текст начинал прокручиваться внутри поля.
              */
-            OutlinedTextField(
+            com.ogneliss.dialer.ui.components.OgnelissTextField(
                 value = note,
                 onValueChange = { note = it },
-                placeholder = { Text(stringResource(R.string.postcall_note_hint)) },
-                shape = MaterialTheme.shapes.large,
+                placeholder = stringResource(R.string.postcall_note_hint),
+                singleLine = false,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = Space.l, end = Space.l, top = Space.l),

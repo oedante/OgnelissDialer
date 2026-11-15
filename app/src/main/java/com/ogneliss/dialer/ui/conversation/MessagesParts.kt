@@ -1,11 +1,12 @@
 package com.ogneliss.dialer.ui.conversation
 
-import androidx.compose.foundation.layout.Arrangement
+import com.ogneliss.dialer.ui.components.EmptyStateLayout
+import com.ogneliss.dialer.ui.components.EmptyState
+import com.ogneliss.dialer.ui.components.EmptyReason
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,9 +22,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.sms.SmsHealth
@@ -53,18 +54,8 @@ internal fun CompanionBlock(
     onOpenCompanion: () -> Unit,
     onUseHere: () -> Unit
 ) {
-    Column(
-        Modifier.fillMaxSize().padding(Space.xl),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            OgnelissIcons.Textsms,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(EMPTY_ICON)
-        )
-        Spacer(Modifier.height(Space.l))
+    // Общий вид пустого экрана (2.7.0, EmptyStateLayout): был синий значок и кнопки по центру
+    EmptyStateLayout(icon = OgnelissIcons.Textsms, title = null) {
         if (companion != null) {
             FilledTonalButton(onClick = onOpenCompanion) {
                 Text(stringResource(R.string.messages_open_app, companion.label))
@@ -88,26 +79,9 @@ internal fun CompanionBlock(
  * но без пояснения и кнопки (правило автора: не объяснять).
  */
 @Composable
-internal fun MessagesEmpty(titleRes: Int) {
-    Column(
-        Modifier.fillMaxSize().padding(Space.xl),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            OgnelissIcons.Textsms,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(EMPTY_ICON)
-        )
-        Spacer(Modifier.height(Space.m))
-        Text(
-            stringResource(titleRes),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
-    }
+internal fun MessagesEmpty(archive: Boolean) {
+    // 2.7.0: общий EmptyState (был свой блок по центру экрана)
+    EmptyState(EmptyReason.NoMessages(archive))
 }
 
 /**
@@ -166,21 +140,23 @@ internal fun Strip(
         contentColor = if (critical) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSecondaryContainer,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
-            Modifier.padding(start = Space.l, end = if (onDismiss == null) Space.s else Space.xs, top = Space.xs, bottom = Space.xs),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(STRIP_ICON))
-            Spacer(Modifier.width(Space.m))
-            Box(Modifier.weight(1f)) {
-                Text(
-                    text,
-                    style = MaterialTheme.typography.bodyMedium,
-                    // Одна короткая строка; на узком экране с крупным шрифтом — перенос, а не обрез
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+        /*
+         * Крупный шрифт (2.7.0, галерея): кнопка справа съедала половину ширины,
+         * и текст без предела строк вставал столбиком в 7–8 строк по слову.
+         * От 130 % кнопки уходят под текст, текст — во всю ширину полосы.
+         */
+        val stacked = LocalDensity.current.fontScale >= STRIP_STACK_FONT_SCALE
+        val message: @Composable () -> Unit = {
+            Text(
+                text,
+                style = MaterialTheme.typography.bodyMedium,
+                // Без предела строк (2.7.0). Было: maxLines = 2 с многоточием —
+                // подсказка свайпов обрывалась на «…Доведите до …», а при шрифте
+                // 160 % оставалось «Проведите по строке вправо …». Полоса
+                // растёт по высоте; все её тексты короткие и важные
+            )
+        }
+        val buttons: @Composable () -> Unit = {
             TextButton(onClick = onAction) { Text(action) }
             if (onDismiss != null) {
                 IconButton(onClick = onDismiss) {
@@ -188,11 +164,34 @@ internal fun Strip(
                 }
             }
         }
+        val padding = Modifier.padding(
+            start = Space.l, end = if (onDismiss == null) Space.s else Space.xs,
+            top = Space.xs, bottom = Space.xs
+        )
+        if (stacked) {
+            Column(Modifier.fillMaxWidth().then(padding)) {
+                Row(Modifier.padding(top = Space.s), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(icon, contentDescription = null, modifier = Modifier.size(STRIP_ICON))
+                    Spacer(Modifier.width(Space.m))
+                    Box(Modifier.weight(1f)) { message() }
+                }
+                Row(Modifier.align(Alignment.End), verticalAlignment = Alignment.CenterVertically) { buttons() }
+            }
+        } else {
+            Row(padding, verticalAlignment = Alignment.CenterVertically) {
+                Icon(icon, contentDescription = null, modifier = Modifier.size(STRIP_ICON))
+                Spacer(Modifier.width(Space.m))
+                Box(Modifier.weight(1f)) { message() }
+                buttons()
+            }
+        }
     }
 }
 
+/** С какого размера шрифта кнопки полосы — под текстом, а не справа. */
+private const val STRIP_STACK_FONT_SCALE = 1.3f
+
 /** Значок пустого состояния — 72 dp (дизайн-система, «Пустое состояние»). */
-private val EMPTY_ICON = 72.dp
 
 /** Значок в строке — 20 dp (дизайн-система, «Значки»). */
 private val STRIP_ICON = 20.dp

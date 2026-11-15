@@ -71,6 +71,10 @@ data class SettingsState(
     val widgetShape: com.ogneliss.dialer.settings.WidgetShape = com.ogneliss.dialer.settings.WidgetShape.AUTO,
     /** Отдельные значки «SMS» и «Контакты» в списке приложений (2.6.0, SectionIcons). */
     val sectionIcons: Boolean = false,
+    /** Цветные стрелки типа вызова (2.7.0, форум, 21vasya): разбор в CallArrowColor. */
+    val coloredCallArrows: Boolean = false,
+    /** Что открывать при запуске значком (2.7.0, форум, oleg_p): разбор в StartSection. */
+    val startSection: com.ogneliss.dialer.settings.StartChoice = com.ogneliss.dialer.settings.StartChoice.JOURNAL,
     /** Имя контакта: «Имя Фамилия» или «Фамилия Имя» (1.6.2). */
     val contactNameFormat: ContactNameFormat = ContactNameFormat.GIVEN_FIRST,
     /** Порядок списка контактов: по имени или по фамилии (1.6.2). */
@@ -120,8 +124,14 @@ data class SettingsState(
     val carrierInfo: CarrierInfoMode = CarrierInfoMode.UNKNOWN_ONLY,
     /** Вид журнала: разбор в JournalStyle. */
     val journalStyle: JournalStyle = JournalStyle.GROUPS,
-    /** Круглая кнопка псевдозвонка на экранах журнала и контактов. */
-    val fakeCallButton: Boolean = true,
+    /**
+     * Круглая кнопка псевдозвонка на экранах журнала и контактов.
+     * 2.7.0, обзор вида 15.11.2026: умолчание true → false. Кнопка — единственный
+ * «парящий» элемент с тенью в плоском приложении, висит над колонкой кнопок
+ * вызова; псевдозвонок есть в «Меню → Инструменты». Кто включил или выключил
+ * сам — у того в хранилище лежит значение, его выбор остаётся.
+     */
+    val fakeCallButton: Boolean = false,
     /** Автодозвон (1.8.0): разбор в call/RedialPolicy.kt. */
     val autoRedialMode: AutoRedialMode = AutoRedialMode.DEFAULT,
     val autoRedialPace: RedialPace = RedialPace.DEFAULT,
@@ -163,6 +173,7 @@ data class SettingsState(
         "swap_answer" -> swapAnswer
         "vibrate_on_connect" -> vibrateOnConnect
         "section_icons" -> sectionIcons
+        "colored_call_arrows" -> coloredCallArrows
         "post_call" -> postCallEnabled
         "post_call_unknown" -> postCallUnknownOnly
         "block_hidden" -> blockHidden
@@ -187,6 +198,8 @@ data class SettingsState(
             "vibrate_on_connect",
             // 2.6.0
             "section_icons",
+            // 2.7.0
+            "colored_call_arrows",
             "block_hidden", "block_unknown", "block_tagged", "file_logging",
             // 1.3.3: переключатели обрабатывались (switchValue выше), но в список
             // не попали — SettingsRegistryTest падал ещё с 1.3.0

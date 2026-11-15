@@ -79,6 +79,8 @@ internal fun settingIcon(id: String): ImageVector? = when (id) {
     "proximity_screen_off" -> OgnelissIcons.PhonelinkLock
     "vibrate_on_connect" -> OgnelissIcons.CallMade
     "section_icons" -> OgnelissIcons.AddToHomeScreen
+    "colored_call_arrows" -> OgnelissIcons.CallReceived
+    "start_section" -> OgnelissIcons.OpenInNew
     "call_hide_contact_number" -> OgnelissIcons.Lock
     "call_photo_style" -> OgnelissIcons.Image
     "call_photo_size" -> OgnelissIcons.Person

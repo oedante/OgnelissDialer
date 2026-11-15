@@ -9,8 +9,6 @@ import com.ogneliss.dialer.ui.components.GroupedRow
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,7 +20,6 @@ import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.ui.components.OgnelissListRow
 import com.ogneliss.dialer.ui.components.RowDivider
 import com.ogneliss.dialer.R
-import com.ogneliss.dialer.ui.components.ReadableWidth
 import com.ogneliss.dialer.ui.components.SettingsCategoryCard
 import com.ogneliss.dialer.ui.components.SettingsGroup
 import com.ogneliss.dialer.ui.settings.SettingEntry
@@ -105,64 +102,47 @@ fun SettingsHomeScreen(
         q.length >= 2 && faqScreenText.contains(q)
     }
 
-    androidx.compose.runtime.CompositionLocalProvider(
-        com.ogneliss.dialer.ui.theme.LocalPageTone provides com.ogneliss.dialer.ui.theme.PageTone.TINTED
-    ) {
-        Scaffold(
-            // Как настройки Ogneliss Mail: серо-голубая страница, группы — карточками (1.5.6)
-            containerColor = com.ogneliss.dialer.ui.theme.OgnelissTheme.pageColor(com.ogneliss.dialer.ui.theme.PageTone.TINTED),
-            // В edge-to-edge содержимое иначе уезжает под системные панели
-            contentWindowInsets = WindowInsets.safeDrawing,
-            topBar = {
-                TopAppBar(
-                    title = {
-                        if (searching) {
-                            TextField(
-                                value = query,
-                                onValueChange = { query = it },
-                                placeholder = { Text(stringResource(R.string.settings_search_hint)) },
-                                singleLine = true,
-                                colors = TextFieldDefaults.colors(
-                                    focusedContainerColor = androidx.compose.ui.graphics.Color.Transparent,
-                                    unfocusedContainerColor = androidx.compose.ui.graphics.Color.Transparent
-                                ),
-                                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
-                                    imeAction = ImeAction.Search
-                                ),
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        } else {
-                            Text(
-                                stringResource(R.string.nav_settings),
-                                Modifier.padding(start = com.ogneliss.dialer.ui.theme.FlowUi.topBarTitleInset)
-                            )
-                        }
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = {
-                            if (searching) { searching = false; query = "" } else onBack()
-                        }) {
-                            Icon(
-                                OgnelissIcons.ArrowBack,
-                                contentDescription = stringResource(R.string.nav_back)
-                            )
-                        }
-                    },
-                    actions = {
-                        if (!searching) {
-                            IconButton(onClick = { searching = true }) {
-                                Icon(
-                                    OgnelissIcons.Search,
-                                    contentDescription = stringResource(R.string.settings_search)
-                                )
-                            }
-                        }
+    /*
+     * Каркас — общий (2.7.0): было своё Scaffold + TopAppBar, и шапка
+     * «Настроек» выходила в цвет страницы, а у разделов внутри — белой.
+     */
+    run {
+        com.ogneliss.dialer.ui.components.ScreenScaffold(
+            title = stringResource(R.string.nav_settings),
+            onBack = { if (searching) { searching = false; query = "" } else onBack() },
+            tone = com.ogneliss.dialer.ui.theme.PageTone.TINTED,
+            pinnedTopBar = true,
+            titleContent = if (searching) {
+                {
+                    TextField(
+                        value = query,
+                        onValueChange = { query = it },
+                        placeholder = { Text(stringResource(R.string.settings_search_hint)) },
+                        singleLine = true,
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = androidx.compose.ui.graphics.Color.Transparent,
+                            unfocusedContainerColor = androidx.compose.ui.graphics.Color.Transparent
+                        ),
+                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                            imeAction = ImeAction.Search
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            } else null,
+            actions = {
+                if (!searching) {
+                    IconButton(onClick = { searching = true }) {
+                        Icon(
+                            OgnelissIcons.Search,
+                            contentDescription = stringResource(R.string.settings_search)
+                        )
                     }
-                )
+                }
             }
         ) { pad ->
-            // Не шире 720 dp по центру на широком окне: разбор в ReadableWidth
-            ReadableWidth {
+            // Ширину по центру (720 dp) ограничивает сам каркас
+            run {
             LazyColumn(Modifier.padding(pad).fillMaxSize()) {
 
                 if (searching && query.trim().length >= 2) {

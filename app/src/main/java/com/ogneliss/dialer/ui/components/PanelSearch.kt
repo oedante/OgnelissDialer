@@ -13,11 +13,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -25,11 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.theme.FlowUi
@@ -90,20 +84,12 @@ fun PanelSearchRow(
         IconButton(onClick = onClose) {
             Icon(OgnelissIcons.ArrowBack, contentDescription = stringResource(R.string.search_close))
         }
-        OutlinedTextField(
+        OgnelissTextField(
             value = value,
             onValueChange = onValueChange,
-            // Как поле «Имя» прежней панели контактов: белое на панели,
-            // рамка цвета акцента — только при вводе (разбор в ContactsBottomBar)
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = PanelColors.key(),
-                unfocusedContainerColor = PanelColors.key(),
-                unfocusedBorderColor = Color.Transparent,
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-                unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline
-            ),
-            placeholder = { Text(hint, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+            // Белое поле на панели — цвет клавиши (PanelColors); вид — общий (OgnelissTextField, 2.7.0)
+            container = PanelColors.key(),
+            placeholder = hint,
             leadingIcon = { Icon(OgnelissIcons.Search, contentDescription = null) },
             trailingIcon = {
                 if (value.isNotEmpty()) {
@@ -112,11 +98,8 @@ fun PanelSearchRow(
                     }
                 }
             },
-            singleLine = true,
-            // Ищется по мере ввода — кнопка клавиатуры её только прячет
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(onSearch = { keyboard?.hide() }),
-            shape = OgnelissShapeTokens.dialKey,
             modifier = Modifier
                 .weight(1f)
                 .focusRequester(focusRequester)

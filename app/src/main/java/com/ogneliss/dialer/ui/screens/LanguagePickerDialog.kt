@@ -5,39 +5,30 @@ import com.ogneliss.dialer.ui.theme.Space
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.unit.dp
 import androidx.core.os.ConfigurationCompat
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.DialerViewModel
-import com.ogneliss.dialer.ui.components.OgnelissDialog
-import com.ogneliss.dialer.ui.theme.Dimens
+import com.ogneliss.dialer.ui.components.ChoiceSheet
+import com.ogneliss.dialer.ui.components.SheetChoiceRow
+import com.ogneliss.dialer.ui.components.SheetDivider
+import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.util.LocaleManager
 import java.text.Collator
 import java.util.Locale
@@ -59,6 +50,9 @@ import java.util.Locale
  * • поиск по обоим названиям и по коду языка;
  * • у 44 языков пометка «автоперевод»: честно сказать заранее, что
  *   перевод машинный, лучше, чем получить отзыв о его качестве.
+ *
+ * 2.7.0: с этой версии — шторка снизу, а не окно по центру (см. комментарий
+ * у ChoiceSheet в теле): имя прежнее, чтобы не трогать вызовы.
  *
  * Флагов нет намеренно: язык — не страна (английский, испанский,
  * арабский, португальский — это десятки стран), и выбор флага за язык
@@ -114,53 +108,61 @@ fun LanguagePickerDialog(
         onDismiss()
     }
 
-    OgnelissDialog(
-        onDismissRequest = onDismiss,
-        title = stringResource(R.string.settings_language),
-        content = {
-            Column {
-                OutlinedTextField(
-                    value = query,
-                    onValueChange = { query = it },
-                    singleLine = true,
-                    leadingIcon = { Icon(OgnelissIcons.Search, contentDescription = null) },
-                    placeholder = { Text(stringResource(R.string.language_search_hint)) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(Modifier.padding(top = Space.s))
-                LazyColumn(Modifier.heightIn(max = 400.dp)) {
-                    // «Как в системе» — всегда первым, в поиске не участвует
-                    if (query.isBlank()) {
-                        item(key = "system") {
-                            LanguageRow(
-                                selected = current.isNullOrEmpty(),
-                                title = systemLabel,
-                                subtitle = null,
-                                onSelect = { choose(LocaleManager.SYSTEM) }
-                            )
-                        }
-                    }
-                    items(shown, key = { it.tag }) { entry ->
-                        val sameName = entry.native.equals(entry.localized, ignoreCase = true)
-                        LanguageRow(
-                            selected = entry.tag == current,
-                            title = entry.native,
-                            // Второе название — если отличается; пометка
-                            // автоперевода — у машинных переводов
-                            subtitle = listOfNotNull(
-                                entry.localized.takeUnless { sameName },
-                                autoLabel.takeIf { entry.auto }
-                            ).joinToString(" · ").ifEmpty { null },
-                            onSelect = { choose(entry.tag) }
+    /*
+     * ШТОРКА, А НЕ ОКНО ПО ЦЕНТРУ (2.7.0, обзор вида 15.11.2026).
+     *
+     * Было — OgnelissDialog: поле поиска, список до 400 dp, кнопка «Закрыть».
+     * Стало — шторка выбора (ChoiceSheet), как остальные настройки-выборы:
+     * владелец: «шторка снизу не всегда удобна; где используется выбор по
+     * долгому нажатию и всплывающая форма (журнал, контакты, SMS) —
+     * оставить, остальное поменять на шторку». Поле поиска осталось над
+     * списком и не прокручивается; список — LazyColumn на остаток высоты
+     * шторки (48 языков). Выбор применяется сразу и закрывает шторку.
+     */
+    ChoiceSheet(title = stringResource(R.string.settings_language), onDismiss = onDismiss) {
+        com.ogneliss.dialer.ui.components.OgnelissTextField(
+            value = query,
+            onValueChange = { query = it },
+            leadingIcon = { Icon(OgnelissIcons.Search, contentDescription = null) },
+            placeholder = stringResource(R.string.language_search_hint),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = FlowUi.sheetPadding)
+        )
+        Spacer(Modifier.height(Space.s))
+        LazyColumn(Modifier.weight(1f, fill = false)) {
+            // «Как в системе» — всегда первым, в поиске не участвует
+            if (query.isBlank()) {
+                item(key = "system") {
+                    Column {
+                        SheetChoiceRow(
+                            selected = current.isNullOrEmpty(),
+                            label = systemLabel,
+                            onClick = { choose(LocaleManager.SYSTEM) }
                         )
+                        SheetDivider()
                     }
                 }
             }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.nav_close)) }
+            items(shown, key = { it.tag }) { entry ->
+                val sameName = entry.native.equals(entry.localized, ignoreCase = true)
+                Column {
+                    SheetChoiceRow(
+                        selected = entry.tag == current,
+                        label = entry.native,
+                        // Второе название — если отличается; пометка
+                        // автоперевода — у машинных переводов
+                        supporting = listOfNotNull(
+                            entry.localized.takeUnless { sameName },
+                            autoLabel.takeIf { entry.auto }
+                        ).joinToString(" · ").ifEmpty { null },
+                        onClick = { choose(entry.tag) }
+                    )
+                    SheetDivider()
+                }
+            }
         }
-    )
+    }
 }
 
 /** Языки с ручным переводом — у них нет пометки «автоперевод». */
@@ -172,33 +174,3 @@ private data class LanguageEntry(
     val localized: String,
     val auto: Boolean
 )
-
-@Composable
-private fun LanguageRow(
-    selected: Boolean,
-    title: String,
-    subtitle: String?,
-    onSelect: () -> Unit
-) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .heightIn(min = Dimens.MIN_TOUCH_TARGET)
-            .selectable(selected = selected, role = Role.RadioButton, onClick = onSelect)
-            .padding(vertical = Space.xs),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        RadioButton(selected = selected, onClick = null)
-        Spacer(Modifier.width(Space.m))
-        Column {
-            Text(title, style = MaterialTheme.typography.bodyLarge)
-            if (subtitle != null) {
-                Text(
-                    subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-    }
-}

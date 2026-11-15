@@ -190,29 +190,29 @@
     <string name="rule_preview_number">Applies to %1$s</string>
     <string name="rule_remove">Remove</string>
     <string name="settings_allow_list">Allow list</string>
-    <string name="settings_allow_list_text">Numbers here are never blocked, whatever other rules say.</string>
+    <string name="settings_allow_list_text">These numbers are never blocked</string>
     <string name="settings_backup_export">Export notes and lists</string>
-    <string name="settings_backup_export_text">Saves your notes, tags, block and allow lists and speed dial to a file you choose.</string>
+    <string name="settings_backup_export_text">Notes, tags, lists and speed dial to a file</string>
     <string name="settings_backup_import">Import from file</string>
     <string name="settings_backup_import_text">Adds data from a backup. Existing entries are kept.</string>
     <string name="settings_block_hidden">Block private numbers</string>
     <string name="settings_block_list">Block list</string>
     <string name="settings_block_tagged">Block numbers tagged as spam</string>
-    <string name="settings_block_tagged_text">On — numbers you tagged as spam or fraud stop calling and appear as blocked in the log. Off — they still call, but the tag is shown in the log and on the call screen.</string>
+    <string name="settings_block_tagged_text">Numbers tagged spam or fraud can’t get through</string>
     <string name="settings_block_unknown">Block numbers not in contacts</string>
-    <string name="settings_block_unknown_text">Use with care: couriers, clinics and schools call from unknown numbers. Add exceptions to the allow list.</string>
+    <string name="settings_block_unknown_text">Calls from unknown numbers don’t get through</string>
     <string name="settings_blocked_system">System blocked numbers</string>
-    <string name="settings_blocked_system_text">Shared with Android. Blocked at the telephony level — the phone does not ring at all.</string>
+    <string name="settings_blocked_system_text">Shared with Android; the phone doesn’t ring at all</string>
     <string name="settings_callback_suggestion">Offer a reminder after a declined call</string>
-    <string name="settings_callback_suggestion_text">A notification with one-tap options: in 30 minutes, in 2 hours, this evening.</string>
+    <string name="settings_callback_suggestion_text">A notification offering to call back later</string>
     <string name="settings_default_apps">Default apps</string>
     <string name="settings_dnd">Do not disturb</string>
     <string name="settings_dynamic_color">Use system colours</string>
-    <string name="settings_dynamic_color_text">Repaints the app to match your wallpaper. Off by default so the app keeps its own colours.</string>
+    <string name="settings_dynamic_color_text">Repaints the app to match your wallpaper</string>
     <string name="settings_external_lookup">External caller ID</string>
-    <string name="settings_external_lookup_text">Off by default. When enabled, the number is passed to the selected app.</string>
+    <string name="settings_external_lookup_text">When on, the number is passed to the chosen app</string>
     <string name="settings_file_logging">Write log to file</string>
-    <string name="settings_file_logging_text">Phone numbers and names in the log are masked. Useful when reporting a problem.</string>
+    <string name="settings_file_logging_text">Log written to a file, numbers and names masked</string>
     <string name="settings_grouping">Group calls</string>
     <string name="settings_grouping_text">How repeated calls are combined in the list</string>
     <string name="settings_haptic">Vibrate on key press</string>
@@ -221,21 +221,21 @@
     <string name="settings_language_summary">Interface language</string>
     <string name="settings_language_system">System default</string>
     <string name="settings_large_buttons">Large buttons</string>
-    <string name="settings_large_buttons_text">Bigger keys and call buttons. Helpful with limited vision or dexterity.</string>
+    <string name="settings_large_buttons_text">Bigger keys and call buttons</string>
     <string name="settings_licenses">Open source licenses</string>
     <string name="settings_log_clear">Clear log</string>
     <string name="settings_log_share">Share log</string>
     <string name="settings_calllog_export">Export the call log</string>
-    <string name="settings_calllog_export_text">The whole log as a CSV table: date, number, name, type, duration. Opens in Excel and LibreOffice.</string>
+    <string name="settings_calllog_export_text">The whole log as a CSV table</string>
     <string name="settings_log_save">Save the log to a file</string>
-    <string name="settings_log_save_text">The same technical log that “Share” sends, but written to a file you choose.</string>
+    <string name="settings_log_save_text">The technical log, written to a file you choose</string>
     <string name="settings_merge_calls">Group calls from the same number</string>
     <string name="settings_merge_calls_text">Consecutive calls appear as one entry with a counter.</string>
     <string name="settings_notifications">App notifications</string>
     <string name="settings_post_call">Show screen after a call</string>
     <string name="settings_post_call_text">Add a note, a tag or a reminder right after hanging up.</string>
     <string name="settings_post_call_unknown">Only for unknown numbers</string>
-    <string name="settings_post_call_unknown_text">Recommended: a popup after every call to family gets annoying fast.</string>
+    <string name="settings_post_call_unknown_text">No popup after calls with contacts</string>
     <string name="settings_privacy_policy">Privacy Policy</string>
     <string name="settings_remember_sim">Remember SIM per number</string>
     <string name="settings_remember_sim_text">The SIM you pick for a number is reused next time.</string>
@@ -266,17 +266,17 @@
     <string name="settings_section_spam_summary">Block list, allow list, tags</string>
     <string name="settings_show_photo">Show contact photos</string>
     <string name="settings_messengers_any_number">Messengers for any number</string>
-    <string name="settings_messengers_any_number_text">«Message» offers the installed WhatsApp, Telegram, Viber and Max even if the number is not in contacts. Telegram opens a chat only if the person allows being found by number</string>
+    <string name="settings_messengers_any_number_text">“Message” offers installed messengers for any number</string>
     <string name="settings_sim">SIM cards and networks</string>
     <string name="settings_sim_labels">SIM card names</string>
     <string name="settings_sim_labels_text">Name the slots so you can tell them apart</string>
     <string name="settings_sim_none">No active SIM cards detected</string>
     <string name="settings_sim_slot">Slot %1$d</string>
     <string name="settings_smart_speaker">Auto speakerphone</string>
-    <string name="settings_smart_speaker_text">Put the phone down during a call and the speaker turns on. Pick it up and it switches back. Ignored with a headset or after you switch audio yourself.</string>
+    <string name="settings_smart_speaker_text">Speaker turns on when you put the phone down</string>
     <string name="settings_sort_order">Search result order</string>
     <string name="settings_carrier_info">Operator and region</string>
-    <string name="settings_carrier_info_text">Shown under the number, from the official numbering plan. For a mobile number this is the region where the number was issued, not where the caller is. Carrier and region come from the Russian registry; in other countries only the carrier is shown, and not for every number.</string>
+    <string name="settings_carrier_info_text">Caption under the number, from the numbering plan</string>
     <string name="carrier_info_unknown">Unknown numbers only</string>
     <string name="carrier_info_all">All numbers</string>
     <string name="carrier_info_hidden">Do not show</string>
@@ -292,7 +292,7 @@
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_summary">Light, dark or AMOLED black</string>
     <string name="settings_theme_preset">Color theme</string>
-    <string name="settings_theme_preset_text">Background tone and accent color — the same themes and accents as in Ogneliss Mail</string>
+    <string name="settings_theme_preset_text">Background tone and accent, as in Ogneliss Mail</string>
     <!-- 1.9.0: оформление как в Ogneliss Mail -->
     <string name="settings_corner_size">Corner rounding</string>
     <string name="settings_corner_size_text">Cards, dialogs and sheets — sharper or softer, as in Ogneliss Mail</string>
@@ -424,15 +424,15 @@
     <string name="onboarding_grant">Grant</string>
     <string name="onboarding_default_action">Set as default</string>
     <string name="settings_dialpad_open">Open keypad on launch</string>
-    <string name="settings_dialpad_open_text">Off by default: the app is opened more often to see who called than to dial.</string>
+    <string name="settings_dialpad_open_text">Dial pad is open right after launch</string>
     <string name="incall_dtmf_hint">Tone dialing</string>
     <string name="action_max" translatable="false">Max</string>
     <string name="settings_theme_contrast">High contrast (low vision)</string>
 
     <string name="settings_notes_retention">Delete old notes</string>
-    <string name="settings_notes_retention_text">A note about a delivery is useful for a week; a year later it is clutter. Notes tagged as spam or fraud are never deleted.</string>
+    <string name="settings_notes_retention_text">Old notes are deleted after the chosen time</string>
     <string name="settings_notes_scope">Which notes to clean up</string>
-    <string name="settings_notes_scope_text">A note about someone in your contacts usually refers to a living relationship, not a one-off errand.</string>
+    <string name="settings_notes_scope_text">Which notes get deleted</string>
     <string name="retention_never">Keep forever</string>
     <string name="retention_month">Older than a month</string>
     <string name="retention_half_year">Older than six months</string>
@@ -524,21 +524,13 @@
     <string name="block_reason_hidden">withheld number</string>
     <string name="block_reason_not_in_contacts">not in contacts</string>
     <string name="settings_panel_swipe_nav">Swipe the bottom bar to switch</string>
-    <string name="settings_panel_swipe_nav_text">Swipe the bottom bar to move between neighbouring sections: call log, SMS, contacts, notes</string>
-    <string name="gesture_hint_title">Two gestures worth knowing</string>
-    <string name="gesture_hint_subtitle">They are not visible on screen, but they are what makes this app quick.</string>
-    <string name="gesture_hint_swipe_right">Swipe a row right — call</string>
-    <string name="gesture_hint_swipe_left">Swipe a row left — send a message</string>
-    <string name="gesture_hint_panel">Swipe the bottom bar left — contacts, right — back to calls</string>
-    <string name="gesture_hint_settings">Any of this can be changed or turned off in Settings → Gestures.</string>
-    <string name="gesture_hint_got_it">Got it</string>
+    <string name="settings_panel_swipe_nav_text">Swipe the bottom bar to switch sections</string>
     <string name="reminder_snooze">In 15 minutes</string>
     <string name="history_expand">Show %1$d more</string>
     <string name="history_collapse">Collapse</string>
     <string name="subscriber_note_section">Note</string>
     <string name="subscriber_note_add">Add a note</string>
     <string name="external_lookup_open_system">Open system settings</string>
-    <string name="gesture_hint_keyboard">Swipe up on the keypad button — open, down on the number row — close</string>
     <string name="gesture_handle_hint">Swipe the bar sideways to switch, up for the keypad</string>
     <string name="filter_no_matches">No calls match these filters</string>
     <string name="action_unblock_short">Unblock</string>
@@ -558,18 +550,18 @@
     <string name="action_more">More</string>
     <string name="action_clear">Clear</string>
     <string name="settings_battery">Background work</string>
-    <string name="settings_battery_text">Without it the system may sleep the app, and missed calls will not appear until you open it yourself</string>
+    <string name="settings_battery_text">Lets the app run in the background</string>
     <string name="settings_battery_already">Already allowed</string>
     <string name="wizard_autostart_title">Auto-start</string>
     <string name="incoming_access_title">Incoming call screen</string>
     <string name="incoming_step_overlay">Allow display over other apps</string>
     <string name="incoming_step_miui">Allow showing on the lock screen and pop-up windows in the background</string>
     <string name="permissions_open">Open</string>
-    <string name="incoming_access_text">Show on the lock screen and pop-up windows in the background: without them the phone may not show the call screen</string>
+    <string name="incoming_access_text">Lock screen display and background pop-ups</string>
     <string name="incoming_blocked_banner">The phone did not show the call screen</string>
     <string name="incoming_blocked_action">Allow</string>
     <string name="menu_my_contact">My contact</string>
-    <string name="settings_own_number_text">Used to share your own card. Tap to change or clear</string>
+    <string name="settings_own_number_text">Used to share your own card</string>
     <string name="blocked_by_rule">Blocked</string>
     <plurals name="reminder_in_minutes">
         <item quantity="one">in %1$d minute</item>
@@ -594,8 +586,8 @@
     <string name="fake_call_cancel">Cancel the fake call</string>
     <string name="settings_fake_call_number">Who calls</string>
     <string name="settings_fake_call_button">Fake call button</string>
-    <string name="settings_fake_call_button_text">A small round button on the call log and contacts screens. Turn it off if you only need the menu, the launcher shortcut or the quick settings tile.</string>
-    <string name="settings_fake_call_number_text">A number from your contacts. Left empty, a random contact is used.</string>
+    <string name="settings_fake_call_button_text">Button on top of the call log and contacts lists</string>
+    <string name="settings_fake_call_number_text">A contact’s number; random if left empty</string>
     <!-- Подзаголовки внутри разделов настроек: разбор в SettingEntry.groupRes -->
     <string name="settings_group_row_swipe">Swipe on a log row</string>
     <string name="settings_group_screen_swipe">Switching screens</string>
@@ -633,14 +625,14 @@
     <string name="sim_kind_esim" translatable="false">eSIM</string>
     <string name="sim_kind_physical">SIM card</string>
     <string name="settings_button_labels">Button labels</string>
-    <string name="settings_button_labels_text">Text under icons on the bottom bars, contact card and call screen. Turn off once you know the icons</string>
+    <string name="settings_button_labels_text">Text under icons on bars and screens</string>
     <string name="settings_proximity">Turn off screen near ear</string>
-    <string name="settings_proximity_text">The proximity sensor turns the screen off during a call. Without it your cheek may press End call or Mute</string>
+    <string name="settings_proximity_text">The proximity sensor turns the screen off during a call</string>
     <string name="settings_hide_contact_number">Number type instead of number</string>
     <string name="settings_call_animation">Live call background</string>
-    <string name="settings_call_animation_text">Slow soft colors behind the call screen: from the caller’s photo, or from the theme without one. Stays still if animations are turned off in system settings</string>
+    <string name="settings_call_animation_text">Slow soft colors behind the call screen</string>
     <string name="settings_call_photo">Contact photo during a call</string>
-    <string name="settings_call_photo_text">How to show the caller’s photo: full screen, across the whole width with nothing cut off, or as a portrait in a circle or a square above the name</string>
+    <string name="settings_call_photo_text">How the caller’s photo is shown</string>
     <string name="call_photo_full_screen">Full screen</string>
     <string name="call_photo_circle">Circle</string>
     <string name="call_photo_square">Square</string>
@@ -652,7 +644,7 @@
     <string name="ui_scale_100" formatted="false">100%</string>
     <string name="ui_scale_110" formatted="false">110%</string>
     <string name="settings_home_group_main">General</string>
-    <string name="settings_hide_contact_number_text">On the call screen, saved contacts show Mobile, Work and so on instead of digits. Unknown numbers are always shown</string>
+    <string name="settings_hide_contact_number_text">On the call screen, contacts show number type, not digits</string>
     <string name="language_search_hint">Search languages</string>
     <string name="language_auto_translated">auto-translated</string>
     <string name="missed_calls_channel">Missed calls</string>
@@ -688,7 +680,7 @@
     <string name="msg_deleted_from_log_many">Deleted from call history: %1$s</string>
     <string name="action_create_contact">Create contact</string>
     <string name="settings_call_photo_size">Photo size during a call</string>
-    <string name="settings_call_photo_size_text">Size of the round or square portrait. It never grows into the space the name needs</string>
+    <string name="settings_call_photo_size_text">Size of the portrait on the call screen</string>
     <string name="call_photo_size_normal">Normal</string>
     <string name="call_photo_size_large">Large</string>
     <!-- 1.5.7: открытый код, лицензия Apache 2.0 -->
@@ -710,7 +702,7 @@
     </plurals>
     <!-- 1.5.8: ответ на вызов сдвигом -->
     <string name="settings_answer_mode">Answering calls</string>
-    <string name="settings_answer_mode_text">Slide — so a call isn\'t answered or declined by accident when you take the phone out of your pocket</string>
+    <string name="settings_answer_mode_text">Answer by tapping buttons or by sliding</string>
     <string name="answer_mode_tap">Tap</string>
     <string name="answer_mode_slide">Slide</string>
     <string name="incall_slide_hint">Slide right to answer, left to decline</string>
@@ -753,17 +745,17 @@
     <string name="faq_q_default">How do I make Ogneliss Dialer my default phone app?</string>
     <string name="faq_a_default">On first launch the app offers to become the default phone app. If you declined, open %1$s and choose Ogneliss Dialer under “Phone” — the name varies slightly between phones. Your call log and contacts stay as they are: Android keeps them, not the app, so nothing is lost if you switch back. If the app was installed from an APK file and Android says “Restricted setting”, open App info → ⋮ → “Allow restricted settings” first.</string>
     <string name="faq_q_internet">Why doesn’t the app have internet access?</string>
-    <string name="faq_a_internet">So that your data cannot leave the phone. Without the internet permission the app cannot send anything — not the call log, not contacts, not notes; you can see this in the installed app details. The operator and region of an unknown number come from a directory inside the app, and whether to show them is up to you: %1$s.</string>
+    <string name="faq_a_internet">So that your data cannot leave the phone. Without the internet permission the app cannot send anything — not the call log, not contacts, not notes; you can see this in the installed app details. The operator and region of an unknown number come from a directory inside the app, and whether to show them is up to you: %1$s. For a mobile number the region is where it was issued, not where the caller is; operator and region come from the Russian registry, in other countries only the operator is shown, and not for every number.</string>
     <string name="faq_q_transfer">How do I move notes and lists to a new phone?</string>
     <string name="faq_a_transfer">With a file. They won’t move by themselves: the app keeps its data out of cloud backups and phone-to-phone transfers, so it stays with you only. Open %1$s — your notes, tags, block and allow lists and speed dial are saved to a file you choose. On the new phone use %2$s: the data is added to what is already there. The call log and contacts are moved by Android and your account.</string>
     <string name="faq_q_switch">How do I switch from the call log to contacts?</string>
-    <string name="faq_a_switch">With the first button on the bottom bar. The large icon is the list that is open now; the small circle next to it is where a tap takes you. A long press opens all sections: call log, contacts, notes and reminders. You can also swipe along the bar: left for contacts, right to go back to the call log.</string>
+    <string name="faq_a_switch">With the first button on the bottom bar. The large icon is the list that is open now; the small circle next to it is where a tap takes you. A long press opens all sections: call log, contacts, notes and reminders. You can also swipe along the bar: left for contacts, right to go back to the call log. SMS and Contacts can also have their own icons in the app list: %1$s. The app icon then opens the call log.</string>
     <string name="faq_q_search">How do I find a contact by name?</string>
     <string name="faq_a_search">With the “Search” button on the bottom bar. In the call log it searches names, numbers and notes; in contacts, names. The dial pad searches with digits too — by number and by T9, in Cyrillic and Latin at once.</string>
     <string name="faq_q_undo">I deleted a call log entry by mistake. Can I get it back?</string>
     <string name="faq_a_undo">Yes, if you act right away. After deleting, “Removed from the call list” with an “Undo” button appears at the bottom for a few seconds — tap it while the message is shown. After that the entries are removed from the phone’s system call log too and cannot be restored. Clearing the whole call log from the menu cannot be undone, which is why the app asks first.</string>
     <string name="faq_q_spam">How do I block spam and unwanted numbers?</string>
-    <string name="faq_a_spam">Long-press an entry → “Block”: the number goes to the block list and can no longer get through. In the same place, under “More”, there is the “Spam” tag: such numbers can’t get through either, and the tag is shown in the call log and on the call screen. Number masks, hidden and unknown numbers and an allow list of exceptions are in %1$s.</string>
+    <string name="faq_a_spam">Long-press an entry → “Block”: the number goes to the block list and can no longer get through. In the same place, under “More”, there is the “Spam” tag: such numbers can’t get through either, and the tag is shown in the call log and on the call screen. Number masks, hidden and unknown numbers and an allow list of exceptions are in %1$s. Blocking numbers not in contacts also stops couriers, clinics and schools: add them to the allow list first.</string>
     <string name="faq_q_slide">How do I answer calls by sliding — or get the buttons back?</string>
     <string name="faq_a_slide">%1$s. “Tap” gives two ordinary buttons. With “Slide” you move the button: right to answer, left to decline — so a call is not answered or rejected by accident while you take the phone out of your pocket. With TalkBack, calls are always answered with buttons.</string>
     <string name="faq_q_sim">How do I choose the SIM card for a call?</string>
@@ -771,7 +763,7 @@
     <string name="faq_q_missed">Missed calls only appear when I open the app. What can I do?</string>
     <string name="faq_a_missed">Most likely the system puts the app to sleep to save battery. Allow it to work in the background — %1$s — and missed calls will appear right away.</string>
     <string name="faq_q_incoming">The call screen does not appear for incoming calls. What can I do?</string>
-    <string name="faq_a_incoming">Some phones — Xiaomi, Redmi, POCO, vivo, OPPO, realme, OnePlus — do not let apps show windows over the lock screen or from the background by default. Open %1$s and allow showing on the lock screen and pop-up windows in the background. On Huawei, Honor, Tecno and Infinix also allow auto-start. Until then you can answer from the call notification.</string>
+    <string name="faq_a_incoming">Some phones — Xiaomi, Redmi, POCO, vivo, OPPO, realme, OnePlus — do not let apps show windows over the lock screen or from the background by default. Open %1$s and allow showing on the lock screen and pop-up windows in the background. On Huawei, Honor, Tecno and Infinix also allow auto-start. Until then you can answer from the call notification. With “Incoming call as a banner” on, the banner appears only while you use the phone; on a locked or dark screen the call is always full screen.</string>
     <string name="faq_q_recording">Can I record calls?</string>
     <string name="faq_a_recording">No. On Android 10 and later the system gives third-party apps no access to call audio, and working around this breaks Google Play rules. If your phone records calls, that is a feature built in by the manufacturer — it works regardless of the dialer you use.</string>
     <string name="faq_q_work">Can I use the app at work? Where is the source code?</string>
@@ -852,12 +844,12 @@
     <string name="number_picker_hint">Which number?</string>
     <!-- Автодозвон (1.8.0): настройка и экран вызова -->
     <string name="settings_auto_redial">Auto redial</string>
-    <string name="settings_auto_redial_text">If the line is busy or nobody answers, the number is dialed again. “Offer” asks on the call screen, “Right away” starts without asking. Emergency and short service numbers are never redialed.</string>
+    <string name="settings_auto_redial_text">Dials a busy or unanswered number again</string>
     <string name="auto_redial_off">Off</string>
     <string name="auto_redial_offer">Offer</string>
     <string name="auto_redial_auto">Right away</string>
     <string name="settings_auto_redial_pace">Redial attempts</string>
-    <string name="settings_auto_redial_pace_text">How many times and how often to dial again. You can stop at any moment on the call screen.</string>
+    <string name="settings_auto_redial_pace_text">How many times and how often to redial</string>
     <string name="redial_pace_3_10">3 attempts, every 10 s</string>
     <string name="redial_pace_5_10">5 attempts, every 10 s</string>
     <string name="redial_pace_5_30">5 attempts, every 30 s</string>
@@ -878,13 +870,13 @@
     <string name="redial_spoken">%1$s. Auto redial, attempt %2$d of %3$d</string>
     <!-- Памятка о мошенниках и тихие часы (1.8.0) -->
     <string name="settings_scam_memo">Fraud reminder</string>
-    <string name="settings_scam_memo_text">If a call with an unknown number lasts over two minutes, the call screen reminds you once: never share SMS codes, card details or passwords. The phone vibrates briefly so you notice.</string>
+    <string name="settings_scam_memo_text">A reminder on long calls with unknown numbers</string>
     <string name="keywords_scam_memo">scam fraud safety bank code warning</string>
     <string name="scam_memo_title">Long call with an unknown number</string>
     <string name="scam_memo_text">Don’t share SMS codes, card details or passwords. Banks, the police and “security services” never ask for them. In doubt, hang up and call your bank using the number on your card.</string>
     <string name="scam_memo_ok">Got it</string>
     <string name="settings_quiet_hours">Quiet hours for unknown numbers</string>
-    <string name="settings_quiet_hours_text">During these hours, calls from numbers not in your contacts come in silently and don’t wake the screen — they stay in the call log. If the same number calls again within 15 minutes, the phone rings: that’s how urgent calls get through. Numbers on the allow list always ring.</string>
+    <string name="settings_quiet_hours_text">Unknown callers ring silently at set hours</string>
     <string name="keywords_quiet_hours">night sleep silent do not disturb quiet unknown</string>
     <string name="quiet_hours_off">Off</string>
     <string name="quiet_hours_22_08">10 PM – 8 AM</string>
@@ -901,6 +893,8 @@
     <string name="faq_a_redial">After “Busy” or “No answer”, the call screen offers “Keep trying”: the app dials the number again after a pause, as many times as set (%2$s). To redial without asking, choose “Right away” in %1$s. Emergency and short service numbers are never redialed, and “End call” always stops it.</string>
     <string name="faq_q_quiet">Can I avoid hearing night calls from unknown numbers?</string>
     <string name="faq_a_quiet">Yes: %1$s. During those hours such a call comes in silently and doesn’t wake the screen; in the morning it’s in the call log marked “Silenced — quiet hours”. If the same number calls again within 15 minutes, the phone rings. Contacts and numbers on the allow list always ring.</string>
+    <string name="faq_q_speaker">How do I get the speaker on automatically?</string>
+    <string name="faq_a_speaker">Put the phone down during a call and the speaker turns on; pick it up and it switches back. Turn it on here: %1$s. It does nothing with a headset or after you switch audio yourself.</string>
     <string name="faq_q_operator_name">Why does a number show a company name “from your carrier”?</string>
     <string name="faq_a_operator_name">Many organizations call with a label: the carrier sends the company name along with the number (in Russia this is required since 1 September 2025). The app shows it on the call screen and keeps it for the call log and the contact card — for numbers not in your contacts. The name comes from the network, not from the app: your contacts and notes always take priority.</string>
     <string name="faq_q_scam">What is the fraud reminder during a call?</string>
@@ -942,13 +936,13 @@
     <string name="settings_sms_default_app">Default SMS app</string>
     <string name="settings_sms_default_app_text">Conversations, incoming SMS and MMS in the dialer’s SMS section</string>
     <string name="settings_sms_delivery_reports">Delivery reports</string>
-    <string name="settings_sms_delivery_reports_text">Ask the network to confirm delivery. Some carriers charge for it</string>
+    <string name="settings_sms_delivery_reports_text">Delivery confirmation from the network; may cost extra</string>
     <string name="keywords_sms">sms mms message text conversation chat code password otp default</string>
 
     <!-- Вопросы о сообщениях (2.0.0) -->
     <string name="faq_section_messages">Messages</string>
     <string name="faq_q_sms">Can I send and receive SMS in the dialer?</string>
-    <string name="faq_a_sms">Yes. When the dialer is your default SMS app (%1$s), conversations, incoming SMS and pictures (MMS) are right here, in the SMS section of the bottom bar, with the same swipes as in the call log; the call log stays calls only. When another app handles SMS, the “Message” buttons simply open the conversation there — nothing to set up. On a phone with an RCS app (Google Messages, Samsung Messages) the dialer does not ask for the SMS role by itself: RCS chat works only in that app and turns off when another app takes SMS. To stop, choose another SMS app at any time — the dialer stops reading messages right away.</string>
+    <string name="faq_a_sms">Yes. When the dialer is your default SMS app (%1$s), conversations, incoming SMS and pictures (MMS) are right here, in the SMS section of the bottom bar, with the same swipes as in the call log; the call log stays calls only. When another app handles SMS, the “Message” buttons simply open the conversation there — nothing to set up. On a phone with an RCS app (Google Messages, Samsung Messages) the dialer does not ask for the SMS role by itself: RCS chat works only in that app and turns off when another app takes SMS. To stop, choose another SMS app at any time — the dialer stops reading messages right away. If you turn on “Messengers for any number”, “Message” also offers WhatsApp, Telegram, Viber and Max for numbers not in contacts; Telegram opens a chat only if the person allows being found by number.</string>
     <string name="faq_q_codes">How do I paste a code from an SMS?</string>
     <string name="faq_a_codes">When a message contains a verification code, the notification gets a “Copy 123456” button, and the conversation shows the same button under the message. The code goes to the clipboard marked as sensitive, and your keyboard offers to paste it with one tap. Filling the code into another app automatically is done by your keyboard or autofill service (for example, Gboard or Autofill with Google) — that keeps working with the dialer as your SMS app. The code is found on the phone: the dialer has no internet access. Long-press a message to copy the whole text, a phone number from it, or select any part.</string>
 
@@ -1004,7 +998,7 @@
     <string name="msg_archived_many">Moved to archive: %1$s</string>
     <string name="a11y_avatar_select">Select</string>
     <string name="settings_incoming_banner">Incoming call as a banner</string>
-    <string name="settings_incoming_banner_text">While you use the phone, an incoming call appears at the top with Answer and Decline instead of opening full screen. On a locked or dark screen it is always full screen</string>
+    <string name="settings_incoming_banner_text">A banner at the top while you use the phone</string>
     <string name="keywords_incoming_banner">popup heads-up compact small window top notification full screen incoming</string>
     <string name="menu_pin_home">To home screen</string>
     <string name="widget_sms_description">SMS icon with the number of unread messages</string>
@@ -1014,7 +1008,7 @@
     <string name="selection_short_block">Block</string>
     <string name="selection_short_unarchive">Restore</string>
     <string name="settings_swap_answer">Answer on the left</string>
-    <string name="settings_swap_answer_text">Swaps the Answer and Decline buttons on the call screen; slide left to answer</string>
+    <string name="settings_swap_answer_text">Answer and Decline swap places</string>
     <string name="keywords_swap_answer">swap answer decline buttons left right order incoming</string>
     <string name="messages_new_to_number">Write to %1$s</string>
     <string name="messages_new_recent">Recent</string>
@@ -1023,7 +1017,7 @@
     <string name="messages_new_letters_short">ABC</string>
     <string name="settings_group_home_screen">Home screen</string>
     <string name="settings_widget_shape">Icon shape</string>
-    <string name="settings_widget_shape_text">For the SMS and Contacts icons on the home screen — match your launcher’s icons</string>
+    <string name="settings_widget_shape_text">Shape of the SMS and Contacts icons on the home screen</string>
     <string name="keywords_widget_shape">widget icon shape round rounded square circle corner home screen sms contacts launcher</string>
     <string name="widget_shape_auto">Automatic</string>
     <string name="widget_shape_circle">Circle</string>
@@ -1040,7 +1034,7 @@
     <string name="settings_sms_calls_in_thread">Calls in conversation</string>
     <string name="settings_sms_calls_in_thread_text">Calls with this person between messages, with the SIM</string>
     <string name="settings_sms_otp_cleanup">Delete codes automatically</string>
-    <string name="settings_sms_otp_cleanup_text">Incoming messages with a confirmation code are deleted after the chosen time. Starred ones stay</string>
+    <string name="settings_sms_otp_cleanup_text">Incoming messages with a code are deleted after the chosen time</string>
     <string name="otp_cleanup_off">Don’t delete</string>
     <string name="otp_cleanup_1h">After 1 hour</string>
     <string name="otp_cleanup_24h">After 24 hours</string>
@@ -1098,9 +1092,23 @@
     <string name="contact_folders_title">Contact folders</string>
     <string name="call_photo_width">Full width</string>
     <string name="settings_section_icons">Separate SMS and Contacts icons</string>
-    <string name="settings_section_icons_text">SMS and Contacts appear in the app list as separate icons — you can put them in the dock or a folder. The app icon then opens the call log</string>
+    <string name="settings_section_icons_text">Icons in the app list — put them in the dock or a folder</string>
     <string name="keywords_section_icons">icon shortcut separate app list dock folder launcher home screen sms contacts phone</string>
     <string name="number_payphone">Payphone</string>
     <string name="card_block_hidden">Block private numbers</string>
     <string name="card_unblock_hidden">Allow private numbers</string>
+    <string name="settings_colored_call_arrows">Colored call arrows</string>
+    <string name="settings_colored_call_arrows_text">Outgoing green, incoming blue, missed red</string>
+    <string name="keywords_colored_call_arrows">color arrow icon call type outgoing incoming missed green blue red journal log</string>
+    <string name="settings_start_section">Open on launch</string>
+    <string name="settings_start_section_text">Which screen the app opens with from its icon</string>
+    <string name="keywords_start_section">start launch open screen first section last journal sms contacts home</string>
+    <string name="settings_group_app_start">App launch</string>
+    <string name="start_section_journal">Call log</string>
+    <string name="start_section_messages">SMS</string>
+    <string name="start_section_contacts">Contacts</string>
+    <string name="start_section_last">Last section</string>
+    <string name="stats_incoming">Incoming</string>
+    <string name="stats_outgoing">Outgoing</string>
+    <string name="stats_missed">Missed</string>
 </resources>

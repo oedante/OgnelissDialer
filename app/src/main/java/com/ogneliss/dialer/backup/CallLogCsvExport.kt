@@ -78,12 +78,36 @@ object CallLogCsvExport {
      * в кавычки, а кавычки внутри удваиваются. Имя вида
      * «Иванов И.И., бухгалтерия» иначе разъедет файл по столбцам.
      */
-    private fun escape(value: String): String =
-        if (value.any { it == ';' || it == '"' || it == '\n' || it == '\r' }) {
-            '"' + value.replace("\"", "\"\"") + '"'
+    private fun escape(value: String): String {
+        val safe = neutralizeFormula(value)
+        return if (safe.any { it == ';' || it == '"' || it == '\n' || it == '\r' }) {
+            '"' + safe.replace("\"", "\"\"") + '"'
+        } else {
+            safe
+        }
+    }
+
+    /**
+     * Защита от формул в таблице (2.7.0, обзор безопасности).
+     *
+     * Excel и LibreOffice считают формулой поле, начатое с «=», «+», «-»,
+     * «@». Имя берётся из контактов, а их синхронизируют и из чужих
+     * аккаунтов: контакт «=HYPERLINK(…)» превратился бы в ссылку, которая
+     * сработает при открытии выгрузки. Такое поле начинаем с апострофа —
+     * таблица покажет его текстом.
+     *
+     * Обычный номер («+7 916 123-45-67», «*100#») не трогаем: формулой он
+     * ничего не делает, а апостроф перед каждым номером испортил бы столбец.
+     */
+    internal fun neutralizeFormula(value: String): String =
+        if (value.isNotEmpty() && value[0] in FORMULA_START && !PLAIN_NUMBER.matches(value)) {
+            "'$value"
         } else {
             value
         }
+
+    private const val FORMULA_START = "=+-@\t\r"
+    private val PLAIN_NUMBER = Regex("""[+\d\s()\-*#]+""")
 
     /** Вызов без номера (2.6.0, NumberPresentation) — как он записан в столбце «Имя». */
     private fun hiddenLabel(presentation: com.ogneliss.dialer.data.NumberPresentation): String? = when (presentation) {

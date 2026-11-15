@@ -3,6 +3,10 @@ package com.ogneliss.dialer.ui.components
 
 import com.ogneliss.dialer.ui.theme.ScaledSheetContent
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -80,6 +84,44 @@ fun <T> SingleChoiceSheet(
                     }
                 }
             }
+        }
+    }
+}
+
+/**
+ * ШТОРКА ВЫБОРА С ЗАГОЛОВКОМ — РАМКА ДЛЯ СВОЕГО СОДЕРЖИМОГО (2.7.0).
+ *
+ * Обзор вида 15.11.2026, решение владельца: «шторка снизу не всегда удобна;
+ * где используется выбор по долгому нажатию и всплывающая форма (журнал,
+ * контакты, SMS) — оставить, остальное поменять на шторку». Выбор значения
+ * настройки (язык, цветовая тема, плотность, шрифт…) был окном по центру
+ * экрана с кружками — стал шторкой, как фильтр контактов и напоминания.
+ *
+ * В отличие от [SingleChoiceSheet] (варианты — пары «значение — строка»)
+ * содержимое здесь своё: вариантов с пояснением, поиска, плиток цвета.
+ * Рамка общая: раскрыта сразу полностью, цвет страницы журнала
+ * ([listSheetContainerColor]), заголовок — [SheetTitle], масштаб интерфейса
+ * ([ScaledSheetContent], иначе упадёт scripts/ui_roles_check.py, правило 3).
+ *
+ * [content] выполняется в ColumnScope шторки: длинный список получает
+ * `Modifier.weight(1f, fill = false)` и прокручивается внутри шторки,
+ * а заголовок и поле поиска остаются на месте. Кнопки «Закрыть» нет:
+ * шторка закрывается смахиванием вниз и касанием мимо.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ChoiceSheet(
+    title: String,
+    onDismiss: () -> Unit,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState, containerColor = listSheetContainerColor()) {
+        ScaledSheetContent {
+            SheetTitle(title)
+            content()
+            // imePadding: с клавиатурой (поиск языка) список сжимается, а не уходит под неё
+            Spacer(Modifier.imePadding().height(FlowUi.sheetBottomPadding))
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.EmptyState
+import com.ogneliss.dialer.ui.components.EmptyReason
 import com.ogneliss.dialer.ui.components.GroupPosition
 import com.ogneliss.dialer.ui.components.GroupedRow
 import androidx.compose.foundation.shape.CircleShape
@@ -18,7 +20,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.ogneliss.dialer.ui.components.OgnelissListRow
@@ -86,27 +87,8 @@ fun PinnedContactsScreen(
             item { Spacer(Modifier.height(Space.l)) }
 
             if (entries.isEmpty()) {
-                item {
-                    Column(
-                        Modifier.fillMaxWidth().padding(Space.xxl),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Icon(
-                            OgnelissIcons.PushPin,
-                            contentDescription = null,
-                            modifier = Modifier.size(48.dp),
-                            tint = MaterialTheme.colorScheme.outline
-                        )
-                        Spacer(Modifier.height(Space.l))
-                        // Значок и заголовок (2.1.0): подсказки «можно закрепить
-                        // и долгим нажатием в журнале» нет — пояснений не показываем
-                        Text(
-                            stringResource(R.string.pinned_empty),
-                            style = MaterialTheme.typography.titleMedium,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
+                // 2.7.0: общий пустой экран (EmptyState); пояснений нет — правило автора 07.11.2026
+                item { EmptyState(EmptyReason.NoPinned) }
             }
 
             itemsIndexed(entries) { index, entry ->

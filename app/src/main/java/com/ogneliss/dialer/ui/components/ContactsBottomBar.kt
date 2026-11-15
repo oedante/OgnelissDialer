@@ -168,42 +168,23 @@ fun ContactsBottomBar(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(Space.s)
             ) {
-            OutlinedTextField(
-                // Белое поле на серой панели — как клавиши и строка номера:
-                // иначе в светлой теме поле сливается с панелью.
-                // Разбор — в PanelColors
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = PanelColors.key(),
-                    unfocusedContainerColor = PanelColors.key(),
-                    /*
-                     * Рамка — только при вводе.
-                     *
-                     * Стандартная рамка поля была самым контрастным
-                     * элементом панели: замер по снимкам — 3,5 : 1
-                     * в светлой теме и 4,9 : 1 в тёмной, тогда как клавиши
-                     * и поле номера отличаются от панели на 1,2–1,3.
-                     * Поле и так видно по своему фону — как поле номера
-                     * в журнале, у которого рамки нет вовсе. Рамка цвета
-                     * primary появляется, когда в поле вводят: видно,
-                     * куда идут буквы.
-                     */
-                    unfocusedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    // Подсказка — тем же цветом, что «Номер» в журнале:
-                    // читается, но бледнее введённого текста
-                    focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline
-                ),
+            /*
+             * Поле — общее (OgnelissTextField, 2.7.0, обзор вида 15.11.2026):
+             * было — OutlinedTextField, собранный здесь вручную; стало — один
+             * вид на всё приложение.
+             *
+             * Белое поле на серой панели — цвет клавиши (PanelColors): иначе
+             * в светлой теме поле сливается с панелью. Рамка — только при
+             * вводе (замер: стандартная рамка была контрастнее клавиш —
+             * 3,5 : 1 в светлой теме и 4,9 : 1 в тёмной против 1,2–1,3).
+             * Подсказка — как «Номер» в журнале.
+             */
+            OgnelissTextField(
+                container = PanelColors.key(),
                 value = query,
                 onValueChange = onQueryChange,
                 // В одну строку: подсказка с 2.6.0 длиннее («Имя, номер или организация»)
-                placeholder = {
-                    Text(
-                        stringResource(R.string.contacts_search_hint),
-                        maxLines = 1,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                    )
-                },
+                placeholder = stringResource(R.string.contacts_search_hint),
                 leadingIcon = { Icon(OgnelissIcons.Search, contentDescription = null) },
                 trailingIcon = {
                     /*
@@ -226,11 +207,9 @@ fun ContactsBottomBar(
                         }
                     }
                 },
-                singleLine = true,
                 // Поиск идёт по мере ввода, поэтому кнопка ввода
                 // просто закрывает клавиатуру
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                shape = OgnelissShapeTokens.dialKey,  // пилюля, как клавиши (1.5.3)
                 // weight, а не fillMaxWidth: рядом стоит кнопка
                 // фильтров, и поле должно оставить ей место
                 modifier = Modifier.weight(1f)

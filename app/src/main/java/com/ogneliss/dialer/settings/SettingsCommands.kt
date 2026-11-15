@@ -111,6 +111,7 @@ class SettingsCommands @Inject constructor(
                 com.ogneliss.dialer.widget.SectionIcons.apply(appContext, value)
                 prefs.setSectionIcons(value)
             }
+            "colored_call_arrows" -> prefs.setColoredCallArrows(value)
             "post_call" -> prefs.setPostCallEnabled(value)
             "post_call_unknown" -> prefs.setPostCallUnknownOnly(value)
             "block_hidden" -> prefs.setBlockHidden(value)
@@ -179,6 +180,7 @@ class SettingsCommands @Inject constructor(
             "swipe_sim" -> prefs.setSwipeSimMode(SwipeSimMode.from(value))
             "carrier_info" -> prefs.setCarrierInfo(CarrierInfoMode.from(value))
             "call_photo_style" -> prefs.setCallPhotoStyle(CallPhotoStyle.from(value))
+            "start_section" -> prefs.setStartSection(StartChoice.from(value))
             "call_photo_size" -> prefs.setCallPhotoSize(CallPhotoSize.from(value))
             "answer_mode" -> prefs.setAnswerMode(AnswerMode.from(value))
             "widget_shape" -> {
@@ -244,6 +246,7 @@ class SettingsCommands @Inject constructor(
         "swipe_sim" -> state.swipeSimMode.name
         "carrier_info" -> state.carrierInfo.name
         "call_photo_style" -> state.callPhotoStyle.name
+        "start_section" -> state.startSection.name
         "call_photo_size" -> state.callPhotoSize.name
         "answer_mode" -> state.answerMode.name
         "widget_shape" -> state.widgetShape.name
@@ -326,6 +329,7 @@ class SettingsCommands @Inject constructor(
         )
 
         "call_photo_style" -> context.getString(callPhotoStyleLabelRes(state.callPhotoStyle))
+        "start_section" -> context.getString(startChoiceLabelRes(state.startSection))
         "call_photo_size" -> context.getString(callPhotoSizeLabelRes(state.callPhotoSize))
         "answer_mode" -> context.getString(answerModeLabelRes(state.answerMode))
         "widget_shape" -> context.getString(widgetShapeLabelRes(state.widgetShape))
@@ -398,6 +402,7 @@ class SettingsCommands @Inject constructor(
             "swipe_sim" -> R.string.settings_swipe_sim
             "carrier_info" -> R.string.settings_carrier_info
             "call_photo_style" -> R.string.settings_call_photo
+            "start_section" -> R.string.settings_start_section
             "call_photo_size" -> R.string.settings_call_photo_size
             "answer_mode" -> R.string.settings_answer_mode
             "widget_shape" -> R.string.settings_widget_shape
@@ -499,6 +504,14 @@ class SettingsCommands @Inject constructor(
             UiScale.S95 -> R.string.ui_scale_95
             UiScale.S100 -> R.string.ui_scale_100
             UiScale.S110 -> R.string.ui_scale_110
+        }
+
+        /** Подпись варианта «При запуске открывать» (2.7.0). */
+        fun startChoiceLabelRes(choice: StartChoice): Int = when (choice) {
+            StartChoice.JOURNAL -> R.string.start_section_journal
+            StartChoice.MESSAGES -> R.string.start_section_messages
+            StartChoice.CONTACTS -> R.string.start_section_contacts
+            StartChoice.LAST -> R.string.start_section_last
         }
 
         /** Подпись варианта фото на экране вызова — для строки настройки и диалога. */
@@ -623,6 +636,8 @@ class SettingsCommands @Inject constructor(
             "vibrate_on_connect",
             // 2.6.0
             "section_icons",
+            // 2.7.0
+            "colored_call_arrows",
             "block_hidden", "block_unknown", "block_tagged", "file_logging",
             "dialpad_open_at_start",
             // 1.8.0
@@ -642,6 +657,8 @@ class SettingsCommands @Inject constructor(
             "sms_undo_send", "sms_otp_cleanup",
             "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info",
             "call_photo_style", "call_photo_size", "answer_mode", "ui_scale",
+            // 2.7.0
+            "start_section",
             "contact_name_format", "contact_sort",
             // 2.1.3
             "widget_shape",

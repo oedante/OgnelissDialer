@@ -28,6 +28,19 @@
    (ui/theme/): иначе экран выпадает из тем, акцента и «Размера шрифта»
    (2.6.0, обзор вида; было в плане после обзора надёжности 13.11.2026).
    Осознанное исключение помечается рядом «ui-roles: своё» с причиной.
+7. Шапка — TopAppBar( (и CenterAligned/Medium/Large) только в ScreenScaffold.kt,
+   SectionTopBar.kt, SelectionTopBar.kt; остальные экраны берут ScreenTopBar
+   или ScreenScaffold (2.7.0, обзор вида 15.11.2026: шапки были у каждого
+   экрана своя).
+8. Поле ввода — OutlinedTextField( и TextField( только в OgnelissTextField.kt,
+   строке SMS (ConversationScreen.kt) и поиске в шапке настроек
+   (SettingsHomeScreen.kt); остальные берут OgnelissTextField (2.7.0: поля
+   были двух видов — с тёмной рамкой и без).
+9. Кружок выбора — RadioButton( только в строке шторки выбора
+   (ui/components/SheetParts.kt, SheetChoiceRow): выбор одного варианта —
+   шторкой снизу (2.7.0, решение владельца: «шторка снизу не всегда удобна;
+   где используется выбор по долгому нажатию и всплывающая форма (журнал,
+   контакты, SMS) — оставить, остальное поменять на шторку»).
 
 Запуск: python3 scripts/ui_roles_check.py  (код выхода 1 — есть замечания)
 """
@@ -149,6 +162,50 @@ for path in sorted(ROOT.rglob("*.kt")):
             continue
         line = text.count("\n", 0, m.start()) + 1
         problems.append(f"{rel}:{line}: {m.group(0)} — цвет и размер шрифта числом только в теме (ui/theme/) или с пометкой «ui-roles: своё»")
+
+def code_matches(text, pattern):
+    """Вхождения pattern вне строк-комментариев, import и объявлений fun."""
+    for m in pattern.finditer(text):
+        line_start = text.rfind("\n", 0, m.start()) + 1
+        prefix = text[line_start:m.start()]
+        if "fun " in prefix or "import" in prefix or prefix.strip().startswith(("*", "//", "/*")):
+            continue
+        yield m
+
+
+# Шапка — только в общих компонентах (правило 7)
+TOP_BAR_ALLOWED = {
+    "ui/components/ScreenScaffold.kt",
+    "ui/components/SectionTopBar.kt",
+    "ui/components/SelectionTopBar.kt",
+}
+TOP_BAR = re.compile(r"(?<![\w])(?:CenterAligned|Medium|Large)?TopAppBar\(")
+# Поле ввода — одно (правило 8)
+TEXT_FIELD_ALLOWED = {
+    "ui/components/OgnelissTextField.kt",
+    "ui/conversation/ConversationScreen.kt",
+    "ui/screens/SettingsHomeScreen.kt",
+}
+TEXT_FIELD = re.compile(r"(?<![\w])(OutlinedTextField|TextField)\(")
+# Кружок выбора — только в шторке выбора (правило 9)
+RADIO_ALLOWED = {"ui/components/SheetParts.kt"}
+RADIO = re.compile(r"(?<![\w])RadioButton\(")
+
+for path in sorted(ROOT.rglob("*.kt")):
+    rel = str(path.relative_to(ROOT))
+    text = path.read_text(encoding="utf-8")
+    if rel not in TOP_BAR_ALLOWED:
+        for m in code_matches(text, TOP_BAR):
+            line = text.count("\n", 0, m.start()) + 1
+            problems.append(f"{rel}:{line}: TopAppBar — шапка только через ScreenTopBar/ScreenScaffold (или SectionTopBar, SelectionTopBar)")
+    if rel not in TEXT_FIELD_ALLOWED:
+        for m in code_matches(text, TEXT_FIELD):
+            line = text.count("\n", 0, m.start()) + 1
+            problems.append(f"{rel}:{line}: {m.group(1)} — поле ввода только через OgnelissTextField")
+    if rel not in RADIO_ALLOWED:
+        for m in code_matches(text, RADIO):
+            line = text.count("\n", 0, m.start()) + 1
+            problems.append(f"{rel}:{line}: RadioButton — выбор одного варианта шторкой (SingleChoiceSheet, ChoiceSheet + SheetChoiceRow)")
 
 if problems:
     print("=" * 70)

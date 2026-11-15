@@ -162,29 +162,29 @@
     <string name="rule_preview_number">Применится к %1$s</string>
     <string name="rule_remove">Удалить</string>
     <string name="settings_allow_list">Белый список</string>
-    <string name="settings_allow_list_text">Номера отсюда не блокируются никогда, что бы ни говорили другие правила.</string>
+    <string name="settings_allow_list_text">Эти номера не блокируются никогда</string>
     <string name="settings_backup_export">Экспорт заметок и списков</string>
-    <string name="settings_backup_export_text">Сохраняет заметки, метки, чёрный и белый списки и быстрый набор в выбранный вами файл.</string>
+    <string name="settings_backup_export_text">Заметки, метки, списки и быстрый набор — в файл</string>
     <string name="settings_backup_import">Импорт из файла</string>
     <string name="settings_backup_import_text">Добавляет данные из копии. Существующие записи сохраняются.</string>
     <string name="settings_block_hidden">Блокировать скрытые номера</string>
     <string name="settings_block_list">Чёрный список</string>
     <string name="settings_block_tagged">Блокировать номера с меткой «спам»</string>
-    <string name="settings_block_tagged_text">Включено — номера с вашей меткой «спам» или «мошенники» перестанут звонить и в журнале будут отмечены как заблокированные. Выключено — звонки проходят, но метка видна в журнале и на экране вызова.</string>
+    <string name="settings_block_tagged_text">Номера с меткой «спам» или «мошенники» не дозваниваются</string>
     <string name="settings_block_unknown">Блокировать номера не из контактов</string>
-    <string name="settings_block_unknown_text">Осторожно: курьеры, поликлиники и школы звонят с незнакомых номеров. Добавляйте исключения в белый список.</string>
+    <string name="settings_block_unknown_text">Звонки от незнакомых номеров не проходят</string>
     <string name="settings_blocked_system">Системный список блокировки</string>
-    <string name="settings_blocked_system_text">Общий с Android. Блокирует на уровне телефонии — телефон вообще не звонит.</string>
+    <string name="settings_blocked_system_text">Общий с Android; телефон вообще не звонит</string>
     <string name="settings_callback_suggestion">Предлагать напоминание после сброса</string>
-    <string name="settings_callback_suggestion_text">Уведомление с вариантами в одно нажатие: через 30 минут, через 2 часа, вечером.</string>
+    <string name="settings_callback_suggestion_text">Уведомление с предложением перезвонить позже</string>
     <string name="settings_default_apps">Приложения по умолчанию</string>
     <string name="settings_dnd">Не беспокоить</string>
     <string name="settings_dynamic_color">Использовать цвета системы</string>
-    <string name="settings_dynamic_color_text">Перекрашивает приложение под ваши обои. Выключено по умолчанию, чтобы приложение сохраняло свои цвета.</string>
+    <string name="settings_dynamic_color_text">Перекрашивает приложение под обои</string>
     <string name="settings_external_lookup">Внешние определители номера</string>
-    <string name="settings_external_lookup_text">По умолчанию выключено. При включении номер передаётся выбранному приложению.</string>
+    <string name="settings_external_lookup_text">При включении номер передаётся выбранному приложению</string>
     <string name="settings_file_logging">Записывать лог в файл</string>
-    <string name="settings_file_logging_text">Номера и имена в логе маскируются. Пригодится при обращении с проблемой.</string>
+    <string name="settings_file_logging_text">Лог в файле, номера и имена скрыты</string>
     <string name="settings_grouping">Группировка вызовов</string>
     <string name="settings_grouping_text">Как объединять повторные звонки в списке</string>
     <string name="settings_haptic">Вибрация при нажатии</string>
@@ -193,21 +193,21 @@
     <string name="settings_language_summary">Язык интерфейса</string>
     <string name="settings_language_system">Системный</string>
     <string name="settings_large_buttons">Крупные кнопки</string>
-    <string name="settings_large_buttons_text">Увеличенные клавиши и кнопки вызова. Помогает при слабом зрении и неточных движениях.</string>
+    <string name="settings_large_buttons_text">Увеличенные клавиши и кнопки вызова</string>
     <string name="settings_licenses">Лицензии открытого ПО</string>
     <string name="settings_log_clear">Очистить лог</string>
     <string name="settings_log_share">Отправить лог</string>
     <string name="settings_calllog_export">Выгрузить журнал вызовов</string>
-    <string name="settings_calllog_export_text">Весь журнал таблицей CSV: дата, номер, имя, тип, длительность. Открывается в Excel и LibreOffice.</string>
+    <string name="settings_calllog_export_text">Весь журнал таблицей CSV</string>
     <string name="settings_log_save">Сохранить журнал в файл</string>
-    <string name="settings_log_save_text">Тот же технический журнал, что отправляет «Поделиться», но записанный в файл на ваш выбор.</string>
+    <string name="settings_log_save_text">Технический журнал — в файл на ваш выбор</string>
     <string name="settings_merge_calls">Группировать вызовы одного номера</string>
     <string name="settings_merge_calls_text">Подряд идущие звонки показываются одной записью со счётчиком.</string>
     <string name="settings_notifications">Уведомления приложения</string>
     <string name="settings_post_call">Показывать экран после звонка</string>
     <string name="settings_post_call_text">Добавить заметку, метку или напоминание сразу после разговора.</string>
     <string name="settings_post_call_unknown">Только для незнакомых номеров</string>
-    <string name="settings_post_call_unknown_text">Рекомендуется: всплывающее окно после каждого звонка родным быстро надоедает.</string>
+    <string name="settings_post_call_unknown_text">Без окна после звонков с контактами</string>
     <string name="settings_privacy_policy">Политика конфиденциальности</string>
     <string name="settings_remember_sim">Запоминать SIM для номера</string>
     <string name="settings_remember_sim_text">Выбранная для номера SIM подставится в следующий раз.</string>
@@ -231,24 +231,24 @@
     <string name="settings_section_quick">Быстрый доступ</string>
     <string name="settings_section_quick_summary">Закреплённые номера, быстрый набор, псевдозвонок</string>
     <string name="settings_section_system">Настройки Android</string>
-    <string name="settings_section_system_summary">Звук, уведомления, батарея, приложения по умолчанию</string>
+    <string name="settings_section_system_summary">Звук, уведомления, батарея, роли приложений</string>
     <string name="settings_section_gestures">Жесты</string>
     <string name="settings_section_gestures_summary">Свайпы, вибрация, тоны клавиш</string>
     <string name="settings_section_spam">Защита от спама</string>
     <string name="settings_section_spam_summary">Чёрный и белый списки, метки</string>
     <string name="settings_show_photo">Показывать фото контактов</string>
     <string name="settings_messengers_any_number">Мессенджеры для любого номера</string>
-    <string name="settings_messengers_any_number_text">«Написать» предлагает установленные WhatsApp, Telegram, Viber и Max, даже если номера нет в контактах. Telegram откроет чат, только если человек разрешил находить себя по номеру</string>
+    <string name="settings_messengers_any_number_text">«Написать» предлагает мессенджеры для любого номера</string>
     <string name="settings_sim">SIM-карты и сети</string>
     <string name="settings_sim_labels">Названия SIM-карт</string>
     <string name="settings_sim_labels_text">Подпишите слоты, чтобы различать карты</string>
     <string name="settings_sim_none">Активные SIM-карты не обнаружены</string>
     <string name="settings_sim_slot">Слот %1$d</string>
     <string name="settings_smart_speaker">Авто-громкая связь</string>
-    <string name="settings_smart_speaker_text">Положите телефон во время разговора — включится динамик. Поднимете — вернётся обычный. Не срабатывает с гарнитурой и после ручного переключения звука.</string>
+    <string name="settings_smart_speaker_text">Положили телефон — включается динамик</string>
     <string name="settings_sort_order">Порядок результатов поиска</string>
     <string name="settings_carrier_info">Оператор и регион</string>
-    <string name="settings_carrier_info_text">Показываются под номером по официальному плану нумерации. Для мобильного это регион выдачи номера, а не место, откуда звонят. Оператор и регион — по реестру России; в других странах показывается только оператор и не у всех номеров.</string>
+    <string name="settings_carrier_info_text">Подпись под номером по плану нумерации</string>
     <string name="carrier_info_unknown">Только у незнакомых</string>
     <string name="carrier_info_all">У всех номеров</string>
     <string name="carrier_info_hidden">Не показывать</string>
@@ -264,7 +264,7 @@
     <string name="settings_theme_light">Светлая</string>
     <string name="settings_theme_summary">Светлая, тёмная или AMOLED-чёрная</string>
     <string name="settings_theme_preset">Цветовая тема</string>
-    <string name="settings_theme_preset_text">Тон фона и цвет акцента — те же темы и акценты, что в Ogneliss Mail</string>
+    <string name="settings_theme_preset_text">Тон фона и акцент — как в Ogneliss Mail</string>
     <!-- 1.9.0: оформление как в Ogneliss Mail -->
     <string name="settings_corner_size">Скругление углов</string>
     <string name="settings_corner_size_text">Карточки, окна и шторки — строже или мягче, как в Ogneliss Mail</string>
@@ -393,14 +393,14 @@
     <string name="onboarding_grant">Разрешить</string>
     <string name="onboarding_default_action">Назначить</string>
     <string name="settings_dialpad_open">Открывать клавиатуру при запуске</string>
-    <string name="settings_dialpad_open_text">По умолчанию выключено: приложение чаще открывают посмотреть, кто звонил, чем набрать номер.</string>
+    <string name="settings_dialpad_open_text">Набор номера открыт сразу после запуска</string>
     <string name="incall_dtmf_hint">Тональный набор</string>
     <string name="settings_theme_contrast">Высокий контраст (для слабого зрения)</string>
 
     <string name="settings_notes_retention">Удалять старые заметки</string>
-    <string name="settings_notes_retention_text">Заметка о доставке полезна неделю, через год это мусор. Заметки с метками «спам» и «мошенники» не удаляются никогда.</string>
+    <string name="settings_notes_retention_text">Старые заметки удаляются через выбранное время</string>
     <string name="settings_notes_scope">Какие заметки чистить</string>
-    <string name="settings_notes_scope_text">Заметка о человеке из контактов обычно относится к живой связи, а не к разовому делу.</string>
+    <string name="settings_notes_scope_text">Какие заметки удаляются</string>
     <string name="retention_never">Хранить всегда</string>
     <string name="retention_month">Старше месяца</string>
     <string name="retention_half_year">Старше полугода</string>
@@ -491,21 +491,13 @@
     <string name="block_reason_hidden">скрытый номер</string>
     <string name="block_reason_not_in_contacts">нет в контактах</string>
     <string name="settings_panel_swipe_nav">Перелистывание по нижней панели</string>
-    <string name="settings_panel_swipe_nav_text">Свайп по нижней панели переходит в соседний раздел: журнал, SMS, контакты, заметки</string>
-    <string name="gesture_hint_title">Два жеста, о которых стоит знать</string>
-    <string name="gesture_hint_subtitle">Их не видно на экране, но именно они делают приложение быстрым.</string>
-    <string name="gesture_hint_swipe_right">Свайп по строке вправо — позвонить</string>
-    <string name="gesture_hint_swipe_left">Свайп по строке влево — написать</string>
-    <string name="gesture_hint_panel">Свайп по нижней панели влево — контакты, вправо — обратно к вызовам</string>
-    <string name="gesture_hint_settings">Всё это можно поменять или выключить: Настройки → Жесты.</string>
-    <string name="gesture_hint_got_it">Понятно</string>
+    <string name="settings_panel_swipe_nav_text">Свайп по нижней панели — переход между разделами</string>
     <string name="reminder_snooze">Через 15 минут</string>
     <string name="history_expand">Показать ещё %1$d</string>
     <string name="history_collapse">Свернуть</string>
     <string name="subscriber_note_section">Заметка</string>
     <string name="subscriber_note_add">Добавить заметку</string>
     <string name="external_lookup_open_system">Открыть системные настройки</string>
-    <string name="gesture_hint_keyboard">Свайп вверх с кнопки клавиатуры открывает её, вниз по строке номера — закрывает</string>
     <string name="gesture_handle_hint">Свайп по панели вбок — переход, вверх — клавиатура</string>
     <string name="filter_no_matches">Под эти условия ничего не подходит</string>
     <string name="action_unblock_short">Разблок.</string>
@@ -525,18 +517,18 @@
     <string name="action_more">Ещё</string>
     <string name="action_clear">Очистить</string>
     <string name="settings_battery">Работа в фоне</string>
-    <string name="settings_battery_text">Без неё система усыпляет приложение, и пропущенные не появятся в журнале, пока вы сами его не откроете</string>
+    <string name="settings_battery_text">Разрешает приложению работать в фоне</string>
     <string name="settings_battery_already">Уже разрешено</string>
     <string name="wizard_autostart_title">Автозапуск</string>
     <string name="incoming_access_title">Экран входящего вызова</string>
     <string name="incoming_step_overlay">Разрешите показ поверх других приложений</string>
     <string name="incoming_step_miui">Разрешите показ на экране блокировки и всплывающие окна в фоне</string>
     <string name="permissions_open">Открыть</string>
-    <string name="incoming_access_text">Показ на экране блокировки и всплывающие окна в фоне: без них телефон может не показать экран вызова</string>
+    <string name="incoming_access_text">Показ на экране блокировки и окна в фоне</string>
     <string name="incoming_blocked_banner">Телефон не дал показать экран вызова</string>
     <string name="incoming_blocked_action">Разрешить</string>
     <string name="menu_my_contact">Мой контакт</string>
-    <string name="settings_own_number_text">Нужен, чтобы делиться своей карточкой. Нажмите, чтобы изменить или убрать</string>
+    <string name="settings_own_number_text">Нужен, чтобы делиться своей карточкой</string>
     <string name="blocked_by_rule">Заблокирован</string>
     <plurals name="reminder_in_minutes">
         <item quantity="one">через %1$d минуту</item>
@@ -567,8 +559,8 @@
     <string name="fake_call_cancel">Отменить псевдозвонок</string>
     <string name="settings_fake_call_number">Кто звонит</string>
     <string name="settings_fake_call_button">Кнопка псевдозвонка</string>
-    <string name="settings_fake_call_button_text">Маленькая круглая кнопка на экранах журнала и контактов. Выключите, если хватает меню, ярлыка на значке или плитки в шторке.</string>
-    <string name="settings_fake_call_number_text">Номер из ваших контактов. Если не выбран, берётся случайный контакт.</string>
+    <string name="settings_fake_call_button_text">Кнопка поверх списков журнала и контактов</string>
+    <string name="settings_fake_call_number_text">Номер из контактов; если не выбран — случайный</string>
     <!-- Подзаголовки внутри разделов настроек: разбор в SettingEntry.groupRes -->
     <string name="settings_group_row_swipe">Свайп по строке журнала</string>
     <string name="settings_group_screen_swipe">Перелистывание экранов</string>
@@ -605,14 +597,14 @@
     <string name="action_mark_spam">Отметить как спам</string>
     <string name="sim_kind_physical">SIM-карта</string>
     <string name="settings_button_labels">Подписи под кнопками</string>
-    <string name="settings_button_labels_text">Текст под значками на нижних панелях, в карточке и на экране вызова. Можно выключить, когда значки уже знакомы</string>
+    <string name="settings_button_labels_text">Текст под значками на панелях и экранах</string>
     <string name="settings_proximity">Гасить экран у уха</string>
-    <string name="settings_proximity_text">Датчик приближения гасит экран во время разговора. Без него щека может нажать «Завершить» или «Звук»</string>
+    <string name="settings_proximity_text">Датчик приближения гасит экран во время разговора</string>
     <string name="settings_hide_contact_number">Тип номера вместо номера</string>
     <string name="settings_call_animation">Живой фон вызова</string>
-    <string name="settings_call_animation_text">За экраном вызова медленно плывут мягкие цвета: из фото звонящего, а без фото — цвета темы. Неподвижен, если анимация отключена в настройках системы</string>
+    <string name="settings_call_animation_text">Медленные мягкие цвета за экраном вызова</string>
     <string name="settings_call_photo">Фото на экране вызова</string>
-    <string name="settings_call_photo_text">Как показывать фото звонящего: на весь экран, по ширине экрана целиком или портретом в круге или квадрате над именем</string>
+    <string name="settings_call_photo_text">Как показывается фото звонящего</string>
     <string name="call_photo_full_screen">На весь экран</string>
     <string name="call_photo_circle">Круг</string>
     <string name="call_photo_square">Квадрат</string>
@@ -624,7 +616,7 @@
     <string name="ui_scale_100" formatted="false">100 %</string>
     <string name="ui_scale_110" formatted="false">110 %</string>
     <string name="settings_home_group_main">Основное</string>
-    <string name="settings_hide_contact_number_text">На экране вызова у сохранённых контактов — «Мобильный», «Рабочий» вместо цифр. Незнакомые номера показываются всегда</string>
+    <string name="settings_hide_contact_number_text">На экране вызова у контактов тип номера вместо цифр</string>
     <string name="language_search_hint">Поиск языка</string>
     <string name="language_auto_translated">автоперевод</string>
     <string name="missed_calls_channel">Пропущенные вызовы</string>
@@ -662,7 +654,7 @@
     <string name="msg_deleted_from_log_many">Удалено из журнала: %1$s</string>
     <string name="action_create_contact">Создать контакт</string>
     <string name="settings_call_photo_size">Размер фото на экране вызова</string>
-    <string name="settings_call_photo_size_text">Размер портрета в круге или квадрате. Место для имени он не займёт</string>
+    <string name="settings_call_photo_size_text">Размер портрета на экране вызова</string>
     <string name="call_photo_size_normal">Обычный</string>
     <string name="call_photo_size_large">Крупный</string>
     <!-- 1.5.7: открытый код, лицензия Apache 2.0 -->
@@ -688,7 +680,7 @@
     </plurals>
     <!-- 1.5.8: ответ на вызов сдвигом -->
     <string name="settings_answer_mode">Ответ на вызов</string>
-    <string name="settings_answer_mode_text">Сдвигом — чтобы не ответить и не сбросить вызов случайно, доставая телефон из кармана</string>
+    <string name="settings_answer_mode_text">Касанием кнопок или сдвигом</string>
     <string name="answer_mode_tap">Касанием</string>
     <string name="answer_mode_slide">Сдвигом</string>
     <string name="incall_slide_hint">Сдвиньте вправо — ответить, влево — отклонить</string>
@@ -733,17 +725,17 @@
     <string name="faq_q_default">Как сделать Ogneliss Dialer основным приложением для звонков?</string>
     <string name="faq_a_default">При первом запуске приложение само предлагает стать телефоном по умолчанию. Если вы отказались, откройте %1$s и выберите Ogneliss Dialer в пункте «Телефон» — на разных телефонах он называется немного по-разному. Журнал вызовов и контакты останутся прежними: их хранит Android, а не приложение, и при возврате к прежнему приложению ничего не пропадёт. Если приложение установлено из файла APK и Android пишет «Ограниченная настройка», сначала откройте «О приложении» → ⋮ → «Разрешить ограниченные настройки».</string>
     <string name="faq_q_internet">Почему у приложения нет доступа в интернет?</string>
-    <string name="faq_a_internet">Чтобы ваши данные не могли уйти с телефона. Без разрешения на интернет приложение не может ничего отправить — ни журнал, ни контакты, ни заметки; это видно в свойствах установленного приложения. Оператор и регион незнакомого номера определяются по справочнику внутри приложения, а показывать ли их, решаете вы: %1$s.</string>
+    <string name="faq_a_internet">Чтобы ваши данные не могли уйти с телефона. Без разрешения на интернет приложение не может ничего отправить — ни журнал, ни контакты, ни заметки; это видно в свойствах установленного приложения. Оператор и регион незнакомого номера определяются по справочнику внутри приложения, а показывать ли их, решаете вы: %1$s. Для мобильного это регион выдачи номера, а не место звонящего; оператор и регион — по реестру России, в других странах показывается только оператор и не у всех номеров.</string>
     <string name="faq_q_transfer">Как перенести заметки и списки на новый телефон?</string>
     <string name="faq_a_transfer">Файлом. Сами они не переедут: приложение не отдаёт свои данные ни в облачные копии, ни при переносе на новый телефон — так они остаются только у вас. Откройте %1$s: заметки, метки, чёрный и белый списки и быстрый набор сохранятся в выбранный вами файл. На новом телефоне — %2$s: данные добавятся к тем, что уже есть. Журнал вызовов и контакты переносят Android и ваш аккаунт.</string>
     <string name="faq_q_switch">Как перейти из журнала в контакты?</string>
-    <string name="faq_a_switch">Первой кнопкой на нижней панели. Крупный значок на ней — список, который открыт сейчас, маленький кружок рядом — тот, куда переключит касание. Долгое нажатие открывает все разделы: журнал, контакты, заметки и напоминания. Можно и провести пальцем по панели: влево — к контактам, вправо — обратно к журналу.</string>
+    <string name="faq_a_switch">Первой кнопкой на нижней панели. Крупный значок на ней — список, который открыт сейчас, маленький кружок рядом — тот, куда переключит касание. Долгое нажатие открывает все разделы: журнал, контакты, заметки и напоминания. Можно и провести пальцем по панели: влево — к контактам, вправо — обратно к журналу. Для «SMS» и «Контактов» можно включить отдельные значки в списке приложений: %1$s. Значок приложения тогда открывает журнал.</string>
     <string name="faq_q_search">Как найти контакт по имени?</string>
     <string name="faq_a_search">Кнопкой «Поиск» на нижней панели. В журнале она ищет по имени, номеру и заметке, в контактах — по имени; «е» и «ё» не различаются. Цифрами ищет и клавиатура набора — по номеру и по T9, кириллицей и латиницей сразу.</string>
     <string name="faq_q_undo">Запись из журнала удалена по ошибке. Можно вернуть?</string>
     <string name="faq_a_undo">Да, если сразу. После удаления внизу на несколько секунд появляется «Удалено из журнала» с кнопкой «Отменить» — нажмите её, пока сообщение на экране. Потом записи удаляются и из системного журнала телефона, и вернуть их уже нельзя. Очистку всего журнала из меню отменить нельзя — поэтому перед ней приложение переспрашивает.</string>
     <string name="faq_q_spam">Как заблокировать спам и нежелательные номера?</string>
-    <string name="faq_a_spam">Долгое нажатие на запись → «Блок»: номер попадёт в чёрный список и больше не дозвонится. Там же, в «Ещё», — метка «Спам»: такие номера тоже не дозваниваются, а метка видна в журнале и на экране вызова. Маски номеров, скрытые и незнакомые номера, белый список исключений — в разделе %1$s.</string>
+    <string name="faq_a_spam">Долгое нажатие на запись → «Блок»: номер попадёт в чёрный список и больше не дозвонится. Там же, в «Ещё», — метка «Спам»: такие номера тоже не дозваниваются, а метка видна в журнале и на экране вызова. Маски номеров, скрытые и незнакомые номера, белый список исключений — в разделе %1$s. Блокировка незнакомых номеров не пропустит и курьеров, поликлиники, школы — сначала добавьте их в белый список.</string>
     <string name="faq_q_slide">Как отвечать на вызов сдвигом — или вернуть кнопки?</string>
     <string name="faq_a_slide">%1$s. «Касанием» — две обычные кнопки. «Сдвигом» — кнопку нужно сдвинуть: вправо — ответить, влево — отклонить; так вызов не принять и не сбросить случайно, доставая телефон из кармана. С TalkBack вызов всегда принимается кнопками.</string>
     <string name="faq_q_sim">Как выбрать SIM-карту для звонка?</string>
@@ -751,7 +743,7 @@
     <string name="faq_q_missed">Пропущенные появляются, только когда открываешь приложение. Что делать?</string>
     <string name="faq_a_missed">Скорее всего, система усыпляет приложение ради экономии батареи. Разрешите ему работать в фоне — %1$s, — и пропущенные вызовы будут появляться сразу.</string>
     <string name="faq_q_incoming">Экран вызова не появляется при входящем звонке. Что делать?</string>
-    <string name="faq_a_incoming">Часть телефонов — Xiaomi, Redmi, POCO, vivo, OPPO, realme, OnePlus — по умолчанию не дают приложениям показывать окна поверх экрана блокировки и из фона. Откройте %1$s и разрешите показ на экране блокировки и всплывающие окна в фоне. На Huawei, Honor, Tecno и Infinix ещё разрешите автозапуск. Пока это не сделано, ответить можно из уведомления о звонке.</string>
+    <string name="faq_a_incoming">Часть телефонов — Xiaomi, Redmi, POCO, vivo, OPPO, realme, OnePlus — по умолчанию не дают приложениям показывать окна поверх экрана блокировки и из фона. Откройте %1$s и разрешите показ на экране блокировки и всплывающие окна в фоне. На Huawei, Honor, Tecno и Infinix ещё разрешите автозапуск. Пока это не сделано, ответить можно из уведомления о звонке. Если включён «Входящий плашкой сверху», плашка появляется, только пока телефоном пользуются; на заблокированном и погасшем экране вызов всегда на весь экран.</string>
     <string name="faq_q_recording">Можно ли записывать разговоры?</string>
     <string name="faq_a_recording">Нет. На Android 10 и новее система не даёт сторонним приложениям доступа к звуку разговора, а обход этого запрета нарушает правила Google Play. Если ваш телефон записывает звонки, это встроенная функция производителя: она работает независимо от выбранного диалера.</string>
     <string name="faq_q_work">Можно ли пользоваться приложением на работе? Где исходный код?</string>
@@ -832,12 +824,12 @@
     <string name="number_picker_hint">Какой номер?</string>
     <!-- Автодозвон (1.8.0): настройка и экран вызова -->
     <string name="settings_auto_redial">Автодозвон</string>
-    <string name="settings_auto_redial_text">Если занято или не берут трубку, номер набирается снова. «Предлагать» — экран вызова спросит, «Сразу» — начнёт без вопроса. Экстренные и короткие служебные номера не повторяются.</string>
+    <string name="settings_auto_redial_text">Набирает снова, если занято или не берут трубку</string>
     <string name="auto_redial_off">Выключен</string>
     <string name="auto_redial_offer">Предлагать</string>
     <string name="auto_redial_auto">Сразу</string>
     <string name="settings_auto_redial_pace">Попытки автодозвона</string>
-    <string name="settings_auto_redial_pace_text">Сколько раз и как часто набирать снова. Остановить можно в любой момент на экране вызова.</string>
+    <string name="settings_auto_redial_pace_text">Сколько раз и как часто набирать снова</string>
     <string name="redial_pace_3_10">3 попытки, каждые 10 с</string>
     <string name="redial_pace_5_10">5 попыток, каждые 10 с</string>
     <string name="redial_pace_5_30">5 попыток, каждые 30 с</string>
@@ -858,13 +850,13 @@
     <string name="redial_spoken">%1$s. Автодозвон, попытка %2$d из %3$d</string>
     <!-- Памятка о мошенниках и тихие часы (1.8.0) -->
     <string name="settings_scam_memo">Памятка о мошенниках</string>
-    <string name="settings_scam_memo_text">Если разговор с незнакомым номером длится больше двух минут, экран вызова один раз напомнит: коды из SMS, данные карты и пароли не называют никому. Телефон коротко вздрогнет, чтобы памятку заметили.</string>
+    <string name="settings_scam_memo_text">Напоминание при долгом разговоре с незнакомым</string>
     <string name="keywords_scam_memo">мошенники обман безопасность банк код предупреждение</string>
     <string name="scam_memo_title">Долгий разговор с незнакомым номером</string>
     <string name="scam_memo_text">Не называйте коды из SMS, данные карты и пароли. Банк, полиция и «служба безопасности» их не спрашивают. Сомневаетесь — положите трубку и перезвоните в банк по номеру с карты.</string>
     <string name="scam_memo_ok">Понятно</string>
     <string name="settings_quiet_hours">Тихие часы для незнакомых</string>
-    <string name="settings_quiet_hours_text">В эти часы звонки с номеров не из контактов идут без звука и не будят экран — они остаются в журнале. Если тот же номер перезвонит в течение 15 минут, телефон зазвонит: так проходят срочные звонки. Номера из белого списка звонят всегда.</string>
+    <string name="settings_quiet_hours_text">В выбранные часы незнакомые звонят без звука</string>
     <string name="keywords_quiet_hours">ночь сон без звука не беспокоить тишина незнакомые</string>
     <string name="quiet_hours_off">Выключены</string>
     <string name="quiet_hours_22_08">С 22:00 до 08:00</string>
@@ -881,6 +873,8 @@
     <string name="faq_a_redial">После «Занято» или «Не отвечает» экран вызова предложит «Дозваниваться»: приложение само наберёт номер снова через паузу — столько раз, сколько задано (%2$s). Чтобы набирало без вопроса, выберите «Сразу» в %1$s. Экстренные и короткие служебные номера не повторяются, а «Завершить» всегда останавливает автодозвон.</string>
     <string name="faq_q_quiet">Можно не слышать ночные звонки с незнакомых номеров?</string>
     <string name="faq_a_quiet">Да: %1$s. В выбранные часы такой звонок идёт без звука и не будит экран, а утром виден в журнале с пометкой «Без звука — тихие часы». Если тот же номер перезвонит за 15 минут, телефон зазвонит. Контакты и номера из белого списка звонят всегда.</string>
+    <string name="faq_q_speaker">Как включать громкую связь, просто положив телефон?</string>
+    <string name="faq_a_speaker">Положите телефон во время разговора — включится динамик, поднимете — вернётся обычный. Включается здесь: %1$s. Не срабатывает с гарнитурой и после ручного переключения звука.</string>
     <string name="faq_q_operator_name">Почему у номера название организации «по данным оператора»?</string>
     <string name="faq_a_operator_name">Многие организации звонят подписанными: оператор передаёт название вместе с номером (в России это обязательно с 1 сентября 2025 года — «маркировка звонков»). Приложение показывает его на экране вызова и запоминает для журнала и карточки — у номеров, которых нет в контактах. Название передаёт сеть, а не приложение: имя из книги и ваша заметка всегда важнее.</string>
     <string name="faq_q_scam">Что за памятка о мошенниках во время разговора?</string>
@@ -922,13 +916,13 @@
     <string name="settings_sms_default_app">Приложение SMS по умолчанию</string>
     <string name="settings_sms_default_app_text">Переписка, входящие SMS и MMS в разделе SMS диалера</string>
     <string name="settings_sms_delivery_reports">Отчёт о доставке</string>
-    <string name="settings_sms_delivery_reports_text">Просить сеть подтвердить доставку. Некоторые операторы берут за это плату</string>
+    <string name="settings_sms_delivery_reports_text">Подтверждение доставки от сети; у части операторов платно</string>
     <string name="keywords_sms">смс sms ммс mms сообщение текст переписка чат код пароль по умолчанию</string>
 
     <!-- Вопросы о сообщениях (2.0.0) -->
     <string name="faq_section_messages">Сообщения</string>
     <string name="faq_q_sms">Можно ли писать и получать SMS в диалере?</string>
-    <string name="faq_a_sms">Да. Когда диалер — приложение SMS по умолчанию (%1$s), переписки, входящие SMS и картинки (MMS) — прямо здесь, в разделе «SMS» на нижней панели, со свайпами, как в журнале; журнал остаётся только для звонков. Когда SMS ведёт другое приложение, кнопки «Написать» просто открывают переписку в нём — настраивать ничего не нужно. На телефоне с приложением, где есть RCS (Google Сообщения, Samsung Messages), диалер сам не просит роль SMS: чаты RCS работают только там и выключаются, если SMS забирает другое приложение. Отказаться можно в любой момент, выбрав другое приложение SMS, — диалер сразу перестанет читать сообщения.</string>
+    <string name="faq_a_sms">Да. Когда диалер — приложение SMS по умолчанию (%1$s), переписки, входящие SMS и картинки (MMS) — прямо здесь, в разделе «SMS» на нижней панели, со свайпами, как в журнале; журнал остаётся только для звонков. Когда SMS ведёт другое приложение, кнопки «Написать» просто открывают переписку в нём — настраивать ничего не нужно. На телефоне с приложением, где есть RCS (Google Сообщения, Samsung Messages), диалер сам не просит роль SMS: чаты RCS работают только там и выключаются, если SMS забирает другое приложение. Отказаться можно в любой момент, выбрав другое приложение SMS, — диалер сразу перестанет читать сообщения. Если включить «Мессенджеры для любого номера», «Написать» предложит WhatsApp, Telegram, Viber и Max и для номеров не из контактов; Telegram откроет чат, только если человек разрешил находить себя по номеру.</string>
     <string name="faq_q_codes">Как вставить код из SMS?</string>
     <string name="faq_a_codes">Когда в сообщении есть код подтверждения, в уведомлении появляется кнопка «Копировать 123456», а в переписке — такая же под сообщением. Код попадает в буфер обмена с пометкой «секретно», и клавиатура предложит вставить его одним касанием. Подставлять код в поле другого приложения автоматически умеет клавиатура или служба автозаполнения (например, Gboard или «Автозаполнение Google») — с диалером в роли приложения SMS это продолжает работать. Код ищется на телефоне: у диалера нет доступа в интернет. Долгое нажатие на сообщение позволяет скопировать весь текст, номер телефона из него или выделить нужную часть.</string>
 
@@ -984,7 +978,7 @@
     <string name="msg_archived_many">Перенесено в архив: %1$s</string>
     <string name="a11y_avatar_select">Выбрать</string>
     <string name="settings_incoming_banner">Входящий плашкой сверху</string>
-    <string name="settings_incoming_banner_text">Пока телефоном пользуются, входящий появляется сверху с «Ответить» и «Отклонить», а не на весь экран. На заблокированном и погасшем экране — всегда на весь экран</string>
+    <string name="settings_incoming_banner_text">Вызов плашкой сверху, пока телефоном пользуются</string>
     <string name="keywords_incoming_banner">всплывающее компактное маленькое окно плашка сверху уведомление весь экран входящий</string>
     <string name="menu_pin_home">На главный экран</string>
     <string name="widget_sms_description">Значок SMS с числом непрочитанных</string>
@@ -994,7 +988,7 @@
     <string name="selection_short_block">Блокировать</string>
     <string name="selection_short_unarchive">Вернуть</string>
     <string name="settings_swap_answer">«Ответить» слева</string>
-    <string name="settings_swap_answer_text">Кнопки «Ответить» и «Отклонить» меняются местами на экране вызова; ответ сдвигом — влево</string>
+    <string name="settings_swap_answer_text">«Ответить» и «Отклонить» меняются местами</string>
     <string name="keywords_swap_answer">поменять местами ответить отклонить кнопки слева справа порядок входящий</string>
     <string name="messages_new_to_number">Написать на %1$s</string>
     <string name="messages_new_recent">Недавние</string>
@@ -1003,7 +997,7 @@
     <string name="messages_new_letters_short">АБВ</string>
     <string name="settings_group_home_screen">Главный экран</string>
     <string name="settings_widget_shape">Форма значков</string>
-    <string name="settings_widget_shape_text">Для значков «SMS» и «Контакты» на главном экране — подберите под значки лаунчера</string>
+    <string name="settings_widget_shape_text">Для значков «SMS» и «Контакты» на главном экране</string>
     <string name="keywords_widget_shape">виджет значок иконка форма круг квадрат скругление угол главный экран рабочий стол смс контакты лаунчер</string>
     <string name="widget_shape_auto">Авто</string>
     <string name="widget_shape_circle">Круг</string>
@@ -1020,7 +1014,7 @@
     <string name="settings_sms_calls_in_thread">Звонки в переписке</string>
     <string name="settings_sms_calls_in_thread_text">Звонки с собеседником между сообщениями, с номером SIM</string>
     <string name="settings_sms_otp_cleanup">Автоудаление кодов</string>
-    <string name="settings_sms_otp_cleanup_text">Входящие с кодом подтверждения удаляются через выбранное время. Избранные остаются</string>
+    <string name="settings_sms_otp_cleanup_text">Входящие с кодом удаляются через выбранное время</string>
     <string name="otp_cleanup_off">Не удалять</string>
     <string name="otp_cleanup_1h">Через 1 час</string>
     <string name="otp_cleanup_24h">Через 24 часа</string>
@@ -1078,9 +1072,23 @@
     <string name="contact_folders_title">Папки контактов</string>
     <string name="call_photo_width">По ширине экрана</string>
     <string name="settings_section_icons">Отдельные значки «SMS» и «Контакты»</string>
-    <string name="settings_section_icons_text">В списке приложений появятся значки «SMS» и «Контакты» — их можно положить в нижний ряд или в папку. Значок приложения тогда открывает журнал</string>
+    <string name="settings_section_icons_text">Значки в списке приложений — в нижний ряд или в папку</string>
     <string name="keywords_section_icons">значок ярлык иконка отдельный список приложений док нижний ряд папка лаунчер рабочий стол смс контакты телефон</string>
     <string name="number_payphone">Таксофон</string>
     <string name="card_block_hidden">Блокировать скрытые номера</string>
     <string name="card_unblock_hidden">Не блокировать скрытые номера</string>
+    <string name="settings_colored_call_arrows">Цветные стрелки вызовов</string>
+    <string name="settings_colored_call_arrows_text">Исходящий — зелёный, входящий — синий, пропущенный — красный</string>
+    <string name="keywords_colored_call_arrows">цвет цветные стрелка стрелки значок тип вызова исходящий входящий пропущенный зелёный синий красный журнал</string>
+    <string name="settings_start_section">При запуске открывать</string>
+    <string name="settings_start_section_text">С какого экрана начинать, когда открываете значком</string>
+    <string name="keywords_start_section">запуск старт открывать экран первый раздел последний журнал смс контакты главный</string>
+    <string name="settings_group_app_start">Запуск приложения</string>
+    <string name="start_section_journal">Журнал</string>
+    <string name="start_section_messages">SMS</string>
+    <string name="start_section_contacts">Контакты</string>
+    <string name="start_section_last">Последний раздел</string>
+    <string name="stats_incoming">Входящие</string>
+    <string name="stats_outgoing">Исходящие</string>
+    <string name="stats_missed">Пропущенные</string>
 </resources>

@@ -10,8 +10,6 @@ import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
@@ -19,11 +17,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.components.OgnelissListRow
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.R
-import com.ogneliss.dialer.ui.components.ReadableWidth
 import com.ogneliss.dialer.data.RuleKind
 import com.ogneliss.dialer.ui.theme.BlockRed
 import com.ogneliss.dialer.data.RulePattern
@@ -64,17 +60,16 @@ fun BlockListScreen(
     val allowed = rules.filter { it.kind == RuleKind.ALLOW.key }
     val blocked = rules.filter { it.kind == RuleKind.BLOCK.key }
 
-    androidx.compose.runtime.CompositionLocalProvider(
-        com.ogneliss.dialer.ui.theme.LocalPageTone provides com.ogneliss.dialer.ui.theme.PageTone.TINTED
-    ) {
-        Scaffold(
-            // Как настройки Ogneliss Mail: серо-голубая страница, группы — карточками (1.5.6)
-            containerColor = com.ogneliss.dialer.ui.theme.OgnelissTheme.pageColor(com.ogneliss.dialer.ui.theme.PageTone.TINTED),
-            // Отступы под системные панели: в edge-to-edge содержимое
-            // иначе уезжает под строку состояния и кнопки навигации
-            contentWindowInsets = WindowInsets.safeDrawing,
-            topBar = {
-                if (selection.isActive) {
+    // Общий каркас (2.7.0): был свой Scaffold + TopAppBar; страница — как настройки
+    // Ogneliss Mail: серо-голубая, группы — карточками (1.5.6)
+    run {
+        com.ogneliss.dialer.ui.components.ScreenScaffold(
+            title = stringResource(R.string.settings_section_spam),
+            onBack = onBack,
+            tone = com.ogneliss.dialer.ui.theme.PageTone.TINTED,
+            pinnedTopBar = true,
+            topBarOverride = if (selection.isActive) {
+                {
                     SelectionTopBar(
                         count = selection.count,
                         onClose = { selection.clear() },
@@ -84,28 +79,11 @@ fun BlockListScreen(
                             selection.clear()
                         }
                     )
-                    return@Scaffold
                 }
-                TopAppBar(
-                    title = {
-                        Text(
-                            stringResource(R.string.settings_section_spam),
-                            Modifier.padding(start = com.ogneliss.dialer.ui.theme.FlowUi.topBarTitleInset)
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = onBack) {
-                            Icon(
-                                OgnelissIcons.ArrowBack,
-                                contentDescription = stringResource(R.string.nav_back)
-                            )
-                        }
-                    }
-                )
-            }
+            } else null
         ) { pad ->
-            // Не шире 640 dp по центру на широком окне: разбор в ReadableWidth
-            ReadableWidth {
+            // Ширину по центру ограничивает сам каркас
+            run {
             val listState = androidx.compose.foundation.lazy.rememberLazyListState()
             LazyColumn(
                 // Выбор протягиванием по левому столбцу (2.1.3, DragSelect):
@@ -133,6 +111,14 @@ fun BlockListScreen(
                         onAdd = { adding = RuleKind.ALLOW }
                     )
                 }
+
+                /*
+                 * ПУСТОЙ СПИСОК — ТОЖЕ КАРТОЧКОЙ (2.7.0, обзор вида): было — подпись
+                 * раздела и под ней ничего, на серо-голубой странице это читалось
+                 * как незагрузившийся блок. Теперь строка «Добавить» в карточке —
+                 * как «Закрепить контакт» в закреплённых.
+                 */
+                if (allowed.isEmpty()) item(key = "allow_empty") { AddRuleRow { adding = RuleKind.ALLOW } }
 
                 itemsIndexed(allowed, key = { _, rule -> "allow_${rule.pattern}" }) { i, rule ->
                     // Правила — строками во всю ширину, линии между ними (1.5.3)
@@ -167,6 +153,8 @@ fun BlockListScreen(
                         )
                     }
                 }
+
+                if (blocked.isEmpty()) item(key = "block_empty") { AddRuleRow { adding = RuleKind.BLOCK } }
 
                 itemsIndexed(blocked, key = { _, rule -> "block_${rule.pattern}" }) { i, rule ->
                     GroupedRow(GroupPosition.of(i, blocked.size)) {
@@ -220,6 +208,18 @@ private fun SectionHeaderWithAction(title: String, onAdd: () -> Unit) {
             }
         }
     )
+}
+
+/** Строка «Добавить» в пустом списке (2.7.0): карточка вместо пустоты под подписью. */
+@Composable
+private fun AddRuleRow(onAdd: () -> Unit) {
+    GroupedRow(GroupPosition.SINGLE) {
+        OgnelissListRow(
+            headline = stringResource(R.string.rule_add),
+            leading = { Icon(OgnelissIcons.Add, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+            onClick = onAdd
+        )
+    }
 }
 
 @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)

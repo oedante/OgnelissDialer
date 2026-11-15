@@ -67,7 +67,11 @@ fun FitText(
                     val scale = (target / widest).coerceAtLeast(minScale)
                     merged.copy(
                         fontSize = merged.fontSize * scale,
-                        lineHeight = if (merged.lineHeight.isSp) merged.lineHeight * scale else merged.lineHeight
+                        lineHeight = if (merged.lineHeight.isSp) merged.lineHeight * scale else merged.lineHeight,
+                        // 2.7.0: разрядка ужимается вместе с шрифтом. Было: 0,5 sp
+                        // оставалась как есть, ужатое слово выходило шире замера и
+                        // всё равно рвалось («Напомнит / ь» при шрифте 160 %)
+                        letterSpacing = if (merged.letterSpacing.isSp) merged.letterSpacing * scale else merged.letterSpacing
                     )
                 }
             }
