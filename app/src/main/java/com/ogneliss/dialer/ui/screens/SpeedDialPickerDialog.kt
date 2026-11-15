@@ -64,11 +64,10 @@ fun SpeedDialPickerDialog(
         },
         content = {
             Column {
-                OutlinedTextField(
+                com.ogneliss.dialer.ui.components.OgnelissTextField(
                     value = search,
                     onValueChange = { search = it },
-                    label = { Text(stringResource(R.string.speed_dial_search)) },
-                    singleLine = true,
+                    label = stringResource(R.string.speed_dial_search),
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(Space.s))

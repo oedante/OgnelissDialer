@@ -62,37 +62,12 @@ fun SimLabelsDialog(
                 }
 
                 sims.forEach { sim ->
-                    OutlinedTextField(
+                    com.ogneliss.dialer.ui.components.OgnelissTextField(
                         value = drafts[sim.slotIndex].orEmpty(),
                         onValueChange = { drafts[sim.slotIndex] = it },
-                        label = {
-                            // Показываем номер слота и системное имя как подсказку:
-                            // пользователю нужно понять, какую карту он подписывает
-                            Text(
-                                stringResource(
-                                    R.string.settings_sim_slot,
-                                    sim.slotIndex + 1
-                                )
-                            )
-                        },
-                        placeholder = { Text(sim.systemName ?: sim.label) },
-                        /*
-                         * ЧТО ЭТО ЗА КАРТА — ПОД ПОЛЕМ, ВСЕГДА НА ВИДУ.
-                         *
-                         * Вопрос от пользователя: «Слот 1», «Слот 2» —
-                         * а где у меня какой номер? Системное имя стояло
-                         * только подсказкой внутри пустого поля, и её
-                         * закрывала подпись «Слот 1»: пока в поле не нажмёшь,
-                         * не видно.
-                         *
-                         * Теперь под каждым полем — имя карты в системе,
-                         * оператор и номер, что из этого известно. Номера
-                         * часто нет (операторы редко пишут его на карту),
-                         * но системное имя есть всегда — и оно то же, что
-                         * в настройках телефона, где карты подписаны.
-                         */
-                        supportingText = { Text(simIdentity(sim)) },
-                        singleLine = true,
+                        label = stringResource(R.string.settings_sim_slot, sim.slotIndex + 1),
+                        placeholder = sim.systemName ?: sim.label,
+                        supportingText = simIdentity(sim),
                         modifier = Modifier.fillMaxWidth().padding(vertical = Space.xs)
                     )
                 }

@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -69,11 +70,14 @@ fun SpamProtectionScreen(
     ) { pad ->
         Column(Modifier.padding(pad).verticalScroll(rememberScrollState())) {
 
-            Text(
-                stringResource(R.string.spam_overview_title),
-                Modifier.padding(FlowUi.contentPadding).semantics { heading() },
-                style = MaterialTheme.typography.titleMedium
-            )
+            /*
+             * ГРУППА — ОДНА КАРТОЧКА С ПОДПИСЬЮ (2.7.0, обзор вида 15.11.2026).
+             * Было: чёрный заголовок titleMedium и три отдельные карточки,
+             * у каждой — «чип» состояния, похожий на кнопку, но ничего не
+             * делавший. Стало — как группы настроек: подпись раздела, одна
+             * карточка, строки с линиями; состояние — текстом справа.
+             */
+            com.ogneliss.dialer.ui.components.SettingsGroup(stringResource(R.string.spam_overview_title)) {
 
             // Слои показаны в порядке срабатывания — это и есть объяснение,
             // почему один вызов блокируется, а другой проходит
@@ -85,6 +89,7 @@ fun SpamProtectionScreen(
                 active = true,
                 onClick = { vm.openSystemBlockList() }
             )
+            com.ogneliss.dialer.ui.components.OgnelissDivider(Modifier.padding(start = LAYER_DIVIDER_START))
 
             /*
              * СЛОЙ ОПРЕДЕЛИТЕЛЯ.
@@ -116,6 +121,7 @@ fun SpamProtectionScreen(
                 },
                 active = roleState.weAreScreener || roleState.otherScreenerPackage != null
             )
+            com.ogneliss.dialer.ui.components.OgnelissDivider(Modifier.padding(start = LAYER_DIVIDER_START))
 
             /*
              * ══════════════════════════════════════════════════════════════
@@ -148,6 +154,8 @@ fun SpamProtectionScreen(
                 onClick = onOpenLists
             )
 
+            }
+
             /*
              * Слой «офлайн-оценка риска» убран вместе с самой оценкой:
              * показывать слой защиты, которого нет, значит обещать
@@ -167,50 +175,30 @@ private fun LayerCard(
     active: Boolean,
     onClick: (() -> Unit)? = null
 ) {
-    OgnelissPanel(
-        // Слой фильтрации нажимается, если за ним есть экран;
-        // если нет — это просто сведение, и нажимать не на что
-        modifier = if (onClick != null) {
-            Modifier.clickable(onClick = onClick)
-        } else {
-            Modifier
-        }
-    ) {
-        Row(verticalAlignment = Alignment.Top) {
+    com.ogneliss.dialer.ui.components.OgnelissRowLayout(
+        // Слой нажимается, если за ним есть экран; если нет — это сведение
+        modifier = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier,
+        leading = {
             Icon(
                 icon, contentDescription = null,
-                tint = if (active) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.outline
+                tint = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
             )
-            Spacer(Modifier.width(Space.m))
-            Column(Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    // Порядковый номер показывает очерёдность срабатывания
-                    Text("$order. ", style = MaterialTheme.typography.labelLarge)
-                    Text(title, style = MaterialTheme.typography.titleSmall)
-                }
-                Spacer(Modifier.height(Space.xs))
-                Text(
-                    text,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            Spacer(Modifier.width(Space.s))
-            AssistChip(
-                onClick = { },
-                label = {
-                    Text(
-                        stringResource(
-                            if (active) R.string.spam_layer_active
-                            else R.string.spam_layer_inactive
-                        )
-                    )
-                }
+        },
+        // Порядковый номер показывает очерёдность срабатывания
+        headline = { Text("$order. $title") },
+        supporting = { Text(text) },
+        trailing = {
+            Text(
+                stringResource(if (active) R.string.spam_layer_active else R.string.spam_layer_inactive),
+                style = MaterialTheme.typography.labelLarge,
+                color = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
             )
         }
-    }
+    )
 }
+
+/** Линия между слоями — от текста, как в настройках (поле 16 + значок 24 + 16). */
+private val LAYER_DIVIDER_START = 56.dp
 
 /** Название приложения по имени пакета — читаемее, чем «com.yandex…». */
 private fun appLabel(context: android.content.Context, packageName: String): String =

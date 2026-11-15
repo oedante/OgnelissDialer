@@ -11,6 +11,7 @@ import com.ogneliss.dialer.ui.theme.OgnelissTheme
 import com.ogneliss.dialer.ui.theme.PageTone
 import com.ogneliss.dialer.ui.theme.FlowUi
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
@@ -77,6 +78,11 @@ fun ScreenScaffold(
      * переписки. null — обычный текст.
      */
     titleContent: (@Composable () -> Unit)? = null,
+    /**
+     * Шапка режима выбора (2.7.0): пока идёт выбор строк, на месте заголовка —
+     * счётчик и действия (SelectionTopBar). null — обычная шапка.
+     */
+    topBarOverride: (@Composable () -> Unit)? = null,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val scrollBehavior = if (pinnedTopBar) {
@@ -90,39 +96,15 @@ fun ScreenScaffold(
         contentWindowInsets = WindowInsets.safeDrawing,
         containerColor = OgnelissTheme.pageColor(tone),
         topBar = {
-            TopAppBar(
-                // Отступ заголовка — как в почте (FlowUi.topBarTitleInset, 1.8.4)
-                title = {
-                    if (titleContent != null) titleContent()
-                    else Text(
-                        title,
-                        Modifier.padding(start = if (showBack) FlowUi.topBarTitleInset else 0.dp)
-                    )
-                },
-                navigationIcon = {
-                    if (showBack) {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            OgnelissIcons.ArrowBack,
-                            contentDescription = stringResource(R.string.nav_back)
-                        )
-                    }
-                    }
-                },
+            if (topBarOverride != null) topBarOverride()
+            else ScreenTopBar(
+                title = title,
+                onBack = onBack,
+                showBack = showBack,
                 actions = actions,
+                titleContent = titleContent,
                 scrollBehavior = scrollBehavior,
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    // Белый список: панель окрашивается при прокрутке — видно,
-                    // что под ней есть содержимое. Серо-голубые настройки:
-                    // панель остаётся белой, как в Mail, — она и так отличается
-                    // от страницы
-                    scrolledContainerColor = if (tone == PageTone.TINTED) {
-                        MaterialTheme.colorScheme.surface
-                    } else {
-                        MaterialTheme.colorScheme.surfaceContainer
-                    }
-                )
+                tone = tone
             )
         },
         bottomBar = bottomBar,
@@ -133,5 +115,69 @@ fun ScreenScaffold(
                 ReadableWidth { content(pad) }
             }
         }
+    )
+}
+
+/**
+ * ШАПКА ЭКРАНА — ОДНА НА ВСЁ ПРИЛОЖЕНИЕ (2.7.0, обзор вида 15.11.2026).
+ *
+ * Было: шесть экранов собирали шапку сами (настройки, карточка, списки
+ * блокировки, архив вызовов, архив SMS, выбор контакта) — у одних заголовок
+ * с отступом от стрелки, у других вплотную; у «Настроек» шапка в цвет
+ * страницы, у вложенных разделов белая; у архива вызовов — свой цвет
+ * страницы. Автор: «ощущение, что приложение сделано из разных кусков».
+ *
+ * Теперь стрелка, отступ заголовка и цвета — здесь; экран со своим
+ * каркасом (карточка с обложкой, список с нижней панелью) берёт эту шапку,
+ * а не TopAppBar. Проверка: scripts/ui_roles_check.py, правило 7.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ScreenTopBar(
+    title: String,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    showBack: Boolean = true,
+    actions: @Composable RowScope.() -> Unit = {},
+    /** Свой заголовок вместо строки [title]: поле поиска, портрет с именем. */
+    titleContent: (@Composable () -> Unit)? = null,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    tone: PageTone = PageTone.LIST,
+    /** Свои цвета — только шапке поверх обложки карточки (прозрачная, белые значки). */
+    colors: TopAppBarColors? = null
+) {
+    TopAppBar(
+        modifier = modifier,
+        // Отступ заголовка — как в почте (FlowUi.topBarTitleInset, 1.8.4)
+        title = {
+            Box(Modifier.padding(start = if (showBack) FlowUi.topBarTitleInset else 0.dp)) {
+                if (titleContent != null) titleContent()
+                else Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
+        },
+        navigationIcon = {
+            if (showBack) {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        OgnelissIcons.ArrowBack,
+                        contentDescription = stringResource(R.string.nav_back)
+                    )
+                }
+            }
+        },
+        actions = actions,
+        scrollBehavior = scrollBehavior,
+        colors = colors ?: TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            // Белый список: панель окрашивается при прокрутке — видно,
+            // что под ней есть содержимое. Серо-голубые настройки:
+            // панель остаётся белой, как в Mail, — она и так отличается
+            // от страницы
+            scrolledContainerColor = if (tone == PageTone.TINTED) {
+                MaterialTheme.colorScheme.surface
+            } else {
+                MaterialTheme.colorScheme.surfaceContainer
+            }
+        )
     )
 }

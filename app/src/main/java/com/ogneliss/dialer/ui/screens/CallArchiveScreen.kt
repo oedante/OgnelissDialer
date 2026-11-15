@@ -86,11 +86,13 @@ fun CallArchiveScreen(vm: DialerViewModel, onBack: () -> Unit) {
      * заменяет панель выбора (как в журнале), а ScreenScaffold строку
      * заголовка подменять не умеет. Отступ от часов — safeDrawing.
      */
-    Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing,
-        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-        topBar = {
-            if (selection.isActive) {
+    // Общий каркас (2.7.0): был свой Scaffold со своим цветом страницы и шапкой без отступа
+    com.ogneliss.dialer.ui.components.ScreenScaffold(
+        title = stringResource(R.string.archive_title),
+        onBack = onBack,
+        pinnedTopBar = true,
+        topBarOverride = if (selection.isActive) {
+            {
                 SelectionTopBar(
                     count = selection.count,
                     onClose = { selection.clear() },
@@ -112,26 +114,13 @@ fun CallArchiveScreen(vm: DialerViewModel, onBack: () -> Unit) {
                         }
                     }
                 )
-            } else {
-                TopAppBar(
-                    title = { Text(stringResource(R.string.archive_title)) },
-                    navigationIcon = {
-                        IconButton(onClick = onBack) {
-                            Icon(OgnelissIcons.ArrowBack, contentDescription = stringResource(R.string.nav_back))
-                        }
-                    }
-                )
             }
-        }
+        } else null
     ) { pad ->
         if (archived.isEmpty()) {
-            Box(Modifier.fillMaxSize().padding(pad).padding(Space.xl), contentAlignment = Alignment.Center) {
-                Text(
-                    stringResource(R.string.archive_empty),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
-                )
+            // 2.7.0: общий пустой экран (была мелкая серая строка по центру, без значка)
+            Box(Modifier.fillMaxSize().padding(pad)) {
+                com.ogneliss.dialer.ui.components.EmptyState(com.ogneliss.dialer.ui.components.EmptyReason.NoArchive)
             }
         } else {
             val listState = androidx.compose.foundation.lazy.rememberLazyListState()

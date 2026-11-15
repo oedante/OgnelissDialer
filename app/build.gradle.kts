@@ -597,6 +597,14 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
     testImplementation("org.robolectric:robolectric:4.14")
+    /*
+     * СНИМКИ ЭКРАНОВ НА JVM (2.7.0, согласие автора 15.11.2026): та же
+     * библиотека, что уже стоит ниже для тестов на устройстве (Google,
+     * Apache 2.0) — здесь для ScreenGalleryTest под Robolectric. Только
+     * для тестов: в приложение не попадает.
+     */
+    testImplementation(platform(libs.compose.bom))
+    testImplementation("androidx.compose.ui:ui-test-junit4")
 
     // Тесты на устройстве
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

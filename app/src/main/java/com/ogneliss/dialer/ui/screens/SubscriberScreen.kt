@@ -1077,7 +1077,11 @@ fun SubscriberScreen(
                  * Имя теперь всегда сверху и всегда видно — это главное,
                  * ради чего шапка нужна.
                  */
-                TopAppBar(
+                // Общая шапка (2.7.0, ScreenTopBar): свои здесь только цвета поверх обложки
+                com.ogneliss.dialer.ui.components.ScreenTopBar(
+                    title = title,
+                    onBack = onBack,
+                    showBack = showBack,
                     modifier = Modifier.onGloballyPositioned { coords ->
                         barBottomInRoot = coords.positionInRoot().y + coords.size.height
                     },
@@ -1086,7 +1090,7 @@ fun SubscriberScreen(
                         navigationIconContentColor = barIcons,
                         actionIconContentColor = barIcons
                     ),
-                    title = {
+                    titleContent = {
                         /*
                          * Имя — когда имени под фото уже не видно. С фото рядом
                          * маленький круглый портрет: фото «уходит» в строку
@@ -1117,16 +1121,6 @@ fun SubscriberScreen(
                                     title,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                        }
-                    },
-                    navigationIcon = {
-                        if (showBack) {
-                            IconButton(onClick = onBack) {
-                                Icon(
-                                    OgnelissIcons.ArrowBack,
-                                    contentDescription = stringResource(R.string.nav_back)
                                 )
                             }
                         }
@@ -2313,19 +2307,12 @@ fun SubscriberScreen(
                  * у каждого номера превратилась бы в шум.
                  */
                 if (showMarkSection) item {
-                    // Значок блокировки у заголовка: «Отметка» сама по себе
-                    // не говорит, о чём раздел, — значок сразу связывает его
-                    // с защитой от нежелательных звонков
+                    // 2.7.0: подпись — как у остальных разделов карточки. Был красный
+                    // значок блокировки перед «Отметка» — единственная подпись со
+                    // значком в приложении; о чём раздел, говорят сами фишки
+                    // «Спам» и «Мошенники»
                     OgnelissPanel(
-                        title = stringResource(R.string.spam_mark_section),
-                        icon = {
-                            Icon(
-                                OgnelissIcons.Block,
-                                contentDescription = null,
-                                tint = BlockRed,
-                                modifier = Modifier.size(FlowUi.iconSizeInline)
-                            )
-                        }
+                        title = stringResource(R.string.spam_mark_section)
                     ) {
                         FlowRow(
                             horizontalArrangement = Arrangement.spacedBy(Space.s),

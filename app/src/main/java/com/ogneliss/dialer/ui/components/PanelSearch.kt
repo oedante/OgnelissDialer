@@ -90,20 +90,12 @@ fun PanelSearchRow(
         IconButton(onClick = onClose) {
             Icon(OgnelissIcons.ArrowBack, contentDescription = stringResource(R.string.search_close))
         }
-        OutlinedTextField(
+        OgnelissTextField(
             value = value,
             onValueChange = onValueChange,
-            // Как поле «Имя» прежней панели контактов: белое на панели,
-            // рамка цвета акцента — только при вводе (разбор в ContactsBottomBar)
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = PanelColors.key(),
-                unfocusedContainerColor = PanelColors.key(),
-                unfocusedBorderColor = Color.Transparent,
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-                unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline
-            ),
-            placeholder = { Text(hint, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+            // Белое поле на панели — цвет клавиши (PanelColors); вид — общий (OgnelissTextField, 2.7.0)
+            container = PanelColors.key(),
+            placeholder = hint,
             leadingIcon = { Icon(OgnelissIcons.Search, contentDescription = null) },
             trailingIcon = {
                 if (value.isNotEmpty()) {
@@ -112,11 +104,8 @@ fun PanelSearchRow(
                     }
                 }
             },
-            singleLine = true,
-            // Ищется по мере ввода — кнопка клавиатуры её только прячет
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(onSearch = { keyboard?.hide() }),
-            shape = OgnelissShapeTokens.dialKey,
             modifier = Modifier
                 .weight(1f)
                 .focusRequester(focusRequester)

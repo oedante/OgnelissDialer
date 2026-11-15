@@ -21,6 +21,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -43,7 +46,6 @@ import com.ogneliss.dialer.ui.components.CallLogSkeleton
 import com.ogneliss.dialer.ui.components.EmptyState
 import com.ogneliss.dialer.ui.components.ReminderTimeDialog
 import com.ogneliss.dialer.ui.components.ScreenScaffold
-import com.ogneliss.dialer.ui.components.LabeledIconButton
 import com.ogneliss.dialer.ui.components.SearchBottomBar
 import com.ogneliss.dialer.ui.components.SingleChoiceSheet
 import com.ogneliss.dialer.ui.theme.CallGreen
@@ -166,23 +168,27 @@ fun RemindersScreen(
                 onQueryChange = { search = it },
                 placeholder = stringResource(R.string.reminders_search_hint),
                 onSwipeNext = onSwipeNext,
-                onSwipePrevious = onSwipePrevious,
-                filterButton = {
-                    // Та же шторка, что в контактах и заметках:
-                    // отбор одиночный. Разбор — в SingleChoiceSheet
-                    LabeledIconButton(
-                        icon = OgnelissIcons.FilterList,
-                        labelRes = R.string.filter_title,
-                        onClick = { filterOpen = true },
-                        tint = if (days > 0) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        },
-                        selected = days > 0
+                onSwipePrevious = onSwipePrevious
+            )
+        },
+        /*
+         * ФИЛЬТР — В ШАПКЕ (2.7.0, обзор вида 15.11.2026). Был кнопкой с подписью
+         * рядом с полем поиска — единственный экран, где фильтр жил на нижней
+         * панели: в журнале и контактах отборы — в «Меню», действия над списком —
+         * в шапке. Теперь внизу только поиск, как в заметках. Включённый отбор —
+         * значок цветом акцента и точка на нём. Выбор — той же шторкой
+         * (SingleChoiceSheet).
+         */
+        actions = {
+            IconButton(onClick = { filterOpen = true }) {
+                BadgedBox(badge = { if (days > 0) Badge() }) {
+                    Icon(
+                        OgnelissIcons.FilterList,
+                        contentDescription = stringResource(R.string.filter_title),
+                        tint = if (days > 0) MaterialTheme.colorScheme.primary else LocalContentColor.current
                     )
                 }
-            )
+            }
         }
     ) { padding ->
         // Пока идёт первая загрузка — заглушка, а не «напоминаний нет»:

@@ -256,11 +256,10 @@ fun ContactEditScreen(
                     onClear = { vm.edit { it.copy(birthday = "") } }
                 )
                 SettingsGroup(title = stringResource(R.string.contact_edit_group_note)) {
-                    OutlinedTextField(
+                    com.ogneliss.dialer.ui.components.OgnelissTextField(
                         value = state.draft.note,
                         onValueChange = { v -> vm.edit { it.copy(note = v) } },
-                        // Подсказки «Хранится в книге — её видят и другие приложения» нет с 2.1.0
-                        shape = MaterialTheme.shapes.large,
+                        singleLine = false,
                         minLines = 3,
                         keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                         modifier = Modifier.fillMaxWidth().padding(Space.m)
@@ -517,12 +516,10 @@ private fun Field(
     modifier: Modifier = Modifier,
     onChange: (String) -> Unit
 ) {
-    OutlinedTextField(
+    com.ogneliss.dialer.ui.components.OgnelissTextField(
         value = value,
         onValueChange = onChange,
-        label = { Text(label) },
-        singleLine = true,
-        shape = MaterialTheme.shapes.large,
+        label = label,
         keyboardOptions = KeyboardOptions(capitalization = capitalization, keyboardType = keyboard),
         modifier = modifier.fillMaxWidth().padding(start = Space.m, end = Space.m, top = Space.s)
     )

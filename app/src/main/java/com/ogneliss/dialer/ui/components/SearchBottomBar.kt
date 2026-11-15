@@ -17,11 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -158,36 +154,25 @@ fun SearchBottomBar(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(Space.s)
             ) {
-                OutlinedTextField(
-                // Белое поле на серой панели — как клавиши и строка номера:
-                // иначе в светлой теме поле сливается с панелью.
-                // Разбор — в PanelColors
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = PanelColors.key(),
-                    unfocusedContainerColor = PanelColors.key(),
-                    /*
-                     * Рамка — только при вводе.
-                     *
-                     * Стандартная рамка поля была самым контрастным
-                     * элементом панели: замер по снимкам — 3,5 : 1
-                     * в светлой теме и 4,9 : 1 в тёмной, тогда как клавиши
-                     * и поле номера отличаются от панели на 1,2–1,3.
-                     * Поле и так видно по своему фону — как поле номера
-                     * в журнале, у которого рамки нет вовсе. Рамка цвета
-                     * primary появляется, когда в поле вводят: видно,
-                     * куда идут буквы.
-                     */
-                    unfocusedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    // Подсказка — тем же цветом, что «Номер» в журнале:
-                    // читается, но бледнее введённого текста
-                    focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline
-                ),
+                /*
+                 * Поле — общее (OgnelissTextField, 2.7.0, обзор вида 15.11.2026):
+                 * было — OutlinedTextField, собранный здесь вручную; стало —
+                 * один вид на всё приложение. Прежний разбор сохранён там же.
+                 *
+                 * Белое поле на серой панели — цвет клавиши (PanelColors):
+                 * иначе в светлой теме поле сливается с панелью. Рамка —
+                 * только при вводе (замер: стандартная рамка была контрастнее
+                 * клавиш — 3,5 : 1 в светлой теме и 4,9 : 1 в тёмной против
+                 * 1,2–1,3). Подсказка — тем же цветом, что «Номер» в журнале.
+                 * Поиск идёт по мере ввода: кнопка ввода просто закрывает
+                 * клавиатуру.
+                 */
+                OgnelissTextField(
+                    container = PanelColors.key(),
                     modifier = Modifier.weight(1f),
                     value = query,
                     onValueChange = onQueryChange,
-                    placeholder = { Text(placeholder) },
+                    placeholder = placeholder,
                     leadingIcon = { Icon(OgnelissIcons.Search, contentDescription = null) },
                     trailingIcon = {
                         if (query.isNotEmpty()) {
@@ -201,11 +186,7 @@ fun SearchBottomBar(
                             }
                         }
                     },
-                    singleLine = true,
-                    // Поиск идёт по мере ввода: кнопка ввода просто
-                    // закрывает клавиатуру
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    shape = OgnelissShapeTokens.dialKey  // пилюля, как клавиши (1.5.3)
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search)
                 )
 
                 filterButton?.invoke()

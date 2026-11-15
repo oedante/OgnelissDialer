@@ -119,12 +119,11 @@ fun LanguagePickerDialog(
         title = stringResource(R.string.settings_language),
         content = {
             Column {
-                OutlinedTextField(
+                com.ogneliss.dialer.ui.components.OgnelissTextField(
                     value = query,
                     onValueChange = { query = it },
-                    singleLine = true,
                     leadingIcon = { Icon(OgnelissIcons.Search, contentDescription = null) },
-                    placeholder = { Text(stringResource(R.string.language_search_hint)) },
+                    placeholder = stringResource(R.string.language_search_hint),
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.padding(top = Space.s))

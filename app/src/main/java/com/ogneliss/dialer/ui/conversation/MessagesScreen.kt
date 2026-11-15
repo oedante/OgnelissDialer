@@ -434,13 +434,9 @@ fun MessagesScreen(
                     ) else emptyList()
                 )
                 // Архив — своей строкой заголовка со стрелкой назад
-                showArchive -> TopAppBar(
-                    title = { Text(stringResource(R.string.archive_title)) },
-                    navigationIcon = {
-                        IconButton(onClick = { showArchive = false }) {
-                            Icon(OgnelissIcons.ArrowBack, contentDescription = stringResource(R.string.nav_back))
-                        }
-                    }
+                showArchive -> com.ogneliss.dialer.ui.components.ScreenTopBar(
+                    title = stringResource(R.string.archive_title),
+                    onBack = { showArchive = false }
                 )
             }
         },
@@ -619,7 +615,7 @@ fun MessagesScreen(
                     // Пустой общий список при непустом архиве — не «пусто»: сверху строка «Архив · N»
                     // Пустая папка — без надписи (тихий интерфейс): вкладки внизу и так говорят, где человек
                     if (query.isBlank() && inFolder == null) {
-                        MessagesEmpty(if (showArchive) R.string.archive_empty else R.string.messages_empty)
+                        MessagesEmpty(archive = showArchive)
                     }
                 } else {
                     @Composable

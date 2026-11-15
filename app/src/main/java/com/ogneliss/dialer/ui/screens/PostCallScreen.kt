@@ -104,14 +104,12 @@ fun PostCallSheet(
         }
         ActionCard {
             Column(Modifier.padding(start = Space.l, end = Space.l, top = Space.l)) {
-                OutlinedTextField(
+                com.ogneliss.dialer.ui.components.OgnelissTextField(
                     value = note,
                     onValueChange = { note = it },
-                    placeholder = { Text(stringResource(R.string.postcall_note_hint)) },
-                    shape = MaterialTheme.shapes.large,
+                    placeholder = stringResource(R.string.postcall_note_hint),
+                    singleLine = false,
                     modifier = Modifier.fillMaxWidth(),
-                    // Три строки: заметка после разговора — обычно фраза,
-                    // а не два слова
                     minLines = 3
                 )
                 Spacer(Modifier.height(Space.m))

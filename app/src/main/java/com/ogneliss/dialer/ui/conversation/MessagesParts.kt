@@ -53,18 +53,8 @@ internal fun CompanionBlock(
     onOpenCompanion: () -> Unit,
     onUseHere: () -> Unit
 ) {
-    Column(
-        Modifier.fillMaxSize().padding(Space.xl),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            OgnelissIcons.Textsms,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(EMPTY_ICON)
-        )
-        Spacer(Modifier.height(Space.l))
+    // Общий вид пустого экрана (2.7.0, EmptyStateLayout): был синий значок и кнопки по центру
+    com.ogneliss.dialer.ui.components.EmptyStateLayout(icon = OgnelissIcons.Textsms, title = null) {
         if (companion != null) {
             FilledTonalButton(onClick = onOpenCompanion) {
                 Text(stringResource(R.string.messages_open_app, companion.label))
@@ -88,26 +78,9 @@ internal fun CompanionBlock(
  * но без пояснения и кнопки (правило автора: не объяснять).
  */
 @Composable
-internal fun MessagesEmpty(titleRes: Int) {
-    Column(
-        Modifier.fillMaxSize().padding(Space.xl),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            OgnelissIcons.Textsms,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(EMPTY_ICON)
-        )
-        Spacer(Modifier.height(Space.m))
-        Text(
-            stringResource(titleRes),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
-    }
+internal fun MessagesEmpty(archive: Boolean) {
+    // 2.7.0: общий EmptyState (был свой блок по центру экрана)
+    com.ogneliss.dialer.ui.components.EmptyState(com.ogneliss.dialer.ui.components.EmptyReason.NoMessages(archive))
 }
 
 /**
@@ -192,7 +165,6 @@ internal fun Strip(
 }
 
 /** Значок пустого состояния — 72 dp (дизайн-система, «Пустое состояние»). */
-private val EMPTY_ICON = 72.dp
 
 /** Значок в строке — 20 dp (дизайн-система, «Значки»). */
 private val STRIP_ICON = 20.dp

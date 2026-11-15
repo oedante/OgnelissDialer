@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Box
 import com.ogneliss.dialer.ui.adaptive.ProvideWindowLayout
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import android.content.Intent
 import android.os.Bundle
@@ -54,6 +55,9 @@ class MainActivity : ComponentActivity() {
      * неизвестно, что рисовать, и заставка честнее пустого экрана.
      */
     private var firstFrameReady = false
+
+    /** Для заставки: согласие читается здесь, а не в разметке (2.7.0, разбор у setKeepOnScreenCondition). */
+    @javax.inject.Inject lateinit var startPrefs: com.ogneliss.dialer.settings.Prefs
 
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { }
@@ -114,6 +118,22 @@ class MainActivity : ComponentActivity() {
          * на 700 мс держал её и тогда, когда всё давно готово.
          */
         splash.setKeepOnScreenCondition { !firstFrameReady }
+        /*
+         * ЗАСТАВКУ СНИМАЕТ ЧТЕНИЕ НАСТРОЕК, А НЕ РАЗМЕТКА (2.7.0).
+         *
+         * Было: флаг ставился только из разметки (LaunchedEffect ниже). Пока
+         * заставка держится, кадры не рисуются; а разметке, чтобы дойти до
+         * флага, нужен кадр. На телефоне это сходилось, потому что разметка
+         * собирается до первого кадра, — но заставка зависела от того, в каком
+         * порядке система вызовет сборку и отрисовку, а в тестах экранов
+         * (ScreenGalleryTest) запуск не завершался вовсе. Теперь согласие
+         * читается отдельно от разметки; ошибка чтения заставку тоже снимает —
+         * человек должен увидеть интерфейс, а не вечную заставку.
+         */
+        lifecycleScope.launch {
+            runCatching { startPrefs.consentVersion.first() }
+            firstFrameReady = true
+        }
 
         /*
          * EDGE-TO-EDGE БЕЗ СВОИХ ПОДЛОЖЕК.
