@@ -120,8 +120,14 @@ data class SettingsState(
     val carrierInfo: CarrierInfoMode = CarrierInfoMode.UNKNOWN_ONLY,
     /** Вид журнала: разбор в JournalStyle. */
     val journalStyle: JournalStyle = JournalStyle.GROUPS,
-    /** Круглая кнопка псевдозвонка на экранах журнала и контактов. */
-    val fakeCallButton: Boolean = true,
+    /**
+     * Круглая кнопка псевдозвонка на экранах журнала и контактов.
+     * 2.7.0, обзор вида 15.11.2026: умолчание true → false. Кнопка — единственный
+ * «парящий» элемент с тенью в плоском приложении, висит над колонкой кнопок
+ * вызова; псевдозвонок есть в «Меню → Инструменты». Кто включил или выключил
+ * сам — у того в хранилище лежит значение, его выбор остаётся.
+     */
+    val fakeCallButton: Boolean = false,
     /** Автодозвон (1.8.0): разбор в call/RedialPolicy.kt. */
     val autoRedialMode: AutoRedialMode = AutoRedialMode.DEFAULT,
     val autoRedialPace: RedialPace = RedialPace.DEFAULT,

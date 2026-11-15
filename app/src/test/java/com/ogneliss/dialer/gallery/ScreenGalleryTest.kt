@@ -183,8 +183,7 @@ class ScreenGalleryTest {
         rule.mainClock.autoAdvance = false
         val vm = ViewModelProvider(rule.activity)[DialerViewModel::class.java]
         settle(300)
-        // Подсказки первого запуска закрывали бы журнал
-        vm.markGestureHintShown()
+        // 2.7.0: шторки жестов при первом запуске больше нет — закрывать нечего
         val field = DialerViewModel::class.java.getDeclaredField("_state").apply { isAccessible = true }
         @Suppress("UNCHECKED_CAST")
         val state = field.get(vm) as MutableStateFlow<UiState>

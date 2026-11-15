@@ -873,15 +873,7 @@ class DialerViewModel @Inject constructor(
 
     fun closeAllSwipes() { _closeSwipes.value++ }
 
-    /**
-     * Подсказка о жестах уже показана.
-     *
-     * Eagerly, а не по подписке: подсказка решается в первые кадры
-     * после запуска, и ленивое начало давало бы её мелькание —
-     * появилась и тут же скрылась, когда пришло настоящее значение.
-     */
-    val gestureHintShown = prefs.gestureHintShown
-        .stateIn(viewModelScope, SharingStarted.Eagerly, true)
+    // gestureHintShown убран в 2.7.0: шторка жестов при первом запуске удалена (плашка о свайпах осталась)
 
     /**
      * СОБСТВЕННЫЙ НОМЕР.
@@ -920,10 +912,6 @@ class DialerViewModel @Inject constructor(
 
     fun setOwnNumber(value: String) = viewModelScope.launch {
         prefs.setOwnNumber(PhoneFormatter.toE164(value))
-    }
-
-    fun markGestureHintShown() = viewModelScope.launch {
-        prefs.setGestureHintShown(true)
     }
 
     /*

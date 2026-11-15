@@ -62,7 +62,6 @@ import com.ogneliss.dialer.data.CallType
 import com.ogneliss.dialer.settings.SwipeAction
 import com.ogneliss.dialer.ui.DialerViewModel
 import com.ogneliss.dialer.ui.components.OwnNumberDialog
-import com.ogneliss.dialer.ui.components.GestureHintSheet
 import com.ogneliss.dialer.ui.components.*
 import com.ogneliss.dialer.ui.components.CallLogRowState
 import com.ogneliss.dialer.ui.components.swipe.rememberSwipeRevealController
@@ -692,10 +691,17 @@ fun MainDialerScreen(
     }
 
 
-    val gestureHintShown by vm.gestureHintShown.collectAsStateWithLifecycle()
-    if (!gestureHintShown && list.isNotEmpty()) {
-        GestureHintSheet(onDismiss = { vm.markGestureHintShown() })
-    }
+    /*
+     * ПЕРВЫЙ ЗАПУСК — ОДНА ПОДСКАЗКА О ЖЕСТАХ (2.7.0, обзор вида 15.11.2026).
+     *
+     * Было: шторка GestureHintSheet «Два жеста, о которых стоит знать»
+     * открывалась сама при первом запуске и одновременно с ней в списке
+     * висела плашка о свайпах (swipeHintDone) — обе про одно, обе с «Понятно».
+     * Стало: только плашка — она тише и стоит в контексте, у самих строк.
+     * Шторку нигде больше не открывали (ни настройки, ни «Вопросы и ответы»),
+     * поэтому компонент и признак «показана» удалены; ключ gesture_hint_shown
+     * в хранилище остался неиспользуемым.
+     */
 
 
     val pinnedNumbers by vm.pinnedNumbers.collectAsStateWithLifecycle()

@@ -174,29 +174,29 @@
     <string name="rule_preview_number">Gilt für %1$s</string>
     <string name="rule_remove">Entfernen</string>
     <string name="settings_allow_list">Freigabeliste</string>
-    <string name="settings_allow_list_text">Diese Nummern werden nie gesperrt, unabhängig von anderen Regeln.</string>
+    <string name="settings_allow_list_text">Diese Nummern werden nie gesperrt</string>
     <string name="settings_backup_export">Notizen und Listen exportieren</string>
-    <string name="settings_backup_export_text">Speichert Notizen, Markierungen, Sperr- und Freigabelisten sowie Kurzwahl in eine Datei Ihrer Wahl.</string>
+    <string name="settings_backup_export_text">Notizen, Markierungen, Listen und Kurzwahl in eine Datei</string>
     <string name="settings_backup_import">Aus Datei importieren</string>
     <string name="settings_backup_import_text">Fügt Daten aus einer Sicherung hinzu. Vorhandene Einträge bleiben erhalten.</string>
     <string name="settings_block_hidden">Unterdrückte Nummern sperren</string>
     <string name="settings_block_list">Sperrliste</string>
     <string name="settings_block_tagged">Als Spam markierte Nummern sperren</string>
-    <string name="settings_block_tagged_text">Ein — Nummern mit Ihrer Markierung „Spam“ oder „Betrug“ rufen nicht mehr an und erscheinen im Protokoll als gesperrt. Aus — Anrufe kommen durch, die Markierung ist aber im Protokoll und auf dem Anrufbildschirm sichtbar.</string>
+    <string name="settings_block_tagged_text">Als Spam oder Betrug markierte Nummern kommen nicht durch</string>
     <string name="settings_block_unknown">Nummern außerhalb der Kontakte sperren</string>
-    <string name="settings_block_unknown_text">Mit Bedacht verwenden: Kurierdienste, Arztpraxen und Schulen rufen von unbekannten Nummern an. Tragen Sie Ausnahmen zuerst in die Freigabeliste ein.</string>
+    <string name="settings_block_unknown_text">Anrufe unbekannter Nummern kommen nicht durch</string>
     <string name="settings_blocked_system">Systemweite Sperrliste</string>
-    <string name="settings_blocked_system_text">Wird mit Android geteilt. Sperrt auf Telefonieebene — das Telefon klingelt gar nicht.</string>
+    <string name="settings_blocked_system_text">Mit Android geteilt; das Telefon klingelt gar nicht</string>
     <string name="settings_callback_suggestion">Erinnerung nach abgelehntem Anruf anbieten</string>
-    <string name="settings_callback_suggestion_text">Eine Benachrichtigung mit Optionen: in 30 Minuten, in 2 Stunden, heute Abend.</string>
+    <string name="settings_callback_suggestion_text">Eine Benachrichtigung mit Rückruf-Erinnerung</string>
     <string name="settings_default_apps">Standard-Apps</string>
     <string name="settings_dnd">Nicht stören</string>
     <string name="settings_dynamic_color">Systemfarben verwenden</string>
-    <string name="settings_dynamic_color_text">Färbt die App passend zu Ihrem Hintergrundbild. Standardmäßig aus, damit die App ihre geprüften Farben behält.</string>
+    <string name="settings_dynamic_color_text">Färbt die App passend zum Hintergrundbild</string>
     <string name="settings_external_lookup">Externe Rufnummernerkennung</string>
-    <string name="settings_external_lookup_text">Standardmäßig aus. Bei Aktivierung wird die Nummer an die gewählte App übergeben.</string>
+    <string name="settings_external_lookup_text">Aktiviert: Die Nummer wird an die gewählte App übergeben</string>
     <string name="settings_file_logging">Protokoll in Datei schreiben</string>
-    <string name="settings_file_logging_text">Nummern und Namen im Protokoll werden maskiert. Nützlich bei einer Fehlermeldung.</string>
+    <string name="settings_file_logging_text">Protokoll in Datei, Nummern und Namen maskiert</string>
     <string name="settings_grouping">Anrufe gruppieren</string>
     <string name="settings_grouping_text">Wie wiederholte Anrufe in der Liste zusammengefasst werden</string>
     <string name="settings_haptic">Vibration beim Tippen</string>
@@ -205,21 +205,21 @@
     <string name="settings_language_summary">Sprache der Oberfläche</string>
     <string name="settings_language_system">Systemsprache</string>
     <string name="settings_large_buttons">Große Tasten</string>
-    <string name="settings_large_buttons_text">Größere Tasten und Anrufschaltflächen. Hilfreich bei eingeschränktem Sehvermögen oder unsicherer Motorik.</string>
+    <string name="settings_large_buttons_text">Größere Tasten und Anrufschaltflächen</string>
     <string name="settings_licenses">Open-Source-Lizenzen</string>
     <string name="settings_log_clear">Protokoll löschen</string>
     <string name="settings_log_share">Protokoll senden</string>
     <string name="settings_calllog_export">Anrufprotokoll exportieren</string>
-    <string name="settings_calllog_export_text">Das gesamte Protokoll als CSV-Tabelle: Datum, Nummer, Name, Typ, Dauer. Öffnet sich in Excel und LibreOffice.</string>
+    <string name="settings_calllog_export_text">Das gesamte Protokoll als CSV-Tabelle</string>
     <string name="settings_log_save">Protokoll in eine Datei speichern</string>
-    <string name="settings_log_save_text">Dasselbe technische Protokoll wie bei „Teilen“, nur in eine Datei Ihrer Wahl geschrieben.</string>
+    <string name="settings_log_save_text">Das technische Protokoll in eine Datei Ihrer Wahl</string>
     <string name="settings_merge_calls">Anrufe derselben Nummer gruppieren</string>
     <string name="settings_merge_calls_text">Aufeinanderfolgende Anrufe erscheinen als ein Eintrag mit Zähler.</string>
     <string name="settings_notifications">App-Benachrichtigungen</string>
     <string name="settings_post_call">Bildschirm nach dem Anruf anzeigen</string>
     <string name="settings_post_call_text">Notiz, Markierung oder Erinnerung direkt nach dem Auflegen.</string>
     <string name="settings_post_call_unknown">Nur bei unbekannten Nummern</string>
-    <string name="settings_post_call_unknown_text">Empfohlen: ein Fenster nach jedem Anruf bei Angehörigen wird schnell lästig.</string>
+    <string name="settings_post_call_unknown_text">Kein Fenster nach Anrufen mit Kontakten</string>
     <string name="settings_privacy_policy">Datenschutzerklärung</string>
     <string name="settings_remember_sim">SIM je Nummer merken</string>
     <string name="settings_remember_sim_text">Die für eine Nummer gewählte SIM wird beim nächsten Mal vorgeschlagen.</string>
@@ -250,17 +250,17 @@
     <string name="settings_section_spam_summary">Sperrliste, Ausnahmen, Markierungen</string>
     <string name="settings_show_photo">Kontaktfotos anzeigen</string>
     <string name="settings_messengers_any_number">Messenger für jede Nummer</string>
-    <string name="settings_messengers_any_number_text">«Schreiben» bietet installierte WhatsApp, Telegram, Viber und Max an, auch wenn die Nummer nicht in den Kontakten ist. Telegram öffnet den Chat nur, wenn die Person die Suche nach Nummer erlaubt</string>
+    <string name="settings_messengers_any_number_text">„Schreiben“ bietet Messenger für jede Nummer an</string>
     <string name="settings_sim">SIM-Karten und Netze</string>
     <string name="settings_sim_labels">Namen der SIM-Karten</string>
     <string name="settings_sim_labels_text">Benennen Sie die Steckplätze, um sie zu unterscheiden</string>
     <string name="settings_sim_none">Keine aktiven SIM-Karten erkannt</string>
     <string name="settings_sim_slot">Steckplatz %1$d</string>
     <string name="settings_smart_speaker">Automatischer Lautsprecher</string>
-    <string name="settings_smart_speaker_text">Legen Sie das Telefon während des Gesprächs ab, schaltet sich der Lautsprecher ein. Heben Sie es an, schaltet er zurück. Nicht bei Headset oder nach manueller Umschaltung.</string>
+    <string name="settings_smart_speaker_text">Ablegen schaltet den Lautsprecher ein</string>
     <string name="settings_sort_order">Reihenfolge der Suchergebnisse</string>
     <string name="settings_carrier_info">Anbieter und Region</string>
-    <string name="settings_carrier_info_text">Werden unter der Nummer aus dem offiziellen Nummernplan angezeigt. Bei einer Mobilnummer ist es die Region der Vergabe, nicht der Aufenthaltsort. Anbieter und Region stammen aus dem russischen Register; in anderen Ländern wird nur der Anbieter angezeigt, und nicht bei jeder Nummer.</string>
+    <string name="settings_carrier_info_text">Zeile unter der Nummer nach dem Nummernplan</string>
     <string name="carrier_info_unknown">Nur unbekannte Nummern</string>
     <string name="carrier_info_all">Alle Nummern</string>
     <string name="carrier_info_hidden">Nicht anzeigen</string>
@@ -276,7 +276,7 @@
     <string name="settings_theme_light">Hell</string>
     <string name="settings_theme_summary">Hell, dunkel oder AMOLED-Schwarz</string>
     <string name="settings_theme_preset">Farbschema</string>
-    <string name="settings_theme_preset_text">Hintergrundton und Akzentfarbe — dieselben Schemata und Akzente wie in Ogneliss Mail</string>
+    <string name="settings_theme_preset_text">Hintergrundton und Akzent wie in Ogneliss Mail</string>
     <!-- 1.9.0: оформление как в Ogneliss Mail -->
     <string name="settings_corner_size">Eckenrundung</string>
     <string name="settings_corner_size_text">Karten, Dialoge und Leisten — strenger oder weicher, wie in Ogneliss Mail</string>
@@ -400,13 +400,13 @@
     <string name="onboarding_grant">Erlauben</string>
     <string name="onboarding_default_action">Festlegen</string>
     <string name="settings_dialpad_open">Tastenfeld beim Start öffnen</string>
-    <string name="settings_dialpad_open_text">Standardmäßig aus: die App wird öfter geöffnet, um zu sehen, wer angerufen hat, als um zu wählen.</string>
+    <string name="settings_dialpad_open_text">Die Wähltastatur ist direkt nach dem Start offen</string>
     <string name="incall_dtmf_hint">Tonwahl</string>
     <string name="settings_theme_contrast">Hoher Kontrast (Sehschwäche)</string>
     <string name="settings_notes_retention">Alte Notizen löschen</string>
-    <string name="settings_notes_retention_text">Eine Notiz zu einer Lieferung ist eine Woche nützlich, nach einem Jahr ist sie Ballast. Notizen mit Spam- oder Betrugsmarkierung werden nie gelöscht.</string>
+    <string name="settings_notes_retention_text">Alte Notizen werden nach der gewählten Zeit gelöscht</string>
     <string name="settings_notes_scope">Welche Notizen bereinigen</string>
-    <string name="settings_notes_scope_text">Eine Notiz zu jemandem aus Ihren Kontakten betrifft meist eine lebendige Beziehung, keine einmalige Angelegenheit.</string>
+    <string name="settings_notes_scope_text">Welche Notizen gelöscht werden</string>
     <string name="retention_never">Dauerhaft behalten</string>
     <string name="retention_month">Älter als ein Monat</string>
     <string name="retention_half_year">Älter als sechs Monate</string>
@@ -496,7 +496,7 @@
     <string name="block_reason_hidden">unterdrückte Nummer</string>
     <string name="block_reason_not_in_contacts">nicht in den Kontakten</string>
     <string name="settings_panel_swipe_nav">Wischen auf der unteren Leiste</string>
-    <string name="settings_panel_swipe_nav_text">Wischen auf der unteren Leiste wechselt zum benachbarten Bereich: Anrufe, SMS, Kontakte, Notizen</string>
+    <string name="settings_panel_swipe_nav_text">Wischen auf der unteren Leiste wechselt den Bereich</string>
     <string name="gesture_hint_title">Zwei Gesten, die man kennen sollte</string>
     <string name="gesture_hint_subtitle">Sie sind nicht sichtbar, machen die App aber erst schnell.</string>
     <string name="gesture_hint_swipe_right">Zeile nach rechts wischen — anrufen</string>
@@ -530,18 +530,18 @@
     <string name="action_more">Mehr</string>
     <string name="action_clear">Löschen</string>
     <string name="settings_battery">Hintergrundbetrieb</string>
-    <string name="settings_battery_text">Ohne ihn schläft die App ein, und verpasste Anrufe erscheinen erst, wenn Sie sie selbst öffnen</string>
+    <string name="settings_battery_text">Erlaubt der App, im Hintergrund zu laufen</string>
     <string name="settings_battery_already">Bereits erlaubt</string>
     <string name="wizard_autostart_title">Autostart</string>
     <string name="incoming_access_title">Anrufbildschirm bei Anrufen</string>
     <string name="incoming_step_overlay">Erlauben Sie die Anzeige über anderen Apps</string>
     <string name="incoming_step_miui">Erlauben Sie die Anzeige auf dem Sperrbildschirm und Pop-up-Fenster im Hintergrund</string>
     <string name="permissions_open">Öffnen</string>
-    <string name="incoming_access_text">Anzeige auf dem Sperrbildschirm und Pop-up-Fenster im Hintergrund: ohne sie zeigt das Telefon den Anrufbildschirm eventuell nicht</string>
+    <string name="incoming_access_text">Anzeige auf dem Sperrbildschirm und Pop-ups im Hintergrund</string>
     <string name="incoming_blocked_banner">Das Telefon hat den Anrufbildschirm nicht angezeigt</string>
     <string name="incoming_blocked_action">Erlauben</string>
     <string name="menu_my_contact">Mein Kontakt</string>
-    <string name="settings_own_number_text">Nötig, um die eigene Karte zu teilen. Zum Ändern oder Löschen tippen</string>
+    <string name="settings_own_number_text">Nötig, um die eigene Karte zu teilen</string>
     <string name="blocked_by_rule">Gesperrt</string>
     <plurals name="reminder_in_minutes">
         <item quantity="one">in %1$d Minute</item>
@@ -566,8 +566,8 @@
     <string name="fake_call_cancel">Fingierten Anruf abbrechen</string>
     <string name="settings_fake_call_number">Wer anruft</string>
     <string name="settings_fake_call_button">Schaltfläche für fingierten Anruf</string>
-    <string name="settings_fake_call_button_text">Eine kleine runde Schaltfläche im Protokoll und in den Kontakten. Ausschalten, wenn Menü, Verknüpfung oder Kachel genügen.</string>
-    <string name="settings_fake_call_number_text">Eine Nummer aus Ihren Kontakten. Bleibt sie leer, wird ein zufälliger Kontakt verwendet.</string>
+    <string name="settings_fake_call_button_text">Schaltfläche über den Listen in Protokoll und Kontakten</string>
+    <string name="settings_fake_call_number_text">Nummer aus den Kontakten; leer = zufälliger Kontakt</string>
     <!-- Подзаголовки внутри разделов настроек: разбор в SettingEntry.groupRes -->
     <string name="settings_group_row_swipe">Wischen über eine Zeile</string>
     <string name="settings_group_screen_swipe">Zwischen Bildschirmen wechseln</string>
@@ -604,14 +604,14 @@
     <string name="action_mark_spam">Als Spam markieren</string>
     <string name="sim_kind_physical">SIM-Karte</string>
     <string name="settings_button_labels">Beschriftungen unter Tasten</string>
-    <string name="settings_button_labels_text">Text unter den Symbolen in den unteren Leisten, der Kontaktkarte und im Anrufbildschirm. Abschaltbar, sobald die Symbole vertraut sind</string>
+    <string name="settings_button_labels_text">Text unter den Symbolen in Leisten und Ansichten</string>
     <string name="settings_proximity">Bildschirm am Ohr ausschalten</string>
-    <string name="settings_proximity_text">Der Näherungssensor schaltet den Bildschirm während eines Anrufs aus. Ohne ihn kann die Wange „Beenden“ oder „Stumm“ drücken</string>
+    <string name="settings_proximity_text">Der Näherungssensor schaltet den Bildschirm im Gespräch aus</string>
     <string name="settings_hide_contact_number">Nummerntyp statt Nummer</string>
     <string name="settings_call_animation">Lebendiger Anrufhintergrund</string>
-    <string name="settings_call_animation_text">Hinter dem Anrufbildschirm ziehen langsam weiche Farben – aus dem Foto des Anrufers, ohne Foto in den Farben des Designs. Bleibt still, wenn Animationen in den Systemeinstellungen aus sind</string>
+    <string name="settings_call_animation_text">Langsam wandernde weiche Farben hinter dem Anrufbildschirm</string>
     <string name="settings_call_photo">Kontaktfoto beim Anruf</string>
-    <string name="settings_call_photo_text">Wie das Foto des Anrufers erscheint: als Vollbild, über die ganze Breite ohne Beschnitt oder als Porträt im Kreis oder Quadrat über dem Namen</string>
+    <string name="settings_call_photo_text">Wie das Foto des Anrufers angezeigt wird</string>
     <string name="call_photo_full_screen">Vollbild</string>
     <string name="call_photo_circle">Kreis</string>
     <string name="call_photo_square">Quadrat</string>
@@ -623,7 +623,7 @@
     <string name="ui_scale_100" formatted="false">100 %</string>
     <string name="ui_scale_110" formatted="false">110 %</string>
     <string name="settings_home_group_main">Allgemein</string>
-    <string name="settings_hide_contact_number_text">Im Anrufbildschirm zeigen gespeicherte Kontakte „Mobil“, „Arbeit“ usw. statt Ziffern. Unbekannte Nummern werden immer angezeigt</string>
+    <string name="settings_hide_contact_number_text">Im Anrufbildschirm bei Kontakten Nummerntyp statt Ziffern</string>
     <string name="language_search_hint">Sprache suchen</string>
     <string name="language_auto_translated">automatisch übersetzt</string>
     <string name="missed_calls_channel">Verpasste Anrufe</string>
@@ -659,7 +659,7 @@
     <string name="msg_deleted_from_log_many">Aus der Anrufliste gelöscht: %1$s</string>
     <string name="action_create_contact">Kontakt erstellen</string>
     <string name="settings_call_photo_size">Fotogröße beim Anruf</string>
-    <string name="settings_call_photo_size_text">Größe des runden oder quadratischen Porträts. Der Platz für den Namen bleibt immer frei</string>
+    <string name="settings_call_photo_size_text">Größe des Porträts im Anrufbildschirm</string>
     <string name="call_photo_size_normal">Normal</string>
     <string name="call_photo_size_large">Groß</string>
     <!-- 1.5.7: открытый код, лицензия Apache 2.0 -->
@@ -681,7 +681,7 @@
     </plurals>
     <!-- 1.5.8: ответ на вызов сдвигом -->
     <string name="settings_answer_mode">Anrufe annehmen</string>
-    <string name="settings_answer_mode_text">Schieben — damit ein Anruf beim Herausnehmen des Telefons nicht versehentlich angenommen oder abgelehnt wird</string>
+    <string name="settings_answer_mode_text">Annehmen per Tippen oder Schieben</string>
     <string name="answer_mode_tap">Tippen</string>
     <string name="answer_mode_slide">Schieben</string>
     <string name="incall_slide_hint">Nach rechts schieben zum Annehmen, nach links zum Ablehnen</string>
@@ -724,17 +724,17 @@
     <string name="faq_q_default">Wie mache ich Ogneliss Dialer zur Standard-Telefon-App?</string>
     <string name="faq_a_default">Beim ersten Start bietet die App an, Standard-Telefon-App zu werden. Wenn Sie abgelehnt haben, öffnen Sie %1$s und wählen Sie Ogneliss Dialer unter „Telefon“ — je nach Gerät heißt der Punkt etwas anders. Anrufliste und Kontakte bleiben, wie sie sind: Sie werden von Android gespeichert, nicht von der App, und auch beim Wechsel zurück geht nichts verloren. Wurde die App aus einer APK-Datei installiert und meldet Android „Eingeschränkte Einstellung“, öffnen Sie zuerst App-Info → ⋮ → „Eingeschränkte Einstellungen zulassen“.</string>
     <string name="faq_q_internet">Warum hat die App keinen Internetzugang?</string>
-    <string name="faq_a_internet">Damit Ihre Daten das Telefon nicht verlassen können. Ohne Internetberechtigung kann die App nichts senden — weder die Anrufliste noch Kontakte oder Notizen; das sehen Sie in den Details der installierten App. Anbieter und Region einer unbekannten Nummer stammen aus einem Verzeichnis in der App, und ob sie angezeigt werden, entscheiden Sie: %1$s.</string>
+    <string name="faq_a_internet">Damit Ihre Daten das Telefon nicht verlassen können. Ohne Internetberechtigung kann die App nichts senden — weder die Anrufliste noch Kontakte oder Notizen; das sehen Sie in den Details der installierten App. Anbieter und Region einer unbekannten Nummer stammen aus einem Verzeichnis in der App, und ob sie angezeigt werden, entscheiden Sie: %1$s. Bei einer Mobilnummer ist das die Region der Vergabe, nicht der Aufenthaltsort; Anbieter und Region stammen aus dem russischen Register, in anderen Ländern wird nur der Anbieter angezeigt, und nicht bei jeder Nummer.</string>
     <string name="faq_q_transfer">Wie übertrage ich Notizen und Listen auf ein neues Telefon?</string>
     <string name="faq_a_transfer">Per Datei. Von selbst ziehen sie nicht um: Die App hält ihre Daten aus Cloud-Sicherungen und der Übertragung von Telefon zu Telefon heraus — so bleiben sie nur bei Ihnen. Öffnen Sie %1$s: Notizen, Markierungen, Sperr- und Freigabelisten sowie Kurzwahl werden in eine Datei Ihrer Wahl gespeichert. Auf dem neuen Telefon: %2$s — die Daten kommen zu den vorhandenen hinzu. Anrufliste und Kontakte übertragen Android und Ihr Konto.</string>
     <string name="faq_q_switch">Wie wechsle ich von der Anrufliste zu den Kontakten?</string>
-    <string name="faq_a_switch">Mit der ersten Taste der unteren Leiste. Das große Symbol ist die gerade geöffnete Liste, der kleine Kreis daneben die, zu der ein Tippen wechselt. Langes Drücken öffnet alle Bereiche: Anrufliste, Kontakte, Notizen und Erinnerungen. Sie können auch über die Leiste wischen: nach links zu den Kontakten, nach rechts zurück zur Anrufliste.</string>
+    <string name="faq_a_switch">Mit der ersten Taste der unteren Leiste. Das große Symbol ist die gerade geöffnete Liste, der kleine Kreis daneben die, zu der ein Tippen wechselt. Langes Drücken öffnet alle Bereiche: Anrufliste, Kontakte, Notizen und Erinnerungen. Sie können auch über die Leiste wischen: nach links zu den Kontakten, nach rechts zurück zur Anrufliste. Für SMS und Kontakte lassen sich eigene Symbole in der App-Liste einschalten: %1$s. Das App-Symbol öffnet dann die Anrufliste.</string>
     <string name="faq_q_search">Wie finde ich einen Kontakt nach Namen?</string>
     <string name="faq_a_search">Mit der Taste „Suche“ auf der unteren Leiste. In der Anrufliste sucht sie nach Name, Nummer und Notiz, in den Kontakten nach Namen. Auch das Wähltastenfeld sucht — per Ziffern nach Nummer und per T9, kyrillisch und lateinisch zugleich.</string>
     <string name="faq_q_undo">Ich habe einen Eintrag versehentlich gelöscht. Lässt er sich zurückholen?</string>
     <string name="faq_a_undo">Ja, wenn Sie gleich handeln. Nach dem Löschen erscheint unten einige Sekunden lang „Aus der Anrufliste entfernt“ mit der Taste „Rückgängig“ — tippen Sie darauf, solange die Meldung zu sehen ist. Danach werden die Einträge auch aus der Systemanrufliste gelöscht und lassen sich nicht wiederherstellen. Das Leeren der ganzen Anrufliste über das Menü lässt sich nicht rückgängig machen — deshalb fragt die App vorher nach.</string>
     <string name="faq_q_spam">Wie sperre ich Spam und unerwünschte Nummern?</string>
-    <string name="faq_a_spam">Eintrag lange drücken → „Sperren“: Die Nummer kommt auf die Sperrliste und kommt nicht mehr durch. Am selben Ort, unter „Mehr“, gibt es die Markierung „Spam“: Auch solche Nummern kommen nicht durch, und die Markierung ist in der Anrufliste und auf dem Anrufbildschirm zu sehen. Nummernmasken, unterdrückte und unbekannte Nummern sowie eine Freigabeliste für Ausnahmen finden Sie unter %1$s.</string>
+    <string name="faq_a_spam">Eintrag lange drücken → „Sperren“: Die Nummer kommt auf die Sperrliste und kommt nicht mehr durch. Am selben Ort, unter „Mehr“, gibt es die Markierung „Spam“: Auch solche Nummern kommen nicht durch, und die Markierung ist in der Anrufliste und auf dem Anrufbildschirm zu sehen. Nummernmasken, unterdrückte und unbekannte Nummern sowie eine Freigabeliste für Ausnahmen finden Sie unter %1$s. Das Sperren unbekannter Nummern hält auch Kurierdienste, Arztpraxen und Schulen ab — tragen Sie sie zuerst in die Freigabeliste ein.</string>
     <string name="faq_q_slide">Wie nehme ich Anrufe durch Schieben an — oder bekomme die Tasten zurück?</string>
     <string name="faq_a_slide">%1$s. „Tippen“ zeigt zwei gewöhnliche Tasten. Bei „Schieben“ verschieben Sie die Taste: nach rechts annehmen, nach links ablehnen — so wird kein Anruf versehentlich angenommen oder abgelehnt, wenn Sie das Telefon aus der Tasche ziehen. Mit TalkBack werden Anrufe immer mit Tasten angenommen.</string>
     <string name="faq_q_sim">Wie wähle ich die SIM-Karte für einen Anruf?</string>
@@ -742,7 +742,7 @@
     <string name="faq_q_missed">Verpasste Anrufe erscheinen erst, wenn ich die App öffne. Was tun?</string>
     <string name="faq_a_missed">Wahrscheinlich schickt das System die App in den Ruhezustand, um Akku zu sparen. Erlauben Sie ihr den Hintergrundbetrieb — %1$s —, dann erscheinen verpasste Anrufe sofort.</string>
     <string name="faq_q_incoming">Bei eingehenden Anrufen erscheint kein Anrufbildschirm. Was tun?</string>
-    <string name="faq_a_incoming">Manche Telefone — Xiaomi, Redmi, POCO, vivo, OPPO, realme, OnePlus — erlauben Apps standardmäßig keine Fenster über dem Sperrbildschirm oder aus dem Hintergrund. Öffnen Sie %1$s und erlauben Sie die Anzeige auf dem Sperrbildschirm und Pop-up-Fenster im Hintergrund. Bei Huawei, Honor, Tecno und Infinix erlauben Sie zusätzlich den Autostart. Bis dahin können Sie über die Anrufbenachrichtigung annehmen.</string>
+    <string name="faq_a_incoming">Manche Telefone — Xiaomi, Redmi, POCO, vivo, OPPO, realme, OnePlus — erlauben Apps standardmäßig keine Fenster über dem Sperrbildschirm oder aus dem Hintergrund. Öffnen Sie %1$s und erlauben Sie die Anzeige auf dem Sperrbildschirm und Pop-up-Fenster im Hintergrund. Bei Huawei, Honor, Tecno und Infinix erlauben Sie zusätzlich den Autostart. Bis dahin können Sie über die Anrufbenachrichtigung annehmen. Ist „Eingehender Anruf als Banner“ an, erscheint das Banner nur, solange Sie das Telefon benutzen; bei gesperrtem oder dunklem Bildschirm kommt der Anruf immer im Vollbild.</string>
     <string name="faq_q_recording">Kann ich Anrufe aufzeichnen?</string>
     <string name="faq_a_recording">Nein. Ab Android 10 gibt das System Dritt-Apps keinen Zugriff auf den Gesprächston, und eine Umgehung verstößt gegen die Google-Play-Richtlinien. Zeichnet Ihr Telefon Anrufe auf, ist das eine eingebaute Funktion des Herstellers — sie arbeitet unabhängig vom gewählten Dialer.</string>
     <string name="faq_q_work">Darf ich die App beruflich nutzen? Wo ist der Quellcode?</string>
@@ -823,12 +823,12 @@
     <string name="number_picker_hint">Welche Nummer?</string>
     <!-- Автодозвон (1.8.0): настройка и экран вызова -->
     <string name="settings_auto_redial">Automatische Wahlwiederholung</string>
-    <string name="settings_auto_redial_text">Ist besetzt oder hebt niemand ab, wird die Nummer erneut gewählt. „Anbieten“ fragt auf dem Anrufbildschirm, „Sofort“ beginnt ohne Nachfrage. Notruf- und kurze Servicenummern werden nie wiederholt.</string>
+    <string name="settings_auto_redial_text">Wählt bei Besetzt oder Nichtannahme erneut</string>
     <string name="auto_redial_off">Aus</string>
     <string name="auto_redial_offer">Anbieten</string>
     <string name="auto_redial_auto">Sofort</string>
     <string name="settings_auto_redial_pace">Wahlwiederholungen</string>
-    <string name="settings_auto_redial_pace_text">Wie oft und in welchem Abstand erneut gewählt wird. Auf dem Anrufbildschirm jederzeit abbrechbar.</string>
+    <string name="settings_auto_redial_pace_text">Wie oft und in welchem Abstand erneut gewählt wird</string>
     <string name="redial_pace_3_10">3 Versuche, alle 10 s</string>
     <string name="redial_pace_5_10">5 Versuche, alle 10 s</string>
     <string name="redial_pace_5_30">5 Versuche, alle 30 s</string>
@@ -849,13 +849,13 @@
     <string name="redial_spoken">%1$s. Wahlwiederholung, Versuch %2$d von %3$d</string>
     <!-- Памятка о мошенниках и тихие часы (1.8.0) -->
     <string name="settings_scam_memo">Betrugshinweis</string>
-    <string name="settings_scam_memo_text">Dauert ein Gespräch mit einer unbekannten Nummer länger als zwei Minuten, erinnert der Anrufbildschirm einmal daran: SMS-Codes, Kartendaten und Passwörter gibt man niemandem. Das Telefon vibriert kurz, damit der Hinweis auffällt.</string>
+    <string name="settings_scam_memo_text">Hinweis bei langen Gesprächen mit unbekannten Nummern</string>
     <string name="keywords_scam_memo">betrug sicherheit bank code warnung</string>
     <string name="scam_memo_title">Langes Gespräch mit unbekannter Nummer</string>
     <string name="scam_memo_text">Geben Sie keine SMS-Codes, Kartendaten oder Passwörter preis. Banken, Polizei und „Sicherheitsdienste“ fragen nie danach. Im Zweifel auflegen und die Bank über die Nummer auf der Karte anrufen.</string>
     <string name="scam_memo_ok">Verstanden</string>
     <string name="settings_quiet_hours">Ruhezeit für unbekannte Nummern</string>
-    <string name="settings_quiet_hours_text">In dieser Zeit kommen Anrufe von Nummern, die nicht in den Kontakten sind, lautlos an und wecken den Bildschirm nicht — sie bleiben in der Anrufliste. Ruft dieselbe Nummer innerhalb von 15 Minuten erneut an, klingelt das Telefon: So kommen dringende Anrufe durch. Nummern auf der Freigabeliste klingeln immer.</string>
+    <string name="settings_quiet_hours_text">Unbekannte Anrufer klingeln zu den Zeiten lautlos</string>
     <string name="keywords_quiet_hours">nacht schlaf lautlos nicht stören ruhe unbekannt</string>
     <string name="quiet_hours_off">Aus</string>
     <string name="quiet_hours_22_08">22:00–08:00 Uhr</string>
@@ -872,6 +872,8 @@
     <string name="faq_a_redial">Nach „Besetzt“ oder „Keine Antwort“ bietet der Anrufbildschirm „Weiter versuchen“ an: Die App wählt die Nummer nach einer Pause erneut — so oft wie eingestellt (%2$s). Um ohne Nachfrage zu wählen, stellen Sie „Sofort“ ein: %1$s. Notruf- und kurze Servicenummern werden nie wiederholt, und „Auflegen“ stoppt immer.</string>
     <string name="faq_q_quiet">Kann ich nächtliche Anrufe unbekannter Nummern stummschalten?</string>
     <string name="faq_a_quiet">Ja: %1$s. In dieser Zeit kommt ein solcher Anruf lautlos an und weckt den Bildschirm nicht; morgens steht er in der Anrufliste mit „Stumm — Ruhezeit“. Ruft dieselbe Nummer innerhalb von 15 Minuten erneut an, klingelt das Telefon. Kontakte und Nummern auf der Freigabeliste klingeln immer.</string>
+    <string name="faq_q_speaker">Wie schalte ich den Lautsprecher automatisch ein?</string>
+    <string name="faq_a_speaker">Legen Sie das Telefon während des Gesprächs ab, schaltet sich der Lautsprecher ein; beim Anheben schaltet er zurück. Einschalten: %1$s. Mit Headset oder nach manueller Umschaltung greift das nicht.</string>
     <string name="faq_q_operator_name">Warum zeigt eine Nummer einen Firmennamen „laut Netzbetreiber“?</string>
     <string name="faq_a_operator_name">Viele Organisationen rufen mit Kennung an: Der Netzbetreiber übermittelt den Firmennamen zusammen mit der Nummer (in Russland seit dem 1. September 2025 Pflicht). Die App zeigt ihn auf dem Anrufbildschirm und merkt ihn sich für Anrufliste und Kontaktkarte — bei Nummern, die nicht in Ihren Kontakten sind. Der Name stammt vom Netz, nicht von der App: Kontakte und Ihre Notizen haben immer Vorrang.</string>
     <string name="faq_q_scam">Was ist der Betrugshinweis während eines Anrufs?</string>
@@ -913,13 +915,13 @@
     <string name="settings_sms_default_app">Standard-SMS-App</string>
     <string name="settings_sms_default_app_text">Unterhaltungen, eingehende SMS und MMS im SMS-Bereich des Dialers</string>
     <string name="settings_sms_delivery_reports">Zustellberichte</string>
-    <string name="settings_sms_delivery_reports_text">Das Netz um Zustellbestätigung bitten. Manche Anbieter berechnen dafür Gebühren</string>
+    <string name="settings_sms_delivery_reports_text">Zustellbestätigung vom Netz, bei manchen Anbietern kostenpflichtig</string>
     <string name="keywords_sms">sms mms nachricht text unterhaltung chat code passwort standard</string>
 
     <!-- Вопросы о сообщениях (2.0.0) -->
     <string name="faq_section_messages">Nachrichten</string>
     <string name="faq_q_sms">Kann ich im Dialer SMS schreiben und empfangen?</string>
-    <string name="faq_a_sms">Ja. Ist der Dialer Ihre Standard-SMS-App (%1$s), finden Sie Unterhaltungen, eingehende SMS und Bilder (MMS) direkt hier im Bereich „SMS“ der unteren Leiste, mit denselben Wischgesten wie in der Anrufliste; die Anrufliste zeigt weiterhin nur Anrufe. Verwaltet eine andere App die SMS, öffnen die „Nachricht“-Tasten die Unterhaltung einfach dort – einzurichten ist nichts. Auf einem Telefon mit einer RCS-App (Google Messages, Samsung Messages) fragt der Dialer nicht von selbst nach der SMS-Rolle: RCS-Chats funktionieren nur in dieser App und werden ausgeschaltet, wenn eine andere App die SMS übernimmt. Zurück geht es jederzeit, indem Sie eine andere SMS-App wählen – der Dialer liest dann sofort keine Nachrichten mehr.</string>
+    <string name="faq_a_sms">Ja. Ist der Dialer Ihre Standard-SMS-App (%1$s), finden Sie Unterhaltungen, eingehende SMS und Bilder (MMS) direkt hier im Bereich „SMS“ der unteren Leiste, mit denselben Wischgesten wie in der Anrufliste; die Anrufliste zeigt weiterhin nur Anrufe. Verwaltet eine andere App die SMS, öffnen die „Nachricht“-Tasten die Unterhaltung einfach dort – einzurichten ist nichts. Auf einem Telefon mit einer RCS-App (Google Messages, Samsung Messages) fragt der Dialer nicht von selbst nach der SMS-Rolle: RCS-Chats funktionieren nur in dieser App und werden ausgeschaltet, wenn eine andere App die SMS übernimmt. Zurück geht es jederzeit, indem Sie eine andere SMS-App wählen – der Dialer liest dann sofort keine Nachrichten mehr. Wenn Sie „Messenger für jede Nummer“ einschalten, bietet „Nachricht“ auch für Nummern außerhalb der Kontakte WhatsApp, Telegram, Viber und Max an; Telegram öffnet den Chat nur, wenn die Person die Suche nach Nummer erlaubt.</string>
     <string name="faq_q_codes">Wie füge ich einen Code aus einer SMS ein?</string>
     <string name="faq_a_codes">Enthält eine Nachricht einen Bestätigungscode, zeigt die Benachrichtigung die Taste „123456 kopieren“, und in der Unterhaltung steht dieselbe Taste unter der Nachricht. Der Code landet als vertraulich markiert in der Zwischenablage, und Ihre Tastatur bietet ihn mit einem Tippen zum Einfügen an. Das automatische Ausfüllen in anderen Apps übernimmt Ihre Tastatur oder Ihr Autofill-Dienst (etwa Gboard oder Autofill mit Google) – das funktioniert mit dem Dialer als SMS-App weiter. Der Code wird auf dem Telefon erkannt: Der Dialer hat keinen Internetzugriff. Langes Drücken auf eine Nachricht kopiert den ganzen Text, eine Nummer daraus oder einen markierten Teil.</string>
 
@@ -975,7 +977,7 @@
     <string name="msg_archived_many">Ins Archiv verschoben: %1$s</string>
     <string name="a11y_avatar_select">Auswählen</string>
     <string name="settings_incoming_banner">Eingehender Anruf als Banner</string>
-    <string name="settings_incoming_banner_text">Während Sie das Telefon benutzen, erscheint ein Anruf oben mit „Annehmen“ und „Ablehnen“ statt im Vollbild. Bei gesperrtem oder dunklem Bildschirm immer im Vollbild</string>
+    <string name="settings_incoming_banner_text">Anruf als Banner oben, solange Sie das Telefon nutzen</string>
     <string name="keywords_incoming_banner">Popup kompakt kleines Fenster oben Benachrichtigung Vollbild eingehend</string>
     <string name="menu_pin_home">Auf den Startbildschirm</string>
     <string name="widget_sms_description">SMS-Symbol mit Anzahl ungelesener Nachrichten</string>
@@ -985,7 +987,7 @@
     <string name="selection_short_block">Sperren</string>
     <string name="selection_short_unarchive">Zurückholen</string>
     <string name="settings_swap_answer">„Annehmen“ links</string>
-    <string name="settings_swap_answer_text">Tauscht „Annehmen“ und „Ablehnen“ auf dem Anrufbildschirm; zum Annehmen nach links wischen</string>
+    <string name="settings_swap_answer_text">„Annehmen“ und „Ablehnen“ tauschen die Plätze</string>
     <string name="keywords_swap_answer">tauschen annehmen ablehnen tasten links rechts reihenfolge eingehend</string>
     <string name="messages_new_to_number">An %1$s schreiben</string>
     <string name="messages_new_recent">Zuletzt</string>
@@ -994,7 +996,7 @@
     <string name="messages_new_letters_short">ABC</string>
     <string name="settings_group_home_screen">Startbildschirm</string>
     <string name="settings_widget_shape">Symbolform</string>
-    <string name="settings_widget_shape_text">Für die Symbole „SMS“ und „Kontakte“ auf dem Startbildschirm – passend zu den Symbolen Ihres Launchers</string>
+    <string name="settings_widget_shape_text">Für die Symbole „SMS“ und „Kontakte“ auf dem Startbildschirm</string>
     <string name="keywords_widget_shape">widget symbol form rund abgerundet quadrat kreis ecke startbildschirm sms kontakte launcher</string>
     <string name="widget_shape_auto">Automatisch</string>
     <string name="widget_shape_circle">Kreis</string>
@@ -1011,7 +1013,7 @@
     <string name="settings_sms_calls_in_thread">Anrufe im Chatverlauf</string>
     <string name="settings_sms_calls_in_thread_text">Anrufe mit dieser Person zwischen den Nachrichten, mit SIM</string>
     <string name="settings_sms_otp_cleanup">Codes automatisch löschen</string>
-    <string name="settings_sms_otp_cleanup_text">Eingehende Nachrichten mit Bestätigungscode werden nach der gewählten Zeit gelöscht. Markierte bleiben</string>
+    <string name="settings_sms_otp_cleanup_text">Nachrichten mit Code werden nach der gewählten Zeit gelöscht</string>
     <string name="otp_cleanup_off">Nicht löschen</string>
     <string name="otp_cleanup_1h">Nach 1 Stunde</string>
     <string name="otp_cleanup_24h">Nach 24 Stunden</string>
@@ -1069,7 +1071,7 @@
     <string name="contact_folders_title">Kontaktordner</string>
     <string name="call_photo_width">Volle Breite</string>
     <string name="settings_section_icons">Eigene Symbole für SMS und Kontakte</string>
-    <string name="settings_section_icons_text">SMS und Kontakte erscheinen in der App-Liste als eigene Symbole – auch für Dock und Ordner. Das App-Symbol öffnet dann die Anrufliste</string>
+    <string name="settings_section_icons_text">Symbole in der App-Liste, für Dock oder Ordner</string>
     <string name="keywords_section_icons">symbol verknüpfung eigene app-liste dock ordner launcher startbildschirm sms kontakte telefon</string>
     <string name="number_payphone">Münztelefon</string>
     <string name="card_block_hidden">Unterdrückte Nummern blockieren</string>

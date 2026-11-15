@@ -9,24 +9,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -50,8 +45,11 @@ import com.ogneliss.dialer.R
 import com.ogneliss.dialer.settings.SettingsCommands
 import com.ogneliss.dialer.settings.ThemePreset
 import com.ogneliss.dialer.ui.DialerViewModel
-import com.ogneliss.dialer.ui.components.OgnelissDialog
-import com.ogneliss.dialer.ui.components.SectionCaption
+import com.ogneliss.dialer.ui.components.ChoiceSheet
+import com.ogneliss.dialer.ui.components.ListSheetGroup
+import com.ogneliss.dialer.ui.components.SheetChoiceRow
+import com.ogneliss.dialer.ui.components.SheetDivider
+import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.ui.theme.Dimens
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import com.ogneliss.dialer.ui.theme.Space
@@ -71,6 +69,9 @@ import com.ogneliss.dialer.ui.theme.ThemePresets
  *   почты, ThemePresetMath.ACCENTS) и «Свой цвет» — тон и насыщенность
  *   ползунками. Кружки показаны той яркостью, какой акцент будет в текущей
  *   теме (подбор под AA — accentLight / accentDark), как в почте.
+ *
+ * 2.7.0: с этой версии — шторка снизу, а не окно по центру (ChoiceSheet);
+ * имя прежнее, чтобы не трогать вызовы.
  *
  * Окно после выбора не закрывается: тему и акцент выбирают вместе
  * и сразу видят результат на самом окне.
@@ -119,48 +120,49 @@ internal fun ColorThemeDialog(
     var editing by remember { mutableStateOf(custom) }
     fun customArgb() = ThemePresetMath.hsl(hue.toDouble(), sat.toDouble(), CUSTOM_LIGHT)
 
-    OgnelissDialog(
-        onDismissRequest = onDismiss,
-        title = stringResource(R.string.settings_theme_preset),
-        content = {
-            Column(
-                Modifier
-                    .heightIn(max = DIALOG_MAX_HEIGHT)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                SectionCaption(stringResource(R.string.color_theme_section))
-                ThemePreset.entries.forEach { p ->
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .heightIn(min = Dimens.MIN_TOUCH_TARGET)
-                            .selectable(
-                                selected = p == preset && accent == null,
-                                role = Role.RadioButton,
-                                onClick = { pick(p, null) }
-                            ),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(selected = p == preset && accent == null, onClick = null)
-                        Spacer(Modifier.width(Space.m))
-                        Box(
-                            Modifier
-                                .size(SWATCH_SMALL)
-                                .clip(CircleShape)
-                                .background(shown(ThemePresets.spec(p).accent))
-                        )
-                        Spacer(Modifier.width(Space.m))
-                        Text(
-                            stringResource(SettingsCommands.themePresetLabelRes(p)),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
+    /*
+     * ШТОРКА, А НЕ ОКНО ПО ЦЕНТРУ (2.7.0, обзор вида 15.11.2026).
+     *
+     * Было — OgnelissDialog с кнопкой «Закрыть», высота до 520 dp. Стало —
+     * шторка выбора (ChoiceSheet): владелец: «шторка снизу не всегда удобна;
+     * где используется выбор по долгому нажатию и всплывающая форма (журнал,
+     * контакты, SMS) — оставить, остальное поменять на шторку». Поведение
+     * прежнее: выбор применяется сразу и шторку НЕ закрывает — тему и акцент
+     * выбирают вместе и сразу видят результат; закрывается смахиванием.
+     * Темы — строки SheetChoiceRow с кружком акцента, как варианты других
+     * настроек; подписи разделов — полоса списка (ListSheetGroup).
+     */
+    ChoiceSheet(title = stringResource(R.string.settings_theme_preset), onDismiss = onDismiss) {
+        Column(
+            Modifier
+                .weight(1f, fill = false)
+                .verticalScroll(rememberScrollState())
+        ) {
+            ListSheetGroup(title = stringResource(R.string.color_theme_section)) {
+                ThemePreset.entries.forEachIndexed { index, p ->
+                    SheetChoiceRow(
+                        selected = p == preset && accent == null,
+                        label = stringResource(SettingsCommands.themePresetLabelRes(p)),
+                        onClick = { pick(p, null) },
+                        swatch = {
+                            Box(
+                                Modifier
+                                    .size(SWATCH_SMALL)
+                                    .clip(CircleShape)
+                                    .background(shown(ThemePresets.spec(p).accent))
+                            )
+                        }
+                    )
+                    if (index < ThemePreset.entries.lastIndex) SheetDivider()
                 }
+            }
 
-                Spacer(Modifier.height(Space.m))
-                SectionCaption(stringResource(R.string.accent_title))
+            Spacer(Modifier.height(Space.m))
+            ListSheetGroup(title = stringResource(R.string.accent_title)) {
                 FlowRow(
-                    Modifier.fillMaxWidth().padding(vertical = Space.xs),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = FlowUi.sheetPadding, vertical = Space.xs),
                     horizontalArrangement = Arrangement.spacedBy(Space.xxs)
                 ) {
                     AccentSwatch(
@@ -193,49 +195,48 @@ internal fun ColorThemeDialog(
                 // Свой цвет: тон по кругу, насыщенность; яркость подбирается
                 // под тему сама. Сохраняется, когда палец отпущен
                 if (editing) {
-                    Text(
-                        stringResource(R.string.accent_hue),
-                        style = MaterialTheme.typography.labelLarge,
-                        modifier = Modifier.padding(top = Space.s)
-                    )
-                    // Радуга над ползунком — где какой тон
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = Space.s)
-                            .height(Space.s)
-                            .clip(CircleShape)
-                            .background(
-                                Brush.horizontalGradient(
-                                    List(HUE_STOPS) { i ->
-                                        shown(ThemePresetMath.hsl(i * 360.0 / (HUE_STOPS - 1), sat.toDouble(), CUSTOM_LIGHT))
-                                    }
+                    Column(Modifier.padding(horizontal = FlowUi.sheetPadding)) {
+                        Text(
+                            stringResource(R.string.accent_hue),
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.padding(top = Space.s)
+                        )
+                        // Радуга над ползунком — где какой тон
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = Space.s)
+                                .height(Space.s)
+                                .clip(CircleShape)
+                                .background(
+                                    Brush.horizontalGradient(
+                                        List(HUE_STOPS) { i ->
+                                            shown(ThemePresetMath.hsl(i * 360.0 / (HUE_STOPS - 1), sat.toDouble(), CUSTOM_LIGHT))
+                                        }
+                                    )
                                 )
-                            )
-                    )
-                    Slider(
-                        value = hue,
-                        onValueChange = { hue = it },
-                        valueRange = 0f..359f,
-                        onValueChangeFinished = { pick(preset, customArgb()) }
-                    )
-                    Text(
-                        stringResource(R.string.accent_saturation),
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                    Slider(
-                        value = sat,
-                        onValueChange = { sat = it },
-                        valueRange = SAT_MIN..1f,
-                        onValueChangeFinished = { pick(preset, customArgb()) }
-                    )
+                        )
+                        Slider(
+                            value = hue,
+                            onValueChange = { hue = it },
+                            valueRange = 0f..359f,
+                            onValueChangeFinished = { pick(preset, customArgb()) }
+                        )
+                        Text(
+                            stringResource(R.string.accent_saturation),
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                        Slider(
+                            value = sat,
+                            onValueChange = { sat = it },
+                            valueRange = SAT_MIN..1f,
+                            onValueChangeFinished = { pick(preset, customArgb()) }
+                        )
+                    }
                 }
             }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.nav_close)) }
         }
-    )
+    }
 }
 
 /**
@@ -286,8 +287,6 @@ private val SWATCH = 36.dp
 private val SWATCH_SMALL = 24.dp
 private val SWATCH_RING = 2.dp
 private val ICON = 18.dp
-/** Окно не выше этого — дальше прокрутка (семь тем, акценты и ползунки). */
-private val DIALOG_MAX_HEIGHT = 520.dp
 /** Свой цвет: яркость исходного цвета (под тему её подбирает AccentFit). */
 private const val CUSTOM_LIGHT = 0.45
 /** Насыщенность своего цвета — не ниже: совсем серый акцент не отличить от текста. */

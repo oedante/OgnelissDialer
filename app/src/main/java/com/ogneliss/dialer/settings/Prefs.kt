@@ -651,6 +651,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val FILE_LOGGING = booleanPreferencesKey("file_logging")
         // Служебное
         val ONBOARDING_DONE = booleanPreferencesKey("onboarding_done")
+        // 2.7.0: не читается и не пишется — шторка жестов при первом запуске удалена
+        // (обзор вида 15.11.2026); ключ оставлен, у кого он уже лежит в хранилище
         val GESTURE_HINT_SHOWN = booleanPreferencesKey("gesture_hint_shown")
         val OWN_NUMBER = stringPreferencesKey("own_number")
         val CONSENT_VERSION = intPreferencesKey("consent_version")
@@ -827,7 +829,14 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     val fakeCallNumber: Flow<String> = data.map { it[Keys.FAKE_CALL_NUMBER].orEmpty() }
 
-    val fakeCallButton: Flow<Boolean> = data.map { it[Keys.FAKE_CALL_BUTTON] ?: true }
+    /*
+     * 2.7.0, обзор вида 15.11.2026: умолчание true → false. Кнопка — единственный
+     * «парящий» элемент с тенью в плоском приложении, висит над колонкой кнопок
+     * вызова; псевдозвонок есть в «Меню → Инструменты». Кто включил или выключил
+     * сам — у того в хранилище лежит значение, его выбор остаётся.
+     * Должно совпадать с SettingsState.fakeCallButton.
+     */
+    val fakeCallButton: Flow<Boolean> = data.map { it[Keys.FAKE_CALL_BUTTON] ?: false }
 
     val fakeCallAt: Flow<Long> = data.map { it[Keys.FAKE_CALL_AT] ?: 0L }
 
@@ -1206,16 +1215,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     val onboardingDone: Flow<Boolean> = data.map { it[Keys.ONBOARDING_DONE] ?: false }
 
     /**
-     * ПОДСКАЗКА О ЖЕСТАХ УЖЕ ПОКАЗАНА.
-     *
-     * Отдельно от onboardingDone: тот отвечает за мастер разрешений,
-     * а его человек мог пройти в прошлой версии — до появления жестов.
-     * Общий признак означал бы, что подсказку не увидит никто из тех,
-     * кто обновился.
-     */
-    val gestureHintShown: Flow<Boolean> = data.map { it[Keys.GESTURE_HINT_SHOWN] ?: false }
-
-    /**
      * СОБСТВЕННЫЙ НОМЕР.
      *
      * Пустая строка означает «не указан» — и это обычное состояние,
@@ -1424,9 +1423,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     suspend fun setOwnNumber(value: String) =
         edit("own_number", value) { it[Keys.OWN_NUMBER] = value }
-
-    suspend fun setGestureHintShown(v: Boolean) =
-        edit("gesture_hint_shown", v) { it[Keys.GESTURE_HINT_SHOWN] = v }
 
     /**
      * Сброс всех настроек к значениям по умолчанию.

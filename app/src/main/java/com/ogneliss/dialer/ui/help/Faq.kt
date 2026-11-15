@@ -103,7 +103,11 @@ object Faq {
         FaqSection(
             R.string.faq_section_lists,
             listOf(
-                FaqItem("switch", R.string.faq_q_switch, R.string.faq_a_switch),
+                // 2.7.0: путь к «Отдельным значкам» — из пояснения настройки убрана подробность
+                FaqItem(
+                    "switch", R.string.faq_q_switch, R.string.faq_a_switch,
+                    listOf(FaqLink.Setting("section_icons"))
+                ),
                 FaqItem("search", R.string.faq_q_search, R.string.faq_a_search),
                 // 1.6.2, отзыв в Google Play: «редактировать контакты и делать
                 // их сортировку по фамилии»
@@ -137,6 +141,11 @@ object Faq {
                 FaqItem(
                     "quiet", R.string.faq_q_quiet, R.string.faq_a_quiet,
                     listOf(FaqLink.Setting("quiet_hours"))
+                ),
+                // 2.7.0: пояснение «Авто-громкой связи» сокращено — условия работы теперь здесь
+                FaqItem(
+                    "speaker", R.string.faq_q_speaker, R.string.faq_a_speaker,
+                    listOf(FaqLink.Setting("smart_speaker"))
                 ),
                 FaqItem("operator_name", R.string.faq_q_operator_name, R.string.faq_a_operator_name),
                 FaqItem(
