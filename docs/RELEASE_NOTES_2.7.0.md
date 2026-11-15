@@ -217,7 +217,7 @@ SMS, MMS, ответ из уведомления); FileProvider открывае
 ## Проверки
 
 Модульные тесты — 728, без ошибок (+15 StartSectionTest, +4 CallArrowColorTest,
-+4 BackupSafetyTest, SettingsTextLengthTest, ScreenGalleryTest); lint — LINT_RESULT;
-release-сборка — REL_RESULT; проверки `scripts/` (prebuild, audit, import, ui_roles —
++4 BackupSafetyTest, SettingsTextLengthTest, ScreenGalleryTest); lint — 0 ошибок;
+release-сборка собрана; проверки `scripts/` (prebuild, audit, import, ui_roles —
 правила 1–9, check_no_internet, check_ringing_flag, design_tokens с Mail) — без
 замечаний. На телефоне не проверялось; немецкие и французские тексты — без носителя языка.
