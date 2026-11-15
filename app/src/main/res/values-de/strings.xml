@@ -1079,4 +1079,7 @@
     <string name="start_section_messages">SMS</string>
     <string name="start_section_contacts">Kontakte</string>
     <string name="start_section_last">Zuletzt geöffneter Bereich</string>
+    <string name="stats_incoming">Eingehend</string>
+    <string name="stats_outgoing">Ausgehend</string>
+    <string name="stats_missed">Verpasst</string>
 </resources>

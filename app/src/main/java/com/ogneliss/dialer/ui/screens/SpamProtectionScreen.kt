@@ -84,7 +84,7 @@ fun SpamProtectionScreen(
                 active = true,
                 onClick = { vm.openSystemBlockList() }
             )
-            com.ogneliss.dialer.ui.components.OgnelissDivider(Modifier.padding(start = LAYER_DIVIDER_START))
+            com.ogneliss.dialer.ui.components.RowDivider(Modifier.padding(start = LAYER_DIVIDER_START))
 
             /*
              * СЛОЙ ОПРЕДЕЛИТЕЛЯ.
@@ -116,7 +116,7 @@ fun SpamProtectionScreen(
                 },
                 active = roleState.weAreScreener || roleState.otherScreenerPackage != null
             )
-            com.ogneliss.dialer.ui.components.OgnelissDivider(Modifier.padding(start = LAYER_DIVIDER_START))
+            com.ogneliss.dialer.ui.components.RowDivider(Modifier.padding(start = LAYER_DIVIDER_START))
 
             /*
              * ══════════════════════════════════════════════════════════════
@@ -174,9 +174,11 @@ private fun LayerCard(
         // Слой нажимается, если за ним есть экран; если нет — это сведение
         modifier = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier,
         leading = {
+            // 2.7.0: тон значка — как в остальных группах (RowIcon), а не по
+            // состоянию: было акцент/серый. Состояние — текстом справа
             Icon(
                 icon, contentDescription = null,
-                tint = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+                tint = com.ogneliss.dialer.ui.theme.RowIcon.tint()
             )
         },
         // Порядковый номер показывает очерёдность срабатывания
@@ -192,7 +194,7 @@ private fun LayerCard(
     )
 }
 
-/** Линия между слоями — от текста, как в настройках (поле 16 + значок 24 + 16). */
+/** Отступ линии между слоями (видна только в высококонтрастной теме) — от текста, как в настройках (поле 16 + значок 24 + 16). */
 private val LAYER_DIVIDER_START = 56.dp
 
 /** Название приложения по имени пакета — читаемее, чем «com.yandex…». */

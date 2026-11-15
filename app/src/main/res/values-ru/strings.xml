@@ -1088,4 +1088,7 @@
     <string name="start_section_messages">SMS</string>
     <string name="start_section_contacts">Контакты</string>
     <string name="start_section_last">Последний раздел</string>
+    <string name="stats_incoming">Входящие</string>
+    <string name="stats_outgoing">Исходящие</string>
+    <string name="stats_missed">Пропущенные</string>
 </resources>

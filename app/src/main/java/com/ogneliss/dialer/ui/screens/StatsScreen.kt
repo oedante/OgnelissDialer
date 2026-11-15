@@ -68,9 +68,11 @@ fun StatsScreen(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     StatCard(stats.totalCalls, R.string.stats_total_calls)
-                    StatCard(stats.incoming, R.string.call_incoming)
-                    StatCard(stats.outgoing, R.string.call_outgoing)
-                    StatCard(stats.missed, R.string.call_missed, highlight = true)
+                    // 2.7.0: подписи во множественном числе («Входящие»). Было: строки типа
+                    // вызова — «Входящий» под числом 4 читалось как ошибка
+                    StatCard(stats.incoming, R.string.stats_incoming)
+                    StatCard(stats.outgoing, R.string.stats_outgoing)
+                    StatCard(stats.missed, R.string.stats_missed, highlight = true)
                 }
             }
 

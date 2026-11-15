@@ -1078,4 +1078,7 @@
     <string name="start_section_messages">SMS</string>
     <string name="start_section_contacts">Contacts</string>
     <string name="start_section_last">Dernière section</string>
+    <string name="stats_incoming">Entrants</string>
+    <string name="stats_outgoing">Sortants</string>
+    <string name="stats_missed">Manqués</string>
 </resources>

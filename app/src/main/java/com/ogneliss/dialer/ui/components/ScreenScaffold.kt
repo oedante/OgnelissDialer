@@ -11,7 +11,6 @@ import com.ogneliss.dialer.ui.theme.OgnelissTheme
 import com.ogneliss.dialer.ui.theme.PageTone
 import com.ogneliss.dialer.ui.theme.FlowUi
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
@@ -152,7 +151,9 @@ fun ScreenTopBar(
         title = {
             Box(Modifier.padding(start = if (showBack) FlowUi.topBarTitleInset else 0.dp)) {
                 if (titleContent != null) titleContent()
-                else Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                // 2.7.0: заголовок сначала ужимается (до 75 %), потом многоточие.
+                // Было: сразу «Новый …» рядом с «Сохранить» при шрифте 160 %.
+                else FitText(title, style = LocalTextStyle.current, maxLines = 1, minScale = 0.75f)
             }
         },
         navigationIcon = {
