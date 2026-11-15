@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.RowIcon
 import com.ogneliss.dialer.ui.theme.ScaledSheetContent
 import com.ogneliss.dialer.ui.components.ActionIconButton
 import androidx.compose.ui.semantics.semantics
@@ -100,10 +101,8 @@ internal fun CallHistoryRow(
         CallType.REJECTED, CallType.BLOCKED -> OgnelissIcons.Block
         else -> OgnelissIcons.CallReceived
     }
-    val tint = when (entry.type) {
-        CallType.MISSED -> MaterialTheme.colorScheme.error
-        else -> MaterialTheme.colorScheme.outline
-    }
+    // 2.7.0: пропущенный — красный, остальное по настройке «Цветные стрелки вызовов»
+    val tint = com.ogneliss.dialer.ui.theme.callArrowTint(entry.type, MaterialTheme.colorScheme.outline)
 
     ListItem(
         colors = ListItemDefaults.colors(
@@ -757,15 +756,19 @@ internal fun DetailRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         /*
-         * Строка сведений — как строка настроек (2.4.0, единый вид): значок
-         * цветом акцента, отступ 16, вторая строка — bodyMedium. Было: серый
-         * значок, отступ 12 и мелкая вторая строка — карточка выглядела
-         * собранной по другим правилам, чем настройки рядом.
+         * Строка сведений — как строка настроек (2.4.0, единый вид): значок,
+         * отступ 16, вторая строка — bodyMedium. Было: серый значок, отступ 12
+         * и мелкая вторая строка — карточка выглядела собранной по другим
+         * правилам, чем настройки рядом.
+         *
+         * Тон значка — общий (RowIcon, 2.7.0, обзор вида 15.11.2026): в 2.4.0
+         * он стал цветом акцента вслед за настройками, а настройки теперь
+         * серые, как «Меню» и шторки; значок лишь обозначает строку.
          */
         Icon(
             icon,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary
+            tint = RowIcon.tint()
         )
         Spacer(Modifier.width(Space.l))
         Column(Modifier.weight(1f)) {

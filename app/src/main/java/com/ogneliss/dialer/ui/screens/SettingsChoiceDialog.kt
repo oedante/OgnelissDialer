@@ -129,6 +129,10 @@ fun SettingsChoiceDialog(
         "contact_name_format" -> com.ogneliss.dialer.settings.ContactNameFormat.entries.map {
             it.name to stringResource(SettingsCommands.contactNameFormatLabelRes(it))
         }
+        // 2.7.0: «При запуске открывать» — журнал, SMS, контакты, последний раздел
+        "start_section" -> com.ogneliss.dialer.settings.StartChoice.entries.map {
+            it.name to stringResource(SettingsCommands.startChoiceLabelRes(it))
+        }
         "contact_sort" -> com.ogneliss.dialer.settings.ContactSort.entries.map {
             it.name to stringResource(SettingsCommands.contactSortLabelRes(it))
         }

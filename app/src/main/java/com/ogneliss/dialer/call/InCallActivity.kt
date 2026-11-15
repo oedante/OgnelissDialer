@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import com.ogneliss.dialer.ui.components.OgnelissTextField
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -2252,10 +2253,13 @@ private fun InCallNoteField(
     }
 
     Column(Modifier.fillMaxWidth().padding(horizontal = Space.xl, vertical = Space.s)) {
-        OutlinedTextField(
+        // Поле — общее (OgnelissTextField, 2.7.0, обзор вида 15.11.2026): было
+        // OutlinedTextField с тёмной рамкой, пропущенный при переводе остальных полей
+        OgnelissTextField(
             value = text,
             onValueChange = onTextChange,
-            placeholder = { Text(stringResource(R.string.incall_note_hint)) },
+            placeholder = stringResource(R.string.incall_note_hint),
+            singleLine = false,
             /*
              * Поле выше: четыре строки вместо двух.
              *
@@ -2269,7 +2273,6 @@ private fun InCallNoteField(
              */
             minLines = 4,
             maxLines = 6,
-            shape = MaterialTheme.shapes.large,
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester)

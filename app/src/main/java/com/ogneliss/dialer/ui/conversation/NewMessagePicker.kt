@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.conversation
 
+import com.ogneliss.dialer.ui.theme.RowIcon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -392,7 +393,8 @@ internal fun ForwardPreview(text: String) {
     ) {
         Icon(
             OgnelissIcons.Forward, contentDescription = stringResource(R.string.sms_forward),
-            tint = MaterialTheme.colorScheme.primary
+            // Значок лишь обозначает строку «Пересылка» — общий тон (RowIcon, 2.7.0), а не primary
+            tint = RowIcon.tint()
         )
         Spacer(Modifier.width(Space.m))
         Text(

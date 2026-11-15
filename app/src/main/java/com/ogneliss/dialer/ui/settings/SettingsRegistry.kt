@@ -451,6 +451,19 @@ object SettingsRegistry {
             SettingKind.Choice("carrier_info"),
             groupRes = R.string.settings_group_log_view
         ),
+        /*
+         * 2.7.0, форум (21vasya, 15.11.2026): цветные стрелки вызовов. Хотели
+         * в «Оформлении», но там уже четырнадцать пунктов — предел
+         * SettingsRegistryTest; стрелки живут в журнале, поэтому здесь,
+         * в группе «Вид журнала». Разбор — ui/theme/CallArrowColor.kt.
+         */
+        SettingEntry(
+            "colored_call_arrows", SettingsCategory.CALL_LOG,
+            R.string.settings_colored_call_arrows, R.string.settings_colored_call_arrows_text,
+            SettingKind.Switch("colored_call_arrows"),
+            keywordsRes = R.string.keywords_colored_call_arrows,
+            groupRes = R.string.settings_group_log_view
+        ),
         SettingEntry(
             "dialpad_open_at_start", SettingsCategory.CALL_LOG,
             R.string.settings_dialpad_open, R.string.settings_dialpad_open_text,
@@ -628,6 +641,19 @@ object SettingsRegistry {
             SettingKind.Switch("section_icons"),
             keywordsRes = R.string.keywords_section_icons,
             groupRes = R.string.settings_group_home_screen
+        ),
+        /*
+         * 2.7.0, форум (oleg_p, 15.11.2026): выбор экрана при запуске — журнал
+         * (по умолчанию), SMS, контакты или последний раздел. Разбор —
+         * settings/StartSection.kt. Свою группу завели, чтобы не путать
+         * с «Главным экраном» выше: тот про рабочий стол лаунчера.
+         */
+        SettingEntry(
+            "start_section", SettingsCategory.QUICK_ACCESS,
+            R.string.settings_start_section, R.string.settings_start_section_text,
+            SettingKind.Choice("start_section"),
+            keywordsRes = R.string.keywords_start_section,
+            groupRes = R.string.settings_group_app_start
         ),
         // 1.5.8, обзор интерфейса (У6): ответ сдвигом — от случайного касания
         /*

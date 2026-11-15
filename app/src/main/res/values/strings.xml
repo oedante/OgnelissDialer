@@ -1105,4 +1105,15 @@
     <string name="number_payphone">Payphone</string>
     <string name="card_block_hidden">Block private numbers</string>
     <string name="card_unblock_hidden">Allow private numbers</string>
+    <string name="settings_colored_call_arrows">Colored call arrows</string>
+    <string name="settings_colored_call_arrows_text">Outgoing green, incoming blue, missed red</string>
+    <string name="keywords_colored_call_arrows">color arrow icon call type outgoing incoming missed green blue red journal log</string>
+    <string name="settings_start_section">Open on launch</string>
+    <string name="settings_start_section_text">Which screen the app opens with from its icon</string>
+    <string name="keywords_start_section">start launch open screen first section last journal sms contacts home</string>
+    <string name="settings_group_app_start">App launch</string>
+    <string name="start_section_journal">Call log</string>
+    <string name="start_section_messages">SMS</string>
+    <string name="start_section_contacts">Contacts</string>
+    <string name="start_section_last">Last section</string>
 </resources>

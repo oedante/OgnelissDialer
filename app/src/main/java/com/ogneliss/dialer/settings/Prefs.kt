@@ -585,6 +585,12 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val WIDGET_SHAPE = stringPreferencesKey("widget_shape")
         /** Отдельные значки «SMS» и «Контакты» в списке приложений (2.6.0, SectionIcons). */
         val SECTION_ICONS = booleanPreferencesKey("section_icons")
+        /** Цветные стрелки типа вызова (2.7.0, форум, 21vasya; выкл.): разбор в CallArrowColor. */
+        val COLORED_CALL_ARROWS = booleanPreferencesKey("colored_call_arrows")
+        /** «При запуске открывать» (2.7.0, форум, oleg_p): разбор в StartSection. */
+        val START_SECTION = stringPreferencesKey("start_section")
+        /** Последний открытый главный раздел — для «Последний раздел» (2.7.0). */
+        val LAST_SECTION = stringPreferencesKey("last_section")
         /** Имя контакта: «Имя Фамилия» или «Фамилия Имя» (1.6.2). */
         val CONTACT_NAME_FORMAT = stringPreferencesKey("contact_name_format")
         /** Порядок контактов: по имени или по фамилии (1.6.2). */
@@ -968,6 +974,15 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     /** Отдельные значки «SMS» и «Контакты» в списке приложений (2.6.0): разбор в SectionIcons. */
     val sectionIcons: Flow<Boolean> = data.map { it[Keys.SECTION_ICONS] ?: false }
 
+    /** Цветные стрелки вызовов (2.7.0): по умолчанию выключено. Разбор — CallArrowColor. */
+    val coloredCallArrows: Flow<Boolean> = data.map { it[Keys.COLORED_CALL_ARROWS] ?: false }
+
+    /** Что открывать при запуске значком (2.7.0): по умолчанию журнал. Разбор — StartSection. */
+    val startSection: Flow<StartChoice> = data.map { StartChoice.from(it[Keys.START_SECTION]) }
+
+    /** Последний открытый главный раздел (маршрут) или null, пока не запоминали (2.7.0). */
+    val lastSection: Flow<String?> = data.map { it[Keys.LAST_SECTION] }
+
     /** Как показывать имя контакта (1.6.2): разбор в ContactNameFormat. */
     val contactNameFormat: Flow<ContactNameFormat> =
         data.map { ContactNameFormat.from(it[Keys.CONTACT_NAME_FORMAT]) }
@@ -1334,6 +1349,12 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setWidgetShape(v: WidgetShape) =
         edit("widget_shape", v.name) { it[Keys.WIDGET_SHAPE] = v.name }
     suspend fun setSectionIcons(v: Boolean) = edit("section_icons", v) { it[Keys.SECTION_ICONS] = v }
+    suspend fun setColoredCallArrows(v: Boolean) =
+        edit("colored_call_arrows", v) { it[Keys.COLORED_CALL_ARROWS] = v }
+    suspend fun setStartSection(v: StartChoice) =
+        edit("start_section", v.name) { it[Keys.START_SECTION] = v.name }
+    suspend fun setLastSection(route: String) =
+        edit("last_section", route) { it[Keys.LAST_SECTION] = route }
     suspend fun setContactNameFormat(v: ContactNameFormat) =
         edit("contact_name_format", v.name) { it[Keys.CONTACT_NAME_FORMAT] = v.name }
     suspend fun setContactSort(v: ContactSort) =

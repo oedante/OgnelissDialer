@@ -589,6 +589,8 @@ private fun CallLine(event: ConversationViewModel.CallEvent) {
     }
     val missed = event.type == CallType.MISSED
     val color = if (missed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
+    // 2.7.0: у стрелки свой цвет по настройке «Цветные стрелки вызовов»; подпись — как была
+    val arrowColor = com.ogneliss.dialer.ui.theme.callArrowTint(event.type, color)
     val time = remember(event.date) { DateUtils.formatDateTime(context, event.date, DateUtils.FORMAT_SHOW_TIME) }
     val duration = if (event.durationSec > 0) {
         String.format(java.util.Locale.ROOT, "%d:%02d", event.durationSec / 60, event.durationSec % 60)
@@ -600,7 +602,7 @@ private fun CallLine(event: ConversationViewModel.CallEvent) {
         horizontalArrangement = if (mine) Arrangement.End else Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(FlowUi.iconSizeInline))
+        Icon(icon, contentDescription = null, tint = arrowColor, modifier = Modifier.size(FlowUi.iconSizeInline))
         Spacer(Modifier.width(Space.xs))
         Text(
             listOfNotNull(stringResource(typeRes), duration, time).joinToString(" · "),

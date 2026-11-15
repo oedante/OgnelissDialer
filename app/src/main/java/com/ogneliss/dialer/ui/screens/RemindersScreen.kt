@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.RowIcon
 import com.ogneliss.dialer.ui.components.ActionIconButton
 import com.ogneliss.dialer.ui.theme.listName
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -281,7 +282,8 @@ private fun ReminderListRow(
             Icon(
                 OgnelissIcons.Alarm,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
+                // Значок лишь обозначает строку — общий тон (RowIcon, 2.7.0), а не primary
+                tint = RowIcon.tint()
             )
 
             Column(

@@ -61,6 +61,8 @@ fun OgnelissTextField(
     placeholder: String? = null,
     singleLine: Boolean = true,
     minLines: Int = 1,
+    /** Предел строк у многострочного поля (заметка во время разговора — 6). */
+    maxLines: Int = Int.MAX_VALUE,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     leadingIcon: (@Composable () -> Unit)? = null,
@@ -87,6 +89,7 @@ fun OgnelissTextField(
             trailingIcon = trailingIcon,
             singleLine = singleLine,
             minLines = if (singleLine) 1 else minLines,
+            maxLines = if (singleLine) 1 else maxLines,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             interactionSource = interaction,

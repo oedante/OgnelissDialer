@@ -130,8 +130,39 @@ class MainActivity : ComponentActivity() {
          * читается отдельно от разметки; ошибка чтения заставку тоже снимает —
          * человек должен увидеть интерфейс, а не вечную заставку.
          */
+        /*
+         * С КАКОГО РАЗДЕЛА НАЧАТЬ (2.7.0, форум, oleg_p: «выбор экрана при
+         * запуске: конкретный экран (по умолчанию) либо последний
+         * использованный»). Настройки читаются в той же сопрограмме, что и
+         * согласие, — до снятия заставки, не на главном потоке и без ожидания
+         * в разметке: человек не видит прыжка с журнала на другой раздел.
+         * Решает чистая StartSection.resolve; здесь — только чтение настроек.
+         * Холодный запуск — это новая активность (savedInstanceState == null),
+         * открытая значком приложения (MAIN + LAUNCHER). Возврат из фона
+         * приходит в onNewIntent или с сохранённым состоянием — тогда
+         * человек остаётся там, где был. Ошибка чтения настроек — журнал.
+         */
+        val coldLauncherStart = savedInstanceState == null &&
+            com.ogneliss.dialer.widget.SectionIcons.isAppIconLaunch(intent)
         lifecycleScope.launch {
             runCatching { startPrefs.consentVersion.first() }
+            if (coldLauncherStart) {
+                runCatching {
+                    val route = com.ogneliss.dialer.settings.StartSection.resolve(
+                        choice = startPrefs.startSection.first(),
+                        last = startPrefs.lastSection.first(),
+                        explicitRoute = sectionRouteOf(intent),
+                        // Пока включены отдельные значки «SMS» и «Контакты» (2.6.0),
+                        // значок приложения — «Телефон» и открывает журнал: это правило
+                        // главнее настройки
+                        sectionIconsEnabled = com.ogneliss.dialer.widget.SectionIcons.isEnabled(this@MainActivity),
+                        coldLauncherStart = true
+                    )
+                    if (route != null) sectionRoute = route
+                }.onFailure {
+                    com.ogneliss.dialer.log.Logger.w("MainActivity", "Раздел запуска не прочитан", it)
+                }
+            }
             firstFrameReady = true
         }
 
@@ -183,7 +214,8 @@ class MainActivity : ComponentActivity() {
         // Намерение, с которым приложение открыли: дальше его меняет
         // onNewIntent
         currentIntent = intent
-        sectionRoute = sectionRouteOf(intent)
+        // ?: — раздел запуска (выше) мог быть уже выбран: не затирать его пустым
+        sectionRoute = sectionRouteOf(intent) ?: sectionRoute
 
         setContent {
             val vm: DialerViewModel = hiltViewModel()

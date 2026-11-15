@@ -1076,4 +1076,15 @@
     <string name="number_payphone">Münztelefon</string>
     <string name="card_block_hidden">Unterdrückte Nummern blockieren</string>
     <string name="card_unblock_hidden">Unterdrückte Nummern zulassen</string>
+    <string name="settings_colored_call_arrows">Farbige Anrufpfeile</string>
+    <string name="settings_colored_call_arrows_text">Ausgehend grün, eingehend blau, verpasst rot</string>
+    <string name="keywords_colored_call_arrows">farbe farbig pfeil symbol anruftyp ausgehend eingehend verpasst grün blau rot anrufliste</string>
+    <string name="settings_start_section">Beim Start öffnen</string>
+    <string name="settings_start_section_text">Mit welchem Bildschirm die App per Symbol startet</string>
+    <string name="keywords_start_section">start öffnen bildschirm erster abschnitt letzter anrufliste sms kontakte startseite</string>
+    <string name="settings_group_app_start">App-Start</string>
+    <string name="start_section_journal">Anrufliste</string>
+    <string name="start_section_messages">SMS</string>
+    <string name="start_section_contacts">Kontakte</string>
+    <string name="start_section_last">Zuletzt geöffneter Bereich</string>
 </resources>

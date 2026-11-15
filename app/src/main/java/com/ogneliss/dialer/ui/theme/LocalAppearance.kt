@@ -53,7 +53,13 @@ data class Appearance(
      * Компактная — 2 dp и 36 dp (строка не ниже 48 dp), обычная — 10 и 48
      * (прежний вид), просторная — 14 и 52.
      */
-    val listDensity: ListDensity = ListDensity.NORMAL
+    val listDensity: ListDensity = ListDensity.NORMAL,
+    /**
+     * ЦВЕТНЫЕ СТРЕЛКИ ВЫЗОВОВ (2.7.0, форум, 21vasya: «зелёным исходящий,
+     * синим входящий, красным неотвеченный»). По умолчанию выключено:
+     * приложение «тихое». Выбор цвета — callArrowTint (CallArrowColor.kt).
+     */
+    val coloredCallArrows: Boolean = false
 ) {
     /** Высота клавиши с учётом режима крупных кнопок. */
     val dialKeyHeight: Dp

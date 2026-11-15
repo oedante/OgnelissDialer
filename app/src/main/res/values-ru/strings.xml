@@ -1085,4 +1085,15 @@
     <string name="number_payphone">Таксофон</string>
     <string name="card_block_hidden">Блокировать скрытые номера</string>
     <string name="card_unblock_hidden">Не блокировать скрытые номера</string>
+    <string name="settings_colored_call_arrows">Цветные стрелки вызовов</string>
+    <string name="settings_colored_call_arrows_text">Исходящий — зелёный, входящий — синий, пропущенный — красный</string>
+    <string name="keywords_colored_call_arrows">цвет цветные стрелка стрелки значок тип вызова исходящий входящий пропущенный зелёный синий красный журнал</string>
+    <string name="settings_start_section">При запуске открывать</string>
+    <string name="settings_start_section_text">С какого экрана начинать, когда открываете значком</string>
+    <string name="keywords_start_section">запуск старт открывать экран первый раздел последний журнал смс контакты главный</string>
+    <string name="settings_group_app_start">Запуск приложения</string>
+    <string name="start_section_journal">Журнал</string>
+    <string name="start_section_messages">SMS</string>
+    <string name="start_section_contacts">Контакты</string>
+    <string name="start_section_last">Последний раздел</string>
 </resources>

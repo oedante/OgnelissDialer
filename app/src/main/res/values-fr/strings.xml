@@ -1075,4 +1075,15 @@
     <string name="number_payphone">Cabine téléphonique</string>
     <string name="card_block_hidden">Bloquer les numéros masqués</string>
     <string name="card_unblock_hidden">Autoriser les numéros masqués</string>
+    <string name="settings_colored_call_arrows">Flèches d’appel en couleur</string>
+    <string name="settings_colored_call_arrows_text">Sortant vert, entrant bleu, manqué rouge</string>
+    <string name="keywords_colored_call_arrows">couleur colorée flèche icône type d’appel sortant entrant manqué vert bleu rouge journal</string>
+    <string name="settings_start_section">À l’ouverture, afficher</string>
+    <string name="settings_start_section_text">L’écran affiché en ouvrant l’app par son icône</string>
+    <string name="keywords_start_section">démarrage lancement ouvrir écran première section dernière journal sms contacts accueil</string>
+    <string name="settings_group_app_start">Lancement de l’app</string>
+    <string name="start_section_journal">Journal</string>
+    <string name="start_section_messages">SMS</string>
+    <string name="start_section_contacts">Contacts</string>
+    <string name="start_section_last">Dernière section</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.components
 
+import com.ogneliss.dialer.ui.theme.RowIcon
 import com.ogneliss.dialer.ui.theme.Space
 
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -58,7 +59,8 @@ fun SettingsCategoryCard(
         leading = {
             // contentDescription = null: иконка декоративна, смысл несёт заголовок.
             // Озвучивать её отдельно значило бы дублировать текст для TalkBack.
-            Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            // Тон значка строки — общий (RowIcon, 2.7.0): было primary (синий), в «Меню» и шторках — серый
+            Icon(icon, contentDescription = null, tint = RowIcon.tint())
         },
         trailing = {
             Icon(OgnelissIcons.KeyboardArrowRight, contentDescription = null)
@@ -271,10 +273,14 @@ private fun Modifier.toggleableRow(
     }
 
 /**
- * Значок строки настроек — слева, цветом акцента, как `SettingsItem` почты
- * (2.2.2). Чисто украшение: смысл несёт заголовок, TalkBack значок не читает.
+ * Значок строки настроек — слева, как `SettingsItem` почты (2.2.2). Чисто
+ * украшение: смысл несёт заголовок, TalkBack значок не читает.
+ *
+ * 2.7.0 (обзор вида 15.11.2026): было цветом акцента, стало общим тоном
+ * значка строки (RowIcon.tint — onSurfaceVariant), как в «Меню» и шторках.
+ * [tint] — только когда у значка есть смысл (красный у опасного и т. п.).
  */
 @Composable
 fun SettingLeadingIcon(icon: ImageVector, tint: androidx.compose.ui.graphics.Color? = null) {
-    Icon(icon, contentDescription = null, tint = tint ?: MaterialTheme.colorScheme.primary)
+    Icon(icon, contentDescription = null, tint = tint ?: RowIcon.tint())
 }

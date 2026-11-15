@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.theme.RowIcon
 import com.ogneliss.dialer.data.ContactNames
 import com.ogneliss.dialer.ui.theme.PanelReachesNavBar
 import com.ogneliss.dialer.ui.theme.PanelColors
@@ -39,7 +40,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.ui.text.style.TextOverflow
 import com.ogneliss.dialer.ui.theme.BlockRed
 import com.ogneliss.dialer.ui.theme.CallGreen
-import com.ogneliss.dialer.ui.theme.NoteTeal
 import com.ogneliss.dialer.ui.theme.FlowUi
 import androidx.compose.material3.ButtonDefaults
 import com.ogneliss.dialer.ui.components.QrCodeDialog
@@ -2184,7 +2184,9 @@ fun SubscriberScreen(
                                 Icon(
                                     OgnelissIcons.StickyNote2,
                                     contentDescription = null,
-                                    tint = NoteTeal,
+                                    // 2.7.0 (обзор вида 15.11.2026): был NoteTeal; значок лишь
+                                    // обозначает заметку — общий тон строк (RowIcon)
+                                    tint = RowIcon.tint(),
                                     modifier = Modifier.size(FlowUi.iconSizeInline)
                                 )
                             }
@@ -2243,7 +2245,8 @@ fun SubscriberScreen(
                                     Icon(
                                         OgnelissIcons.StickyNote2,
                                         contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.primary
+                                        // Обозначение строки — общий тон (RowIcon, 2.7.0), был primary
+                                        tint = RowIcon.tint()
                                     )
                                     Spacer(Modifier.width(Space.l))
                                 }
@@ -2442,7 +2445,8 @@ fun SubscriberScreen(
                                 Icon(
                                     OgnelissIcons.Alarm,
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary
+                                    // Обозначение строки «Напоминание» — общий тон (RowIcon, 2.7.0), был primary
+                                    tint = RowIcon.tint()
                                 )
                                 Spacer(Modifier.width(Space.m))
                                 Column(Modifier.weight(1f)) {

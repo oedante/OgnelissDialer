@@ -232,6 +232,13 @@ class ScreenGalleryTest {
         },
         Shot("choice_call_photo", dialog = true) { vm ->
             com.ogneliss.dialer.ui.screens.SettingsChoiceDialog(settingKey = "call_photo_style", vm = vm, onDismiss = {})
+        },
+        // 2.7.0: выбор языка и цветовой темы — тоже шторки (обзор вида 15.11.2026)
+        Shot("choice_language", dialog = true) { vm ->
+            com.ogneliss.dialer.ui.screens.SettingsChoiceDialog(settingKey = "language", vm = vm, onDismiss = {})
+        },
+        Shot("choice_color_theme", dialog = true) { vm ->
+            com.ogneliss.dialer.ui.screens.SettingsChoiceDialog(settingKey = "theme_preset", vm = vm, onDismiss = {})
         }
     )
 
