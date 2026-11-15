@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.EmptyState
+import com.ogneliss.dialer.ui.components.EmptyReason
 import android.text.format.DateUtils
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -114,7 +116,7 @@ fun CallArchiveScreen(vm: DialerViewModel, onBack: () -> Unit) {
         if (archived.isEmpty()) {
             // 2.7.0: общий пустой экран (была мелкая серая строка по центру, без значка)
             Box(Modifier.fillMaxSize().padding(pad)) {
-                com.ogneliss.dialer.ui.components.EmptyState(com.ogneliss.dialer.ui.components.EmptyReason.NoArchive)
+                EmptyState(EmptyReason.NoArchive)
             }
         } else {
             val listState = androidx.compose.foundation.lazy.rememberLazyListState()

@@ -1,5 +1,7 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.ui.components.EmptyState
+import com.ogneliss.dialer.ui.components.EmptyReason
 import com.ogneliss.dialer.ui.components.GroupPosition
 import com.ogneliss.dialer.ui.components.GroupedRow
 import androidx.compose.foundation.shape.CircleShape
@@ -86,7 +88,7 @@ fun PinnedContactsScreen(
 
             if (entries.isEmpty()) {
                 // 2.7.0: общий пустой экран (EmptyState); пояснений нет — правило автора 07.11.2026
-                item { com.ogneliss.dialer.ui.components.EmptyState(com.ogneliss.dialer.ui.components.EmptyReason.NoPinned) }
+                item { EmptyState(EmptyReason.NoPinned) }
             }
 
             itemsIndexed(entries) { index, entry ->

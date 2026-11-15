@@ -1,5 +1,8 @@
 package com.ogneliss.dialer.ui.conversation
 
+import com.ogneliss.dialer.ui.components.EmptyStateLayout
+import com.ogneliss.dialer.ui.components.EmptyState
+import com.ogneliss.dialer.ui.components.EmptyReason
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -51,7 +54,7 @@ internal fun CompanionBlock(
     onUseHere: () -> Unit
 ) {
     // Общий вид пустого экрана (2.7.0, EmptyStateLayout): был синий значок и кнопки по центру
-    com.ogneliss.dialer.ui.components.EmptyStateLayout(icon = OgnelissIcons.Textsms, title = null) {
+    EmptyStateLayout(icon = OgnelissIcons.Textsms, title = null) {
         if (companion != null) {
             FilledTonalButton(onClick = onOpenCompanion) {
                 Text(stringResource(R.string.messages_open_app, companion.label))
@@ -77,7 +80,7 @@ internal fun CompanionBlock(
 @Composable
 internal fun MessagesEmpty(archive: Boolean) {
     // 2.7.0: общий EmptyState (был свой блок по центру экрана)
-    com.ogneliss.dialer.ui.components.EmptyState(com.ogneliss.dialer.ui.components.EmptyReason.NoMessages(archive))
+    EmptyState(EmptyReason.NoMessages(archive))
 }
 
 /**

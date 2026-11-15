@@ -1,0 +1,162 @@
+<ru-RU>
+• Единое оформление: одна шапка экранов, одно поле ввода, один вид пустого экрана.
+• Выбор в настройках — шторкой снизу; пояснения настроек стали короткими, подробности — в «Вопросах и ответах».
+• По вашим просьбам: цветные стрелки вызовов и выбор экрана при запуске (в настройках).
+• Кнопка псевдозвонка поверх списков теперь выключена по умолчанию — он есть в «Меню».
+</ru-RU>
+<ar>
+• مظهر موحّد: شريط علوي واحد للشاشات، وحقل إدخال واحد، وشكل واحد للشاشة الفارغة.
+• الاختيار في الإعدادات عبر لوحة تنزلق من الأسفل؛ شروحات الإعدادات أصبحت أقصر، والتفاصيل في «أسئلة وأجوبة».
+• بناءً على طلباتكم: أسهم مكالمات ملوّنة واختيار الشاشة عند التشغيل (في الإعدادات).
+• زر المكالمة الوهمية فوق القوائم أصبح معطّلًا افتراضيًا، وهي متاحة في «القائمة».
+</ar>
+<cs-CZ>
+• Jednotný vzhled: jedna hlavička obrazovek, jedno vstupní pole, jeden vzhled prázdné obrazovky.
+• Volba v nastavení se zobrazuje panelem zespodu; popisy nastavení jsou kratší, podrobnosti najdete v „Otázkách a odpovědích“.
+• Na vaše přání: barevné šipky hovorů a volba úvodní obrazovky (v nastavení).
+• Tlačítko falešného hovoru nad seznamy je nyní ve výchozím stavu vypnuté – najdete ho v „Nabídce“.
+</cs-CZ>
+<da-DK>
+• Ensartet udseende: ét skærmhoved, ét inputfelt og ét udseende til tomme skærme.
+• Valg i indstillingerne vises i et panel nedefra; forklaringerne er blevet kortere, detaljerne står i „Spørgsmål og svar“.
+• Efter jeres ønske: farvede opkaldspile og valg af startskærm (i indstillingerne).
+• Knappen til falske opkald over listerne er nu slået fra som standard – den findes i „Menu“.
+</da-DK>
+<de-DE>
+• Einheitliches Design: eine Kopfzeile für alle Bildschirme, ein Eingabefeld, eine Darstellung für leere Ansichten.
+• Auswahl in den Einstellungen per Bottom Sheet von unten; die Erklärungen sind kürzer, Details stehen unter „Fragen und Antworten“.
+• Auf Ihren Wunsch: farbige Anrufpfeile und Wahl des Startbildschirms (in den Einstellungen).
+• Die Taste für den Scheinanruf über den Listen ist jetzt standardmäßig aus – er ist im „Menü“.
+</de-DE>
+<en-US>
+• Consistent design: one screen header, one input field, one look for empty screens.
+• Choices in Settings now open in a bottom sheet; setting descriptions are shorter, with details in “Questions and answers”.
+• By popular request: colored call arrows and a choice of start screen (in Settings).
+• The fake call button over lists is now off by default; fake call is in the “Menu”.
+</en-US>
+<es-ES>
+• Diseño unificado: una sola cabecera en las pantallas, un solo campo de entrada y un solo aspecto para las pantallas vacías.
+• Las opciones de Ajustes se eligen en un panel inferior; las descripciones son más breves y los detalles están en «Preguntas y respuestas».
+• Por vuestra petición: flechas de llamada de colores y elección de la pantalla de inicio (en Ajustes).
+• El botón de llamada falsa sobre las listas viene desactivado por defecto; la función está en el «Menú».
+</es-ES>
+<fi-FI>
+• Yhtenäinen ulkoasu: yksi näyttöjen yläpalkki, yksi syöttökenttä ja yksi tyhjän näytön ulkoasu.
+• Asetusten valinnat avautuvat alhaalta nousevassa paneelissa; selitykset ovat lyhyempiä ja yksityiskohdat löytyvät kohdasta ”Kysymykset ja vastaukset”.
+• Toiveidenne mukaan: värilliset puhelunuolet ja aloitusnäytön valinta (Asetuksissa).
+• Valepuhelupainike luetteloiden päällä on nyt oletuksena pois päältä – valepuhelu löytyy ”Valikosta”.
+</fi-FI>
+<fr-FR>
+• Design unifié : un seul en-tête d’écran, un seul champ de saisie, un seul aspect pour les écrans vides.
+• Dans les paramètres, les choix s’affichent dans un panneau qui monte du bas ; les explications sont plus courtes, les détails sont dans « Questions et réponses ».
+• À votre demande : flèches d’appel en couleur et choix de l’écran de démarrage (dans les paramètres).
+• Le bouton de faux appel au-dessus des listes est désormais désactivé par défaut ; il se trouve dans le « Menu ».
+</fr-FR>
+<hi-IN>
+• एक जैसा डिज़ाइन: सभी स्क्रीन पर एक ही शीर्ष पट्टी, एक ही इनपुट फ़ील्ड और खाली स्क्रीन का एक ही रूप।
+• सेटिंग्स में विकल्प नीचे से खुलने वाले पैनल में चुनें; सेटिंग्स के विवरण छोटे हो गए हैं, ब्योरा "सवाल और जवाब" में है।
+• आपके अनुरोध पर: रंगीन कॉल तीर और शुरू होने पर खुलने वाली स्क्रीन का चुनाव (सेटिंग्स में)।
+• सूचियों के ऊपर नकली कॉल का बटन अब डिफ़ॉल्ट रूप से बंद है — नकली कॉल "मेन्यू" में है।
+</hi-IN>
+<hu-HU>
+• Egységes megjelenés: egy képernyőfejléc, egy beviteli mező, egy kinézet az üres képernyőkhöz.
+• A beállításokban a választás alulról felcsúszó panelen történik; a leírások rövidebbek, a részletek a „Kérdések és válaszok” részben vannak.
+• Kérésetekre: színes hívásnyilak és indítóképernyő-választás (a beállításokban).
+• A listák feletti álhívás gomb alapértelmezetten ki van kapcsolva – az álhívás a „Menüben” található.
+</hu-HU>
+<id>
+• Tampilan seragam: satu header layar, satu kolom input, satu tampilan untuk layar kosong.
+• Pilihan di Setelan kini muncul lewat panel dari bawah; keterangan setelan lebih singkat, rincian ada di “Tanya jawab”.
+• Atas permintaan Anda: panah panggilan berwarna dan pilihan layar awal (di Setelan).
+• Tombol panggilan palsu di atas daftar kini nonaktif secara default; fitur ini ada di “Menu”.
+</id>
+<it-IT>
+• Aspetto uniforme: un’unica intestazione per le schermate, un solo campo di input, un solo aspetto per le schermate vuote.
+• Le scelte nelle Impostazioni si fanno in un pannello dal basso; le descrizioni sono più brevi e i dettagli sono in «Domande e risposte».
+• Su vostra richiesta: frecce delle chiamate colorate e scelta della schermata iniziale (nelle Impostazioni).
+• Il pulsante della finta chiamata sopra gli elenchi ora è disattivato di default; la finta chiamata è nel «Menu».
+</it-IT>
+<iw-IL>
+• עיצוב אחיד: כותרת אחת לכל המסכים, שדה קלט אחד ומראה אחד למסך ריק.
+• הבחירה בהגדרות נפתחת בלוח שעולה מלמטה; ההסברים קצרים יותר, והפרטים ב"שאלות ותשובות".
+• לבקשתכם: חיצי שיחות צבעוניים ובחירת מסך הפתיחה (בהגדרות).
+• כפתור השיחה המדומה מעל הרשימות כבוי כעת כברירת מחדל – השיחה המדומה נמצאת ב"תפריט".
+</iw-IL>
+<ja-JP>
+• デザインを統一：画面のヘッダー、入力欄、空の画面の表示がそれぞれ共通になりました。
+• 設定の選択肢は下からのパネルで選べます。設定の説明は短くなり、詳しくは「よくある質問」で確認できます。
+• ご要望にお応えして：通話の矢印に色を付け、起動時の画面を選べるようにしました（設定）。
+• リスト上の偽の着信ボタンは初期設定でオフになりました。偽の着信は「メニュー」から使えます。
+</ja-JP>
+<ko-KR>
+• 통일된 디자인: 화면 상단 영역, 입력란, 빈 화면 모양이 각각 하나로 통일되었습니다.
+• 설정의 선택 항목은 아래에서 올라오는 패널로 고릅니다. 설정 설명은 짧아졌고 자세한 내용은 '질문과 답변'에 있습니다.
+• 요청에 따라: 통화 화살표 색상 표시와 시작 화면 선택(설정).
+• 목록 위의 가짜 전화 버튼은 이제 기본으로 꺼져 있습니다. 가짜 전화는 '메뉴'에 있습니다.
+</ko-KR>
+<nl-NL>
+• Eén ontwerp: één schermkop, één invoerveld en één weergave voor lege schermen.
+• Keuzes in Instellingen verschijnen in een paneel van onderaf; de uitleg is korter, details staan bij ‘Vragen en antwoorden’.
+• Op jullie verzoek: gekleurde gesprekspijlen en keuze van het startscherm (in Instellingen).
+• De knop voor een nepoproep boven lijsten staat nu standaard uit – de nepoproep vind je in het ‘Menu’.
+</nl-NL>
+<no-NO>
+• Enhetlig design: én skjermtopp, ett inndatafelt og ett utseende for tomme skjermer.
+• Valg i innstillingene vises i et panel nedenfra; forklaringene er kortere, og detaljene står i «Spørsmål og svar».
+• Etter ønske fra dere: fargede anropspiler og valg av startskjerm (i innstillingene).
+• Knappen for falske anrop over listene er nå av som standard – falske anrop finner du i «Menyen».
+</no-NO>
+<pl-PL>
+• Spójny wygląd: jeden nagłówek ekranów, jedno pole wprowadzania i jeden wygląd pustego ekranu.
+• Wybór w ustawieniach otwiera się w panelu od dołu; opisy ustawień są krótsze, a szczegóły znajdziesz w „Pytaniach i odpowiedziach”.
+• Na Wasze prośby: kolorowe strzałki połączeń i wybór ekranu startowego (w ustawieniach).
+• Przycisk fałszywego połączenia nad listami jest teraz domyślnie wyłączony – fałszywe połączenie jest w „Menu”.
+</pl-PL>
+<pt-BR>
+• Visual unificado: um só cabeçalho de tela, um só campo de entrada e um só visual para telas vazias.
+• As opções em Configurações abrem em um painel inferior; as descrições estão mais curtas e os detalhes ficam em "Perguntas e respostas".
+• A pedido de vocês: setas de chamada coloridas e escolha da tela inicial (em Configurações).
+• O botão de chamada falsa sobre as listas agora vem desativado por padrão; a chamada falsa está no "Menu".
+</pt-BR>
+<ro>
+• Aspect unitar: un singur antet al ecranelor, un singur câmp de introducere și un singur aspect pentru ecranele goale.
+• Alegerile din Setări se fac într-un panou care urcă de jos; explicațiile sunt mai scurte, iar detaliile se găsesc în „Întrebări și răspunsuri”.
+• La cererea voastră: săgeți de apel colorate și alegerea ecranului de pornire (în Setări).
+• Butonul pentru apelul fals de deasupra listelor este acum dezactivat implicit – apelul fals se găsește în „Meniu”.
+</ro>
+<sk>
+• Jednotný vzhľad: jedna hlavička obrazoviek, jedno vstupné pole, jeden vzhľad prázdnej obrazovky.
+• Voľba v nastaveniach sa zobrazuje panelom zospodu; popisy nastavení sú kratšie, podrobnosti nájdete v „Otázkach a odpovediach“.
+• Na vaše želanie: farebné šípky hovorov a voľba úvodnej obrazovky (v nastaveniach).
+• Tlačidlo falošného hovoru nad zoznamami je teraz predvolene vypnuté – nájdete ho v „Ponuke“.
+</sk>
+<sv-SE>
+• Enhetlig design: ett skärmhuvud, ett inmatningsfält och ett utseende för tomma skärmar.
+• Val i inställningarna visas i en panel nedifrån; förklaringarna är kortare och detaljerna finns i ”Frågor och svar”.
+• På era önskemål: färgade samtalspilar och val av startskärm (i inställningarna).
+• Knappen för låtsassamtal över listorna är nu avstängd som standard – låtsassamtal finns i ”Menyn”.
+</sv-SE>
+<th>
+• ดีไซน์เป็นหนึ่งเดียว: ส่วนหัวหน้าจอแบบเดียว ช่องป้อนข้อมูลแบบเดียว และหน้าจอว่างแบบเดียว
+• ตัวเลือกในการตั้งค่าเลือกผ่านแผงที่เลื่อนขึ้นจากด้านล่าง คำอธิบายการตั้งค่าสั้นลง ส่วนรายละเอียดอยู่ใน "คำถามและคำตอบ"
+• ตามคำขอของคุณ: ลูกศรการโทรหลากสี และเลือกหน้าจอเริ่มต้นได้ (ในการตั้งค่า)
+• ปุ่มสายปลอมเหนือรายการตอนนี้ปิดไว้เป็นค่าเริ่มต้น โดยสายปลอมอยู่ใน "เมนู"
+</th>
+<tr-TR>
+• Tutarlı tasarım: tek ekran başlığı, tek giriş alanı, boş ekranlar için tek görünüm.
+• Ayarlardaki seçimler alttan açılan bir panelle yapılır; ayar açıklamaları kısaldı, ayrıntılar "Sorular ve yanıtlar" bölümünde.
+• İsteğiniz üzerine: renkli arama okları ve açılış ekranı seçimi (Ayarlar'da).
+• Listelerin üzerindeki sahte arama düğmesi artık varsayılan olarak kapalı; sahte arama "Menü"de.
+</tr-TR>
+<vi>
+• Giao diện thống nhất: một thanh tiêu đề cho mọi màn hình, một ô nhập liệu, một kiểu hiển thị cho màn hình trống.
+• Lựa chọn trong Cài đặt hiện qua bảng trượt từ dưới lên; phần giải thích ngắn gọn hơn, chi tiết nằm trong "Hỏi đáp".
+• Theo yêu cầu của bạn: mũi tên cuộc gọi có màu và chọn màn hình khởi động (trong Cài đặt).
+• Nút cuộc gọi giả trên các danh sách nay tắt theo mặc định; cuộc gọi giả có trong "Menu".
+</vi>
+<zh-CN>
+• 统一的外观：所有屏幕使用同一种顶部栏、同一种输入框，空白页面也统一样式。
+• 设置中的选项改为从底部弹出的面板；设置说明更简短，详细内容见“常见问题”。
+• 应您的要求：通话箭头增加颜色，并可选择启动时显示的屏幕（在设置中）。
+• 列表上方的假来电按钮现在默认关闭，假来电功能在“菜单”中。
+</zh-CN>
