@@ -101,7 +101,9 @@ private fun DrawScope.drawSoftShape(shape: Shape, color: Color, feather: Float, 
     // скругляется тем же радиусом на большем квадрате
     val outline = shape.createOutline(size, layoutDirection, this)
     val corner = ((outline as? Outline.Rounded)?.roundRect?.topLeftCornerRadius?.x ?: 0f) + g
-    val half = minOf(w, h) / 2f
+    // Не меньше 1 (2.7.3): у портрета меньше 2 px (начало анимации) было бы
+    // coerceIn(1f, 0.5f) — пустой диапазон и падение, как в окне обрезки фото
+    val half = (minOf(w, h) / 2f).coerceAtLeast(1f)
     val featherPx = feather.coerceIn(1f, half)
     // Вниз до целого: два радиуса не должны быть больше стороны — иначе
     // углы наложатся, и на стыке выйдет полоса плотнее

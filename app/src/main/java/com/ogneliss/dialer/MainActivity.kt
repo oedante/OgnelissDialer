@@ -156,29 +156,7 @@ class MainActivity : ComponentActivity() {
          * приходит в onNewIntent или с сохранённым состоянием — тогда
          * человек остаётся там, где был. Ошибка чтения настроек — журнал.
          */
-        val coldLauncherStart = savedInstanceState == null &&
-            com.ogneliss.dialer.widget.SectionIcons.isAppIconLaunch(intent)
-        lifecycleScope.launch {
-            runCatching { startPrefs.consentVersion.first() }
-            if (coldLauncherStart) {
-                runCatching {
-                    val route = com.ogneliss.dialer.settings.StartSection.resolve(
-                        choice = startPrefs.startSection.first(),
-                        last = startPrefs.lastSection.first(),
-                        explicitRoute = sectionRouteOf(intent),
-                        // Пока включены отдельные значки «SMS» и «Контакты» (2.6.0),
-                        // значок приложения — «Телефон» и открывает журнал: это правило
-                        // главнее настройки
-                        sectionIconsEnabled = com.ogneliss.dialer.widget.SectionIcons.isEnabled(this@MainActivity),
-                        coldLauncherStart = true
-                    )
-                    if (route != null) sectionRoute = route
-                }.onFailure {
-                    com.ogneliss.dialer.log.Logger.w("MainActivity", "Раздел запуска не прочитан", it)
-                }
-            }
-            firstFrameReady = true
-        }
+        // Само чтение — ниже, после super.onCreate (2.7.3): см. там
 
         /*
          * EDGE-TO-EDGE БЕЗ СВОИХ ПОДЛОЖЕК.
@@ -230,6 +208,40 @@ class MainActivity : ComponentActivity() {
         currentIntent = intent
         // ?: — раздел запуска (выше) мог быть уже выбран: не затирать его пустым
         sectionRoute = sectionRouteOf(intent) ?: sectionRoute
+
+        /*
+         * ЧТЕНИЕ СОГЛАСИЯ И РАЗДЕЛА ЗАПУСКА — ПОСЛЕ super.onCreate (2.7.3).
+         * Было (2.7.0–2.7.2): сопрограмма запускалась до super.onCreate, а
+         * startPrefs подставляет Hilt именно в super.onCreate. lifecycleScope
+         * начинает сопрограмму сразу (Main.immediate) — обращение к ещё пустому
+         * полю падало, ошибка ловилась, и «При запуске открывать» не
+         * срабатывало никогда (журнал пользователя: «lateinit property
+         * startPrefs has not been initialized» при каждом запуске). Заставка
+         * от переноса не страдает: она держится, пока firstFrameReady ложь.
+         */
+        val coldLauncherStart = savedInstanceState == null &&
+            com.ogneliss.dialer.widget.SectionIcons.isAppIconLaunch(intent)
+        lifecycleScope.launch {
+            runCatching { startPrefs.consentVersion.first() }
+            if (coldLauncherStart) {
+                runCatching {
+                    val route = com.ogneliss.dialer.settings.StartSection.resolve(
+                        choice = startPrefs.startSection.first(),
+                        last = startPrefs.lastSection.first(),
+                        explicitRoute = sectionRouteOf(intent),
+                        // Пока включены отдельные значки «SMS» и «Контакты» (2.6.0),
+                        // значок приложения — «Телефон» и открывает журнал: это правило
+                        // главнее настройки
+                        sectionIconsEnabled = com.ogneliss.dialer.widget.SectionIcons.isEnabled(this@MainActivity),
+                        coldLauncherStart = true
+                    )
+                    if (route != null) sectionRoute = route
+                }.onFailure {
+                    com.ogneliss.dialer.log.Logger.w("MainActivity", "Раздел запуска не прочитан", it)
+                }
+            }
+            firstFrameReady = true
+        }
 
         setContent {
             val vm: DialerViewModel = hiltViewModel()
