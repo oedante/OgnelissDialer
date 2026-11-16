@@ -72,4 +72,18 @@ SMS), настройки (DataStore `ogneliss_prefs`, `speed_dial`), настр�
 
 ## Проверки
 
-CHECKS
+Модульные тесты — 736, без ошибок (+6 DeviceTransferTest, +2 DeviceTransferDbTest);
+lint — 0 ошибок; release-сборка; проверки `scripts/` (prebuild, audit, import, ui_roles,
+check_no_internet, check_ringing_flag, design_tokens с Mail) — без замечаний.
+Карточка без истории — отрисовкой (`ScreenGalleryTest`). Перенос «телефон на телефон»
+на двух телефонах не проверялся.
+
+## Сайт
+
+Присланный сайт (`ogneliss-site-2026-11-15-v4`, совпадает с полной версией
+`ogneliss-site-2026-11-16`) обновлён: в `src_multilang/` — `privacy.html`, `faq.html`,
+`index.html` из `docs/www` (на сайте «Вопросы и ответы» были ещё от 1.8.0),
+`UPDATED` — 2026-11-16, сборка `build_site.py` без замечаний. Изменились политика,
+«Вопросы и ответы» и страница Dialer на четырёх языках и карта сайта. Архивы —
+`ogneliss-site-2026-11-16.zip` (исходники) и `ogneliss-site-deploy-2026-11-16.zip`
+(выкладка, DEPLOY.md, шаг 2).
