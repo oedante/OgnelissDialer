@@ -3,6 +3,9 @@ package com.ogneliss.dialer.ui.screens
 
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -109,6 +112,11 @@ fun SettingsChoiceDialog(
         "call_photo_style" -> com.ogneliss.dialer.settings.CallPhotoStyle.entries.map {
             it.name to stringResource(SettingsCommands.callPhotoStyleLabelRes(it))
         }
+        // 2.7.4: фон вызова — обычный или свой снимок (из окна выбора фото)
+        "call_bg_incoming", "call_bg_outgoing" -> listOf(
+            SettingsCommands.CALL_BG_DEFAULT to stringResource(R.string.call_bg_default),
+            SettingsCommands.CALL_BG_CUSTOM to stringResource(R.string.call_bg_custom)
+        )
         "call_photo_size" -> com.ogneliss.dialer.settings.CallPhotoSize.entries.map {
             it.name to stringResource(SettingsCommands.callPhotoSizeLabelRes(it))
         }
@@ -215,6 +223,17 @@ fun SettingsChoiceDialog(
      * список прокручивается внутри (weight + verticalScroll), заголовок
      * остаётся на месте. Раньше было heightIn(max = 400.dp) в диалоге.
      */
+    /*
+     * 2.7.4: «Свой снимок» открывает системное окно выбора фото (разрешений
+     * не нужно, как в редакторе контакта). Шторка остаётся под окном, пока
+     * не придёт ответ: закрытая раньше, она увела бы с собой и приёмник
+     * ответа. Выбрал — сохраняем; отменил — ничего не меняется.
+     */
+    val pickBackground = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) vm.setCallBackground(settingKey, uri)
+        onDismiss()
+    }
+
     ChoiceSheet(title = vm.choiceTitle(ctx, settingKey), onDismiss = onDismiss) {
         Column(
             Modifier
@@ -232,8 +251,14 @@ fun SettingsChoiceDialog(
                             com.ogneliss.dialer.ui.theme.uiFontFamily(com.ogneliss.dialer.settings.UiFont.from(value))
                         } else null,
                         onClick = {
-                            vm.setChoice(settingKey, value)
-                            onDismiss()
+                            if (value == SettingsCommands.CALL_BG_CUSTOM) {
+                                pickBackground.launch(
+                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                )
+                            } else {
+                                vm.setChoice(settingKey, value)
+                                onDismiss()
+                            }
                         }
                     )
                     if (index < options.lastIndex) SheetDivider()

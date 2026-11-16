@@ -12,6 +12,14 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 16.11.2026 — 2.7.4 (79): свой фон экрана вызова, «Меню»
+
+Разбор — `docs/RELEASE_NOTES_2.7.4.md`. Фон: `call/CallBackgrounds.kt` (файлы),
+`call/CallBackgroundLayer.kt` (какой слой рисовать), `CallScreenParts.CallCustomBackground`,
+настройки `call_bg_incoming`/`call_bg_outgoing` (Choice, «Свой снимок» → PickVisualMedia
+в `SettingsChoiceDialog`), направление — `CallManager.isIncomingCall`. «Меню»: «Приложение»
+строками (`MenuActionRows`), «Настроить папки» — `OgnelissIcons.Tune`.
+
 ## 16.11.2026 — 2.7.3 (78): закрытие в окне обрезки фото, раздел запуска
 
 Разбор — `docs/RELEASE_NOTES_2.7.3.md`. `PhotoCropDialog.clampOffset` — пустой

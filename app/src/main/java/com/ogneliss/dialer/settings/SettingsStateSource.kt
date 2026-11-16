@@ -64,6 +64,9 @@ class SettingsStateSource @Inject constructor(
         .combine(prefs.callHideContactNumber) { a, v -> a.copy(callHideContactNumber = v) }
         .combine(prefs.callAnimation) { a, v -> a.copy(callAnimation = v) }
         .combine(prefs.callPhotoStyle) { a, v -> a.copy(callPhotoStyle = v) }
+        // 2.7.4: свой фон входящих и исходящих
+        .combine(prefs.callBgIncoming) { a, v -> a.copy(callBgIncoming = v) }
+        .combine(prefs.callBgOutgoing) { a, v -> a.copy(callBgOutgoing = v) }
         .combine(prefs.uiScale) { a, v -> a.copy(uiScale = v) }
         .combine(prefs.fontScale) { a, v -> a.copy(fontScale = v) }
         .combine(prefs.themePreset) { a, v -> a.copy(themePreset = v) }
@@ -204,6 +207,8 @@ class SettingsStateSource @Inject constructor(
             callHideContactNumber = a.callHideContactNumber,
             callAnimation = a.callAnimation,
             callPhotoStyle = a.callPhotoStyle,
+            callBgIncoming = a.callBgIncoming,
+            callBgOutgoing = a.callBgOutgoing,
             uiScale = a.uiScale,
             fontScale = a.fontScale,
             themePreset = a.themePreset,
@@ -281,6 +286,8 @@ class SettingsStateSource @Inject constructor(
         val callHideContactNumber: Boolean = false,
         val callAnimation: Boolean = true,
         val callPhotoStyle: CallPhotoStyle = CallPhotoStyle.CIRCLE,
+        val callBgIncoming: Long = 0L,
+        val callBgOutgoing: Long = 0L,
         val uiScale: UiScale = UiScale.DEFAULT,
         val fontScale: Float = 1f,
         val themePreset: ThemePreset = ThemePreset.CLASSIC,

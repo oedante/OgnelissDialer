@@ -1094,4 +1094,11 @@
     <string name="consent_updated_title">Политика конфиденциальности обновлена</string>
     <string name="consent_changes_caption">Что изменилось</string>
     <string name="consent_changes_v2">Редакция 1.3 от 16 ноября 2026 г. При переносе данных со старого телефона на новый средствами Android (по кабелю или Wi‑Fi, напрямую между телефонами) заметки, метки, списки блокировки, напоминания и настройки теперь переезжают вместе с ним. В облако по-прежнему не уходит ничего, доступа в интернет у приложения нет.</string>
+    <string name="settings_call_bg_incoming">Фон входящего вызова</string>
+    <string name="settings_call_bg_incoming_text">Свой снимок вместо живого фона</string>
+    <string name="settings_call_bg_outgoing">Фон исходящего вызова</string>
+    <string name="settings_call_bg_outgoing_text">Свой снимок вместо живого фона</string>
+    <string name="call_bg_default">Обычный</string>
+    <string name="call_bg_custom">Свой снимок</string>
+    <string name="keywords_call_bg">фон обои картинка снимок фото изображение экран вызова</string>
 </resources>

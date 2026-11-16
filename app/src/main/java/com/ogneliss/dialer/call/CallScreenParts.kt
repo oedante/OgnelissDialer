@@ -24,6 +24,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalView
@@ -253,6 +255,56 @@ internal fun LightStatusIconsOnPhoto(enabled: Boolean) {
 @Composable
 internal fun BoxScope.PlainCallBackground() {
     Box(Modifier.matchParentSize().background(MaterialTheme.colorScheme.surface))
+}
+
+/**
+ * СВОЙ СНИМОК ВМЕСТО ФОНА ВЫЗОВА (2.7.4, CallBackgrounds): во весь экран,
+ * под строкой состояния и навигацией тоже, обрезкой по краям. Поверх —
+ * вертикальный градиент цвета страницы темы (тот же, что у PlainCallBackground):
+ * сверху 0,60 — под имя и состояние, в середине 0,30 — снимок виден, снизу
+ * 0,70 — под кнопки без панели. На любом снимке текст темы остаётся читаемым,
+ * потому что под ним всегда не меньше трети цвета страницы.
+ */
+@Composable
+internal fun BoxScope.CallCustomBackground(image: androidx.compose.ui.graphics.ImageBitmap) {
+    val page = MaterialTheme.colorScheme.surface
+    androidx.compose.foundation.Image(
+        bitmap = image,
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.matchParentSize()
+    )
+    Box(
+        Modifier
+            .matchParentSize()
+            .background(
+                Brush.verticalGradient(
+                    0f to page.copy(alpha = 0.60f),
+                    0.5f to page.copy(alpha = 0.30f),
+                    1f to page.copy(alpha = 0.70f)
+                )
+            )
+    )
+}
+
+/**
+ * Свой снимок фона вызова — загруженный, по отметке (2.7.4). [mark] 0 — снимка
+ * нет (или высокий контраст: там фон ровный ради различимости). Пока снимок
+ * читается с диска (IO), возвращает null — экран рисует прежний фон, без
+ * мигания пустотой; не прочитался — тоже null (причина в журнале).
+ */
+@Composable
+internal fun rememberCustomCallBackground(
+    kind: CallBackgrounds.Kind,
+    mark: Long
+): androidx.compose.ui.graphics.ImageBitmap? {
+    val context = androidx.compose.ui.platform.LocalContext.current.applicationContext
+    val image by androidx.compose.runtime.produceState<androidx.compose.ui.graphics.ImageBitmap?>(null, kind, mark) {
+        value = if (mark <= 0L) null else {
+            CallBackgrounds.load(context, kind)?.asImageBitmap()
+        }
+    }
+    return image
 }
 
 /**

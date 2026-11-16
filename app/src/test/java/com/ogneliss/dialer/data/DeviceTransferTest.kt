@@ -63,7 +63,7 @@ class DeviceTransferTest {
 
         val transfer = section("device-transfer")
         assertEquals(
-            setOf("database:", "file:datastore/", "sharedpref:sms_settings.xml"),
+            setOf("database:", "file:datastore/", "file:call_backgrounds/", "sharedpref:sms_settings.xml"),
             rules(transfer, "include")
         )
     }

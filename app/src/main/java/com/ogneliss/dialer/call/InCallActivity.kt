@@ -259,6 +259,9 @@ class InCallActivity : ComponentActivity() {
             // Живой фон (1.5.1): по настройке; в высоком контрасте — нет,
             // там фон ровный ради различимости
             val callAnimation by prefs.callAnimation.collectAsStateWithLifecycle(initialValue = true)
+            // Свой фон вызова (2.7.4): отметки снимков входящих и исходящих; 0 — нет
+            val callBgIncoming by prefs.callBgIncoming.collectAsStateWithLifecycle(initialValue = 0L)
+            val callBgOutgoing by prefs.callBgOutgoing.collectAsStateWithLifecycle(initialValue = 0L)
             // Фото звонящего (1.5.5). null — настройка ещё не прочитана:
             // фото не показываем ни так, ни так, чтобы оно не мигнуло
             // на весь экран перед кругом
@@ -396,6 +399,9 @@ class InCallActivity : ComponentActivity() {
                     hideContactNumber = hideContactNumber,
                     ambientBackground = callAnimation && theme != ThemeMode.HIGH_CONTRAST,
                     bareControls = theme != ThemeMode.HIGH_CONTRAST,
+                    // В высоком контрасте свой снимок не показываем — как и живой фон
+                    incomingBgMark = if (theme != ThemeMode.HIGH_CONTRAST) callBgIncoming else 0L,
+                    outgoingBgMark = if (theme != ThemeMode.HIGH_CONTRAST) callBgOutgoing else 0L,
                     photoStyle = callPhotoStyle,
                     largePortrait = callPhotoSize == CallPhotoSize.LARGE,
                     slideToAnswer = answerMode == AnswerMode.SLIDE,
@@ -511,6 +517,9 @@ private fun InCallScreen(
     ambientBackground: Boolean = false,
     /** Кнопки без панели и на ровном фоне (1.6.2): всё, кроме высокого контраста. */
     bareControls: Boolean = false,
+    /** Отметки своего фона вызова (2.7.4, CallBackgrounds): входящие и исходящие; 0 — нет. */
+    incomingBgMark: Long = 0L,
+    outgoingBgMark: Long = 0L,
     /** Фото звонящего: круг, квадрат или на весь экран; null — ещё не прочитано. */
     photoStyle: CallPhotoStyle? = CallPhotoStyle.CIRCLE,
     /** Настройка «Размер фото» — крупный (1.5.7). */
@@ -1029,12 +1038,24 @@ private fun InCallScreen(
         portraitFocus = AmbientFocus(bounds.center, if (squarePortrait) half * SQUARE_FOCUS else half)
     }
     LightStatusIconsOnPhoto(photoBackground || photoTop)
+    /*
+     * 2.7.4: свой снимок вместо живого фона и ровной заливки — отдельный
+     * для входящих и исходящих. Направление — как вызов пришёл
+     * (CallManager.isIncomingCall): снятый входящий остаётся входящим.
+     * Пока снимок грузится — прежний фон (rememberCustomCallBackground).
+     */
+    val customBg = rememberCustomCallBackground(
+        if (CallManager.isIncomingCall(call)) CallBackgrounds.Kind.INCOMING else CallBackgrounds.Kind.OUTGOING,
+        if (CallManager.isIncomingCall(call)) incomingBgMark else outgoingBgMark
+    )
+    val bgLayer = CallBackgroundLayer.decide(photoBackground, photoTop, customBg != null, ambientBackground)
+    val customLayer = bgLayer == CallBackgroundLayer.CUSTOM
     // Живой фон — когда нет фото на весь экран: фото само и есть фон.
     // У фото по ширине — тоже нет: волны от квадрата во всю ширину некуда пускать
-    val ambient = ambientBackground && !photoBackground && !photoTop
+    val ambient = bgLayer == CallBackgroundLayer.AMBIENT
     // Без панели под кнопками — везде, кроме фото на весь экран и высокого
-    // контраста (1.6.2, разбор у LocalControlsOnAmbient)
-    val bare = ambient || (bareControls && !photoBackground)
+    // контраста (1.6.2, разбор у LocalControlsOnAmbient); над своим снимком — тоже
+    val bare = ambient || customLayer || (bareControls && !photoBackground)
     /*
      * Сторона фото по ширине (2.6.0, photoTopSide): ширина экрана, но не
      * больше, чем оставляют имя и кнопки. Высоты верхней части и подписей
@@ -1066,14 +1087,15 @@ private fun InCallScreen(
         )
     }
     // Ровный фон без панели — до краёв экрана (1.6.2); под фото по ширине — тоже
-    if ((bare && !ambient) || photoTop) PlainCallBackground()
+    if (customLayer) customBg?.let { CallCustomBackground(it) }
+    else if ((bare && !ambient) || photoTop) PlainCallBackground()
     if (photoTop) CallPhotoTop(photoUri.orEmpty(), photoSide)
     // Полоса цвета панели под навигацией — только когда есть панель
     // (разбор у LocalControlsOnAmbient)
     if (!bare) NavBarUnderPanel()
     Surface(
         Modifier.fillMaxSize().safeDrawingPadding(),
-        color = if (photoBackground || ambient || photoTop) Color.Transparent else MaterialTheme.colorScheme.surface
+        color = if (photoBackground || ambient || photoTop || customLayer) Color.Transparent else MaterialTheme.colorScheme.surface
     ) {
         /*
          * Кто звонит — фото, имя, оператор, состояние вызова. Общий блок

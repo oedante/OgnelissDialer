@@ -4,6 +4,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import android.content.Context
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.call.AutoRedialMode
+import com.ogneliss.dialer.call.CallBackgrounds
 import com.ogneliss.dialer.call.QuietHours
 import com.ogneliss.dialer.call.RedialPace
 import com.ogneliss.dialer.log.Logger
@@ -180,6 +181,15 @@ class SettingsCommands @Inject constructor(
             "swipe_sim" -> prefs.setSwipeSimMode(SwipeSimMode.from(value))
             "carrier_info" -> prefs.setCarrierInfo(CarrierInfoMode.from(value))
             "call_photo_style" -> prefs.setCallPhotoStyle(CallPhotoStyle.from(value))
+            /*
+             * Свой фон вызова (2.7.4): сюда доходит только «Обычный» — убрать
+             * снимок и отметку. «Свой снимок» требует выбора файла и идёт
+             * через setCallBackground (окно выбора фото открывает шторка).
+             */
+            "call_bg_incoming" ->
+                if (value != CALL_BG_CUSTOM) removeCallBackground(CallBackgrounds.Kind.INCOMING)
+            "call_bg_outgoing" ->
+                if (value != CALL_BG_CUSTOM) removeCallBackground(CallBackgrounds.Kind.OUTGOING)
             "start_section" -> prefs.setStartSection(StartChoice.from(value))
             "call_photo_size" -> prefs.setCallPhotoSize(CallPhotoSize.from(value))
             "answer_mode" -> prefs.setAnswerMode(AnswerMode.from(value))
@@ -223,6 +233,38 @@ class SettingsCommands @Inject constructor(
         }
     }
 
+    /** «Обычный» фон вызова: файл удаляется, отметка — 0 (2.7.4). */
+    private suspend fun removeCallBackground(kind: CallBackgrounds.Kind) {
+        CallBackgrounds.delete(appContext, kind)
+        when (kind) {
+            CallBackgrounds.Kind.INCOMING -> prefs.setCallBgIncoming(0L)
+            CallBackgrounds.Kind.OUTGOING -> prefs.setCallBgOutgoing(0L)
+        }
+    }
+
+    /**
+     * «Свой снимок» (2.7.4): сохранить выбранный человеком снимок и записать
+     * отметку. Не сохранился — ничего не меняется, прежний снимок (если был)
+     * остаётся; ошибка только в журнале (CallBackgrounds.save).
+     */
+    suspend fun setCallBackground(key: String, uri: android.net.Uri) {
+        val kind = when (key) {
+            "call_bg_incoming" -> CallBackgrounds.Kind.INCOMING
+            "call_bg_outgoing" -> CallBackgrounds.Kind.OUTGOING
+            else -> {
+                Logger.w(TAG, "Неизвестный ключ фона вызова: $key")
+                return
+            }
+        }
+        if (!CallBackgrounds.save(appContext, kind, uri)) return
+        // Время — всегда новое, чтобы замена снимка перечитывалась и при том же значении
+        val mark = System.currentTimeMillis().coerceAtLeast(1L)
+        when (kind) {
+            CallBackgrounds.Kind.INCOMING -> prefs.setCallBgIncoming(mark)
+            CallBackgrounds.Kind.OUTGOING -> prefs.setCallBgOutgoing(mark)
+        }
+    }
+
     suspend fun setSimLabel(slotIndex: Int, label: String) =
         prefs.setSimLabel(slotIndex, label.trim())
 
@@ -246,6 +288,9 @@ class SettingsCommands @Inject constructor(
         "swipe_sim" -> state.swipeSimMode.name
         "carrier_info" -> state.carrierInfo.name
         "call_photo_style" -> state.callPhotoStyle.name
+        // 2.7.4: свой фон вызова — «Свой снимок» (CUSTOM), если отметка есть
+        "call_bg_incoming" -> if (state.callBgIncoming > 0L) CALL_BG_CUSTOM else CALL_BG_DEFAULT
+        "call_bg_outgoing" -> if (state.callBgOutgoing > 0L) CALL_BG_CUSTOM else CALL_BG_DEFAULT
         "start_section" -> state.startSection.name
         "call_photo_size" -> state.callPhotoSize.name
         "answer_mode" -> state.answerMode.name
@@ -329,6 +374,8 @@ class SettingsCommands @Inject constructor(
         )
 
         "call_photo_style" -> context.getString(callPhotoStyleLabelRes(state.callPhotoStyle))
+        "call_bg_incoming", "call_bg_outgoing" ->
+            context.getString(callBgLabelRes(currentChoice(key, state)))
         "start_section" -> context.getString(startChoiceLabelRes(state.startSection))
         "call_photo_size" -> context.getString(callPhotoSizeLabelRes(state.callPhotoSize))
         "answer_mode" -> context.getString(answerModeLabelRes(state.answerMode))
@@ -402,6 +449,8 @@ class SettingsCommands @Inject constructor(
             "swipe_sim" -> R.string.settings_swipe_sim
             "carrier_info" -> R.string.settings_carrier_info
             "call_photo_style" -> R.string.settings_call_photo
+            "call_bg_incoming" -> R.string.settings_call_bg_incoming
+            "call_bg_outgoing" -> R.string.settings_call_bg_outgoing
             "start_section" -> R.string.settings_start_section
             "call_photo_size" -> R.string.settings_call_photo_size
             "answer_mode" -> R.string.settings_answer_mode
@@ -521,6 +570,14 @@ class SettingsCommands @Inject constructor(
             CallPhotoStyle.SQUARE -> R.string.call_photo_square
             CallPhotoStyle.WIDTH -> R.string.call_photo_width
         }
+
+        /** Значения выбора «Фон вызова» (2.7.4): обычный или свой снимок. */
+        const val CALL_BG_DEFAULT = "DEFAULT"
+        const val CALL_BG_CUSTOM = "CUSTOM"
+
+        /** Подпись варианта «Фон вызова» — для строки настройки и шторки. */
+        fun callBgLabelRes(value: String): Int =
+            if (value == CALL_BG_CUSTOM) R.string.call_bg_custom else R.string.call_bg_default
 
         /** Подпись размера портрета на экране вызова (1.5.7). */
         fun callPhotoSizeLabelRes(size: CallPhotoSize): Int = when (size) {
@@ -657,6 +714,8 @@ class SettingsCommands @Inject constructor(
             "sms_undo_send", "sms_otp_cleanup",
             "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info",
             "call_photo_style", "call_photo_size", "answer_mode", "ui_scale",
+            // 2.7.4
+            "call_bg_incoming", "call_bg_outgoing",
             // 2.7.0
             "start_section",
             "contact_name_format", "contact_sort",

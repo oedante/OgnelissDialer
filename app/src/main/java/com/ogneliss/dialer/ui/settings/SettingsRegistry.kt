@@ -722,6 +722,21 @@ object SettingsRegistry {
             SettingKind.Switch("call_animation"),
             groupRes = R.string.settings_group_during_call
         ),
+        // 2.7.4: свой снимок вместо живого фона — отдельно для входящих и исходящих
+        SettingEntry(
+            "call_bg_incoming", SettingsCategory.CALLS,
+            R.string.settings_call_bg_incoming, R.string.settings_call_bg_incoming_text,
+            SettingKind.Choice("call_bg_incoming"),
+            groupRes = R.string.settings_group_during_call,
+            keywordsRes = R.string.keywords_call_bg
+        ),
+        SettingEntry(
+            "call_bg_outgoing", SettingsCategory.CALLS,
+            R.string.settings_call_bg_outgoing, R.string.settings_call_bg_outgoing_text,
+            SettingKind.Choice("call_bg_outgoing"),
+            groupRes = R.string.settings_group_during_call,
+            keywordsRes = R.string.keywords_call_bg
+        ),
         SettingEntry(
             "post_call", SettingsCategory.CALLS,
             R.string.settings_post_call, R.string.settings_post_call_text,

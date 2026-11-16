@@ -2106,6 +2106,11 @@ class DialerViewModel @Inject constructor(
         }
     }
 
+    /** «Свой снимок» для фона вызова (2.7.4): сохранить выбранное в окне выбора фото. */
+    fun setCallBackground(key: String, uri: android.net.Uri) = viewModelScope.launch {
+        settingsCommands.setCallBackground(key, uri)
+    }
+
     fun setSimLabel(slotIndex: Int, label: String) = viewModelScope.launch {
         settingsCommands.setSimLabel(slotIndex, label)
     }

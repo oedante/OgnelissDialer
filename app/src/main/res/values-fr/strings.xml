@@ -1084,4 +1084,11 @@
     <string name="consent_updated_title">La politique de confidentialité a été mise à jour</string>
     <string name="consent_changes_caption">Ce qui a changé</string>
     <string name="consent_changes_v2">Version 1.3 du 16 novembre 2026. Lorsque vous transférez les données de l’ancien téléphone vers un nouveau avec Android (par câble ou Wi‑Fi, directement entre les téléphones), les notes, étiquettes, listes de blocage, rappels et réglages sont désormais transférés avec lui. Rien n’est envoyé dans le cloud, et l’application n’a toujours pas accès à Internet.</string>
+    <string name="settings_call_bg_incoming">Arrière-plan d’appel entrant</string>
+    <string name="settings_call_bg_incoming_text">Votre image à la place du fond animé</string>
+    <string name="settings_call_bg_outgoing">Arrière-plan d’appel sortant</string>
+    <string name="settings_call_bg_outgoing_text">Votre image à la place du fond animé</string>
+    <string name="call_bg_default">Par défaut</string>
+    <string name="call_bg_custom">Image perso</string>
+    <string name="keywords_call_bg">arrière-plan fond écran image photo appel</string>
 </resources>

@@ -137,6 +137,8 @@ class FakeCallActivity : ComponentActivity() {
             val uiScale by prefs.uiScale.collectAsStateWithLifecycle(com.ogneliss.dialer.settings.UiScale.DEFAULT)
             // Живой фон — как у настоящего вызова (1.5.1)
             val callAnimation by prefs.callAnimation.collectAsStateWithLifecycle(true)
+            // Свой фон вызова (2.7.4): пробный вызов — входящий, берёт снимок входящих
+            val callBgIncoming by prefs.callBgIncoming.collectAsStateWithLifecycle(0L)
             // Фото звонящего — как у настоящего вызова (1.5.5); null — ещё не прочитано
             val callPhotoStyle by prefs.callPhotoStyle.collectAsStateWithLifecycle<CallPhotoStyle?>(null)
             // Размер портрета — как у настоящего вызова (1.5.7)
@@ -205,6 +207,8 @@ class FakeCallActivity : ComponentActivity() {
                     photoUri = photo,
                     ambientBackground = callAnimation && theme != ThemeMode.HIGH_CONTRAST,
                     bareControls = theme != ThemeMode.HIGH_CONTRAST,
+                    // В высоком контрасте свой снимок не показываем — как и живой фон
+                    incomingBgMark = if (theme != ThemeMode.HIGH_CONTRAST) callBgIncoming else 0L,
                     photoStyle = callPhotoStyle,
                     largePortrait = callPhotoSize == CallPhotoSize.LARGE,
                     slideToAnswer = answerMode == AnswerMode.SLIDE,
@@ -274,6 +278,8 @@ private fun FakeCallScreen(
     ambientBackground: Boolean = false,
     /** Кнопки без панели и на ровном фоне (1.6.2), как у настоящего вызова. */
     bareControls: Boolean = false,
+    /** Отметка своего фона входящих (2.7.4, CallBackgrounds); 0 — нет. */
+    incomingBgMark: Long = 0L,
     /** Фото: круг, квадрат или на весь экран (1.5.5); null — ещё не прочитано. */
     photoStyle: CallPhotoStyle? = CallPhotoStyle.CIRCLE,
     /** Настройка «Размер фото» — крупный (1.5.7). */
@@ -347,9 +353,13 @@ private fun FakeCallScreen(
     // Нет фото — волны от имени (1.8.1, разбор у AmbientFocus)
     var nameFocus by remember { mutableStateOf<AmbientFocus?>(null) }
     LightStatusIconsOnPhoto(photoBackground || photoTop)
+    // 2.7.4: свой снимок входящих вместо живого фона — как у настоящего вызова
+    val customBg = rememberCustomCallBackground(CallBackgrounds.Kind.INCOMING, incomingBgMark)
+    val bgLayer = CallBackgroundLayer.decide(photoBackground, photoTop, customBg != null, ambientBackground)
+    val customLayer = bgLayer == CallBackgroundLayer.CUSTOM
     // Живой фон — по тем же состояниям, что у настоящего вызова
-    val ambient = ambientBackground && !photoBackground && !photoTop
-    val bare = ambient || (bareControls && !photoBackground)
+    val ambient = bgLayer == CallBackgroundLayer.AMBIENT
+    val bare = ambient || customLayer || (bareControls && !photoBackground)
     // Сторона фото по ширине — как у настоящего вызова (photoTopSide)
     var topAreaPx by remember { mutableIntStateOf(0) }
     var identityPx by remember { mutableIntStateOf(0) }
@@ -379,12 +389,13 @@ private fun FakeCallScreen(
         )
     }
     // Как у настоящего вызова: панели нет над живым и ровным фоном (1.6.2)
-    if ((bare && !ambient) || photoTop) PlainCallBackground()
+    if (customLayer) customBg?.let { CallCustomBackground(it) }
+    else if ((bare && !ambient) || photoTop) PlainCallBackground()
     if (photoTop) CallPhotoTop(photoUri.orEmpty(), photoSide)
     if (!bare) NavBarUnderPanel()
     Surface(
         Modifier.fillMaxSize().safeDrawingPadding(),
-        color = if (photoBackground || ambient || photoTop) Color.Transparent else MaterialTheme.colorScheme.surface
+        color = if (photoBackground || ambient || photoTop || customLayer) Color.Transparent else MaterialTheme.colorScheme.surface
     ) {
         Column(
             Modifier.fillMaxSize(),

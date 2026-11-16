@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.graphics.Shader
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.isDialog
@@ -234,6 +235,33 @@ class ScreenGalleryTest {
             )
         },
         Shot("wizard") { _ -> PermissionWizardScreen(isDefaultDialer = false, onRequestDefaultDialer = { false }, onFinished = {}) },
+        // 2.7.4: «Меню» журнала — папки, инструменты, приложение, поиск (снимок автора 16.11.2026)
+        Shot("menu", dialog = true) { vm ->
+            val settings = vm.settingsState.collectAsState().value
+            com.ogneliss.dialer.ui.screens.OverflowMenu(
+                expanded = true, onDismiss = {}, settings = settings,
+                onThemeToggle = {}, onSettings = {}, onFakeCall = {}, onNotes = {}, onReminders = {},
+                onHelp = {},
+                header = {
+                    com.ogneliss.dialer.ui.components.MenuFolderRows(
+                        title = androidx.compose.ui.res.stringResource(com.ogneliss.dialer.R.string.settings_sms_folders),
+                        folders = com.ogneliss.dialer.data.JournalFolder.entries.map { f ->
+                            com.ogneliss.dialer.ui.components.MenuFolder(
+                                com.ogneliss.dialer.ui.screens.journalFolderIcon(f),
+                                androidx.compose.ui.res.stringResource(com.ogneliss.dialer.ui.screens.journalFolderLabel(f)),
+                                selected = f == com.ogneliss.dialer.data.JournalFolder.ALL
+                            ) {}
+                        } + com.ogneliss.dialer.ui.components.MenuFolder(
+                            com.ogneliss.dialer.ui.theme.OgnelissIcons.Archive,
+                            androidx.compose.ui.res.stringResource(com.ogneliss.dialer.R.string.archive_title)
+                        ) {},
+                        onEdit = {},
+                        editLabel = androidx.compose.ui.res.stringResource(com.ogneliss.dialer.R.string.sms_folders_edit)
+                    )
+                },
+                onFilters = {}, onSearch = {}
+            )
+        },
         Shot("sheet_filters", dialog = true) { _ ->
             com.ogneliss.dialer.ui.components.FilterSheet(
                 filter = com.ogneliss.dialer.data.CallLogFilter(), simCount = 2, onFilterChange = {}, matchCount = 12, onDismiss = {}
@@ -282,6 +310,6 @@ class ScreenGalleryTest {
     @Test
     fun `шрифт 160 процентов и масштаб 110 — главные экраны собираются`() = render(
         "large", ThemeMode.LIGHT, UiScale.S110, 1.6f,
-        only = setOf("journal", "contacts", "card_plain", "settings_home", "settings_calls", "notes", "contact_edit", "sheet_filters")
+        only = setOf("journal", "contacts", "card_plain", "settings_home", "settings_calls", "notes", "contact_edit", "sheet_filters", "menu")
     )
 }
