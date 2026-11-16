@@ -1,0 +1,135 @@
+<ru-RU>
+• Смена телефона: если при настройке нового телефона скопировать данные со старого, переедут и заметки, отметки, списки блокировки, напоминания и настройки диалера. В облако по-прежнему ничего не уходит.
+• Если у контакта нет звонков и SMS, в его карточке больше нет пустой «Истории».
+• При первом запуске приложение попросит заново принять политику конфиденциальности — коротко покажет, что изменилось.
+</ru-RU>
+<ar>
+• عند تغيير الهاتف: إذا نسختَ البيانات من هاتفك القديم أثناء إعداد الهاتف الجديد، فستنتقل معها الملاحظات والعلامات وقوائم الحظر والتذكيرات وإعدادات الطالب. ولا يُرسَل أي شيء إلى السحابة كما في السابق.
+• إذا لم تكن لجهة الاتصال مكالمات أو رسائل SMS، فلن تظهر في بطاقتها «السجل» فارغًا بعد الآن.
+• عند التشغيل الأول سيطلب التطبيق قبول سياسة الخصوصية من جديد، وسيعرض بإيجاز ما تغيّر.
+</ar>
+<cs-CZ>
+• Změna telefonu: pokud při nastavování nového telefonu zkopírujete data ze starého, přenesou se i poznámky, značky, seznamy blokovaných, připomínky a nastavení vytáčení. Do cloudu se stále nic neodesílá.
+• Pokud kontakt nemá žádné hovory ani SMS, jeho karta už nezobrazuje prázdnou „Historii“.
+• Při prvním spuštění vás aplikace požádá o opětovné přijetí zásad ochrany osobních údajů a stručně ukáže, co se změnilo.
+</cs-CZ>
+<da-DK>
+• Skift af telefon: Hvis du kopierer data fra den gamle telefon, mens du sætter den nye op, flyttes også noter, mærker, blokeringslister, påmindelser og indstillinger for opkaldsappen. Der sendes stadig intet til skyen.
+• Hvis en kontakt ikke har opkald eller SMS’er, viser kontaktkortet ikke længere en tom „Historik“.
+• Ved første start beder appen dig om at acceptere privatlivspolitikken igen og viser kort, hvad der er ændret.
+</da-DK>
+<de-DE>
+• Telefonwechsel: Wenn Sie beim Einrichten des neuen Telefons die Daten vom alten übertragen, werden auch Notizen, Markierungen, Sperrlisten, Erinnerungen und Einstellungen der Telefon-App übernommen. In die Cloud wird weiterhin nichts gesendet.
+• Hat ein Kontakt keine Anrufe und SMS, zeigt seine Karte keinen leeren „Verlauf“ mehr an.
+• Beim ersten Start bittet die App Sie, die Datenschutzerklärung erneut zu akzeptieren, und zeigt kurz, was sich geändert hat.
+</de-DE>
+<en-US>
+• Switching phones: if you copy data from your old phone while setting up a new one, notes, labels, block lists, reminders and dialer settings come along too. Nothing is sent to the cloud, as before.
+• A contact card with no calls or SMS no longer shows an empty “History”.
+• On first launch, the app will ask you to accept the privacy policy again and briefly show what has changed.
+</en-US>
+<es-ES>
+• Cambio de teléfono: si al configurar el teléfono nuevo copiáis los datos del anterior, también se transfieren las notas, las marcas, las listas de bloqueo, los recordatorios y los ajustes del marcador. Como siempre, no se envía nada a la nube.
+• La ficha de un contacto sin llamadas ni SMS ya no muestra un «Historial» vacío.
+• Al abrir la app por primera vez, os pedirá que aceptéis de nuevo la política de privacidad y os mostrará brevemente qué ha cambiado.
+</es-ES>
+<fi-FI>
+• Puhelimen vaihto: jos kopioit tiedot vanhasta puhelimesta uutta puhelinta määrittäessäsi, myös muistiinpanot, merkinnät, estolistat, muistutukset ja numeronvalitsimen asetukset siirtyvät. Pilveen ei edelleenkään lähetetä mitään.
+• Jos yhteystiedolla ei ole puheluita eikä tekstiviestejä, sen kortissa ei enää näy tyhjää ”Historiaa”.
+• Ensimmäisellä käynnistyskerralla sovellus pyytää hyväksymään tietosuojakäytännön uudelleen ja näyttää lyhyesti, mikä on muuttunut.
+</fi-FI>
+<fr-FR>
+• Changement de téléphone : si vous copiez les données de l’ancien téléphone lors de la configuration du nouveau, les notes, marques, listes de blocage, rappels et réglages du composeur sont transférés aussi. Rien n’est envoyé dans le cloud, comme auparavant.
+• La fiche d’un contact sans appels ni SMS n’affiche plus d’« Historique » vide.
+• Au premier lancement, l’application vous demandera d’accepter à nouveau la politique de confidentialité et indiquera brièvement ce qui a changé.
+</fr-FR>
+<hi-IN>
+• फ़ोन बदलना: नया फ़ोन सेट करते समय यदि आप पुराने फ़ोन का डेटा कॉपी करते हैं, तो नोट्स, निशान, ब्लॉक सूचियाँ, रिमाइंडर और डायलर की सेटिंग्स भी साथ आ जाएँगी। क्लाउड में पहले की तरह कुछ नहीं भेजा जाता।
+• जिस संपर्क के कोई कॉल या SMS नहीं हैं, उसके कार्ड में अब खाली "इतिहास" नहीं दिखता।
+• पहली बार खोलने पर ऐप आपसे गोपनीयता नीति को फिर से स्वीकार करने को कहेगा और संक्षेप में दिखाएगा कि क्या बदला है।
+</hi-IN>
+<hu-HU>
+• Telefoncsere: ha az új telefon beállításakor átmásoljátok a régi adatait, a jegyzetek, jelölések, tiltólisták, emlékeztetők és a tárcsázó beállításai is átkerülnek. A felhőbe továbbra sem kerül semmi.
+• Ha egy kontaktnak nincs hívása vagy SMS-e, a névjegykártyáján már nem jelenik meg üres „Előzmények”.
+• Az első indításkor az alkalmazás kéri, hogy fogadjátok el újra az adatvédelmi irányelveket, és röviden megmutatja, mi változott.
+</hu-HU>
+<id>
+• Ganti ponsel: jika Anda menyalin data dari ponsel lama saat menyiapkan ponsel baru, catatan, tanda, daftar blokir, pengingat, dan setelan dialer ikut berpindah. Seperti sebelumnya, tidak ada yang dikirim ke cloud.
+• Kartu kontak tanpa panggilan dan SMS tidak lagi menampilkan “Riwayat” yang kosong.
+• Saat pertama kali dibuka, aplikasi akan meminta Anda menyetujui kebijakan privasi lagi dan menampilkan secara singkat apa yang berubah.
+</id>
+<it-IT>
+• Cambio di telefono: se durante la configurazione del nuovo telefono copiate i dati dal vecchio, vengono trasferiti anche note, contrassegni, elenchi di blocco, promemoria e impostazioni del dialer. Nel cloud, come prima, non viene inviato nulla.
+• La scheda di un contatto senza chiamate né SMS non mostra più una «Cronologia» vuota.
+• Al primo avvio l’app vi chiederà di accettare di nuovo l’informativa sulla privacy e mostrerà brevemente cosa è cambiato.
+</it-IT>
+<iw-IL>
+• מעבר לטלפון חדש: אם בהגדרת הטלפון החדש תעתיקו נתונים מהישן, יועברו גם הערות, סימונים, רשימות חסימה, תזכורות והגדרות החייגן. לענן עדיין לא נשלח דבר.
+• בכרטיס איש קשר ללא שיחות והודעות SMS כבר לא מוצגת "היסטוריה" ריקה.
+• בהפעלה הראשונה האפליקציה תבקש לאשר מחדש את מדיניות הפרטיות ותציג בקצרה מה השתנה.
+</iw-IL>
+<ja-JP>
+• 機種変更：新しい端末のセットアップ時に古い端末からデータをコピーすると、メモ、マーク、ブロックリスト、リマインダー、ダイヤラーの設定も引き継がれます。クラウドには従来どおり何も送信されません。
+• 通話やSMSがない連絡先のカードに、空の「履歴」が表示されなくなりました。
+• 初回起動時に、プライバシーポリシーへの再同意を求め、変更点を簡単にお知らせします。
+</ja-JP>
+<ko-KR>
+• 휴대폰 교체: 새 휴대폰을 설정할 때 기존 휴대폰의 데이터를 복사하면 메모, 표시, 차단 목록, 알림, 전화 앱 설정도 함께 옮겨집니다. 이전처럼 클라우드로는 아무것도 전송되지 않습니다.
+• 통화나 SMS가 없는 연락처 카드에는 더 이상 빈 '기록'이 표시되지 않습니다.
+• 처음 실행하면 앱이 개인정보 처리방침에 다시 동의해 달라고 요청하고, 달라진 내용을 간단히 보여 드립니다.
+</ko-KR>
+<nl-NL>
+• Van telefoon wisselen: als je bij het instellen van de nieuwe telefoon de gegevens van de oude kopieert, gaan ook notities, markeringen, blokkeerlijsten, herinneringen en de instellingen van de beller mee. Er wordt nog steeds niets naar de cloud gestuurd.
+• De kaart van een contact zonder gesprekken en sms’jes toont geen lege ‘Geschiedenis’ meer.
+• Bij de eerste keer openen vraagt de app je het privacybeleid opnieuw te accepteren en laat ze kort zien wat er is veranderd.
+</nl-NL>
+<no-NO>
+• Bytte av telefon: hvis du kopierer data fra den gamle telefonen når du setter opp den nye, følger også notater, merker, blokkeringslister, påminnelser og innstillinger for ringeappen med. Ingenting sendes til skyen, som før.
+• Kontaktkortet til en kontakt uten samtaler og SMS-er viser ikke lenger en tom «Historikk».
+• Ved første oppstart ber appen deg godta personvernerklæringen på nytt og viser kort hva som er endret.
+</no-NO>
+<pl-PL>
+• Zmiana telefonu: jeśli podczas konfiguracji nowego telefonu skopiujecie dane ze starego, przeniosą się też notatki, oznaczenia, listy blokowanych, przypomnienia i ustawienia dialera. Do chmury nadal nic nie jest wysyłane.
+• Karta kontaktu bez połączeń i SMS-ów nie pokazuje już pustej „Historii”.
+• Przy pierwszym uruchomieniu aplikacja poprosi o ponowne zaakceptowanie polityki prywatności i krótko pokaże, co się zmieniło.
+</pl-PL>
+<pt-BR>
+• Troca de celular: se, ao configurar o novo celular, vocês copiarem os dados do antigo, as notas, marcações, listas de bloqueio, lembretes e configurações do discador também serão transferidos. Nada é enviado para a nuvem, como antes.
+• O cartão de um contato sem chamadas nem SMS não mostra mais um "Histórico" vazio.
+• Na primeira abertura, o app pedirá que vocês aceitem novamente a política de privacidade e mostrará resumidamente o que mudou.
+</pt-BR>
+<ro>
+• Schimbarea telefonului: dacă, la configurarea telefonului nou, copiați datele de pe cel vechi, se transferă și notițele, marcajele, listele de blocare, mementourile și setările aplicației de apelare. În cloud, ca și până acum, nu se trimite nimic.
+• Cardul unui contact fără apeluri și SMS-uri nu mai afișează un „Istoric” gol.
+• La prima pornire, aplicația vă va cere să acceptați din nou politica de confidențialitate și va arăta pe scurt ce s-a schimbat.
+</ro>
+<sk>
+• Zmena telefónu: ak pri nastavovaní nového telefónu skopírujete dáta zo starého, prenesú sa aj poznámky, značky, zoznamy blokovaných, pripomienky a nastavenia vytáčania. Do cloudu sa stále nič neodosiela.
+• Ak kontakt nemá žiadne hovory ani SMS, jeho karta už nezobrazuje prázdnu „Históriu“.
+• Pri prvom spustení vás aplikácia požiada o opätovné prijatie zásad ochrany osobných údajov a stručne ukáže, čo sa zmenilo.
+</sk>
+<sv-SE>
+• Byte av telefon: om du kopierar data från den gamla telefonen när du ställer in den nya följer även anteckningar, markeringar, blockeringslistor, påminnelser och inställningar för uppringaren med. Inget skickas till molnet, som tidigare.
+• Kontaktkortet för en kontakt utan samtal och SMS visar inte längre en tom ”Historik”.
+• Vid första start ber appen dig godkänna integritetspolicyn igen och visar kort vad som har ändrats.
+</sv-SE>
+<th>
+• เปลี่ยนโทรศัพท์: หากคัดลอกข้อมูลจากเครื่องเก่าขณะตั้งค่าเครื่องใหม่ โน้ต เครื่องหมาย รายการบล็อก การแจ้งเตือน และการตั้งค่าแอปโทรออกจะถูกย้ายไปด้วย และยังคงไม่มีการส่งข้อมูลไปยังคลาวด์
+• การ์ดผู้ติดต่อที่ไม่มีการโทรและ SMS จะไม่แสดง "ประวัติ" ที่ว่างเปล่าอีกต่อไป
+• เมื่อเปิดแอปครั้งแรก แอปจะขอให้ยอมรับนโยบายความเป็นส่วนตัวอีกครั้ง และแสดงสั้น ๆ ว่ามีอะไรเปลี่ยนแปลง
+</th>
+<tr-TR>
+• Telefon değiştirme: yeni telefonu kurarken eskisinden veri kopyalarsanız notlar, işaretler, engelleme listeleri, hatırlatıcılar ve çevirici ayarları da taşınır. Buluta yine hiçbir şey gönderilmez.
+• Araması ve SMS’i olmayan bir kişinin kartında artık boş bir “Geçmiş” görünmez.
+• İlk açılışta uygulama gizlilik politikasını yeniden kabul etmenizi isteyecek ve nelerin değiştiğini kısaca gösterecek.
+</tr-TR>
+<vi>
+• Đổi điện thoại: nếu bạn sao chép dữ liệu từ điện thoại cũ khi thiết lập điện thoại mới, ghi chú, dấu đánh dấu, danh sách chặn, lời nhắc và cài đặt trình quay số cũng được chuyển theo. Vẫn không có gì được gửi lên đám mây.
+• Thẻ liên hệ không có cuộc gọi và SMS sẽ không còn hiển thị mục "Lịch sử" trống.
+• Khi mở lần đầu, ứng dụng sẽ yêu cầu bạn chấp nhận lại chính sách quyền riêng tư và cho xem ngắn gọn những gì đã thay đổi.
+</vi>
+<zh-CN>
+• 更换手机：设置新手机时，如果从旧手机复制数据，备注、标记、屏蔽名单、提醒和拨号器设置也会一并迁移。仍然不会向云端发送任何内容。
+• 没有通话和短信的联系人，其名片中不再显示空的“历史记录”。
+• 首次启动时，应用会请您重新接受隐私政策，并简要说明有哪些变化。
+</zh-CN>

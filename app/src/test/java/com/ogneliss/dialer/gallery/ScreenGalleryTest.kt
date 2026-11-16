@@ -224,6 +224,13 @@ class ScreenGalleryTest {
         Shot("archive") { vm -> CallArchiveScreen(vm, onBack = {}) },
         Shot("contact_edit") { _ -> com.ogneliss.dialer.ui.contactedit.ContactEditScreen(onClose = {}, onSaved = {}) },
         Shot("consent") { _ -> ConsentScreen(onAccept = {}, onDecline = {}, onOpenDocument = {}) },
+        // 2.7.2: повторное согласие — «Политика обновлена» и что изменилось
+        Shot("consent_updated") { _ ->
+            ConsentScreen(
+                onAccept = {}, onDecline = {}, onOpenDocument = {},
+                changes = androidx.compose.ui.res.stringResource(com.ogneliss.dialer.R.string.consent_changes_v2)
+            )
+        },
         Shot("wizard") { _ -> PermissionWizardScreen(isDefaultDialer = false, onRequestDefaultDialer = { false }, onFinished = {}) },
         Shot("sheet_filters", dialog = true) { _ ->
             com.ogneliss.dialer.ui.components.FilterSheet(

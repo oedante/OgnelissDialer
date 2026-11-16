@@ -1111,4 +1111,7 @@
     <string name="stats_incoming">Incoming</string>
     <string name="stats_outgoing">Outgoing</string>
     <string name="stats_missed">Missed</string>
+    <string name="consent_updated_title">The privacy policy has been updated</string>
+    <string name="consent_changes_caption">What has changed</string>
+    <string name="consent_changes_v2">Version 1.3 of 16 November 2026. When you move data from your old phone to a new one using Android (by cable or Wi‑Fi, directly between the phones), your notes, tags, block lists, reminders and settings now move with it. Nothing goes to the cloud, and the app still has no internet access.</string>
 </resources>

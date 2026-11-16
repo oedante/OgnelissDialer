@@ -1091,4 +1091,7 @@
     <string name="stats_incoming">Входящие</string>
     <string name="stats_outgoing">Исходящие</string>
     <string name="stats_missed">Пропущенные</string>
+    <string name="consent_updated_title">Политика конфиденциальности обновлена</string>
+    <string name="consent_changes_caption">Что изменилось</string>
+    <string name="consent_changes_v2">Редакция 1.3 от 16 ноября 2026 г. При переносе данных со старого телефона на новый средствами Android (по кабелю или Wi‑Fi, напрямую между телефонами) заметки, метки, списки блокировки, напоминания и настройки теперь переезжают вместе с ним. В облако по-прежнему не уходит ничего, доступа в интернет у приложения нет.</string>
 </resources>

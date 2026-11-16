@@ -28,6 +28,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.LifecycleEventObserver
 import com.ogneliss.dialer.ui.RootScreen
 import com.ogneliss.dialer.ui.screens.ConsentScreen
+import androidx.compose.ui.res.stringResource
 import com.ogneliss.dialer.ui.screens.LegalDocument
 import com.ogneliss.dialer.ui.screens.LegalScreen
 import com.ogneliss.dialer.ui.screens.PermissionWizardScreen
@@ -42,8 +43,21 @@ import com.ogneliss.dialer.settings.ThemeMode
 import com.ogneliss.dialer.ui.DialerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
-/** Номер текущей редакции документов. Увеличивается при их изменении. */
-private const val CONSENT_VERSION = 1
+/**
+ * Номер текущей редакции документов. Увеличивается при их существенном
+ * изменении — тогда согласие спрашивается заново.
+ * 2 — политика 1.3 (2.7.2): данные переезжают при переносе «телефон на
+ * телефон»; решение автора 16.11.2026 — спросить согласие снова, с кратким
+ * резюме изменений ([CONSENT_CHANGES]).
+ */
+private const val CONSENT_VERSION = 2
+
+/**
+ * Что изменилось в редакции — для тех, кто принимал прежнюю. Показывается
+ * резюме текущей редакции: кто пропустил несколько, всё равно видит
+ * документы целиком по ссылкам на том же экране.
+ */
+private val CONSENT_CHANGES = mapOf(2 to R.string.consent_changes_v2)
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -333,6 +347,10 @@ class MainActivity : ComponentActivity() {
                     )
 
                     consentVersion < CONSENT_VERSION -> ConsentScreen(
+                        // Принимал прежнюю редакцию (не первый запуск) — что изменилось
+                        changes = CONSENT_CHANGES[CONSENT_VERSION]
+                            ?.takeIf { consentVersion > 0 }
+                            ?.let { stringResource(it) },
                         onAccept = {
                             /*
                              * rememberCoroutineScope, а не lifecycleScope:

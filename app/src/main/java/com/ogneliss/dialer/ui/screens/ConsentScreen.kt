@@ -60,7 +60,16 @@ import com.ogneliss.dialer.ui.components.ReadableWidth
 fun ConsentScreen(
     onAccept: () -> Unit,
     onDecline: () -> Unit,
-    onOpenDocument: (LegalDocument) -> Unit
+    onOpenDocument: (LegalDocument) -> Unit,
+    /**
+     * ПОВТОРНОЕ СОГЛАСИЕ (2.7.2). Не null — человек уже принимал прежнюю
+     * редакцию, и документы существенно изменились: заголовок «Политика
+     * обновлена» и коротко, что именно поменялось, — до документов, чтобы
+     * не перечитывать их целиком ради одного абзаца. Решение автора,
+     * 16.11.2026: «Давай лучше повторное согласие. Можно с кратким резюме
+     * изменений». Первый запуск — null, экран прежний.
+     */
+    changes: String? = null
 ) {
     var accepted by remember { mutableStateOf(false) }
 
@@ -134,7 +143,7 @@ fun ConsentScreen(
                 Spacer(Modifier.height(Space.s))
 
                 Text(
-                    stringResource(R.string.consent_title),
+                    stringResource(if (changes != null) R.string.consent_updated_title else R.string.consent_title),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.fillMaxWidth(),
@@ -142,6 +151,18 @@ fun ConsentScreen(
                 )
 
                 Spacer(Modifier.height(Space.xl))
+
+                // Что изменилось (2.7.2) — первым: ради этого экран и открылся снова
+                if (changes != null) {
+                    OgnelissPanel(title = stringResource(R.string.consent_changes_caption)) {
+                        Text(
+                            changes,
+                            modifier = Modifier.padding(FlowUi.contentPadding),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    Spacer(Modifier.height(Space.xl))
+                }
 
                 /*
                  * Главное о приватности — до документов, а не после.
