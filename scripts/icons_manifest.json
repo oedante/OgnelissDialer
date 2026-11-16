@@ -524,6 +524,11 @@
   "filled": false,
   "autoMirror": false
  },
+ "Tune": {
+  "symbol": "tune",
+  "filled": false,
+  "autoMirror": false
+ },
  "Unarchive": {
   "symbol": "unarchive",
   "filled": false,

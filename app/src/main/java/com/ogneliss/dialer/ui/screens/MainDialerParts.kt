@@ -156,26 +156,33 @@ internal fun OverflowMenu(
         // Постоянные — первыми, необязательный («на главный экран») — последним,
         // чтобы его отсутствие (журнал) не сдвигало остальные
         val app = buildList {
-            add(MenuTile(MenuGroup.APP, OgnelissIcons.Settings, settingsLabel, onSettings))
-            if (onHelp != null) add(MenuTile(MenuGroup.APP, OgnelissIcons.Help, helpLabel, onHelp))
+            add(MenuFolder(OgnelissIcons.Settings, settingsLabel, onClick = onSettings))
+            if (onHelp != null) add(MenuFolder(OgnelissIcons.Help, helpLabel, onClick = onHelp))
             add(
-                MenuTile(
-                    MenuGroup.APP,
+                MenuFolder(
                     if (settings.theme == ThemeMode.DARK) OgnelissIcons.LightMode else OgnelissIcons.DarkMode,
                     themeLabel,
-                    onThemeToggle
+                    onClick = onThemeToggle
                 )
             )
-            if (onPinToHome != null) add(MenuTile(MenuGroup.APP, OgnelissIcons.AddToHomeScreen, stringResource(R.string.menu_pin_home), onPinToHome))
+            if (onPinToHome != null) add(MenuFolder(OgnelissIcons.AddToHomeScreen, stringResource(R.string.menu_pin_home), onClick = onPinToHome))
         }
         Column(Modifier.fillMaxSize()) {
             Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())) {
                 if (header != null) header()
                 MenuActionRows(stringResource(R.string.menu_section_tools), tools)
+                /*
+                 * «Приложение» — строками, как папки и инструменты (2.7.4, автор
+                 * по снимку меню 16.11.2026: «отличается размер текста и много
+                 * пустого пространства»). Было (2.5.0): значки с подписью 12 sp
+                 * внизу панели — третий размер текста в одной панели, а между
+                 * ними и списком — пустая полоса в полэкрана. Теперь одна лента
+                 * строк одного размера, внизу — только поиск.
+                 */
+                MenuActionRows(stringResource(R.string.menu_section_app), app)
             }
-            com.ogneliss.dialer.ui.components.OgnelissDivider()
-            AppActionsRow(app)
             if (onSearch != null || onFilters != null) {
+                com.ogneliss.dialer.ui.components.OgnelissDivider()
                 Row(
                     Modifier.fillMaxWidth().padding(end = Space.s, bottom = Space.xs),
                     verticalAlignment = Alignment.CenterVertically
@@ -184,43 +191,6 @@ internal fun OverflowMenu(
                     else Spacer(Modifier.weight(1f))
                     if (onFilters != null) FiltersButton(filtersCount, onFilters)
                 }
-            }
-        }
-    }
-}
-
-/**
- * Приложение — значками с подписью, как нижняя панель (2.5.0): настройки,
- * справка, тема, значок на главный экран. Ровными долями по ширине.
- */
-@Composable
-private fun AppActionsRow(actions: List<MenuTile>) {
-    Row(
-        Modifier.fillMaxWidth().padding(horizontal = Space.xs, vertical = Space.xs),
-        verticalAlignment = Alignment.Top
-    ) {
-        actions.forEach { action ->
-            Column(
-                Modifier
-                    .weight(1f)
-                    .clip(MaterialTheme.shapes.medium)
-                    .clickable(role = androidx.compose.ui.semantics.Role.Button, onClick = action.onClick)
-                    .heightIn(min = Dimens.MIN_TOUCH_TARGET)
-                    .padding(vertical = Space.xs),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Icon(action.icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                Spacer(Modifier.height(Space.xxs))
-                // Слово не рвётся посреди («Настр/ойки» при шрифте 160 %), а ужимается (2.6.0)
-                com.ogneliss.dialer.ui.components.FitText(
-                    action.label,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                    // Три строки: «На главный / экран» при крупном шрифте
-                    maxLines = 3,
-                    minScale = 0.6f
-                )
             }
         }
     }
@@ -403,16 +373,9 @@ private val DRAWER_CORNER = 28.dp
  * ПЛИТКИ МЕНЮ (2.2.1–2.4.1, `tile_grid.dart` почты) убраны в 2.5.0: белые
  * плитки были только здесь и выглядели чужими в приложении (автор: «вид
  * отличается от остального приложения»). Инструменты — строками, как папки
- * (MenuActionRows), приложение — значками с подписью (AppActionsRow).
+ * (MenuActionRows); приложение — тоже строками (2.7.4, было — значками
+ * с подписью внизу).
  */
-
-/**
- * Группы плиток меню: TOOLS — с подписью (две колонки), APP — значком (одна).
- */
-internal enum class MenuGroup {
-    TOOLS,
-    APP
-}
 
 /** Название «папки» журнала (2.2.2) — для меню и шапки раздела. */
 internal fun journalFolderLabel(folder: com.ogneliss.dialer.data.JournalFolder): Int = when (folder) {
@@ -439,15 +402,6 @@ internal fun journalFolderIcon(folder: com.ogneliss.dialer.data.JournalFolder): 
         com.ogneliss.dialer.data.JournalFolder.UNKNOWN -> OgnelissIcons.PersonOff
     }
 
-/** Плитка меню (2.1.0): группа, значок или фото, подпись, действие. */
-internal class MenuTile(
-    val group: MenuGroup,
-    val icon: androidx.compose.ui.graphics.vector.ImageVector,
-    val label: String,
-    val onClick: () -> Unit,
-    val selected: Boolean = false,
-    val photoUri: String? = null
-)
 
 
 

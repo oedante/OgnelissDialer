@@ -61,8 +61,10 @@ internal fun MenuFolderRows(
             action = if (onEdit != null) {
                 {
                     IconButton(onClick = onEdit) {
+                        // «Настроить папки» — ползунки, как «настроить избранное» в почте
+                        // (2.7.4, автор: шестерёнку путали с «Настройками» внизу меню)
                         Icon(
-                            OgnelissIcons.Settings,
+                            OgnelissIcons.Tune,
                             contentDescription = editLabel,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
