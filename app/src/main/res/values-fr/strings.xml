@@ -1081,4 +1081,7 @@
     <string name="stats_incoming">Entrants</string>
     <string name="stats_outgoing">Sortants</string>
     <string name="stats_missed">Manqués</string>
+    <string name="consent_updated_title">La politique de confidentialité a été mise à jour</string>
+    <string name="consent_changes_caption">Ce qui a changé</string>
+    <string name="consent_changes_v2">Version 1.3 du 16 novembre 2026. Lorsque vous transférez les données de l’ancien téléphone vers un nouveau avec Android (par câble ou Wi‑Fi, directement entre les téléphones), les notes, étiquettes, listes de blocage, rappels et réglages sont désormais transférés avec lui. Rien n’est envoyé dans le cloud, et l’application n’a toujours pas accès à Internet.</string>
 </resources>
