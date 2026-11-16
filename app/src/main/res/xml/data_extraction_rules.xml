@@ -10,7 +10,8 @@
   данные со старого — по кабелю или Wi-Fi напрямую, без интернета) — данные
   человека: база (заметки, отметки, чёрный и белый списки, напоминания,
   черновики, избранные SMS), настройки (DataStore: ogneliss_prefs,
-  speed_dial) и настройки SMS (sms_settings.xml). Без журнала работы (logs),
+  speed_dial), свои фоны экрана вызова (call_backgrounds/, 2.7.4: без файла
+  отметка в настройках ни к чему) и настройки SMS (sms_settings.xml). Без журнала работы (logs),
   выгрузок (share), ожидающих MMS и прочих служебных файлов про старый
   телефон. Что из перенесённого привязано к старому телефону (отложенные SMS,
   архив журнала, кэш контактов) — убирается при первом запуске,
@@ -36,6 +37,7 @@
     <device-transfer>
         <include domain="database" />
         <include domain="file" path="datastore/" />
+        <include domain="file" path="call_backgrounds/" />
         <include domain="sharedpref" path="sms_settings.xml" />
     </device-transfer>
 </data-extraction-rules>

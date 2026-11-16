@@ -576,6 +576,12 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val CALL_HIDE_CONTACT_NUMBER = booleanPreferencesKey("call_hide_contact_number")
         /** Живой фон экрана вызова (1.5.1, по умолчанию вкл.). */
         val CALL_ANIMATION = booleanPreferencesKey("call_animation")
+        /**
+         * Свой фон экрана вызова (2.7.4): отметка — время сохранения снимка,
+         * 0 или нет ключа — снимка нет. Сами файлы — call/CallBackgrounds.kt.
+         */
+        val CALL_BG_INCOMING = longPreferencesKey("call_bg_incoming")
+        val CALL_BG_OUTGOING = longPreferencesKey("call_bg_outgoing")
         /** Фото звонящего: на весь экран, круг или квадрат (1.5.5). */
         val CALL_PHOTO_STYLE = stringPreferencesKey("call_photo_style")
         /** Размер портрета на экране вызова (1.5.7). */
@@ -941,6 +947,14 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      * и без этой настройки (call/CallAmbientBackground.kt).
      */
     val callAnimation: Flow<Boolean> = data.map { it[Keys.CALL_ANIMATION] ?: true }
+
+    /**
+     * Отметки своего фона экрана вызова (2.7.4): входящие и исходящие.
+     * Время сохранения снимка; 0 — снимка нет. Меняется при каждой замене,
+     * поэтому открытый экран вызова перечитывает файл.
+     */
+    val callBgIncoming: Flow<Long> = data.map { it[Keys.CALL_BG_INCOMING] ?: 0L }
+    val callBgOutgoing: Flow<Long> = data.map { it[Keys.CALL_BG_OUTGOING] ?: 0L }
 
     /** Масштаб интерфейса (1.5.6): по умолчанию 90 % с 1.8.0 (было «Авто») — разбор в ui/theme/UiScale.kt. */
     val uiScale: Flow<UiScale> = data.map { UiScale.from(it[Keys.UI_SCALE]) }
@@ -1338,6 +1352,10 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("call_hide_contact_number", v) { it[Keys.CALL_HIDE_CONTACT_NUMBER] = v }
     suspend fun setCallAnimation(v: Boolean) =
         edit("call_animation", v) { it[Keys.CALL_ANIMATION] = v }
+    suspend fun setCallBgIncoming(mark: Long) =
+        edit("call_bg_incoming", mark) { it[Keys.CALL_BG_INCOMING] = mark }
+    suspend fun setCallBgOutgoing(mark: Long) =
+        edit("call_bg_outgoing", mark) { it[Keys.CALL_BG_OUTGOING] = mark }
     suspend fun setFontScale(v: Float) =
         edit("font_scale", v) { it[Keys.FONT_SCALE] = FontScale.clamp(v) }
     suspend fun setUiScale(v: UiScale) =
@@ -1476,6 +1494,11 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         runCatching { context.dataStore.edit { it.clear() } }
             .onSuccess {
                 Logger.i(TAG, "Настройки сброшены к значениям по умолчанию")
+                // 2.7.4: отметки свои фоны вызова сброшены вместе с настройками —
+                // файлы без отметки никому не нужны, убираем и их
+                com.ogneliss.dialer.call.CallBackgrounds.Kind.entries.forEach {
+                    com.ogneliss.dialer.call.CallBackgrounds.delete(context, it)
+                }
                 // Копия настроек SMS для мест без корутин (2.2.0) — тоже к умолчаниям,
                 // иначе отмена отправки и автоудаление кодов остались бы прежними
                 com.ogneliss.dialer.sms.SmsSettings.putInt(

@@ -160,7 +160,43 @@ object CallManager {
             .onFailure { Logger.w("Call", "phoneAccountSelected не выполнен", it) }
     }
 
+    /**
+     * ВХОДЯЩИЕ ВЫЗОВЫ (2.7.4): те, что пришли как входящие. Нужны экрану вызова
+     * ради своего фона: снятый входящий продолжает показывать снимок входящих,
+     * хотя состояние уже не RINGING. Слабые ссылки — ended вызов сам уходит.
+     */
+    private val incomingCalls: MutableSet<Call> =
+        java.util.Collections.synchronizedSet(java.util.Collections.newSetFromMap(java.util.WeakHashMap()))
+
+    /**
+     * Пришёл ли вызов как входящий. Направление запоминается в [add], пока
+     * вызов ещё звонит; у конференции своего направления нет — берётся
+     * направление её участников.
+     */
+    fun isIncomingCall(call: Call?): Boolean {
+        if (call == null) return false
+        if (call in incomingCalls) return true
+        return runCatching { call.children.any { it in incomingCalls } }.getOrDefault(false)
+    }
+
+    @Suppress("DEPRECATION")
+    private fun rememberDirection(call: Call) {
+        val incoming = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            when (call.details.callDirection) {
+                Call.Details.DIRECTION_INCOMING -> true
+                Call.Details.DIRECTION_OUTGOING -> false
+                // Не определено — как на Android 8–9: по состоянию при появлении
+                else -> call.state == Call.STATE_RINGING
+            }
+        } else {
+            // До Android 10 направления в Details нет: входящий появляется звонящим
+            call.state == Call.STATE_RINGING
+        }
+        if (incoming) incomingCalls += call
+    }
+
     internal fun add(call: Call) {
+        runCatching { rememberDirection(call) }
         call.registerCallback(callback)
         _calls.value = _calls.value + call
         _revision.value++
