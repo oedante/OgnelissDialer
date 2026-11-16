@@ -40,4 +40,6 @@ startPrefs has not been initialized». Чтение согласия и разд
 
 ## Проверки
 
-CHECKS
+Модульные тесты — 739, без ошибок (+3 PhotoCropMathTest); lint — 0 ошибок;
+release-сборка; проверки `scripts/` — без замечаний. Окно обрезки со снимком
+пользователя на OnePlus 7T не проверялось.
