@@ -308,6 +308,15 @@ object SmsSettings {
 
     fun markAutostartHintDone(context: Context) = put(context, KEY_AUTOSTART_HINT, true)
 
+    /**
+     * Перенос на новый телефон (2.7.1, DeviceTransfer): окно роли SMS
+     * и полоса автозапуска — про этот телефон, а не про человека. Роль
+     * на новом не выдана, автозапуск у другой прошивки свой — спросить снова.
+     */
+    fun forgetDevicePrompts(context: Context) {
+        prefs(context).edit().remove(KEY_ROLE_PROMPT).remove(KEY_AUTOSTART_HINT).apply()
+    }
+
     fun put(context: Context, key: String, value: Boolean) {
         prefs(context).edit().putBoolean(key, value).apply()
     }
