@@ -1,7 +1,7 @@
 Privacy Policy
 
 Ogneliss Dialer
-Last updated: 5 November 2026
+Last updated: 16 November 2026
 
 THE SHORT VERSION
 
@@ -46,6 +46,11 @@ Call log and contacts are not copied. The Application reads them from
 Android system providers and displays them. Your own data — notes, tags,
 rules, settings — is stored in the application's private storage, which
 is not accessible to other applications.
+
+Cloud backup of this data is disabled. If, when setting up a new phone,
+you transfer data to it from your old one using Android (by cable or
+Wi-Fi, directly between the phones), your notes, tags, block lists,
+reminders and settings move with it; service data does not.
 
 Uninstalling the Application deletes all of this data.
 

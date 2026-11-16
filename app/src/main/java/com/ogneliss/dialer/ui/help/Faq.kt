@@ -94,6 +94,8 @@ object Faq {
                     "internet", R.string.faq_q_internet, R.string.faq_a_internet,
                     listOf(FaqLink.Setting("carrier_info"))
                 ),
+                // 2.7.1: перенос «телефон на телефон» снова переносит данные (вариант «Б»
+                // автора, политика 1.3); файл — для переноса без такого копирования
                 FaqItem(
                     "transfer", R.string.faq_q_transfer, R.string.faq_a_transfer,
                     listOf(FaqLink.Setting("backup_export"), FaqLink.Setting("backup_import", button = false))
