@@ -213,6 +213,8 @@ class ScreenGalleryTest {
         Shot("settings_home") { _ -> SettingsHomeScreen(onBack = {}, onOpenCategory = {}, onOpenEntry = {}) },
         Shot("settings_appearance") { vm -> SettingsCategoryScreen(category = SettingsCategory.APPEARANCE, vm = vm, onBack = {}, onAction = {}) },
         Shot("settings_calls") { vm -> SettingsCategoryScreen(category = SettingsCategory.CALLS, vm = vm, onBack = {}, onAction = {}) },
+        // 2.7.2: «Журнал вызовов» — где «Цветные стрелки вызовов» (вопрос автора: «не вижу настройки»)
+        Shot("settings_log") { vm -> SettingsCategoryScreen(category = SettingsCategory.CALL_LOG, vm = vm, onBack = {}, onAction = {}) },
         Shot("settings_quick") { vm -> SettingsCategoryScreen(category = SettingsCategory.QUICK_ACCESS, vm = vm, onBack = {}, onAction = {}) },
         Shot("notes") { vm -> NotesScreen(vm = vm, onOpenCard = {}, onBack = {}) },
         Shot("reminders") { vm -> RemindersScreen(vm = vm, onOpenCard = {}, onBack = {}) },
