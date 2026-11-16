@@ -2538,7 +2538,17 @@ fun SubscriberScreen(
                  * элементами того же цвета: визуально это тот же раздел,
                  * но LazyColumn переиспользует строки как обычно.
                  */
-                item { SectionPanelHeader(stringResource(R.string.subscriber_history)) }
+                /*
+                 * Подпись — только когда есть что показать (2.7.1, галерея).
+                 * Было: у контакта без звонков и SMS «История» стояла над пустым
+                 * местом. Флаг «загружено» не нужен: пока лента грузится, подписи
+                 * нет, и она появляется вместе с записями — как и сами записи.
+                 * Обратного мигания («История» и сразу пусто) так не бывает.
+                 * Открыли из журнала — group.entries уже есть, подпись сразу.
+                 */
+                if (history.isNotEmpty() || smsHistory.isNotEmpty()) {
+                    item(key = "history_header") { SectionPanelHeader(stringResource(R.string.subscriber_history)) }
+                }
                 // Фильтр — только когда есть и звонки, и SMS: иначе выбирать не из чего
                 if (history.isNotEmpty() && smsHistory.isNotEmpty()) {
                     item(key = "history_filter") {

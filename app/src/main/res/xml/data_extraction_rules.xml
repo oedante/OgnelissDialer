@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Ничего из приложения не уходит ни в облако, ни на новый телефон
-  (обещание приватности: заметки, метки, правила блокировки, журнал работы).
+  ЧТО УХОДИТ С ТЕЛЕФОНА (2.7.1, решение автора 16.11.2026, вариант «Б»).
 
-  2.7.0, обзор безопасности: раньше стояло только <exclude domain="root" />.
-  «root» — это лишь файлы в корне каталога данных; базы (database),
-  настройки (sharedpref, DataStore лежит в file), файлы и журнал (file)
-  Android обходит отдельными доменами — при переносе «телефон на телефон»
-  они уходили. allowBackup="false" на Android 12+ отключает только облако,
-  перенос между устройствами идёт по этим правилам. Поэтому — каждый домен
-  явно. Перенести данные — «Резервная копия и выгрузка» в настройках (файл выбирает
-  человек).
+  В облако — ничего (allowBackup="false" и исключение каждого домена ниже):
+  заметки, метки, списки блокировки и журнал работы на чужие серверы
+  не попадают.
+
+  При копировании «телефон на телефон» (новый телефон при настройке берёт
+  данные со старого — по кабелю или Wi-Fi напрямую, без интернета) — данные
+  человека: база (заметки, отметки, чёрный и белый списки, напоминания,
+  черновики, избранные SMS), настройки (DataStore: ogneliss_prefs,
+  speed_dial) и настройки SMS (sms_settings.xml). Без журнала работы (logs),
+  выгрузок (share), ожидающих MMS и прочих служебных файлов про старый
+  телефон. Что из перенесённого привязано к старому телефону (отложенные SMS,
+  архив журнала, кэш контактов) — убирается при первом запуске,
+  data/DeviceTransfer.kt.
+
+  2.7.0: стояло только <exclude domain="root" /> — «root» это лишь файлы
+  в корне каталога данных, базы и настройки Android обходит отдельными
+  доменами, и при переносе уходило всё, вместе со служебным. Список <include>
+  ниже — единственное, что переносится; проверка — DataExtractionRulesTest.
 -->
 <data-extraction-rules>
     <cloud-backup>
@@ -25,14 +34,8 @@
         <exclude domain="device_sharedpref" />
     </cloud-backup>
     <device-transfer>
-        <exclude domain="root" />
-        <exclude domain="file" />
-        <exclude domain="database" />
-        <exclude domain="sharedpref" />
-        <exclude domain="external" />
-        <exclude domain="device_root" />
-        <exclude domain="device_file" />
-        <exclude domain="device_database" />
-        <exclude domain="device_sharedpref" />
+        <include domain="database" />
+        <include domain="file" path="datastore/" />
+        <include domain="sharedpref" path="sms_settings.xml" />
     </device-transfer>
 </data-extraction-rules>

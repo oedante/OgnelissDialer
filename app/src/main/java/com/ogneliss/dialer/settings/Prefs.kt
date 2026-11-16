@@ -661,6 +661,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         // (обзор вида 15.11.2026); ключ оставлен, у кого он уже лежит в хранилище
         val GESTURE_HINT_SHOWN = booleanPreferencesKey("gesture_hint_shown")
         val OWN_NUMBER = stringPreferencesKey("own_number")
+        /** Метка установки (2.7.1): разбор у DeviceTransfer. */
+        val INSTALL_ID = stringPreferencesKey("install_id")
         val CONSENT_VERSION = intPreferencesKey("consent_version")
         val SCHEMA_VERSION = intPreferencesKey("schema_version")
     }
@@ -1444,6 +1446,27 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     suspend fun setOwnNumber(value: String) =
         edit("own_number", Logger.mask(value)) { it[Keys.OWN_NUMBER] = value }
+
+    /** Метка установки (2.7.1, DeviceTransfer): та же — в no_backup, который не переносится. */
+    val installId: Flow<String?> = data.map { it[Keys.INSTALL_ID] }
+
+    suspend fun setInstallId(id: String) = edit("install_id", "…") { it[Keys.INSTALL_ID] = id }
+
+    /**
+     * ПЕРЕНОС НА НОВЫЙ ТЕЛЕФОН (2.7.1, DeviceTransfer): убрать то, что
+     * привязано к старому телефону, а не к человеку.
+     * • sim_cache — сведения о SIM старого телефона;
+     * • fake_call_at — псевдозвонок ставился будильником старого телефона,
+     *   здесь будильника нет, а отметка «запланирован» осталась бы;
+     * • call_archived — номера записей системного журнала (CallLog._ID):
+     *   на новом телефоне у звонков другие номера, и в архив попали бы чужие.
+     * Остальное — заметки, правила, настройки — человека, оно и переносится.
+     */
+    suspend fun forgetDeviceBound() = edit("device_bound", "убрано") {
+        it.remove(Keys.SIM_CACHE)
+        it.remove(Keys.FAKE_CALL_AT)
+        it.remove(Keys.CALL_ARCHIVED)
+    }
 
     /**
      * Сброс всех настроек к значениям по умолчанию.

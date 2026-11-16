@@ -78,6 +78,10 @@ class OgnelissApp : Application(), Configuration.Provider, ImageLoaderFactory {
     /** Настройки нужны, чтобы узнать, включена ли запись лога в файл. */
     @Inject lateinit var prefs: Prefs
 
+    /** Перенос на новый телефон (2.7.1, DeviceTransfer): уборка привязанного к старому. */
+    @Inject lateinit var database: com.ogneliss.dialer.data.db.AppDatabase
+    @Inject lateinit var reminders: com.ogneliss.dialer.data.RemindersRepository
+
     /**
      * ОБЛАСТЬ ФОНОВЫХ ЗАДАЧ УРОВНЯ ПРИЛОЖЕНИЯ.
      *
@@ -142,6 +146,14 @@ class OgnelissApp : Application(), Configuration.Provider, ImageLoaderFactory {
 
             if (!region.isNullOrBlank()) PhoneFormatter.setDefaultRegion(region)
         }.onFailure { Logger.w("App", "Не удалось определить страну SIM: ${it.message}") }
+
+        /*
+         * ПЕРЕНОС НА НОВЫЙ ТЕЛЕФОН (2.7.1) — до всего, что читает базу:
+         * отложенные SMS со старого телефона убираются раньше, чем их увидит
+         * очередь или BootReceiver. Обычный запуск — одна проверка файла;
+         * разбор — в DeviceTransfer.
+         */
+        com.ogneliss.dialer.data.DeviceTransfer.checkOnStart(this, database, prefs, reminders)
 
         // Если прошлый запуск закончился падением, сообщаем на каком этапе.
         // Строка попадает в начало нового лога — при разборе это первое,
