@@ -1,0 +1,189 @@
+<ru-RU>
+• По вашим просьбам: поиск по организации, фото по ширине экрана, поиск «Контактов» внизу, значки «SMS» и «Контакты», цветные стрелки вызовов, экран при запуске.
+• Скрытый номер подписан «Номер скрыт».
+• Единое оформление, выбор — шторкой снизу.
+• Смена телефона: заметки, списки и настройки переезжают; в облако — ничего.
+• Политика конфиденциальности обновлена — её попросят принять заново.
+</ru-RU>
+<ar>
+• بناءً على طلباتكم: البحث بالمؤسسة، صورة المتصل بعرض الشاشة، البحث في جهات الاتصال أسفل الشاشة، أيقونتا SMS وجهات الاتصال، أسهم مكالمات ملوّنة، اختيار الشاشة عند التشغيل.
+• الرقم المخفي يظهر باسم «رقم خاص».
+• مظهر موحّد، والاختيار في الإعدادات عبر لوحة تنزلق من الأسفل.
+• عند تغيير الهاتف: تنتقل الملاحظات والقوائم والإعدادات، ولا يُرسَل شيء إلى السحابة.
+• تم تحديث سياسة الخصوصية، وسيُطلب منك قبولها من جديد.
+</ar>
+<cs-CZ>
+• Na vaše přání: hledání podle organizace, fotka na šířku obrazovky, hledání v Kontaktech dole, ikony SMS a Kontakty, barevné šipky hovorů, úvodní obrazovka.
+• Skryté číslo je označeno „Soukromé číslo“.
+• Jednotný vzhled, volba panelem zespodu.
+• Změna telefonu: poznámky, seznamy a nastavení se přenesou; do cloudu nic.
+• Zásady ochrany osobních údajů jsou aktualizované – aplikace požádá o opětovné přijetí.
+</cs-CZ>
+<da-DK>
+• Efter jeres ønske: søgning på firma, foto i skærmens fulde bredde, kontaktsøgning nederst, SMS- og Kontakter-ikoner, farvede opkaldspile, startskærm.
+• Skjulte numre vises som „Privat nummer“.
+• Ensartet udseende, valg vises i et panel nedefra.
+• Skift af telefon: noter, lister og indstillinger flyttes med; intet sendes til skyen.
+• Privatlivspolitikken er opdateret – du bliver bedt om at acceptere den igen.
+</da-DK>
+<de-DE>
+• Auf Ihren Wunsch: Suche nach Firma, Foto über die ganze Bildschirmbreite, Kontaktsuche unten, Symbole für SMS und Kontakte, farbige Anrufpfeile, Startbildschirm.
+• Unterdrückte Nummern heißen „Unterdrückte Nummer“.
+• Einheitliches Design; Auswahllisten öffnen sich von unten.
+• Telefonwechsel: Notizen, Listen und Einstellungen werden übernommen; in die Cloud wird nichts gesendet.
+• Datenschutzerklärung aktualisiert – Sie werden gebeten, sie erneut zu akzeptieren.
+</de-DE>
+<en-US>
+• By popular request: company search, full-width caller photo, Contacts search at the bottom, SMS and Contacts icons, colored call arrows, start screen.
+• Private numbers are now labelled “Private number”.
+• Consistent design, choices open in a bottom sheet.
+• Switching phones: notes, lists and settings come along; nothing is sent to the cloud.
+• Privacy policy updated – you will be asked to accept it again.
+</en-US>
+<es-ES>
+• Por vuestra petición: búsqueda por empresa, foto a todo el ancho, búsqueda de Contactos abajo, iconos de SMS y Contactos, flechas de llamada de colores, pantalla de inicio.
+• Los números ocultos aparecen como «Número privado».
+• Diseño unificado; las opciones se eligen en un panel inferior.
+• Cambio de teléfono: notas, listas y ajustes se transfieren; nada va a la nube.
+• Política de privacidad actualizada: os pedirá aceptarla de nuevo.
+</es-ES>
+<fi-FI>
+• Toiveidenne mukaan: haku yrityksellä, kuva näytön leveydeltä, Yhteystiedot-haku alhaalla, SMS- ja Yhteystiedot-kuvakkeet, värilliset puhelunuolet, aloitusnäyttö.
+• Piilotettu numero näkyy tekstinä ”Yksityinen numero”.
+• Yhtenäinen ulkoasu, valinnat avautuvat alhaalta nousevassa paneelissa.
+• Puhelimen vaihto: muistiinpanot, listat ja asetukset siirtyvät; pilveen ei lähetetä mitään.
+• Tietosuojakäytäntö on päivitetty – sovellus pyytää hyväksymään sen uudelleen.
+</fi-FI>
+<fr-FR>
+• À votre demande : recherche par société, photo sur toute la largeur, recherche de contacts en bas, icônes SMS et Contacts, flèches d’appel en couleur, écran de démarrage.
+• Les numéros masqués s’affichent « Numéro masqué ».
+• Design unifié ; les choix s’affichent dans un panneau du bas.
+• Changement de téléphone : notes, listes et réglages sont transférés ; rien dans le cloud.
+• Politique de confidentialité mise à jour : l’application vous demandera de l’accepter à nouveau.
+</fr-FR>
+<hi-IN>
+• आपके अनुरोध पर: संस्था से खोज, पूरी चौड़ाई में फ़ोटो, नीचे संपर्क खोज, SMS और संपर्क आइकन, रंगीन कॉल तीर, शुरू होने पर खुलने वाली स्क्रीन।
+• छिपा नंबर अब «निजी नंबर» दिखता है।
+• एक जैसा डिज़ाइन, विकल्प नीचे से खुलने वाले पैनल में।
+• फ़ोन बदलना: नोट्स, सूचियाँ और सेटिंग्स साथ आती हैं; क्लाउड में कुछ नहीं जाता।
+• गोपनीयता नीति अपडेट हुई है — उसे फिर से स्वीकार करने को कहा जाएगा।
+</hi-IN>
+<hu-HU>
+• Kérésetekre: keresés cég szerint, fotó a képernyő teljes szélességében, névjegykeresés alul, külön SMS és Névjegyek ikon, színes hívásnyilak, indítóképernyő.
+• A rejtett szám „Privát szám” felirattal jelenik meg.
+• Egységes megjelenés, a választás alulról felcsúszó panelen történik.
+• Telefoncsere: a jegyzetek, listák és beállítások átkerülnek; a felhőbe semmi sem kerül.
+• Az adatvédelmi irányelvek frissültek – újra el kell fogadnotok őket.
+</hu-HU>
+<id>
+• Atas permintaan Anda: pencarian menurut perusahaan, foto selebar layar, pencarian Kontak di bawah, ikon SMS dan Kontak, panah panggilan berwarna, layar awal.
+• Nomor tersembunyi kini bertuliskan “Nomor pribadi”.
+• Tampilan seragam, pilihan lewat panel dari bawah.
+• Ganti ponsel: catatan, daftar, dan setelan ikut berpindah; tidak ada yang dikirim ke cloud.
+• Kebijakan privasi diperbarui — Anda akan diminta menyetujuinya lagi.
+</id>
+<it-IT>
+• Su vostra richiesta: ricerca per azienda, foto a tutta larghezza, ricerca contatti in basso, icone SMS e Contatti, frecce delle chiamate colorate, schermata iniziale.
+• I numeri nascosti appaiono come «Numero privato».
+• Aspetto uniforme, scelte in un pannello dal basso.
+• Cambio di telefono: note, elenchi e impostazioni vengono trasferiti; nel cloud non va nulla.
+• Informativa sulla privacy aggiornata: vi verrà chiesto di accettarla di nuovo.
+</it-IT>
+<iw-IL>
+• לבקשתכם: חיפוש לפי ארגון, תמונה ברוחב המסך, חיפוש אנשי קשר למטה, סמלים ל-SMS ולאנשי קשר, חיצי שיחות צבעוניים, מסך פתיחה.
+• מספר חסוי מוצג כ„מספר חסוי”.
+• עיצוב אחיד, הבחירה נפתחת בלוח שעולה מלמטה.
+• מעבר לטלפון חדש: הערות, רשימות והגדרות עוברים; לענן לא נשלח דבר.
+• מדיניות הפרטיות עודכנה – תתבקשו לאשר אותה מחדש.
+</iw-IL>
+<ja-JP>
+• ご要望にお応えして：組織名での検索、写真の画面幅表示、連絡先検索を画面下部に、SMSと連絡先のアイコン、色付きの通話矢印、起動時の画面選択。
+• 非通知の着信は「非通知」と表示されます。
+• デザインを統一し、選択肢は下からのパネルで選べます。
+• 機種変更：メモ、リスト、設定も引き継がれ、クラウドには何も送信されません。
+• プライバシーポリシーを更新しました。再同意をお願いします。
+</ja-JP>
+<ko-KR>
+• 요청에 따라: 조직 검색, 화면 너비 사진, 하단 연락처 검색, SMS·연락처 아이콘, 색상 통화 화살표, 시작 화면.
+• 발신번호 표시 제한 전화는 '발신번호 표시 제한'으로 표시됩니다.
+• 통일된 디자인, 선택 항목은 아래에서 올라오는 패널로.
+• 휴대폰 교체: 메모, 목록, 설정이 함께 옮겨지며 클라우드로는 아무것도 전송되지 않습니다.
+• 개인정보 처리방침이 업데이트되어 다시 동의를 요청합니다.
+</ko-KR>
+<nl-NL>
+• Op jullie verzoek: zoeken op bedrijf, foto over de volle schermbreedte, contacten zoeken onderaan, SMS- en Contacten-iconen, gekleurde gesprekspijlen, startscherm.
+• Verborgen nummers heten nu ‘Privénummer’.
+• Eén ontwerp, keuzes in een paneel van onderaf.
+• Van telefoon wisselen: notities, lijsten en instellingen gaan mee; niets naar de cloud.
+• Privacybeleid bijgewerkt – jullie moeten het opnieuw accepteren.
+</nl-NL>
+<no-NO>
+• Etter ønske fra dere: søk på firma, bilde i full skjermbredde, kontaktsøk nederst, SMS- og Kontakter-ikoner, fargede anropspiler, startskjerm.
+• Skjulte numre vises som «Privat nummer».
+• Enhetlig design, valg vises i et panel nedenfra.
+• Bytte av telefon: notater, lister og innstillinger følger med; ingenting sendes til skyen.
+• Personvernerklæringen er oppdatert – du blir bedt om å godta den på nytt.
+</no-NO>
+<pl-PL>
+• Na Wasze prośby: wyszukiwanie po firmie, zdjęcie na całą szerokość ekranu, wyszukiwanie kontaktów na dole, ikony SMS i Kontakty, kolorowe strzałki połączeń, ekran startowy.
+• Ukryty numer jest teraz opisany „Numer prywatny”.
+• Spójny wygląd, wybór w panelu od dołu.
+• Zmiana telefonu: notatki, listy i ustawienia się przenoszą; do chmury nic nie trafia.
+• Polityka prywatności zaktualizowana – trzeba będzie zaakceptować ją ponownie.
+</pl-PL>
+<pt-BR>
+• A pedido de vocês: busca por empresa, foto na largura da tela, busca de contatos embaixo, ícones de SMS e Contatos, setas de chamada coloridas, tela inicial.
+• Números ocultos agora aparecem como “Número privado”.
+• Visual unificado, opções em um painel inferior.
+• Troca de celular: notas, listas e configurações são transferidas; nada vai para a nuvem.
+• Política de privacidade atualizada — vocês precisarão aceitá-la de novo.
+</pt-BR>
+<ro>
+• La cererea voastră: căutare după companie, fotografie pe toată lățimea ecranului, căutarea contactelor jos, pictograme SMS și Contacte, săgeți de apel colorate, ecran de pornire.
+• Numerele ascunse apar acum „Număr privat”.
+• Aspect unitar, alegeri într-un panou care urcă de jos.
+• Schimbarea telefonului: notițele, listele și setările se transferă; în cloud nu se trimite nimic.
+• Politica de confidențialitate a fost actualizată – vi se va cere să o acceptați din nou.
+</ro>
+<sk>
+• Na vaše želanie: hľadanie podľa organizácie, fotka na šírku obrazovky, hľadanie v Kontaktoch dole, ikony SMS a Kontakty, farebné šípky hovorov, úvodná obrazovka.
+• Skryté číslo je označené „Súkromné číslo“.
+• Jednotný vzhľad, voľba panelom zospodu.
+• Zmena telefónu: poznámky, zoznamy a nastavenia sa prenesú; do cloudu nič.
+• Zásady ochrany osobných údajov sú aktualizované – aplikácia požiada o ich opätovné prijatie.
+</sk>
+<sv-SE>
+• På era önskemål: sök på företag, bild i hela skärmbredden, kontaktsök längst ned, SMS- och Kontakter-ikoner, färgade samtalspilar, startskärm.
+• Dolda nummer visas nu som ”Privat nummer”.
+• Enhetlig design, val visas i en panel nedifrån.
+• Byte av telefon: anteckningar, listor och inställningar följer med; inget skickas till molnet.
+• Integritetspolicyn är uppdaterad – du ombeds godkänna den igen.
+</sv-SE>
+<th>
+• ตามคำขอของคุณ: ค้นหาตามบริษัท รูปเต็มความกว้างหน้าจอ ค้นหารายชื่อด้านล่าง ไอคอน SMS และรายชื่อแยกกัน ลูกศรการโทรหลากสี เลือกหน้าจอเริ่มต้น
+• หมายเลขที่ซ่อนจะแสดงเป็น “หมายเลขส่วนตัว”
+• ดีไซน์เป็นหนึ่งเดียว เลือกตัวเลือกผ่านแผงที่เลื่อนขึ้นจากด้านล่าง
+• เปลี่ยนโทรศัพท์: โน้ต รายการ และการตั้งค่าจะย้ายไปด้วย โดยไม่มีอะไรถูกส่งไปคลาวด์
+• อัปเดตนโยบายความเป็นส่วนตัวแล้ว จะขอให้ยอมรับอีกครั้ง
+</th>
+<tr-TR>
+• İsteğiniz üzerine: kuruma göre arama, ekran genişliğinde fotoğraf, altta Kişiler araması, SMS ve Kişiler simgeleri, renkli arama okları, açılış ekranı.
+• Gizli numaralar artık “Gizli numara” olarak görünür.
+• Tutarlı tasarım, seçimler alttan açılan panelle.
+• Telefon değiştirme: notlar, listeler ve ayarlar taşınır; buluta hiçbir şey gönderilmez.
+• Gizlilik politikası güncellendi; yeniden kabul etmeniz istenecek.
+</tr-TR>
+<vi>
+• Theo yêu cầu của bạn: tìm theo tổ chức, ảnh rộng bằng màn hình, tìm danh bạ ở dưới cùng, biểu tượng SMS và Danh bạ, mũi tên cuộc gọi có màu, màn hình khởi động.
+• Số ẩn nay hiển thị “Số riêng tư”.
+• Giao diện thống nhất, lựa chọn qua bảng trượt từ dưới lên.
+• Đổi điện thoại: ghi chú, danh sách và cài đặt được chuyển theo; không gửi gì lên đám mây.
+• Chính sách quyền riêng tư đã cập nhật — bạn sẽ được yêu cầu chấp nhận lại.
+</vi>
+<zh-CN>
+• 应您的要求：按单位搜索、照片按屏幕宽度显示、联系人搜索在底部、短信和联系人图标、彩色通话箭头、可选启动屏幕。
+• 隐藏号码显示为“私人号码”。
+• 统一的外观，选项从底部面板弹出。
+• 更换手机：备注、列表和设置会迁移，不会向云端发送任何内容。
+• 隐私政策已更新，将请您重新接受。
+</zh-CN>
