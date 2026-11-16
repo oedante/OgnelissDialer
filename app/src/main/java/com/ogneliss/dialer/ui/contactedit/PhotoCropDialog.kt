@@ -122,8 +122,8 @@ private fun CropArea(source: Bitmap, modifier: Modifier, onCrop: (Rect) -> Unit)
         var ty by remember(source, side) { mutableFloatStateOf(h / 2f - source.height * minScale / 2f) }
 
         fun clampAndReport() {
-            tx = tx.coerceIn(left0 + side - source.width * scale, left0)
-            ty = ty.coerceIn(top0 + side - source.height * scale, top0)
+            tx = clampOffset(tx, frameStart = left0, side = side, imageSize = source.width * scale)
+            ty = clampOffset(ty, frameStart = top0, side = side, imageSize = source.height * scale)
             val l = ((left0 - tx) / scale).roundToInt()
             val t = ((top0 - ty) / scale).roundToInt()
             val s = (side / scale).roundToInt()
@@ -174,4 +174,23 @@ private fun CropArea(source: Bitmap, modifier: Modifier, onCrop: (Rect) -> Unit)
             )
         }
     }
+}
+
+/**
+ * Сдвиг снимка вдоль одной оси: край снимка не заходит внутрь рамки.
+ * Допустимо [frameStart + side − imageSize; frameStart].
+ *
+ * 2.7.3, журнал пользователя (OnePlus 7T): приложение закрывалось сразу при
+ * открытии окна обрезки — «Cannot coerce value to an empty range: maximum
+ * 527.275 is less than minimum 527.2751». У горизонтального снимка масштаб
+ * подобран так, что высота ровно равна стороне рамки, но в дробях
+ * height × (side / height) выходит на долю пикселя меньше side — и нижняя
+ * граница становится больше верхней, coerceIn бросает исключение. Зависит
+ * от размеров снимка и экрана, поэтому воспроизводилось не у всех.
+ * Теперь пустой диапазон (снимок не длиннее рамки) — снимок по центру рамки.
+ */
+internal fun clampOffset(value: Float, frameStart: Float, side: Float, imageSize: Float): Float {
+    val low = frameStart + side - imageSize
+    return if (low <= frameStart) value.coerceIn(low, frameStart)
+    else frameStart + (side - imageSize) / 2f
 }
