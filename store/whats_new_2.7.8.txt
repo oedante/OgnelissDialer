@@ -1,0 +1,81 @@
+<ru-RU>
+• Псевдозвонок звонит и в Bluetooth-гарнитуре, в машине и на часах — кнопкой гарнитуры можно ответить и сбросить.
+</ru-RU>
+<ar>
+• المكالمة الوهمية ترنّ الآن أيضًا في سماعة Bluetooth وفي السيارة وعلى الساعة، ويمكن الرد أو الرفض بزر السماعة.
+</ar>
+<cs-CZ>
+• Falešný hovor teď zvoní i v Bluetooth sluchátkách, v autě a na hodinkách – tlačítkem sluchátek ho přijmete i odmítnete.
+</cs-CZ>
+<da-DK>
+• Falske opkald ringer nu også i Bluetooth-headsettet, i bilen og på uret – svar og afvis med headsettets knap.
+</da-DK>
+<de-DE>
+• Fake-Anrufe klingeln jetzt auch im Bluetooth-Headset, im Auto und auf der Uhr – annehmen und ablehnen per Headset-Taste.
+</de-DE>
+<en-US>
+• Fake calls now ring on Bluetooth headsets, in the car and on watches too — answer or decline with the headset button.
+</en-US>
+<es-ES>
+• La llamada falsa ahora también suena en los auriculares Bluetooth, en el coche y en el reloj; se puede contestar o rechazar con el botón de los auriculares.
+</es-ES>
+<fi-FI>
+• Valepuhelu soi nyt myös Bluetooth-kuulokkeissa, autossa ja kellossa – vastaa tai hylkää kuulokkeiden painikkeella.
+</fi-FI>
+<fr-FR>
+• Le faux appel sonne désormais aussi dans le casque Bluetooth, en voiture et sur la montre ; répondez ou refusez avec le bouton du casque.
+</fr-FR>
+<hi-IN>
+• नकली कॉल अब Bluetooth हेडसेट, कार और घड़ी पर भी बजती है — हेडसेट के बटन से उठाएँ या काटें।
+</hi-IN>
+<hu-HU>
+• Az álhívás most a Bluetooth-headsetben, az autóban és az órán is cseng – a headset gombjával felvehető és elutasítható.
+</hu-HU>
+<id>
+• Panggilan palsu kini juga berdering di headset Bluetooth, di mobil, dan di jam tangan — jawab atau tolak dengan tombol headset.
+</id>
+<it-IT>
+• La finta chiamata ora squilla anche nelle cuffie Bluetooth, in auto e sull’orologio: rispondi o rifiuta con il tasto delle cuffie.
+</it-IT>
+<iw-IL>
+• שיחה מזויפת מצלצלת עכשיו גם באוזניות Bluetooth, ברכב ובשעון — אפשר לענות או לדחות בכפתור האוזניות.
+</iw-IL>
+<ja-JP>
+• フェイク着信が Bluetooth ヘッドセット、車、スマートウォッチでも鳴るようになり、ヘッドセットのボタンで応答・拒否できます。
+</ja-JP>
+<ko-KR>
+• 가짜 전화가 이제 블루투스 헤드셋, 차량, 워치에서도 울리며 헤드셋 버튼으로 받거나 거절할 수 있습니다.
+</ko-KR>
+<nl-NL>
+• Nepoproepen gaan nu ook af op Bluetooth-headsets, in de auto en op het horloge – opnemen en weigeren met de headsetknop.
+</nl-NL>
+<no-NO>
+• Falske anrop ringer nå også i Bluetooth-headsettet, i bilen og på klokken – svar og avvis med headsettknappen.
+</no-NO>
+<pl-PL>
+• Fałszywe połączenie dzwoni teraz także w słuchawkach Bluetooth, w samochodzie i na zegarku – odbierzesz i odrzucisz je przyciskiem słuchawek.
+</pl-PL>
+<pt-BR>
+• A chamada falsa agora toca também no fone Bluetooth, no carro e no relógio — atenda ou recuse pelo botão do fone.
+</pt-BR>
+<ro>
+• Apelul fals sună acum și în căștile Bluetooth, în mașină și pe ceas – răspunzi sau respingi cu butonul căștilor.
+</ro>
+<sk>
+• Falošný hovor teraz zvoní aj v Bluetooth slúchadlách, v aute a na hodinkách – tlačidlom slúchadiel ho prijmete aj odmietnete.
+</sk>
+<sv-SE>
+• Låtsassamtal ringer nu även i Bluetooth-headset, i bilen och på klockan – svara eller avvisa med headsetknappen.
+</sv-SE>
+<th>
+• สายปลอมดังในหูฟังบลูทูธ ในรถ และบนนาฬิกาแล้ว — รับหรือปฏิเสธได้ด้วยปุ่มบนหูฟัง
+</th>
+<tr-TR>
+• Sahte arama artık Bluetooth kulaklıkta, arabada ve saatte de çalar — kulaklık düğmesiyle cevaplayabilir veya reddedebilirsiniz.
+</tr-TR>
+<vi>
+• Cuộc gọi giả nay đổ chuông cả trên tai nghe Bluetooth, trong ô tô và trên đồng hồ — trả lời hoặc từ chối bằng nút tai nghe.
+</vi>
+<zh-CN>
+• 假来电现在也会在蓝牙耳机、车机和手表上响铃，可用耳机按键接听或拒接。
+</zh-CN>

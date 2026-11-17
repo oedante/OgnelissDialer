@@ -103,6 +103,14 @@ class FakeCallActivity : ComponentActivity() {
         enableEdgeToEdge()
         // 2.7.7: открыт из уведомления по времени — его мелодию сменяет своя (FakeCall)
         FakeCall.clearNotification(this)
+        /*
+         * 2.7.8: псевдозвонок — «своим вызовом» в системе (FakeTelecomCall): так
+         * он звонит и в Bluetooth-гарнитуре. Открыли кнопкой, плиткой или
+         * ярлыком — вызова ещё нет, создаём; открыла система (по времени) —
+         * он уже есть, start ничего не делает. При повороте экрана — не трогаем.
+         */
+        FakeTelecomCall.activityVisible = true
+        if (savedInstanceState == null) FakeTelecomCall.start(this)
 
         /*
          * БЕЗ БЕЛОЙ ПОДЛОЖКИ ПОД КНОПКАМИ НАВИГАЦИИ (1.5.1, снимки автора
@@ -158,6 +166,22 @@ class FakeCallActivity : ComponentActivity() {
              * в неудобный момент.
              */
             var caller by remember { mutableStateOf<Pair<String, String>?>(null) }
+            // Имя и номер — гарнитуре и машине, как только выбраны
+            LaunchedEffect(caller) { caller?.let { (n, num) -> FakeTelecomCall.updateCaller(n, num) } }
+            /*
+             * Ответили или сбросили в гарнитуре (2.7.8): ответ — экран переходит
+             * в разговор, мелодия смолкает; сброс — экран закрывается. «Был
+             * вызов» — чтобы не закрыться до того, как система его создала.
+             */
+            val telecom by FakeTelecomCall.state.collectAsStateWithLifecycle()
+            var hadTelecomCall by remember { mutableStateOf(false) }
+            LaunchedEffect(telecom) {
+                when (telecom) {
+                    FakeTelecomCall.State.RINGING -> hadTelecomCall = true
+                    FakeTelecomCall.State.ACTIVE -> { hadTelecomCall = true; stopRinging() }
+                    FakeTelecomCall.State.IDLE -> if (hadTelecomCall) finish()
+                }
+            }
 
             LaunchedEffect(Unit) {
                 val chosen = prefs.fakeCallNumber.first()
@@ -214,8 +238,9 @@ class FakeCallActivity : ComponentActivity() {
                     largePortrait = callPhotoSize == CallPhotoSize.LARGE,
                     slideToAnswer = answerMode == AnswerMode.SLIDE,
                     swapAnswer = swapAnswer,
-                    onAnswer = { stopRinging() },
-                    onHangUp = { finish() },
+                    onAnswer = { stopRinging(); FakeTelecomCall.answer() },
+                    onHangUp = { FakeTelecomCall.end(); finish() },
+                    answeredOutside = telecom == FakeTelecomCall.State.ACTIVE,
                     onAtEarChanged = { atEar = it }
                 )
             }
@@ -262,7 +287,25 @@ class FakeCallActivity : ComponentActivity() {
         ringtone = null
     }
 
+    override fun onStart() {
+        super.onStart()
+        FakeTelecomCall.activityVisible = true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Открыли касанием плашки (2.7.8) — её мелодию сменяет своя
+        FakeCall.clearNotification(this)
+    }
+
+    override fun onStop() {
+        FakeTelecomCall.activityVisible = false
+        super.onStop()
+    }
+
     override fun onDestroy() {
+        // Экран закрыли насовсем — и вызов в системе завершается (гарнитура, машина)
+        if (isFinishing) FakeTelecomCall.end()
         stopRinging()
         // Ещё у уха — экран загорится, когда отнимут (как у настоящего вызова)
         proximity?.release(waitForFar = true)
@@ -292,10 +335,13 @@ internal fun FakeCallScreen(
     onAnswer: () -> Unit,
     onHangUp: () -> Unit,
     /** «Трубка у уха» (2.4.4): ответили, не на удержании, без громкой связи — датчик гасит экран. */
-    onAtEarChanged: (Boolean) -> Unit = {}
+    onAtEarChanged: (Boolean) -> Unit = {},
+    /** Ответили в гарнитуре, машине или на часах (2.7.8, FakeTelecomCall). */
+    answeredOutside: Boolean = false
 ) {
     val slideAnswer = useSlideToAnswer(slideToAnswer)
     var answered by remember { mutableStateOf(false) }
+    LaunchedEffect(answeredOutside) { if (answeredOutside) answered = true }
     var seconds by remember { mutableIntStateOf(0) }
 
     /*

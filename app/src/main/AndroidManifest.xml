@@ -235,6 +235,20 @@
             android:exported="false" />
 
         <!--
+            Псевдозвонок «своим вызовом» в системе вызовов (2.7.8, FakeTelecomCall):
+            так он звонит и в Bluetooth-гарнитуре, в машине и на часах. Только
+            псевдозвонок; привязаться может лишь система (BIND_TELECOM_CONNECTION_SERVICE).
+        -->
+        <service
+            android:name=".call.FakeCallConnectionService"
+            android:exported="true"
+            android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE">
+            <intent-filter>
+                <action android:name="android.telecom.ConnectionService" />
+            </intent-filter>
+        </service>
+
+        <!--
             Плитка в шторке быстрых настроек.
 
             exported="true" обязателен: плитку запускает системный

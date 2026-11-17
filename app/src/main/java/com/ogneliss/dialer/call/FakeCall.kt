@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.ogneliss.dialer.log.Logger
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /**
@@ -30,6 +31,10 @@ import kotlinx.coroutines.launch
  * вызов в системе нельзя, да и не нужно: экран рисуется приложением,
  * звонок играет через обычный проигрыватель рингтона.
  *
+ * 2.7.8: псевдозвонок ещё и регистрируется «своим вызовом» приложения
+ * (FakeTelecomCall, как у мессенджеров) — ради гарнитуры, машины и часов.
+ * Это не вызов сети: никуда не звонит и в журнал не попадает.
+ *
  * Из этого следуют три ограничения, и о них честнее сказать вслух:
  *
  * • псевдозвонок НЕ попадает в журнал вызовов — ни в наш, ни в системный;
@@ -48,6 +53,9 @@ object FakeCall {
     private const val REQUEST_CODE = 0x1CA1
 
     private const val TAG = "FakeCall"
+
+    /** Подпись уведомления в журнале работы (для разработчика, не для экрана). */
+    private const val LOG_WHAT = "псевдозвонок"
 
     /** Показать экран прямо сейчас. */
     /**
@@ -136,7 +144,7 @@ object FakeCall {
      * (FakeCallActivity). Разрешено «поверх других приложений» — экран
      * открывается сразу, как раньше.
      */
-    private fun ringFromBackground(context: Context) {
+    internal fun ringFromBackground(context: Context) {
         if (com.ogneliss.dialer.util.AppPermissions.canDrawOverlays(context)) {
             ringNow(context)
             return
@@ -161,7 +169,7 @@ object FakeCall {
                 .build()
                 // Мелодия повторяется, пока плашку не открыли или не смахнули
                 .apply { flags = flags or android.app.Notification.FLAG_INSISTENT }
-            com.ogneliss.dialer.util.NotificationPermission.notify(context, NOTIFICATION_ID, notification, "псевдозвонок")
+            com.ogneliss.dialer.util.NotificationPermission.notify(context, NOTIFICATION_ID, notification, LOG_WHAT)
         }.onFailure { Logger.w(TAG, "Уведомление псевдозвонка не показано: ${it.message}") }
         // Приложение на экране — откроется и так (уведомление тогда снимет сам экран)
         runCatching { ringNow(context) }
@@ -215,7 +223,6 @@ object FakeCall {
 
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action != ACTION_RING) return
-            ringFromBackground(context)
 
             /*
              * Отметка о назначенном снимается сразу после срабатывания.
@@ -228,6 +235,13 @@ object FakeCall {
             kotlinx.coroutines.CoroutineScope(
                 kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.IO
             ).launch {
+                /*
+                 * 2.7.8: сначала — своим вызовом в системе (FakeTelecomCall): так
+                 * псевдозвонок звонит и в гарнитуре, а экран покажет система
+                 * (onShowIncomingCallUi). Система не приняла — по-старому.
+                 */
+                val number = suspendRunCatching { prefs.fakeCallNumber.first() }.getOrNull().orEmpty()
+                if (!FakeTelecomCall.start(context, number)) ringFromBackground(context)
                 suspendRunCatching { prefs.setFakeCallAt(0L) }
                 pending.finish()
             }
