@@ -621,7 +621,9 @@ class ScreenGalleryTest {
     private fun render(suffix: String, mode: ThemeMode, uiScale: UiScale = UiScale.DEFAULT, fontScale: Float = 1f, only: Set<String>? = null) {
         val vm = viewModel()
         val failed = mutableListOf<String>()
-        shots.filter { only == null || it.name in only }.forEach { shot ->
+        // GALLERY_ONLY=journal,menu — только эти снимки (быстрая проверка одной правки)
+        val envOnly = System.getenv("GALLERY_ONLY")?.split(',')?.map { it.trim() }?.toSet()
+        shots.filter { (only == null || it.name in only) && (envOnly == null || it.name in envOnly) }.forEach { shot ->
             runCatching {
                 applyBase(vm)
                 shot.prepare(vm)

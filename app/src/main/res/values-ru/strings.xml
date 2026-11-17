@@ -1101,4 +1101,6 @@
     <string name="call_bg_default">Обычный</string>
     <string name="call_bg_custom">Свой снимок</string>
     <string name="keywords_call_bg">фон обои картинка снимок фото изображение экран вызова</string>
+    <string name="settings_section_call_screen">Экран вызова</string>
+    <string name="settings_section_call_screen_summary">Фото, фон и номер на экране звонка</string>
 </resources>

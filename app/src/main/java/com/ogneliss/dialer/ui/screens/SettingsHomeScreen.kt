@@ -270,6 +270,8 @@ internal val HOME_GROUPS: List<Pair<Int, List<SettingsCategory>>> = listOf(
     ),
     R.string.settings_section_calls to listOf(
         SettingsCategory.CALLS,
+        // 2.7.5: вид экрана звонка — рядом с «Вызовами»
+        SettingsCategory.CALL_SCREEN,
         SettingsCategory.CALL_LOG,
         SettingsCategory.QUICK_ACCESS
     ),

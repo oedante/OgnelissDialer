@@ -448,12 +448,16 @@ fun BottomControlPanel(
                      * Небольшая, а не во всю высоту: главное в этом ряду —
                      * вызов, и кнопка скрытия не должна с ним спорить.
                      */
-                    // Отступ слева — у ряда, справа и между кнопками —
-                    // собственный отступ CallButtons: так поля по краям
-                    // экрана остаются одинаковыми, по 16 dp
+                    /*
+                     * 2.7.5: кнопки вызова — круги с подписью карты под ними.
+                     * Кнопка «скрыть» — по центру круга (Top + отступ), справа —
+                     * пустое место той же ширины: круги стоят по центру экрана,
+                     * как на выбранном автором снимке, и не наезжают на кнопку.
+                     */
+                    val hideTop = ((callCircleSize() - Dimens.MIN_TOUCH_TARGET) / 2).coerceAtLeast(0.dp)
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(start = FlowUi.contentPadding)
+                        verticalAlignment = Alignment.Top,
+                        modifier = Modifier.padding(horizontal = FlowUi.contentPadding)
                     ) {
                         FilledTonalIconButton(
                             onClick = onToggleExpanded,
@@ -462,7 +466,7 @@ fun BottomControlPanel(
                             colors = IconButtonDefaults.filledTonalIconButtonColors(
                                 containerColor = PanelColors.key()
                             ),
-                            modifier = Modifier.size(Dimens.MIN_TOUCH_TARGET)
+                            modifier = Modifier.padding(top = hideTop).size(Dimens.MIN_TOUCH_TARGET)
                         ) {
                             androidx.compose.animation.Crossfade(
                                 targetState = expanded,
@@ -484,6 +488,7 @@ fun BottomControlPanel(
                                 onCall = onCall
                             )
                         }
+                        Spacer(Modifier.width(Dimens.MIN_TOUCH_TARGET))
                     }
 
 

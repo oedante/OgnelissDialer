@@ -20,6 +20,7 @@ import androidx.compose.foundation.gestures.snapTo
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -862,6 +863,17 @@ private fun DirectActionHint(
         ((revealedPx - appear) / (triggerPx - appear)).coerceIn(0f, 1f)
     )
     val labelT = ((revealedPx - appear) / ((triggerPx - appear) / 2f)).coerceIn(0f, 1f)
+    /*
+     * Подпись — только когда помещается в открытую часть с запасом (2.7.5,
+     * по снимку: «Позвонить» у порога упиралась в край открытой части).
+     * Ширину подписи узнаём после первой раскладки; до неё подпись прозрачна.
+     */
+    val density = androidx.compose.ui.platform.LocalDensity.current
+    var labelWidthPx by remember { androidx.compose.runtime.mutableIntStateOf(0) }
+    val labelNeedPx = with(density) { (HINT_EDGE + HALO_BOX + Space.xs * 2 + LABEL_ROOM).toPx() } + labelWidthPx
+    val labelFit = if (labelWidthPx == 0) 0f
+    else ((revealedPx - labelNeedPx) / with(density) { LABEL_ROOM.toPx() }).coerceIn(0f, 1f)
+    val labelAlpha = labelT * labelFit
     val glow = 0.12f * eased + 0.10f * armT
     Box(
         modifier
@@ -920,7 +932,8 @@ private fun DirectActionHint(
                         action.description,
                         modifier = Modifier
                             .padding(horizontal = Space.xs)
-                            .graphicsLayer { alpha = labelT },
+                            .onSizeChanged { labelWidthPx = it.width }
+                            .graphicsLayer { alpha = labelAlpha },
                         color = tones.content,
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
@@ -934,6 +947,9 @@ private fun DirectActionHint(
         }
     }
 }
+
+/** Запас за подписью до края открытой части; на нём же подпись проявляется. */
+private val LABEL_ROOM = 16.dp
 
 /** Значок свайпа — 28 dp, как в почте (было 24). */
 private val SWIPE_ICON = 28.dp

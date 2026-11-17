@@ -30,7 +30,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.ogneliss.dialer.ui.theme.PanelColors
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.Color
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.ui.theme.Dimens
 import com.ogneliss.dialer.ui.theme.LocalAppearance
@@ -46,6 +47,15 @@ import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
  * Теперь у каждой клавиши своя поверхность, форма и отклик нажатия.
  * Видно, где заканчивается область, и попадание подтверждается визуально,
  * тактильно и звуком — тремя каналами сразу, потому что набирают вслепую.
+ *
+ * ── 2.7.5: классический вид (автор выбрал вариант «А» из трёх снимков) ─────
+ * Автор, 17.11.2026: «не нравится клавиатура». Выбран классический вид:
+ * цифра крупно по центру, буквы под ней, клавиши без подложки, вызов —
+ * круглые зелёные кнопки (CallButtons). Попадание по-прежнему видно:
+ * нажатая клавиша подсвечивается (primaryContainer), плюс отклик
+ * вибрацией и звуком. Где ряд ниже [STACK_MIN] (лёжа, тесная клавиатура
+ * экрана вызова) — прежняя раскладка «цифра слева, буквы справа»: в 1.3.5–1.3.6
+ * буквы под цифрой лёжа не помещались и пропадали.
  *
  * ── Раскладка не настраивается ─────────────────────────────────────────────
  * Порядок клавиш фиксирован телефонным стандартом. Перестановка сломала бы
@@ -117,7 +127,20 @@ fun Dialpad(
     val feedback = remember { DialpadFeedback() }
     DisposableEffect(Unit) { onDispose { feedback.release() } }
 
-    Column(modifier.fillMaxWidth().padding(horizontal = Space.m)) {
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+    // Высота ряда: задана — известна сразу; ряды делят место — четверть высоты
+    val rowHeight = when {
+        !fillHeight -> keyHeight ?: appearance.dialKeyHeight
+        constraints.hasBoundedHeight -> maxHeight / 4 - KEY_GAP * 2
+        else -> 0.dp
+    }
+    val stacked = rowHeight >= STACK_MIN
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .then(if (fillHeight) Modifier.fillMaxHeight() else Modifier)
+            .padding(horizontal = Space.m)
+    ) {
         DIAL_KEYS.chunked(3).forEach { row ->
             Row(
                 Modifier
@@ -153,14 +176,15 @@ fun Dialpad(
                     val keyInteraction = remember { MutableInteractionSource() }
                     val keyPressed by keyInteraction.collectIsPressedAsState()
                     val keyColor by animateColorAsState(
-                        if (keyPressed) MaterialTheme.colorScheme.primaryContainer else PanelColors.key(),
+                        // 2.7.5: без подложки в покое — классический вид (разбор вверху)
+                        if (keyPressed) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
                         animationSpec = tween(100),
                         label = "dialKeyPressed"
                     )
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(3.dp)
+                            .padding(KEY_GAP)
                             .then(
                                 if (fillHeight) {
                                     // Вся высота ряда; без нижней границы 48 dp —
@@ -174,7 +198,7 @@ fun Dialpad(
                                 }
                             )
                             .clip(OgnelissShapeTokens.dialKey)
-                            // Клавиша заметно отличается от панели: разбор в PanelColors
+                            // В покое прозрачная, нажатая — с подсветкой (2.7.5)
                             .background(keyColor)
                             .semantics(mergeDescendants = true) {
                                 contentDescription = keyLabel
@@ -258,7 +282,33 @@ fun Dialpad(
                          * под ними мельче и бледнее. Две короткие строки
                          * не выше цифры — помещаются и лёжа.
                          */
-                        Row(
+                        /*
+                         * 2.7.5 — ЦИФРА ПО ЦЕНТРУ, БУКВЫ ЯЗЫКА ПОД НЕЙ (вариант «А»).
+                         * Строка букв есть и у «1», «*», «#» (пустая): цифры ряда
+                         * стоят на одной высоте. Латиница в русской локали не
+                         * показывается — так на выбранном снимке; поиск по
+                         * буквам работает с буквами включённого языка.
+                         */
+                        if (stacked) Column(
+                            Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                key.digit.toString(),
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Normal,
+                                maxLines = 1
+                            )
+                            Text(
+                                primary,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                letterSpacing = 1.sp,
+                                maxLines = 1,
+                                softWrap = false
+                            )
+                        } else Row(
                             Modifier.fillMaxSize(),
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
@@ -301,6 +351,7 @@ fun Dialpad(
             }
         }
     }
+    }
 }
 
 /*
@@ -310,3 +361,12 @@ fun Dialpad(
  */
 private val DIGIT_SLOT = 24.dp
 private val LETTERS_SLOT = 44.dp
+
+/** Поле вокруг клавиши (между соседними — вдвое больше). */
+private val KEY_GAP = 3.dp
+
+/**
+ * Ниже этой высоты ряда — цифра и буквы в строку (2.7.5): цифра
+ * headlineMedium (36 sp строки) и буквы labelSmall (16 sp) столбиком — 52 dp.
+ */
+private val STACK_MIN = 52.dp

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -17,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
@@ -25,6 +25,7 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import com.ogneliss.dialer.ui.theme.Space
 
@@ -37,9 +38,9 @@ import com.ogneliss.dialer.ui.theme.Space
  * открыть в этом разделе. Журнал — пропущенные, входящие, исходящие…
  * (JournalFolder), контакты — избранные, частые, с заметкой… (ContactFilter).
  *
- * Без карточки: подпись раздела и строки прямо на странице меню. Строка —
- * значок, название и число (непрочитанные); открытая — заливкой, как
- * выбранный раздел нижней панели. [onEdit] — значок справа от подписи
+ * Подпись раздела и под ней карточка со строками (2.7.5; было — строки
+ * прямо на странице меню). Строка — значок, название и число
+ * (непрочитанные); открытая — заливкой и цветом акцента. [onEdit] — значок справа от подписи
  * (порядок и показ папок), как «настроить» у «Избранного» почты.
  *
  * ── Плотнее и одинаково во всех разделах (2.4.0) ───────────────────────────
@@ -72,7 +73,7 @@ internal fun MenuFolderRows(
                 }
             } else null
         )
-        folders.forEach { folder -> FolderRow(folder) }
+        OgnelissCard { folders.forEach { folder -> FolderRow(folder) } }
     }
 }
 
@@ -95,7 +96,8 @@ internal fun MenuBand(title: String, action: (@Composable () -> Unit)? = null) {
         Modifier
             .fillMaxWidth()
             .height(BAND_HEIGHT)
-            .padding(start = Space.l, end = Space.xs),
+            // Подпись — вровень с текстом строк в карточке (поле карточки + поле строки)
+            .padding(start = FlowUi.groupInset + Space.l, end = FlowUi.groupInset - Space.xs),
         verticalAlignment = Alignment.CenterVertically
     ) {
         SectionCaption(title, Modifier.weight(1f))
@@ -126,36 +128,46 @@ internal class MenuFolder(
 internal fun MenuActionRows(title: String, actions: List<MenuFolder>) {
     Column(Modifier.fillMaxWidth()) {
         MenuBand(title)
-        actions.forEach { FolderRow(it, role = Role.Button) }
+        OgnelissCard { actions.forEach { FolderRow(it, role = Role.Button) } }
     }
 }
 
+/*
+ * КАРТОЧКИ, КАК В НАСТРОЙКАХ (2.7.5, автор выбрал вариант «А» из трёх
+ * снимков 17.11.2026). Было (2.5.0–2.7.4): строки прямо на белой панели,
+ * 48 dp, bodyLarge, открытая папка — пилюлей. Автор: «не нравится
+ * оформление боковой панели». Теперь части меню — белые карточки на
+ * серо-голубой странице (EndDrawer), как группы настроек; строка 44 dp
+ * и bodyMedium — как строки настроек, без пустоты; открытая папка —
+ * заливкой во всю ширину карточки и цветом акцента.
+ */
 @Composable
 private fun FolderRow(folder: MenuFolder, role: Role = Role.Tab) {
     val on = folder.selected
+    val accent = MaterialTheme.colorScheme.primary
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = Space.xs)
-            .clip(MaterialTheme.shapes.extraLarge)
             .background(if (on) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent)
             .clickable(role = role, onClick = folder.onClick)
             .semantics { if (role == Role.Tab) selected = on }
             .heightIn(min = ROW_HEIGHT)
-            .padding(horizontal = Space.m),
+            .padding(horizontal = Space.l),
         verticalAlignment = Alignment.CenterVertically
     ) {
         val photo = folder.photoUri?.takeIf { it.isNotBlank() }
         if (photo != null) RowAvatar(photo, size = PHOTO_SIZE)
         else Icon(
             folder.icon, contentDescription = null,
-            tint = if (on) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+            tint = if (on) accent else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(ICON_SIZE)
         )
         Spacer(Modifier.width(Space.l))
         Text(
             folder.label,
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.bodyMedium,
             fontWeight = if (on) FontWeight.SemiBold else null,
+            color = if (on) accent else MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(1f)
         )
         // Число — только то, что требует внимания (непрочитанные): всего строк человеку не нужно
@@ -169,8 +181,11 @@ private fun FolderRow(folder: MenuFolder, role: Role = Role.Tab) {
     }
 }
 
-/** Высота строки папки — по пальцу (48 dp): плотнее, чем 52 dp прежде. */
-private val ROW_HEIGHT = 48.dp
+/** Высота строки (2.7.5): 44 dp, как строки в карточках настроек (было 48, ещё раньше 52). */
+private val ROW_HEIGHT = 44.dp
+
+/** Значок строки — 22 dp: под bodyMedium 24 dp выглядели крупнее текста. */
+private val ICON_SIZE = 22.dp
 
 /** Фото на месте значка строки — размер значка. */
-private val PHOTO_SIZE = 24.dp
+private val PHOTO_SIZE = ICON_SIZE

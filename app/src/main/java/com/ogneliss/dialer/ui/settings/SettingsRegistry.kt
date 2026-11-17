@@ -90,6 +90,19 @@ enum class SettingsCategory(
         R.string.settings_section_calls_summary,
         OgnelissIcons.Call
     ),
+    /*
+     * «Экран вызова» (2.7.5, автор: «можно вообще вынести настройки фона
+     * вызова в отдельную категорию»). «Вызовы» с двумя пунктами своего фона
+     * дошли до предела в 16 строк. Сюда переехало всё, что про вид экрана
+     * звонка: фото, живой фон, свой фон входящих и исходящих, скрытый номер.
+     * В «Вызовах» осталось поведение: как отвечать, звук, что после звонка.
+     */
+    CALL_SCREEN(
+        "settings/callscreen",
+        R.string.settings_section_call_screen,
+        R.string.settings_section_call_screen_summary,
+        OgnelissIcons.Image
+    ),
     CALL_LOG(
         "settings/calllog",
         R.string.settings_section_log,
@@ -698,43 +711,37 @@ object SettingsRegistry {
             groupRes = R.string.settings_group_during_call
         ),
         SettingEntry(
-            "call_hide_contact_number", SettingsCategory.CALLS,
+            "call_hide_contact_number", SettingsCategory.CALL_SCREEN,
             R.string.settings_hide_contact_number, R.string.settings_hide_contact_number_text,
-            SettingKind.Switch("call_hide_contact_number"),
-            groupRes = R.string.settings_group_during_call
+            SettingKind.Switch("call_hide_contact_number")
         ),
         SettingEntry(
-            "call_photo_style", SettingsCategory.CALLS,
+            "call_photo_style", SettingsCategory.CALL_SCREEN,
             R.string.settings_call_photo, R.string.settings_call_photo_text,
-            SettingKind.Choice("call_photo_style"),
-            groupRes = R.string.settings_group_during_call
+            SettingKind.Choice("call_photo_style")
         ),
         // 1.5.7: отзыв valmikk — портрет крупнее (разбор в CallPhotoSize)
         SettingEntry(
-            "call_photo_size", SettingsCategory.CALLS,
+            "call_photo_size", SettingsCategory.CALL_SCREEN,
             R.string.settings_call_photo_size, R.string.settings_call_photo_size_text,
-            SettingKind.Choice("call_photo_size"),
-            groupRes = R.string.settings_group_during_call
+            SettingKind.Choice("call_photo_size")
         ),
         SettingEntry(
-            "call_animation", SettingsCategory.CALLS,
+            "call_animation", SettingsCategory.CALL_SCREEN,
             R.string.settings_call_animation, R.string.settings_call_animation_text,
-            SettingKind.Switch("call_animation"),
-            groupRes = R.string.settings_group_during_call
+            SettingKind.Switch("call_animation")
         ),
         // 2.7.4: свой снимок вместо живого фона — отдельно для входящих и исходящих
         SettingEntry(
-            "call_bg_incoming", SettingsCategory.CALLS,
+            "call_bg_incoming", SettingsCategory.CALL_SCREEN,
             R.string.settings_call_bg_incoming, R.string.settings_call_bg_incoming_text,
             SettingKind.Choice("call_bg_incoming"),
-            groupRes = R.string.settings_group_during_call,
             keywordsRes = R.string.keywords_call_bg
         ),
         SettingEntry(
-            "call_bg_outgoing", SettingsCategory.CALLS,
+            "call_bg_outgoing", SettingsCategory.CALL_SCREEN,
             R.string.settings_call_bg_outgoing, R.string.settings_call_bg_outgoing_text,
             SettingKind.Choice("call_bg_outgoing"),
-            groupRes = R.string.settings_group_during_call,
             keywordsRes = R.string.keywords_call_bg
         ),
         SettingEntry(

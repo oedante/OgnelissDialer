@@ -1092,4 +1092,6 @@
     <string name="call_bg_default">Standard</string>
     <string name="call_bg_custom">Eigenes Bild</string>
     <string name="keywords_call_bg">hintergrund hintergrundbild bild foto anrufbildschirm</string>
+    <string name="settings_section_call_screen">Anrufbildschirm</string>
+    <string name="settings_section_call_screen_summary">Foto, Hintergrund und Nummer beim Anruf</string>
 </resources>
