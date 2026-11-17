@@ -12,6 +12,14 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 17.11.2026 — 2.7.6 (81): текст над своим фоном вызова под цвет снимка, латиница на клавишах
+
+Разбор — `docs/RELEASE_NOTES_2.7.6.md`. Цвет текста над своим снимком —
+`CallBackgroundLayer.darkTextOver` (яркость полосы — `CallBackgrounds.textBandLuminance`),
+в экран — `OnPhotoColors(enabled, text)` и `LocalCallTextOnImage`; номер — `CallNumberText`
+(общий для `InCallActivity` и `FakeCallActivity`). Клавиатура: латиница третьей строкой
+(`Dialpad.kt`, `STACK_MIN` 58 dp).
+
 ## 17.11.2026 — 2.7.5 (80): «Меню» карточками, классическая клавиатура, свайпы как в почте, «Экран вызова»
 
 Разбор — `docs/RELEASE_NOTES_2.7.5.md`. Автор выбрал по трём снимкам: «Меню» — вариант «А»

@@ -290,6 +290,12 @@ object FlowUi {
     val callNameSizeLandscape = 22.sp
     val callNumberSize = 16.sp
 
+    /** Номер над снимком (2.7.6, форум): крупнее и чётче — разбор у CallNumberText. */
+    val callNumberSizeOnImage = 18.sp
+
+    /** Почти чёрный текст над светлым своим фоном вызова (2.7.6): чистый чёрный режет глаз. */
+    val callTextDark = androidx.compose.ui.graphics.Color(0xFF15171A)
+
     /**
      * Портрет в шапке карточки.
      *

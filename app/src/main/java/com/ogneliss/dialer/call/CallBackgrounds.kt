@@ -118,4 +118,23 @@ object CallBackgrounds {
         }.onFailure { Logger.w(TAG, "Снимок ${kind.name} не прочитан", it) }
             .getOrNull()
     }
+
+    /**
+     * Яркость снимка под именем и номером (2.7.6, CallBackgroundLayer.bandLuminance) —
+     * по копии 24×48: сотни точек достаточно для среднего. Не вышло — 0 (тёмный
+     * снимок → белый текст, как было).
+     */
+    suspend fun textBandLuminance(bitmap: Bitmap): Double = withContext(Dispatchers.Default) {
+        runCatching {
+            val small = Bitmap.createScaledBitmap(bitmap, BAND_W, BAND_H, true)
+            val px = IntArray(BAND_W * BAND_H)
+            small.getPixels(px, 0, BAND_W, 0, 0, BAND_W, BAND_H)
+            if (small !== bitmap) small.recycle()
+            CallBackgroundLayer.bandLuminance(px, BAND_W, BAND_H)
+        }.onFailure { Logger.w(TAG, "Яркость снимка не посчитана", it) }
+            .getOrDefault(0.0)
+    }
+
+    private const val BAND_W = 24
+    private const val BAND_H = 48
 }

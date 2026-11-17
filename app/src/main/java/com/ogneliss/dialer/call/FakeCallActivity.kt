@@ -31,7 +31,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -270,7 +269,7 @@ class FakeCallActivity : ComponentActivity() {
 }
 
 @Composable
-private fun FakeCallScreen(
+internal fun FakeCallScreen(
     name: String,
     number: String,
     photoUri: String?,
@@ -352,11 +351,13 @@ private fun FakeCallScreen(
     var portraitFocus by remember { mutableStateOf<AmbientFocus?>(null) }
     // Нет фото — волны от имени (1.8.1, разбор у AmbientFocus)
     var nameFocus by remember { mutableStateOf<AmbientFocus?>(null) }
-    LightStatusIconsOnPhoto(photoBackground || photoTop)
     // 2.7.4: свой снимок входящих вместо живого фона — как у настоящего вызова
     val customBg = rememberCustomCallBackground(CallBackgrounds.Kind.INCOMING, incomingBgMark)
     val bgLayer = CallBackgroundLayer.decide(photoBackground, photoTop, customBg != null, ambientBackground)
     val customLayer = bgLayer == CallBackgroundLayer.CUSTOM
+    // 2.7.6: цвет текста над снимком и значки строки состояния — как у настоящего
+    val customText = if (customLayer) customCallTextColor(customBg) else null
+    LightStatusIconsOnPhoto(photoBackground || photoTop || customText == Color.White)
     // Живой фон — по тем же состояниям, что у настоящего вызова
     val ambient = bgLayer == CallBackgroundLayer.AMBIENT
     val bare = ambient || customLayer || (bareControls && !photoBackground)
@@ -389,7 +390,7 @@ private fun FakeCallScreen(
         )
     }
     // Как у настоящего вызова: панели нет над живым и ровным фоном (1.6.2)
-    if (customLayer) customBg?.let { CallCustomBackground(it) }
+    if (customLayer) customBg?.let { CallCustomBackground(it.image) }
     else if ((bare && !ambient) || photoTop) PlainCallBackground()
     if (photoTop) CallPhotoTop(photoUri.orEmpty(), photoSide)
     if (!bare) NavBarUnderPanel()
@@ -402,7 +403,7 @@ private fun FakeCallScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            OnPhotoColors(photoBackground) {
+            OnPhotoColors(photoBackground || customText != null, customText ?: Color.White) {
             Column(
                 Modifier
                     // 1.5.6: всё место над панелью — портрету и подписям,
@@ -453,7 +454,8 @@ private fun FakeCallScreen(
                     style = androidx.compose.ui.text.TextStyle(
                         fontSize = FlowUi.callNameSize,
                         fontWeight = FontWeight.Medium,
-                        lineHeight = FlowUi.callNameSize * 1.15f
+                        lineHeight = FlowUi.callNameSize * 1.15f,
+                        shadow = callTextShadow()
                     ),
                     maxLines = 3,
                     minScale = 0.5f,
@@ -466,11 +468,7 @@ private fun FakeCallScreen(
 
                 if (number.isNotBlank()) {
                     Spacer(Modifier.height(Space.xs))
-                    Text(
-                        PhoneFormatter.format(number),
-                        fontSize = FlowUi.callNumberSize,
-                        color = MaterialTheme.colorScheme.outline
-                    )
+                    CallNumberText(PhoneFormatter.format(number))
                 }
 
                 Spacer(Modifier.height(Space.m))
