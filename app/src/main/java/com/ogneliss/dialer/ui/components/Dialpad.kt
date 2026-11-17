@@ -135,7 +135,14 @@ fun Dialpad(
         else -> 0.dp
     }
     // Текст растёт с размером шрифта, а высота ряда — нет: порог растёт вместе с ним
-    val stacked = rowHeight >= STACK_MIN * androidx.compose.ui.platform.LocalDensity.current.fontScale
+    val fontScale = androidx.compose.ui.platform.LocalDensity.current.fontScale
+    val stacked = rowHeight >= STACK_MIN * fontScale
+    /*
+     * Ячейки «цифра слева, буквы справа» растут с размером шрифта (2.7.7, галерея
+     * при шрифте 160 %: «АБВ», «МНС» — буквы обрезались, цифра наезжала на них).
+     * Ширина клавиши это выдерживает: 24 + 8 + 44 dp × 1,6 ≈ 120 dp.
+     */
+    val slotScale = fontScale.coerceAtLeast(1f)
     // Буквы языка не латиница (русская локаль) — под ними строка латиницы у всех клавиш
     val latinRow = stringResource(R.string.key_2_alt).isNotEmpty()
     Column(
@@ -330,7 +337,7 @@ fun Dialpad(
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Box(Modifier.width(DIGIT_SLOT), contentAlignment = Alignment.Center) {
+                            Box(Modifier.width(DIGIT_SLOT * slotScale), contentAlignment = Alignment.Center) {
                                 Text(
                                     key.digit.toString(),
                                     style = MaterialTheme.typography.headlineMedium,
@@ -340,16 +347,17 @@ fun Dialpad(
                             }
                             Spacer(Modifier.width(Space.s))
                             Column(
-                                Modifier.width(LETTERS_SLOT),
+                                Modifier.width(LETTERS_SLOT * slotScale),
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 if (primary.isNotEmpty()) {
-                                    Text(
+                                    // FitText (2.7.7): при крупном шрифте «ДЕЖЗ» ужимается, а не обрезается
+                                    FitText(
                                         primary,
                                         style = MaterialTheme.typography.labelLarge,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         maxLines = 1,
-                                        softWrap = false
+                                        minScale = 0.6f
                                     )
                                 }
                                 if (secondary.isNotEmpty()) {

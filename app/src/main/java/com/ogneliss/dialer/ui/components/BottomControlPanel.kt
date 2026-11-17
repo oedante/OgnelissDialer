@@ -119,6 +119,13 @@ fun BottomControlPanel(
      */
     onSwipeToContacts: (() -> Unit)? = null,
     /**
+     * «Контакты» кнопкой справа от кнопок вызова (2.7.7, форум, oleg_p:
+     * «быстрый переход из журнала с открытой клавиатурой в контакты… внизу
+     * справа на клавиатуре есть свободное место»). Было: закрыть клавиатуру,
+     * потом перейти. Пара кнопке «скрыть клавиатуру» слева. null — пусто.
+     */
+    onOpenContacts: (() -> Unit)? = null,
+    /**
      * Панель стоит сбоку, а не внизу: широкое окно с открытой
      * клавиатурой. Разбор — в MainDialerScreen, у раскладки журнала.
      *
@@ -488,7 +495,17 @@ fun BottomControlPanel(
                                 onCall = onCall
                             )
                         }
-                        Spacer(Modifier.width(Dimens.MIN_TOUCH_TARGET))
+                        if (onOpenContacts != null) {
+                            FilledTonalIconButton(
+                                onClick = onOpenContacts,
+                                colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                    containerColor = PanelColors.key()
+                                ),
+                                modifier = Modifier.padding(top = hideTop).size(Dimens.MIN_TOUCH_TARGET)
+                            ) {
+                                Icon(OgnelissIcons.Contacts, contentDescription = stringResource(R.string.nav_contacts))
+                            }
+                        } else Spacer(Modifier.width(Dimens.MIN_TOUCH_TARGET))
                     }
 
 

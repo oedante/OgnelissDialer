@@ -664,7 +664,9 @@ class ScreenGalleryTest {
         only = setOf(
             "journal", "contacts", "card_plain", "settings_home", "settings_calls", "notes", "contact_edit", "sheet_filters", "menu",
             // 2.7.5: журнал с записями, переписка, список SMS, окно с полями, «О приложении»
-            "sms_chat", "sms_list", "dialog_note", "about"
+            "sms_chat", "sms_list", "dialog_note", "about",
+            // 2.7.7: окно псевдозвонка — кнопки переносятся, «Закрыть» не столбиком
+            "journal_fakecall", "journal_dialpad"
         )
     )
 }
