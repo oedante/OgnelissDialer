@@ -136,6 +136,8 @@ fun Dialpad(
     }
     // Текст растёт с размером шрифта, а высота ряда — нет: порог растёт вместе с ним
     val stacked = rowHeight >= STACK_MIN * androidx.compose.ui.platform.LocalDensity.current.fontScale
+    // Буквы языка не латиница (русская локаль) — под ними строка латиницы у всех клавиш
+    val latinRow = stringResource(R.string.key_2_alt).isNotEmpty()
     Column(
         Modifier
             .fillMaxWidth()
@@ -285,10 +287,14 @@ fun Dialpad(
                          */
                         /*
                          * 2.7.5 — ЦИФРА ПО ЦЕНТРУ, БУКВЫ ЯЗЫКА ПОД НЕЙ (вариант «А»).
-                         * Строка букв есть и у «1», «*», «#» (пустая): цифры ряда
-                         * стоят на одной высоте. Латиница в русской локали не
-                         * показывается — так на выбранном снимке; поиск по
-                         * буквам работает с буквами включённого языка.
+                         * Строки букв есть и у «1», «*», «#» (пустые): цифры ряда
+                         * стоят на одной высоте.
+                         *
+                         * 2.7.6: латиница вернулась третьей строкой, мельче
+                         * и бледнее (автор, по снимку с телефона: «клавиатура стала
+                         * выглядеть по-другому без латиницы»). В 2.7.5 её убрали,
+                         * как на снимке варианта. Строки ужаты по высоте
+                         * (32 + 13 + 12 sp), чтобы три строки встали в клавишу 60 dp.
                          */
                         if (stacked) Column(
                             Modifier.fillMaxSize(),
@@ -297,18 +303,28 @@ fun Dialpad(
                         ) {
                             Text(
                                 key.digit.toString(),
-                                style = MaterialTheme.typography.headlineMedium,
+                                style = MaterialTheme.typography.headlineMedium.copy(lineHeight = 32.sp),
                                 fontWeight = FontWeight.Normal,
                                 maxLines = 1
                             )
                             Text(
                                 primary,
-                                style = MaterialTheme.typography.labelSmall,
+                                style = MaterialTheme.typography.labelSmall.copy(lineHeight = 13.sp),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 letterSpacing = 1.sp,
                                 maxLines = 1,
                                 softWrap = false
                             )
+                            if (latinRow) {
+                                Text(
+                                    secondary,
+                                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp, lineHeight = 12.sp),
+                                    color = MaterialTheme.colorScheme.outline,
+                                    letterSpacing = 1.sp,
+                                    maxLines = 1,
+                                    softWrap = false
+                                )
+                            }
                         } else Row(
                             Modifier.fillMaxSize(),
                             horizontalArrangement = Arrangement.Center,
@@ -367,7 +383,8 @@ private val LETTERS_SLOT = 44.dp
 private val KEY_GAP = 3.dp
 
 /**
- * Ниже этой высоты ряда — цифра и буквы в строку (2.7.5): цифра
- * headlineMedium (36 sp строки) и буквы labelSmall (16 sp) столбиком — 52 dp.
+ * Ниже этой высоты ряда — цифра и буквы в строку (2.7.5): цифра (32 sp
+ * строки), буквы языка (13 sp) и латиница (12 sp) столбиком — 57, с запасом 58 dp
+ * (2.7.6; в 2.7.5 без латиницы было 52).
  */
-private val STACK_MIN = 52.dp
+private val STACK_MIN = 58.dp

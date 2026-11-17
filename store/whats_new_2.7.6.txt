@@ -1,0 +1,82 @@
+<ru-RU>
+• Свой фон экрана вызова: имя и номер подстраиваются под снимок — белые или тёмные, номер крупнее и чётче.
+• На клавишах набора снова латиница под русскими буквами.
+</ru-RU>
+<ar>
+• خلفية مخصّصة لشاشة المكالمة: الاسم والرقم يتكيّفان مع الصورة — أبيض أو داكن، والرقم أكبر وأوضح.
+</ar>
+<cs-CZ>
+• Vlastní pozadí hovoru: jméno a číslo se přizpůsobí obrázku – bílé nebo tmavé, číslo je větší a zřetelnější.
+</cs-CZ>
+<da-DK>
+• Egen opkaldsbaggrund: navn og nummer tilpasser sig billedet – hvide eller mørke, og nummeret er større og tydeligere.
+</da-DK>
+<de-DE>
+• Eigener Anrufhintergrund: Name und Nummer passen sich dem Bild an – weiß oder dunkel, die Nummer größer und deutlicher.
+</de-DE>
+<en-US>
+• Custom call background: name and number adapt to the picture — white or dark, with a larger, clearer number.
+</en-US>
+<es-ES>
+• Fondo de llamada propio: el nombre y el número se adaptan a la imagen (blancos u oscuros) y el número es más grande y nítido.
+</es-ES>
+<fi-FI>
+• Oma puhelutausta: nimi ja numero mukautuvat kuvaan – valkoisina tai tummina, ja numero on suurempi ja selkeämpi.
+</fi-FI>
+<fr-FR>
+• Fond d’appel personnalisé : le nom et le numéro s’adaptent à l’image (blancs ou foncés), le numéro est plus grand et plus net.
+</fr-FR>
+<hi-IN>
+• अपना कॉल बैकग्राउंड: नाम और नंबर तस्वीर के अनुसार सफ़ेद या गहरे रंग में दिखते हैं, नंबर बड़ा और साफ़।
+</hi-IN>
+<hu-HU>
+• Saját hívásháttér: a név és a szám a képhez igazodik – fehér vagy sötét, a szám nagyobb és jobban olvasható.
+</hu-HU>
+<id>
+• Latar panggilan sendiri: nama dan nomor menyesuaikan gambar — putih atau gelap, nomor lebih besar dan jelas.
+</id>
+<it-IT>
+• Sfondo di chiamata personalizzato: nome e numero si adattano all’immagine (bianchi o scuri), il numero è più grande e nitido.
+</it-IT>
+<iw-IL>
+• רקע שיחה משלך: השם והמספר מותאמים לתמונה — לבנים או כהים, והמספר גדול וברור יותר.
+</iw-IL>
+<ja-JP>
+• 通話画面の独自背景：名前と番号が画像に合わせて白または濃い色になり、番号は大きくはっきり表示されます。
+</ja-JP>
+<ko-KR>
+• 나만의 통화 배경: 이름과 번호가 이미지에 맞춰 흰색 또는 어두운 색으로 바뀌고, 번호가 더 크고 선명해집니다.
+</ko-KR>
+<nl-NL>
+• Eigen belachtergrond: naam en nummer passen zich aan de afbeelding aan – wit of donker, het nummer groter en duidelijker.
+</nl-NL>
+<no-NO>
+• Egen anropsbakgrunn: navn og nummer tilpasser seg bildet – hvite eller mørke, og nummeret er større og tydeligere.
+</no-NO>
+<pl-PL>
+• Własne tło połączenia: nazwa i numer dopasowują się do obrazu – białe lub ciemne, a numer jest większy i wyraźniejszy.
+</pl-PL>
+<pt-BR>
+• Fundo de chamada próprio: nome e número se adaptam à imagem — brancos ou escuros, com o número maior e mais nítido.
+</pt-BR>
+<ro>
+• Fundal de apel propriu: numele și numărul se adaptează imaginii – albe sau închise, iar numărul e mai mare și mai clar.
+</ro>
+<sk>
+• Vlastné pozadie hovoru: meno a číslo sa prispôsobia obrázku – biele alebo tmavé, číslo je väčšie a zreteľnejšie.
+</sk>
+<sv-SE>
+• Egen samtalsbakgrund: namn och nummer anpassas efter bilden – vita eller mörka, och numret är större och tydligare.
+</sv-SE>
+<th>
+• พื้นหลังหน้าจอโทรของคุณเอง: ชื่อและหมายเลขปรับให้เข้ากับรูป เป็นสีขาวหรือสีเข้ม และหมายเลขใหญ่ขึ้นชัดขึ้น
+</th>
+<tr-TR>
+• Kendi arama arka planınız: ad ve numara resme uyum sağlar — beyaz ya da koyu; numara daha büyük ve net.
+</tr-TR>
+<vi>
+• Hình nền cuộc gọi riêng: tên và số tự điều chỉnh theo ảnh — màu trắng hoặc tối, số lớn và rõ hơn.
+</vi>
+<zh-CN>
+• 自定义通话背景：姓名和号码会根据图片显示为白色或深色，号码更大更清晰。
+</zh-CN>

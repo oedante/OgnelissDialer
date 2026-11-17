@@ -27,6 +27,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
@@ -156,32 +158,102 @@ internal fun photoTopSide(
  * Шрифты и формы — прежние.
  */
 @Composable
-internal fun OnPhotoColors(enabled: Boolean, content: @Composable () -> Unit) {
+internal fun OnPhotoColors(
+    enabled: Boolean,
+    /**
+     * Цвет текста (2.7.6): над фото на весь экран — белый, над своим снимком —
+     * белый или почти чёрный по яркости снимка (customCallTextColor).
+     */
+    text: Color = Color.White,
+    content: @Composable () -> Unit
+) {
     if (!enabled) {
         content()
         return
     }
     val scheme = MaterialTheme.colorScheme
+    // Под тёмным текстом плашки светлые, под белым — затемнение, как было
+    val darkText = text.luminance() < 0.5f
+    val veil = if (darkText) Color.White else Color.Black
     MaterialTheme(
         colorScheme = scheme.copy(
-            onSurface = Color.White,
-            onSurfaceVariant = Color.White.copy(alpha = 0.85f),
-            outline = Color.White.copy(alpha = 0.75f),
-            primary = Color.White,
+            onSurface = text,
+            onSurfaceVariant = text.copy(alpha = 0.85f),
+            outline = text.copy(alpha = 0.75f),
+            primary = text,
             /*
              * Плашки («Соединение…») — затемнение, а не светлый контейнер
              * темы (05.10.2026, скриншот автора): белый текст на светлой
              * плашке поверх фото был почти не виден.
              */
-            surfaceContainerHighest = Color.Black.copy(alpha = 0.40f),
-            surfaceContainerHigh = Color.Black.copy(alpha = 0.35f),
-            surfaceContainer = Color.Black.copy(alpha = 0.30f)
+            surfaceContainerHighest = veil.copy(alpha = if (darkText) 0.55f else 0.40f),
+            surfaceContainerHigh = veil.copy(alpha = if (darkText) 0.50f else 0.35f),
+            surfaceContainer = veil.copy(alpha = if (darkText) 0.45f else 0.30f)
         ),
         shapes = MaterialTheme.shapes,
         typography = MaterialTheme.typography
     ) {
-        CompositionLocalProvider(LocalContentColor provides Color.White, content = content)
+        CompositionLocalProvider(
+            LocalContentColor provides text,
+            LocalCallTextOnImage provides text,
+            content = content
+        )
     }
+}
+
+/**
+ * ТЕКСТ ПОВЕРХ СНИМКА (2.7.6): цвет текста, когда под ним фото на весь экран
+ * или свой снимок; null — обычный фон. По нему номер становится крупнее
+ * и чётче, а под имя и номер ложится мягкая тень (форум, Saxena1: «сделайте
+ * цифры номера чёткими и крупными, когда установлены собственные обои»).
+ */
+internal val LocalCallTextOnImage = staticCompositionLocalOf<Color?> { null }
+
+/** Тень под текстом поверх снимка: тёмная под белым, светлая под тёмным; без снимка — нет. */
+@Composable
+internal fun callTextShadow(): androidx.compose.ui.graphics.Shadow? = LocalCallTextOnImage.current?.let { text ->
+    androidx.compose.ui.graphics.Shadow(
+        color = (if (text.luminance() < 0.5f) Color.White else Color.Black).copy(alpha = 0.45f),
+        offset = androidx.compose.ui.geometry.Offset(0f, 1.5f),
+        blurRadius = 6f
+    )
+}
+
+/**
+ * Номер под именем — один для настоящего и пробного вызова. Над снимком
+ * (2.7.6) — 18 sp, средней насыщенности, цветом текста и с тенью; было —
+ * 16 sp бледно-серым (outline), на ярком снимке его не было видно.
+ */
+@Composable
+internal fun CallNumberText(text: String) {
+    val onImage = LocalCallTextOnImage.current
+    androidx.compose.material3.Text(
+        text,
+        style = androidx.compose.material3.LocalTextStyle.current.copy(
+            fontSize = if (onImage != null) CALL_NUMBER_ON_IMAGE else FlowUi.callNumberSize,
+            fontWeight = if (onImage != null) androidx.compose.ui.text.font.FontWeight.Medium else null,
+            shadow = callTextShadow()
+        ),
+        color = onImage ?: MaterialTheme.colorScheme.outline,
+        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+    )
+}
+
+private val CALL_NUMBER_ON_IMAGE = 18.sp
+
+/** Почти чёрный текст над светлым снимком: чистый чёрный режет глаз. */
+private val CALL_TEXT_DARK = Color(0xFF15171A)
+
+/**
+ * Цвет текста над своим снимком (2.7.6): белый или почти чёрный — что
+ * контрастнее снимку под именем с подложкой цвета страницы
+ * (CallBackgroundLayer.darkTextOver). null — снимка нет.
+ */
+@Composable
+internal fun customCallTextColor(bg: CustomCallBackground?): Color? {
+    bg ?: return null
+    val page = MaterialTheme.colorScheme.surface.luminance().toDouble()
+    return if (CallBackgroundLayer.darkTextOver(bg.luminance, page)) CALL_TEXT_DARK else Color.White
 }
 
 /**
@@ -297,15 +369,23 @@ internal fun BoxScope.CallCustomBackground(image: androidx.compose.ui.graphics.I
 internal fun rememberCustomCallBackground(
     kind: CallBackgrounds.Kind,
     mark: Long
-): androidx.compose.ui.graphics.ImageBitmap? {
+): CustomCallBackground? {
     val context = androidx.compose.ui.platform.LocalContext.current.applicationContext
-    val image by androidx.compose.runtime.produceState<androidx.compose.ui.graphics.ImageBitmap?>(null, kind, mark) {
+    val image by androidx.compose.runtime.produceState<CustomCallBackground?>(null, kind, mark) {
         value = if (mark <= 0L) null else {
-            CallBackgrounds.load(context, kind)?.asImageBitmap()
+            CallBackgrounds.load(context, kind)?.let { bitmap ->
+                CustomCallBackground(bitmap.asImageBitmap(), CallBackgrounds.textBandLuminance(bitmap))
+            }
         }
     }
     return image
 }
+
+/** Свой снимок и яркость его полосы под именем и номером (2.7.6). */
+internal class CustomCallBackground(
+    val image: androidx.compose.ui.graphics.ImageBitmap,
+    val luminance: Double
+)
 
 /**
  * Полоса цвета нижней панели под системной навигацией (1.3.5, 05.10.2026,

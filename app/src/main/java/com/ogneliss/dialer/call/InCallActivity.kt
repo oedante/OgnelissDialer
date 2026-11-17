@@ -1037,7 +1037,6 @@ private fun InCallScreen(
         val half = bounds.width / 2f
         portraitFocus = AmbientFocus(bounds.center, if (squarePortrait) half * SQUARE_FOCUS else half)
     }
-    LightStatusIconsOnPhoto(photoBackground || photoTop)
     /*
      * 2.7.4: свой снимок вместо живого фона и ровной заливки — отдельный
      * для входящих и исходящих. Направление — как вызов пришёл
@@ -1050,6 +1049,10 @@ private fun InCallScreen(
     )
     val bgLayer = CallBackgroundLayer.decide(photoBackground, photoTop, customBg != null, ambientBackground)
     val customLayer = bgLayer == CallBackgroundLayer.CUSTOM
+    // 2.7.6: текст над своим снимком — белый или тёмный по яркости снимка
+    val customText = if (customLayer) customCallTextColor(customBg) else null
+    // Светлые значки строки состояния — над фото и над снимком с белым текстом
+    LightStatusIconsOnPhoto(photoBackground || photoTop || customText == Color.White)
     // Живой фон — когда нет фото на весь экран: фото само и есть фон.
     // У фото по ширине — тоже нет: волны от квадрата во всю ширину некуда пускать
     val ambient = bgLayer == CallBackgroundLayer.AMBIENT
@@ -1087,7 +1090,7 @@ private fun InCallScreen(
         )
     }
     // Ровный фон без панели — до краёв экрана (1.6.2); под фото по ширине — тоже
-    if (customLayer) customBg?.let { CallCustomBackground(it) }
+    if (customLayer) customBg?.let { CallCustomBackground(it.image) }
     else if ((bare && !ambient) || photoTop) PlainCallBackground()
     if (photoTop) CallPhotoTop(photoUri.orEmpty(), photoSide)
     // Полоса цвета панели под навигацией — только когда есть панель
@@ -1394,7 +1397,7 @@ private fun InCallScreen(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             // --- Верх: кто звонит ---
-            OnPhotoColors(photoBackground) {
+            OnPhotoColors(photoBackground || customText != null, customText ?: Color.White) {
             Column(
                 Modifier
                     // 1.5.6: всё место над панелью — портрету и подписям;
@@ -2471,6 +2474,8 @@ private fun CallerIdentity(
         minScale = 0.5f,
         style = androidx.compose.ui.text.TextStyle(
         fontSize = titleSize,
+        // 2.7.6: над снимком — мягкая тень, имя читается на пёстром фоне
+        shadow = callTextShadow(),
         /*
          * МЕЖСТРОЧНЫЙ ИНТЕРВАЛ ЗАДАЁТСЯ ВМЕСТЕ С РАЗМЕРОМ.
          *
@@ -2531,11 +2536,8 @@ private fun CallerIdentity(
     // Номер не дублируется, если он уже стоит заголовком
     if (display.title != PhoneFormatter.format(number)) {
         Spacer(Modifier.height(Space.xs))
-        Text(
-            numberLine ?: PhoneFormatter.format(number),
-            fontSize = FlowUi.callNumberSize,
-            color = MaterialTheme.colorScheme.outline
-        )
+        // 2.7.6: над снимком — крупнее и чётче (CallNumberText)
+        CallNumberText(numberLine ?: PhoneFormatter.format(number))
     }
 
     /*
