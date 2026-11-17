@@ -108,6 +108,91 @@ object FakeCall {
         }.onFailure { Logger.w(TAG, "Не удалось назначить псевдозвонок: ${it.message}") }
     }
 
+    /** Уведомление отложенного псевдозвонка (2.7.7): одно на всё приложение. */
+    const val NOTIFICATION_ID = 0x1CA2
+
+    /** Канал со звуком мелодии звонка — только для псевдозвонка по времени. */
+    private const val CHANNEL_RING = "fake_call_ring"
+
+    /** Сколько звонит плашка, если её не открыли: как неотвеченный вызов. */
+    private const val RING_TIMEOUT_MS = 45_000L
+
+    /**
+     * ПСЕВДОЗВОНОК ПО ВРЕМЕНИ — УВЕДОМЛЕНИЕМ ВО ВЕСЬ ЭКРАН (2.7.7).
+     *
+     * Форум, valer4ik123 (Motorola Edge 50 Fusion): «Через минуту» и «Выбрать
+     * время» не срабатывали вовсе, «Позвонить сейчас» — да.
+     *
+     * Было: будильник → этот приёмник → startActivity. С Android 10 приложение,
+     * которого нет на экране, само открыть экран не может (запуск из фона
+     * запрещён), и система молча ничего не показывала. «Сейчас» работало:
+     * приложение в этот момент на экране.
+     *
+     * Стало — как у настоящего входящего: уведомление категории «вызов»
+     * с переходом во весь экран (USE_FULL_SCREEN_INTENT уже есть ради входящих).
+     * Экран выключен или заблокирован — система сама открывает экран
+     * псевдозвонка. Телефоном пользуются — плашка сверху с мелодией звонка,
+     * касание открывает экран. Экран псевдозвонка снимает уведомление сам
+     * (FakeCallActivity). Разрешено «поверх других приложений» — экран
+     * открывается сразу, как раньше.
+     */
+    private fun ringFromBackground(context: Context) {
+        if (com.ogneliss.dialer.util.AppPermissions.canDrawOverlays(context)) {
+            ringNow(context)
+            return
+        }
+        runCatching {
+            ensureRingChannel(context)
+            val open = PendingIntent.getActivity(
+                context, REQUEST_CODE,
+                Intent(context, FakeCallActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            val notification = androidx.core.app.NotificationCompat.Builder(context, CHANNEL_RING)
+                .setSmallIcon(com.ogneliss.dialer.R.drawable.ic_call)
+                .setContentTitle(context.getString(com.ogneliss.dialer.R.string.incall_incoming))
+                .setCategory(androidx.core.app.NotificationCompat.CATEGORY_CALL)
+                .setPriority(androidx.core.app.NotificationCompat.PRIORITY_MAX)
+                .setVisibility(androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC)
+                .setFullScreenIntent(open, true)
+                .setContentIntent(open)
+                .setAutoCancel(true)
+                .setTimeoutAfter(RING_TIMEOUT_MS)
+                .build()
+                // Мелодия повторяется, пока плашку не открыли или не смахнули
+                .apply { flags = flags or android.app.Notification.FLAG_INSISTENT }
+            com.ogneliss.dialer.util.NotificationPermission.notify(context, NOTIFICATION_ID, notification, "псевдозвонок")
+        }.onFailure { Logger.w(TAG, "Уведомление псевдозвонка не показано: ${it.message}") }
+        // Приложение на экране — откроется и так (уведомление тогда снимет сам экран)
+        runCatching { ringNow(context) }
+    }
+
+    private fun ensureRingChannel(context: Context) {
+        val nm = context.getSystemService(android.app.NotificationManager::class.java) ?: return
+        if (nm.getNotificationChannel(CHANNEL_RING) != null) return
+        val channel = android.app.NotificationChannel(
+            CHANNEL_RING,
+            context.getString(com.ogneliss.dialer.R.string.fake_call_title),
+            android.app.NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            setSound(
+                android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_RINGTONE),
+                android.media.AudioAttributes.Builder()
+                    .setUsage(android.media.AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                    .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build()
+            )
+            enableVibration(true)
+            lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
+        }
+        nm.createNotificationChannel(channel)
+    }
+
+    /** Снять уведомление псевдозвонка — экран открыт, звонит уже он. */
+    fun clearNotification(context: Context) {
+        runCatching { androidx.core.app.NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID) }
+    }
+
     fun cancel(context: Context) {
         val alarms = context.getSystemService(AlarmManager::class.java) ?: return
         runCatching { alarms.cancel(pendingIntent(context)) }
@@ -130,7 +215,7 @@ object FakeCall {
 
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action != ACTION_RING) return
-            ringNow(context)
+            ringFromBackground(context)
 
             /*
              * Отметка о назначенном снимается сразу после срабатывания.

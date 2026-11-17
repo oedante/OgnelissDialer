@@ -84,10 +84,19 @@ fun OgnelissDialog(
                         content()
                     }
 
-                    Row(
+                    /*
+                     * Кнопки переносятся на строку ниже, а не сжимаются (2.7.7,
+                     * форум, valer4ik123, снимок окна псевдозвонка с крупным
+                     * шрифтом: «Отменить псевдозвонок» заняла строку, и «Закрыть»
+                     * встала столбиком «За / кр / ы / ть»). Было: Row — вторая
+                     * кнопка получала остаток ширины. Стало: FlowRow — не влезла
+                     * целиком, уходит вниз, к правому краю.
+                     */
+                    @OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+                    androidx.compose.foundation.layout.FlowRow(
                         Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalArrangement = Arrangement.Center
                     ) {
                         dismissButton?.invoke()
                         confirmButton()

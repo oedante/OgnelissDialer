@@ -1,0 +1,135 @@
+<ru-RU>
+• Псевдозвонок по времени («Через минуту», «Выбрать время») срабатывает и при закрытом приложении — как настоящий входящий.
+• На клавиатуре набора — кнопка «Контакты» справа от кнопок вызова.
+• Кнопки в окнах при крупном шрифте переносятся, а не сжимаются.
+</ru-RU>
+<ar>
+• المكالمة الوهمية المجدولة («بعد دقيقة»، «اختيار الوقت») ترنّ الآن حتى عندما يكون التطبيق مغلقًا، مثل مكالمة واردة حقيقية.
+• زر جهات الاتصال على لوحة الاتصال، على يمين أزرار الاتصال.
+• أزرار النوافذ تنتقل إلى سطر جديد بدل أن تنضغط عند تكبير الخط.
+</ar>
+<cs-CZ>
+• Naplánovaný falešný hovor („Za minutu“, „Vybrat čas“) teď zazvoní i při zavřené aplikaci – jako skutečný příchozí hovor.
+• Tlačítko Kontakty na číselníku, vpravo od tlačítek volání.
+• Tlačítka v oknech se při velkém písmu zalomí, místo aby se smrštila.
+</cs-CZ>
+<da-DK>
+• Planlagte falske opkald („Om et minut“, „Vælg tidspunkt“) ringer nu også, når appen er lukket – som et rigtigt indgående opkald.
+• Knap til Kontakter på tastaturet, til højre for opkaldsknapperne.
+• Knapper i dialoger ombrydes i stedet for at blive klemt med stor skrift.
+</da-DK>
+<de-DE>
+• Geplante Fake-Anrufe („In einer Minute“, „Zeit wählen“) klingeln jetzt auch bei geschlossener App – wie ein echter eingehender Anruf.
+• Kontakte-Taste auf der Wähltastatur, rechts neben den Anruftasten.
+• Schaltflächen in Dialogen brechen bei großer Schrift um, statt gequetscht zu werden.
+</de-DE>
+<en-US>
+• Scheduled fake calls ("In a minute", "Pick a time") now ring even when the app is closed — just like a real incoming call.
+• Contacts button on the dial pad, to the right of the call buttons.
+• Dialog buttons wrap instead of squeezing with large fonts.
+</en-US>
+<es-ES>
+• Las llamadas falsas programadas («En un minuto», «Elegir hora») ahora suenan aunque la app esté cerrada, como una llamada entrante real.
+• Botón de Contactos en el teclado, a la derecha de los botones de llamada.
+• Los botones de los diálogos pasan a otra línea en lugar de comprimirse con letra grande.
+</es-ES>
+<fi-FI>
+• Ajastettu valepuhelu (”Minuutin päästä”, ”Valitse aika”) soi nyt myös sovelluksen ollessa suljettuna – kuin oikea saapuva puhelu.
+• Yhteystiedot-painike näppäimistössä soittopainikkeiden oikealla puolella.
+• Ikkunoiden painikkeet rivittyvät suurella fontilla puristumisen sijaan.
+</fi-FI>
+<fr-FR>
+• Les faux appels programmés (« Dans une minute », « Choisir l’heure ») sonnent désormais même appli fermée, comme un vrai appel entrant.
+• Bouton Contacts sur le clavier, à droite des boutons d’appel.
+• Avec une grande police, les boutons des fenêtres passent à la ligne au lieu de se tasser.
+</fr-FR>
+<hi-IN>
+• तय समय की नकली कॉल («एक मिनट में», «समय चुनें») अब ऐप बंद होने पर भी बजती है — असली आने वाली कॉल की तरह।
+• डायल पैड पर कॉल बटनों के दाईं ओर संपर्क बटन।
+• बड़े फ़ॉन्ट में विंडो के बटन सिकुड़ने के बजाय अगली पंक्ति में जाते हैं।
+</hi-IN>
+<hu-HU>
+• Az ütemezett álhívás („Egy perc múlva”, „Időpont választása”) most bezárt alkalmazásnál is megszólal – mint egy valódi bejövő hívás.
+• Névjegyek gomb a tárcsázón, a hívógomboktól jobbra.
+• Nagy betűméretnél az ablakok gombjai új sorba törnek, nem nyomódnak össze.
+</hu-HU>
+<id>
+• Panggilan palsu terjadwal (“Dalam satu menit”, “Pilih waktu”) kini berdering meski aplikasi ditutup — seperti panggilan masuk sungguhan.
+• Tombol Kontak di papan tombol, di kanan tombol panggil.
+• Tombol di jendela pindah ke baris baru, bukan menyempit, saat huruf besar.
+</id>
+<it-IT>
+• Le finte chiamate programmate («Tra un minuto», «Scegli l’ora») ora squillano anche ad app chiusa, come una vera chiamata in arrivo.
+• Pulsante Contatti sul tastierino, a destra dei pulsanti di chiamata.
+• Con caratteri grandi i pulsanti delle finestre vanno a capo invece di schiacciarsi.
+</it-IT>
+<iw-IL>
+• שיחה מזויפת מתוזמנת („בעוד דקה”, „בחירת שעה”) מצלצלת עכשיו גם כשהאפליקציה סגורה — כמו שיחה נכנסת אמיתית.
+• כפתור אנשי קשר בלוח החיוג, מימין לכפתורי החיוג.
+• בגופן גדול כפתורי החלונות עוברים לשורה חדשה במקום להידחס.
+</iw-IL>
+<ja-JP>
+• 予約したフェイク着信（「1分後」「時間を選択」）が、アプリを閉じていても本物の着信のように鳴るようになりました。
+• ダイヤルパッドの発信ボタンの右に連絡先ボタンを追加。
+• 大きな文字サイズでも、ダイアログのボタンは縮まずに改行されます。
+</ja-JP>
+<ko-KR>
+• 예약한 가짜 전화(‘1분 후’, ‘시간 선택’)가 이제 앱을 닫아도 실제 수신 전화처럼 울립니다.
+• 다이얼패드의 통화 버튼 오른쪽에 연락처 버튼 추가.
+• 큰 글꼴에서도 대화상자 버튼이 찌그러지지 않고 줄바꿈됩니다.
+</ko-KR>
+<nl-NL>
+• Geplande nepoproepen (‘Over een minuut’, ‘Tijd kiezen’) gaan nu ook af als de app gesloten is – net als een echte inkomende oproep.
+• Knop Contacten op het toetsenblok, rechts van de belknoppen.
+• Knoppen in vensters lopen bij grote letters door naar een nieuwe regel in plaats van te krimpen.
+</nl-NL>
+<no-NO>
+• Planlagte falske anrop («Om ett minutt», «Velg tidspunkt») ringer nå også når appen er lukket – som et ekte innkommende anrop.
+• Kontakter-knapp på tastaturet, til høyre for ringeknappene.
+• Knapper i dialoger brytes til ny linje i stedet for å klemmes ved stor skrift.
+</no-NO>
+<pl-PL>
+• Zaplanowane fałszywe połączenie („Za minutę”, „Wybierz godzinę”) dzwoni teraz także przy zamkniętej aplikacji – jak prawdziwe połączenie przychodzące.
+• Przycisk Kontakty na klawiaturze, po prawej od przycisków połączenia.
+• Przy dużej czcionce przyciski w oknach przechodzą do nowej linii zamiast się ściskać.
+</pl-PL>
+<pt-BR>
+• Chamadas falsas agendadas (“Em um minuto”, “Escolher horário”) agora tocam mesmo com o app fechado, como uma chamada real.
+• Botão Contatos no teclado, à direita dos botões de chamada.
+• Com fonte grande, os botões das janelas passam para a linha de baixo em vez de se espremerem.
+</pt-BR>
+<ro>
+• Apelul fals programat („Peste un minut”, „Alege ora”) sună acum și cu aplicația închisă – ca un apel real.
+• Buton Contacte pe tastatură, în dreapta butoanelor de apel.
+• La font mare, butoanele din ferestre trec pe rândul următor în loc să se înghesuie.
+</ro>
+<sk>
+• Naplánovaný falošný hovor („O minútu“, „Vybrať čas“) teraz zazvoní aj pri zatvorenej aplikácii – ako skutočný prichádzajúci hovor.
+• Tlačidlo Kontakty na klávesnici, vpravo od tlačidiel volania.
+• Tlačidlá v oknách sa pri veľkom písme zalomia namiesto zmršťovania.
+</sk>
+<sv-SE>
+• Schemalagda låtsassamtal (”Om en minut”, ”Välj tid”) ringer nu även när appen är stängd – som ett riktigt inkommande samtal.
+• Kontakter-knapp på knappsatsen, till höger om samtalsknapparna.
+• Knappar i dialoger radbryts i stället för att trängas ihop vid stor text.
+</sv-SE>
+<th>
+• สายปลอมที่ตั้งเวลาไว้ («ในอีก 1 นาที», «เลือกเวลา») ตอนนี้ดังแม้ปิดแอปอยู่ เหมือนสายเรียกเข้าจริง
+• ปุ่มรายชื่อติดต่อบนแป้นกด ทางขวาของปุ่มโทร
+• ปุ่มในหน้าต่างขึ้นบรรทัดใหม่แทนการบีบเมื่อใช้ตัวอักษรใหญ่
+</th>
+<tr-TR>
+• Zamanlanmış sahte arama (“Bir dakika sonra”, “Saat seç”) artık uygulama kapalıyken de gerçek bir gelen arama gibi çalar.
+• Tuş takımında, arama düğmelerinin sağında Kişiler düğmesi.
+• Büyük yazı tipinde pencere düğmeleri sıkışmak yerine alt satıra geçer.
+</tr-TR>
+<vi>
+• Cuộc gọi giả hẹn giờ (“Sau một phút”, “Chọn giờ”) nay đổ chuông cả khi ứng dụng đã đóng — như cuộc gọi đến thật.
+• Nút Danh bạ trên bàn phím, bên phải các nút gọi.
+• Với chữ lớn, nút trong hộp thoại xuống dòng thay vì bị bóp nhỏ.
+</vi>
+<zh-CN>
+• 定时假来电（“一分钟后”“选择时间”）现在即使应用已关闭也会像真实来电一样响铃。
+• 拨号键盘上的拨号按钮右侧新增“联系人”按钮。
+• 大字体下，对话框按钮会换行，不再被挤压。
+</zh-CN>

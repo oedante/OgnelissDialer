@@ -12,6 +12,13 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 17.11.2026 — 2.7.7 (82): псевдозвонок по времени, «Контакты» на клавиатуре, кнопки окон
+
+Разбор — `docs/RELEASE_NOTES_2.7.7.md`. Псевдозвонок по времени — уведомлением во весь
+экран (`FakeCall.ringFromBackground`, канал `fake_call_ring`), снимает его
+`FakeCallActivity.onCreate`. «Контакты» — `BottomControlPanel.onOpenContacts`. Кнопки
+`OgnelissDialog` — `FlowRow`.
+
 ## 17.11.2026 — 2.7.6 (81): текст над своим фоном вызова под цвет снимка, латиница на клавишах
 
 Разбор — `docs/RELEASE_NOTES_2.7.6.md`. Цвет текста над своим снимком —

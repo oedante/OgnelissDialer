@@ -101,6 +101,8 @@ class FakeCallActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        // 2.7.7: открыт из уведомления по времени — его мелодию сменяет своя (FakeCall)
+        FakeCall.clearNotification(this)
 
         /*
          * БЕЗ БЕЛОЙ ПОДЛОЖКИ ПОД КНОПКАМИ НАВИГАЦИИ (1.5.1, снимки автора
