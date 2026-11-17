@@ -12,6 +12,15 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 17.11.2026 — 2.7.5 (80): «Меню» карточками, классическая клавиатура, свайпы как в почте, «Экран вызова»
+
+Разбор — `docs/RELEASE_NOTES_2.7.5.md`. Автор выбрал по трём снимкам: «Меню» — вариант «А»
+(`MenuFolders.kt`: `OgnelissCard`, строка 44 dp; `EndDrawer` — страница TINTED), клавиатура —
+«А» (`Dialpad.kt`: цифра над буквами при ряде ≥ `STACK_MIN`, ниже — прежняя раскладка;
+`CallButtons.kt` — круги `callCircleSize()`). Свайпы — `SwipeRevealRow.DirectActionHint`
+(по `swipe_action_indicator.dart` почты). Раздел настроек `SettingsCategory.CALL_SCREEN`.
+Уведомление SMS без фото — значок `ic_shortcut_sms`. Галерея: `GALLERY_ONLY=имя,имя`.
+
 ## 16.11.2026 — 2.7.4 (79): свой фон экрана вызова, «Меню»
 
 Разбор — `docs/RELEASE_NOTES_2.7.4.md`. Фон: `call/CallBackgrounds.kt` (файлы),

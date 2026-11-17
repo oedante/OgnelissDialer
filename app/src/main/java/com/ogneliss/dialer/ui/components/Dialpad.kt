@@ -134,7 +134,8 @@ fun Dialpad(
         constraints.hasBoundedHeight -> maxHeight / 4 - KEY_GAP * 2
         else -> 0.dp
     }
-    val stacked = rowHeight >= STACK_MIN
+    // Текст растёт с размером шрифта, а высота ряда — нет: порог растёт вместе с ним
+    val stacked = rowHeight >= STACK_MIN * androidx.compose.ui.platform.LocalDensity.current.fontScale
     Column(
         Modifier
             .fillMaxWidth()

@@ -174,7 +174,16 @@ object MessageNotifications {
         ensureChannel(context)
         val contact = contactInfo(context, address)
         val name = contact?.name ?: PhoneFormatter.format(address)
+        /*
+         * Без фото — значок «SMS» (2.7.5, автор: «можно ли уведомления смс
+         * выводить со значками смс?»). Было: без фото на месте собеседника
+         * Android и прошивки рисуют букву или значок приложения — трубку
+         * звонилки. Значок тот же, что у ярлыка «SMS» на главном экране
+         * (ic_shortcut_sms). Шапку уведомления (значок и имя приложения) Android
+         * берёт у приложения целиком, её из одного приложения не поменять.
+         */
         val photo = contact?.photo?.let { loadIcon(context, it) }
+            ?: runCatching { IconCompat.createWithResource(context, R.drawable.ic_shortcut_sms) }.getOrNull()
         val dialable = address.any { it.isDigit() } && address.none { it.isLetter() }
         val me = Person.Builder().setName(context.getString(R.string.sms_me)).build()
         val them = Person.Builder()
