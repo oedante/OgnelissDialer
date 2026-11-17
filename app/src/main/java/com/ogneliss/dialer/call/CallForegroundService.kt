@@ -194,7 +194,9 @@ class CallForegroundService : Service() {
     @Volatile private var alive = true
 
     /** Уведомление по команде [intent] и номер, под которым его показать. */
-    private fun build(intent: Intent?, name: String, number: String?, card: CallerCard.Info?): Pair<Int, Notification> {
+    private fun build(intent: Intent?, label: String, number: String?, card: CallerCard.Info?): Pair<Int, Notification> {
+        // Имя из книги — вместо номера или имени от сети (2.7.9, CallerCard.Info.name)
+        val name = card?.name ?: label
         val incoming = intent?.getBooleanExtra(EXTRA_INCOMING, false) == true
         val alert = intent?.getBooleanExtra(EXTRA_ALERT, false) == true
         val quiet = intent?.getBooleanExtra(EXTRA_QUIET, false) == true

@@ -1,0 +1,81 @@
+<ru-RU>
+• Всплывающая плашка входящего показывает имя из контактов, а не только номер (realme, OPPO и другие).
+</ru-RU>
+<ar>
+• شريط المكالمة الواردة المنبثق يعرض الاسم من جهات الاتصال وليس الرقم فقط (realme وOPPO وغيرها).
+</ar>
+<cs-CZ>
+• Vyskakovací proužek příchozího hovoru ukazuje jméno z kontaktů, ne jen číslo (realme, OPPO a další).
+</cs-CZ>
+<da-DK>
+• Pop op-banneret for indgående opkald viser navnet fra kontakter, ikke kun nummeret (realme, OPPO m.fl.).
+</da-DK>
+<de-DE>
+• Das Pop-up-Banner für eingehende Anrufe zeigt den Namen aus den Kontakten, nicht nur die Nummer (realme, OPPO u. a.).
+</de-DE>
+<en-US>
+• The incoming call pop-up banner shows the contact name, not just the number (realme, OPPO and others).
+</en-US>
+<es-ES>
+• El aviso emergente de llamada entrante muestra el nombre del contacto, no solo el número (realme, OPPO y otros).
+</es-ES>
+<fi-FI>
+• Saapuvan puhelun ponnahdusilmoitus näyttää yhteystiedon nimen eikä vain numeroa (realme, OPPO ym.).
+</fi-FI>
+<fr-FR>
+• Le bandeau d’appel entrant affiche le nom du contact, pas seulement le numéro (realme, OPPO et autres).
+</fr-FR>
+<hi-IN>
+• आने वाली कॉल की पॉप-अप पट्टी अब सिर्फ़ नंबर नहीं, संपर्क का नाम भी दिखाती है (realme, OPPO आदि)।
+</hi-IN>
+<hu-HU>
+• A bejövő hívás felugró sávja a névjegy nevét mutatja, nem csak a számot (realme, OPPO és mások).
+</hu-HU>
+<id>
+• Banner pop-up panggilan masuk kini menampilkan nama kontak, bukan hanya nomor (realme, OPPO, dan lainnya).
+</id>
+<it-IT>
+• Il banner a comparsa delle chiamate in arrivo mostra il nome del contatto, non solo il numero (realme, OPPO e altri).
+</it-IT>
+<iw-IL>
+• פס השיחה הנכנסת הקופץ מציג את שם איש הקשר ולא רק את המספר (realme‏, OPPO ואחרים).
+</iw-IL>
+<ja-JP>
+• 着信のポップアップバナーに番号だけでなく連絡先の名前を表示（realme、OPPO など）。
+</ja-JP>
+<ko-KR>
+• 수신 전화 팝업 배너에 번호만이 아니라 연락처 이름이 표시됩니다(realme, OPPO 등).
+</ko-KR>
+<nl-NL>
+• De pop-upbanner bij inkomende oproepen toont de contactnaam, niet alleen het nummer (realme, OPPO en andere).
+</nl-NL>
+<no-NO>
+• Popup-banneret for innkommende anrop viser navnet fra kontakter, ikke bare nummeret (realme, OPPO m.fl.).
+</no-NO>
+<pl-PL>
+• Wyskakujący pasek połączenia przychodzącego pokazuje nazwę z kontaktów, a nie tylko numer (realme, OPPO i inne).
+</pl-PL>
+<pt-BR>
+• O banner de chamada recebida mostra o nome do contato, não só o número (realme, OPPO e outros).
+</pt-BR>
+<ro>
+• Bannerul pop-up al apelului primit arată numele din contacte, nu doar numărul (realme, OPPO și altele).
+</ro>
+<sk>
+• Vyskakovací pruh prichádzajúceho hovoru ukazuje meno z kontaktov, nie iba číslo (realme, OPPO a ďalšie).
+</sk>
+<sv-SE>
+• Popup-banderollen för inkommande samtal visar kontaktnamnet, inte bara numret (realme, OPPO m.fl.).
+</sv-SE>
+<th>
+• แถบสายเรียกเข้าแบบป๊อปอัปแสดงชื่อจากรายชื่อติดต่อ ไม่ใช่แค่หมายเลข (realme, OPPO และอื่นๆ)
+</th>
+<tr-TR>
+• Gelen arama açılır bandı yalnızca numarayı değil, kişi adını da gösterir (realme, OPPO ve diğerleri).
+</tr-TR>
+<vi>
+• Thanh thông báo cuộc gọi đến hiện tên trong danh bạ, không chỉ số điện thoại (realme, OPPO và các máy khác).
+</vi>
+<zh-CN>
+• 来电弹出横幅现在显示联系人姓名，而不仅是号码（realme、OPPO 等）。
+</zh-CN>

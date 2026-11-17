@@ -12,6 +12,11 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 17.11.2026 — 2.7.9 (84): имя из контактов во всплывающей плашке входящего
+
+Разбор — `docs/RELEASE_NOTES_2.7.9.md`. Имя для уведомлений вызова — `CallerCard.Info.name`
+(`PhoneLookup.DISPLAY_NAME`), подставляется в `CallForegroundService.build`.
+
 ## 17.11.2026 — 2.7.8 (83): псевдозвонок в Bluetooth-гарнитуре, машине и на часах
 
 Разбор — `docs/RELEASE_NOTES_2.7.8.md`. Псевдозвонок — «свой вызов» приложения в системе
