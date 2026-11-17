@@ -1091,4 +1091,6 @@
     <string name="call_bg_default">Par défaut</string>
     <string name="call_bg_custom">Image perso</string>
     <string name="keywords_call_bg">arrière-plan fond écran image photo appel</string>
+    <string name="settings_section_call_screen">Écran d’appel</string>
+    <string name="settings_section_call_screen_summary">Photo, fond et numéro pendant l’appel</string>
 </resources>

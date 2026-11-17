@@ -1121,4 +1121,6 @@
     <string name="call_bg_default">Default</string>
     <string name="call_bg_custom">Own picture</string>
     <string name="keywords_call_bg">background wallpaper image picture photo screen call</string>
+    <string name="settings_section_call_screen">Call screen</string>
+    <string name="settings_section_call_screen_summary">Photo, background and number on the call screen</string>
 </resources>

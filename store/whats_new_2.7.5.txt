@@ -1,0 +1,135 @@
+<ru-RU>
+• Боковое меню — карточками, как настройки; клавиатура — классическая: цифра по центру, буквы под ней, круглые кнопки вызова.
+• Свайпы в списках — как в Ogneliss Mail: значок у края, подпись у порога.
+• Фото и фон экрана вызова — в своём разделе настроек «Экран вызова». В уведомлениях SMS без фото — значок SMS.
+</ru-RU>
+<ar>
+• القائمة الجانبية على شكل بطاقات مثل الإعدادات؛ لوحة اتصال كلاسيكية: الرقم في الوسط والحروف تحته وأزرار اتصال دائرية.
+• السحب في القوائم كما في Ogneliss Mail: أيقونة عند الحافة وتسمية قرب حدّ التنفيذ.
+• صورة وخلفية شاشة المكالمة في قسم إعدادات مستقل «شاشة المكالمة». إشعارات SMS بدون صورة تعرض أيقونة SMS.
+</ar>
+<cs-CZ>
+• Boční nabídka v kartách jako Nastavení; klasická klávesnice: číslice uprostřed, písmena pod ní, kulatá tlačítka volání.
+• Přejetí v seznamech jako v Ogneliss Mail: ikona u okraje, popisek u prahu.
+• Fotka a pozadí obrazovky hovoru mají vlastní sekci nastavení „Obrazovka hovoru“. Oznámení SMS bez fotky ukazují ikonu SMS.
+</cs-CZ>
+<da-DK>
+• Sidemenuen i kort som Indstillinger; klassisk tastatur: tal i midten, bogstaver under, runde opkaldsknapper.
+• Swipes i lister som i Ogneliss Mail: ikon ved kanten, tekst ved tærsklen.
+• Foto og baggrund på opkaldsskærmen har deres egen indstillingssektion, „Opkaldsskærm“. SMS-notifikationer uden foto viser SMS-ikonet.
+</da-DK>
+<de-DE>
+• Seitenmenü in Karten wie die Einstellungen; klassische Wähltastatur: Ziffer in der Mitte, Buchstaben darunter, runde Anruftasten.
+• Wischgesten in Listen wie in Ogneliss Mail: Symbol am Rand, Beschriftung an der Schwelle.
+• Foto und Hintergrund beim Anruf haben einen eigenen Einstellungsbereich „Anrufbildschirm“. SMS-Benachrichtigungen ohne Foto zeigen das SMS-Symbol.
+</de-DE>
+<en-US>
+• Side menu in cards, like Settings; classic keypad: digit in the center, letters below, round call buttons.
+• Swipes in lists work like in Ogneliss Mail: icon at the edge, label near the threshold.
+• Call screen photo and background have their own Settings section, "Call screen". SMS notifications without a photo show the SMS icon.
+</en-US>
+<es-ES>
+• Menú lateral en tarjetas, como Ajustes; teclado clásico: número en el centro, letras debajo, botones de llamada redondos.
+• Deslizamientos en las listas como en Ogneliss Mail: icono en el borde, etiqueta al llegar al umbral.
+• La foto y el fondo de la pantalla de llamada tienen su propia sección de ajustes, «Pantalla de llamada». Las notificaciones SMS sin foto muestran el icono de SMS.
+</es-ES>
+<fi-FI>
+• Sivuvalikko kortteina kuten Asetukset; perinteinen näppäimistö: numero keskellä, kirjaimet sen alla, pyöreät soittopainikkeet.
+• Pyyhkäisyt listoissa kuten Ogneliss Mailissa: kuvake reunassa, teksti kynnyksen kohdalla.
+• Puhelunäkymän kuvalla ja taustalla on oma asetusosio ”Puhelunäkymä”. Tekstiviesti-ilmoituksissa ilman kuvaa näkyy SMS-kuvake.
+</fi-FI>
+<fr-FR>
+• Menu latéral en cartes, comme les Paramètres ; clavier classique : chiffre au centre, lettres dessous, boutons d’appel ronds.
+• Balayages dans les listes comme dans Ogneliss Mail : icône au bord, libellé près du seuil.
+• La photo et le fond de l’écran d’appel ont leur propre section de paramètres, « Écran d’appel ». Les notifications SMS sans photo affichent l’icône SMS.
+</fr-FR>
+<hi-IN>
+• साइड मेनू अब सेटिंग्स की तरह कार्ड में; क्लासिक कीपैड: अंक बीच में, अक्षर नीचे, गोल कॉल बटन।
+• सूचियों में स्वाइप Ogneliss Mail की तरह: किनारे पर आइकन, सीमा के पास लेबल।
+• कॉल स्क्रीन की फ़ोटो और बैकग्राउंड के लिए सेटिंग्स में अलग सेक्शन «कॉल स्क्रीन»। बिना फ़ोटो वाली SMS सूचनाओं में SMS आइकन दिखता है।
+</hi-IN>
+<hu-HU>
+• Oldalsó menü kártyákban, mint a Beállítások; klasszikus billentyűzet: számjegy középen, betűk alatta, kerek hívógombok.
+• Húzás a listákban, mint az Ogneliss Mailben: ikon a szélén, felirat a küszöbnél.
+• A hívásképernyő fotója és háttere saját beállítási részt kapott: „Hívásképernyő”. A fotó nélküli SMS-értesítéseken az SMS ikon látható.
+</hu-HU>
+<id>
+• Menu samping berbentuk kartu seperti Setelan; papan tombol klasik: angka di tengah, huruf di bawahnya, tombol panggil bulat.
+• Geser di daftar seperti di Ogneliss Mail: ikon di tepi, label di dekat batas.
+• Foto dan latar layar panggilan kini punya bagian setelan sendiri, “Layar panggilan”. Notifikasi SMS tanpa foto menampilkan ikon SMS.
+</id>
+<it-IT>
+• Menu laterale a schede, come le Impostazioni; tastierino classico: cifra al centro, lettere sotto, pulsanti di chiamata rotondi.
+• Scorrimenti negli elenchi come in Ogneliss Mail: icona sul bordo, etichetta vicino alla soglia.
+• Foto e sfondo della schermata di chiamata hanno una sezione delle impostazioni a parte, «Schermata di chiamata». Le notifiche SMS senza foto mostrano l’icona SMS.
+</it-IT>
+<iw-IL>
+• התפריט הצדדי בכרטיסים, כמו בהגדרות; לוח חיוג קלאסי: ספרה במרכז, אותיות מתחתיה, כפתורי חיוג עגולים.
+• החלקות ברשימות כמו ב-Ogneliss Mail: סמל בקצה, תווית ליד הסף.
+• לתמונה ולרקע של מסך השיחה יש קטע הגדרות משלהם, „מסך שיחה”. התראות SMS ללא תמונה מציגות את סמל ה-SMS.
+</iw-IL>
+<ja-JP>
+• サイドメニューを設定画面と同じカード表示に。ダイヤルパッドはクラシックに：数字を中央、文字をその下、丸い発信ボタン。
+• リストのスワイプは Ogneliss Mail と同じ：端にアイコン、しきい値付近にラベル。
+• 通話画面の写真と背景は設定の専用セクション「通話画面」に。写真のない SMS 通知には SMS アイコンを表示。
+</ja-JP>
+<ko-KR>
+• 사이드 메뉴를 설정처럼 카드로 표시; 클래식 키패드: 숫자는 가운데, 문자는 그 아래, 둥근 통화 버튼.
+• 목록의 스와이프를 Ogneliss Mail처럼: 가장자리에 아이콘, 기준점 근처에 라벨.
+• 통화 화면의 사진과 배경은 설정의 별도 섹션 ‘통화 화면’으로 이동. 사진이 없는 SMS 알림에는 SMS 아이콘이 표시됩니다.
+</ko-KR>
+<nl-NL>
+• Zijmenu in kaarten, zoals Instellingen; klassiek toetsenblok: cijfer in het midden, letters eronder, ronde belknoppen.
+• Vegen in lijsten zoals in Ogneliss Mail: pictogram aan de rand, label bij de drempel.
+• Foto en achtergrond van het belscherm hebben een eigen instellingengedeelte, ‘Belscherm’. Sms-meldingen zonder foto tonen het sms-pictogram.
+</nl-NL>
+<no-NO>
+• Sidemenyen i kort, som Innstillinger; klassisk tastatur: siffer i midten, bokstaver under, runde ringeknapper.
+• Sveip i lister som i Ogneliss Mail: ikon ved kanten, tekst ved terskelen.
+• Bilde og bakgrunn på anropsskjermen har fått en egen innstillingsdel, «Anropsskjerm». SMS-varsler uten bilde viser SMS-ikonet.
+</no-NO>
+<pl-PL>
+• Menu boczne w kartach, jak Ustawienia; klasyczna klawiatura: cyfra na środku, litery pod nią, okrągłe przyciski połączenia.
+• Przesunięcia na listach jak w Ogneliss Mail: ikona przy krawędzi, podpis przy progu.
+• Zdjęcie i tło ekranu połączenia mają własną sekcję ustawień „Ekran połączenia”. Powiadomienia SMS bez zdjęcia pokazują ikonę SMS.
+</pl-PL>
+<pt-BR>
+• Menu lateral em cartões, como as Configurações; teclado clássico: número no centro, letras embaixo, botões de chamada redondos.
+• Deslizes nas listas como no Ogneliss Mail: ícone na borda, rótulo perto do limite.
+• Foto e fundo da tela de chamada ganharam uma seção própria nas configurações, “Tela de chamada”. Notificações de SMS sem foto mostram o ícone de SMS.
+</pt-BR>
+<ro>
+• Meniul lateral în carduri, ca Setările; tastatură clasică: cifra în centru, literele dedesubt, butoane rotunde de apel.
+• Glisările din liste ca în Ogneliss Mail: pictogramă la margine, etichetă lângă prag.
+• Fotografia și fundalul ecranului de apel au o secțiune proprie în setări, „Ecran de apel”. Notificările SMS fără fotografie afișează pictograma SMS.
+</ro>
+<sk>
+• Bočná ponuka v kartách ako Nastavenia; klasická klávesnica: číslica v strede, písmená pod ňou, okrúhle tlačidlá volania.
+• Potiahnutia v zoznamoch ako v Ogneliss Mail: ikona pri okraji, popis pri prahu.
+• Fotka a pozadie obrazovky hovoru majú vlastnú sekciu nastavení „Obrazovka hovoru“. Upozornenia SMS bez fotky zobrazujú ikonu SMS.
+</sk>
+<sv-SE>
+• Sidomenyn i kort, som Inställningar; klassisk knappsats: siffra i mitten, bokstäver under, runda samtalsknappar.
+• Svep i listor som i Ogneliss Mail: ikon vid kanten, etikett vid tröskeln.
+• Foto och bakgrund på samtalsskärmen har fått en egen inställningsdel, ”Samtalsskärm”. SMS-aviseringar utan foto visar SMS-ikonen.
+</sv-SE>
+<th>
+• เมนูด้านข้างแสดงเป็นการ์ดเหมือนหน้าการตั้งค่า แป้นกดแบบคลาสสิก: ตัวเลขอยู่ตรงกลาง ตัวอักษรอยู่ด้านล่าง ปุ่มโทรทรงกลม
+• การปัดในรายการเหมือนใน Ogneliss Mail: ไอคอนที่ขอบ ป้ายกำกับใกล้จุดทำงาน
+• รูปและพื้นหลังหน้าจอโทรมีส่วนการตั้งค่าของตัวเองแล้ว «หน้าจอโทร» การแจ้งเตือน SMS ที่ไม่มีรูปจะแสดงไอคอน SMS
+</th>
+<tr-TR>
+• Yan menü, Ayarlar gibi kartlar hâlinde; klasik tuş takımı: rakam ortada, harfler altında, yuvarlak arama düğmeleri.
+• Listelerde kaydırma Ogneliss Mail'deki gibi: kenarda simge, eşiğe yakın etiket.
+• Arama ekranının fotoğrafı ve arka planı ayarlarda kendi bölümüne taşındı: “Arama ekranı”. Fotoğrafı olmayan SMS bildirimlerinde SMS simgesi görünür.
+</tr-TR>
+<vi>
+• Menu bên hiển thị dạng thẻ như Cài đặt; bàn phím cổ điển: số ở giữa, chữ bên dưới, nút gọi tròn.
+• Vuốt trong danh sách giống Ogneliss Mail: biểu tượng ở mép, nhãn gần ngưỡng.
+• Ảnh và hình nền màn hình cuộc gọi có mục cài đặt riêng, “Màn hình cuộc gọi”. Thông báo SMS không có ảnh hiển thị biểu tượng SMS.
+</vi>
+<zh-CN>
+• 侧边菜单改为卡片样式，与设置一致；经典拨号键盘：数字居中，字母在下方，圆形拨号按钮。
+• 列表中的滑动操作与 Ogneliss Mail 一致：图标在边缘，接近阈值时显示文字。
+• 通话界面的照片和背景移至单独的设置分区“通话界面”。没有照片的短信通知显示短信图标。
+</zh-CN>

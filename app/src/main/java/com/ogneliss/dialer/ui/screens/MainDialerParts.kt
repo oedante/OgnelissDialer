@@ -180,9 +180,10 @@ internal fun OverflowMenu(
                  * строк одного размера, внизу — только поиск.
                  */
                 MenuActionRows(stringResource(R.string.menu_section_app), app)
+                Spacer(Modifier.height(Space.s))
             }
+            // Без линии над поиском (2.7.5): карточки и так отделены от страницы
             if (onSearch != null || onFilters != null) {
-                com.ogneliss.dialer.ui.components.OgnelissDivider()
                 Row(
                     Modifier.fillMaxWidth().padding(end = Space.s, bottom = Space.xs),
                     verticalAlignment = Alignment.CenterVertically
@@ -282,7 +283,8 @@ internal fun ownPhotoUriOf(ownNumber: String, contacts: List<com.ogneliss.dialer
 @Composable
 internal fun SearchPill(label: String, onSearch: () -> Unit, modifier: Modifier = Modifier) {
     Surface(
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = SEARCH_PILL_ALPHA),
+        // Цвет карточек меню (2.7.5): белая пилюля на серо-голубой странице
+        color = com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.card,
         shape = androidx.compose.foundation.shape.CircleShape,
         modifier = modifier
             .fillMaxWidth()
@@ -304,9 +306,6 @@ internal fun SearchPill(label: String, onSearch: () -> Unit, modifier: Modifier 
         }
     }
 }
-
-/** Подложка пилюли поиска — как у поиска в шапке почты (6 % цвета текста). */
-private const val SEARCH_PILL_ALPHA = 0.06f
 
 /**
  * Панель у правого края во всю высоту — как выдвижное меню почты (endDrawer):
@@ -338,7 +337,11 @@ private fun EndDrawer(onDismiss: () -> Unit, content: @Composable ColumnScope.()
                     enter = androidx.compose.animation.slideInHorizontally { it }
                 ) {
                     Surface(
-                        color = com.ogneliss.dialer.ui.components.sheetContainerColor(),
+                        /*
+                         * Серо-голубая страница, как у настроек (2.7.5, вариант «А»):
+                         * на ней белые карточки частей меню. Было — цвет шторки.
+                         */
+                        color = com.ogneliss.dialer.ui.theme.OgnelissTheme.pageColor(com.ogneliss.dialer.ui.theme.PageTone.TINTED),
                         // Скруглён левый край — тот, которым панель «выезжает»
                         shape = androidx.compose.foundation.shape.RoundedCornerShape(
                             topStart = DRAWER_CORNER, bottomStart = DRAWER_CORNER
@@ -354,7 +357,11 @@ private fun EndDrawer(onDismiss: () -> Unit, content: @Composable ColumnScope.()
                                 onClick = {}
                             )
                     ) {
-                        Column(Modifier.windowInsetsPadding(WindowInsets.safeDrawing), content = content)
+                        androidx.compose.runtime.CompositionLocalProvider(
+                            com.ogneliss.dialer.ui.theme.LocalPageTone provides com.ogneliss.dialer.ui.theme.PageTone.TINTED
+                        ) {
+                            Column(Modifier.windowInsetsPadding(WindowInsets.safeDrawing), content = content)
+                        }
                     }
                 }
             }

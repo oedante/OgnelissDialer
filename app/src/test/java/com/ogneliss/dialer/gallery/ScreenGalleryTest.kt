@@ -11,17 +11,29 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.isDialog
+import androidx.compose.ui.test.isPopup
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.onAllNodesWithContentDescription
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.lifecycle.ViewModelProvider
 import com.ogneliss.dialer.MainActivity
+import com.ogneliss.dialer.R
 import com.ogneliss.dialer.data.CallLogEntry
 import com.ogneliss.dialer.data.CallLogGroup
 import com.ogneliss.dialer.data.CallType
 import com.ogneliss.dialer.data.Contact
 import com.ogneliss.dialer.data.NumberNote
 import com.ogneliss.dialer.data.NumberPresentation
+import com.ogneliss.dialer.data.NumberCategory
+import com.ogneliss.dialer.data.NumberInfo
 import com.ogneliss.dialer.data.PhoneNumber
+import com.ogneliss.dialer.data.SimSlot
+import com.ogneliss.dialer.settings.CarrierInfoMode
+import com.ogneliss.dialer.settings.Prefs
+import com.ogneliss.dialer.settings.SwipeAction
+import com.ogneliss.dialer.sms.Message
 import com.ogneliss.dialer.settings.ThemeMode
 import com.ogneliss.dialer.settings.UiScale
 import com.ogneliss.dialer.ui.DialerViewModel
@@ -44,6 +56,7 @@ import com.ogneliss.dialer.ui.screens.SubscriberScreen
 import com.ogneliss.dialer.ui.settings.SettingsCategory
 import com.ogneliss.dialer.ui.theme.OgnelissDialerTheme
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -84,9 +97,17 @@ import java.io.File
  * бесконечные анимации (заглушка журнала), и ожидание «покоя» не
  * закончилось бы.
  *
- * Чего здесь нет: журнала с записями и списка SMS (строки собирает
- * ViewModel из системных хранилищ, которых в тесте нет), экрана вызова
- * (ему нужен Telecom).
+ * 2.7.5: добавлены журнал С ЗАПИСЯМИ (строки собирает ViewModel из
+ * подставленных групп — нужно дать ей время на фоновую работу: часы теста
+ * идут вручную, а потоки настоящие, поэтому settle() ещё и спит), его
+ * режимы (клавиатура набора, поиск, выбор, цветные стрелки), все разделы
+ * настроек, остальные экраны и окна, список SMS и переписка (роль SMS
+ * включается теневым RoleManager, данные кладутся в состояние их
+ * ViewModel). Экран вызова — в CallScreenGalleryTest (ему нужна своя
+ * Activity).
+ *
+ * Не собравшийся экран из списка убирается, а не ломает тест: причина — в
+ * отчёте к выпуску 2.7.5.
  */
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -137,9 +158,29 @@ class ScreenGalleryTest {
         )
     }
 
-    private fun group(id: Long, number: String, name: String?, type: CallType, minutesAgo: Long, count: Int = 1, contactId: Long? = null, presentation: NumberPresentation = NumberPresentation.ALLOWED): CallLogGroup {
-        val date = now - minutesAgo * 60_000
-        val entry = CallLogEntry(id, number, number, name, null, type, date, 75, "sim1", contactId, presentation)
+    /** Начало сегодняшнего дня: «Сегодня», «Вчера» и даты в журнале считаются от него, а не от часа запуска теста. */
+    private val startOfDay = java.util.Calendar.getInstance().apply {
+        set(java.util.Calendar.HOUR_OF_DAY, 0); set(java.util.Calendar.MINUTE, 0)
+        set(java.util.Calendar.SECOND, 0); set(java.util.Calendar.MILLISECOND, 0)
+    }.timeInMillis
+
+    /** Две карты: значок SIM в строках журнала появляется, только когда карт две. */
+    private val sims = listOf(
+        SimSlot(1, 0, "SIM 1", null, "Beeline"),
+        SimSlot(2, 1, "SIM 2", null, "МТС")
+    )
+
+    /**
+     * Запись журнала. day — сколько дней назад (0 — сегодня), hour/minute — время суток;
+     * сегодняшнее не уходит в будущее, если тест запущен рано утром.
+     */
+    private fun group(
+        id: Long, number: String, name: String?, type: CallType, day: Int, hour: Int, minute: Int = 0,
+        count: Int = 1, contactId: Long? = null, presentation: NumberPresentation = NumberPresentation.ALLOWED, sim: Int = 1
+    ): CallLogGroup {
+        val planned = startOfDay - day * 86_400_000L + hour * 3_600_000L + minute * 60_000L
+        val date = if (day == 0) minOf(planned, now - 60_000L) else planned
+        val entry = CallLogEntry(id, number, number, name, null, type, date, 75, sim.toString(), contactId, presentation)
         val subscriber = when {
             presentation.hidden -> "hidden:${presentation.name}"
             contactId != null -> "contact:$contactId"
@@ -151,33 +192,68 @@ class ScreenGalleryTest {
             incomingCount = if (type == CallType.INCOMING) count else 0,
             outgoingCount = if (type == CallType.OUTGOING) count else 0,
             missedCount = if (type == CallType.MISSED) count else 0,
-            rejectedCount = 0, totalDurationSec = 75L * count,
+            rejectedCount = if (type == CallType.REJECTED) count else 0, totalDurationSec = 75L * count,
             numbers = if (number.isBlank()) emptyList() else listOf(number),
-            subscriptionLabel = "Beeline", subscriptionId = "sim1",
+            subscriptionLabel = if (sim == 1) "Beeline" else "МТС", subscriptionId = sim.toString(),
             presentation = presentation, entries = listOf(entry)
         )
     }
 
+    /*
+     * Журнал 2.7.5: все виды записей, три дня-подписи. Первые три — те же, что были
+     * (на них ссылаются снимки карточек): скрытый номер, Анна «×3», незнакомый.
+     */
     private val log by lazy {
         listOf(
-            group(1, "", null, CallType.MISSED, 12, presentation = NumberPresentation.RESTRICTED),
-            group(2, "+79001110001", "Анна Смирнова", CallType.INCOMING, 55, 3, 1),
-            group(3, "+79180827805", null, CallType.OUTGOING, 60 * 5),
-            group(4, "+79001110002", "Борис Кузнецов", CallType.MISSED, 60 * 26, 2, 2),
-            group(5, "+78005553535", null, CallType.INCOMING, 60 * 28),
-            group(6, "+79001110008", "Иван Петров", CallType.OUTGOING, 60 * 24 * 4, 1, 8)
+            group(1, "", null, CallType.MISSED, 0, 12, 48, presentation = NumberPresentation.RESTRICTED),
+            group(2, "+79001110001", "Анна Смирнова", CallType.INCOMING, 0, 11, 5, 3, 1),
+            group(3, "+79180827805", null, CallType.OUTGOING, 0, 9, 30, sim = 2),
+            group(7, "+79001110004", "Григорий Васильев", CallType.REJECTED, 0, 8, 15, contactId = 4),
+            group(4, "+79001110002", "Борис Кузнецов", CallType.MISSED, 1, 20, 40, 2, 2),
+            group(5, "+78005553535", null, CallType.INCOMING, 1, 18, 2),
+            group(8, "+79001110003", "Валентина Попова", CallType.OUTGOING, 1, 10, 15, contactId = 3, sim = 2),
+            group(6, "+79001110008", "Иван Петров", CallType.OUTGOING, 4, 16, 20, contactId = 8),
+            group(9, "+79281234567", null, CallType.INCOMING, 6, 12, 0)
         )
     }
 
-    /** Часы вручную: разбор в шапке файла. */
+    /** Сведения об операторе и регионе — для незнакомых номеров. */
+    private val numberInfo = mapOf(
+        "+79180827805" to NumberInfo("+79180827805", "+7 918 082-78-05", "Россия", "Краснодарский край", "МТС", NumberCategory.PERSONAL),
+        "+79281234567" to NumberInfo("+79281234567", "+7 928 123-45-67", "Россия", "Ростовская область", "Билайн", NumberCategory.PERSONAL),
+        "+78005553535" to NumberInfo("+78005553535", "+7 800 555-35-35", "Россия", null, null, NumberCategory.TOLL_FREE)
+    )
+
+    /** Часы вручную: разбор в шапке файла. Спит: строки журнала и SMS собирают настоящие фоновые потоки. */
     private fun settle(ms: Long = 800) {
         rule.mainClock.autoAdvance = false
         var t = 0L
         while (t < ms) {
             rule.mainClock.advanceTimeBy(50)
             ShadowLooper.idleMainLooper()
+            Thread.sleep(12)
             t += 50
         }
+    }
+
+    /** Подставить состояние в приватное поле _state любой ViewModel (DialerViewModel, ConversationViewModel…). */
+    @Suppress("UNCHECKED_CAST")
+    private fun <T> mutate(vm: Any, update: (T) -> T) {
+        val field = vm.javaClass.getDeclaredField("_state").apply { isAccessible = true }
+        val flow = field.get(vm) as MutableStateFlow<T>
+        flow.value = update(flow.value)
+    }
+
+    /** Исходное состояние перед каждым снимком: прежний снимок мог изменить запрос, журнал, карты. */
+    private fun applyBase(vm: DialerViewModel) {
+        mutate<UiState>(vm) {
+            it.copy(
+                query = "", contacts = contacts, callLog = log, filteredLog = log, filteredContacts = emptyList(), loading = false,
+                hasContactsPermission = true, hasCallLogPermission = true, sims = sims, numberInfo = numberInfo,
+                notes = mapOf("+79180827805" to NumberNote("+79180827805", "Сантехник, после 18:00", listOf("ремонт"), updatedAt = now))
+            )
+        }
+        settle(300)
     }
 
     private fun viewModel(): DialerViewModel {
@@ -185,27 +261,136 @@ class ScreenGalleryTest {
         val vm = ViewModelProvider(rule.activity)[DialerViewModel::class.java]
         settle(300)
         // 2.7.0: шторки жестов при первом запуске больше нет — закрывать нечего
-        val field = DialerViewModel::class.java.getDeclaredField("_state").apply { isAccessible = true }
-        @Suppress("UNCHECKED_CAST")
-        val state = field.get(vm) as MutableStateFlow<UiState>
-        state.value = state.value.copy(
-            contacts = contacts, callLog = log, filteredLog = log, loading = false,
-            hasContactsPermission = true, hasCallLogPermission = true,
-            notes = mapOf("+79180827805" to NumberNote("+79180827805", "Сантехник, после 18:00", listOf("ремонт"), updatedAt = now))
-        )
-        settle(300)
+        applyBase(vm)
         return vm
     }
 
-    private class Shot(val name: String, val dialog: Boolean = false, val content: @Composable (DialerViewModel) -> Unit)
+    /** Роль SMS (теневой RoleManager): без неё переписка и список SMS передают дело другому приложению. */
+    private fun grantSmsRole() {
+        val manager = rule.activity.getSystemService(android.app.role.RoleManager::class.java)
+        org.robolectric.Shadows.shadowOf(manager).addHeldRole(android.app.role.RoleManager.ROLE_SMS)
+    }
 
-    private val shots: List<Shot> = listOf(
-        Shot("journal") { vm ->
-            MainDialerScreen(
-                vm = vm, prefilledNumber = null, onOpenContacts = {}, onOpenSettings = {}, onOpenFakeCallPicker = {},
-                onOpenNotes = {}, onOpenReminders = {}, onOpenSubscriber = {}, onOpenBlockLists = {}
-            )
-        },
+    private fun msg(id: Long, address: String, body: String, minutesAgo: Long, outgoing: Boolean, unread: Boolean = false) = Message(
+        id, false, 1, address, body, now - minutesAgo * 60_000, outgoing,
+        if (outgoing) Message.Status.DELIVERED else Message.Status.RECEIVED, !unread, null
+    )
+
+    /** Переписка с Анной: входящие и исходящие вперемешку, последнее — непрочитанное. */
+    private val chat by lazy {
+        val a = "+79001110001"
+        listOf(
+            msg(1, a, "Привет! Ты сегодня заедешь за документами?", 190, false),
+            msg(2, a, "Привет. Да, после обеда, около трёх.", 185, true),
+            msg(3, a, "Отлично. Я буду на месте до шести, звони, если что-то изменится.", 180, false),
+            msg(4, a, "Хорошо, договорились.", 176, true),
+            msg(5, a, "Код подтверждения: 482913. Никому не сообщайте его.", 120, false),
+            msg(6, a, "Заеду в три пятнадцать, пробки на мосту.", 25, true),
+            msg(7, a, "Жду!", 22, false, unread = true)
+        )
+    }
+
+    /** Список переписок: знакомые, незнакомый, сервисный отправитель, одна с непрочитанными. */
+    private val threads by lazy {
+        fun t(id: Long, address: String, body: String, minutesAgo: Long, outgoing: Boolean, unread: Int = 0) =
+            com.ogneliss.dialer.ui.conversation.MessagesViewModel.Thread(id, address, msg(100 + id, address, body, minutesAgo, outgoing, unread > 0).copy(threadId = id), unread)
+        listOf(
+            t(1, "+79001110001", "Жду!", 22, false, 1),
+            t(2, "+79001110002", "Спасибо, получил.", 90, true),
+            t(3, "+79180827805", "Мастер будет в четверг после 18:00", 60 * 5, false),
+            t(4, "Sber", "Покупка 1 250 ₽, карта *4821. Баланс 38 410 ₽", 60 * 9, false, 2),
+            t(5, "+79001110008", "Перезвони, как освободишься", 60 * 30, false)
+        )
+    }
+
+    /** Содержимое журнала — общее для всех его снимков. */
+    private val journalContent: @Composable (DialerViewModel) -> Unit = { vm ->
+        MainDialerScreen(
+            vm = vm, prefilledNumber = null, onOpenContacts = {}, onOpenSettings = {}, onOpenFakeCallPicker = {},
+            onOpenNotes = {}, onOpenReminders = {}, onOpenSubscriber = {}, onOpenBlockLists = {}
+        )
+    }
+
+    /**
+     * Один снимок. prepare — до сборки экрана; act — после неё (нажатия, подмена состояния
+     * ViewModel экрана); cleanup — после снимка (вернуть настройку). popup — снимать выпадающее
+     * окно, dialog — окно-шторку.
+     */
+    private class Shot(
+        val name: String,
+        val dialog: Boolean = false,
+        val popup: Boolean = false,
+        val prepare: (DialerViewModel) -> Unit = {},
+        val act: (DialerViewModel) -> Unit = {},
+        val cleanup: () -> Unit = {},
+        val content: @Composable (DialerViewModel) -> Unit
+    )
+
+    private val baseShots: List<Shot> = listOf(
+        // 2.7.5: журнал теперь С ЗАПИСЯМИ; прежний, пустой, — journal_empty
+        Shot("journal", content = journalContent),
+        Shot("journal_empty", prepare = { vm -> mutate<UiState>(vm) { it.copy(callLog = emptyList(), filteredLog = emptyList()) } }, content = journalContent),
+        // Клавиатура набора с номером: подсказки T9 — контакты, чьи номера начинаются с набранного
+        Shot("journal_dialpad", act = { vm ->
+            rule.onAllNodesWithContentDescription(rule.activity.getString(R.string.dialpad_show))[0].performClick()
+            settle(500)
+            mutate<UiState>(vm) { it.copy(query = "90011100", filteredContacts = contacts.take(4), filteredLog = log.filter { g -> g.contactId != null }) }
+            settle(500)
+        }, content = journalContent),
+        // Поиск в журнале: «Меню» → «Поиск», запрос «Бор» — найден контакт и его запись
+        Shot("journal_search", act = { vm ->
+            rule.onAllNodesWithText(rule.activity.getString(R.string.bar_menu))[0].performClick()
+            settle(400)
+            rule.onAllNodesWithText(rule.activity.getString(R.string.nav_search))[0].performClick()
+            settle(400)
+            mutate<UiState>(vm) {
+                it.copy(
+                    query = "Бор",
+                    filteredContacts = contacts.filter { c -> c.displayName.startsWith("Бор") },
+                    filteredLog = log.filter { g -> g.displayName?.startsWith("Бор") == true }
+                )
+            }
+            settle(500)
+        }, content = journalContent),
+        // Режим выбора: «⋮» шапки → «Выбрать несколько», отмечены две записи
+        Shot("journal_select", act = { _ ->
+            rule.onAllNodesWithContentDescription(rule.activity.getString(R.string.topbar_list_actions))[0].performClick()
+            settle(400)
+            rule.onAllNodesWithText(rule.activity.getString(R.string.selection_start))[0].performClick()
+            settle(500)
+            rule.onAllNodesWithText("Анна Смирнова")[0].performClick()
+            settle(300)
+            rule.onAllNodesWithText("Иван Петров")[0].performClick()
+            settle(500)
+        }, content = journalContent),
+        // «Цветные стрелки вызовов» включены (настройка «Журнал вызовов»)
+        Shot("journal_arrows", prepare = { _ ->
+            runBlocking { Prefs(rule.activity.applicationContext).setColoredCallArrows(true) }
+            settle(1200)
+        }, cleanup = {
+            runBlocking { Prefs(rule.activity.applicationContext).setColoredCallArrows(false) }
+            settle(600)
+        }, content = journalContent),
+        // Меню «⋮» шапки журнала — выпадающее окно (popup), а не шторка
+        Shot("journal_menu_top", popup = true, act = { _ ->
+            rule.onAllNodesWithContentDescription(rule.activity.getString(R.string.topbar_list_actions))[0].performClick()
+            settle(500)
+        }, content = journalContent),
+        // Окно псевдозвонка из «Меню» журнала и выбор времени из него
+        Shot("journal_fakecall", dialog = true, act = { _ ->
+            rule.onAllNodesWithText(rule.activity.getString(R.string.bar_menu))[0].performClick()
+            settle(400)
+            rule.onAllNodesWithText(rule.activity.getString(R.string.fake_call_title))[0].performClick()
+            settle(500)
+        }, content = journalContent),
+        Shot("journal_fakecall_time", dialog = true, act = { _ ->
+            rule.onAllNodesWithText(rule.activity.getString(R.string.bar_menu))[0].performClick()
+            settle(400)
+            rule.onAllNodesWithText(rule.activity.getString(R.string.fake_call_title))[0].performClick()
+            settle(500)
+            rule.onAllNodesWithText(rule.activity.getString(R.string.fake_call_pick_time))[0].performClick()
+            settle(500)
+        }, content = journalContent),
         Shot("contacts") { vm -> ContactsScreen(vm = vm, onBack = {}) },
         Shot("card_photo") { vm -> SubscriberScreen(groupKey = "contact:2", vm = vm, onOpenBlockLists = {}, onBack = {}) },
         Shot("card_plain") { vm -> SubscriberScreen(groupKey = "contact:8", vm = vm, onOpenBlockLists = {}, onBack = {}) },
@@ -279,24 +464,190 @@ class ScreenGalleryTest {
         }
     )
 
+    /** 2.7.5: экраны, которых в галерее не было. */
+    private val screenShots: List<Shot> = listOf(
+        Shot("about") { _ -> com.ogneliss.dialer.ui.screens.AboutScreen(onBack = {}, onOpenLegal = {}) },
+        Shot("backup") { vm -> com.ogneliss.dialer.ui.screens.BackupScreen(vm = vm, onBack = {}) },
+        Shot("external_lookup") { vm -> com.ogneliss.dialer.ui.screens.ExternalLookupScreen(vm = vm, onBack = {}) },
+        Shot("legal_privacy") { _ -> com.ogneliss.dialer.ui.screens.LegalScreen(document = com.ogneliss.dialer.ui.screens.LegalDocument.PRIVACY, onBack = {}) },
+        Shot("menu_folders") { _ ->
+            com.ogneliss.dialer.ui.screens.MenuFoldersScreen(
+                title = androidx.compose.ui.res.stringResource(com.ogneliss.dialer.R.string.settings_sms_folders),
+                folders = com.ogneliss.dialer.data.JournalFolder.entries.map {
+                    Triple(it.name, com.ogneliss.dialer.ui.screens.journalFolderLabel(it), com.ogneliss.dialer.ui.screens.journalFolderIcon(it))
+                },
+                raw = null, onSave = {}, onBack = {}
+            )
+        },
+        Shot("permissions") { _ -> com.ogneliss.dialer.ui.screens.PermissionsSettingsScreen(isDefaultDialer = false, onRequestDefaultDialer = { false }, onBack = {}) },
+        Shot("speed_dial") { vm -> com.ogneliss.dialer.ui.screens.SpeedDialScreen(vm = vm, onBack = {}) },
+        Shot("swipe_tuning") { vm -> com.ogneliss.dialer.ui.screens.SwipeTuningScreen(vm = vm, onBack = {}) },
+        Shot("sms_folders") { _ -> com.ogneliss.dialer.ui.conversation.SmsFoldersScreen(onBack = {}) }
+    )
+
+    /**
+     * 2.7.5: окна, шторки и карточки по удержанию. Окна с полем ввода в фокусе
+     * (правило блокировки, названия SIM, быстрый набор, свой номер) не сняты:
+     * мигающий курсор не даёт Compose успокоиться, снимок не делается.
+     */
+    private val windowShots: List<Shot> = listOf(
+        Shot("dialog_note", dialog = true) { _ ->
+            com.ogneliss.dialer.ui.screens.NoteEditorDialog(
+                initialNote = "Сантехник, после 18:00. Обещал прийти в четверг, взять с собой прокладки.",
+                initialTags = setOf("ремонт"), onSave = { _, _ -> }, onDismiss = {}, displayName = "Иван Петров"
+            )
+        },
+        Shot("dialog_swipe_actions", dialog = true) { vm ->
+            com.ogneliss.dialer.ui.screens.SwipeActionsDialog(
+                vm = vm, settingKey = "swipe_right", primary = SwipeAction.CALL,
+                extra = listOf(SwipeAction.SMS, SwipeAction.WHATSAPP), onDismiss = {}
+            )
+        },
+        Shot("dialog_reminder_options", dialog = true) { _ ->
+            com.ogneliss.dialer.ui.components.ReminderDialog(displayName = "Анна Смирнова", onPick = {}, onDismiss = {})
+        },
+        Shot("dialog_reminder_time", dialog = true) { _ ->
+            com.ogneliss.dialer.ui.components.ReminderTimeDialog(
+                displayName = "Анна Смирнова", initialMillis = now + 3_600_000L, onSave = {}, onDismiss = {}
+            )
+        },
+        Shot("dialog_post_call", dialog = true) { _ ->
+            com.ogneliss.dialer.ui.screens.PostCallSheet(
+                number = "+79180827805", displayName = null, durationSec = 75, isKnownContact = false,
+                onSaveNote = { _, _ -> }, onAddContact = {}, onRemind = {}, onBlock = {}, onDismiss = {}
+            )
+        },
+        Shot("cards_record", dialog = true) { vm ->
+            com.ogneliss.dialer.ui.screens.RecordActionCards(
+                group = log[1], vm = vm, anchorY = null, origin = com.ogneliss.dialer.ui.screens.CardsOrigin.LOG,
+                onOpenCard = {}, onOpenBlockLists = {}, onDismiss = {}
+            )
+        },
+        Shot("cards_record_unknown", dialog = true) { vm ->
+            com.ogneliss.dialer.ui.screens.RecordActionCards(
+                group = log[2], vm = vm, anchorY = null, origin = com.ogneliss.dialer.ui.screens.CardsOrigin.LOG,
+                onOpenCard = {}, onOpenBlockLists = {}, onDismiss = {}
+            )
+        },
+        Shot("cards_number", dialog = true) { vm ->
+            com.ogneliss.dialer.ui.screens.NumberActionCards(
+                target = com.ogneliss.dialer.ui.screens.NumberCardsTarget("+79001110001", "Мобильный"),
+                vm = vm, anchorY = null, onDismiss = {}
+            )
+        },
+        Shot("cards_sim_call", dialog = true) { _ ->
+            com.ogneliss.dialer.ui.components.SimChoiceOverlay(
+                request = DialerViewModel.SimRequest(
+                    displayName = "Анна Смирнова", number = "+79001110001", sims = sims, action = DialerViewModel.SimAction.CALL,
+                    contactName = "Анна Смирнова", numberOperator = "Beeline", onChosen = {}
+                ),
+                anchorY = null, onDismiss = {}
+            )
+        },
+        Shot("cards_sim_sms", dialog = true) { _ ->
+            com.ogneliss.dialer.ui.components.SimChoiceOverlay(
+                request = DialerViewModel.SimRequest(
+                    displayName = "Анна Смирнова", number = "+79001110001", sims = sims, action = DialerViewModel.SimAction.SMS,
+                    contactName = "Анна Смирнова", onChosen = {}
+                ),
+                anchorY = null, onDismiss = {}
+            )
+        }
+    )
+
+    /** 2.7.5: SMS — роль включается до сборки экрана, данные подставляются после неё. */
+    private val smsShots: List<Shot> = listOf(
+        Shot("sms_list", prepare = { grantSmsRole() }, act = { _ ->
+            mutate<com.ogneliss.dialer.ui.conversation.MessagesViewModel.UiState>(messagesVm()) { it.copy(loading = false, isDefaultSms = true, threads = threads, problem = null, autostartHint = false) }
+            settle(500)
+        }) { vm -> messagesContent(vm) },
+        Shot("sms_list_empty", prepare = { grantSmsRole() }, act = { _ ->
+            mutate<com.ogneliss.dialer.ui.conversation.MessagesViewModel.UiState>(messagesVm()) { it.copy(loading = false, isDefaultSms = true, threads = emptyList(), problem = null, autostartHint = false) }
+            settle(500)
+        }) { vm -> messagesContent(vm) },
+        Shot("sms_new_message", prepare = { grantSmsRole() }, act = { _ ->
+            mutate<com.ogneliss.dialer.ui.conversation.MessagesViewModel.UiState>(messagesVm()) { it.copy(loading = false, isDefaultSms = true, threads = threads, problem = null, autostartHint = false) }
+            settle(500)
+            rule.onAllNodesWithContentDescription(rule.activity.getString(R.string.messages_new))[0].performClick()
+            settle(600)
+        }) { vm -> messagesContent(vm) },
+        Shot("sms_chat", prepare = { grantSmsRole() }, act = { _ ->
+            mutate<com.ogneliss.dialer.ui.conversation.ConversationViewModel.UiState>(conversationVm()) {
+                it.copy(
+                    title = "Анна Смирнова", subtitle = "+7 900 111-00-01", dialable = true, messages = chat,
+                    loading = false, isDefaultSms = true, sims = sims
+                )
+            }
+            settle(600)
+        }) { _ -> com.ogneliss.dialer.ui.conversation.ConversationScreen(onBack = {}, onOpenCard = {}, onCall = {}) }
+    )
+
+    private fun messagesVm() = ViewModelProvider(rule.activity)[com.ogneliss.dialer.ui.conversation.MessagesViewModel::class.java]
+    private fun conversationVm() = ViewModelProvider(rule.activity)[com.ogneliss.dialer.ui.conversation.ConversationViewModel::class.java]
+
+    @Composable
+    private fun messagesContent(vm: DialerViewModel) {
+        com.ogneliss.dialer.ui.conversation.MessagesScreen(
+            vm = vm, onOpenConversation = {}, onOpenSection = {}, onOpenDialpad = {}, onOpenSettings = {}, onOpenNotes = {},
+            onOpenReminders = {}, onOpenHelp = {}, onFakeCall = {}, onOpenCard = {}, onOpenBlockLists = {}
+        )
+    }
+
+    /** Разделы настроек, которых не было выше: по одному снимку на раздел (2.7.5). */
+    private val settingsShots: List<Shot> = SettingsCategory.entries
+        .filter { it !in setOf(SettingsCategory.APPEARANCE, SettingsCategory.CALLS, SettingsCategory.CALL_LOG, SettingsCategory.QUICK_ACCESS) }
+        .map { c -> Shot("settings_" + c.name.lowercase()) { vm -> SettingsCategoryScreen(category = c, vm = vm, onBack = {}, onAction = {}) } }
+
+    private val expShots: List<Shot> = listOf(
+        Shot("xa", dialog = true) { _ ->
+            androidx.compose.ui.window.Dialog(onDismissRequest = {}) {
+                androidx.compose.material3.Surface { androidx.compose.material3.TextField(value = "a", onValueChange = {}, singleLine = true) }
+            }
+        },
+        Shot("xb", dialog = true) { _ ->
+            androidx.compose.ui.window.Dialog(onDismissRequest = {}) {
+                androidx.compose.material3.Surface { androidx.compose.material3.Text("b") }
+            }
+        },
+        Shot("xc") { _ -> androidx.compose.material3.TextField(value = "a", onValueChange = {}, singleLine = true) },
+        Shot("xd", dialog = true) { _ ->
+            androidx.compose.ui.window.Dialog(onDismissRequest = {}) {
+                androidx.compose.material3.Surface { androidx.compose.material3.TextField(value = "a", onValueChange = {}, singleLine = false) }
+            }
+        }
+    )
+    private val shots: List<Shot> by lazy { if (System.getenv("GALLERY_EXP") != null) expShots else baseShots + settingsShots + screenShots + windowShots + smsShots }
+
     private fun render(suffix: String, mode: ThemeMode, uiScale: UiScale = UiScale.DEFAULT, fontScale: Float = 1f, only: Set<String>? = null) {
         val vm = viewModel()
         val failed = mutableListOf<String>()
-        shots.filter { only == null || it.name in only }.forEach { shot ->
+        // GALLERY_ONLY=journal,menu — только эти снимки (быстрая проверка одной правки)
+        val envOnly = System.getenv("GALLERY_ONLY")?.split(',')?.map { it.trim() }?.toSet()
+        shots.filter { (only == null || it.name in only) && (envOnly == null || it.name in envOnly) }.forEach { shot ->
             runCatching {
+                applyBase(vm)
+                shot.prepare(vm)
                 rule.activity.runOnUiThread {
                     rule.activity.setContent {
                         OgnelissDialerTheme(themeMode = mode, uiScale = uiScale, fontScale = fontScale) { shot.content(vm) }
                     }
                 }
                 settle()
-                val node = if (shot.dialog) rule.onNode(isDialog()) else rule.onRoot()
+                shot.act(vm)
+                val node = when {
+                    shot.dialog -> rule.onNode(isDialog())
+                    shot.popup -> rule.onNode(isPopup())
+                    else -> rule.onRoot()
+                }
                 val bitmap = node.captureToImage().asAndroidBitmap()
                 File(out, "${shot.name}_$suffix.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+            }.onFailure { failed += "${shot.name}: ${it.javaClass.simpleName}: ${it.message?.lineSequence()?.firstOrNull()}" }
+            runCatching {
+                shot.cleanup()
                 // Закрыть окно шторки или диалога перед следующим экраном
                 rule.activity.runOnUiThread { rule.activity.setContent { } }
                 settle(200)
-            }.onFailure { failed += "${shot.name}: ${it.javaClass.simpleName}: ${it.message?.lineSequence()?.firstOrNull()}" }
+            }
         }
         assertTrue("Экраны не собрались ($suffix):\n" + failed.joinToString("\n"), failed.isEmpty())
     }
@@ -310,6 +661,10 @@ class ScreenGalleryTest {
     @Test
     fun `шрифт 160 процентов и масштаб 110 — главные экраны собираются`() = render(
         "large", ThemeMode.LIGHT, UiScale.S110, 1.6f,
-        only = setOf("journal", "contacts", "card_plain", "settings_home", "settings_calls", "notes", "contact_edit", "sheet_filters", "menu")
+        only = setOf(
+            "journal", "contacts", "card_plain", "settings_home", "settings_calls", "notes", "contact_edit", "sheet_filters", "menu",
+            // 2.7.5: журнал с записями, переписка, список SMS, окно с полями, «О приложении»
+            "sms_chat", "sms_list", "dialog_note", "about"
+        )
     )
 }
