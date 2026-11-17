@@ -23,6 +23,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
@@ -468,27 +471,25 @@ fun SwipeRevealRow(
          * и это единственный способ понять, засчитается ли жест,
          * не отпуская палец.
          */
+        // 2.7.5: подсказка — во всю ширину строки, видна открытая часть
+        // (как в Ogneliss Mail): подпись за значком не ужимается узкой полосой
         if (offset > 0 && hasStartDirect && directStartAction != null) {
             DirectActionHint(
                 action = directStartAction,
-                progress = (offset / directTriggerPx).coerceIn(0f, 1f),
-                alignment = Alignment.CenterStart,
-                modifier = Modifier
-                    .matchParentSize()
-                    .wrapContentWidth(Alignment.Start)
-                    .width(with(density) { offset.toDp() })
+                revealedPx = offset,
+                triggerPx = directTriggerPx,
+                fromStart = true,
+                modifier = Modifier.matchParentSize()
             )
         }
 
         if (offset < 0 && hasEndDirect && directEndAction != null) {
             DirectActionHint(
                 action = directEndAction,
-                progress = (-offset / directTriggerPx).coerceIn(0f, 1f),
-                alignment = Alignment.CenterEnd,
-                modifier = Modifier
-                    .matchParentSize()
-                    .wrapContentWidth(Alignment.End)
-                    .width(with(density) { (-offset).toDp() })
+                revealedPx = -offset,
+                triggerPx = directTriggerPx,
+                fromStart = false,
+                modifier = Modifier.matchParentSize()
             )
         }
 
@@ -744,9 +745,9 @@ private fun ActionCell(
         Modifier
             .width(width)
             .fillMaxHeight()
-            // 1.6.1: светлый тон цвета действия с мягким градиентом —
-            // разбор у revealTones
-            .background(Brush.verticalGradient(listOf(tones.soft, tones.strong)))
+            // 2.7.5: ровная тональная заливка, как кнопки свайпа в Ogneliss Mail
+            // (было с 1.6.1 — вертикальный градиент); разбор у revealTones
+            .background(tones.fill)
             // Кнопка панели тоже должна быть не меньше минимальной зоны нажатия
             .heightIn(min = Dimens.MIN_TOUCH_TARGET)
             .clickable(onClick = onClick),
@@ -757,7 +758,8 @@ private fun ActionCell(
             verticalArrangement = Arrangement.Center
         ) {
             action.icon?.let {
-                Icon(it, contentDescription = null, tint = tones.content)
+                // 28 dp — как значок свайпа в почте: видно из-под пальца
+                Icon(it, contentDescription = null, tint = tones.content, modifier = Modifier.size(SWIPE_ICON))
                 Spacer(Modifier.height(Space.xxs))
             }
             if (action.simBadge != null) {
@@ -829,36 +831,121 @@ private fun ActionCell(
 @Composable
 private fun DirectActionHint(
     action: RevealAction,
-    progress: Float,
-    alignment: Alignment,
+    /** Насколько строка сдвинута (px, всегда ≥ 0). */
+    revealedPx: Float,
+    /** Порог срабатывания (px): отпустили дальше — действие выполнится. */
+    triggerPx: Float,
+    /** Свайп от начальной стороны строки (вправо при письме слева направо). */
+    fromStart: Boolean,
     modifier: Modifier = Modifier
 ) {
+    /*
+     * 2.7.5 — КАК В OGNELISS MAIL (автор: «стиль свайпов можно из ogneliss mail
+     * взять»; swipe_action_indicator.dart почты). Было (1.6.1–2.7.4): градиент
+     * от края, значок 24 dp, только проявление и рост.
+     *
+     * • Заливка — ровный светлый тон действия; от края — мягкое свечение
+     *   цветом значка, гуще к порогу.
+     * • Значок 28 dp у края, на месте с первых миллиметров: проявляется
+     *   и подрастает, пока тянут до трети порога.
+     * • Дальше, до порога, за значком проступает мягкий круг, значок
+     *   дорастает, а рядом появляется подпись — что произойдёт.
+     * • Всё — по положению пальца, без пружин и вспышек.
+     */
     val tones = revealTones(availableColor(action.color))
-    // Насыщеннее у края экрана, откуда выезжает значок, бледнее — к строке
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-    val fromLeft = (alignment == Alignment.CenterStart) != rtl
-    val stops = if (fromLeft) listOf(tones.strong, tones.soft) else listOf(tones.soft, tones.strong)
+    val fromLeft = fromStart != rtl
+    // Значок и круг появляются на первой трети пути, подпись и «готовность» — дальше
+    val appear = triggerPx * APPEAR_SHARE
+    val eased = androidx.compose.animation.core.EaseOutCubic.transform((revealedPx / appear).coerceIn(0f, 1f))
+    val armT = androidx.compose.animation.core.EaseInOut.transform(
+        ((revealedPx - appear) / (triggerPx - appear)).coerceIn(0f, 1f)
+    )
+    val labelT = ((revealedPx - appear) / ((triggerPx - appear) / 2f)).coerceIn(0f, 1f)
+    val glow = 0.12f * eased + 0.10f * armT
     Box(
-        modifier.background(Brush.horizontalGradient(stops)),
-        contentAlignment = alignment
+        modifier
+            // Строка открыта на revealedPx — видна только эта часть слоя
+            .drawWithContent {
+                val left = if (fromLeft) 0f else size.width - revealedPx
+                val right = if (fromLeft) revealedPx else size.width
+                clipRect(left = left, right = right) { this@drawWithContent.drawContent() }
+            }
+            .background(tones.fill)
+            .background(
+                Brush.horizontalGradient(
+                    if (fromLeft) listOf(tones.content.copy(alpha = glow), Color.Transparent)
+                    else listOf(Color.Transparent, tones.content.copy(alpha = glow))
+                )
+            ),
+        contentAlignment = if (fromStart) Alignment.CenterStart else Alignment.CenterEnd
     ) {
-        action.icon?.let { icon ->
-            Icon(
-                icon,
-                contentDescription = null,
-                tint = tones.content.copy(alpha = 0.45f + 0.55f * progress),
-                modifier = Modifier
-                    .padding(horizontal = Space.xl)
-                    .size(24.dp)
-                    .graphicsLayer {
-                        val scale = 0.75f + 0.25f * progress
-                        scaleX = scale
-                        scaleY = scale
+        Row(
+            Modifier.padding(horizontal = HINT_EDGE),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val icon: @Composable () -> Unit = {
+                Box(Modifier.size(HALO_BOX), contentAlignment = Alignment.Center) {
+                    if (armT > 0f) {
+                        Box(
+                            Modifier
+                                .size(HALO_BOX)
+                                .graphicsLayer {
+                                    val k = 0.7f + 0.3f * armT
+                                    scaleX = k
+                                    scaleY = k
+                                }
+                                .background(tones.content.copy(alpha = 0.14f * armT), CircleShape)
+                        )
                     }
-            )
+                    action.icon?.let { vector ->
+                        Icon(
+                            vector,
+                            contentDescription = null,
+                            tint = tones.content.copy(alpha = 0.45f + 0.55f * eased),
+                            modifier = Modifier
+                                .size(SWIPE_ICON)
+                                .graphicsLayer {
+                                    val k = 0.8f + 0.2f * eased + 0.08f * armT
+                                    scaleX = k
+                                    scaleY = k
+                                }
+                        )
+                    }
+                }
+            }
+            val label: @Composable () -> Unit = {
+                if (labelT > 0f && action.description.isNotEmpty()) {
+                    Text(
+                        action.description,
+                        modifier = Modifier
+                            .padding(horizontal = Space.xs)
+                            .graphicsLayer { alpha = labelT },
+                        color = tones.content,
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+            // Значок — у края, подпись — дальше от края: значок не сдвигается
+            if (fromStart) { icon(); label() } else { label(); icon() }
         }
     }
 }
+
+/** Значок свайпа — 28 dp, как в почте (было 24). */
+private val SWIPE_ICON = 28.dp
+
+/** Место под мягкий круг за значком: значок в его центре, круг не сдвигает значок. */
+private val HALO_BOX = 48.dp
+
+/** Центр значка — в 34 dp от края строки, как в почте: 10 + 48 / 2. */
+private val HINT_EDGE = 10.dp
+
+/** Доля пути до порога, за которую значок проявляется полностью. */
+private const val APPEAR_SHARE = 0.35f
 
 /**
  * ТОНА ДЕЙСТВИЯ СВАЙПА (1.6.1).
@@ -867,15 +954,16 @@ private fun DirectActionHint(
  * сплошной насыщенный цвет действия — CallGreen, MessageBlue — и белый
  * значок; из-под строки выезжало самое яркое пятно экрана.
  *
- * Стало — тот же цвет, смешанный со страницей: [strong] — светлый тон
- * (у края экрана, внизу ячейки), [soft] — почти страница (у строки, вверху
- * ячейки). Значок и подпись — тот же цвет, темнее (в тёмной теме — светлее):
- * контраст к светлому тону 5 : 1 (зелёный в светлой — 4,96), к почти
- * странице — 7 : 1 и выше; порог для текста — 4,5. Белый здесь не читался бы.
- * Оттенок остаётся «звонковым» и «сообщенческим» — путать действия нельзя.
+ * Стало — тот же цвет, смешанный со страницей. Значок и подпись — тот же
+ * цвет, темнее (в тёмной теме — светлее), к светлому тону контраст выше 4,5 :
+ * 1 — порога для текста. Белый здесь не читался бы. Оттенок остаётся
+ * «звонковым» и «сообщенческим» — путать действия нельзя.
+ *
+ * 2.7.5: заливка [fill] — ровная, как в Ogneliss Mail (было — градиент из
+ * двух тонов); свечение от края рисует подсказка цветом [content].
  */
 @Immutable
-private class RevealTones(val strong: Color, val soft: Color, val content: Color)
+private class RevealTones(val content: Color, val fill: Color)
 
 @Composable
 private fun revealTones(color: Color): RevealTones {
@@ -883,9 +971,10 @@ private fun revealTones(color: Color): RevealTones {
     val dark = page.luminance() < 0.5f
     return remember(color, page) {
         RevealTones(
-            strong = lerp(color, page, if (dark) 0.55f else 0.62f),
-            soft = lerp(color, page, if (dark) 0.8f else 0.88f),
-            content = if (dark) lerp(color, Color.White, 0.5f) else lerp(color, Color.Black, 0.3f)
+            content = if (dark) lerp(color, Color.White, 0.5f) else lerp(color, Color.Black, 0.3f),
+            // 2.7.5: ровная заливка свайпа — тон почты (SwipeTone: «задача»
+            // DDEEDF на светлой, 1F3A28 на тёмной — между soft и strong)
+            fill = lerp(color, page, if (dark) 0.72f else 0.84f)
         )
     }
 }
