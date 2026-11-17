@@ -28,8 +28,18 @@ import java.util.concurrent.Executors
  */
 object CallerCard {
 
-    /** Фото (миниатюра книги) и подпись номера («Мобильный»); любое может отсутствовать. */
-    data class Info(val photo: Bitmap?, val typeLabel: String?)
+    /**
+     * Фото (миниатюра книги), подпись номера («Мобильный») и имя из книги;
+     * любое может отсутствовать.
+     *
+     * [name] (2.7.9, форум, Joker5649, realme XT: «в режиме всплывающего окна при
+     * звонке не показывает имя абонента, только номер, хотя абонент занесён
+     * в контакты»). Подпись уведомления бралась только из данных вызова
+     * (CallDetailsCompat.displayLabel), а имя из книги туда кладёт система —
+     * и не на всех прошивках: на ColorOS его там нет. Экран вызова ищет имя
+     * в книге сам, поэтому там оно было. Теперь и уведомление берёт имя отсюда.
+     */
+    data class Info(val photo: Bitmap?, val typeLabel: String?, val name: String? = null)
 
     private const val TAG = "CallerCard"
     /**
@@ -67,7 +77,7 @@ object CallerCard {
                 .onFailure { Logger.w(TAG, "Фото звонящего не загрузилось", it) }
                 .getOrNull() ?: Info(null, null)
             synchronized(cache) { cache[key(number)] = info }
-            if (info.photo != null || info.typeLabel != null) main.post { onLoaded(info) }
+            if (info.photo != null || info.typeLabel != null || info.name != null) main.post { onLoaded(info) }
         }
     }
 
@@ -77,7 +87,8 @@ object CallerCard {
             ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI,
             ContactsContract.PhoneLookup.PHOTO_URI,
             ContactsContract.PhoneLookup.TYPE,
-            ContactsContract.PhoneLookup.LABEL
+            ContactsContract.PhoneLookup.LABEL,
+            ContactsContract.PhoneLookup.DISPLAY_NAME
         )
         return context.contentResolver.query(uri, projection, null, null, null)?.use { c ->
             if (!c.moveToFirst()) return@use null
@@ -85,7 +96,8 @@ object CallerCard {
             val label = if (c.isNull(2)) null else ContactsContract.CommonDataKinds.Phone
                 .getTypeLabel(context.resources, c.getInt(2), c.getString(3))
                 ?.toString()?.takeIf { it.isNotBlank() }
-            Info(photoUri?.let { decode(context, Uri.parse(it)) }, label)
+            val name = c.getString(4)?.takeIf { it.isNotBlank() }
+            Info(photoUri?.let { decode(context, Uri.parse(it)) }, label, name)
         }
     }
 
