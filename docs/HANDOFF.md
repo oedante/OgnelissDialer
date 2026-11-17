@@ -12,6 +12,13 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 17.11.2026 — 2.7.8 (83): псевдозвонок в Bluetooth-гарнитуре, машине и на часах
+
+Разбор — `docs/RELEASE_NOTES_2.7.8.md`. Псевдозвонок — «свой вызов» приложения в системе
+вызовов (`call/FakeTelecomCall.kt`: self-managed PhoneAccount, `FakeCallConnectionService`,
+`FakeConnection`); экран (`FakeCallActivity`) создаёт вызов и следит за `FakeTelecomCall.state`.
+Плавающий значок вызова — автор отказался (17.11.2026).
+
 ## 17.11.2026 — 2.7.7 (82): псевдозвонок по времени, «Контакты» на клавиатуре, кнопки окон
 
 Разбор — `docs/RELEASE_NOTES_2.7.7.md`. Псевдозвонок по времени — уведомлением во весь
