@@ -28,7 +28,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
@@ -230,7 +229,7 @@ internal fun CallNumberText(text: String) {
     androidx.compose.material3.Text(
         text,
         style = androidx.compose.material3.LocalTextStyle.current.copy(
-            fontSize = if (onImage != null) CALL_NUMBER_ON_IMAGE else FlowUi.callNumberSize,
+            fontSize = if (onImage != null) FlowUi.callNumberSizeOnImage else FlowUi.callNumberSize,
             fontWeight = if (onImage != null) androidx.compose.ui.text.font.FontWeight.Medium else null,
             shadow = callTextShadow()
         ),
@@ -238,11 +237,6 @@ internal fun CallNumberText(text: String) {
         textAlign = androidx.compose.ui.text.style.TextAlign.Center
     )
 }
-
-private val CALL_NUMBER_ON_IMAGE = 18.sp
-
-/** Почти чёрный текст над светлым снимком: чистый чёрный режет глаз. */
-private val CALL_TEXT_DARK = Color(0xFF15171A)
 
 /**
  * Цвет текста над своим снимком (2.7.6): белый или почти чёрный — что
@@ -253,7 +247,7 @@ private val CALL_TEXT_DARK = Color(0xFF15171A)
 internal fun customCallTextColor(bg: CustomCallBackground?): Color? {
     bg ?: return null
     val page = MaterialTheme.colorScheme.surface.luminance().toDouble()
-    return if (CallBackgroundLayer.darkTextOver(bg.luminance, page)) CALL_TEXT_DARK else Color.White
+    return if (CallBackgroundLayer.darkTextOver(bg.luminance, page)) FlowUi.callTextDark else Color.White
 }
 
 /**
