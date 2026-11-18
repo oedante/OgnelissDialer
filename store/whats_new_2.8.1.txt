@@ -1,0 +1,81 @@
+<ru-RU>
+• Свой фон экрана вызова: подписи под кнопками разговора подстраиваются под снимок и читаются на светлом и тёмном фоне.
+</ru-RU>
+<ar>
+• خلفية المكالمة المخصّصة: تسميات أزرار المكالمة تتكيّف مع الصورة وتُقرأ على الخلفية الفاتحة والداكنة.
+</ar>
+<cs-CZ>
+• Vlastní pozadí hovoru: popisky tlačítek hovoru se přizpůsobí obrázku a jsou čitelné na světlém i tmavém pozadí.
+</cs-CZ>
+<da-DK>
+• Egen opkaldsbaggrund: teksterne under opkaldsknapperne tilpasser sig billedet og kan læses på lys og mørk baggrund.
+</da-DK>
+<de-DE>
+• Eigener Anrufhintergrund: Die Beschriftungen der Anruftasten passen sich dem Bild an und sind auf hellem und dunklem Hintergrund lesbar.
+</de-DE>
+<en-US>
+• Custom call background: call button labels adapt to the picture and stay readable on light and dark backgrounds.
+</en-US>
+<es-ES>
+• Fondo de llamada propio: las etiquetas de los botones de llamada se adaptan a la imagen y se leen sobre fondos claros y oscuros.
+</es-ES>
+<fi-FI>
+• Oma puhelutausta: puhelupainikkeiden tekstit mukautuvat kuvaan ja erottuvat sekä vaalealla että tummalla taustalla.
+</fi-FI>
+<fr-FR>
+• Fond d’appel personnalisé : les libellés des boutons d’appel s’adaptent à l’image et restent lisibles sur fond clair comme sombre.
+</fr-FR>
+<hi-IN>
+• अपना कॉल बैकग्राउंड: कॉल बटनों के लेबल तस्वीर के अनुसार बदलते हैं और हल्के व गहरे दोनों बैकग्राउंड पर पढ़े जा सकते हैं।
+</hi-IN>
+<hu-HU>
+• Saját hívásháttér: a hívógombok feliratai a képhez igazodnak, és világos és sötét háttéren is olvashatók.
+</hu-HU>
+<id>
+• Latar panggilan sendiri: label tombol panggilan menyesuaikan gambar dan tetap terbaca di latar terang maupun gelap.
+</id>
+<it-IT>
+• Sfondo di chiamata personalizzato: le etichette dei pulsanti di chiamata si adattano all’immagine e restano leggibili su sfondi chiari e scuri.
+</it-IT>
+<iw-IL>
+• רקע שיחה משלך: התוויות של כפתורי השיחה מותאמות לתמונה וקריאות על רקע בהיר וכהה.
+</iw-IL>
+<ja-JP>
+• 通話画面の独自背景：通話ボタンのラベルが画像に合わせて変わり、明るい背景でも暗い背景でも読みやすくなりました。
+</ja-JP>
+<ko-KR>
+• 나만의 통화 배경: 통화 버튼 라벨이 이미지에 맞춰 바뀌어 밝은 배경과 어두운 배경 모두에서 잘 보입니다.
+</ko-KR>
+<nl-NL>
+• Eigen belachtergrond: de labels van de belknoppen passen zich aan de afbeelding aan en blijven leesbaar op lichte en donkere achtergronden.
+</nl-NL>
+<no-NO>
+• Egen anropsbakgrunn: tekstene under anropsknappene tilpasser seg bildet og kan leses på lys og mørk bakgrunn.
+</no-NO>
+<pl-PL>
+• Własne tło połączenia: podpisy przycisków rozmowy dopasowują się do obrazu i są czytelne na jasnym i ciemnym tle.
+</pl-PL>
+<pt-BR>
+• Fundo de chamada próprio: os rótulos dos botões de chamada se adaptam à imagem e ficam legíveis em fundos claros e escuros.
+</pt-BR>
+<ro>
+• Fundal de apel propriu: etichetele butoanelor de apel se adaptează imaginii și se citesc pe fundal deschis și închis.
+</ro>
+<sk>
+• Vlastné pozadie hovoru: popisy tlačidiel hovoru sa prispôsobia obrázku a sú čitateľné na svetlom aj tmavom pozadí.
+</sk>
+<sv-SE>
+• Egen samtalsbakgrund: etiketterna under samtalsknapparna anpassas efter bilden och syns på både ljus och mörk bakgrund.
+</sv-SE>
+<th>
+• พื้นหลังหน้าจอโทรของคุณเอง: ป้ายใต้ปุ่มระหว่างสายปรับตามรูป อ่านได้ทั้งบนพื้นสว่างและพื้นมืด
+</th>
+<tr-TR>
+• Kendi arama arka planınız: arama düğmelerinin etiketleri resme uyum sağlar ve açık ve koyu arka planda okunur.
+</tr-TR>
+<vi>
+• Hình nền cuộc gọi riêng: nhãn dưới các nút cuộc gọi tự điều chỉnh theo ảnh, dễ đọc trên nền sáng lẫn nền tối.
+</vi>
+<zh-CN>
+• 自定义通话背景：通话按钮的文字会根据图片调整，在浅色和深色背景上都清晰可读。
+</zh-CN>

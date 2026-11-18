@@ -251,6 +251,20 @@ internal fun customCallTextColor(bg: CustomCallBackground?): Color? {
 }
 
 /**
+ * Цвет подписей под кнопками разговора над своим снимком (2.8.1): по яркости
+ * низа снимка с подложкой (CONTROLS_BAND_*). Сами круглые кнопки — на своей
+ * подложке и в подстройке не нуждаются. null — снимка нет.
+ */
+@Composable
+internal fun customCallControlsColor(bg: CustomCallBackground?): Color? {
+    bg ?: return null
+    val page = MaterialTheme.colorScheme.surface.luminance().toDouble()
+    return if (CallBackgroundLayer.darkTextOver(bg.controlsLuminance, page, CallBackgroundLayer.CONTROLS_BAND_SCRIM)) {
+        FlowUi.callTextDark
+    } else Color.White
+}
+
+/**
  * КНОПКИ ВЫЗОВА БЕЗ ПОДЛОЖКИ — НАД ЖИВЫМ ФОНОМ (1.6.0).
  *
  * ══════════════════════════════════════════════════════════════════════════
@@ -368,7 +382,8 @@ internal fun rememberCustomCallBackground(
     val image by androidx.compose.runtime.produceState<CustomCallBackground?>(null, kind, mark) {
         value = if (mark <= 0L) null else {
             CallBackgrounds.load(context, kind)?.let { bitmap ->
-                CustomCallBackground(bitmap.asImageBitmap(), CallBackgrounds.textBandLuminance(bitmap))
+                val (top, bottom) = CallBackgrounds.textBandLuminance(bitmap)
+                CustomCallBackground(bitmap.asImageBitmap(), top, bottom)
             }
         }
     }
@@ -378,7 +393,10 @@ internal fun rememberCustomCallBackground(
 /** Свой снимок и яркость его полосы под именем и номером (2.7.6). */
 internal class CustomCallBackground(
     val image: androidx.compose.ui.graphics.ImageBitmap,
-    val luminance: Double
+    /** Яркость полосы имени и номера. */
+    val luminance: Double,
+    /** Яркость полосы кнопок разговора (2.8.1). */
+    val controlsLuminance: Double = luminance
 )
 
 /**

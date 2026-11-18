@@ -416,6 +416,8 @@ internal fun FakeCallScreen(
     val customLayer = bgLayer == CallBackgroundLayer.CUSTOM
     // 2.7.6: цвет текста над снимком и значки строки состояния — как у настоящего
     val customText = if (customLayer) customCallTextColor(customBg) else null
+    // 2.8.1: подписи под кнопками разговора — по яркости низа снимка
+    val customControls = if (customLayer) customCallControlsColor(customBg) else null
     LightStatusIconsOnPhoto(photoBackground || photoTop || customText == Color.White)
     // Живой фон — по тем же состояниям, что у настоящего вызова
     val ambient = bgLayer == CallBackgroundLayer.AMBIENT
@@ -550,7 +552,8 @@ internal fun FakeCallScreen(
                 // Как у настоящего вызова: общий цвет нижней панели (1.4.0),
                 // над живым фоном — без подложки (1.6.0, разбор у LocalControlsOnAmbient)
                 color = if (bare) Color.Transparent else PanelColors.panel(),
-                contentColor = MaterialTheme.colorScheme.onSurface,
+                // Над своим снимком — подписи кнопок по яркости его низа (2.8.1)
+                contentColor = customControls ?: MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.fillMaxWidth()
             ) {
             CompositionLocalProvider(LocalControlsOnAmbient provides bare) {

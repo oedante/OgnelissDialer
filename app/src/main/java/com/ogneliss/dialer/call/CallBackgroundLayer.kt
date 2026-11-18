@@ -61,6 +61,16 @@ enum class CallBackgroundLayer {
         /** Средняя плотность подложки в этой полосе (градиент 0,60 → 0,30 → 0,70). */
         const val TEXT_BAND_SCRIM = 0.40
 
+        /*
+         * Полоса кнопок разговора (2.8.1, проверка автора: светлый свой фон
+         * в тёмной теме — подписи «Звук», «Динамик» белым по светло-серому
+         * читались плохо). Подписи под кнопками — по яркости низа снимка,
+         * подложка там гуще (к низу 0,70).
+         */
+        const val CONTROLS_BAND_FROM = 0.75f
+        const val CONTROLS_BAND_TO = 1.0f
+        const val CONTROLS_BAND_SCRIM = 0.62
+
         /** Относительная яркость цвета sRGB (WCAG), 0…1. */
         fun luminance(argb: Int): Double {
             fun ch(v: Int): Double {
