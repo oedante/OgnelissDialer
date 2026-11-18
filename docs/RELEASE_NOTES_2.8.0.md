@@ -38,4 +38,4 @@
 ## Проверки
 
 Здесь: `SettingsRegistryTest`, `SettingsTextLengthTest`, `DeviceTransferTest`, снимки —
-без ошибок; `scripts/` — без замечаний; lint и release-сборка — см. ниже.
+без ошибок; `scripts/` — без замечаний; lint — 0 ошибок; release-сборка.
