@@ -110,4 +110,17 @@ class CallBackgroundLayerTest {
     fun `пустой снимок — яркость 0`() {
         assertEquals(0.0, CallBackgroundLayer.bandLuminance(IntArray(0), 0, 0), 1e-9)
     }
+
+    @Test
+    fun `светлый низ снимка в тёмной теме — подписи кнопок тёмные`() {
+        // Почти белый низ (#EEEEF2) под тёмной подложкой 0,62 — чёрный контрастнее
+        val light = CallBackgroundLayer.luminance(0xFFEEEEF2.toInt())
+        assertTrue(CallBackgroundLayer.darkTextOver(light, darkPage, CallBackgroundLayer.CONTROLS_BAND_SCRIM))
+    }
+
+    @Test
+    fun `тёмный низ снимка в тёмной теме — подписи кнопок белые`() {
+        val night = CallBackgroundLayer.luminance(0xFF141821.toInt())
+        assertFalse(CallBackgroundLayer.darkTextOver(night, darkPage, CallBackgroundLayer.CONTROLS_BAND_SCRIM))
+    }
 }

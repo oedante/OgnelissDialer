@@ -1067,6 +1067,8 @@ private fun InCallScreen(
     val customLayer = bgLayer == CallBackgroundLayer.CUSTOM
     // 2.7.6: текст над своим снимком — белый или тёмный по яркости снимка
     val customText = if (customLayer) customCallTextColor(customBg) else null
+    // 2.8.1: подписи под кнопками разговора — по яркости низа снимка
+    val customControls = if (customLayer) customCallControlsColor(customBg) else null
     // Светлые значки строки состояния — над фото и над снимком с белым текстом
     LightStatusIconsOnPhoto(photoBackground || photoTop || customText == Color.White)
     // Живой фон — когда нет фото на весь экран: фото само и есть фон.
@@ -1548,7 +1550,8 @@ private fun InCallScreen(
                 // Над живым фоном — без подложки, волны идут и под кнопками
                 // (1.6.0); с 1.6.2 и на ровном фоне — разбор у LocalControlsOnAmbient
                 color = if (bare) Color.Transparent else PanelColors.panel(),
-                contentColor = MaterialTheme.colorScheme.onSurface,
+                // Над своим снимком — подписи кнопок по яркости его низа (2.8.1)
+                contentColor = customControls ?: MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.fillMaxWidth()
             ) {
             CompositionLocalProvider(LocalControlsOnAmbient provides bare) {

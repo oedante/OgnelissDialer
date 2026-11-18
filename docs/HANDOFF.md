@@ -12,6 +12,12 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 18.11.2026 — 2.8.1 (86): подписи кнопок разговора над своим фоном вызова
+
+Разбор — `docs/RELEASE_NOTES_2.8.1.md`. Цвет подписей — `customCallControlsColor`
+(яркость низа снимка, `CallBackgroundLayer.CONTROLS_BAND_*`), задаётся нижней панели
+в `InCallActivity` и `FakeCallActivity`.
+
 ## 18.11.2026 — 2.8.0 (85): свои картинки для контактов без фото и неизвестных номеров
 
 Разбор — `docs/RELEASE_NOTES_2.8.0.md`. `ui/components/AvatarPictures.kt` (`LocalAvatarPictures`,
