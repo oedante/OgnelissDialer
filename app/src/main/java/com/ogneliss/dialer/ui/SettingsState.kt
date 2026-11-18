@@ -66,6 +66,10 @@ data class SettingsState(
     /** Отметки своего фона экрана вызова (2.7.4): время сохранения снимка, 0 — снимка нет. */
     val callBgIncoming: Long = 0L,
     val callBgOutgoing: Long = 0L,
+    /** Картинки вместо фото (2.8.0): отметки снимков (0 — нет) и где показывать. */
+    val avatarNoPhoto: Long = 0L,
+    val avatarUnknown: Long = 0L,
+    val avatarScope: com.ogneliss.dialer.settings.AvatarScope = com.ogneliss.dialer.settings.AvatarScope.EVERYWHERE,
     /** Размер портрета на экране вызова (1.5.7). */
     val callPhotoSize: CallPhotoSize = CallPhotoSize.LARGE,
     /** Ответ на вызов: касанием или сдвигом (1.5.8). */

@@ -12,6 +12,13 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 18.11.2026 — 2.8.0 (85): свои картинки для контактов без фото и неизвестных номеров
+
+Разбор — `docs/RELEASE_NOTES_2.8.0.md`. `ui/components/AvatarPictures.kt` (`LocalAvatarPictures`,
+задаётся в `RootScreen`, `InCallActivity`; псевдозвонок — напрямую), файлы —
+`CallBackgrounds.Kind.AVATAR_*`, настройки `avatar_no_photo` / `avatar_unknown` / `avatar_scope`
+(`AvatarScope`) в разделе «Экран вызова».
+
 ## 17.11.2026 — 2.7.9 (84): имя из контактов во всплывающей плашке входящего
 
 Разбор — `docs/RELEASE_NOTES_2.7.9.md`. Имя для уведомлений вызова — `CallerCard.Info.name`

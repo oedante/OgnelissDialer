@@ -744,6 +744,33 @@ object SettingsRegistry {
             SettingKind.Choice("call_bg_outgoing"),
             keywordsRes = R.string.keywords_call_bg
         ),
+        /*
+         * 2.8.0: картинки вместо фото (форум, iKovalsky, как в TruePhone; автор:
+         * «совместим варианты А и Б и дадим выбор, где применять»). Здесь, а не
+         * в «Оформлении»: там 16 пунктов — предел SettingsRegistryTest; а придут
+         * сюда чаще всего ради экрана вызова. Поиск по настройкам находит и так.
+         */
+        SettingEntry(
+            "avatar_no_photo", SettingsCategory.CALL_SCREEN,
+            R.string.settings_avatar_no_photo, R.string.settings_avatar_no_photo_text,
+            SettingKind.Choice("avatar_no_photo"),
+            groupRes = R.string.settings_group_avatar_pictures,
+            keywordsRes = R.string.keywords_avatar_pictures
+        ),
+        SettingEntry(
+            "avatar_unknown", SettingsCategory.CALL_SCREEN,
+            R.string.settings_avatar_unknown, R.string.settings_avatar_unknown_text,
+            SettingKind.Choice("avatar_unknown"),
+            groupRes = R.string.settings_group_avatar_pictures,
+            keywordsRes = R.string.keywords_avatar_pictures
+        ),
+        SettingEntry(
+            "avatar_scope", SettingsCategory.CALL_SCREEN,
+            R.string.settings_avatar_scope, null,
+            SettingKind.Choice("avatar_scope"),
+            groupRes = R.string.settings_group_avatar_pictures,
+            keywordsRes = R.string.keywords_avatar_pictures
+        ),
         SettingEntry(
             "post_call", SettingsCategory.CALLS,
             R.string.settings_post_call, R.string.settings_post_call_text,

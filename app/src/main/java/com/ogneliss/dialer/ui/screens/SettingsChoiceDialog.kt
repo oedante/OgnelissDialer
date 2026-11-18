@@ -117,6 +117,14 @@ fun SettingsChoiceDialog(
             SettingsCommands.CALL_BG_DEFAULT to stringResource(R.string.call_bg_default),
             SettingsCommands.CALL_BG_CUSTOM to stringResource(R.string.call_bg_custom)
         )
+        // 2.8.0: картинки вместо фото — обычное или своя картинка (окно выбора фото)
+        "avatar_no_photo", "avatar_unknown" -> listOf(
+            SettingsCommands.CALL_BG_DEFAULT to stringResource(SettingsCommands.avatarPictureLabelRes(settingKey, SettingsCommands.CALL_BG_DEFAULT)),
+            SettingsCommands.CALL_BG_CUSTOM to stringResource(R.string.avatar_custom)
+        )
+        "avatar_scope" -> com.ogneliss.dialer.settings.AvatarScope.entries.map {
+            it.name to stringResource(SettingsCommands.avatarScopeLabelRes(it))
+        }
         "call_photo_size" -> com.ogneliss.dialer.settings.CallPhotoSize.entries.map {
             it.name to stringResource(SettingsCommands.callPhotoSizeLabelRes(it))
         }

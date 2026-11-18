@@ -67,6 +67,10 @@ class SettingsStateSource @Inject constructor(
         // 2.7.4: свой фон входящих и исходящих
         .combine(prefs.callBgIncoming) { a, v -> a.copy(callBgIncoming = v) }
         .combine(prefs.callBgOutgoing) { a, v -> a.copy(callBgOutgoing = v) }
+        // 2.8.0: картинки вместо фото и где их показывать
+        .combine(prefs.avatarNoPhoto) { a, v -> a.copy(avatarNoPhoto = v) }
+        .combine(prefs.avatarUnknown) { a, v -> a.copy(avatarUnknown = v) }
+        .combine(prefs.avatarScope) { a, v -> a.copy(avatarScope = v) }
         .combine(prefs.uiScale) { a, v -> a.copy(uiScale = v) }
         .combine(prefs.fontScale) { a, v -> a.copy(fontScale = v) }
         .combine(prefs.themePreset) { a, v -> a.copy(themePreset = v) }
@@ -209,6 +213,9 @@ class SettingsStateSource @Inject constructor(
             callPhotoStyle = a.callPhotoStyle,
             callBgIncoming = a.callBgIncoming,
             callBgOutgoing = a.callBgOutgoing,
+            avatarNoPhoto = a.avatarNoPhoto,
+            avatarUnknown = a.avatarUnknown,
+            avatarScope = a.avatarScope,
             uiScale = a.uiScale,
             fontScale = a.fontScale,
             themePreset = a.themePreset,
@@ -288,6 +295,9 @@ class SettingsStateSource @Inject constructor(
         val callPhotoStyle: CallPhotoStyle = CallPhotoStyle.CIRCLE,
         val callBgIncoming: Long = 0L,
         val callBgOutgoing: Long = 0L,
+        val avatarNoPhoto: Long = 0L,
+        val avatarUnknown: Long = 0L,
+        val avatarScope: AvatarScope = AvatarScope.EVERYWHERE,
         val uiScale: UiScale = UiScale.DEFAULT,
         val fontScale: Float = 1f,
         val themePreset: ThemePreset = ThemePreset.CLASSIC,

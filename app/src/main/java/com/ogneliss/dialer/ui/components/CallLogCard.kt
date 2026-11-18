@@ -651,9 +651,15 @@ private fun Avatar(
                     )
                 }
 
-                if (appearance.showPhoto && photoUri != null) {
+                /*
+                 * Фото нет — своя картинка (2.8.0, AvatarPictures): буквы имени —
+                 * сохранённый контакт без фото, силуэт — неизвестный номер.
+                 */
+                val pictures = LocalAvatarPictures.current
+                val shown = photoUri?.takeIf { it.isNotBlank() } ?: pictures.forLists(known = initials != null)
+                if (appearance.showPhoto && shown != null) {
                     AsyncImage(
-                        model = photoUri,
+                        model = shown,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.size(size)

@@ -480,7 +480,16 @@ fun RootScreen(
         )
     }
 
-    CompositionLocalProvider(LocalAppearance provides appearance) {
+    // 2.8.0: картинки вместо фото (AvatarPictures) — для всех списков и карточек
+    val avatarPictures = remember(settings.avatarNoPhoto, settings.avatarUnknown, settings.avatarScope) {
+        com.ogneliss.dialer.ui.components.AvatarPictures.of(
+            context.applicationContext, settings.avatarNoPhoto, settings.avatarUnknown, settings.avatarScope
+        )
+    }
+    CompositionLocalProvider(
+        LocalAppearance provides appearance,
+        com.ogneliss.dialer.ui.components.LocalAvatarPictures provides avatarPictures
+    ) {
     /*
      * ОТСТУПЫ ПОД СИСТЕМНЫЕ ПАНЕЛИ.
      *

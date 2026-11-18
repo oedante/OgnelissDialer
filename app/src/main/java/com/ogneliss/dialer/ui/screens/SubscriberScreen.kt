@@ -546,7 +546,7 @@ fun SubscriberScreen(
      * при звонке и часто оставляет пустым. Точечный запрос к книге
      * идёт по индексу PhoneLookup и занимает миллисекунды.
      */
-    val photoUri by produceState<String?>(initialValue = group.photoUri, group.e164) {
+    val ownPhotoUri by produceState<String?>(initialValue = group.photoUri, group.e164) {
         value = suspendRunCatching { vm.photoForNumber(group.number) }.getOrNull()
             ?: group.photoUri
     }
@@ -573,6 +573,14 @@ fun SubscriberScreen(
             ?: com.ogneliss.dialer.data.ContactMatch.bestFor(state.contacts, group.e164)?.id
             ?: group.contactId
     }
+    /*
+     * Фото нет — своя картинка (2.8.0, AvatarPictures), если её показывать
+     * в списках и карточках. Только для показа: ярлык на главный экран — по
+     * настоящему фото.
+     */
+    val avatarPictures = com.ogneliss.dialer.ui.components.LocalAvatarPictures.current
+    val photoUri = ownPhotoUri?.takeIf { it.isNotBlank() }
+        ?: avatarPictures.forLists(known = knownContactId != null)
 
     // Мессенджеры контакта для кнопки «Написать» — из телефонной книги
     val appContext = LocalContext.current.applicationContext
@@ -1171,10 +1179,10 @@ fun SubscriberScreen(
                             },
                             // Значок — фото или буквы с меткой действия, как у ярлыков из лаунчера (2.5.0)
                             onShortcut = {
-                                com.ogneliss.dialer.util.ContactShortcuts.requestPinDirect(appContext, title, group.number, photoUri, sms = false)
+                                com.ogneliss.dialer.util.ContactShortcuts.requestPinDirect(appContext, title, group.number, ownPhotoUri, sms = false)
                             },
                             onSmsShortcut = {
-                                com.ogneliss.dialer.util.ContactShortcuts.requestPinDirect(appContext, title, group.number, photoUri, sms = true)
+                                com.ogneliss.dialer.util.ContactShortcuts.requestPinDirect(appContext, title, group.number, ownPhotoUri, sms = true)
                             },
                             onEdit = { id -> vm.editContact(id) },
                             // Номер не из книги (1.7.0): «К контакту» и «Поделиться» —

@@ -1103,4 +1103,17 @@
     <string name="keywords_call_bg">фон обои картинка снимок фото изображение экран вызова</string>
     <string name="settings_section_call_screen">Экран вызова</string>
     <string name="settings_section_call_screen_summary">Фото, фон и номер на экране звонка</string>
+    <string name="settings_group_avatar_pictures">Картинки без фото</string>
+    <string name="settings_avatar_no_photo">Контакты без фото</string>
+    <string name="settings_avatar_no_photo_text">Своя картинка вместо букв имени</string>
+    <string name="settings_avatar_unknown">Неизвестные номера</string>
+    <string name="settings_avatar_unknown_text">Своя картинка вместо силуэта</string>
+    <string name="settings_avatar_scope">Где показывать картинки</string>
+    <string name="avatar_default_initials">Буквы имени</string>
+    <string name="avatar_default_silhouette">Силуэт</string>
+    <string name="avatar_custom">Своя картинка</string>
+    <string name="avatar_scope_everywhere">Везде</string>
+    <string name="avatar_scope_call">На экране вызова</string>
+    <string name="avatar_scope_lists">В списках и карточках</string>
+    <string name="keywords_avatar_pictures">аватар, аватарка, картинка, заглушка, без фото, неизвестный, изображение</string>
 </resources>

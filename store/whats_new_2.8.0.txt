@@ -1,0 +1,81 @@
+<ru-RU>
+• Свои картинки для контактов без фото и неизвестных номеров — везде, только на экране вызова или только в списках (Настройки → Экран вызова).
+</ru-RU>
+<ar>
+• صور خاصة بك لجهات الاتصال بلا صورة وللأرقام غير المعروفة — في كل مكان، أو على شاشة المكالمة فقط، أو في القوائم فقط (الإعدادات ← شاشة المكالمة).
+</ar>
+<cs-CZ>
+• Vlastní obrázky pro kontakty bez fotky a neznámá čísla – všude, jen na obrazovce hovoru nebo jen v seznamech (Nastavení → Obrazovka hovoru).
+</cs-CZ>
+<da-DK>
+• Egne billeder til kontakter uden foto og ukendte numre – overalt, kun på opkaldsskærmen eller kun i lister (Indstillinger → Opkaldsskærm).
+</da-DK>
+<de-DE>
+• Eigene Bilder für Kontakte ohne Foto und unbekannte Nummern – überall, nur auf dem Anrufbildschirm oder nur in Listen (Einstellungen → Anrufbildschirm).
+</de-DE>
+<en-US>
+• Your own pictures for contacts without a photo and for unknown numbers — everywhere, only on the call screen, or only in lists (Settings → Call screen).
+</en-US>
+<es-ES>
+• Imágenes propias para contactos sin foto y números desconocidos: en todas partes, solo en la pantalla de llamada o solo en las listas (Ajustes → Pantalla de llamada).
+</es-ES>
+<fi-FI>
+• Omat kuvat yhteystiedoille ilman kuvaa ja tuntemattomille numeroille – kaikkialla, vain puhelunäkymässä tai vain listoissa (Asetukset → Puhelunäkymä).
+</fi-FI>
+<fr-FR>
+• Vos propres images pour les contacts sans photo et les numéros inconnus : partout, seulement sur l’écran d’appel ou seulement dans les listes (Paramètres → Écran d’appel).
+</fr-FR>
+<hi-IN>
+• बिना फ़ोटो वाले संपर्कों और अनजान नंबरों के लिए अपनी तस्वीरें — हर जगह, सिर्फ़ कॉल स्क्रीन पर या सिर्फ़ सूचियों में (सेटिंग्स → कॉल स्क्रीन)।
+</hi-IN>
+<hu-HU>
+• Saját képek a fotó nélküli névjegyekhez és az ismeretlen számokhoz – mindenhol, csak a hívásképernyőn vagy csak a listákban (Beállítások → Hívásképernyő).
+</hu-HU>
+<id>
+• Gambar sendiri untuk kontak tanpa foto dan nomor tak dikenal — di mana saja, hanya di layar panggilan, atau hanya di daftar (Setelan → Layar panggilan).
+</id>
+<it-IT>
+• Immagini personali per i contatti senza foto e i numeri sconosciuti: ovunque, solo sulla schermata di chiamata o solo negli elenchi (Impostazioni → Schermata di chiamata).
+</it-IT>
+<iw-IL>
+• תמונות משלך לאנשי קשר ללא תמונה ולמספרים לא מוכרים — בכל מקום, רק במסך השיחה או רק ברשימות (הגדרות ← מסך שיחה).
+</iw-IL>
+<ja-JP>
+• 写真のない連絡先と不明な番号に独自の画像を設定可能。表示先はすべて・通話画面のみ・リストのみから選べます（設定 → 通話画面）。
+</ja-JP>
+<ko-KR>
+• 사진 없는 연락처와 알 수 없는 번호에 나만의 이미지 — 모든 곳, 통화 화면만, 또는 목록만 선택 가능(설정 → 통화 화면).
+</ko-KR>
+<nl-NL>
+• Eigen afbeeldingen voor contacten zonder foto en onbekende nummers – overal, alleen op het belscherm of alleen in lijsten (Instellingen → Belscherm).
+</nl-NL>
+<no-NO>
+• Egne bilder for kontakter uten bilde og ukjente numre – overalt, bare på anropsskjermen eller bare i lister (Innstillinger → Anropsskjerm).
+</no-NO>
+<pl-PL>
+• Własne obrazy dla kontaktów bez zdjęcia i nieznanych numerów – wszędzie, tylko na ekranie połączenia lub tylko na listach (Ustawienia → Ekran połączenia).
+</pl-PL>
+<pt-BR>
+• Imagens próprias para contatos sem foto e números desconhecidos — em todo lugar, só na tela de chamada ou só nas listas (Configurações → Tela de chamada).
+</pt-BR>
+<ro>
+• Imagini proprii pentru contactele fără fotografie și numerele necunoscute – peste tot, doar pe ecranul de apel sau doar în liste (Setări → Ecran de apel).
+</ro>
+<sk>
+• Vlastné obrázky pre kontakty bez fotky a neznáme čísla – všade, len na obrazovke hovoru alebo len v zoznamoch (Nastavenia → Obrazovka hovoru).
+</sk>
+<sv-SE>
+• Egna bilder för kontakter utan foto och okända nummer – överallt, bara på samtalsskärmen eller bara i listor (Inställningar → Samtalsskärm).
+</sv-SE>
+<th>
+• รูปของคุณเองสำหรับรายชื่อที่ไม่มีรูปและหมายเลขที่ไม่รู้จัก — ทุกที่ เฉพาะหน้าจอโทร หรือเฉพาะในรายการ (การตั้งค่า → หน้าจอโทร)
+</th>
+<tr-TR>
+• Fotoğrafı olmayan kişiler ve bilinmeyen numaralar için kendi resimleriniz — her yerde, yalnızca arama ekranında veya yalnızca listelerde (Ayarlar → Arama ekranı).
+</tr-TR>
+<vi>
+• Ảnh riêng cho liên hệ không có ảnh và số lạ — ở mọi nơi, chỉ trên màn hình cuộc gọi hoặc chỉ trong danh sách (Cài đặt → Màn hình cuộc gọi).
+</vi>
+<zh-CN>
+• 可为无照片的联系人和未知号码设置自定义图片——可选全部显示、仅通话界面或仅列表（设置 → 通话界面）。
+</zh-CN>
