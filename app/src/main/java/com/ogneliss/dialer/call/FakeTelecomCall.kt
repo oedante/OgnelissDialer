@@ -93,7 +93,15 @@ object FakeTelecomCall {
      * Сообщить системе о входящем псевдозвонке. true — вызов уже есть или
      * запрос принят (экран показывается из onShowIncomingCallUi); false —
      * не вышло, показывать по-старому.
+     *
+     * @Suppress("DEPRECATION") (2.8.4, предупреждения сборки автора): в Android 16
+     * (compileSdk 36) CAPABILITY_SELF_MANAGED и EXTRA_LOG_SELF_MANAGED_CALLS
+     * помечены устаревшими — Google советует библиотеку Jetpack core-telecom
+     * (CallsManager). На всех версиях, включая 16, прежний способ работает;
+     * переход — новая зависимость, только по решению автора. Подавление —
+     * на этой функции, а не на файле: другие устаревшие вызовы будут видны.
      */
+    @Suppress("DEPRECATION")
     fun start(context: Context, number: String = ""): Boolean {
         if (connection != null || isPending()) return true
         return runCatching {

@@ -15,7 +15,6 @@ import androidx.compose.ui.test.isPopup
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.lifecycle.ViewModelProvider
 import com.ogneliss.dialer.MainActivity
@@ -114,7 +113,13 @@ import java.io.File
 @Config(sdk = [35], qualifiers = "ru-w393dp-h873dp-xxhdpi")
 class ScreenGalleryTest {
 
-    @get:Rule val rule = createAndroidComposeRule<MainActivity>()
+    /*
+     * v2 (2.8.4, предупреждение сборки автора): прежний createAndroidComposeRule
+     * устарел. v2 ставит задачи корутин в очередь (StandardTestDispatcher), а не
+     * выполняет сразу; галерея и так ведёт часы вручную (settle), очередь
+     * разбирается там же.
+     */
+    @get:Rule val rule = androidx.compose.ui.test.junit4.v2.createAndroidComposeRule<MainActivity>()
 
     private val out = File("build/gallery").apply { mkdirs() }
     private val now = System.currentTimeMillis()
