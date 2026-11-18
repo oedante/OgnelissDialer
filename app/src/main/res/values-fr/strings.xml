@@ -1093,4 +1093,17 @@
     <string name="keywords_call_bg">arrière-plan fond écran image photo appel</string>
     <string name="settings_section_call_screen">Écran d’appel</string>
     <string name="settings_section_call_screen_summary">Photo, fond et numéro pendant l’appel</string>
+    <string name="settings_group_avatar_pictures">Images sans photo</string>
+    <string name="settings_avatar_no_photo">Contacts sans photo</string>
+    <string name="settings_avatar_no_photo_text">Votre image au lieu des initiales</string>
+    <string name="settings_avatar_unknown">Numéros inconnus</string>
+    <string name="settings_avatar_unknown_text">Votre image au lieu de la silhouette</string>
+    <string name="settings_avatar_scope">Où afficher les images</string>
+    <string name="avatar_default_initials">Initiales</string>
+    <string name="avatar_default_silhouette">Silhouette</string>
+    <string name="avatar_custom">Votre image</string>
+    <string name="avatar_scope_everywhere">Partout</string>
+    <string name="avatar_scope_call">Sur l’écran d’appel</string>
+    <string name="avatar_scope_lists">Dans les listes et fiches</string>
+    <string name="keywords_avatar_pictures">avatar, image, sans photo, inconnu, illustration</string>
 </resources>

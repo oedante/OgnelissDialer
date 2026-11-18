@@ -166,6 +166,11 @@ class FakeCallActivity : ComponentActivity() {
              * в неудобный момент.
              */
             var caller by remember { mutableStateOf<Pair<String, String>?>(null) }
+            // Звонит сохранённый контакт (2.8.0): для картинки вместо фото — буквы или силуэт
+            var callerKnown by remember { mutableStateOf(true) }
+            val avatarNoPhoto by prefs.avatarNoPhoto.collectAsStateWithLifecycle(0L)
+            val avatarUnknown by prefs.avatarUnknown.collectAsStateWithLifecycle(0L)
+            val avatarScope by prefs.avatarScope.collectAsStateWithLifecycle(com.ogneliss.dialer.settings.AvatarScope.EVERYWHERE)
             // Имя и номер — гарнитуре и машине, как только выбраны
             LaunchedEffect(caller) { caller?.let { (n, num) -> FakeTelecomCall.updateCaller(n, num) } }
             /*
@@ -196,6 +201,7 @@ class FakeCallActivity : ComponentActivity() {
                                 found
                             }
                         }
+                    callerKnown = name != null
                     (name ?: PhoneFormatter.format(chosen)) to chosen
                 } else {
                     val random = suspendRunCatching {
@@ -221,11 +227,16 @@ class FakeCallActivity : ComponentActivity() {
                 ProvideWindowLayout(this@FakeCallActivity) {
                 // Фото — тем же запросом, что у настоящего вызова (1.3.4)
                 val callerNumber = caller?.second.orEmpty()
-                val photo by produceState<String?>(initialValue = null, callerNumber) {
+                val contactPhoto by produceState<String?>(initialValue = null, callerNumber) {
                     value = callerNumber.takeIf { it.isNotBlank() }?.let {
                         suspendRunCatching { contactsRepo.photoUriForNumber(it) }.getOrNull()
                     }
                 }
+                // Фото нет — своя картинка (2.8.0, AvatarPictures), как у настоящего вызова
+                val photo = contactPhoto?.takeIf { it.isNotBlank() } ?: if (caller == null) null else
+                    com.ogneliss.dialer.ui.components.AvatarPictures.of(
+                        applicationContext, avatarNoPhoto, avatarUnknown, avatarScope
+                    ).forCallScreen(known = callerKnown)
                 FakeCallScreen(
                     name = caller?.first.orEmpty(),
                     number = callerNumber,

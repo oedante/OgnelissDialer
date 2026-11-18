@@ -30,7 +30,16 @@ object CallBackgrounds {
 
     enum class Kind(val fileName: String) {
         INCOMING("incoming.jpg"),
-        OUTGOING("outgoing.jpg")
+        OUTGOING("outgoing.jpg"),
+
+        /*
+         * 2.8.0: картинки вместо фото (форум, iKovalsky: «как в TruePhone общие
+         * картинки для неизвестных контактов и контактов без фото»). Лежат
+         * здесь же: то же сохранение, тот же перенос «телефон на телефон»
+         * (папка в data_extraction_rules.xml) и та же уборка при сбросе настроек.
+         */
+        AVATAR_NO_PHOTO("avatar_no_photo.jpg"),
+        AVATAR_UNKNOWN("avatar_unknown.jpg")
     }
 
     private const val DIR = "call_backgrounds"
@@ -41,6 +50,15 @@ object CallBackgrounds {
 
     /** Путь к файлу снимка; сам файл может и не существовать. */
     fun file(context: Context, kind: Kind): File = File(File(context.filesDir, DIR), kind.fileName)
+
+    /**
+     * Адрес снимка для показа (2.8.0, картинки вместо фото); [mark] 0 — снимка нет.
+     * Отметка — в адресе: заменили снимок — у адреса новое значение, и загрузчик
+     * картинок не покажет прежний из памяти.
+     */
+    fun uri(context: Context, kind: Kind, mark: Long): String? =
+        if (mark <= 0L) null else android.net.Uri.fromFile(file(context, kind)).buildUpon()
+            .appendQueryParameter("v", mark.toString()).build().toString()
 
     /**
      * Сохранить снимок из [uri] поверх прежнего. true — записан.

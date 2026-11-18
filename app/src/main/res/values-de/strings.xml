@@ -1094,4 +1094,17 @@
     <string name="keywords_call_bg">hintergrund hintergrundbild bild foto anrufbildschirm</string>
     <string name="settings_section_call_screen">Anrufbildschirm</string>
     <string name="settings_section_call_screen_summary">Foto, Hintergrund und Nummer beim Anruf</string>
+    <string name="settings_group_avatar_pictures">Bilder ohne Foto</string>
+    <string name="settings_avatar_no_photo">Kontakte ohne Foto</string>
+    <string name="settings_avatar_no_photo_text">Eigenes Bild statt Initialen</string>
+    <string name="settings_avatar_unknown">Unbekannte Nummern</string>
+    <string name="settings_avatar_unknown_text">Eigenes Bild statt Silhouette</string>
+    <string name="settings_avatar_scope">Wo Bilder zeigen</string>
+    <string name="avatar_default_initials">Initialen</string>
+    <string name="avatar_default_silhouette">Silhouette</string>
+    <string name="avatar_custom">Eigenes Bild</string>
+    <string name="avatar_scope_everywhere">Überall</string>
+    <string name="avatar_scope_call">Auf dem Anrufbildschirm</string>
+    <string name="avatar_scope_lists">In Listen und Karten</string>
+    <string name="keywords_avatar_pictures">Avatar, Bild, Platzhalter, ohne Foto, unbekannt</string>
 </resources>

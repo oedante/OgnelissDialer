@@ -190,6 +190,12 @@ class SettingsCommands @Inject constructor(
                 if (value != CALL_BG_CUSTOM) removeCallBackground(CallBackgrounds.Kind.INCOMING)
             "call_bg_outgoing" ->
                 if (value != CALL_BG_CUSTOM) removeCallBackground(CallBackgrounds.Kind.OUTGOING)
+            // 2.8.0: картинки вместо фото — так же, как фон вызова
+            "avatar_no_photo" ->
+                if (value != CALL_BG_CUSTOM) removeCallBackground(CallBackgrounds.Kind.AVATAR_NO_PHOTO)
+            "avatar_unknown" ->
+                if (value != CALL_BG_CUSTOM) removeCallBackground(CallBackgrounds.Kind.AVATAR_UNKNOWN)
+            "avatar_scope" -> prefs.setAvatarScope(AvatarScope.from(value))
             "start_section" -> prefs.setStartSection(StartChoice.from(value))
             "call_photo_size" -> prefs.setCallPhotoSize(CallPhotoSize.from(value))
             "answer_mode" -> prefs.setAnswerMode(AnswerMode.from(value))
@@ -239,6 +245,8 @@ class SettingsCommands @Inject constructor(
         when (kind) {
             CallBackgrounds.Kind.INCOMING -> prefs.setCallBgIncoming(0L)
             CallBackgrounds.Kind.OUTGOING -> prefs.setCallBgOutgoing(0L)
+            CallBackgrounds.Kind.AVATAR_NO_PHOTO -> prefs.setAvatarNoPhoto(0L)
+            CallBackgrounds.Kind.AVATAR_UNKNOWN -> prefs.setAvatarUnknown(0L)
         }
     }
 
@@ -251,6 +259,8 @@ class SettingsCommands @Inject constructor(
         val kind = when (key) {
             "call_bg_incoming" -> CallBackgrounds.Kind.INCOMING
             "call_bg_outgoing" -> CallBackgrounds.Kind.OUTGOING
+            "avatar_no_photo" -> CallBackgrounds.Kind.AVATAR_NO_PHOTO
+            "avatar_unknown" -> CallBackgrounds.Kind.AVATAR_UNKNOWN
             else -> {
                 Logger.w(TAG, "Неизвестный ключ фона вызова: $key")
                 return
@@ -262,6 +272,8 @@ class SettingsCommands @Inject constructor(
         when (kind) {
             CallBackgrounds.Kind.INCOMING -> prefs.setCallBgIncoming(mark)
             CallBackgrounds.Kind.OUTGOING -> prefs.setCallBgOutgoing(mark)
+            CallBackgrounds.Kind.AVATAR_NO_PHOTO -> prefs.setAvatarNoPhoto(mark)
+            CallBackgrounds.Kind.AVATAR_UNKNOWN -> prefs.setAvatarUnknown(mark)
         }
     }
 
@@ -291,6 +303,9 @@ class SettingsCommands @Inject constructor(
         // 2.7.4: свой фон вызова — «Свой снимок» (CUSTOM), если отметка есть
         "call_bg_incoming" -> if (state.callBgIncoming > 0L) CALL_BG_CUSTOM else CALL_BG_DEFAULT
         "call_bg_outgoing" -> if (state.callBgOutgoing > 0L) CALL_BG_CUSTOM else CALL_BG_DEFAULT
+        "avatar_no_photo" -> if (state.avatarNoPhoto > 0L) CALL_BG_CUSTOM else CALL_BG_DEFAULT
+        "avatar_unknown" -> if (state.avatarUnknown > 0L) CALL_BG_CUSTOM else CALL_BG_DEFAULT
+        "avatar_scope" -> state.avatarScope.name
         "start_section" -> state.startSection.name
         "call_photo_size" -> state.callPhotoSize.name
         "answer_mode" -> state.answerMode.name
@@ -376,6 +391,9 @@ class SettingsCommands @Inject constructor(
         "call_photo_style" -> context.getString(callPhotoStyleLabelRes(state.callPhotoStyle))
         "call_bg_incoming", "call_bg_outgoing" ->
             context.getString(callBgLabelRes(currentChoice(key, state)))
+        "avatar_no_photo", "avatar_unknown" ->
+            context.getString(avatarPictureLabelRes(key, currentChoice(key, state)))
+        "avatar_scope" -> context.getString(avatarScopeLabelRes(state.avatarScope))
         "start_section" -> context.getString(startChoiceLabelRes(state.startSection))
         "call_photo_size" -> context.getString(callPhotoSizeLabelRes(state.callPhotoSize))
         "answer_mode" -> context.getString(answerModeLabelRes(state.answerMode))
@@ -451,6 +469,9 @@ class SettingsCommands @Inject constructor(
             "call_photo_style" -> R.string.settings_call_photo
             "call_bg_incoming" -> R.string.settings_call_bg_incoming
             "call_bg_outgoing" -> R.string.settings_call_bg_outgoing
+            "avatar_no_photo" -> R.string.settings_avatar_no_photo
+            "avatar_unknown" -> R.string.settings_avatar_unknown
+            "avatar_scope" -> R.string.settings_avatar_scope
             "start_section" -> R.string.settings_start_section
             "call_photo_size" -> R.string.settings_call_photo_size
             "answer_mode" -> R.string.settings_answer_mode
@@ -578,6 +599,20 @@ class SettingsCommands @Inject constructor(
         /** Подпись варианта «Фон вызова» — для строки настройки и шторки. */
         fun callBgLabelRes(value: String): Int =
             if (value == CALL_BG_CUSTOM) R.string.call_bg_custom else R.string.call_bg_default
+
+        /** Подпись варианта картинки вместо фото (2.8.0): обычное — буквы или силуэт. */
+        fun avatarPictureLabelRes(key: String, value: String): Int = when {
+            value == CALL_BG_CUSTOM -> R.string.avatar_custom
+            key == "avatar_unknown" -> R.string.avatar_default_silhouette
+            else -> R.string.avatar_default_initials
+        }
+
+        /** Подпись «Где показывать картинки» (2.8.0). */
+        fun avatarScopeLabelRes(scope: AvatarScope): Int = when (scope) {
+            AvatarScope.EVERYWHERE -> R.string.avatar_scope_everywhere
+            AvatarScope.CALL_SCREEN -> R.string.avatar_scope_call
+            AvatarScope.LISTS -> R.string.avatar_scope_lists
+        }
 
         /** Подпись размера портрета на экране вызова (1.5.7). */
         fun callPhotoSizeLabelRes(size: CallPhotoSize): Int = when (size) {
@@ -716,6 +751,8 @@ class SettingsCommands @Inject constructor(
             "call_photo_style", "call_photo_size", "answer_mode", "ui_scale",
             // 2.7.4
             "call_bg_incoming", "call_bg_outgoing",
+            // 2.8.0
+            "avatar_no_photo", "avatar_unknown", "avatar_scope",
             // 2.7.0
             "start_section",
             "contact_name_format", "contact_sort",

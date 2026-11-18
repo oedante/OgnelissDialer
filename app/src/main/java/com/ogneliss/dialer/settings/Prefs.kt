@@ -224,6 +224,27 @@ enum class CallPhotoStyle {
  * пустая полоса — «Крупный» её занимает. Кто выбрал «Обычный» сам, у того
  * он и останется: в хранилище лежит его выбор.
  */
+/**
+ * ГДЕ ПОКАЗЫВАТЬ КАРТИНКИ ВМЕСТО ФОТО (2.8.0, AvatarPictures).
+ *
+ * Автор: «совместим варианты А и Б и дадим выбор пользователю в настройках, где
+ * применять». В списках картинка заменяет цветные буквы имени — людей труднее
+ * различить, на экране вызова — пустое место: выбирает человек.
+ */
+enum class AvatarScope {
+    EVERYWHERE,
+    CALL_SCREEN,
+    LISTS;
+
+    val onCallScreen: Boolean get() = this != LISTS
+    val inLists: Boolean get() = this != CALL_SCREEN
+
+    companion object {
+        fun from(name: String?): AvatarScope =
+            entries.firstOrNull { it.name == name } ?: EVERYWHERE
+    }
+}
+
 enum class CallPhotoSize {
     NORMAL,
     LARGE;
@@ -582,6 +603,10 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
          */
         val CALL_BG_INCOMING = longPreferencesKey("call_bg_incoming")
         val CALL_BG_OUTGOING = longPreferencesKey("call_bg_outgoing")
+        /** Картинки вместо фото (2.8.0): отметки, как у фона вызова; где показывать. */
+        val AVATAR_NO_PHOTO = longPreferencesKey("avatar_no_photo")
+        val AVATAR_UNKNOWN = longPreferencesKey("avatar_unknown")
+        val AVATAR_SCOPE = stringPreferencesKey("avatar_scope")
         /** Фото звонящего: на весь экран, круг или квадрат (1.5.5). */
         val CALL_PHOTO_STYLE = stringPreferencesKey("call_photo_style")
         /** Размер портрета на экране вызова (1.5.7). */
@@ -955,6 +980,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      */
     val callBgIncoming: Flow<Long> = data.map { it[Keys.CALL_BG_INCOMING] ?: 0L }
     val callBgOutgoing: Flow<Long> = data.map { it[Keys.CALL_BG_OUTGOING] ?: 0L }
+    val avatarNoPhoto: Flow<Long> = data.map { it[Keys.AVATAR_NO_PHOTO] ?: 0L }
+    val avatarUnknown: Flow<Long> = data.map { it[Keys.AVATAR_UNKNOWN] ?: 0L }
+    val avatarScope: Flow<AvatarScope> = data.map { AvatarScope.from(it[Keys.AVATAR_SCOPE]) }
 
     /** Масштаб интерфейса (1.5.6): по умолчанию 90 % с 1.8.0 (было «Авто») — разбор в ui/theme/UiScale.kt. */
     val uiScale: Flow<UiScale> = data.map { UiScale.from(it[Keys.UI_SCALE]) }
@@ -1356,6 +1384,12 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("call_bg_incoming", mark) { it[Keys.CALL_BG_INCOMING] = mark }
     suspend fun setCallBgOutgoing(mark: Long) =
         edit("call_bg_outgoing", mark) { it[Keys.CALL_BG_OUTGOING] = mark }
+    suspend fun setAvatarNoPhoto(mark: Long) =
+        edit("avatar_no_photo", mark) { it[Keys.AVATAR_NO_PHOTO] = mark }
+    suspend fun setAvatarUnknown(mark: Long) =
+        edit("avatar_unknown", mark) { it[Keys.AVATAR_UNKNOWN] = mark }
+    suspend fun setAvatarScope(v: AvatarScope) =
+        edit("avatar_scope", v.name) { it[Keys.AVATAR_SCOPE] = v.name }
     suspend fun setFontScale(v: Float) =
         edit("font_scale", v) { it[Keys.FONT_SCALE] = FontScale.clamp(v) }
     suspend fun setUiScale(v: UiScale) =

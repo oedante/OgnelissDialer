@@ -262,6 +262,13 @@ class InCallActivity : ComponentActivity() {
             // Свой фон вызова (2.7.4): отметки снимков входящих и исходящих; 0 — нет
             val callBgIncoming by prefs.callBgIncoming.collectAsStateWithLifecycle(initialValue = 0L)
             val callBgOutgoing by prefs.callBgOutgoing.collectAsStateWithLifecycle(initialValue = 0L)
+            // Картинки вместо фото (2.8.0, AvatarPictures): звонящий без фото
+            val avatarNoPhoto by prefs.avatarNoPhoto.collectAsStateWithLifecycle(initialValue = 0L)
+            val avatarUnknown by prefs.avatarUnknown.collectAsStateWithLifecycle(initialValue = 0L)
+            val avatarScope by prefs.avatarScope.collectAsStateWithLifecycle(initialValue = com.ogneliss.dialer.settings.AvatarScope.EVERYWHERE)
+            val avatarPictures = remember(avatarNoPhoto, avatarUnknown, avatarScope) {
+                com.ogneliss.dialer.ui.components.AvatarPictures.of(applicationContext, avatarNoPhoto, avatarUnknown, avatarScope)
+            }
             // Фото звонящего (1.5.5). null — настройка ещё не прочитана:
             // фото не показываем ни так, ни так, чтобы оно не мигнуло
             // на весь экран перед кругом
@@ -288,7 +295,8 @@ class InCallActivity : ComponentActivity() {
                 ProvideWindowLayout(this@InCallActivity) {
                 androidx.compose.runtime.CompositionLocalProvider(
                     com.ogneliss.dialer.ui.theme.LocalAppearance provides
-                        com.ogneliss.dialer.ui.theme.Appearance(buttonLabels = buttonLabels)
+                        com.ogneliss.dialer.ui.theme.Appearance(buttonLabels = buttonLabels),
+                    com.ogneliss.dialer.ui.components.LocalAvatarPictures provides avatarPictures
                 ) {
                 val calls by CallManager.calls.collectAsStateWithLifecycle()
                 val revision by CallManager.revision.collectAsStateWithLifecycle()
@@ -702,9 +710,17 @@ private fun InCallScreen(
      * produceState: пока запрос идёт, показывается обобщённая иконка,
      * и экран не ждёт результата.
      */
-    val photoUri by produceState<String?>(initialValue = null, number) {
+    val contactPhotoUri by produceState<String?>(initialValue = null, number) {
         value = suspendRunCatching { contactsRepo.photoUriForNumber(number) }.getOrNull()
     }
+    /*
+     * Фото нет — своя картинка (2.8.0, AvatarPictures), если её показывать на
+     * экране вызова: контакт без фото или неизвестный номер. Дальше — как фото:
+     * круг, квадрат, по ширине или во весь экран — по настройке.
+     */
+    val avatarPictures = com.ogneliss.dialer.ui.components.LocalAvatarPictures.current
+    val photoUri = contactPhotoUri?.takeIf { it.isNotBlank() }
+        ?: avatarPictures.forCallScreen(known = !name.isNullOrBlank())
     // Тип номера — только если он понадобится: настройка включена
     // и звонит сохранённый контакт
     val numberType by produceState<String?>(null, number, hideContactNumber, name) {

@@ -1123,4 +1123,17 @@
     <string name="keywords_call_bg">background wallpaper image picture photo screen call</string>
     <string name="settings_section_call_screen">Call screen</string>
     <string name="settings_section_call_screen_summary">Photo, background and number on the call screen</string>
+    <string name="settings_group_avatar_pictures">Pictures without photo</string>
+    <string name="settings_avatar_no_photo">Contacts without photo</string>
+    <string name="settings_avatar_no_photo_text">Your picture instead of initials</string>
+    <string name="settings_avatar_unknown">Unknown numbers</string>
+    <string name="settings_avatar_unknown_text">Your picture instead of the silhouette</string>
+    <string name="settings_avatar_scope">Where to show pictures</string>
+    <string name="avatar_default_initials">Initials</string>
+    <string name="avatar_default_silhouette">Silhouette</string>
+    <string name="avatar_custom">Your picture</string>
+    <string name="avatar_scope_everywhere">Everywhere</string>
+    <string name="avatar_scope_call">On the call screen</string>
+    <string name="avatar_scope_lists">In lists and cards</string>
+    <string name="keywords_avatar_pictures">avatar, picture, placeholder, no photo, unknown, image</string>
 </resources>
