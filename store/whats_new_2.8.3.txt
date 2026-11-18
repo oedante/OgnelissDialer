@@ -1,0 +1,81 @@
+<ru-RU>
+• Уведомления SMS — «разговором», как у мессенджеров: круглый портрет слева, значок приложения в углу (и на Android 11–12).
+</ru-RU>
+<ar>
+• إشعارات SMS تظهر كمحادثة مثل تطبيقات المراسلة: صورة دائرية على اليسار وأيقونة التطبيق في الزاوية (وعلى Android 11–12 أيضًا).
+</ar>
+<cs-CZ>
+• Oznámení SMS jako konverzace v messengerech: kulatá fotka vlevo, ikona aplikace v rohu (i na Androidu 11–12).
+</cs-CZ>
+<da-DK>
+• SMS-notifikationer som samtaler, ligesom i beskedapps: rundt foto til venstre, appikon i hjørnet (også på Android 11–12).
+</da-DK>
+<de-DE>
+• SMS-Benachrichtigungen als Unterhaltung wie bei Messengern: rundes Foto links, App-Symbol in der Ecke (auch unter Android 11–12).
+</de-DE>
+<en-US>
+• SMS notifications now show as conversations, like messengers: round photo on the left, app icon in the corner (Android 11–12 too).
+</en-US>
+<es-ES>
+• Las notificaciones de SMS se muestran como conversación, como en las apps de mensajería: foto redonda a la izquierda e icono de la app en la esquina (también en Android 11–12).
+</es-ES>
+<fi-FI>
+• Tekstiviesti-ilmoitukset keskusteluina kuten viestisovelluksissa: pyöreä kuva vasemmalla, sovelluksen kuvake kulmassa (myös Android 11–12).
+</fi-FI>
+<fr-FR>
+• Les notifications SMS s’affichent en conversation, comme les messageries : photo ronde à gauche, icône de l’appli dans le coin (Android 11–12 aussi).
+</fr-FR>
+<hi-IN>
+• SMS सूचनाएँ अब मैसेंजर की तरह बातचीत के रूप में: बाईं ओर गोल फ़ोटो, कोने में ऐप आइकन (Android 11–12 पर भी)।
+</hi-IN>
+<hu-HU>
+• Az SMS-értesítések beszélgetésként jelennek meg, mint az üzenetküldőknél: kerek fotó balra, alkalmazásikon a sarokban (Android 11–12-n is).
+</hu-HU>
+<id>
+• Notifikasi SMS kini tampil sebagai percakapan seperti aplikasi pesan: foto bulat di kiri, ikon aplikasi di sudut (juga di Android 11–12).
+</id>
+<it-IT>
+• Le notifiche SMS appaiono come conversazioni, come nelle app di messaggistica: foto rotonda a sinistra, icona dell’app nell’angolo (anche su Android 11–12).
+</it-IT>
+<iw-IL>
+• התראות SMS מוצגות כשיחה, כמו באפליקציות מסרים: תמונה עגולה משמאל וסמל האפליקציה בפינה (גם ב-Android 11–12).
+</iw-IL>
+<ja-JP>
+• SMS 通知をメッセンジャーと同じ「会話」表示に：左に丸い写真、隅にアプリのアイコン（Android 11–12 でも）。
+</ja-JP>
+<ko-KR>
+• SMS 알림이 메신저처럼 대화로 표시됩니다: 왼쪽에 둥근 사진, 모서리에 앱 아이콘(Android 11–12에서도).
+</ko-KR>
+<nl-NL>
+• Sms-meldingen verschijnen als gesprek, zoals bij messengers: ronde foto links, app-pictogram in de hoek (ook op Android 11–12).
+</nl-NL>
+<no-NO>
+• SMS-varsler vises som samtaler, som i meldingsapper: rundt bilde til venstre, appikon i hjørnet (også på Android 11–12).
+</no-NO>
+<pl-PL>
+• Powiadomienia SMS jako rozmowa, jak w komunikatorach: okrągłe zdjęcie po lewej, ikona aplikacji w rogu (także na Androidzie 11–12).
+</pl-PL>
+<pt-BR>
+• Notificações de SMS aparecem como conversa, como nos mensageiros: foto redonda à esquerda e ícone do app no canto (também no Android 11–12).
+</pt-BR>
+<ro>
+• Notificările SMS apar ca o conversație, ca în aplicațiile de mesagerie: fotografie rotundă în stânga, pictograma aplicației în colț (și pe Android 11–12).
+</ro>
+<sk>
+• Upozornenia SMS ako konverzácia, ako v messengeroch: okrúhla fotka vľavo, ikona aplikácie v rohu (aj na Androide 11–12).
+</sk>
+<sv-SE>
+• SMS-aviseringar visas som konversationer, som i meddelandeappar: rund bild till vänster, appikon i hörnet (även på Android 11–12).
+</sv-SE>
+<th>
+• การแจ้งเตือน SMS แสดงเป็นการสนทนาเหมือนแอปแชต: รูปวงกลมทางซ้าย ไอคอนแอปที่มุม (บน Android 11–12 ด้วย)
+</th>
+<tr-TR>
+• SMS bildirimleri mesajlaşma uygulamaları gibi sohbet olarak görünür: solda yuvarlak fotoğraf, köşede uygulama simgesi (Android 11–12’de de).
+</tr-TR>
+<vi>
+• Thông báo SMS hiển thị dạng cuộc trò chuyện như ứng dụng nhắn tin: ảnh tròn bên trái, biểu tượng ứng dụng ở góc (cả trên Android 11–12).
+</vi>
+<zh-CN>
+• 短信通知像聊天应用一样以“对话”形式显示：左侧圆形头像，角落显示应用图标（Android 11–12 也支持）。
+</zh-CN>

@@ -122,7 +122,7 @@ object CallerCard {
         val kind = if (known) CallBackgrounds.Kind.AVATAR_NO_PHOTO else CallBackgrounds.Kind.AVATAR_UNKNOWN
         val key = "${kind.name}:$mark"
         synchronized(this) { placeholderCache?.takeIf { it.first == key }?.let { return@runCatching it.second } }
-        val bitmap = decode(context, Uri.fromFile(CallBackgrounds.file(context, kind)))
+        val bitmap = portrait(context, Uri.fromFile(CallBackgrounds.file(context, kind)))
         synchronized(this) { placeholderCache = key to bitmap }
         bitmap
     }.onFailure { Logger.w(TAG, "Своя картинка для уведомления не прочитана", it) }.getOrNull()
@@ -150,8 +150,26 @@ object CallerCard {
                 .getTypeLabel(context.resources, c.getInt(2), c.getString(3))
                 ?.toString()?.takeIf { it.isNotBlank() }
             val name = c.getString(4)?.takeIf { it.isNotBlank() }
-            Info(photoUri?.let { decode(context, Uri.parse(it)) }, label, name)
+            Info(photoUri?.let { portrait(context, Uri.parse(it)) }, label, name)
         }
+    }
+
+    /*
+     * КРУГЛЫЙ ПОРТРЕТ (2.8.3, снимок автора: в уведомлении SMS портрет квадратный).
+     * Обычный вид уведомления на части прошивок (ColorOS) рисует снимок как есть;
+     * круг — как в списках приложения и у CallStyle. Середина квадрата, края — прозрачные.
+     */
+    fun portrait(context: Context, uri: Uri): Bitmap? = decode(context, uri)?.let(::circle)
+
+    private fun circle(src: Bitmap): Bitmap {
+        val side = minOf(src.width, src.height)
+        val out = Bitmap.createBitmap(side, side, Bitmap.Config.ARGB_8888)
+        val canvas = android.graphics.Canvas(out)
+        val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG or android.graphics.Paint.FILTER_BITMAP_FLAG)
+        canvas.drawCircle(side / 2f, side / 2f, side / 2f, paint)
+        paint.xfermode = android.graphics.PorterDuffXfermode(android.graphics.PorterDuff.Mode.SRC_IN)
+        canvas.drawBitmap(src, (side - src.width) / 2f, (side - src.height) / 2f, paint)
+        return out
     }
 
     /** Снимок не больше [MAX_SIDE_PX] по стороне: уведомлению больше не нужно, а память — не лишняя. */

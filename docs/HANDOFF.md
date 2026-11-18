@@ -12,6 +12,12 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 18.11.2026 — 2.8.3 (88): SMS «разговором» на Android 11–12, портреты в уведомлениях круглые
+
+Разбор — `docs/RELEASE_NOTES_2.8.3.md`. Ярлык переписки — `setExcludedFromSurfaces` только
+с API 33 (androidx до 33 исключённый ярлык в систему не отдаёт); круглые портреты —
+`CallerCard.portrait`.
+
 ## 18.11.2026 — 2.8.2 (87): портрет в уведомлениях о пропущенных и напоминаниях, свои картинки в уведомлениях
 
 Разбор — `docs/RELEASE_NOTES_2.8.2.md`. `CallerCard.notifyWithPhoto` (уведомление сразу, с фото —
