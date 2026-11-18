@@ -8,7 +8,6 @@ import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
@@ -350,7 +349,17 @@ object MessageNotifications {
             .setPerson(person)
             .setIntent(openIntent(context, address))
             .setRank(SHORTCUT_RANK)
-            .setExcludedFromSurfaces(ShortcutInfoCompat.SURFACE_LAUNCHER)
+            /*
+             * Не в меню значка — только с Android 13 (2.8.3, снимок автора: SMS
+             * в шторке обычным уведомлением с квадратным портретом, а не
+             * «разговором», как у мессенджеров). До 13 androidx такой ярлык
+             * в систему не отдаёт вовсе (ShortcutManagerCompat.pushDynamicShortcut:
+             * исключённый из лаунчера при SDK ≤ 32 — только слушателям), и
+             * уведомление ссылалось на ярлык, которого в системе нет. На Android
+             * 11–12 ярлык переписки теперь бывает и в меню значка — в конце
+             * списка (ранг SHORTCUT_RANK).
+             */
+            .apply { if (Build.VERSION.SDK_INT >= 33) setExcludedFromSurfaces(ShortcutInfoCompat.SURFACE_LAUNCHER) }
             .apply { icon?.let { setIcon(it) } }
             .build()
         ShortcutManagerCompat.pushDynamicShortcut(context, shortcut)
@@ -515,10 +524,10 @@ object MessageNotifications {
     fun contactName(context: Context, number: String): String? = contactInfo(context, number)?.name
 
     /** Снимок контакта — значком собеседника и ярлыка; не открылся — без него. */
+    /** Портрет собеседника — круглый и уменьшенный (2.8.3, CallerCard.portrait). */
     private fun loadIcon(context: Context, photoUri: String): IconCompat? = runCatching {
-        context.contentResolver.openInputStream(Uri.parse(photoUri))?.use { stream ->
-            BitmapFactory.decodeStream(stream)?.let { IconCompat.createWithBitmap(it) }
-        }
+        com.ogneliss.dialer.call.CallerCard.portrait(context, Uri.parse(photoUri))
+            ?.let { IconCompat.createWithBitmap(it) }
     }.getOrNull()
 
     /** «Копировать код», «Ответить», «Прочитано», «Удалить», «Загрузить» из шторки. */
