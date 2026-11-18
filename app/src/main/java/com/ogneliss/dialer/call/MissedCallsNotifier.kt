@@ -111,11 +111,15 @@ object MissedCallsNotifier {
          * некуда, а в строке — «Номер скрыт», а не «-2».
          */
         val presentation = com.ogneliss.dialer.data.NumberPresentation.of(null, number)
-        val text = when {
+        /*
+         * «Последний: …» — имя из книги, если есть (2.8.2, CallerCard.Info.name;
+         * было — всегда номер), иначе номер; скрытый — «Номер скрыт».
+         */
+        fun textFor(card: CallerCard.Info?): String? = when {
             !number.isNullOrBlank() && presentation.hidden ->
                 context.getString(R.string.missed_calls_last, com.ogneliss.dialer.ui.components.hiddenNumberLabel(context, presentation))
             else -> number?.takeIf { it.isNotBlank() }?.let {
-                context.getString(R.string.missed_calls_last, PhoneFormatter.format(it))
+                context.getString(R.string.missed_calls_last, card?.name ?: PhoneFormatter.format(it))
             }
         }
         /*
@@ -150,10 +154,16 @@ object MissedCallsNotifier {
             Intent(context, CallControlReceiver::class.java).setAction(CallControlReceiver.ACTION_CLEAR_MISSED),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+        // Портрет последнего звонившего справа (2.8.2) — когда загрузится (CallerCard)
+        CallerCard.notifyWithPhoto(context, last) { card ->
+        // Пока грузилось фото, пришёл новый пропущенный — его покажет свой вызов show
+        if (card != null && savedCount(context) != count) return@notifyWithPhoto
+        val text = textFor(card)
         val notification = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_stat_missed)  // 1.3.4: свой значок у каждого типа уведомления
             .setContentTitle(title)
             .apply { if (text != null) setContentText(text) }
+            .apply { card?.photo?.let { setLargeIcon(it) } }
             .setNumber(count)
             .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
             .setCategory(Notification.CATEGORY_MISSED_CALL)
@@ -168,6 +178,7 @@ object MissedCallsNotifier {
             .setSilent(silent)
             .build()
         NotificationPermission.notify(context, ID, notification, LOG_WHAT)
+        }
         Logger.i("Missed", "Пропущенных: $count")
     }
 

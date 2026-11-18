@@ -238,10 +238,15 @@ object CallbackReminder {
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             )
 
+            // Портрет справа (2.8.2) — когда загрузится (CallerCard.notifyWithPhoto)
+            com.ogneliss.dialer.call.CallerCard.notifyWithPhoto(context, number) { card ->
             val n = NotificationCompat.Builder(context, CallNotifications.CHANNEL_REMINDER)
                 .setSmallIcon(R.drawable.ic_stat_reminder)  // 1.3.4: свой значок у каждого типа уведомления
                 .setContentTitle(context.getString(R.string.reminder_title, name))
                 .setContentText(number)
+                .apply { card?.photo?.let { setLargeIcon(it) } }
+                // Обновление с портретом — без второго звука
+                .setOnlyAlertOnce(true)
                 .setAutoCancel(true)
                 .setContentIntent(cardIntent)
                 .addAction(0, context.getString(R.string.action_call), callIntent)
@@ -254,6 +259,7 @@ object CallbackReminder {
             NotificationPermission.notify(
                 context, number.hashCode(), n, "напоминание перезвонить"
             )
+            }
         }
     }
 }

@@ -183,6 +183,9 @@ object MessageNotifications {
          * берёт у приложения целиком, её из одного приложения не поменять.
          */
         val photo = contact?.photo?.let { loadIcon(context, it) }
+            // 2.8.2: своя картинка из настроек («Где показывать картинки» = «Везде»)
+            ?: com.ogneliss.dialer.call.CallerCard.placeholder(context, known = contact != null)
+                ?.let { IconCompat.createWithBitmap(it) }
             ?: runCatching { IconCompat.createWithResource(context, R.drawable.ic_shortcut_sms) }.getOrNull()
         val dialable = address.any { it.isDigit() } && address.none { it.isLetter() }
         val me = Person.Builder().setName(context.getString(R.string.sms_me)).build()

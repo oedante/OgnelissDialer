@@ -1,0 +1,108 @@
+<ru-RU>
+• Портрет звонящего в уведомлениях о пропущенных и в напоминаниях «перезвонить»; в пропущенных — имя из контактов.
+• Свои картинки для контактов без фото и неизвестных номеров — и в уведомлениях (при «Где показывать картинки» = «Везде»).
+</ru-RU>
+<ar>
+• صورة المتصل في إشعارات المكالمات الفائتة وتذكيرات «معاودة الاتصال»، واسم جهة الاتصال في المكالمات الفائتة.
+• صورك الخاصة لجهات الاتصال بلا صورة وللأرقام غير المعروفة تظهر في الإشعارات أيضًا (عند اختيار «في كل مكان»).
+</ar>
+<cs-CZ>
+• Fotka volajícího v oznámeních o zmeškaných hovorech a připomínkách „zavolat zpět“; u zmeškaných jméno z kontaktů.
+• Vlastní obrázky pro kontakty bez fotky a neznámá čísla i v oznámeních (při volbě „Všude“).
+</cs-CZ>
+<da-DK>
+• Foto af den, der ringer, i notifikationer om ubesvarede opkald og påmindelser om at ringe tilbage; navn fra kontakter ved ubesvarede.
+• Egne billeder til kontakter uden foto og ukendte numre også i notifikationer (ved „Overalt“).
+</da-DK>
+<de-DE>
+• Foto des Anrufers in Benachrichtigungen zu verpassten Anrufen und Rückruf-Erinnerungen; bei verpassten Anrufen der Name aus den Kontakten.
+• Eigene Bilder für Kontakte ohne Foto und unbekannte Nummern auch in Benachrichtigungen (bei „Überall“).
+</de-DE>
+<en-US>
+• Caller photo in missed call and call-back reminder notifications; missed calls show the contact name.
+• Your own pictures for contacts without a photo and unknown numbers now appear in notifications too (with "Everywhere").
+</en-US>
+<es-ES>
+• Foto de quien llama en las notificaciones de llamadas perdidas y recordatorios para devolver la llamada; en las perdidas, el nombre del contacto.
+• Las imágenes propias para contactos sin foto y números desconocidos también aparecen en las notificaciones (con «En todas partes»).
+</es-ES>
+<fi-FI>
+• Soittajan kuva vastaamattomien puhelujen ja takaisinsoittomuistutusten ilmoituksissa; vastaamattomissa nimi yhteystiedoista.
+• Omat kuvat yhteystiedoille ilman kuvaa ja tuntemattomille numeroille myös ilmoituksissa (valinnalla ”Kaikkialla”).
+</fi-FI>
+<fr-FR>
+• Photo de l’appelant dans les notifications d’appels manqués et les rappels « rappeler » ; nom du contact pour les appels manqués.
+• Vos images pour les contacts sans photo et les numéros inconnus apparaissent aussi dans les notifications (avec « Partout »).
+</fr-FR>
+<hi-IN>
+• छूटी कॉल और «वापस कॉल करें» रिमाइंडर की सूचनाओं में कॉल करने वाले की फ़ोटो; छूटी कॉल में संपर्क का नाम।
+• बिना फ़ोटो वाले संपर्कों और अनजान नंबरों की आपकी तस्वीरें अब सूचनाओं में भी («हर जगह» चुनने पर)।
+</hi-IN>
+<hu-HU>
+• A hívó fotója a nem fogadott hívások és a visszahívási emlékeztetők értesítéseiben; nem fogadott hívásnál a névjegy neve.
+• A saját képek a fotó nélküli névjegyekhez és ismeretlen számokhoz az értesítésekben is („Mindenhol” beállításnál).
+</hu-HU>
+<id>
+• Foto penelepon di notifikasi panggilan tak terjawab dan pengingat telepon balik; nama kontak di panggilan tak terjawab.
+• Gambar sendiri untuk kontak tanpa foto dan nomor tak dikenal kini juga di notifikasi (dengan “Di mana saja”).
+</id>
+<it-IT>
+• Foto del chiamante nelle notifiche di chiamate perse e nei promemoria «richiama»; nelle perse, il nome del contatto.
+• Le immagini personali per contatti senza foto e numeri sconosciuti compaiono anche nelle notifiche (con «Ovunque»).
+</it-IT>
+<iw-IL>
+• תמונת המתקשר בהתראות על שיחות שלא נענו ובתזכורות „להתקשר בחזרה”; בשיחות שלא נענו — שם איש הקשר.
+• התמונות שלך לאנשי קשר ללא תמונה ולמספרים לא מוכרים מופיעות גם בהתראות (באפשרות „בכל מקום”).
+</iw-IL>
+<ja-JP>
+• 不在着信と「折り返し」リマインダーの通知に発信者の写真を表示。不在着信には連絡先の名前を表示。
+• 写真のない連絡先と不明な番号の独自画像が通知にも表示されます（「すべて」を選択時）。
+</ja-JP>
+<ko-KR>
+• 부재중 전화와 ‘다시 전화’ 알림에 발신자 사진 표시, 부재중 전화에는 연락처 이름 표시.
+• 사진 없는 연락처와 알 수 없는 번호의 나만의 이미지가 알림에도 표시됩니다(‘모든 곳’ 선택 시).
+</ko-KR>
+<nl-NL>
+• Foto van de beller in meldingen over gemiste oproepen en terugbelherinneringen; bij gemiste oproepen de contactnaam.
+• Eigen afbeeldingen voor contacten zonder foto en onbekende nummers nu ook in meldingen (bij ‘Overal’).
+</nl-NL>
+<no-NO>
+• Bilde av den som ringer i varsler om tapte anrop og påminnelser om å ringe tilbake; navn fra kontakter ved tapte anrop.
+• Egne bilder for kontakter uten bilde og ukjente numre også i varsler (ved «Overalt»).
+</no-NO>
+<pl-PL>
+• Zdjęcie dzwoniącego w powiadomieniach o nieodebranych połączeniach i przypomnieniach „oddzwoń”; przy nieodebranych nazwa z kontaktów.
+• Własne obrazy dla kontaktów bez zdjęcia i nieznanych numerów także w powiadomieniach (przy „Wszędzie”).
+</pl-PL>
+<pt-BR>
+• Foto de quem liga nas notificações de chamadas perdidas e lembretes de retorno; nas perdidas, o nome do contato.
+• Imagens próprias para contatos sem foto e números desconhecidos também nas notificações (com “Em todo lugar”).
+</pt-BR>
+<ro>
+• Fotografia apelantului în notificările de apeluri pierdute și mementourile „sună înapoi”; la cele pierdute, numele din contacte.
+• Imaginile proprii pentru contactele fără fotografie și numerele necunoscute apar și în notificări (cu „Peste tot”).
+</ro>
+<sk>
+• Fotka volajúceho v upozorneniach na zmeškané hovory a pripomienkach „zavolať späť“; pri zmeškaných meno z kontaktov.
+• Vlastné obrázky pre kontakty bez fotky a neznáme čísla aj v upozorneniach (pri voľbe „Všade“).
+</sk>
+<sv-SE>
+• Foto på den som ringer i aviseringar om missade samtal och påminnelser om att ringa tillbaka; namn från kontakter vid missade samtal.
+• Egna bilder för kontakter utan foto och okända nummer även i aviseringar (med ”Överallt”).
+</sv-SE>
+<th>
+• รูปผู้โทรในการแจ้งเตือนสายที่ไม่ได้รับและการเตือน «โทรกลับ» สายที่ไม่ได้รับแสดงชื่อจากรายชื่อติดต่อ
+• รูปของคุณสำหรับรายชื่อที่ไม่มีรูปและหมายเลขที่ไม่รู้จักแสดงในการแจ้งเตือนด้วย (เมื่อเลือก «ทุกที่»)
+</th>
+<tr-TR>
+• Cevapsız arama ve “geri ara” hatırlatma bildirimlerinde arayanın fotoğrafı; cevapsız aramalarda kişi adı.
+• Fotoğrafı olmayan kişiler ve bilinmeyen numaralar için kendi resimleriniz bildirimlerde de görünür (“Her yerde” seçiliyse).
+</tr-TR>
+<vi>
+• Ảnh người gọi trong thông báo cuộc gọi nhỡ và lời nhắc gọi lại; cuộc gọi nhỡ hiện tên trong danh bạ.
+• Ảnh riêng cho liên hệ không có ảnh và số lạ nay hiện cả trong thông báo (khi chọn “Mọi nơi”).
+</vi>
+<zh-CN>
+• 未接来电和“回电”提醒通知中显示来电者照片；未接来电显示联系人姓名。
+• 为无照片联系人和未知号码设置的自定义图片也会显示在通知中（选择“全部显示”时）。
+</zh-CN>

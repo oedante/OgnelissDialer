@@ -10,6 +10,7 @@ import android.provider.ContactsContract
 import com.ogneliss.dialer.log.Logger
 import com.ogneliss.dialer.util.PermissionGuard
 import java.util.concurrent.Executors
+import kotlinx.coroutines.flow.first
 
 /**
  * ФОТО И ТИП НОМЕРА ЗВОНЯЩЕГО — ДЛЯ УВЕДОМЛЕНИЯ ВЫЗОВА (2.1.0).
@@ -73,12 +74,64 @@ object CallerCard {
         if (!PermissionGuard.canReadContacts(context)) return
         val app = context.applicationContext
         io.execute {
-            val info = runCatching { query(app, number) }
+            val found = runCatching { query(app, number) }
                 .onFailure { Logger.w(TAG, "Фото звонящего не загрузилось", it) }
                 .getOrNull() ?: Info(null, null)
+            // Фото нет — своя картинка (2.8.2, placeholder): контакт без фото или неизвестный
+            val info = if (found.photo != null) found
+            else found.copy(photo = placeholder(app, known = found.name != null))
             synchronized(cache) { cache[key(number)] = info }
             if (info.photo != null || info.typeLabel != null || info.name != null) main.post { onLoaded(info) }
         }
+    }
+
+    /**
+     * Уведомление с портретом звонящего (2.8.2, автор: портрет в уведомлениях
+     * о пропущенных и напоминаниях — вариант «А»: обычный вид Android, значок
+     * приложения слева, портрет справа). [post] — сразу, с тем, что уже
+     * в памяти (часто — ничего); загрузились фото или имя — ещё раз, тем же
+     * номером уведомления. Повторного звука нет: у таких уведомлений
+     * setOnlyAlertOnce.
+     */
+    fun notifyWithPhoto(context: Context, number: String?, post: (Info?) -> Unit) {
+        val cached = cached(number)
+        post(cached)
+        if (cached == null) load(context, number) { post(it) }
+    }
+
+    /*
+     * КАРТИНКА ВМЕСТО ФОТО В УВЕДОМЛЕНИЯХ (2.8.2, автор: «да» — подставлять
+     * картинки из 2.8.0 и в уведомления). Только при «Где показывать картинки» =
+     * «Везде»: отдельного пункта для уведомлений нет. Читается в фоновом потоке
+     * (настройки — через точку входа Hilt, как у значков на главном экране);
+     * не ответили за секунду — картинки нет. Уменьшенная копия держится
+     * в памяти, пока картинку не заменили (отметка — в ключе).
+     */
+    private var placeholderCache: Pair<String, Bitmap?>? = null
+
+    /** Своя картинка для звонящего без фото; null — не задана или показывать не везде. */
+    fun placeholder(context: Context, known: Boolean): Bitmap? = runCatching {
+        val prefs = dagger.hilt.android.EntryPointAccessors
+            .fromApplication(context.applicationContext, PrefsEntryPoint::class.java).prefs()
+        val (scope, mark) = kotlinx.coroutines.runBlocking {
+            kotlinx.coroutines.withTimeoutOrNull(1_000L) {
+                prefs.avatarScope.first() to (if (known) prefs.avatarNoPhoto.first() else prefs.avatarUnknown.first())
+            }
+        } ?: return@runCatching null
+        if (scope != com.ogneliss.dialer.settings.AvatarScope.EVERYWHERE || mark <= 0L) return@runCatching null
+        val kind = if (known) CallBackgrounds.Kind.AVATAR_NO_PHOTO else CallBackgrounds.Kind.AVATAR_UNKNOWN
+        val key = "${kind.name}:$mark"
+        synchronized(this) { placeholderCache?.takeIf { it.first == key }?.let { return@runCatching it.second } }
+        val bitmap = decode(context, Uri.fromFile(CallBackgrounds.file(context, kind)))
+        synchronized(this) { placeholderCache = key to bitmap }
+        bitmap
+    }.onFailure { Logger.w(TAG, "Своя картинка для уведомления не прочитана", it) }.getOrNull()
+
+    /** Настройки для картинок: объект живёт вне графа Hilt. */
+    @dagger.hilt.EntryPoint
+    @dagger.hilt.InstallIn(dagger.hilt.components.SingletonComponent::class)
+    interface PrefsEntryPoint {
+        fun prefs(): com.ogneliss.dialer.settings.Prefs
     }
 
     private fun query(context: Context, number: String): Info? {
