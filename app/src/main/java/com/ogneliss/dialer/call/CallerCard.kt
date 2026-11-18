@@ -81,6 +81,20 @@ object CallerCard {
         }
     }
 
+    /**
+     * Уведомление с портретом звонящего (2.8.2, автор: портрет в уведомлениях
+     * о пропущенных и напоминаниях — вариант «А»: обычный вид Android, значок
+     * приложения слева, портрет справа). [post] — сразу, с тем, что уже
+     * в памяти (часто — ничего); загрузились фото или имя — ещё раз, тем же
+     * номером уведомления. Повторного звука нет: у таких уведомлений
+     * setOnlyAlertOnce.
+     */
+    fun notifyWithPhoto(context: Context, number: String?, post: (Info?) -> Unit) {
+        val cached = cached(number)
+        post(cached)
+        if (cached == null) load(context, number) { post(it) }
+    }
+
     private fun query(context: Context, number: String): Info? {
         val uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number))
         val projection = arrayOf(

@@ -124,12 +124,17 @@ object CallbackSuggestion {
             )
         }
 
-        NotificationPermission.notify(
-            context,
-            NOTIFICATION_ID_BASE + number.hashCode(),
-            builder.build(),
-            "предложение перезвонить"
-        )
+        // Портрет справа (2.8.2) — когда загрузится; обновление — без второго звука
+        builder.setOnlyAlertOnce(true)
+        com.ogneliss.dialer.call.CallerCard.notifyWithPhoto(context, number) { card ->
+            card?.photo?.let { builder.setLargeIcon(it) }
+            NotificationPermission.notify(
+                context,
+                NOTIFICATION_ID_BASE + number.hashCode(),
+                builder.build(),
+                "предложение перезвонить"
+            )
+        }
     }
 
     private fun remindIntent(
