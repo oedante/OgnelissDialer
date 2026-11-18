@@ -12,6 +12,12 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 18.11.2026 — 2.8.2 (87): портрет в уведомлениях о пропущенных и напоминаниях, свои картинки в уведомлениях
+
+Разбор — `docs/RELEASE_NOTES_2.8.2.md`. `CallerCard.notifyWithPhoto` (уведомление сразу, с фото —
+обновлением), `CallerCard.placeholder` (своя картинка при «Везде», настройки — через
+`CallerCard.PrefsEntryPoint`).
+
 ## 18.11.2026 — 2.8.1 (86): подписи кнопок разговора над своим фоном вызова
 
 Разбор — `docs/RELEASE_NOTES_2.8.1.md`. Цвет подписей — `customCallControlsColor`
