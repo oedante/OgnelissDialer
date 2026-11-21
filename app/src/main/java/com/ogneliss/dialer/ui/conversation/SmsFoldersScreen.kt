@@ -88,6 +88,7 @@ internal fun smsFolderLabel(folder: SmsFolder): Int = when (folder) {
     SmsFolder.SERVICE -> R.string.sms_folder_service
     SmsFolder.UNREAD -> R.string.sms_folder_unread
     SmsFolder.STARRED -> R.string.sms_folder_starred
+    SmsFolder.BLOCKED -> R.string.sms_folder_blocked
 }
 
 /**

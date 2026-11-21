@@ -1,0 +1,135 @@
+<ru-RU>
+• SMS: папка «Заблокированные» и отдельный размер текста сообщений.
+• Ответ и сброс свайпом вверх и вниз.
+• Новый контакт можно сохранить в DAVx⁵ и другие аккаунты; поиск в журнале точнее.
+</ru-RU>
+<ar>
+• الرسائل: مجلد «المحظورة» وحجم مستقل لنص الرسائل.
+• الرد والرفض بالسحب للأعلى وللأسفل.
+• حفظ جهة اتصال جديدة في DAVx⁵ وحسابات أخرى؛ بحث أدق في سجل المكالمات.
+</ar>
+<cs-CZ>
+• SMS: složka „Blokované“ a samostatná velikost textu zpráv.
+• Přijetí a odmítnutí přejetím nahoru a dolů.
+• Nový kontakt lze uložit do DAVx⁵ a dalších účtů; přesnější hledání v historii.
+</cs-CZ>
+<da-DK>
+• SMS: mappen „Blokeret“ og separat tekststørrelse for beskeder.
+• Besvar og afvis ved at stryge op og ned.
+• Ny kontakt kan gemmes i DAVx⁵ og andre konti; mere præcis søgning i opkaldsloggen.
+</da-DK>
+<de-DE>
+• SMS: Ordner „Blockiert“ und eigene Textgröße für Nachrichten.
+• Annehmen und Ablehnen per Wischen nach oben und unten.
+• Neue Kontakte auch in DAVx⁵ und anderen Konten speichern; genauere Suche in der Anrufliste.
+</de-DE>
+<en-US>
+• SMS: "Blocked" folder and a separate message text size.
+• Answer and decline by swiping up and down.
+• Save new contacts to DAVx⁵ and other accounts; more accurate call log search.
+</en-US>
+<es-ES>
+• SMS: carpeta «Bloqueados» y tamaño de texto propio para los mensajes.
+• Contestar y rechazar deslizando hacia arriba y hacia abajo.
+• Guarda contactos nuevos en DAVx⁵ y otras cuentas; búsqueda más precisa en el registro.
+</es-ES>
+<fi-FI>
+• Tekstiviestit: kansio ”Estetyt” ja oma tekstikoko viesteille.
+• Vastaa ja hylkää pyyhkäisemällä ylös ja alas.
+• Uuden yhteystiedon voi tallentaa DAVx⁵:een ja muihin tileihin; tarkempi haku puheluhistoriassa.
+</fi-FI>
+<fr-FR>
+• SMS : dossier « Bloqués » et taille de texte propre aux messages.
+• Répondre et refuser en glissant vers le haut et le bas.
+• Enregistrement des nouveaux contacts dans DAVx⁵ et d’autres comptes ; recherche plus précise dans le journal.
+</fr-FR>
+<hi-IN>
+• SMS: «ब्लॉक किए गए» फ़ोल्डर और संदेशों के टेक्स्ट का अलग आकार।
+• ऊपर और नीचे स्वाइप करके उठाएँ और काटें।
+• नया संपर्क DAVx⁵ और अन्य खातों में सहेजें; कॉल लॉग में अधिक सटीक खोज।
+</hi-IN>
+<hu-HU>
+• SMS: „Letiltott” mappa és külön szövegméret az üzenetekhez.
+• Hívás fogadása és elutasítása felfelé és lefelé húzással.
+• Új névjegy menthető a DAVx⁵-be és más fiókokba; pontosabb keresés a hívásnaplóban.
+</hu-HU>
+<id>
+• SMS: folder “Diblokir” dan ukuran teks pesan tersendiri.
+• Jawab dan tolak dengan geser ke atas dan ke bawah.
+• Kontak baru bisa disimpan ke DAVx⁵ dan akun lain; pencarian log panggilan lebih tepat.
+</id>
+<it-IT>
+• SMS: cartella «Bloccati» e dimensione del testo dei messaggi separata.
+• Rispondi e rifiuta scorrendo verso l’alto e verso il basso.
+• Nuovi contatti salvabili in DAVx⁵ e altri account; ricerca nel registro più precisa.
+</it-IT>
+<iw-IL>
+• SMS: תיקייה „חסומים” וגודל טקסט נפרד להודעות.
+• מענה ודחייה בהחלקה למעלה ולמטה.
+• שמירת איש קשר חדש ב-DAVx⁵ ובחשבונות אחרים; חיפוש מדויק יותר ביומן השיחות.
+</iw-IL>
+<ja-JP>
+• SMS：「ブロック済み」フォルダと、メッセージ本文の文字サイズ設定。
+• 上下スワイプで応答・拒否。
+• 新しい連絡先を DAVx⁵ などのアカウントに保存可能。通話履歴の検索がより正確に。
+</ja-JP>
+<ko-KR>
+• SMS: ‘차단됨’ 폴더와 메시지 글자 크기 별도 설정.
+• 위아래로 스와이프해 받기·거절.
+• 새 연락처를 DAVx⁵ 등 다른 계정에 저장; 통화 기록 검색이 더 정확해졌습니다.
+</ko-KR>
+<nl-NL>
+• Sms: map ‘Geblokkeerd’ en een eigen tekstgrootte voor berichten.
+• Opnemen en weigeren door omhoog en omlaag te vegen.
+• Nieuwe contacten opslaan in DAVx⁵ en andere accounts; nauwkeuriger zoeken in de oproeplijst.
+</nl-NL>
+<no-NO>
+• SMS: mappen «Blokkert» og egen tekststørrelse for meldinger.
+• Svar og avvis ved å sveipe opp og ned.
+• Nye kontakter kan lagres i DAVx⁵ og andre kontoer; mer presist søk i anropsloggen.
+</no-NO>
+<pl-PL>
+• SMS: folder „Zablokowane” i osobny rozmiar tekstu wiadomości.
+• Odbieranie i odrzucanie przesunięciem w górę i w dół.
+• Nowy kontakt można zapisać w DAVx⁵ i innych kontach; dokładniejsze wyszukiwanie w rejestrze.
+</pl-PL>
+<pt-BR>
+• SMS: pasta “Bloqueados” e tamanho de texto próprio para as mensagens.
+• Atender e recusar deslizando para cima e para baixo.
+• Salve novos contatos no DAVx⁵ e em outras contas; busca mais precisa no histórico.
+</pt-BR>
+<ro>
+• SMS: dosarul „Blocate” și mărime separată a textului mesajelor.
+• Răspuns și respingere glisând în sus și în jos.
+• Contactele noi se pot salva în DAVx⁵ și alte conturi; căutare mai precisă în istoricul apelurilor.
+</ro>
+<sk>
+• SMS: priečinok „Blokované“ a samostatná veľkosť textu správ.
+• Prijatie a odmietnutie potiahnutím nahor a nadol.
+• Nový kontakt možno uložiť do DAVx⁵ a ďalších účtov; presnejšie hľadanie v histórii.
+</sk>
+<sv-SE>
+• SMS: mappen ”Blockerade” och egen textstorlek för meddelanden.
+• Svara och avvisa genom att svepa uppåt och nedåt.
+• Nya kontakter kan sparas i DAVx⁵ och andra konton; mer exakt sökning i samtalsloggen.
+</sv-SE>
+<th>
+• SMS: โฟลเดอร์ «ถูกบล็อก» และขนาดตัวอักษรข้อความแยกต่างหาก
+• รับและปฏิเสธสายด้วยการปัดขึ้นและลง
+• บันทึกรายชื่อใหม่ลง DAVx⁵ และบัญชีอื่นได้ ค้นหาในประวัติการโทรแม่นยำขึ้น
+</th>
+<tr-TR>
+• SMS: “Engellenenler” klasörü ve mesajlar için ayrı yazı boyutu.
+• Yukarı ve aşağı kaydırarak cevaplama ve reddetme.
+• Yeni kişiler DAVx⁵ ve diğer hesaplara kaydedilebilir; arama geçmişinde daha doğru arama.
+</tr-TR>
+<vi>
+• SMS: thư mục “Đã chặn” và cỡ chữ tin nhắn riêng.
+• Trả lời và từ chối bằng cách vuốt lên và xuống.
+• Lưu liên hệ mới vào DAVx⁵ và tài khoản khác; tìm kiếm nhật ký cuộc gọi chính xác hơn.
+</vi>
+<zh-CN>
+• 短信：新增“已拦截”文件夹，可单独设置短信文字大小。
+• 上下滑动接听或拒接。
+• 新联系人可保存到 DAVx⁵ 等账户；通话记录搜索更准确。
+</zh-CN>

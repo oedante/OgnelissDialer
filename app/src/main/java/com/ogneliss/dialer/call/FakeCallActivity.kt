@@ -247,7 +247,8 @@ class FakeCallActivity : ComponentActivity() {
                     incomingBgMark = if (theme != ThemeMode.HIGH_CONTRAST) callBgIncoming else 0L,
                     photoStyle = callPhotoStyle,
                     largePortrait = callPhotoSize == CallPhotoSize.LARGE,
-                    slideToAnswer = answerMode == AnswerMode.SLIDE,
+                    slideToAnswer = answerMode != AnswerMode.TAP,
+                    verticalAnswer = answerMode == AnswerMode.SWIPE_VERTICAL,
                     swapAnswer = swapAnswer,
                     onAnswer = { stopRinging(); FakeTelecomCall.answer() },
                     onHangUp = { FakeTelecomCall.end(); finish() },
@@ -341,6 +342,8 @@ internal fun FakeCallScreen(
     largePortrait: Boolean = false,
     /** Настройка «Ответ на вызов» — сдвигом (1.5.8), как у настоящего. */
     slideToAnswer: Boolean = false,
+    /** Ответ свайпом вверх и вниз (2.8.5), как у настоящего вызова. */
+    verticalAnswer: Boolean = false,
     /** «Ответить» слева (2.1.1), как у настоящего. */
     swapAnswer: Boolean = false,
     onAnswer: () -> Unit,
@@ -596,7 +599,10 @@ internal fun FakeCallScreen(
 
                 if (!answered && slideAnswer) {
                     // Сдвиг вместо кнопок — как у настоящего вызова (1.5.8)
-                    SlideToAnswer(
+                    if (verticalAnswer && !com.ogneliss.dialer.ui.adaptive.LocalWindowLayout.current.isShort) VerticalSwipeToAnswer(
+                        onAnswer = { answered = true; onAnswer() },
+                        onDecline = onHangUp
+                    ) else SlideToAnswer(
                         onAnswer = { answered = true; onAnswer() },
                         onDecline = onHangUp,
                         modifier = Modifier.padding(horizontal = Space.s),

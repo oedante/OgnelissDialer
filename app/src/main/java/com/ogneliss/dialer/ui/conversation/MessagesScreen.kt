@@ -307,22 +307,34 @@ fun MessagesScreen(
         else state.threads.filterNot { t -> pendingDeletion[t.key]?.let { t.last.date <= it } == true }
     }
     // Архивные — отдельно; новое сообщение возвращает переписку само (ArchiveRules)
-    val (archivedThreads, activeThreads) = remember(visibleThreads, archive) {
+    val (archivedThreads, unarchivedThreads) = remember(visibleThreads, archive) {
         visibleThreads.partition { ArchiveRules.isSmsArchived(smsPinKey(it.address), it.last.date, archive) }
+    }
+    /*
+     * Чёрный список (2.8.5, SmsFolder.BLOCKED): переписки с заблокированными
+     * номерами — только в папке «Заблокированные», в «Все», остальных папках
+     * и поиске их нет.
+     */
+    val numberRules by vm.numberRules.collectAsStateWithLifecycle()
+    val (blockedThreads, activeThreads) = remember(unarchivedThreads, numberRules) {
+        unarchivedThreads.partition { SmsFolders.isBlocked(it.address, numberRules) }
     }
     // Непрочитанные по папкам — числом справа в списке папок (2.2.0)
     val folderUnread = remember(activeThreads, visibleFolders, byNumber) {
         visibleFolders.associateWith { f ->
-            if (f == SmsFolder.STARRED || f == SmsFolder.ALL) 0
+            if (f == SmsFolder.STARRED || f == SmsFolder.ALL || f == SmsFolder.BLOCKED) 0
             else activeThreads.count { t -> t.unread > 0 && SmsFolders.matches(f, t.address, contactOf(t.address) != null, t.unread) }
         }
     }
     // Папка — только у общего списка; в архиве и при поиске — все переписки
     val inFolder = if (showArchive || query.isNotBlank() || folder == SmsFolder.ALL) null else folder
-    val source = remember(showArchive, archivedThreads, activeThreads, inFolder, byNumber) {
+    val source = remember(showArchive, archivedThreads, activeThreads, blockedThreads, inFolder, byNumber) {
         val base = if (showArchive) archivedThreads else activeThreads
-        if (inFolder == null) base
-        else base.filter { SmsFolders.matches(inFolder, it.address, contactOf(it.address) != null, it.unread) }
+        when (inFolder) {
+            null -> base
+            SmsFolder.BLOCKED -> blockedThreads
+            else -> base.filter { SmsFolders.matches(inFolder, it.address, contactOf(it.address) != null, it.unread) }
+        }
     }
     val shown = remember(source, query, byNumber) {
         val q = query.trim().lowercase()

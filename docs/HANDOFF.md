@@ -12,6 +12,13 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 21.11.2026 — 2.8.5 (90): «Заблокированные» в SMS, DAVx⁵, размер текста SMS, поиск, свайп вверх/вниз
+
+Разбор — `docs/RELEASE_NOTES_2.8.5.md`. `SmsFolder.BLOCKED` / `SmsFolders.isBlocked`
+(+ `DialerViewModel.numberRules`); `<queries>` SyncAdapter/AccountAuthenticator и
+`AccountRules.owned`; настройка `sms_text_scale` (`LocalSmsTextScale`); `ContactSearch.rankLog`;
+`AnswerMode.SWIPE_VERTICAL` / `VerticalSwipeToAnswer`. План «Расширенных настроек» — у автора.
+
 ## 18.11.2026 — 2.8.4 (89): сборка без предупреждений
 
 Разбор — `docs/RELEASE_NOTES_2.8.4.md`. Самоуправляемые вызовы (`FakeTelecomCall.start`) —

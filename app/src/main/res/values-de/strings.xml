@@ -1107,4 +1107,8 @@
     <string name="avatar_scope_call">Auf dem Anrufbildschirm</string>
     <string name="avatar_scope_lists">In Listen und Karten</string>
     <string name="keywords_avatar_pictures">Avatar, Bild, Platzhalter, ohne Foto, unbekannt</string>
+    <string name="sms_folder_blocked">Blockiert</string>
+    <string name="settings_sms_text_scale">SMS-Textgröße</string>
+    <string name="answer_mode_swipe_vertical">Wischen nach oben oder unten</string>
+    <string name="incall_swipe_vertical_hint">Nach oben annehmen, nach unten ablehnen</string>
 </resources>

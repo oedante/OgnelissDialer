@@ -534,6 +534,18 @@ object SettingsRegistry {
             keywordsRes = R.string.keywords_sms,
             groupRes = R.string.settings_group_messages
         ),
+        /*
+         * Размер текста SMS (2.8.5, форум: «опцию увеличения шрифта только СМС,
+         * без увеличения всего интерфейса»): множитель только для текста сообщений
+         * в переписке, поверх размера шрифта приложения.
+         */
+        SettingEntry(
+            "sms_text_scale", SettingsCategory.MESSAGES,
+            R.string.settings_sms_text_scale, null,
+            SettingKind.Slider("sms_text_scale"),
+            keywordsRes = R.string.keywords_accessibility,
+            groupRes = R.string.settings_group_messages
+        ),
         SettingEntry(
             "sms_calls_in_thread", SettingsCategory.MESSAGES,
             R.string.settings_sms_calls_in_thread, R.string.settings_sms_calls_in_thread_text,

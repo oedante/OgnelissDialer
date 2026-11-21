@@ -56,4 +56,34 @@ class SmsFoldersTest {
         assertTrue(SmsFolders.matches(SmsFolder.UNREAD, "Bank", hasContact = false, unread = 2))
         assertFalse(SmsFolders.matches(SmsFolder.STARRED, "Bank", hasContact = false, unread = 2))
     }
+
+    // ── 2.8.5: папка «Заблокированные» ────────────────────────────────────
+
+    private val rules = listOf(
+        com.ogneliss.dialer.data.NumberRule("+79001112233", "block"),
+        com.ogneliss.dialer.data.NumberRule("+7800*", "block"),
+        com.ogneliss.dialer.data.NumberRule("+78005553535", "allow")
+    )
+
+    @Test
+    fun `заблокированный номер — только в папке Заблокированные`() {
+        val blocked = SmsFolders.isBlocked("+79001112233", rules)
+        org.junit.Assert.assertTrue(blocked)
+        org.junit.Assert.assertTrue(SmsFolders.matches(SmsFolder.BLOCKED, "+79001112233", false, 0, blocked))
+        org.junit.Assert.assertFalse(SmsFolders.matches(SmsFolder.ALL, "+79001112233", false, 0, blocked))
+        org.junit.Assert.assertFalse(SmsFolders.matches(SmsFolder.UNKNOWN, "+79001112233", false, 0, blocked))
+    }
+
+    @Test
+    fun `маска блокирует, разрешение важнее маски`() {
+        org.junit.Assert.assertTrue(SmsFolders.isBlocked("+78001234567", rules))
+        org.junit.Assert.assertFalse(SmsFolders.isBlocked("+78005553535", rules))
+        org.junit.Assert.assertFalse(SmsFolders.isBlocked("+79005554433", rules))
+    }
+
+    @Test
+    fun `сохранённый порядок без новой папки — она добавляется видимой`() {
+        val parsed = SmsFolders.parse("ALL,PERSONAL,UNKNOWN,SERVICE,UNREAD,STARRED")
+        org.junit.Assert.assertEquals(SmsFolder.BLOCKED to true, parsed.last())
+    }
 }

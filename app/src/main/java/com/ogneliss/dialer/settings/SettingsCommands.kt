@@ -285,6 +285,9 @@ class SettingsCommands @Inject constructor(
     /** Размер шрифта (2.2.1): множитель 0,8…1,6. */
     suspend fun setFontScale(value: Float) = prefs.setFontScale(value)
 
+    /** Размер текста SMS (2.8.5): 0,8…1,6, только текст сообщений в переписке. */
+    suspend fun setSmsTextScale(value: Float) = prefs.setSmsTextScale(value)
+
     /** Текущее значение варианта — для отметки в диалоге выбора. */
     fun currentChoice(key: String, state: SettingsState): String = when (key) {
         "language" -> state.language
@@ -624,6 +627,7 @@ class SettingsCommands @Inject constructor(
         fun answerModeLabelRes(mode: AnswerMode): Int = when (mode) {
             AnswerMode.TAP -> R.string.answer_mode_tap
             AnswerMode.SLIDE -> R.string.answer_mode_slide
+            AnswerMode.SWIPE_VERTICAL -> R.string.answer_mode_swipe_vertical
         }
 
         /** Отмена отправки SMS (2.2.0). */

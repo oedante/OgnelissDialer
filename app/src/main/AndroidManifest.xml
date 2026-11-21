@@ -106,6 +106,13 @@
             <data android:mimeType="vnd.android.cursor.item/contact" /></intent>
         <intent><action android:name="android.intent.action.DIAL" /></intent>
         <package android:name="com.google.android.contacts" />
+        <!-- 2.8.5: куда сохранять контакт — аккаунты DAVx⁵ и других синхронизаций
+             (форум: «видит только телефон, контакты из DAVx не видит»). С Android 11
+             адаптеры синхронизации и владельцы аккаунтов чужих приложений без этих
+             строк не видны: ContentResolver.getSyncAdapterTypes и
+             AccountManager.authenticatorTypes их не отдают — ContactEditRepository -->
+        <intent><action android:name="android.content.SyncAdapter" /></intent>
+        <intent><action android:name="android.accounts.AccountAuthenticator" /></intent>
     </queries>
 
     <application

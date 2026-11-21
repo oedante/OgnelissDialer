@@ -10,6 +10,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
@@ -297,6 +298,130 @@ internal fun SlideToAnswer(
         }
     }
 }
+
+/**
+ * ОТВЕТ И СБРОС СВАЙПОМ ВВЕРХ И ВНИЗ (2.8.5, форум: «пользователи просят ответ
+ * и сброс вертикальным свайпом»). Круглая ручка посередине: вверх — ответить,
+ * вниз — отклонить. Как у сдвига вбок: срабатывает, только если отпустить
+ * дальше 70 % пути, на пороге — короткая вибрация, не дотянули — ручка
+ * возвращается. Цвет ручки — к зелёному или красному по мере сдвига.
+ * С TalkBack — обычные кнопки (useSlideToAnswer); для Switch Access и голоса —
+ * два действия, как у SlideToAnswer.
+ */
+@Composable
+internal fun VerticalSwipeToAnswer(
+    onAnswer: () -> Unit,
+    onDecline: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val haptic = LocalHapticFeedback.current
+    val scope = rememberCoroutineScope()
+    val drag = remember { Animatable(0f) }
+    // 1 — у порога ответа, -1 — у порога сброса, 0 — между
+    var armed by remember { mutableStateOf(0) }
+    var done by remember { mutableStateOf(false) }
+    val rangePx = with(LocalDensity.current) { V_RANGE.toPx() }
+
+    val answerLabel = stringResource(R.string.incall_answer)
+    val declineLabel = stringResource(R.string.incall_decline)
+    val hint = stringResource(R.string.incall_swipe_vertical_hint)
+    // Вверх — отрицательный сдвиг: progress < 0 — к ответу
+    val progress = (drag.value / rangePx).coerceIn(-1f, 1f)
+    val neutral = PanelColors.key()
+    val knobColor = when {
+        progress < 0f -> lerp(neutral, CallGreen, -progress)
+        progress > 0f -> lerp(neutral, DeclineRed, progress)
+        else -> neutral
+    }
+    val knobContent = if (abs(progress) > 0.35f) Color.White else MaterialTheme.colorScheme.onSurface
+
+    androidx.compose.foundation.layout.Column(
+        modifier
+            .fillMaxWidth()
+            .semantics {
+                contentDescription = hint
+                customActions = listOf(
+                    CustomAccessibilityAction(answerLabel) { onAnswer(); true },
+                    CustomAccessibilityAction(declineLabel) { onDecline(); true }
+                )
+            },
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        SwipeEdgeLabel(OgnelissIcons.ArrowUpward, answerLabel, CallGreen, 0.6f + 0.4f * (-progress).coerceAtLeast(0f))
+        Spacer(Modifier.height(Space.s))
+        Box(Modifier.height(V_RANGE * 2 + V_KNOB), contentAlignment = Alignment.Center) {
+            // Дорожка — куда тянуть
+            Box(
+                Modifier
+                    .width(V_KNOB + 12.dp)
+                    .height(V_RANGE * 2 + V_KNOB)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f))
+            )
+            Box(
+                Modifier
+                    .offset { IntOffset(0, drag.value.roundToInt()) }
+                    .size(V_KNOB)
+                    .clip(CircleShape)
+                    .background(knobColor)
+                    .pointerInput(rangePx) {
+                        detectVerticalDragGestures(
+                            onDragEnd = {
+                                val p = drag.value / rangePx
+                                when {
+                                    done -> Unit
+                                    p <= -TRIGGER -> { done = true; onAnswer() }
+                                    p >= TRIGGER -> { done = true; onDecline() }
+                                    else -> scope.launch { drag.animateTo(0f, spring()) }
+                                }
+                                armed = 0
+                            },
+                            onDragCancel = {
+                                armed = 0
+                                scope.launch { drag.animateTo(0f, spring()) }
+                            },
+                            onVerticalDrag = { change, dy ->
+                                change.consume()
+                                if (done) return@detectVerticalDragGestures
+                                val next = (drag.value + dy).coerceIn(-rangePx, rangePx)
+                                scope.launch { drag.snapTo(next) }
+                                val p = next / rangePx
+                                val now = when {
+                                    p <= -TRIGGER -> 1
+                                    p >= TRIGGER -> -1
+                                    else -> 0
+                                }
+                                if (now != armed) {
+                                    if (now != 0) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    armed = now
+                                }
+                            }
+                        )
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(OgnelissIcons.Call, contentDescription = null, tint = knobContent, modifier = Modifier.size(28.dp))
+            }
+        }
+        Spacer(Modifier.height(Space.s))
+        SwipeEdgeLabel(OgnelissIcons.ArrowDownward, declineLabel, DeclineRed, 0.6f + 0.4f * progress.coerceAtLeast(0f))
+    }
+}
+
+/** Подпись края вертикального свайпа: стрелка и действие, ярче по мере сдвига. */
+@Composable
+private fun SwipeEdgeLabel(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, color: Color, alpha: Float) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.graphicsLayer { this.alpha = alpha }) {
+        Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(20.dp))
+        Spacer(Modifier.width(Space.xs))
+        Text(label, style = MaterialTheme.typography.labelLarge, color = color)
+    }
+}
+
+/** Путь ручки от середины до порога-края, вверх и вниз. */
+private val V_RANGE = 64.dp
+/** Ручка вертикального свайпа — как круг кнопки вызова. */
+private val V_KNOB = 64.dp
 
 /**
  * Показывать ли сдвиг вместо кнопок: выбран в настройках и не включён

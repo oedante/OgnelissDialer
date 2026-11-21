@@ -1116,4 +1116,8 @@
     <string name="avatar_scope_call">На экране вызова</string>
     <string name="avatar_scope_lists">В списках и карточках</string>
     <string name="keywords_avatar_pictures">аватар, аватарка, картинка, заглушка, без фото, неизвестный, изображение</string>
+    <string name="sms_folder_blocked">Заблокированные</string>
+    <string name="settings_sms_text_scale">Размер текста SMS</string>
+    <string name="answer_mode_swipe_vertical">Свайпом вверх или вниз</string>
+    <string name="incall_swipe_vertical_hint">Вверх — ответить, вниз — отклонить</string>
 </resources>

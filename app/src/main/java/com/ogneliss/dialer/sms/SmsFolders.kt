@@ -25,7 +25,13 @@ package com.ogneliss.dialer.sms
  * из виду. Папки новых версий, которых нет в строке, добавляются в конец
  * видимыми. Чистый Kotlin — проверяется модульными тестами.
  */
-enum class SmsFolder { ALL, PERSONAL, UNKNOWN, SERVICE, UNREAD, STARRED }
+/*
+ * BLOCKED (2.8.5, форум: «не скрывает заблокированные смс, нужно сделать отдельную
+ * папку „Заблокированные“»): переписки с номерами из чёрного списка — только здесь,
+ * из «Все» и остальных папок их нет. Последней: в сохранённом порядке её нет,
+ * parse добавит её в конец видимой.
+ */
+enum class SmsFolder { ALL, PERSONAL, UNKNOWN, SERVICE, UNREAD, STARRED, BLOCKED }
 
 object SmsFolders {
 
@@ -62,13 +68,34 @@ object SmsFolders {
      * Переписка в папке. [hasContact] — собеседник есть в книге,
      * [unread] — непрочитанных. STARRED переписок не содержит.
      */
-    fun matches(folder: SmsFolder, address: String, hasContact: Boolean, unread: Int): Boolean = when (folder) {
-        SmsFolder.ALL -> true
-        SmsFolder.PERSONAL -> hasContact
-        SmsFolder.UNKNOWN -> !hasContact && !isService(address)
-        SmsFolder.SERVICE -> !hasContact && isService(address)
-        SmsFolder.UNREAD -> unread > 0
-        SmsFolder.STARRED -> false
+    fun matches(
+        folder: SmsFolder,
+        address: String,
+        hasContact: Boolean,
+        unread: Int,
+        /** Номер в чёрном списке (2.8.5, isBlocked): такая переписка — только в BLOCKED. */
+        blocked: Boolean = false
+    ): Boolean = when (folder) {
+        SmsFolder.BLOCKED -> blocked
+        else -> !blocked && when (folder) {
+            SmsFolder.ALL -> true
+            SmsFolder.PERSONAL -> hasContact
+            SmsFolder.UNKNOWN -> !hasContact && !isService(address)
+            SmsFolder.SERVICE -> !hasContact && isService(address)
+            SmsFolder.UNREAD -> unread > 0
+            SmsFolder.STARRED, SmsFolder.BLOCKED -> false
+        }
+    }
+
+    /**
+     * Номер в чёрном списке по правилам (2.8.5): правило «разрешить» важнее,
+     * как у вызовов (RulesRepository.decide), маски — RulePattern.
+     */
+    fun isBlocked(address: String, rules: List<com.ogneliss.dialer.data.NumberRule>): Boolean {
+        if (rules.isEmpty()) return false
+        val e164 = com.ogneliss.dialer.util.PhoneFormatter.toE164(address)
+        if (rules.any { it.isAllow && com.ogneliss.dialer.data.RulePattern.matches(it.pattern, e164) }) return false
+        return rules.any { it.isBlock && com.ogneliss.dialer.data.RulePattern.matches(it.pattern, e164) }
     }
 
     /** Короткие номера сервисов: «900», «4444», «88002» — до шести цифр. */

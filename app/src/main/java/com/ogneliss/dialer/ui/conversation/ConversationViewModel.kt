@@ -27,6 +27,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import com.ogneliss.dialer.log.Logger
 import com.ogneliss.dialer.sms.Message
 import com.ogneliss.dialer.sms.MessageNotifications
@@ -171,6 +172,10 @@ class ConversationViewModel @Inject constructor(
         )
     )
     val state: StateFlow<UiState> = _state
+
+    /** Размер текста SMS в переписке (2.8.5, настройка «Размер текста SMS»). */
+    val smsTextScale: StateFlow<Float> = prefs.smsTextScale
+        .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.Eagerly, 1f)
 
     private var threadId: Long? = null
 
