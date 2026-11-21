@@ -12,6 +12,11 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 18.11.2026 — 2.8.4 (89): сборка без предупреждений
+
+Разбор — `docs/RELEASE_NOTES_2.8.4.md`. Самоуправляемые вызовы (`FakeTelecomCall.start`) —
+подавление устаревания до решения о Jetpack `core-telecom`; галерея — правило v2.
+
 ## 18.11.2026 — 2.8.3 (88): SMS «разговором» на Android 11–12, портреты в уведомлениях круглые
 
 Разбор — `docs/RELEASE_NOTES_2.8.3.md`. Ярлык переписки — `setExcludedFromSurfaces` только
