@@ -1107,4 +1107,5 @@
     <string name="avatar_scope_call">Auf dem Anrufbildschirm</string>
     <string name="avatar_scope_lists">In Listen und Karten</string>
     <string name="keywords_avatar_pictures">Avatar, Bild, Platzhalter, ohne Foto, unbekannt</string>
+    <string name="sms_folder_blocked">Blockiert</string>
 </resources>

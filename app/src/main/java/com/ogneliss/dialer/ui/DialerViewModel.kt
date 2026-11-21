@@ -342,6 +342,10 @@ class DialerViewModel @Inject constructor(
     @Volatile
     private var dialpadRequested = false
 
+    /** Правила блокировки (2.8.5): папка «Заблокированные» в SMS — SmsFolders.isBlocked. */
+    val numberRules: StateFlow<List<com.ogneliss.dialer.data.NumberRule>> = blocking.allRules
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
     fun requestDialpad() {
         dialpadRequested = true
     }

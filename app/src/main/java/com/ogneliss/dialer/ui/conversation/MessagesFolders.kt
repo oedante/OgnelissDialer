@@ -80,6 +80,7 @@ internal fun smsFolderIcon(folder: SmsFolder): ImageVector = when (folder) {
     SmsFolder.SERVICE -> OgnelissIcons.Article
     SmsFolder.UNREAD -> OgnelissIcons.Textsms
     SmsFolder.STARRED -> OgnelissIcons.Star
+    SmsFolder.BLOCKED -> OgnelissIcons.Block
 }
 
 /**

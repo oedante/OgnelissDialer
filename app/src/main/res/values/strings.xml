@@ -1136,4 +1136,5 @@
     <string name="avatar_scope_call">On the call screen</string>
     <string name="avatar_scope_lists">In lists and cards</string>
     <string name="keywords_avatar_pictures">avatar, picture, placeholder, no photo, unknown, image</string>
+    <string name="sms_folder_blocked">Blocked</string>
 </resources>
