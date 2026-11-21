@@ -219,13 +219,13 @@
     <string name="settings_section_about">О приложении</string>
     <string name="settings_section_about_summary">Конфиденциальность, условия, версия</string>
     <string name="settings_section_appearance">Оформление</string>
-    <string name="settings_section_appearance_summary">Язык, тема, цвета, шрифт, скругление, плотность</string>
-    <string name="settings_section_maintenance">Данные и диагностика</string>
-    <string name="settings_section_maintenance_summary">Экспорт и импорт, файл журнала, сброс</string>
+    <string name="settings_section_appearance_summary">Тема, цвета, размер шрифта, масштаб, язык</string>
+    <string name="settings_section_maintenance">Резервная копия</string>
+    <string name="settings_section_maintenance_summary">Экспорт и импорт заметок и списков</string>
     <string name="settings_section_calls">Вызовы</string>
     <string name="settings_section_calls_summary">Что происходит во время и после звонка</string>
-    <string name="settings_section_log">Журнал вызовов</string>
-    <string name="settings_section_log_summary">Группировка, сортировка, срок хранения заметок</string>
+    <string name="settings_section_log">Журнал и контакты</string>
+    <string name="settings_section_log_summary">Вид журнала, сортировка контактов, запуск</string>
     <string name="settings_section_sim">SIM-карты</string>
     <string name="settings_section_sim_summary">Названия, запоминание, свой номер</string>
     <string name="settings_section_quick">Быстрый доступ</string>
@@ -751,7 +751,6 @@
     <string name="faq_q_contact">Как сообщить об ошибке или предложить идею?</string>
     <string name="faq_a_contact">Напишите на oedante@gmail.com. Если что-то работает не так, приложите технический журнал — %1$s: номера и имена в нём скрыты.</string>
     <!-- 1.6.2: имена контактов — формат и сортировка -->
-    <string name="settings_group_contact_names">Имена контактов</string>
     <string name="settings_contact_name_format">Как показывать имя</string>
     <string name="settings_contact_name_format_text">В контактах, журнале, карточке и на экране вызова</string>
     <string name="contact_name_given_first">Имя Фамилия</string>
@@ -957,7 +956,7 @@
     <string name="settings_sms_swipe_text">В разделе «SMS», отдельно от журнала вызовов</string>
     <string name="settings_group_sms_swipe">Свайп по переписке</string>
     <string name="settings_group_messengers">Мессенджеры</string>
-    <string name="settings_section_messages_summary">Приложение SMS, свайпы, мессенджеры</string>
+    <string name="settings_section_messages_summary">Приложение SMS, уведомления, отправка, папки</string>
     <string name="settings_home_group_protection">Защита</string>
     <string name="action_delete_thread">Удалить</string>
     <string name="history_filter_all">Все</string>
@@ -1102,7 +1101,7 @@
     <string name="call_bg_custom">Свой снимок</string>
     <string name="keywords_call_bg">фон обои картинка снимок фото изображение экран вызова</string>
     <string name="settings_section_call_screen">Экран вызова</string>
-    <string name="settings_section_call_screen_summary">Фото, фон и номер на экране звонка</string>
+    <string name="settings_section_call_screen_summary">Фото и фон экрана звонка</string>
     <string name="settings_group_avatar_pictures">Картинки без фото</string>
     <string name="settings_avatar_no_photo">Контакты без фото</string>
     <string name="settings_avatar_no_photo_text">Своя картинка вместо букв имени</string>
@@ -1120,4 +1119,13 @@
     <string name="settings_sms_text_scale">Размер текста SMS</string>
     <string name="answer_mode_swipe_vertical">Свайпом вверх или вниз</string>
     <string name="incall_swipe_vertical_hint">Вверх — ответить, вниз — отклонить</string>
+    <string name="settings_sms_notifications_off">Отключить уведомления SMS</string>
+    <string name="settings_sms_notifications_off_text">Новые сообщения приходят молча — код легко пропустить</string>
+    <string name="settings_sms_notifications_off_on">Уведомления о новых SMS выключены</string>
+    <string name="confirm_sms_notifications_off">Новые SMS и MMS будут приходить без звука, вибрации и уведомления. Можно пропустить коды подтверждения и сообщения из банка или поликлиники. Уведомления о неотправленных сообщениях и не скачанных MMS останутся.</string>
+    <string name="confirm_turn_off">Отключить</string>
+    <string name="keywords_sms_notifications">уведомления оповещения звук без звука тихо отключить сообщения</string>
+    <string name="settings_section_advanced">Расширенные настройки</string>
+    <string name="settings_section_advanced_summary">Тонкая настройка, редкие пункты, диагностика</string>
+    <string name="settings_advanced_more">Ещё в «Расширенных настройках»</string>
 </resources>

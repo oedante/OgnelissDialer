@@ -668,6 +668,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
          * «sms_in_app» убран в 2.1.0 — сохранённое значение больше не читается.
          */
         val SMS_DELIVERY_REPORTS = booleanPreferencesKey("sms_delivery_reports")
+        // 2.8.6: «Отключить уведомления SMS» — разбор в SettingsRegistry
+        val SMS_NOTIFICATIONS_OFF = booleanPreferencesKey("sms_notifications_off")
         // 2.2.0
         val SMS_UNDO_SEND = stringPreferencesKey("sms_undo_send")
         val SMS_CALLS_IN_THREAD = booleanPreferencesKey("sms_calls_in_thread")
@@ -1121,6 +1123,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      */
     val smsDeliveryReports: Flow<Boolean> = data.map { it[Keys.SMS_DELIVERY_REPORTS] ?: false }
 
+    /** Уведомления о новых SMS выключены (2.8.6). По умолчанию — нет, уведомления идут. */
+    val smsNotificationsOff: Flow<Boolean> = data.map { it[Keys.SMS_NOTIFICATIONS_OFF] ?: false }
+
     /** Отмена отправки SMS (2.2.0): по умолчанию 5 секунд. */
     val smsUndoSend: Flow<UndoSend> = data.map { UndoSend.from(it[Keys.SMS_UNDO_SEND]) }
 
@@ -1457,6 +1462,11 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("sms_delivery_reports", v) { it[Keys.SMS_DELIVERY_REPORTS] = v }
         com.ogneliss.dialer.sms.SmsSettings.put(context, com.ogneliss.dialer.sms.SmsSettings.KEY_DELIVERY_REPORTS, v)
     }
+    // 2.8.6: копия в SmsSettings — приёмник SMS решает без DataStore
+    suspend fun setSmsNotificationsOff(v: Boolean) {
+        edit("sms_notifications_off", v) { it[Keys.SMS_NOTIFICATIONS_OFF] = v }
+        com.ogneliss.dialer.sms.SmsSettings.put(context, com.ogneliss.dialer.sms.SmsSettings.KEY_NOTIFICATIONS_OFF, v)
+    }
     // 2.2.0: копия в SmsSettings — для приёмника SMS и очереди без корутин
     suspend fun setSmsUndoSend(v: UndoSend) {
         edit("sms_undo_send", v.name) { it[Keys.SMS_UNDO_SEND] = v.name }
@@ -1547,6 +1557,14 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
                 )
                 com.ogneliss.dialer.sms.SmsSettings.putInt(
                     context, com.ogneliss.dialer.sms.SmsSettings.KEY_OTP_HOURS, OtpCleanup.from(null).hours
+                )
+                // 2.8.6: и переключатели — отчёт о доставке (раньше оставался прежним)
+                // и «Отключить уведомления SMS»: после сброса уведомления снова идут
+                com.ogneliss.dialer.sms.SmsSettings.put(
+                    context, com.ogneliss.dialer.sms.SmsSettings.KEY_DELIVERY_REPORTS, false
+                )
+                com.ogneliss.dialer.sms.SmsSettings.put(
+                    context, com.ogneliss.dialer.sms.SmsSettings.KEY_NOTIFICATIONS_OFF, false
                 )
             }
             .onFailure { Logger.e(TAG, "Не удалось сбросить настройки", it) }

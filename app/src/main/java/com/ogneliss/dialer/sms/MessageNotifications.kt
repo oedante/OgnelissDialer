@@ -163,6 +163,18 @@ object MessageNotifications {
      */
     fun showForAddress(context: Context, address: String, incoming: Incoming? = null) {
         val thread = MessageStore.threadIdOf(context, address)
+        /*
+         * «Отключить уведомления SMS» (2.8.6, форум; разбор в SettingsRegistry):
+         * новое сообщение уже записано, уведомления о нём нет. Висевшее с прошлого
+         * раза снимается — после выключения уведомлений шторка не должна
+         * напоминать о старом. «Не отправлено» и «MMS не скачано» — другие
+         * функции, они остаются.
+         */
+        if (SmsSettings.notificationsOff(context)) {
+            cancelId(context, thread?.let(::idFor) ?: idForAddress(address))
+            if (incoming != null) Logger.i(TAG, "Новое сообщение — без уведомления: уведомления SMS отключены")
+            return
+        }
         val stored = thread?.let { MessageStore.unreadInThread(context, it) }.orEmpty()
         val unread = withIncoming(stored, incoming, address, thread)
         val id = thread?.let(::idFor) ?: idForAddress(address)
@@ -370,6 +382,22 @@ object MessageNotifications {
 
     private fun cancelId(context: Context, id: Int) {
         runCatching { NotificationManagerCompat.from(context).cancel(id) }
+    }
+
+    /**
+     * Снять все уведомления о входящих (2.8.6: «Отключить уведомления SMS»).
+     * Только окно номеров переписок: «не отправлено», отложенные и не скачанные
+     * MMS — свои номера, они остаются.
+     */
+    fun cancelAllIncoming(context: Context) {
+        runCatching {
+            val nm = context.getSystemService(NotificationManager::class.java) ?: return
+            nm.activeNotifications
+                // И канал, и окно номеров: у других уведомлений приложения
+                // (псевдозвонок, пропущенные) номера могут попасть в это окно
+                .filter { it.notification.channelId == CHANNEL && it.id in ID_BASE until ID_BASE + ID_RANGE }
+                .forEach { nm.cancel(it.tag, it.id) }
+        }.onFailure { Logger.w(TAG, "Уведомления о входящих не сняты: ${it.message}") }
     }
 
     // ── Не отправлено ──────────────────────────────────────────────────────

@@ -100,6 +100,16 @@ fun SettingsSwitchRow(
     val stateText = stringResource(
         if (checked) R.string.a11y_setting_on else R.string.a11y_setting_off
     )
+    /*
+     * ВКЛЮЧЁННАЯ ОПАСНАЯ — КРАСНОЙ СТРОКОЙ (2.8.6, автор об «Отключить
+     * уведомления SMS»: «с предупреждением на красном фоне или с красным
+     * треугольником»). Треугольник у опасных был и раньше; теперь, пока
+     * настройка включена, вся строка — на errorContainer, текст и значок —
+     * его цветом. Видно и через месяц, кто и почему не получает уведомлений
+     * (или звонков от незнакомых — «Блокировать не из контактов» так же).
+     */
+    val alert = dangerous && checked
+    val alertText = MaterialTheme.colorScheme.onErrorContainer
 
     OgnelissRowLayout(
         headline = {
@@ -113,12 +123,14 @@ fun SettingsSwitchRow(
                     )
                     Spacer(Modifier.width(6.dp))
                 }
-                Text(title)
+                // weight(fill = false): заголовок в две строки не вытесняет точку «изменено» (2.8.6)
+                val titleModifier = Modifier.weight(1f, fill = false)
+                if (alert) Text(title, titleModifier, color = alertText) else Text(title, titleModifier)
                 if (changed) ChangedDot()
             }
         },
-        supporting = summary?.let { { Text(it) } },
-        leading = icon?.let { { SettingLeadingIcon(it) } },
+        supporting = summary?.let { { if (alert) Text(it, color = alertText) else Text(it) } },
+        leading = icon?.let { { SettingLeadingIcon(it, if (alert) MaterialTheme.colorScheme.error else null) } },
         trailing = {
             // null: нажатие ловит вся строка, отдельная цель не нужна
             Switch(checked = checked, onCheckedChange = null)
@@ -128,7 +140,9 @@ fun SettingsSwitchRow(
          * у опасных настроек; раскладка — общая (OgnelissRowLayout,
          * плотность как в почте, 1.8.4).
          */
-        modifier = Modifier.toggleableRow(checked, stateText) { onChange(!checked) }
+        modifier = Modifier
+            .then(if (alert) Modifier.background(MaterialTheme.colorScheme.errorContainer) else Modifier)
+            .toggleableRow(checked, stateText) { onChange(!checked) }
     )
 }
 
@@ -218,7 +232,9 @@ fun DangerousSettingDialog(
     title: String,
     explanation: String,
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    /** Кнопка согласия: «Включить»; у «Отключить уведомления SMS» — «Отключить» (2.8.6). */
+    confirmText: String = stringResource(R.string.confirm_enable)
 ) {
     /*
      * Общий контейнер приложения.
@@ -244,7 +260,7 @@ fun DangerousSettingDialog(
         },
         confirmButton = {
             TextButton(onClick = { onConfirm(); onDismiss() }) {
-                Text(stringResource(R.string.confirm_enable))
+                Text(confirmText)
             }
         },
         dismissButton = {

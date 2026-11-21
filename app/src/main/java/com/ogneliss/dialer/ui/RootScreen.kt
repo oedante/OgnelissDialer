@@ -282,7 +282,8 @@ fun RootScreen(
     }
     val revealSetting: (SettingEntry) -> Unit = { entry ->
         settingsReveal = SettingReveal(entry.id)
-        nav.navigate(entry.category.route)
+        // 2.8.6: дополнительный пункт — в «Расширенных настройках»
+        nav.navigate(SettingsRegistry.screenOf(entry).route)
     }
     val openFaqLink: (FaqLink) -> Unit = { link ->
         when (link) {
@@ -991,7 +992,7 @@ fun RootScreen(
                                     onOpenCategory = { selected = it },
                                     onOpenEntry = {
                                         settingsReveal = SettingReveal(it.id)
-                                        selected = it.category
+                                        selected = SettingsRegistry.screenOf(it)
                                     },
                                     onOpenFaq = openFaq
                                 )
@@ -1005,7 +1006,12 @@ fun RootScreen(
                                     onOwnNumber = { ownNumberOpen = true },
                                     showBack = false,
                                     reveal = settingsReveal,
-                                    onRevealConsumed = { settingsReveal = null }
+                                    onRevealConsumed = { settingsReveal = null },
+                                    // 2.8.6: «Ещё в „Расширенных“» — справа же, без нового экрана
+                                    onOpenAdvanced = { id ->
+                                        settingsReveal = SettingReveal(id)
+                                        selected = SettingsCategory.ADVANCED
+                                    }
                                 )
                             }
                         }
@@ -1017,7 +1023,7 @@ fun RootScreen(
                             // лежит под «Дополнительно» — раздел её покажет (1.5.8)
                             onOpenEntry = {
                                 settingsReveal = SettingReveal(it.id)
-                                nav.navigate(it.category.route)
+                                nav.navigate(SettingsRegistry.screenOf(it).route)
                             },
                             onOpenFaq = openFaq
                         )
@@ -1309,7 +1315,11 @@ fun RootScreen(
                             onBack = { nav.popBackStack() },
                             onOwnNumber = { ownNumberOpen = true },
                             reveal = settingsReveal,
-                            onRevealConsumed = { settingsReveal = null }
+                            onRevealConsumed = { settingsReveal = null },
+                            onOpenAdvanced = { id ->
+                                settingsReveal = SettingReveal(id)
+                                nav.navigate(SettingsCategory.ADVANCED.route)
+                            }
                         )
                     }
                 }
@@ -1515,7 +1525,9 @@ private fun SettingsCategoryHost(
     showBack: Boolean = true,
     /** Найдено поиском — показать (1.5.8): разбор у SettingReveal. */
     reveal: SettingReveal? = null,
-    onRevealConsumed: () -> Unit = {}
+    onRevealConsumed: () -> Unit = {},
+    /** Ссылка на «Расширенные настройки» внизу раздела (2.8.6). */
+    onOpenAdvanced: ((String) -> Unit)? = null
 ) {
     val context = LocalContext.current
 
@@ -1576,6 +1588,8 @@ private fun SettingsCategoryHost(
         // Просьба — только разделу найденной настройки
         reveal = reveal?.takeIf { r -> SettingsRegistry.byCategory(category).any { it.id == r.entryId } },
         onRevealConsumed = onRevealConsumed,
+        // У самих «Расширенных» ссылки на себя нет
+        onOpenAdvanced = onOpenAdvanced.takeIf { category != SettingsCategory.ADVANCED },
         onAction = { key ->
             if (key == "sms_restore") {
                 // Любой тип: XML копии в проводниках часто помечен как text/plain или octet-stream

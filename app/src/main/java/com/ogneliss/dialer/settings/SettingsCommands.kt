@@ -120,6 +120,11 @@ class SettingsCommands @Inject constructor(
             "block_tagged" -> prefs.setBlockTaggedSpam(value)
             "scam_memo" -> prefs.setScamMemo(value)
             "sms_delivery_reports" -> prefs.setSmsDeliveryReports(value)
+            // 2.8.6: выключили — висящие уведомления о входящих снимаются сразу
+            "sms_notifications_off" -> {
+                prefs.setSmsNotificationsOff(value)
+                if (value) com.ogneliss.dialer.sms.MessageNotifications.cancelAllIncoming(appContext)
+            }
             "sms_calls_in_thread" -> prefs.setSmsCallsInThread(value)
             "file_logging" -> {
                 prefs.setFileLogging(value)
@@ -741,7 +746,9 @@ class SettingsCommands @Inject constructor(
             // 2.0.0
             "sms_delivery_reports",
             // 2.2.0
-            "sms_calls_in_thread"
+            "sms_calls_in_thread",
+            // 2.8.6
+            "sms_notifications_off"
         )
 
         /** Ключи, которые обрабатывает setChoice. */
