@@ -289,6 +289,11 @@ object SmsSettings {
     /** Просить отчёт о доставке (по умолчанию — нет: часть операторов берёт плату). */
     fun deliveryReports(context: Context): Boolean = prefs(context).getBoolean(KEY_DELIVERY_REPORTS, false)
 
+    /** «Отключить уведомления SMS» (2.8.6): новые входящие — без уведомления. */
+    const val KEY_NOTIFICATIONS_OFF = "sms_notifications_off"
+
+    fun notificationsOff(context: Context): Boolean = prefs(context).getBoolean(KEY_NOTIFICATIONS_OFF, false)
+
     /*
      * Полоса «разрешите автозапуск» — один раз (2.1.0: в списке SMS,
      * SmsHealth; было — в переписке): на Huawei, OPPO, vivo, Tecno

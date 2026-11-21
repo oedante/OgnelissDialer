@@ -12,6 +12,16 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 21.11.2026 — 2.8.6 (91): основные и «Расширенные настройки», отключение уведомлений SMS
+
+Разбор — `docs/RELEASE_NOTES_2.8.6.md`. `SettingEntry.advanced` + `SettingsCategory.ADVANCED`
+(`SettingsRegistry.byCategory/advancedOf/screenOf/groupKey`): раздел — основное (≤ 8,
+`SettingsRegistryTest`), «Расширенные» — по разделам; ссылка внизу раздела
+(`onOpenAdvanced`), поиск и «Вопросы и ответы» ведут через `screenOf`. Настройка
+`sms_notifications_off` (опасная, копия в `SmsSettings`): молчит
+`MessageNotifications.showForAddress`, «не отправлено» и «MMS не скачано» остаются;
+включённый опасный переключатель — красной строкой (`SettingsSwitchRow`).
+
 ## 21.11.2026 — 2.8.5 (90): «Заблокированные» в SMS, DAVx⁵, размер текста SMS, поиск, свайп вверх/вниз
 
 Разбор — `docs/RELEASE_NOTES_2.8.5.md`. `SmsFolder.BLOCKED` / `SmsFolders.isBlocked`

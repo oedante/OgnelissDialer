@@ -58,6 +58,7 @@ internal fun settingIcon(id: String): ImageVector? = when (id) {
     // SMS
     "sms_default_app" -> OgnelissIcons.Textsms
     "sms_delivery_reports" -> OgnelissIcons.MarkChatRead
+    "sms_notifications_off" -> OgnelissIcons.NotificationsOff
     "sms_undo_send" -> OgnelissIcons.Restore
     "sms_calls_in_thread" -> OgnelissIcons.Call
     "sms_otp_cleanup" -> OgnelissIcons.DeleteSweep

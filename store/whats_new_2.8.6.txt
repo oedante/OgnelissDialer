@@ -1,0 +1,108 @@
+<ru-RU>
+• Настройки проще: в разделах — главное, остальное — в «Расширенных настройках». Поиск находит всё.
+• SMS: уведомления о новых сообщениях можно отключить совсем — с предупреждением.
+</ru-RU>
+<ar>
+• إعدادات أبسط: الأهم في كل قسم، والباقي في «الإعدادات المتقدمة». البحث يجد كل شيء.
+• الرسائل: يمكن إيقاف إشعارات الرسائل الجديدة تمامًا — مع تحذير.
+</ar>
+<cs-CZ>
+• Jednodušší nastavení: v sekcích to hlavní, zbytek v „Rozšířeném nastavení“. Hledání najde vše.
+• SMS: oznámení o nových zprávách lze zcela vypnout — s upozorněním.
+</cs-CZ>
+<da-DK>
+• Enklere indstillinger: det vigtigste i hver sektion, resten under „Avancerede indstillinger“. Søgningen finder alt.
+• SMS: notifikationer om nye beskeder kan slås helt fra — med en advarsel.
+</da-DK>
+<de-DE>
+• Einfachere Einstellungen: das Wichtigste in jedem Bereich, der Rest unter „Erweiterte Einstellungen“. Die Suche findet alles.
+• SMS: Benachrichtigungen zu neuen Nachrichten lassen sich ganz ausschalten – mit Warnhinweis.
+</de-DE>
+<en-US>
+• Simpler settings: the essentials in each section, the rest under "Advanced settings". Search finds everything.
+• SMS: notifications about new messages can be turned off completely, with a warning.
+</en-US>
+<es-ES>
+• Ajustes más sencillos: lo esencial en cada sección y el resto en «Ajustes avanzados». La búsqueda lo encuentra todo.
+• SMS: las notificaciones de mensajes nuevos se pueden desactivar por completo, con aviso.
+</es-ES>
+<fi-FI>
+• Selkeämmät asetukset: osioissa tärkein, loput kohdassa ”Lisäasetukset”. Haku löytää kaiken.
+• Tekstiviestit: uusien viestien ilmoitukset voi poistaa kokonaan käytöstä – varoituksen kera.
+</fi-FI>
+<fr-FR>
+• Paramètres plus simples : l’essentiel dans chaque section, le reste dans « Paramètres avancés ». La recherche trouve tout.
+• SMS : les notifications des nouveaux messages peuvent être désactivées complètement, avec un avertissement.
+</fr-FR>
+<hi-IN>
+• आसान सेटिंग्स: हर अनुभाग में मुख्य विकल्प, बाकी «उन्नत सेटिंग्स» में। खोज सब कुछ ढूँढती है।
+• SMS: नए संदेशों की सूचनाएँ पूरी तरह बंद की जा सकती हैं — चेतावनी के साथ।
+</hi-IN>
+<hu-HU>
+• Egyszerűbb beállítások: a szakaszokban a lényeg, a többi a „Speciális beállítások” alatt. A keresés mindent megtalál.
+• SMS: az új üzenetek értesítései teljesen kikapcsolhatók – figyelmeztetéssel.
+</hu-HU>
+<id>
+• Pengaturan lebih sederhana: yang utama di tiap bagian, sisanya di “Pengaturan lanjutan”. Pencarian menemukan semuanya.
+• SMS: notifikasi pesan baru bisa dimatikan sepenuhnya — dengan peringatan.
+</id>
+<it-IT>
+• Impostazioni più semplici: l’essenziale in ogni sezione, il resto in «Impostazioni avanzate». La ricerca trova tutto.
+• SMS: le notifiche dei nuovi messaggi si possono disattivare del tutto, con un avviso.
+</it-IT>
+<iw-IL>
+• הגדרות פשוטות יותר: העיקר בכל קטע, והשאר ב„הגדרות מתקדמות”. החיפוש מוצא הכול.
+• SMS: אפשר לכבות לגמרי את ההתראות על הודעות חדשות — עם אזהרה.
+</iw-IL>
+<ja-JP>
+• 設定をシンプルに：各セクションには主要な項目だけ、その他は「詳細設定」へ。検索ですべて見つかります。
+• SMS：新着メッセージの通知を完全にオフにできます（警告付き）。
+</ja-JP>
+<ko-KR>
+• 더 간단한 설정: 각 섹션에는 핵심 항목만, 나머지는 '고급 설정'에. 검색으로 모두 찾을 수 있습니다.
+• SMS: 새 메시지 알림을 완전히 끌 수 있습니다(경고 표시).
+</ko-KR>
+<nl-NL>
+• Eenvoudigere instellingen: het belangrijkste per sectie, de rest onder ‘Geavanceerde instellingen’. Zoeken vindt alles.
+• Sms: meldingen van nieuwe berichten zijn helemaal uit te zetten, met een waarschuwing.
+</nl-NL>
+<no-NO>
+• Enklere innstillinger: det viktigste i hver del, resten under «Avanserte innstillinger». Søket finner alt.
+• SMS: varsler om nye meldinger kan slås helt av – med en advarsel.
+</no-NO>
+<pl-PL>
+• Prostsze ustawienia: w sekcjach to, co najważniejsze, reszta w „Ustawieniach zaawansowanych”. Wyszukiwanie znajdzie wszystko.
+• SMS: powiadomienia o nowych wiadomościach można całkiem wyłączyć — z ostrzeżeniem.
+</pl-PL>
+<pt-BR>
+• Configurações mais simples: o essencial em cada seção, o resto em “Configurações avançadas”. A busca encontra tudo.
+• SMS: as notificações de novas mensagens podem ser desativadas por completo, com aviso.
+</pt-BR>
+<ro>
+• Setări mai simple: esențialul în fiecare secțiune, restul în „Setări avansate”. Căutarea găsește tot.
+• SMS: notificările pentru mesaje noi pot fi oprite complet, cu avertizare.
+</ro>
+<sk>
+• Jednoduchšie nastavenia: v sekciách to hlavné, zvyšok v „Rozšírených nastaveniach“. Vyhľadávanie nájde všetko.
+• SMS: upozornenia na nové správy sa dajú úplne vypnúť — s varovaním.
+</sk>
+<sv-SE>
+• Enklare inställningar: det viktigaste i varje avsnitt, resten under ”Avancerade inställningar”. Sökningen hittar allt.
+• SMS: aviseringar om nya meddelanden kan stängas av helt – med en varning.
+</sv-SE>
+<th>
+• การตั้งค่าที่ง่ายขึ้น: แต่ละหมวดมีเฉพาะรายการหลัก ที่เหลืออยู่ใน «การตั้งค่าขั้นสูง» การค้นหาพบทุกรายการ
+• SMS: ปิดการแจ้งเตือนข้อความใหม่ได้ทั้งหมด — พร้อมคำเตือน
+</th>
+<tr-TR>
+• Daha sade ayarlar: her bölümde temel seçenekler, gerisi “Gelişmiş ayarlar”da. Arama her şeyi bulur.
+• SMS: yeni mesaj bildirimleri tamamen kapatılabilir — uyarıyla birlikte.
+</tr-TR>
+<vi>
+• Cài đặt gọn hơn: mỗi mục chỉ có phần chính, phần còn lại nằm trong “Cài đặt nâng cao”. Tìm kiếm thấy tất cả.
+• SMS: có thể tắt hẳn thông báo tin nhắn mới — kèm cảnh báo.
+</vi>
+<zh-CN>
+• 设置更简洁：各部分只保留主要选项，其余放入“高级设置”。搜索可找到全部选项。
+• 短信：可完全关闭新消息通知（附有警告）。
+</zh-CN>

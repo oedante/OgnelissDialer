@@ -150,6 +150,8 @@ data class SettingsState(
     val quietHours: QuietHours = QuietHours.DEFAULT,
     /** Сообщения (2.0.0): разбор в sms/SmsRole.kt. «Писать SMS в диалере» убран в 2.1.0. */
     val smsDeliveryReports: Boolean = false,
+    /** «Отключить уведомления SMS» (2.8.6): по умолчанию уведомления идут. */
+    val smsNotificationsOff: Boolean = false,
     // 2.2.0
     val smsUndoSend: com.ogneliss.dialer.settings.UndoSend = com.ogneliss.dialer.settings.UndoSend.S5,
     val smsCallsInThread: Boolean = true,
@@ -191,6 +193,7 @@ data class SettingsState(
         "file_logging" -> fileLogging
         "scam_memo" -> scamMemo
         "sms_delivery_reports" -> smsDeliveryReports
+        "sms_notifications_off" -> smsNotificationsOff
         "sms_calls_in_thread" -> smsCallsInThread
         else -> false
     }
@@ -220,7 +223,9 @@ data class SettingsState(
             // 2.0.0
             "sms_delivery_reports",
             // 2.2.0
-            "sms_calls_in_thread"
+            "sms_calls_in_thread",
+            // 2.8.6
+            "sms_notifications_off"
         )
     }
 }

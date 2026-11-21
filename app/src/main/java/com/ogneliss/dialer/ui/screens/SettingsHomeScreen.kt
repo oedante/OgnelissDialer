@@ -164,8 +164,14 @@ fun SettingsHomeScreen(
                                 OgnelissListRow(
                                     headline = stringResource(entry.titleRes),
                                     // Показываем, в какой категории лежит настройка —
-                                    // иначе пользователь найдёт её, но не запомнит где
-                                    supporting = stringResource(entry.category.titleRes),
+                                    // иначе пользователь найдёт её, но не запомнит где.
+                                    // 2.8.6: дополнительная — «Расширенные настройки · раздел»
+                                    supporting = if (entry.advanced) {
+                                        stringResource(SettingsCategory.ADVANCED.titleRes) + " · " +
+                                            stringResource(SettingsRegistry.advancedTitleRes(entry.category))
+                                    } else {
+                                        stringResource(entry.category.titleRes)
+                                    },
                                     onClick = { onOpenEntry(entry) }
                                 )
                             }
@@ -211,7 +217,7 @@ fun SettingsHomeScreen(
                      */
                     HOME_GROUPS.forEach { (titleRes, categories) ->
                         item(key = "group_$titleRes") {
-                            SettingsGroup(title = stringResource(titleRes)) {
+                            SettingsGroup(title = titleRes?.let { stringResource(it) }) {
                                 categories.forEachIndexed { index, category ->
                                     SettingsCategoryCard(
                                         icon = category.icon,
@@ -257,7 +263,7 @@ fun SettingsHomeScreen(
  * забытый раздел пропал бы с экрана настроек. Проверяет
  * SettingsRegistryTest («каждый раздел — в одной группе главного экрана»).
  */
-internal val HOME_GROUPS: List<Pair<Int, List<SettingsCategory>>> = listOf(
+internal val HOME_GROUPS: List<Pair<Int?, List<SettingsCategory>>> = listOf(
     /*
      * 2.1.0: группы пересобраны под SMS. SIM — в «Основном»: карты
      * общие для звонков и сообщений. SMS — своей группой, как раздел
@@ -285,5 +291,13 @@ internal val HOME_GROUPS: List<Pair<Int, List<SettingsCategory>>> = listOf(
         SettingsCategory.MAINTENANCE,
         SettingsCategory.SYSTEM,
         SettingsCategory.ABOUT
+    ),
+    /*
+     * 2.8.6: «Расширенные настройки» — последней строкой, своей карточкой без
+     * заголовка (как «Вопросы и ответы» ниже): это не тема, а второй уровень
+     * всех разделов сразу.
+     */
+    null to listOf(
+        SettingsCategory.ADVANCED
     )
 )

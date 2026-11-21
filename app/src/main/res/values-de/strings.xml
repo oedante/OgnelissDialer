@@ -231,13 +231,13 @@
     <string name="settings_section_about">Über die App</string>
     <string name="settings_section_about_summary">Datenschutz, Bedingungen, Version</string>
     <string name="settings_section_appearance">Darstellung</string>
-    <string name="settings_section_appearance_summary">Sprache, Design, Farben, Schrift, Ecken, Dichte</string>
-    <string name="settings_section_maintenance">Daten und Diagnose</string>
-    <string name="settings_section_maintenance_summary">Export und Import, Protokolldatei, Zurücksetzen</string>
+    <string name="settings_section_appearance_summary">Design, Farben, Schriftgröße, Skalierung, Sprache</string>
+    <string name="settings_section_maintenance">Sicherung</string>
+    <string name="settings_section_maintenance_summary">Notizen und Listen exportieren und importieren</string>
     <string name="settings_section_calls">Anrufe</string>
     <string name="settings_section_calls_summary">Was während und nach einem Anruf geschieht</string>
-    <string name="settings_section_log">Anrufprotokoll</string>
-    <string name="settings_section_log_summary">Gruppierung, Sortierung, Aufbewahrung von Notizen</string>
+    <string name="settings_section_log">Anrufliste und Kontakte</string>
+    <string name="settings_section_log_summary">Protokollansicht, Kontaktsortierung, Start</string>
     <string name="settings_section_sim">SIM-Karten</string>
     <string name="settings_section_sim_summary">Namen, Merken, eigene Nummer</string>
     <string name="settings_section_quick">Schnellzugriff</string>
@@ -742,7 +742,6 @@
     <string name="faq_q_contact">Wie melde ich einen Fehler oder schlage eine Idee vor?</string>
     <string name="faq_a_contact">Schreiben Sie an oedante@gmail.com. Wenn etwas nicht richtig funktioniert, hängen Sie das technische Protokoll an — %1$s: Nummern und Namen darin sind maskiert.</string>
     <!-- 1.6.2: имена контактов — формат и сортировка -->
-    <string name="settings_group_contact_names">Kontaktnamen</string>
     <string name="settings_contact_name_format">Namensformat</string>
     <string name="settings_contact_name_format_text">In Kontakten, im Anrufprotokoll, in der Kontaktkarte und auf dem Anrufbildschirm</string>
     <string name="contact_name_given_first">Vorname Nachname</string>
@@ -948,7 +947,7 @@
     <string name="settings_sms_swipe_text">Im Bereich „SMS“, getrennt vom Anrufprotokoll</string>
     <string name="settings_group_sms_swipe">Wischen über eine Unterhaltung</string>
     <string name="settings_group_messengers">Messenger</string>
-    <string name="settings_section_messages_summary">SMS-App, Wischgesten, Messenger</string>
+    <string name="settings_section_messages_summary">SMS-App, Hinweise, Senden, Ordner</string>
     <string name="settings_home_group_protection">Schutz</string>
     <string name="action_delete_thread">Löschen</string>
     <string name="history_filter_all">Alle</string>
@@ -1093,7 +1092,7 @@
     <string name="call_bg_custom">Eigenes Bild</string>
     <string name="keywords_call_bg">hintergrund hintergrundbild bild foto anrufbildschirm</string>
     <string name="settings_section_call_screen">Anrufbildschirm</string>
-    <string name="settings_section_call_screen_summary">Foto, Hintergrund und Nummer beim Anruf</string>
+    <string name="settings_section_call_screen_summary">Foto und Hintergrund des Anrufbildschirms</string>
     <string name="settings_group_avatar_pictures">Bilder ohne Foto</string>
     <string name="settings_avatar_no_photo">Kontakte ohne Foto</string>
     <string name="settings_avatar_no_photo_text">Eigenes Bild statt Initialen</string>
@@ -1111,4 +1110,13 @@
     <string name="settings_sms_text_scale">SMS-Textgröße</string>
     <string name="answer_mode_swipe_vertical">Wischen nach oben oder unten</string>
     <string name="incall_swipe_vertical_hint">Nach oben annehmen, nach unten ablehnen</string>
+    <string name="settings_sms_notifications_off">SMS-Benachrichtigungen ausschalten</string>
+    <string name="settings_sms_notifications_off_text">Neue Nachrichten kommen lautlos – Codes gehen leicht unter</string>
+    <string name="settings_sms_notifications_off_on">Benachrichtigungen zu neuen SMS sind aus</string>
+    <string name="confirm_sms_notifications_off">Neue SMS und MMS kommen ohne Ton, Vibration und Benachrichtigung. Bestätigungscodes und Nachrichten von Bank oder Arztpraxis gehen leicht unter. Hinweise zu nicht gesendeten Nachrichten und nicht geladenen MMS bleiben.</string>
+    <string name="confirm_turn_off">Ausschalten</string>
+    <string name="keywords_sms_notifications">Benachrichtigungen Hinweise Ton lautlos stumm Nachrichten</string>
+    <string name="settings_section_advanced">Erweiterte Einstellungen</string>
+    <string name="settings_section_advanced_summary">Feinabstimmung, seltene Optionen, Diagnose</string>
+    <string name="settings_advanced_more">Mehr in „Erweiterte Einstellungen“</string>
 </resources>

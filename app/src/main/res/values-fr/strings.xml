@@ -229,13 +229,13 @@
     <string name="settings_section_about">À propos</string>
     <string name="settings_section_about_summary">Confidentialité, conditions, version</string>
     <string name="settings_section_appearance">Apparence</string>
-    <string name="settings_section_appearance_summary">Langue, thème, couleurs, police, coins, densité</string>
-    <string name="settings_section_maintenance">Données et diagnostic</string>
-    <string name="settings_section_maintenance_summary">Export, import, fichier journal, réinitialisation</string>
+    <string name="settings_section_appearance_summary">Thème, couleurs, taille du texte, échelle, langue</string>
+    <string name="settings_section_maintenance">Sauvegarde</string>
+    <string name="settings_section_maintenance_summary">Exporter et importer notes et listes</string>
     <string name="settings_section_calls">Appels</string>
     <string name="settings_section_calls_summary">Ce qui se passe pendant et après un appel</string>
-    <string name="settings_section_log">Journal d’appels</string>
-    <string name="settings_section_log_summary">Regroupement, tri, conservation des notes</string>
+    <string name="settings_section_log">Journal et contacts</string>
+    <string name="settings_section_log_summary">Affichage du journal, tri des contacts, lancement</string>
     <string name="settings_section_sim">Cartes SIM</string>
     <string name="settings_section_sim_summary">Noms, mémorisation, votre numéro</string>
     <string name="settings_section_quick">Accès rapide</string>
@@ -741,7 +741,6 @@
     <string name="faq_q_contact">Comment signaler un bug ou proposer une idée ?</string>
     <string name="faq_a_contact">Écrivez à oedante@gmail.com. Si quelque chose ne fonctionne pas, joignez le journal technique — %1$s : les numéros et les noms y sont masqués.</string>
     <!-- 1.6.2: имена контактов — формат и сортировка -->
-    <string name="settings_group_contact_names">Noms des contacts</string>
     <string name="settings_contact_name_format">Format du nom</string>
     <string name="settings_contact_name_format_text">Dans les contacts, le journal, la fiche et l’écran d’appel</string>
     <string name="contact_name_given_first">Prénom Nom</string>
@@ -947,7 +946,7 @@
     <string name="settings_sms_swipe_text">Dans la section « SMS », indépendamment du journal d’appels</string>
     <string name="settings_group_sms_swipe">Balayage sur une conversation</string>
     <string name="settings_group_messengers">Messageries</string>
-    <string name="settings_section_messages_summary">Application SMS, balayages, messageries</string>
+    <string name="settings_section_messages_summary">App SMS, notifications, envoi, dossiers</string>
     <string name="settings_home_group_protection">Protection</string>
     <string name="action_delete_thread">Supprimer</string>
     <string name="history_filter_all">Tout</string>
@@ -1092,7 +1091,7 @@
     <string name="call_bg_custom">Image perso</string>
     <string name="keywords_call_bg">arrière-plan fond écran image photo appel</string>
     <string name="settings_section_call_screen">Écran d’appel</string>
-    <string name="settings_section_call_screen_summary">Photo, fond et numéro pendant l’appel</string>
+    <string name="settings_section_call_screen_summary">Photo et fond de l’écran d’appel</string>
     <string name="settings_group_avatar_pictures">Images sans photo</string>
     <string name="settings_avatar_no_photo">Contacts sans photo</string>
     <string name="settings_avatar_no_photo_text">Votre image au lieu des initiales</string>
@@ -1110,4 +1109,13 @@
     <string name="settings_sms_text_scale">Taille du texte des SMS</string>
     <string name="answer_mode_swipe_vertical">Glisser vers le haut ou le bas</string>
     <string name="incall_swipe_vertical_hint">Vers le haut pour répondre, vers le bas pour refuser</string>
+    <string name="settings_sms_notifications_off">Désactiver les notifications SMS</string>
+    <string name="settings_sms_notifications_off_text">Les nouveaux messages arrivent sans bruit : codes faciles à manquer</string>
+    <string name="settings_sms_notifications_off_on">Les notifications des nouveaux SMS sont désactivées</string>
+    <string name="confirm_sms_notifications_off">Les nouveaux SMS et MMS arriveront sans son, vibration ni notification. Vous risquez de manquer des codes de confirmation et des messages de votre banque ou de votre médecin. Les alertes de messages non envoyés et de MMS non téléchargés restent.</string>
+    <string name="confirm_turn_off">Désactiver</string>
+    <string name="keywords_sms_notifications">notifications alertes son silencieux muet messages</string>
+    <string name="settings_section_advanced">Paramètres avancés</string>
+    <string name="settings_section_advanced_summary">Réglages fins, options rares, diagnostic</string>
+    <string name="settings_advanced_more">Plus dans « Paramètres avancés »</string>
 </resources>

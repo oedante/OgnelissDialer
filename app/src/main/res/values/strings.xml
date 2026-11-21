@@ -247,13 +247,13 @@
     <string name="settings_section_about">About</string>
     <string name="settings_section_about_summary">Privacy, terms, version</string>
     <string name="settings_section_appearance">Appearance</string>
-    <string name="settings_section_appearance_summary">Language, theme, colors, font, corners, density</string>
-    <string name="settings_section_maintenance">Data and diagnostics</string>
-    <string name="settings_section_maintenance_summary">Export and import, log file, reset</string>
+    <string name="settings_section_appearance_summary">Theme, colors, font size, scale, language</string>
+    <string name="settings_section_maintenance">Backup</string>
+    <string name="settings_section_maintenance_summary">Export and import notes and lists</string>
     <string name="settings_section_calls">Calls</string>
     <string name="settings_section_calls_summary">What happens during and after a call</string>
-    <string name="settings_section_log">Call log</string>
-    <string name="settings_section_log_summary">Grouping, sorting, notes retention</string>
+    <string name="settings_section_log">Call log and contacts</string>
+    <string name="settings_section_log_summary">Log view, contact sorting, app launch</string>
     <string name="settings_section_sim">SIM cards</string>
     <string name="settings_section_sim_summary">Names, memory, your own number</string>
     <string name="settings_section_quick">Quick access</string>
@@ -771,7 +771,6 @@
     <string name="faq_q_contact">How do I report a bug or suggest an idea?</string>
     <string name="faq_a_contact">Write to oedante@gmail.com. If something doesn’t work right, attach the technical log — %1$s: numbers and names in it are masked.</string>
     <!-- 1.6.2: имена контактов — формат и сортировка -->
-    <string name="settings_group_contact_names">Contact names</string>
     <string name="settings_contact_name_format">Name format</string>
     <string name="settings_contact_name_format_text">In contacts, the call log, the contact card and on the call screen</string>
     <string name="contact_name_given_first">First name first</string>
@@ -977,7 +976,7 @@
     <string name="settings_sms_swipe_text">In the SMS section, separate from the call log</string>
     <string name="settings_group_sms_swipe">Swipe on a conversation</string>
     <string name="settings_group_messengers">Messengers</string>
-    <string name="settings_section_messages_summary">SMS app, swipes, messengers</string>
+    <string name="settings_section_messages_summary">SMS app, notifications, sending, folders</string>
     <string name="settings_home_group_protection">Protection</string>
     <string name="action_delete_thread">Delete</string>
     <string name="history_filter_all">All</string>
@@ -1122,7 +1121,7 @@
     <string name="call_bg_custom">Own picture</string>
     <string name="keywords_call_bg">background wallpaper image picture photo screen call</string>
     <string name="settings_section_call_screen">Call screen</string>
-    <string name="settings_section_call_screen_summary">Photo, background and number on the call screen</string>
+    <string name="settings_section_call_screen_summary">Photo and background of the call screen</string>
     <string name="settings_group_avatar_pictures">Pictures without photo</string>
     <string name="settings_avatar_no_photo">Contacts without photo</string>
     <string name="settings_avatar_no_photo_text">Your picture instead of initials</string>
@@ -1140,4 +1139,13 @@
     <string name="settings_sms_text_scale">SMS text size</string>
     <string name="answer_mode_swipe_vertical">Swipe up or down</string>
     <string name="incall_swipe_vertical_hint">Swipe up to answer, down to decline</string>
+    <string name="settings_sms_notifications_off">Turn off SMS notifications</string>
+    <string name="settings_sms_notifications_off_text">New messages arrive silently; codes are easy to miss</string>
+    <string name="settings_sms_notifications_off_on">Notifications about new SMS are off</string>
+    <string name="confirm_sms_notifications_off">New SMS and MMS will arrive without sound, vibration or notification. You may miss confirmation codes and messages from your bank or doctor. Notifications about unsent messages and MMS that failed to download stay on.</string>
+    <string name="confirm_turn_off">Turn off</string>
+    <string name="keywords_sms_notifications">notifications alerts sound silent mute quiet messages</string>
+    <string name="settings_section_advanced">Advanced settings</string>
+    <string name="settings_section_advanced_summary">Fine-tuning, rarely used options, diagnostics</string>
+    <string name="settings_advanced_more">Also in “Advanced settings”</string>
 </resources>

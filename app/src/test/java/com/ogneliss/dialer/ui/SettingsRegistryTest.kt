@@ -137,12 +137,15 @@ class SettingsRegistryTest {
     // существующего: в «Журнале вызовов» его настройки читались как звонковые.
     // 2.7.5: двенадцатый — «Экран вызова» (решение автора): «Вызовы» упёрлись
     // в предел 16 пунктов, вид экрана звонка — отдельная тема
+    // 2.8.6: «Расширенные настройки» не считаются — это второй уровень всех
+    // разделов, а не ещё одна тема
     fun `категорий не больше двенадцати`() {
+        val themes = SettingsCategory.entries.filter { it != SettingsCategory.ADVANCED }
         assertTrue(
-            "Категорий стало ${SettingsCategory.entries.size}. " +
+            "Категорий стало ${themes.size}. " +
                 "Прежде чем добавлять новую, посмотрите, не тема ли это " +
                 "существующей.",
-            SettingsCategory.entries.size <= 12
+            themes.size <= 12
         )
     }
 
@@ -163,14 +166,59 @@ class SettingsRegistryTest {
          * 2.7.5: поделён — вид экрана звонка (фото, фон, скрытый номер)
          * вынесен в «Экран вызова», в «Вызовах» 10 пунктов.
          */
-        SettingsCategory.entries.forEach { category ->
+        /*
+         * 2.8.6: основное и дополнительное (автор: «в основных категориях
+         * оставить важные и основные настройки… а всё дополнительное убрать
+         * в „Расширенные настройки“»). Предел — на то, что видно в разделе
+         * сразу: не больше восьми. «Расширенные» — длинный экран, но поделённый
+         * на разделы; предел — на группу одного раздела.
+         */
+        SettingsCategory.entries.filter { it != SettingsCategory.ADVANCED }.forEach { category ->
             val all = SettingsRegistry.byCategory(category)
             assertTrue(
-                "В разделе ${category.name} ${all.size} настроек. " +
-                    "Такой список читают прокруткой, а не взглядом — " +
-                    "стоит разделить по смыслу.",
-                all.size <= 16
+                "В разделе ${category.name} ${all.size} основных настроек. " +
+                    "Редкое — в «Расширенные» (advanced = true).",
+                all.size <= 8
             )
+            val extra = SettingsRegistry.advancedOf(category)
+            assertTrue(
+                "В «Расширенных» у раздела ${category.name} ${extra.size} пунктов — " +
+                    "такой список читают прокруткой, стоит разделить по смыслу.",
+                extra.size <= 8
+            )
+        }
+    }
+
+    @Test
+    fun `каждая настройка ровно на одном экране`() {
+        // 2.8.6: пункт в своём разделе или в «Расширенных» — не в обоих и не нигде
+        val shown = SettingsCategory.entries.flatMap { SettingsRegistry.byCategory(it) }.map { it.id }
+        assertEquals(SettingsRegistry.entries.map { it.id }.sorted(), shown.sorted())
+        SettingsRegistry.entries.forEach { entry ->
+            assertTrue(
+                "Пункт '${entry.id}' не на своём экране",
+                entry in SettingsRegistry.byCategory(SettingsRegistry.screenOf(entry))
+            )
+        }
+    }
+
+    @Test
+    fun `у «Расширенных» нет своих пунктов`() {
+        // Раздел пункта — настоящий; в «Расширенные» его выносит advanced
+        assertTrue(SettingsRegistry.entries.none { it.category == SettingsCategory.ADVANCED })
+    }
+
+    @Test
+    fun `главное о звонках и SMS — не в «Расширенных»`() {
+        // Решение автора 21.11.2026: в основных разделах — важное. Эти пункты
+        // ищут чаще всего; уйти в «Расширенные» они не должны и по ошибке
+        val main = listOf(
+            "theme", "font_scale", "language", "answer_mode", "swap_answer", "incoming_banner",
+            "sms_default_app", "sms_notifications_off", "sms_text_scale", "block_list", "allow_list",
+            "backup_export", "backup_import", "permissions", "battery"
+        )
+        main.forEach { id ->
+            assertTrue("'$id' должен быть в основном разделе", SettingsRegistry.byId(id)?.advanced == false)
         }
     }
 
@@ -208,7 +256,8 @@ class SettingsRegistryTest {
     @Test
     fun `подгруппы не разорваны`() {
         SettingsCategory.entries.forEach { category ->
-            val groups = SettingsRegistry.byCategory(category).map { it.groupRes }
+            // 2.8.6: в «Расширенных» группа — раздел пункта (SettingsRegistry.groupKey)
+            val groups = SettingsRegistry.byCategory(category).map { SettingsRegistry.groupKey(category, it) }
 
             val runs = mutableListOf<Int?>()
             groups.forEach { g -> if (runs.lastOrNull() != g || runs.isEmpty()) runs += g }

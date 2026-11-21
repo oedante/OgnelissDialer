@@ -402,11 +402,11 @@ class ScreenGalleryTest {
         Shot("card_unknown") { vm -> SubscriberScreen(groupKey = log[2].key, vm = vm, onOpenBlockLists = {}, onBack = {}) },
         Shot("card_hidden") { vm -> SubscriberScreen(groupKey = log[0].key, vm = vm, onOpenBlockLists = {}, onBack = {}) },
         Shot("settings_home") { _ -> SettingsHomeScreen(onBack = {}, onOpenCategory = {}, onOpenEntry = {}) },
-        Shot("settings_appearance") { vm -> SettingsCategoryScreen(category = SettingsCategory.APPEARANCE, vm = vm, onBack = {}, onAction = {}) },
-        Shot("settings_calls") { vm -> SettingsCategoryScreen(category = SettingsCategory.CALLS, vm = vm, onBack = {}, onAction = {}) },
+        Shot("settings_appearance") { vm -> SettingsCategoryScreen(category = SettingsCategory.APPEARANCE, vm = vm, onBack = {}, onOpenAdvanced = {}, onAction = {}) },
+        Shot("settings_calls") { vm -> SettingsCategoryScreen(category = SettingsCategory.CALLS, vm = vm, onBack = {}, onOpenAdvanced = {}, onAction = {}) },
         // 2.7.2: «Журнал вызовов» — где «Цветные стрелки вызовов» (вопрос автора: «не вижу настройки»)
-        Shot("settings_log") { vm -> SettingsCategoryScreen(category = SettingsCategory.CALL_LOG, vm = vm, onBack = {}, onAction = {}) },
-        Shot("settings_quick") { vm -> SettingsCategoryScreen(category = SettingsCategory.QUICK_ACCESS, vm = vm, onBack = {}, onAction = {}) },
+        Shot("settings_log") { vm -> SettingsCategoryScreen(category = SettingsCategory.CALL_LOG, vm = vm, onBack = {}, onOpenAdvanced = {}, onAction = {}) },
+        Shot("settings_quick") { vm -> SettingsCategoryScreen(category = SettingsCategory.QUICK_ACCESS, vm = vm, onBack = {}, onOpenAdvanced = {}, onAction = {}) },
         Shot("notes") { vm -> NotesScreen(vm = vm, onOpenCard = {}, onBack = {}) },
         Shot("reminders") { vm -> RemindersScreen(vm = vm, onOpenCard = {}, onBack = {}) },
         Shot("spam") { vm -> SpamProtectionScreen(vm = vm, onBack = {}, onOpenLists = {}) },
@@ -601,7 +601,7 @@ class ScreenGalleryTest {
     /** Разделы настроек, которых не было выше: по одному снимку на раздел (2.7.5). */
     private val settingsShots: List<Shot> = SettingsCategory.entries
         .filter { it !in setOf(SettingsCategory.APPEARANCE, SettingsCategory.CALLS, SettingsCategory.CALL_LOG, SettingsCategory.QUICK_ACCESS) }
-        .map { c -> Shot("settings_" + c.name.lowercase()) { vm -> SettingsCategoryScreen(category = c, vm = vm, onBack = {}, onAction = {}) } }
+        .map { c -> Shot("settings_" + c.name.lowercase()) { vm -> SettingsCategoryScreen(category = c, vm = vm, onBack = {}, onOpenAdvanced = {}, onAction = {}) } }
 
     private val expShots: List<Shot> = listOf(
         Shot("xa", dialog = true) { _ ->

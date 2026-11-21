@@ -59,6 +59,12 @@ fun SettingsCategoryScreen(
     reveal: SettingReveal? = null,
     /** Просьба исполнена — снять её, чтобы не сработала при следующем входе. */
     onRevealConsumed: () -> Unit = {},
+    /**
+     * Ссылка «Ещё в „Расширенных настройках“» внизу раздела (2.8.6): открыть
+     * «Расширенные» и показать первый дополнительный пункт этого раздела.
+     * null — ссылки нет (сами «Расширенные», галерея снимков).
+     */
+    onOpenAdvanced: ((entryId: String) -> Unit)? = null,
     onAction: (String) -> Unit
 ) {
     val ctx = LocalContext.current
@@ -107,6 +113,12 @@ fun SettingsCategoryScreen(
      * пункты, их у нас не так много»). Свёрнутая группа «Дополнительно»
      * (1.5.8–1.7.0) убрана: в самом длинном разделе одиннадцать строк,
      * а спрятанный пункт приходилось искать поиском.
+     *
+     * 2.8.6 — снова два уровня, но иначе (автор: «в основных категориях
+     * оставить важные и основные настройки… а всё дополнительное убрать
+     * в „Расширенные настройки“»). Не свёрнутая группа внутри раздела,
+     * а свой экран «Расширенные настройки» с разделами; внизу раздела —
+     * ссылка с названиями того, что ушло туда, поиск находит всё.
      *
      * Найдено поиском — или кнопкой в «Вопросах и ответах» (1.6.0):
      * раздел прокручивается к пункту и на секунду подсвечивает его.
@@ -170,14 +182,19 @@ fun SettingsCategoryScreen(
      *
      * Пункты без подгруппы идут без заголовка — как раньше.
      */
+    /*
+     * 2.8.6: в «Расширенных настройках» заголовок группы — раздел пункта
+     * («Оформление», «Вызовы»…), а не его подгруппа: SettingsRegistry.groupKey.
+     */
     val renderEntries: @Composable (List<SettingEntry>) -> Unit = { list ->
         val chunks = buildList<Pair<Int?, List<SettingEntry>>> {
             list.forEach { entry ->
+                val key = SettingsRegistry.groupKey(category, entry)
                 val last = lastOrNull()
-                if (last != null && last.first == entry.groupRes) {
+                if (last != null && last.first == key) {
                     this[lastIndex] = last.first to (last.second + entry)
                 } else {
-                    add(entry.groupRes to listOf(entry))
+                    add(key to listOf(entry))
                 }
             }
         }
@@ -205,6 +222,9 @@ fun SettingsCategoryScreen(
                         // Выдано — «Уже разрешено» вместо пояснения (2.1.0, разбор выше)
                         entry.id == "battery" && batteryAllowed ->
                             stringResource(R.string.settings_battery_already)
+                        // 2.8.6: уведомления SMS отключены — так и написано, красной строкой
+                        entry.id == "sms_notifications_off" && state.smsNotificationsOff ->
+                            stringResource(R.string.settings_sms_notifications_off_on)
                         // Прошивка может не пропустить плашку (2.2.2) — что разрешить в телефоне
                         entry.id == "incoming_banner" &&
                             com.ogneliss.dialer.util.IncomingCallAccess.restrictiveShell ->
@@ -325,6 +345,25 @@ fun SettingsCategoryScreen(
 
             renderEntries(entries)
 
+            /*
+             * «ЕЩЁ В „РАСШИРЕННЫХ НАСТРОЙКАХ“» (2.8.6). Дополнительные пункты
+             * ушли из раздела, но человек ищет их здесь, где они лежали годами.
+             * Строка внизу называет их (до четырёх) и ведёт прямо к ним.
+             */
+            val advanced = remember(category) { SettingsRegistry.advancedOf(category) }
+            if (onOpenAdvanced != null && advanced.isNotEmpty()) {
+                val names = advanced.take(ADVANCED_NAMES_SHOWN).map { stringResource(it.titleRes) }
+                val more = if (advanced.size > ADVANCED_NAMES_SHOWN) " · …" else ""
+                SettingsGroup(title = null) {
+                    SettingsActionRow(
+                        title = stringResource(R.string.settings_advanced_more),
+                        summary = names.joinToString(" · ") + more,
+                        icon = SettingsCategory.ADVANCED.icon,
+                        onClick = { onOpenAdvanced(advanced.first().id) }
+                    )
+                }
+            }
+
             if (changedEntries.isNotEmpty()) {
                 SettingsGroup(title = null) {
                     SettingsActionRow(
@@ -343,6 +382,9 @@ fun SettingsCategoryScreen(
         DangerousSettingDialog(
             title = stringResource(R.string.confirm_title),
             explanation = stringResource(dangerExplanationRes(entry.id)),
+            confirmText = stringResource(
+                if (entry.id == "sms_notifications_off") R.string.confirm_turn_off else R.string.confirm_enable
+            ),
             onConfirm = {
                 when (val k = entry.kind) {
                     is SettingKind.Switch -> vm.setSwitch(k.key, true)
@@ -420,9 +462,13 @@ fun SettingsCategoryScreen(
 private fun dangerExplanationRes(entryId: String): Int = when (entryId) {
     "block_unknown" -> R.string.confirm_block_unknown
     "reset" -> R.string.confirm_reset
+    "sms_notifications_off" -> R.string.confirm_sms_notifications_off
     // «Внешние справочники» — без этого окна с 2.1.0: вопрос задаёт сам экран (SettingsRegistry)
     else -> R.string.confirm_title
 }
+
+/** Сколько названий дополнительных пунктов показать в ссылке на «Расширенные» (2.8.6). */
+private const val ADVANCED_NAMES_SHOWN = 4
 
 /** Варианты, которые «Вернуть как было» не трогает: разбор у отметок «изменено» в начале экрана. */
 private val NOT_RESETTABLE = setOf("language")

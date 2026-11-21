@@ -255,9 +255,10 @@ private fun faqLinkPath(link: FaqLink): String? = when (link) {
 @Composable
 private fun settingPath(entry: SettingEntry): String {
     val settings = stringResource(R.string.nav_settings)
-    val section = stringResource(entry.category.titleRes)
+    // 2.8.6: дополнительный пункт — «Настройки → Расширенные настройки → «пункт»»:
+    // так и идти, а раздел внутри «Расширенных» виден заголовком группы
+    val section = stringResource(SettingsRegistry.screenOf(entry).titleRes)
     val title = stringResource(entry.titleRes)
-    // С 1.8.0 пункты не прячутся под «Дополнительно» — путь всегда из трёх частей
     return stringResource(R.string.faq_path, settings, section, title)
 }
 
