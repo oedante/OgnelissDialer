@@ -70,13 +70,26 @@ class ContactEditRepository @Inject constructor(
      * перезапишет запись при следующей синхронизации. SIM — нет: на карте
      * помещаются имя и один номер, остальное потерялось бы молча.
      */
-    private class AccountRules(val readOnly: Set<String>, val synced: Set<String>) {
+    private class AccountRules(
+        val readOnly: Set<String>,
+        val synced: Set<String>,
+        /** Типы, у которых есть приложение-владелец аккаунта (2.8.5). */
+        val owned: Set<String> = emptySet()
+    ) {
         fun isSim(type: String?) = type?.contains("sim", ignoreCase = true) == true
         fun isWritable(type: String?) = !isSim(type) && (type == null || type !in readOnly)
+        /*
+         * 2.8.5 (форум: «видит только телефон, контакты из DAVx не видит»): тип,
+         * у которого есть приложение-владелец (DAVx⁵, Xiaomi, почта), — свой
+         * источник, даже если адаптер синхронизации не виден. Было: всё, чего
+         * нет среди видимых адаптеров, считалось «Телефоном» и сливалось в одну
+         * строку «Телефон».
+         */
         fun kind(type: String?): ContactAccount.Kind = when {
             type == GOOGLE -> ContactAccount.Kind.GOOGLE
-            type == null || type !in synced -> ContactAccount.Kind.DEVICE
-            else -> ContactAccount.Kind.OTHER
+            type == null -> ContactAccount.Kind.DEVICE
+            type in synced || type in owned -> ContactAccount.Kind.OTHER
+            else -> ContactAccount.Kind.DEVICE
         }
         /** Куда класть новые строки: Google, другой синхронизируемый, «Телефон». */
         fun rank(type: String?) = when (kind(type)) {
@@ -91,7 +104,10 @@ class ContactEditRepository @Inject constructor(
             .filter { it.authority == ContactsContract.AUTHORITY }
         AccountRules(
             readOnly = adapters.filter { !it.supportsUploading() }.mapTo(HashSet()) { it.accountType },
-            synced = adapters.filter { it.supportsUploading() }.mapTo(HashSet()) { it.accountType }
+            synced = adapters.filter { it.supportsUploading() }.mapTo(HashSet()) { it.accountType },
+            owned = runCatching {
+                AccountManager.get(context).authenticatorTypes.mapTo(HashSet()) { it.type }
+            }.getOrDefault(emptySet())
         )
     }.getOrElse {
         Logger.w(TAG, "Не удалось прочитать адаптеры синхронизации", it)

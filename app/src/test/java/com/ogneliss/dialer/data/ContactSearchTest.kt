@@ -381,4 +381,50 @@ class ContactSearchTest {
         // Пустой запрос — все
         assertTrue(ContactSearch.matchesListQuery(ivan, "  "))
     }
+
+    // ── 2.8.5: порядок найденных записей журнала ───────────────────────────
+
+    @Test
+    fun `журнал буквами — начало имени, потом начало слова, потом середина`() {
+        val log = listOf(
+            group("+79000000001", "Аспетрович", lastDate = now),            // середина слова — свежий
+            group("+79000000002", "Иван Петров", lastDate = now - day),     // начало слова
+            group("+79000000003", "Петров Сантехник", lastDate = now - 5 * day) // начало имени — старый
+        )
+        val result = ContactSearch.search(emptyList(), log, "петр", SortOrder.RELEVANCE, nowMillis = now)
+        assertEquals(
+            listOf("Петров Сантехник", "Иван Петров", "Аспетрович"),
+            result.callLog.map { it.displayName }
+        )
+    }
+
+    @Test
+    fun `журнал по алфавиту — по имени, без имени в конце`() {
+        val log = listOf(
+            group("+79000000001", "Яков Петров"),
+            group("+79000000002", null),
+            group("+79000000003", "Борис Петров")
+        )
+        val result = ContactSearch.search(emptyList(), log, "9000", SortOrder.ALPHABET, nowMillis = now)
+        assertEquals(listOf("Борис Петров", "Яков Петров", null), result.callLog.map { it.displayName })
+    }
+
+    @Test
+    fun `журнал частые — при равном совпадении чаще выше`() {
+        val log = listOf(
+            group("+79000000001", "Пётр А", count = 2, lastDate = now),
+            group("+79000000002", "Пётр Б", count = 9, lastDate = now - day)
+        )
+        val result = ContactSearch.search(emptyList(), log, "пётр", SortOrder.FREQUENCY, nowMillis = now)
+        assertEquals(listOf("Пётр Б", "Пётр А"), result.callLog.map { it.displayName })
+    }
+
+    @Test
+    fun `контакты буквами по алфавиту — без учёта совпадения`() {
+        val result = ContactSearch.search(
+            listOf(contact(1, "Яна Петрова"), contact(2, "Аспетрович"), contact(3, "Петров")),
+            emptyList(), "петр", SortOrder.ALPHABET, nowMillis = now
+        )
+        assertEquals(listOf("Аспетрович", "Петров", "Яна Петрова"), result.contacts.map { it.displayName })
+    }
 }

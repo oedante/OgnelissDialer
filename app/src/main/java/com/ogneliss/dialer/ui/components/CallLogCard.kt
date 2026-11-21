@@ -248,7 +248,19 @@ fun CallLogCard(
                      * Значок «i» отвечает на вопрос сразу: подпись —
                      * ваша пометка, а не имя из телефонной книги.
                      */
-                    if (row.titleFromNote) {
+                    /*
+                     * Своя картинка неизвестных номеров (2.8.5, форум: «если у контакта,
+                     * которого нет в книге, есть заметка, картинка не отображается»).
+                     * Задана и показывается в списках — она, а значок заметки «i» —
+                     * маленьким в углу: что имя — ваша пометка, видно и так.
+                     */
+                    val unknownPicture = LocalAvatarPictures.current.forLists(known = false)
+                    if (row.titleFromNote && unknownPicture != null && LocalAppearance.current.showPhoto) {
+                        Box {
+                            Avatar(row.photoUri, name = null)
+                            NoteBadge(Modifier.align(Alignment.BottomEnd))
+                        }
+                    } else if (row.titleFromNote) {
                         NoteAvatar()
                     } else {
                         // Имя — только у контактов: незнакомый номер с именем
@@ -702,6 +714,24 @@ private fun typeLabelRes(type: CallType) = when (type) {
  * Пропущенный его не перекрашивает (1.4.0): о пропуске говорит красная
  * строка даты, как у остальных записей.
  */
+/** Значок заметки в углу аватара (2.8.5): та же «i», что у NoteAvatar, — на трети диаметра. */
+@Composable
+private fun NoteBadge(modifier: Modifier = Modifier) {
+    val size = LocalAppearance.current.avatarSize * NOTE_BADGE_SHARE
+    Surface(
+        shape = CircleShape,
+        color = MaterialTheme.colorScheme.surface,
+        modifier = modifier.size(size)
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Icon(OgnelissIcons.Info, contentDescription = null, tint = NoteTeal, modifier = Modifier.size(size * 0.9f))
+        }
+    }
+}
+
+/** Значок заметки в углу — доля диаметра аватара. */
+private const val NOTE_BADGE_SHARE = 0.38f
+
 @Composable
 private fun NoteAvatar() {
     /*

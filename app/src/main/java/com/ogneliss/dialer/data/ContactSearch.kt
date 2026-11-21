@@ -61,7 +61,7 @@ object ContactSearch {
         notes: Map<String, NumberNote> = emptyMap(),
         nowMillis: Long = System.currentTimeMillis()
     ): Result {
-        if (TextFold.isTextQuery(query)) return searchText(contacts, callLog, query.trim(), notes)
+        if (TextFold.isTextQuery(query)) return searchText(contacts, callLog, query.trim(), notes, order)
 
         val digits = query.filter { it.isDigit() }
         if (digits.isEmpty()) return Result.EMPTY
@@ -99,8 +99,56 @@ object ContactSearch {
             nameMatches || noteMatches || DialDigits.matches(group.number, digits)
         }
 
-        return Result(ranked, matchedLog)
+        // 2.8.5: записи журнала — по качеству совпадения и выбранному порядку (rankLog)
+        return Result(ranked, rankLog(matchedLog, order) { group -> t9Tier(group, digits, notes) })
     }
+
+    /*
+     * ПОРЯДОК НАЙДЕННЫХ ЗАПИСЕЙ ЖУРНАЛА (2.8.5, форум: «настройки поиска в журнале
+     * не влияют на результаты… вхождения в середину слова показываются выше, чем
+     * вхождения с начала слова»). Было: записи журнала шли как в журнале — по дате
+     * звонка, без учёта совпадения и настройки «Порядок результатов».
+     *
+     * Стало: «По алфавиту» — по имени (без имени — в конце), остальное — сначала
+     * качество совпадения (0 — с начала имени, 1 — с начала слова или номера,
+     * 2 — в середине слова или в заметке), внутри — выбранный порядок:
+     * «Частые» — по числу звонков, «Недавние» и «По релевантности» — свежие выше.
+     */
+    internal fun rankLog(
+        groups: List<CallLogGroup>,
+        order: SortOrder,
+        tier: (CallLogGroup) -> Int
+    ): List<CallLogGroup> {
+        if (groups.size <= 1) return groups
+        return when (order) {
+            SortOrder.ALPHABET -> groups.sortedWith(
+                compareBy<CallLogGroup> { it.displayName.isNullOrBlank() }
+                    .thenBy { it.displayName.orEmpty().lowercase() }
+                    .thenByDescending { it.lastDate }
+            )
+            SortOrder.FREQUENCY -> groups.sortedWith(
+                compareBy(tier).thenByDescending<CallLogGroup> { it.count }.thenByDescending { it.lastDate }
+            )
+            SortOrder.RECENCY, SortOrder.RELEVANCE -> groups.sortedWith(
+                compareBy(tier).thenByDescending<CallLogGroup> { it.lastDate }
+            )
+        }
+    }
+
+    /** Качество совпадения записи журнала при наборе цифрами (разбор у rankLog). */
+    private fun t9Tier(group: CallLogGroup, digits: String, notes: Map<String, NumberNote>): Int {
+        val at = group.displayName?.let { T9Engine.matchIndex(digits, it) } ?: -1
+        return when {
+            at == 0 -> 0
+            at > 0 -> 1
+            DialDigits.matches(group.number, digits) -> 1
+            else -> 2
+        }
+    }
+
+    /** Качество совпадения записи журнала при поиске буквами (разбор у rankLog). */
+    private fun textTier(group: CallLogGroup, query: String): Int =
+        if (TextFold.contains(group.displayName, query)) TextFold.rank(group.displayName.orEmpty(), query).coerceAtMost(2) else 2
 
     /**
      * СОВПАДЕНИЕ КОНТАКТА: ИМЯ, НОМЕР ИЛИ ЗАМЕТКА.
@@ -206,7 +254,8 @@ object ContactSearch {
         contacts: List<Contact>,
         callLog: List<CallLogGroup>,
         query: String,
-        notes: Map<String, NumberNote>
+        notes: Map<String, NumberNote>,
+        order: SortOrder = SortOrder.RELEVANCE
     ): Result {
         if (query.isEmpty()) return Result.EMPTY
 
@@ -219,21 +268,33 @@ object ContactSearch {
             TextFold.contains(group.displayName, query) ||
                 TextFold.contains(notes[group.e164]?.note, query)
         }
-        return Result(rankText(matched, callLog, query), matchedLog)
+        return Result(
+            rankText(matched, callLog, query, order),
+            rankLog(matchedLog, order) { group -> textTier(group, query) }
+        )
     }
 
     /** Порядок выдачи при поиске буквами: разбор у searchText. */
     private fun rankText(
         matched: List<Contact>,
         callLog: List<CallLogGroup>,
-        query: String
+        query: String,
+        order: SortOrder = SortOrder.RELEVANCE
     ): List<Contact> {
         if (matched.size <= 1) return matched
         val callsByE164 = callLog.associate { it.e164 to it.count }
+        val lastByE164 = callLog.associate { it.e164 to it.lastDate }
+        val calls = { contact: Contact -> contact.numbers.sumOf { callsByE164[it.e164] ?: 0 } }
+        val last = { contact: Contact -> contact.numbers.maxOfOrNull { lastByE164[it.e164] ?: 0L } ?: 0L }
+        val quality = compareBy<Contact> { TextFold.rank(it.displayName, query) }
+        // 2.8.5: «Порядок результатов» и при поиске буквами (было — всегда по релевантности)
         return matched.sortedWith(
-            compareBy<Contact> { TextFold.rank(it.displayName, query) }
-                .thenByDescending { it.starred }
-                .thenByDescending { contact -> contact.numbers.sumOf { callsByE164[it.e164] ?: 0 } }
+            when (order) {
+                SortOrder.ALPHABET -> compareBy { it.displayName.lowercase() }
+                SortOrder.FREQUENCY -> quality.thenByDescending(calls).thenBy { it.displayName.lowercase() }
+                SortOrder.RECENCY -> quality.thenByDescending(last).thenBy { it.displayName.lowercase() }
+                SortOrder.RELEVANCE -> quality.thenByDescending { it.starred }.thenByDescending(calls)
+            }
         )
     }
 
