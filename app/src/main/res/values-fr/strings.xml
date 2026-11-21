@@ -1107,4 +1107,5 @@
     <string name="avatar_scope_lists">Dans les listes et fiches</string>
     <string name="keywords_avatar_pictures">avatar, image, sans photo, inconnu, illustration</string>
     <string name="sms_folder_blocked">Bloqués</string>
+    <string name="settings_sms_text_scale">Taille du texte des SMS</string>
 </resources>

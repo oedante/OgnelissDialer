@@ -143,7 +143,7 @@ fun SettingsCategoryScreen(
     val isChanged: (SettingEntry) -> Boolean = { entry ->
         when (val k = entry.kind) {
             is SettingKind.Switch -> state.switchValue(k.key) != defaults.switchValue(k.key)
-            is SettingKind.Slider -> state.fontScale != defaults.fontScale
+            is SettingKind.Slider -> sliderValue(k.key, state) != sliderValue(k.key, defaults)
             is SettingKind.Choice -> k.key !in NOT_RESETTABLE && (
                 vm.choiceValueOf(k.key, state) != vm.choiceValueOf(k.key, defaults) ||
                     (k.key == "swipe_right" && rightExtra.isNotEmpty()) ||
@@ -245,9 +245,9 @@ fun SettingsCategoryScreen(
                     is SettingKind.Slider -> FontScaleRow(
                         icon = rowIcon,
                         title = title,
-                        value = state.fontScale,
+                        value = sliderValue(kind.key, state),
                         changed = isChanged(entry),
-                        onChange = vm::setFontScale
+                        onChange = { vm.setSlider(kind.key, it) }
                     )
 
                     // Масштаб (2.2.1) — вариантами в ряд на месте, как в настройках почты
@@ -373,7 +373,7 @@ fun SettingsCategoryScreen(
                     changedEntries.forEach { entry ->
                         when (val k = entry.kind) {
                             is SettingKind.Switch -> vm.setSwitch(k.key, defaults.switchValue(k.key))
-                            is SettingKind.Slider -> vm.setFontScale(defaults.fontScale)
+                            is SettingKind.Slider -> vm.setSlider(k.key, sliderValue(k.key, defaults))
                             // Вместе с дополнительными действиями свайпа
                             is SettingKind.Choice -> vm.resetChoice(k.key)
                             else -> Unit
@@ -537,3 +537,7 @@ private fun UiScaleRow(
         )
     }
 }
+
+/** Значение ползунка по ключу (2.8.5): размер шрифта или размер текста SMS. */
+private fun sliderValue(key: String, state: com.ogneliss.dialer.ui.SettingsState): Float =
+    if (key == "sms_text_scale") state.smsTextScale else state.fontScale

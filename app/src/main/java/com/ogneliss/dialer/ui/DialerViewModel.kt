@@ -2095,6 +2095,12 @@ class DialerViewModel @Inject constructor(
     /** Размер шрифта (2.2.1): ползунок «Оформления». */
     fun setFontScale(value: Float) = viewModelScope.launch { settingsCommands.setFontScale(value) }
 
+    fun setSmsTextScale(value: Float) = viewModelScope.launch { settingsCommands.setSmsTextScale(value) }
+
+    /** Ползунок настроек по ключу (2.8.5): размер шрифта или размер текста SMS. */
+    fun setSlider(key: String, value: Float) =
+        if (key == "sms_text_scale") setSmsTextScale(value) else setFontScale(value)
+
     fun setChoice(key: String, value: String) = viewModelScope.launch {
         settingsCommands.setChoice(key, value)
         when (key) {

@@ -345,6 +345,9 @@ fun ConversationScreen(
                         own = scheme.primary
                     )
                 }
+                // Размер текста SMS (2.8.5) — только текст сообщений (LinkedBody)
+                val smsTextScale by vm.smsTextScale.collectAsStateWithLifecycle()
+                androidx.compose.runtime.CompositionLocalProvider(LocalSmsTextScale provides smsTextScale) {
                 MessageList(
                     state = state,
                     focusKey = vm.focusKey,
@@ -357,6 +360,7 @@ fun ConversationScreen(
                     onCancelQueued = vm::cancelQueued,
                     onSendQueuedNow = vm::sendQueuedNow
                 )
+                }
             }
         }
     }
@@ -896,11 +900,12 @@ private fun Bubble(
 @Composable
 private fun LinkedBody(message: Message, linkColor: Color, enabled: Boolean) {
     val context = LocalContext.current
+    val bodyStyle = smsBodyStyle()
     val spans = remember(message.key, message.body) {
         com.ogneliss.dialer.sms.MessageLinks.find(message.body, message.date)
     }
     if (spans.isEmpty() || !enabled) {
-        Text(message.body, style = MaterialTheme.typography.bodyLarge)
+        Text(message.body, style = bodyStyle)
         return
     }
     val styles = androidx.compose.ui.text.TextLinkStyles(
@@ -922,7 +927,22 @@ private fun LinkedBody(message: Message, linkColor: Color, enabled: Boolean) {
             }
         }
     }
-    Text(text, style = MaterialTheme.typography.bodyLarge)
+    Text(text, style = bodyStyle)
+}
+
+/*
+ * РАЗМЕР ТЕКСТА SMS (2.8.5, форум: «увеличение шрифта только СМС, без увеличения
+ * всего интерфейса»). Множитель из настроек (SMS → «Размер текста SMS») — поверх
+ * размера шрифта приложения, только для текста сообщений; строки растут вместе
+ * с кеглем, иначе крупный текст наезжал бы строка на строку.
+ */
+internal val LocalSmsTextScale = androidx.compose.runtime.staticCompositionLocalOf { 1f }
+
+@Composable
+private fun smsBodyStyle(): androidx.compose.ui.text.TextStyle {
+    val base = MaterialTheme.typography.bodyLarge
+    val k = LocalSmsTextScale.current
+    return if (k == 1f) base else base.copy(fontSize = base.fontSize * k, lineHeight = base.lineHeight * k)
 }
 
 /** Действие по касанию найденного в SMS (разбор у LinkedBody). */

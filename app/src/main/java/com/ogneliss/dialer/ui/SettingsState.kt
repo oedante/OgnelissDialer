@@ -54,6 +54,8 @@ data class SettingsState(
     val uiScale: UiScale = UiScale.DEFAULT,
     /** Размер шрифта (2.2.1): множитель поверх системного. */
     val fontScale: Float = 1f,
+    /** Размер текста SMS в переписке (2.8.5), множитель поверх размера шрифта. */
+    val smsTextScale: Float = 1f,
     /** Цветовая тема, как в Ogneliss Mail (1.8.4). */
     val themePreset: com.ogneliss.dialer.settings.ThemePreset = com.ogneliss.dialer.settings.ThemePreset.CLASSIC,
     // 1.9.0: оформление как в Ogneliss Mail

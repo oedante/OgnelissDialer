@@ -1117,4 +1117,5 @@
     <string name="avatar_scope_lists">В списках и карточках</string>
     <string name="keywords_avatar_pictures">аватар, аватарка, картинка, заглушка, без фото, неизвестный, изображение</string>
     <string name="sms_folder_blocked">Заблокированные</string>
+    <string name="settings_sms_text_scale">Размер текста SMS</string>
 </resources>

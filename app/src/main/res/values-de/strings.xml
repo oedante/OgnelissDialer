@@ -1108,4 +1108,5 @@
     <string name="avatar_scope_lists">In Listen und Karten</string>
     <string name="keywords_avatar_pictures">Avatar, Bild, Platzhalter, ohne Foto, unbekannt</string>
     <string name="sms_folder_blocked">Blockiert</string>
+    <string name="settings_sms_text_scale">SMS-Textgröße</string>
 </resources>

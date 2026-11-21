@@ -23,6 +23,7 @@ internal fun settingIcon(id: String): ImageVector? = when (id) {
     "theme_preset" -> OgnelissIcons.Palette
     "dynamic_color" -> OgnelissIcons.Image
     "font_scale" -> OgnelissIcons.EditNote
+    "sms_text_scale" -> OgnelissIcons.Textsms
     "ui_scale" -> OgnelissIcons.Smartphone
     "ui_font" -> OgnelissIcons.Article
     "corner_size" -> OgnelissIcons.RadioButtonUnchecked

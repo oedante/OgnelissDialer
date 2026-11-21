@@ -632,6 +632,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val UI_SCALE = stringPreferencesKey("ui_scale")
         // 2.2.1: размер шрифта, как в Ogneliss Mail
         val FONT_SCALE = floatPreferencesKey("font_scale")
+        /** Размер текста SMS в переписке (2.8.5), отдельно от размера шрифта приложения. */
+        val SMS_TEXT_SCALE = floatPreferencesKey("sms_text_scale")
         // 2.2.2: подсказка о свайпах в журнале показана
         val SWIPE_HINT_DONE = booleanPreferencesKey("swipe_hint_done")
         // Поведение
@@ -1002,6 +1004,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     /** Размер шрифта (2.2.1): множитель поверх системного, 0,8…1,6. */
     val fontScale: Flow<Float> = data.map { FontScale.clamp(it[Keys.FONT_SCALE] ?: FontScale.DEFAULT) }
+    val smsTextScale: Flow<Float> = data.map { FontScale.clamp(it[Keys.SMS_TEXT_SCALE] ?: FontScale.DEFAULT) }
 
     /** Фото звонящего на экране вызова (1.5.5): разбор в CallPhotoStyle. */
     val callPhotoStyle: Flow<CallPhotoStyle> = data.map { CallPhotoStyle.from(it[Keys.CALL_PHOTO_STYLE]) }
@@ -1392,6 +1395,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("avatar_scope", v.name) { it[Keys.AVATAR_SCOPE] = v.name }
     suspend fun setFontScale(v: Float) =
         edit("font_scale", v) { it[Keys.FONT_SCALE] = FontScale.clamp(v) }
+    suspend fun setSmsTextScale(v: Float) =
+        edit("sms_text_scale", v) { it[Keys.SMS_TEXT_SCALE] = FontScale.clamp(v) }
     suspend fun setUiScale(v: UiScale) =
         edit("ui_scale", v.name) { it[Keys.UI_SCALE] = v.name }
     suspend fun setCallPhotoStyle(v: CallPhotoStyle) =
