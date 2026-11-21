@@ -412,7 +412,8 @@ class InCallActivity : ComponentActivity() {
                     outgoingBgMark = if (theme != ThemeMode.HIGH_CONTRAST) callBgOutgoing else 0L,
                     photoStyle = callPhotoStyle,
                     largePortrait = callPhotoSize == CallPhotoSize.LARGE,
-                    slideToAnswer = answerMode == AnswerMode.SLIDE,
+                    slideToAnswer = answerMode != AnswerMode.TAP,
+                    verticalAnswer = answerMode == AnswerMode.SWIPE_VERTICAL,
                     swapAnswer = swapAnswer,
                     familyFirst = nameFormat == ContactNameFormat.FAMILY_FIRST,
                     redial = redial,
@@ -534,6 +535,8 @@ private fun InCallScreen(
     largePortrait: Boolean = false,
     /** Настройка «Ответ на вызов» — сдвигом (1.5.8): разбор в SlideToAnswer. */
     slideToAnswer: Boolean = false,
+    /** Ответ свайпом вверх и вниз (2.8.5, VerticalSwipeToAnswer); лёжа — сдвиг вбок. */
+    verticalAnswer: Boolean = false,
     /** Настройка «Ответить» слева (2.1.1): кнопки и сдвиг — зеркально. */
     swapAnswer: Boolean = false,
     /** Настройка «Как показывать имя» — «Фамилия Имя» (1.6.2). */
@@ -1246,7 +1249,10 @@ private fun InCallScreen(
                         RedialButtons(redialSession)
                     } else if (state == Call.STATE_RINGING && slideAnswer) {
                         // Ответ сдвигом (1.5.8): от случайного касания
-                        SlideToAnswer(
+                        if (verticalAnswer && !landscape) VerticalSwipeToAnswer(
+                            onAnswer = { CallManager.answer() },
+                            onDecline = { CallManager.reject() }
+                        ) else SlideToAnswer(
                             onAnswer = { CallManager.answer() },
                             onDecline = { CallManager.reject() },
                             swapped = swapAnswer
@@ -1781,7 +1787,10 @@ private fun InCallScreen(
                 } else if (state == Call.STATE_RINGING && slideAnswer) {
                     // Ответ сдвигом (1.5.8): от случайного касания, когда
                     // телефон достают из кармана. Разбор — в SlideToAnswer
-                    SlideToAnswer(
+                    if (verticalAnswer && !landscape) VerticalSwipeToAnswer(
+                        onAnswer = { CallManager.answer() },
+                        onDecline = { CallManager.reject() }
+                    ) else SlideToAnswer(
                         onAnswer = { CallManager.answer() },
                         onDecline = { CallManager.reject() },
                         modifier = Modifier.padding(horizontal = Space.s),

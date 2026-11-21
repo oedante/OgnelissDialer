@@ -1108,4 +1108,6 @@
     <string name="keywords_avatar_pictures">avatar, image, sans photo, inconnu, illustration</string>
     <string name="sms_folder_blocked">Bloqués</string>
     <string name="settings_sms_text_scale">Taille du texte des SMS</string>
+    <string name="answer_mode_swipe_vertical">Glisser vers le haut ou le bas</string>
+    <string name="incall_swipe_vertical_hint">Vers le haut pour répondre, vers le bas pour refuser</string>
 </resources>

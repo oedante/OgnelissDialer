@@ -1138,4 +1138,6 @@
     <string name="keywords_avatar_pictures">avatar, picture, placeholder, no photo, unknown, image</string>
     <string name="sms_folder_blocked">Blocked</string>
     <string name="settings_sms_text_scale">SMS text size</string>
+    <string name="answer_mode_swipe_vertical">Swipe up or down</string>
+    <string name="incall_swipe_vertical_hint">Swipe up to answer, down to decline</string>
 </resources>

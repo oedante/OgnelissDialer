@@ -317,7 +317,9 @@ enum class OtpCleanup(val hours: Int) {
 
 enum class AnswerMode {
     TAP,
-    SLIDE;
+    SLIDE,
+    /** Вверх — ответить, вниз — отклонить (2.8.5, форум; VerticalSwipeToAnswer). */
+    SWIPE_VERTICAL;
 
     companion object {
         fun from(name: String?): AnswerMode =

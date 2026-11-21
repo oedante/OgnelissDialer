@@ -627,6 +627,7 @@ class SettingsCommands @Inject constructor(
         fun answerModeLabelRes(mode: AnswerMode): Int = when (mode) {
             AnswerMode.TAP -> R.string.answer_mode_tap
             AnswerMode.SLIDE -> R.string.answer_mode_slide
+            AnswerMode.SWIPE_VERTICAL -> R.string.answer_mode_swipe_vertical
         }
 
         /** Отмена отправки SMS (2.2.0). */
