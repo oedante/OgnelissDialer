@@ -12,6 +12,15 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 22.11.2026 — 2.8.9 (94): телефония необязательна (Google Play), кнопки со скруглением из настроек, стрелки по умолчанию
+
+Разбор — `docs/RELEASE_NOTES_2.8.9.md`. Манифест: `android.hardware.telephony` —
+`required="false"`; обёрнуты `NumberInfoRepository.deviceRegion` и `SmsSender.resolveSubId`.
+`CallButtons` — прямоугольники `shapes.medium` с подписью внутри, `callButtonHeight()`;
+`ComposeBar` — кнопки по середине строки поля (`COMPOSE_ROW`), счётчик под рядом.
+`coloredCallArrows` по умолчанию `true`. «Что нового»: `whats_new_2.8.9.txt`
+и сводный `whats_new_2.8.9_since_2.7.4.txt`.
+
 ## 22.11.2026 — 2.8.8 (93): книга контактов — только когда изменилась (к выкладке)
 
 Разбор — `docs/RELEASE_NOTES_2.8.8.md`. `ContactsRepository.changeStamp` (число контактов

@@ -1,0 +1,135 @@
+<ru-RU>
+• Кнопки вызова на клавиатуре и «Отправить» в SMS — со скруглением из настроек, имя SIM прямо на кнопке.
+• Цветные стрелки вызовов включены сразу.
+• Поле ввода SMS выровнено; приложение ставится и на планшеты без SIM.
+</ru-RU>
+<ar>
+• أزرار الاتصال في لوحة الأرقام وزر «إرسال» بزوايا مستديرة حسب الإعدادات، واسم الشريحة على الزر نفسه.
+• أسهم المكالمات الملوّنة مفعّلة افتراضيًا.
+• محاذاة حقل كتابة الرسائل؛ ويمكن تثبيت التطبيق على أجهزة لوحية بلا شريحة.
+</ar>
+<cs-CZ>
+• Tlačítka volání na klávesnici a „Odeslat“ v SMS mají zaoblení podle nastavení a název SIM přímo na tlačítku.
+• Barevné šipky hovorů jsou zapnuté hned.
+• Zarovnané pole pro psaní SMS; aplikaci lze nainstalovat i na tablety bez SIM.
+</cs-CZ>
+<da-DK>
+• Opkaldsknapperne på tastaturet og „Send“ i SMS har afrunding efter indstillingerne og SIM-navnet på selve knappen.
+• Farvede opkaldspile er slået til fra start.
+• SMS-feltet er justeret; appen kan også installeres på tablets uden SIM.
+</da-DK>
+<de-DE>
+• Anruftasten auf der Wähltastatur und „Senden“ in SMS mit Rundung aus den Einstellungen, SIM-Name direkt auf der Taste.
+• Farbige Anrufpfeile sind von Anfang an an.
+• SMS-Eingabefeld ausgerichtet; die App lässt sich auch auf Tablets ohne SIM installieren.
+</de-DE>
+<en-US>
+• Call buttons on the keypad and "Send" in SMS use the corner rounding from settings, with the SIM name right on the button.
+• Colored call arrows are on by default.
+• The SMS input bar is aligned; the app also installs on tablets without a SIM.
+</en-US>
+<es-ES>
+• Los botones de llamada del teclado y «Enviar» en SMS usan el redondeo de los ajustes, con el nombre de la SIM en el propio botón.
+• Las flechas de llamada en color vienen activadas.
+• Barra de escritura de SMS alineada; la app también se instala en tabletas sin SIM.
+</es-ES>
+<fi-FI>
+• Näppäimistön soittopainikkeet ja tekstiviestien ”Lähetä” noudattavat asetusten pyöristystä, SIM-nimi suoraan painikkeessa.
+• Värilliset puhelunuolet ovat heti käytössä.
+• Tekstiviestin kirjoituskenttä tasattu; sovelluksen voi asentaa myös tabletteihin ilman SIM-korttia.
+</fi-FI>
+<fr-FR>
+• Les boutons d’appel du clavier et « Envoyer » dans les SMS suivent l’arrondi des paramètres, avec le nom de la SIM sur le bouton.
+• Les flèches d’appel colorées sont activées d’office.
+• Barre de saisie des SMS alignée ; l’application s’installe aussi sur les tablettes sans SIM.
+</fr-FR>
+<hi-IN>
+• कीपैड के कॉल बटन और SMS में «भेजें» अब सेटिंग्स के अनुसार गोल कोनों वाले हैं, SIM का नाम बटन पर ही।
+• रंगीन कॉल तीर शुरू से चालू हैं।
+• SMS लिखने की पट्टी संरेखित; ऐप बिना SIM वाले टैबलेट पर भी इंस्टॉल होता है।
+</hi-IN>
+<hu-HU>
+• A tárcsázó hívásgombjai és az SMS „Küldés” gombja a beállítások szerinti lekerekítést kapják, a SIM neve a gombon.
+• A színes hívásnyilak alapból be vannak kapcsolva.
+• Igazított SMS-beviteli sáv; az alkalmazás SIM nélküli táblagépekre is telepíthető.
+</hu-HU>
+<id>
+• Tombol panggil di keypad dan “Kirim” di SMS memakai lengkungan sudut dari pengaturan, nama SIM langsung di tombol.
+• Panah panggilan berwarna aktif sejak awal.
+• Bilah ketik SMS kini rata; aplikasi juga bisa dipasang di tablet tanpa SIM.
+</id>
+<it-IT>
+• I pulsanti di chiamata del tastierino e «Invia» negli SMS seguono l’arrotondamento delle impostazioni, con il nome della SIM sul pulsante.
+• Le frecce di chiamata colorate sono attive da subito.
+• Barra di scrittura degli SMS allineata; l’app si installa anche su tablet senza SIM.
+</it-IT>
+<iw-IL>
+• כפתורי החיוג במקלדת ו„שליחה” ב-SMS מעוגלים לפי ההגדרות, ושם ה-SIM על הכפתור עצמו.
+• חיצי השיחה הצבעוניים פעילים כברירת מחדל.
+• שורת כתיבת ה-SMS מיושרת; האפליקציה מותקנת גם בטאבלטים בלי SIM.
+</iw-IL>
+<ja-JP>
+• キーパッドの発信ボタンと SMS の「送信」が設定の角丸に。SIM 名はボタン上に表示。
+• 色付きの通話矢印を最初からオンに。
+• SMS 入力欄の配置を調整。SIM のないタブレットにもインストールできます。
+</ja-JP>
+<ko-KR>
+• 키패드 통화 버튼과 SMS '보내기'가 설정의 모서리 둥글기를 따르고, SIM 이름이 버튼 안에 표시됩니다.
+• 색상 통화 화살표가 기본으로 켜져 있습니다.
+• SMS 입력줄 정렬; SIM 없는 태블릿에도 설치할 수 있습니다.
+</ko-KR>
+<nl-NL>
+• Belknoppen op het toetsenblok en ‘Verzenden’ in sms volgen de afronding uit de instellingen, met de SIM-naam op de knop.
+• Gekleurde gesprekspijlen staan standaard aan.
+• Sms-invoerbalk uitgelijnd; de app is ook te installeren op tablets zonder simkaart.
+</nl-NL>
+<no-NO>
+• Ringeknappene på tastaturet og «Send» i SMS følger avrundingen fra innstillingene, med SIM-navnet på selve knappen.
+• Fargede anropspiler er på fra start.
+• SMS-feltet er justert; appen kan også installeres på nettbrett uten SIM.
+</no-NO>
+<pl-PL>
+• Przyciski połączeń na klawiaturze i „Wyślij” w SMS mają zaokrąglenie z ustawień, a nazwę SIM na samym przycisku.
+• Kolorowe strzałki połączeń są włączone od razu.
+• Wyrównany pasek pisania SMS; aplikację można zainstalować także na tabletach bez SIM.
+</pl-PL>
+<pt-BR>
+• Os botões de chamada do teclado e “Enviar” no SMS seguem o arredondamento das configurações, com o nome do SIM no próprio botão.
+• As setas de chamada coloridas vêm ativadas.
+• Barra de digitação do SMS alinhada; o app também instala em tablets sem SIM.
+</pt-BR>
+<ro>
+• Butoanele de apel de pe tastatură și „Trimite” din SMS urmează rotunjirea din setări, cu numele SIM pe buton.
+• Săgețile colorate de apel sunt pornite implicit.
+• Bara de scriere SMS e aliniată; aplicația se instalează și pe tablete fără SIM.
+</ro>
+<sk>
+• Tlačidlá hovoru na klávesnici a „Odoslať“ v SMS majú zaoblenie podľa nastavení a názov SIM priamo na tlačidle.
+• Farebné šípky hovorov sú zapnuté hneď.
+• Zarovnané pole na písanie SMS; aplikáciu možno nainštalovať aj na tablety bez SIM.
+</sk>
+<sv-SE>
+• Samtalsknapparna på knappsatsen och ”Skicka” i SMS följer avrundningen i inställningarna, med SIM-namnet på knappen.
+• Färgade samtalspilar är på från början.
+• SMS-fältet är justerat; appen kan också installeras på surfplattor utan SIM.
+</sv-SE>
+<th>
+• ปุ่มโทรบนแป้นกดและ «ส่ง» ใน SMS ใช้ความโค้งมุมตามการตั้งค่า พร้อมชื่อ SIM บนปุ่ม
+• ลูกศรการโทรแบบมีสีเปิดไว้ตั้งแต่ต้น
+• จัดแนวช่องพิมพ์ SMS แล้ว; ติดตั้งแอปบนแท็บเล็ตที่ไม่มี SIM ได้ด้วย
+</th>
+<tr-TR>
+• Tuş takımındaki arama düğmeleri ve SMS’teki “Gönder” ayarlardaki köşe yuvarlaklığını kullanıyor, SIM adı düğmenin üzerinde.
+• Renkli arama okları baştan açık.
+• SMS yazma çubuğu hizalandı; uygulama SIM’siz tabletlere de yüklenebilir.
+</tr-TR>
+<vi>
+• Nút gọi trên bàn phím và “Gửi” trong SMS theo độ bo góc trong cài đặt, tên SIM nằm ngay trên nút.
+• Mũi tên cuộc gọi có màu được bật sẵn.
+• Thanh soạn SMS đã căn chỉnh; ứng dụng cài được cả trên máy tính bảng không có SIM.
+</vi>
+<zh-CN>
+• 拨号键盘上的拨号按钮和短信“发送”按钮采用设置中的圆角，SIM 名称直接显示在按钮上。
+• 彩色通话箭头默认开启。
+• 短信输入栏已对齐；应用也可安装在没有 SIM 卡的平板上。
+</zh-CN>

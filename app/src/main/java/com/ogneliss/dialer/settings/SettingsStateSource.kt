@@ -314,7 +314,7 @@ class SettingsStateSource @Inject constructor(
         val answerMode: AnswerMode = AnswerMode.TAP,
         val widgetShape: WidgetShape = WidgetShape.AUTO,
         val sectionIcons: Boolean = false,
-        val coloredCallArrows: Boolean = false,
+        val coloredCallArrows: Boolean = true,
         val startSection: StartChoice = StartChoice.JOURNAL,
         val messengersAnyNumber: Boolean = false,
         val contactNameFormat: ContactNameFormat = ContactNameFormat.GIVEN_FIRST,

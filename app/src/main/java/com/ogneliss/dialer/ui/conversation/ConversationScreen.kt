@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -90,7 +91,6 @@ import com.ogneliss.dialer.ui.theme.Space
 import com.ogneliss.dialer.ui.components.listSheetContainerColor
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.shape.CircleShape
 import com.ogneliss.dialer.data.CallType
 import com.ogneliss.dialer.ui.components.SelectionAction
 import com.ogneliss.dialer.ui.components.SelectionBottomBar
@@ -980,6 +980,9 @@ private val HEADER_AVATAR = 36.dp
 /** Кнопка «Отправить» — размер стандартной кнопки-значка. */
 private val SEND_BUTTON = 48.dp
 
+/** Высота одной строки поля сообщения (TextField): по её середине стоят кнопки ряда (2.8.9). */
+private val COMPOSE_ROW = 56.dp
+
 /** Сообщения одной стороны не дальше этого друг от друга — под одним временем. */
 private const val TIME_GROUP_MS = 3 * 60_000L
 
@@ -1045,11 +1048,24 @@ private fun ComposeBar(
                     }
                 }
             }
+            /*
+             * ВЫРАВНИВАНИЕ (2.8.9, автор по снимку переписки: «в смс кнопки не выровнены
+             * на нижней панели»). Было: ряд по нижнему краю, значок картинки, карта
+             * и «Отправить» (48 dp) — у низа поля (56 dp) и ниже его середины;
+             * счётчик «2 · 35» жил внутри поля и стягивал кнопки ещё ниже.
+             * Стало: каждая кнопка — по середине полосы высотой в одну строку поля
+             * (COMPOSE_ROW). Ряд по-прежнему по нижнему краю: поле растёт вверх
+             * до шести строк, а кнопки остаются у последней, у пальца. Счётчик —
+             * строкой под рядом, под началом текста.
+             */
+            val attachShown = state.isDefaultSms && state.mmsEnabled
             Row(verticalAlignment = Alignment.Bottom) {
                 // Картинки — MMS, только у приложения SMS по умолчанию и если оператор разрешает (2.1.0)
-                if (state.isDefaultSms && state.mmsEnabled) {
-                    IconButton(onClick = onPickImages) {
-                        Icon(OgnelissIcons.AddPhotoAlternate, contentDescription = stringResource(R.string.sms_attach_picture))
+                if (attachShown) {
+                    Box(Modifier.height(COMPOSE_ROW), contentAlignment = Alignment.Center) {
+                        IconButton(onClick = onPickImages) {
+                            Icon(OgnelissIcons.AddPhotoAlternate, contentDescription = stringResource(R.string.sms_attach_picture))
+                        }
                     }
                 } else {
                     Spacer(Modifier.size(Space.s))
@@ -1058,11 +1074,14 @@ private fun ComposeBar(
                     value = state.draft,
                     onValueChange = onDraft,
                     placeholder = { Text(stringResource(R.string.sms_compose_hint)) },
-                    supportingText = if (state.counter != null) {
-                        { Text(state.counter) }
-                    } else null,
                     maxLines = 6,
-                    shape = MaterialTheme.shapes.extraLarge,
+                    /*
+                     * 2.8.9 (автор: «панель ввода текста в смс тоже должна зависеть
+                     * от настроек скругления»): форма темы shapes.medium, как у
+                     * «Отправить» и кнопок вызова на клавиатуре. Было extraLarge —
+                     * 28 dp при высоте 56: «пилюля» при любом скруглении, кроме «Малого».
+                     */
+                    shape = MaterialTheme.shapes.medium,
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
@@ -1070,9 +1089,13 @@ private fun ComposeBar(
                         focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest
                     ),
-                    modifier = Modifier.weight(1f).heightIn(min = 48.dp)
+                    modifier = Modifier.weight(1f).heightIn(min = COMPOSE_ROW)
                 )
-                if (state.sims.size > 1) SimPicker(state, onSelectSim)
+                if (state.sims.size > 1) {
+                    Box(Modifier.height(COMPOSE_ROW), contentAlignment = Alignment.Center) {
+                        SimPicker(state, onSelectSim)
+                    }
+                }
                 // 2.1.0: отправить нельзя (нет SIM, режим полёта) — кнопка серая
                 val canSms = com.ogneliss.dialer.util.LocalCallAvailability.current.canSms
                 /*
@@ -1091,11 +1114,17 @@ private fun ComposeBar(
                     else -> MaterialTheme.colorScheme.outline
                 }
                 val laterLabel = stringResource(R.string.sms_send_later)
+                /*
+                 * 2.8.9: не круг, а скруглённый квадрат — форма темы, как у кнопок
+                 * вызова на клавиатуре (автор: «кнопку отправки смс тоже можно сделать
+                 * с такой же настройкой»): «Скругление углов» в настройках.
+                 */
+                Box(Modifier.height(COMPOSE_ROW), contentAlignment = Alignment.Center) {
                 Box(
                     Modifier
                         .padding(start = Space.xs)
                         .size(SEND_BUTTON)
-                        .clip(CircleShape)
+                        .clip(MaterialTheme.shapes.medium)
                         .background(container)
                         .combinedClickable(
                             enabled = canSendNow,
@@ -1108,6 +1137,19 @@ private fun ComposeBar(
                 ) {
                     Icon(OgnelissIcons.Send, contentDescription = stringResource(R.string.sms_send), tint = content)
                 }
+                }
+            }
+            // Сколько SMS уйдёт и сколько знаков осталось — под началом текста (2.8.9: было в поле)
+            if (state.counter != null) {
+                Text(
+                    state.counter,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(
+                        start = (if (attachShown) com.ogneliss.dialer.ui.theme.Dimens.MIN_TOUCH_TARGET else Space.s) + Space.l,
+                        top = Space.xxs
+                    )
+                )
             }
         }
     }

@@ -1025,8 +1025,12 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     /** Отдельные значки «SMS» и «Контакты» в списке приложений (2.6.0): разбор в SectionIcons. */
     val sectionIcons: Flow<Boolean> = data.map { it[Keys.SECTION_ICONS] ?: false }
 
-    /** Цветные стрелки вызовов (2.7.0): по умолчанию выключено. Разбор — CallArrowColor. */
-    val coloredCallArrows: Flow<Boolean> = data.map { it[Keys.COLORED_CALL_ARROWS] ?: false }
+    /**
+     * Цветные стрелки вызовов (2.7.0). Разбор — CallArrowColor. 2.8.9: по умолчанию
+     * ВКЛЮЧЕНО (автор: «проверь, что цветные стрелки… включены по умолчанию»; было —
+     * выключено). Кто выключил сам — у того записано false, оно и остаётся.
+     */
+    val coloredCallArrows: Flow<Boolean> = data.map { it[Keys.COLORED_CALL_ARROWS] ?: true }
 
     /** Что открывать при запуске значком (2.7.0): по умолчанию журнал. Разбор — StartSection. */
     val startSection: Flow<StartChoice> = data.map { StartChoice.from(it[Keys.START_SECTION]) }

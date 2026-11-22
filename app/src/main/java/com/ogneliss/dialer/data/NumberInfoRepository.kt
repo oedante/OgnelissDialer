@@ -130,8 +130,14 @@ class NumberInfoRepository @Inject constructor(
             context.getSystemService(android.telephony.TelephonyManager::class.java)
         }.getOrNull()
 
-        val fromSim = telephony?.simCountryIso?.takeIf { it.isNotBlank() }
-        val fromNetwork = telephony?.networkCountryIso?.takeIf { it.isNotBlank() }
+        /*
+         * 2.8.9: каждое чтение — в runCatching. Телефония в манифесте стала
+         * необязательной (Google Play), а с Android 15 без модуля связи эти
+         * методы бросают UnsupportedOperationException — разбор номеров
+         * в журнале упал бы на планшете без SIM. Не ответили — страна языка.
+         */
+        val fromSim = runCatching { telephony?.simCountryIso }.getOrNull()?.takeIf { it.isNotBlank() }
+        val fromNetwork = runCatching { telephony?.networkCountryIso }.getOrNull()?.takeIf { it.isNotBlank() }
         val fromLocale = Locale.getDefault().country.takeIf { it.isNotBlank() }
 
         (fromSim ?: fromNetwork ?: fromLocale ?: "RU").uppercase(Locale.ROOT)
