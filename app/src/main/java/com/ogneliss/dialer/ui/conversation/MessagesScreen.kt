@@ -542,15 +542,18 @@ fun MessagesScreen(
                         onHelp = { menuOpen = false; onOpenHelp() },
                         // 2.1.0: значок «SMS» со счётчиком на главный экран (SectionWidgets)
                         onPinToHome = pinToHome,
-                        // Папки (2.2.0) — над плитками, как «Папки» в меню почты
-                        header = if (state.isDefaultSms && visibleFolders.size > 1) {
+                        // Папки (2.2.0) — над плитками, как «Папки» в меню почты.
+                        // 2.8.7: и «Архив» последним — тогда папки есть всегда, даже
+                        // если в настройках оставлена одна «Все»
+                        header = if (state.isDefaultSms) {
                             {
                                 SmsFolderRows(
                                     folders = visibleFolders,
                                     current = folder,
                                     unread = folderUnread,
                                     onSelect = { menuOpen = false; selection.clear(); folderName = it.name },
-                                    onEdit = { menuOpen = false; onOpenFolders() }
+                                    onEdit = { menuOpen = false; onOpenFolders() },
+                                    onArchive = { menuOpen = false; selection.clear(); showArchive = true }
                                 )
                             }
                         } else null,

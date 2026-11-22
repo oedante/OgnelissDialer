@@ -54,7 +54,14 @@ internal fun SmsFolderRows(
     current: SmsFolder,
     unread: Map<SmsFolder, Int>,
     onSelect: (SmsFolder) -> Unit,
-    onEdit: () -> Unit
+    onEdit: () -> Unit,
+    /**
+     * «Архив» последней строкой (2.8.7, автор: «в SMS папка „Архив“ только
+     * в пункте сверху, а в боковой панели такого пункта нет»). Как в журнале
+     * (MainDialerScreen, папки меню): не папка из настроек порядка, а вход
+     * в архив, поэтому всегда последним и без числа.
+     */
+    onArchive: (() -> Unit)? = null
 ) {
     MenuFolderRows(
         title = stringResource(R.string.settings_sms_folders),
@@ -66,7 +73,9 @@ internal fun SmsFolderRows(
                 selected = folder == current,
                 onClick = { onSelect(folder) }
             )
-        },
+        } + listOfNotNull(
+            onArchive?.let { MenuFolder(OgnelissIcons.Archive, stringResource(R.string.archive_title), onClick = it) }
+        ),
         onEdit = onEdit,
         editLabel = stringResource(R.string.sms_folders_edit)
     )

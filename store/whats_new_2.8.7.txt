@@ -1,0 +1,81 @@
+<ru-RU>
+• SMS: «Архив» теперь и в папках бокового меню, как в журнале.
+</ru-RU>
+<ar>
+• الرسائل: «الأرشيف» الآن أيضًا ضمن مجلدات القائمة الجانبية، كما في سجل المكالمات.
+</ar>
+<cs-CZ>
+• SMS: „Archiv“ je nově i mezi složkami v bočním menu, stejně jako v historii hovorů.
+</cs-CZ>
+<da-DK>
+• SMS: „Arkiv“ findes nu også blandt mapperne i sidemenuen, ligesom i opkaldsloggen.
+</da-DK>
+<de-DE>
+• SMS: „Archiv“ jetzt auch bei den Ordnern im Seitenmenü – wie in der Anrufliste.
+</de-DE>
+<en-US>
+• SMS: "Archive" is now also in the side menu folders, as in the call log.
+</en-US>
+<es-ES>
+• SMS: «Archivo» ahora también está en las carpetas del menú lateral, como en el registro de llamadas.
+</es-ES>
+<fi-FI>
+• Tekstiviestit: ”Arkisto” on nyt myös sivuvalikon kansioissa, kuten puheluhistoriassa.
+</fi-FI>
+<fr-FR>
+• SMS : « Archives » figure désormais aussi dans les dossiers du menu latéral, comme dans le journal.
+</fr-FR>
+<hi-IN>
+• SMS: «संग्रह» अब साइड मेनू के फ़ोल्डरों में भी है, कॉल लॉग की तरह।
+</hi-IN>
+<hu-HU>
+• SMS: az „Archívum” mostantól az oldalsó menü mappái között is megtalálható, mint a hívásnaplóban.
+</hu-HU>
+<id>
+• SMS: “Arsip” kini juga ada di folder menu samping, seperti di log panggilan.
+</id>
+<it-IT>
+• SMS: «Archivio» ora anche tra le cartelle del menu laterale, come nel registro chiamate.
+</it-IT>
+<iw-IL>
+• SMS: „ארכיון” נמצא עכשיו גם בתיקיות של התפריט הצדדי, כמו ביומן השיחות.
+</iw-IL>
+<ja-JP>
+• SMS：通話履歴と同じく、サイドメニューのフォルダにも「アーカイブ」を追加しました。
+</ja-JP>
+<ko-KR>
+• SMS: 통화 기록처럼 사이드 메뉴 폴더에도 '보관함'이 추가되었습니다.
+</ko-KR>
+<nl-NL>
+• Sms: ‘Archief’ staat nu ook bij de mappen in het zijmenu, net als in de oproeplijst.
+</nl-NL>
+<no-NO>
+• SMS: «Arkiv» finnes nå også blant mappene i sidemenyen, som i anropsloggen.
+</no-NO>
+<pl-PL>
+• SMS: „Archiwum” jest teraz także wśród folderów w menu bocznym, tak jak w rejestrze połączeń.
+</pl-PL>
+<pt-BR>
+• SMS: “Arquivo” agora também aparece nas pastas do menu lateral, como no registro de chamadas.
+</pt-BR>
+<ro>
+• SMS: „Arhivă” apare acum și în dosarele din meniul lateral, ca în jurnalul de apeluri.
+</ro>
+<sk>
+• SMS: „Archív“ je teraz aj medzi priečinkami v bočnom menu, rovnako ako v histórii hovorov.
+</sk>
+<sv-SE>
+• SMS: ”Arkiv” finns nu även bland mapparna i sidomenyn, precis som i samtalsloggen.
+</sv-SE>
+<th>
+• SMS: «คลังเก็บ» อยู่ในโฟลเดอร์ของเมนูด้านข้างด้วยแล้ว เหมือนในประวัติการโทร
+</th>
+<tr-TR>
+• SMS: “Arşiv” artık arama kaydında olduğu gibi yan menüdeki klasörlerde de var.
+</tr-TR>
+<vi>
+• SMS: “Lưu trữ” nay có cả trong thư mục của menu bên, giống nhật ký cuộc gọi.
+</vi>
+<zh-CN>
+• 短信：侧边菜单的文件夹中也加入了“归档”，与通话记录一致。
+</zh-CN>
