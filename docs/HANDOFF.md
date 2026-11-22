@@ -12,6 +12,11 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 22.11.2026 — 2.8.7 (92): «Архив» в «Меню» SMS
+
+Разбор — `docs/RELEASE_NOTES_2.8.7.md`. `SmsFolderRows(onArchive)` — «Архив» последней
+строкой папок, как в журнале; снимок `menu_sms` в галерее.
+
 ## 21.11.2026 — 2.8.6 (91): основные и «Расширенные настройки», отключение уведомлений SMS
 
 Разбор — `docs/RELEASE_NOTES_2.8.6.md`. `SettingEntry.advanced` + `SettingsCategory.ADVANCED`

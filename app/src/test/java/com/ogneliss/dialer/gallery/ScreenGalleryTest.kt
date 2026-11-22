@@ -452,6 +452,24 @@ class ScreenGalleryTest {
                 onFilters = {}, onSearch = {}
             )
         },
+        // 2.8.7: «Меню» SMS — папки и «Архив» последним (автор: «в боковой панели такого пункта нет»)
+        Shot("menu_sms", dialog = true) { vm ->
+            val settings = vm.settingsState.collectAsState().value
+            com.ogneliss.dialer.ui.screens.OverflowMenu(
+                expanded = true, onDismiss = {}, settings = settings,
+                onThemeToggle = {}, onSettings = {}, onFakeCall = {}, onNotes = {}, onReminders = {},
+                onHelp = {},
+                header = {
+                    com.ogneliss.dialer.ui.conversation.SmsFolderRows(
+                        folders = com.ogneliss.dialer.sms.SmsFolder.entries,
+                        current = com.ogneliss.dialer.sms.SmsFolder.ALL,
+                        unread = mapOf(com.ogneliss.dialer.sms.SmsFolder.UNREAD to 2),
+                        onSelect = {}, onEdit = {}, onArchive = {}
+                    )
+                },
+                onSearch = {}
+            )
+        },
         Shot("sheet_filters", dialog = true) { _ ->
             com.ogneliss.dialer.ui.components.FilterSheet(
                 filter = com.ogneliss.dialer.data.CallLogFilter(), simCount = 2, onFilterChange = {}, matchCount = 12, onDismiss = {}
