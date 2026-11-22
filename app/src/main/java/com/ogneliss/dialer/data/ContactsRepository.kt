@@ -530,35 +530,57 @@ class ContactsRepository @Inject constructor(
     }
 
     /**
-     * ОТМЕТКА ПОСЛЕДНЕГО ИЗМЕНЕНИЯ КНИГИ.
+     * ОТМЕТКА СОСТОЯНИЯ КНИГИ (2.8.8; до того — lastUpdatedTimestamp, только время правки).
      *
-     * Возвращает максимальную метку времени правки среди всех контактов.
+     * ══════════════════════════════════════════════════════════════════════
+     * ЗАЧЕМ
+     * ══════════════════════════════════════════════════════════════════════
+     * Лог автора (nubia, 18–22.11.2026): «Контактов: 488…» — 85 раз за четыре
+     * дня, по два-три после каждого звонка. Книга перечитывалась целиком
+     * (номера, почта, даты, организации, части имени — шесть запросов по всем
+     * контактам) при каждом обновлении журнала, хотя сама не менялась.
+     * Теперь DialerViewModel.doRefresh сравнивает эту отметку с отметкой
+     * последнего чтения и читает книгу, только когда они разошлись.
      *
-     * Зачем: ContentObserver срабатывает на любое касание провайдера,
-     * включая служебные операции синхронизации, которые ничего не меняют
-     * по существу. Синхронизация Google трогает контакты пачками
-     * по несколько раз в час.
+     * ── Из чего ───────────────────────────────────────────────────────────
+     * Четыре коротких запроса вместо полного чтения:
+     * • число контактов — добавили или удалили;
+     * • число избранных — отметили звёздочкой или сняли;
+     * • последнее время правки (CONTACT_LAST_UPDATED_TIMESTAMP) — изменили
+     *   имя, номер, фото, почту: правка любых данных контакта его двигает;
+     * • последнее время удаления (DeletedContacts) — удаление время правки
+     *   оставшихся не двигает, а число могло совпасть, если в тот же миг
+     *   добавили другой.
+     * Прежняя проверка (только время правки) пропускала удаление и звёздочку —
+     * пока книга читалась при каждом обновлении, это не было заметно.
      *
-     * Сравнивая метку с сохранённой, можно понять, изменилось ли что-то
-     * на самом деле, и не перечитывать тысячи контактов вместе
-     * с пересборкой T9-индекса впустую.
-     *
-     * @return метка в миллисекундах или 0, если прочитать не удалось
+     * @return отметка; null — прочитать не удалось (тогда книгу читаем:
+     *         лучше лишний раз, чем пропустить настоящее изменение)
      */
-    suspend fun lastUpdatedTimestamp(): Long = withContext(io) {
-        if (!PermissionGuard.canReadContacts(context)) return@withContext 0L
+    suspend fun changeStamp(): String? = withContext(io) {
+        if (!PermissionGuard.canReadContacts(context)) return@withContext ContactsStamp.NO_ACCESS
         runCatching {
-            context.contentResolver.query(
-                ContactsContract.Contacts.CONTENT_URI,
-                arrayOf(ContactsContract.Contacts.CONTACT_LAST_UPDATED_TIMESTAMP),
-                null, null,
+            val resolver = context.contentResolver
+            val contacts = ContactsContract.Contacts.CONTENT_URI
+            val count = resolver.query(contacts, arrayOf(ContactsContract.Contacts._ID), null, null, null)
+                ?.use { it.count } ?: return@runCatching null
+            val starred = resolver.query(
+                contacts, arrayOf(ContactsContract.Contacts._ID),
+                "${ContactsContract.Contacts.STARRED} = 1", null, null
+            )?.use { it.count } ?: 0
+            val updated = resolver.query(
+                contacts, arrayOf(ContactsContract.Contacts.CONTACT_LAST_UPDATED_TIMESTAMP), null, null,
                 "${ContactsContract.Contacts.CONTACT_LAST_UPDATED_TIMESTAMP} DESC LIMIT 1"
             )?.use { c -> if (c.moveToFirst()) c.getLong(0) else 0L } ?: 0L
+            val deleted = resolver.query(
+                ContactsContract.DeletedContacts.CONTENT_URI,
+                arrayOf(ContactsContract.DeletedContacts.CONTACT_DELETED_TIMESTAMP), null, null,
+                "${ContactsContract.DeletedContacts.CONTACT_DELETED_TIMESTAMP} DESC LIMIT 1"
+            )?.use { c -> if (c.moveToFirst()) c.getLong(0) else 0L } ?: 0L
+            ContactsStamp.of(count, starred, updated, deleted)
         }.getOrElse {
             Logger.w("Contacts", "Не удалось прочитать отметку изменения книги", it)
-            // При ошибке возвращаем текущее время: пусть лучше перечитаем
-            // лишний раз, чем пропустим настоящее изменение
-            System.currentTimeMillis()
+            null
         }
     }
 

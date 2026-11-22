@@ -581,25 +581,28 @@ class DialerViewModel @Inject constructor(
     }
 
     /**
-     * Отметка времени последней известной правки книги.
-     * Служит для отсечения ложных уведомлений от синхронизации.
+     * Отметка книги, с которой она прочитана в последний раз (2.8.8,
+     * ContactsRepository.changeStamp). null — ещё не читали. Пишется только
+     * вместе с публикацией прочитанного (doRefresh): иначе отменённое
+     * обновление оставило бы отметку от контактов, которых на экране нет.
      */
-    private var lastContactsTimestamp: Long = 0L
+    @Volatile private var contactsReadStamp: String? = null
 
     /**
      * Реакция на уведомление об изменении контактов.
      *
      * Провайдер уведомляет и о служебных операциях синхронизации,
-     * которые не меняют данные. Сравнение отметки времени отсекает их
-     * и экономит перечитывание книги вместе с пересборкой T9-индекса.
+     * которые не меняют данные. Сравнение отметки книги (2.8.8: число
+     * контактов и избранных, время правки и удаления — было только время
+     * правки, удаление и звёздочку оно пропускало) отсекает их и экономит
+     * перечитывание книги вместе с пересборкой T9-индекса.
      */
     private suspend fun onContactsPossiblyChanged() {
-        val timestamp = contactsRepo.lastUpdatedTimestamp()
-        if (timestamp == lastContactsTimestamp && timestamp != 0L) {
+        val stamp = contactsRepo.changeStamp()
+        if (stamp != null && stamp == contactsReadStamp) {
             Logger.d("Contacts", "Уведомление без реальных изменений, пропускаю")
             return
         }
-        lastContactsTimestamp = timestamp
 
         Logger.i("Contacts", "Книга изменилась, перечитываю и пересобираю T9-индекс")
         refresh()
@@ -1184,8 +1187,21 @@ class DialerViewModel @Inject constructor(
          * ради обновления журнала бессмысленно: результат тот же,
          * а работа теряется.
          */
+        /*
+         * 2.8.8: КНИГА — ТОЛЬКО КОГДА ИЗМЕНИЛАСЬ (лог автора: «Контактов: 488» по два-три
+         * раза после каждого звонка — обновление журнала перечитывало и книгу).
+         * Сначала отметка книги (четыре коротких запроса, ContactsRepository.changeStamp):
+         * совпала с отметкой прошлого чтения и контакты на месте — книгу не читаем,
+         * остаются прежние. Отметка — до чтения: правка во время чтения даст
+         * новую отметку, и следующее обновление прочитает книгу снова.
+         */
         val contactsDeferred = appScope.async {
-            suspendRunCatching { contactsRepo.loadAll() }
+            val stamp = suspendRunCatching { contactsRepo.changeStamp() }.getOrNull()
+            if (!ContactsStamp.mustRead(stamp, contactsReadStamp, haveContacts = state.value.contacts.isNotEmpty())) {
+                Logger.d("Contacts", "Книга не менялась — не перечитываю")
+                return@async ContactsRead(list = null, stamp = stamp)
+            }
+            val list = suspendRunCatching { contactsRepo.loadAll() }
                 .onFailure { error ->
                     /*
                      * Отмена — не ошибка.
@@ -1199,6 +1215,7 @@ class DialerViewModel @Inject constructor(
                     }
                 }
                 .getOrNull()
+            ContactsRead(list = list, stamp = stamp)
         }
         val simsDeferred = async {
             suspendRunCatching {
@@ -1256,7 +1273,8 @@ class DialerViewModel @Inject constructor(
          * Различать важно для кэша: перезаписывать его подставленными
          * данными значит записать в него то, что оттуда же и взято.
          */
-        val freshContacts = contactsDeferred.await()
+        val contactsRead = contactsDeferred.await()
+        val freshContacts = contactsRead.list
 
         /*
          * ══════════════════════════════════════════════════════════════════
@@ -1295,6 +1313,14 @@ class DialerViewModel @Inject constructor(
             // 1.3.3: запасное «?: previousContacts» убрано — Kotlin 2.4
             // предупреждал, что оно никогда не срабатывает
             else -> freshContacts
+        }
+        /*
+         * Отметка прочитанного (2.8.8) — когда прочитанное и показано: сбой (null)
+         * и пустой ответ при известных контактах её не трогают — следующее
+         * обновление прочитает книгу снова.
+         */
+        if (freshContacts != null && !(providerAnsweredEmpty && previousContacts.isNotEmpty())) {
+            contactsReadStamp = contactsRead.stamp
         }
 
         /*
@@ -3624,3 +3650,13 @@ class DialerViewModel @Inject constructor(
         if (digits.isNotEmpty()) onQueryChange(digits)
     }
 }
+
+/**
+ * Итог чтения книги в обновлении (2.8.8). [list] — прочитанное; null — сбой,
+ * отмена или книга не читалась (отметка не изменилась): в обоих случаях
+ * остаются прежние контакты. [stamp] — отметка книги перед чтением.
+ */
+private class ContactsRead(
+    val list: List<com.ogneliss.dialer.data.Contact>?,
+    val stamp: String?
+)
