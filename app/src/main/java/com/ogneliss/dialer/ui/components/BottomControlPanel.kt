@@ -461,19 +461,30 @@ fun BottomControlPanel(
                      * пустое место той же ширины: круги стоят по центру экрана,
                      * как на выбранном автором снимке, и не наезжают на кнопку.
                      */
-                    val hideTop = ((callCircleSize() - Dimens.MIN_TOUCH_TARGET) / 2).coerceAtLeast(0.dp)
+                    /*
+                     * 2.8.9: кнопки вызова — прямоугольные со скруглением из настроек
+                     * и подписью внутри (CallButtons). «Скрыть клавиатуру»
+                     * и «Контакты» — той же формы и высоты: ряд читается одним
+                     * блоком, а не кругами вокруг прямоугольников.
+                     */
+                    val sideShape = MaterialTheme.shapes.medium
+                    val sideModifier = Modifier
+                        .width(Dimens.MIN_TOUCH_TARGET)
+                        .height(callButtonHeight())
                     Row(
-                        verticalAlignment = Alignment.Top,
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(Space.s),
                         modifier = Modifier.padding(horizontal = FlowUi.contentPadding)
                     ) {
                         FilledTonalIconButton(
                             onClick = onToggleExpanded,
+                            shape = sideShape,
                             // Тот же фон, что у клавиш: кнопка стоит в одном
                             // блоке с ними и должна читаться как их соседка
                             colors = IconButtonDefaults.filledTonalIconButtonColors(
                                 containerColor = PanelColors.key()
                             ),
-                            modifier = Modifier.padding(top = hideTop).size(Dimens.MIN_TOUCH_TARGET)
+                            modifier = sideModifier
                         ) {
                             androidx.compose.animation.Crossfade(
                                 targetState = expanded,
@@ -498,10 +509,11 @@ fun BottomControlPanel(
                         if (onOpenContacts != null) {
                             FilledTonalIconButton(
                                 onClick = onOpenContacts,
+                                shape = sideShape,
                                 colors = IconButtonDefaults.filledTonalIconButtonColors(
                                     containerColor = PanelColors.key()
                                 ),
-                                modifier = Modifier.padding(top = hideTop).size(Dimens.MIN_TOUCH_TARGET)
+                                modifier = sideModifier
                             ) {
                                 Icon(OgnelissIcons.Contacts, contentDescription = stringResource(R.string.nav_contacts))
                             }

@@ -63,7 +63,9 @@ object SmsSender {
     @android.annotation.SuppressLint("MissingPermission")
     fun resolveSubId(context: Context, subId: Int?): Int? {
         if (subId != null && subId >= 0) return subId
-        val default = SubscriptionManager.getDefaultSmsSubscriptionId()
+        // 2.8.9: без модуля связи (телефония в манифесте необязательна) — не падать
+        val default = runCatching { SubscriptionManager.getDefaultSmsSubscriptionId() }
+            .getOrDefault(SubscriptionManager.INVALID_SUBSCRIPTION_ID)
         if (default != SubscriptionManager.INVALID_SUBSCRIPTION_ID) return default
         return runCatching {
             context.getSystemService(SubscriptionManager::class.java)

@@ -18,18 +18,18 @@ import com.ogneliss.dialer.R
 import com.ogneliss.dialer.data.SimCallPlan
 import com.ogneliss.dialer.data.SimSlot
 import com.ogneliss.dialer.ui.theme.LocalAppearance
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
  * КНОПКИ ВЫЗОВА.
  *
- * ── Одна SIM: один круг по центру ──────────────────────────────────────────
- * Главное действие экрана: крупный зелёный круг под клавиатурой (2.7.5;
- * до того — широкая пилюля во всю ширину).
+ * ── Одна SIM: одна кнопка «Позвонить» ──────────────────────────────────────
+ * Главное действие экрана: зелёная кнопка под клавиатурой. Форма: до 2.7.5 —
+ * пилюля во всю ширину, 2.7.5–2.8.8 — круг, с 2.8.9 — прямоугольник
+ * со скруглением из настройки «Скругление углов» и подписью внутри.
  *
- * ── Две SIM: два круга рядом ───────────────────────────────────────────────
+ * ── Две SIM: две кнопки рядом ──────────────────────────────────────────────
  * Не одна кнопка с диалогом выбора после нажатия: это лишний шаг
  * на самом частом действии. Две кнопки убирают его целиком.
  *
@@ -88,50 +88,100 @@ fun CallButtons(
     )
 
     /*
-     * КРУГЛЫЕ КНОПКИ, ПОДПИСЬ КАРТЫ ПОД НИМИ (2.7.5, классическая клавиатура —
-     * вариант «А», выбранный автором). Было: широкие пилюли во всю ширину
-     * с «SIM 1» внутри. Круги стоят равномерно по ширине ряда; подпись —
-     * номер слота и имя карты, если его задали (FitText: лёжа имя
-     * не обрезается до «Beeline2» / «Beeline0» — урок 1.3.2).
+     * ПРЯМОУГОЛЬНЫЕ КНОПКИ С ПОДПИСЬЮ ВНУТРИ (2.8.9, автор по снимку клавиатуры:
+     * «давай кнопки на клавиатуре сделаем прямоугольными с подписями в них.
+     * А то не красиво»). В 2.7.5 были круги с подписью карты под ними: под
+     * бледными кругами висели «SIM 1 · Beeline2292» — подпись отрывалась
+     * от кнопки, а ряд занимал две строки. Стало: кнопки делят ряд поровну
+     * между «скрыть клавиатуру» и «Контактами». Не совсем прямоугольные (автор:
+     * «со скруглениями, зависящими от настроек, которые уже есть»): форма темы
+     * MaterialTheme.shapes.medium — 14 dp, при «Скруглении углов» «Малое» 7,
+     * «Большое» ≈ 20 (shapesFor, CornerSize). Внутри —
+     * трубка и «SIM 1» с именем карты строкой ниже (FitText: лёжа имя
+     * не обрезается — урок 1.3.2). Одна карта — одна кнопка «Позвонить».
      */
     Row(
         Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.Top
+        horizontalArrangement = Arrangement.spacedBy(Space.s),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         if (layout is SimCallPlan.Layout.Single) {
             val label = stringResource(R.string.action_call)
-            CallCircle(
+            CallButton(
                 enabled = enabled,
                 colors = callColors,
                 description = label,
-                onClick = { onCall(-1) }
+                title = label,
+                subtitle = null,
+                onClick = { onCall(-1) },
+                modifier = Modifier.weight(1f)
             )
         } else {
             (layout as SimCallPlan.Layout.PerSim).sims.forEach { sim ->
                 val label = stringResource(R.string.a11y_call_with_sim_only, sim.label)
                 val slot = "SIM ${sim.slotIndex + 1}"
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.widthIn(max = callCircleSize() + CAPTION_EXTRA)
-                ) {
-                    CallCircle(
-                        enabled = enabled,
-                        colors = callColors,
-                        description = label,
-                        // Передаём индекс СЛОТА, а не позицию в списке:
-                        // при одной активной карте во втором слоте позиция 0,
-                        // а слот 1 — и звонок ушёл бы не с той карты
-                        onClick = { onCall(sim.slotIndex) }
-                    )
-                    Spacer(Modifier.height(Space.xxs))
-                    // Имя карты рядом с номером: если пользователь подписал
-                    // слоты, выбор становится осмысленным, а не «первая или вторая»
-                    val named = sim.label.isNotBlank() && sim.label != slot
+                // Имя карты — строкой ниже, если пользователь или система его задали
+                val named = sim.label.isNotBlank() && sim.label != slot
+                CallButton(
+                    enabled = enabled,
+                    colors = callColors,
+                    description = label,
+                    title = slot,
+                    subtitle = sim.label.takeIf { named },
+                    // Передаём индекс СЛОТА, а не позицию в списке:
+                    // при одной активной карте во втором слоте позиция 0,
+                    // а слот 1 — и звонок ушёл бы не с той карты
+                    onClick = { onCall(sim.slotIndex) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
+}
+
+/** Кнопка вызова: трубка и подпись внутри, белые на зелёном (2.8.9). */
+@Composable
+private fun CallButton(
+    enabled: Boolean,
+    colors: IconButtonColors,
+    description: String,
+    title: String,
+    subtitle: String?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val container = if (enabled) colors.containerColor else colors.disabledContainerColor
+    val content = if (enabled) colors.contentColor else colors.disabledContentColor
+    Surface(
+        onClick = onClick,
+        enabled = enabled,
+        shape = MaterialTheme.shapes.medium,
+        color = container,
+        contentColor = content,
+        modifier = modifier
+            .height(callButtonHeight())
+            .semantics { contentDescription = description }
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxSize().padding(horizontal = Space.s)
+        ) {
+            Icon(OgnelissIcons.Call, contentDescription = null, modifier = Modifier.size(CALL_ICON))
+            Spacer(Modifier.width(Space.s))
+            Column(verticalArrangement = Arrangement.Center) {
+                FitText(
+                    title,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = content,
+                    maxLines = 1,
+                    minScale = 0.7f
+                )
+                if (subtitle != null) {
                     FitText(
-                        if (named) "$slot · ${sim.label}" else slot,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        subtitle,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = content,
                         maxLines = 1,
                         minScale = 0.7f
                     )
@@ -141,37 +191,13 @@ fun CallButtons(
     }
 }
 
-/** Круг вызова: значок трубки, белый на зелёном. */
-@Composable
-private fun CallCircle(
-    enabled: Boolean,
-    colors: IconButtonColors,
-    description: String,
-    onClick: () -> Unit
-) {
-    FilledIconButton(
-        onClick = onClick,
-        enabled = enabled,
-        shape = CircleShape,
-        colors = colors,
-        modifier = Modifier
-            .size(callCircleSize())
-            .semantics { contentDescription = description }
-    ) {
-        Icon(OgnelissIcons.Call, contentDescription = null, modifier = Modifier.size(CALL_ICON))
-    }
-}
-
 /**
- * Диаметр круга вызова: высота прежней кнопки + 8 dp — 64 dp, с крупными
- * кнопками 80 dp. Нужен и панели: кнопку «скрыть клавиатуру» ставят
- * по центру круга, а не по центру круга с подписью.
+ * Высота кнопки вызова — высота кнопок приложения (56 dp, с крупными
+ * кнопками 72 dp). Нужна и панели: кнопки «скрыть клавиатуру»
+ * и «Контакты» стоят по её середине.
  */
 @Composable
-internal fun callCircleSize(): Dp = LocalAppearance.current.callButtonHeight + 8.dp
+internal fun callButtonHeight(): Dp = LocalAppearance.current.callButtonHeight
 
-/** Значок трубки в круге. */
-private val CALL_ICON = 28.dp
-
-/** Подпись карты может быть шире круга — на столько. */
-private val CAPTION_EXTRA = 56.dp
+/** Значок трубки в кнопке. */
+private val CALL_ICON = 24.dp

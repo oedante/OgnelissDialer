@@ -1,0 +1,216 @@
+<ru-RU>
+• Ответ и сброс свайпом вверх и вниз; псевдозвонок слышен в гарнитуре, машине и на часах.
+• Свои картинки для контактов без фото и неизвестных номеров.
+• SMS: папка «Заблокированные», «Архив» в меню, свой размер текста, уведомления можно отключить.
+• Контакт можно сохранить в DAVx⁵ и другие аккаунты; поиск в журнале точнее.
+• Настройки проще: главное в разделах, остальное — в «Расширенных».
+• Новые кнопки вызова, цветные стрелки вызовов; приложение экономнее.
+</ru-RU>
+<ar>
+• الرد والرفض بالسحب للأعلى وللأسفل؛ المكالمة الوهمية تُسمع في السماعة والسيارة والساعة.
+• صور مخصّصة لجهات الاتصال بلا صورة وللأرقام المجهولة؛ صورة المتصل في الإشعارات.
+• الرسائل: مجلد «المحظورة»، «الأرشيف» في القائمة، حجم نص مستقل، ويمكن إيقاف الإشعارات.
+• حفظ جهة الاتصال في DAVx⁵ وحسابات أخرى؛ بحث أدق في السجل.
+• إعدادات أبسط: الأهم في الأقسام، والباقي في «الإعدادات المتقدمة».
+• أزرار اتصال جديدة وأسهم مكالمات ملوّنة؛ التطبيق أكثر كفاءة.
+</ar>
+<cs-CZ>
+• Přijetí a odmítnutí přejetím nahoru a dolů; falešný hovor zvoní i v sluchátkách, autě a hodinkách.
+• Vlastní obrázky pro kontakty bez fotky a neznámá čísla.
+• SMS: složka „Blokované“, „Archiv“ v menu, vlastní velikost textu, oznámení lze vypnout.
+• Kontakt lze uložit do DAVx⁵ a dalších účtů; přesnější hledání v historii.
+• Jednodušší nastavení: hlavní v sekcích, zbytek v „Rozšířeném nastavení“.
+• Nová tlačítka volání, barevné šipky hovorů; úspornější provoz.
+</cs-CZ>
+<da-DK>
+• Besvar og afvis ved at stryge op og ned; falsk opkald ringer også i headset, bil og ur.
+• Egne billeder til kontakter uden foto og ukendte numre.
+• SMS: mappen „Blokeret“, „Arkiv“ i menuen, egen tekststørrelse, notifikationer kan slås fra.
+• Kontakter kan gemmes i DAVx⁵ og andre konti; mere præcis søgning i loggen.
+• Enklere indstillinger: det vigtigste i sektionerne, resten under „Avancerede“.
+• Nye opkaldsknapper, farvede opkaldspile; appen er mere effektiv.
+</da-DK>
+<de-DE>
+• Annehmen und Ablehnen per Wischen nach oben und unten; Fake-Anruf klingelt auch im Headset, Auto und auf der Uhr.
+• Eigene Bilder für Kontakte ohne Foto und unbekannte Nummern.
+• SMS: Ordner „Blockiert“, „Archiv“ im Menü, eigene Textgröße, Benachrichtigungen abschaltbar.
+• Kontakte auch in DAVx⁵ und anderen Konten speichern; genauere Suche.
+• Einfachere Einstellungen: Wichtiges in den Bereichen, der Rest unter „Erweitert“.
+• Neue Anruftasten, farbige Anrufpfeile; sparsamer.
+</de-DE>
+<en-US>
+• Answer and decline by swiping up and down; fake calls ring on headsets, cars and watches.
+• Custom pictures for contacts without a photo and unknown numbers.
+• SMS: "Blocked" folder, "Archive" in the menu, own text size, notifications can be turned off.
+• Save contacts to DAVx⁵ and other accounts; more accurate call log search.
+• Simpler settings: essentials in each section, the rest under "Advanced settings".
+• New call buttons, colored call arrows; the app works more efficiently.
+</en-US>
+<es-ES>
+• Contesta y rechaza deslizando arriba y abajo; la llamada falsa suena en auriculares, coche y reloj.
+• Imágenes propias para contactos sin foto y números desconocidos.
+• SMS: carpeta «Bloqueados», «Archivo» en el menú, tamaño de texto propio, notificaciones desactivables.
+• Guarda contactos en DAVx⁵ y otras cuentas; búsqueda más precisa.
+• Ajustes más sencillos: lo esencial en cada sección, el resto en «Avanzados».
+• Nuevos botones de llamada, flechas en color; más eficiente.
+</es-ES>
+<fi-FI>
+• Vastaa ja hylkää pyyhkäisemällä ylös ja alas; valepuhelu soi myös kuulokkeissa, autossa ja kellossa.
+• Omat kuvat yhteystiedoille ilman kuvaa ja tuntemattomille numeroille.
+• Tekstiviestit: kansio ”Estetyt”, ”Arkisto” valikossa, oma tekstikoko, ilmoitukset voi poistaa.
+• Yhteystiedon voi tallentaa DAVx⁵:een ja muihin tileihin; tarkempi haku.
+• Selkeämmät asetukset: tärkein osioissa, loput ”Lisäasetuksissa”.
+• Uudet soittopainikkeet, värilliset puhelunuolet; säästeliäämpi.
+</fi-FI>
+<fr-FR>
+• Répondre ou refuser en glissant en haut ou en bas ; le faux appel sonne aussi dans le casque, la voiture, la montre.
+• Images pour contacts sans photo et numéros inconnus.
+• SMS : dossier « Bloqués », « Archives » dans le menu, taille du texte, notifications désactivables.
+• Contacts dans DAVx⁵ et autres comptes ; recherche plus précise.
+• Paramètres simplifiés : l’essentiel en section, le reste en « Avancés ».
+• Nouveaux boutons d’appel, flèches colorées ; plus économe.
+</fr-FR>
+<hi-IN>
+• ऊपर-नीचे स्वाइप से कॉल उठाएँ और काटें; नकली कॉल हेडसेट, कार और घड़ी में भी बजती है।
+• बिना फ़ोटो वाले संपर्कों और अज्ञात नंबरों के लिए अपनी तस्वीरें.
+• SMS: «ब्लॉक किए गए» फ़ोल्डर, मेनू में «संग्रह», टेक्स्ट का अलग आकार, सूचनाएँ बंद की जा सकती हैं।
+• संपर्क DAVx⁵ और अन्य खातों में सहेजें; लॉग में अधिक सटीक खोज।
+• आसान सेटिंग्स: मुख्य विकल्प अनुभागों में, बाकी «उन्नत» में।
+• नए कॉल बटन, रंगीन कॉल तीर; ऐप अधिक किफ़ायती।
+</hi-IN>
+<hu-HU>
+• Hívásfogadás és elutasítás fel- és lehúzással; az álhívás a fülhallgatón, autóban és órán is szól.
+• Saját képek fotó nélküli névjegyekhez és ismeretlen számokhoz.
+• SMS: „Letiltott” mappa, „Archívum” a menüben, saját szövegméret, kikapcsolható értesítések.
+• Névjegy menthető DAVx⁵-be és más fiókokba; pontosabb keresés.
+• Egyszerűbb beállítások: a lényeg a szakaszokban, a többi a „Speciális” alatt.
+• Új hívásgombok, színes hívásnyilak; takarékosabb működés.
+</hu-HU>
+<id>
+• Jawab dan tolak dengan geser ke atas dan bawah; panggilan palsu berdering di headset, mobil, dan jam.
+• Gambar sendiri untuk kontak tanpa foto dan nomor tak dikenal.
+• SMS: folder “Diblokir”, “Arsip” di menu, ukuran teks tersendiri, notifikasi bisa dimatikan.
+• Kontak bisa disimpan ke DAVx⁵ dan akun lain; pencarian log lebih tepat.
+• Pengaturan lebih sederhana: yang utama di tiap bagian, sisanya di “Lanjutan”.
+• Tombol panggil baru, panah panggilan berwarna; aplikasi lebih hemat.
+</id>
+<it-IT>
+• Rispondi e rifiuta scorrendo su e giù; la finta chiamata suona in cuffia, in auto e sull’orologio.
+• Immagini proprie per contatti senza foto e numeri sconosciuti.
+• SMS: cartella «Bloccati», «Archivio» nel menu, dimensione del testo, notifiche disattivabili.
+• Contatti salvabili in DAVx⁵ e altri account; ricerca più precisa.
+• Impostazioni più semplici: l’essenziale nelle sezioni, il resto in «Avanzate».
+• Nuovi pulsanti di chiamata, frecce colorate; più efficiente.
+</it-IT>
+<iw-IL>
+• מענה ודחייה בהחלקה למעלה ולמטה; שיחה מדומה מצלצלת גם באוזניות, ברכב ובשעון.
+• תמונות משלך לאנשי קשר בלי תמונה ולמספרים לא מוכרים.
+• SMS: תיקיית „חסומים”, „ארכיון” בתפריט, גודל טקסט נפרד, אפשר לכבות התראות.
+• שמירת אנשי קשר ב-DAVx⁵ ובחשבונות אחרים; חיפוש מדויק יותר ביומן.
+• הגדרות פשוטות יותר: העיקר בקטעים, השאר ב„מתקדמות”.
+• כפתורי חיוג חדשים, חיצי שיחה צבעוניים; האפליקציה חסכונית יותר.
+</iw-IL>
+<ja-JP>
+• 上下スワイプで応答・拒否。フェイク着信はヘッドセット、車、時計でも鳴ります。
+• 写真のない連絡先や不明な番号に独自の画像。
+• SMS：「ブロック済み」フォルダ、メニューに「アーカイブ」、本文の文字サイズ、通知オフ。
+• 連絡先を DAVx⁵ などのアカウントに保存。履歴の検索がより正確に。
+• 設定をシンプルに：主要な項目は各セクション、その他は「詳細設定」へ。
+• 新しい発信ボタンと色付きの通話矢印。動作を効率化。
+</ja-JP>
+<ko-KR>
+• 위아래 스와이프로 전화 받기·거절; 가짜 전화가 헤드셋, 차량, 시계에서도 울립니다.
+• 사진 없는 연락처와 모르는 번호에 나만의 이미지.
+• SMS: '차단됨' 폴더, 메뉴의 '보관함', 별도 글자 크기, 알림 끄기 가능.
+• 연락처를 DAVx⁵ 등 다른 계정에 저장; 더 정확한 기록 검색.
+• 더 간단한 설정: 핵심은 각 섹션에, 나머지는 '고급 설정'에.
+• 새 통화 버튼, 색상 통화 화살표; 더 효율적인 동작.
+</ko-KR>
+<nl-NL>
+• Opnemen en weigeren door omhoog en omlaag te vegen; nepoproep gaat ook over op headset, auto en horloge.
+• Eigen afbeeldingen voor contacten zonder foto en onbekende nummers.
+• Sms: map ‘Geblokkeerd’, ‘Archief’ in het menu, eigen tekstgrootte, meldingen uit te zetten.
+• Contacten opslaan in DAVx⁵ en andere accounts; nauwkeuriger zoeken.
+• Eenvoudigere instellingen: het belangrijkste per sectie, de rest onder ‘Geavanceerd’.
+• Nieuwe belknoppen, gekleurde gesprekspijlen; zuiniger.
+</nl-NL>
+<no-NO>
+• Svar og avvis ved å sveipe opp og ned; falsk anrop ringer også i headset, bil og klokke.
+• Egne bilder for kontakter uten bilde og ukjente numre.
+• SMS: mappen «Blokkert», «Arkiv» i menyen, egen tekststørrelse, varsler kan slås av.
+• Kontakter kan lagres i DAVx⁵ og andre kontoer; mer presist søk i loggen.
+• Enklere innstillinger: det viktigste i delene, resten under «Avansert».
+• Nye ringeknapper, fargede anropspiler; mer effektiv app.
+</no-NO>
+<pl-PL>
+• Odbieranie i odrzucanie przesunięciem w górę i w dół; fałszywe połączenie dzwoni w słuchawkach, aucie i zegarku.
+• Własne obrazy dla kontaktów bez zdjęcia i nieznanych numerów.
+• SMS: folder „Zablokowane”, „Archiwum” w menu, rozmiar tekstu, wyłączanie powiadomień.
+• Zapis kontaktów w DAVx⁵ i innych kontach; dokładniejsze wyszukiwanie.
+• Prostsze ustawienia: najważniejsze w sekcjach, reszta w „Zaawansowanych”.
+• Nowe przyciski połączeń, kolorowe strzałki; oszczędniej.
+</pl-PL>
+<pt-BR>
+• Atenda e recuse deslizando para cima e para baixo; a chamada falsa toca no fone, no carro e no relógio.
+• Imagens próprias para contatos sem foto e números desconhecidos.
+• SMS: pasta “Bloqueados”, “Arquivo” no menu, tamanho do texto, notificações desativáveis.
+• Contatos salvos no DAVx⁵ e em outras contas; busca mais precisa.
+• Configurações mais simples: o essencial nas seções, o resto em “Avançadas”.
+• Novos botões de chamada, setas coloridas; mais eficiente.
+</pt-BR>
+<ro>
+• Răspunde și respinge glisând în sus și în jos; apelul fals sună și în cască, mașină și pe ceas.
+• Imagini proprii pentru contacte fără fotografie și numere necunoscute.
+• SMS: dosarul „Blocate”, „Arhivă” în meniu, mărime proprie a textului, notificări care se pot opri.
+• Contactele se pot salva în DAVx⁵ și alte conturi; căutare mai precisă.
+• Setări mai simple: esențialul în secțiuni, restul în „Avansate”.
+• Butoane noi de apel, săgeți colorate; aplicație mai eficientă.
+</ro>
+<sk>
+• Prijatie a odmietnutie potiahnutím hore a dole; falošný hovor zvoní aj v slúchadlách, aute a hodinkách.
+• Vlastné obrázky pre kontakty bez fotky a neznáme čísla.
+• SMS: priečinok „Blokované“, „Archív“ v menu, vlastná veľkosť textu, upozornenia možno vypnúť.
+• Kontakt možno uložiť do DAVx⁵ a ďalších účtov; presnejšie hľadanie.
+• Jednoduchšie nastavenia: hlavné v sekciách, zvyšok v „Rozšírených“.
+• Nové tlačidlá hovoru, farebné šípky hovorov; úspornejšia aplikácia.
+</sk>
+<sv-SE>
+• Svara och avvisa genom att svepa upp och ner; låtsassamtal ringer även i headset, bil och klocka.
+• Egna bilder för kontakter utan foto och okända nummer.
+• SMS: mappen ”Blockerade”, ”Arkiv” i menyn, egen textstorlek, aviseringar kan stängas av.
+• Kontakter kan sparas i DAVx⁵ och andra konton; mer exakt sökning.
+• Enklare inställningar: det viktigaste i avsnitten, resten under ”Avancerat”.
+• Nya samtalsknappar, färgade samtalspilar; effektivare app.
+</sv-SE>
+<th>
+• รับและปฏิเสธสายด้วยการปัดขึ้นและลง; สายปลอมดังในหูฟัง รถ และนาฬิกาด้วย
+• รูปภาพของคุณเองสำหรับรายชื่อที่ไม่มีรูปและเบอร์ที่ไม่รู้จัก
+• SMS: โฟลเดอร์ «ที่ถูกบล็อก», «คลังเก็บ» ในเมนู, ขนาดตัวอักษรแยก, ปิดการแจ้งเตือนได้
+• บันทึกรายชื่อไปยัง DAVx⁵ และบัญชีอื่น; ค้นหาประวัติแม่นยำขึ้น
+• การตั้งค่าที่ง่ายขึ้น: รายการหลักอยู่ในแต่ละหมวด ที่เหลืออยู่ใน «ขั้นสูง»
+• ปุ่มโทรใหม่ ลูกศรการโทรแบบมีสี; แอปประหยัดขึ้น
+</th>
+<tr-TR>
+• Yukarı ve aşağı kaydırarak yanıtlayın ve reddedin; sahte arama kulaklıkta, arabada ve saatte de çalar.
+• Fotoğrafı olmayan kişiler ve bilinmeyen numaralar için kendi resimleriniz.
+• SMS: “Engellenenler” klasörü, menüde “Arşiv”, ayrı metin boyutu, bildirimler kapatılabilir.
+• Kişiler DAVx⁵ ve diğer hesaplara kaydedilebilir; daha isabetli arama.
+• Daha sade ayarlar: temel seçenekler bölümlerde, gerisi “Gelişmiş”te.
+• Yeni arama düğmeleri, renkli arama okları; daha verimli uygulama.
+</tr-TR>
+<vi>
+• Trả lời và từ chối bằng cách vuốt lên và xuống; cuộc gọi giả đổ chuông cả ở tai nghe, ô tô và đồng hồ.
+• Ảnh riêng cho liên hệ không có ảnh và số lạ.
+• SMS: thư mục “Đã chặn”, “Lưu trữ” trong menu, cỡ chữ riêng, có thể tắt thông báo.
+• Lưu liên hệ vào DAVx⁵ và tài khoản khác; tìm kiếm nhật ký chính xác hơn.
+• Cài đặt gọn hơn: phần chính trong từng mục, phần còn lại ở “Nâng cao”.
+• Nút gọi mới, mũi tên cuộc gọi có màu; ứng dụng tiết kiệm hơn.
+</vi>
+<zh-CN>
+• 上下滑动接听和拒接；模拟来电也会在耳机、车载和手表上响铃。
+• 为无照片的联系人和陌生号码设置自定义图片。
+• 短信：“已屏蔽”文件夹、菜单中的“归档”、独立的文字大小，可关闭通知。
+• 联系人可保存到 DAVx⁵ 等账户；通话记录搜索更准确。
+• 设置更简洁：各部分保留主要选项，其余放入“高级设置”。
+• 新的拨号按钮、彩色通话箭头；运行更省资源。
+</zh-CN>
