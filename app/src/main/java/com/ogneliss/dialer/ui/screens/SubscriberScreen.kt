@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import com.ogneliss.dialer.ui.components.Motion
+import com.ogneliss.dialer.ui.components.shadowBelow
 import com.ogneliss.dialer.ui.components.rememberPhotoPixels
 import com.ogneliss.dialer.ui.theme.PhotoPalette
 import com.ogneliss.dialer.ui.theme.Space
@@ -1017,6 +1018,7 @@ fun SubscriberScreen(
         }
     }
     val showBarTitle = !cardTwoColumns && nameHidden
+    val cardScrolled by remember { derivedStateOf { cardListState.canScrollBackward } }
 
     val barContainer = MaterialTheme.colorScheme.background.copy(alpha = coverProgress)
     // Светлые значки строки состояния, пока под ними фото (1.5.8)
@@ -1089,9 +1091,17 @@ fun SubscriberScreen(
                     title = title,
                     onBack = onBack,
                     showBack = showBack,
-                    modifier = Modifier.onGloballyPositioned { coords ->
-                        barBottomInRoot = coords.positionInRoot().y + coords.size.height
-                    },
+                    modifier = Modifier
+                        .onGloballyPositioned { coords ->
+                            barBottomInRoot = coords.positionInRoot().y + coords.size.height
+                        }
+                        /*
+                         * Тень под шапкой (2.9.0, автор: «в… карточке звонка под шапкой
+                         * нужна тень, чтобы понимать, что выше что-то есть»): когда список
+                         * прокручен и шапка уже не прозрачная над фото. Под фото тень
+                         * не нужна — там граница и так видна.
+                         */
+                        .shadowBelow(cardScrolled && coverProgress >= 0.99f),
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = barContainer,
                         navigationIconContentColor = barIcons,

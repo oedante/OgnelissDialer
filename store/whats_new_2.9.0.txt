@@ -1,0 +1,81 @@
+<ru-RU>
+• В переписке SMS и карточке звонка под шапкой появляется тень, когда выше есть ещё содержимое.
+</ru-RU>
+<ar>
+• في المحادثة وبطاقة المكالمة يظهر ظل أسفل الشريط العلوي عندما يوجد محتوى إضافي في الأعلى.
+</ar>
+<cs-CZ>
+• V konverzaci SMS a kartě hovoru se pod záhlavím objeví stín, když je nahoře další obsah.
+</cs-CZ>
+<da-DK>
+• I SMS-samtalen og opkaldskortet vises en skygge under toplinjen, når der er mere indhold ovenfor.
+</da-DK>
+<de-DE>
+• Im SMS-Verlauf und in der Anrufkarte erscheint unter der Kopfzeile ein Schatten, wenn oben weiterer Inhalt ist.
+</de-DE>
+<en-US>
+• In SMS conversations and the call card, a shadow appears under the top bar when there is more content above.
+</en-US>
+<es-ES>
+• En las conversaciones SMS y la ficha de llamada aparece una sombra bajo la barra superior cuando hay más contenido arriba.
+</es-ES>
+<fi-FI>
+• Tekstiviestikeskustelussa ja puhelukortissa yläpalkin alle tulee varjo, kun yläpuolella on lisää sisältöä.
+</fi-FI>
+<fr-FR>
+• Dans les conversations SMS et la fiche d’appel, une ombre apparaît sous l’en-tête quand il y a du contenu au-dessus.
+</fr-FR>
+<hi-IN>
+• SMS बातचीत और कॉल कार्ड में ऊपर और सामग्री होने पर शीर्ष पट्टी के नीचे छाया दिखती है।
+</hi-IN>
+<hu-HU>
+• Az SMS-beszélgetésben és a híváskártyán árnyék jelenik meg a fejléc alatt, ha feljebb további tartalom van.
+</hu-HU>
+<id>
+• Di percakapan SMS dan kartu panggilan, bayangan muncul di bawah bilah atas saat masih ada konten di atas.
+</id>
+<it-IT>
+• Nelle conversazioni SMS e nella scheda chiamata compare un’ombra sotto l’intestazione quando sopra c’è altro contenuto.
+</it-IT>
+<iw-IL>
+• בשיחת SMS ובכרטיס השיחה מופיע צל מתחת לסרגל העליון כשיש עוד תוכן למעלה.
+</iw-IL>
+<ja-JP>
+• SMS の会話と通話カードで、上にまだ内容があるときヘッダーの下に影が表示されます。
+</ja-JP>
+<ko-KR>
+• SMS 대화와 통화 카드에서 위에 내용이 더 있으면 상단 바 아래에 그림자가 표시됩니다.
+</ko-KR>
+<nl-NL>
+• In sms-gesprekken en de belkaart verschijnt een schaduw onder de kopbalk als er boven nog meer inhoud is.
+</nl-NL>
+<no-NO>
+• I SMS-samtaler og anropskortet vises en skygge under topplinjen når det er mer innhold over.
+</no-NO>
+<pl-PL>
+• W rozmowie SMS i karcie połączenia pod nagłówkiem pojawia się cień, gdy wyżej jest więcej treści.
+</pl-PL>
+<pt-BR>
+• Nas conversas SMS e no cartão de chamada, aparece uma sombra sob a barra superior quando há mais conteúdo acima.
+</pt-BR>
+<ro>
+• În conversațiile SMS și fișa apelului apare o umbră sub bara de sus când mai există conținut deasupra.
+</ro>
+<sk>
+• V konverzácii SMS a karte hovoru sa pod hlavičkou objaví tieň, keď je vyššie ďalší obsah.
+</sk>
+<sv-SE>
+• I SMS-konversationer och samtalskortet visas en skugga under rubrikraden när det finns mer innehåll ovanför.
+</sv-SE>
+<th>
+• ในการสนทนา SMS และการ์ดการโทร จะมีเงาใต้แถบด้านบนเมื่อยังมีเนื้อหาอยู่ด้านบน
+</th>
+<tr-TR>
+• SMS konuşmalarında ve arama kartında, yukarıda daha fazla içerik olduğunda üst çubuğun altında gölge görünür.
+</tr-TR>
+<vi>
+• Trong cuộc trò chuyện SMS và thẻ cuộc gọi, bóng đổ xuất hiện dưới thanh trên cùng khi phía trên còn nội dung.
+</vi>
+<zh-CN>
+• 短信对话和通话卡片中，上方还有内容时，顶栏下方会显示阴影。
+</zh-CN>

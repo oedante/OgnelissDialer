@@ -594,6 +594,20 @@ class ScreenGalleryTest {
             rule.onAllNodesWithContentDescription(rule.activity.getString(R.string.messages_new))[0].performClick()
             settle(600)
         }) { vm -> messagesContent(vm) },
+        // 2.9.0: длинная переписка — сверху тень: выше есть старые сообщения
+        Shot("sms_chat_long", prepare = { grantSmsRole() }, act = { _ ->
+            val older = (1..4).flatMap { round ->
+                chat.map { m -> m.copy(id = m.id + round * 100L, date = m.date - round * 86_400_000L) }
+            }
+            mutate<com.ogneliss.dialer.ui.conversation.ConversationViewModel.UiState>(conversationVm()) {
+                it.copy(
+                    title = "Анна Смирнова", subtitle = "+7 900 111-00-01", dialable = true,
+                    messages = (older + chat).sortedBy { m -> m.date },
+                    loading = false, isDefaultSms = true, sims = sims
+                )
+            }
+            settle(600)
+        }) { _ -> com.ogneliss.dialer.ui.conversation.ConversationScreen(onBack = {}, onOpenCard = {}, onCall = {}) },
         Shot("sms_chat", prepare = { grantSmsRole() }, act = { _ ->
             mutate<com.ogneliss.dialer.ui.conversation.ConversationViewModel.UiState>(conversationVm()) {
                 it.copy(

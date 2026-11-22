@@ -24,12 +24,18 @@ import androidx.compose.ui.unit.dp
  * ниже есть ещё. Стало, как в почте (scroll_edge_fade.dart): у края, за
  * которым есть содержимое, — мягкая тень 8 dp; появляется и гаснет за
  * 150 мс. Маленьким областям (ниже 120 dp) не нужна.
+ *
+ * [reverse] — список снизу вверх (reverseLayout, переписка SMS, 2.9.0): там
+ * «назад» — вниз, к новым, а «вперёд» — вверх, к старым; края меняются местами.
  */
-fun Modifier.scrollEdgeFade(state: LazyListState): Modifier = composed {
-    val dark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
-    val shade = Color.Black.copy(alpha = if (dark) 0.32f else 0.10f)
-    val before by remember(state) { derivedStateOf { state.canScrollBackward } }
-    val after by remember(state) { derivedStateOf { state.canScrollForward } }
+fun Modifier.scrollEdgeFade(state: LazyListState, reverse: Boolean = false): Modifier = composed {
+    val shade = edgeShade()
+    val before by remember(state, reverse) {
+        derivedStateOf { if (reverse) state.canScrollForward else state.canScrollBackward }
+    }
+    val after by remember(state, reverse) {
+        derivedStateOf { if (reverse) state.canScrollBackward else state.canScrollForward }
+    }
     val topAlpha by animateFloatAsState(if (before) 1f else 0f, tween(FADE_MS), label = "edgeTop")
     val bottomAlpha by animateFloatAsState(if (after) 1f else 0f, tween(FADE_MS), label = "edgeBottom")
     drawWithContent {
@@ -52,6 +58,39 @@ fun Modifier.scrollEdgeFade(state: LazyListState): Modifier = composed {
             )
         }
     }
+}
+
+/**
+ * ТЕНЬ ПОД ШАПКОЙ (2.9.0, автор: «в окне смс, карточке звонка под шапкой нужна
+ * тень, чтобы понимать, что выше что-то есть»).
+ *
+ * Для экранов, где список уходит ПОД шапку (карточка: шапка лежит поверх
+ * обложки), и тень у края списка закрыла бы сама шапка. Рисуется под нижним
+ * краем элемента, к которому применена, — та же тень, что у края прокрутки,
+ * с тем же появлением. Шапка в Scaffold рисуется поверх содержимого, поэтому
+ * тень ложится на список.
+ */
+fun Modifier.shadowBelow(visible: Boolean): Modifier = composed {
+    val shade = edgeShade()
+    val alpha by animateFloatAsState(if (visible) 1f else 0f, tween(FADE_MS), label = "edgeBelow")
+    drawWithContent {
+        drawContent()
+        if (alpha <= 0f) return@drawWithContent
+        val h = EDGE.toPx()
+        drawRect(
+            Brush.verticalGradient(listOf(shade, Color.Transparent), startY = size.height, endY = size.height + h),
+            topLeft = Offset(0f, size.height),
+            size = Size(size.width, h),
+            alpha = alpha
+        )
+    }
+}
+
+/** Цвет тени: на тёмной теме гуще, иначе её не видно (как в почте). */
+@androidx.compose.runtime.Composable
+private fun edgeShade(): Color {
+    val dark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
+    return Color.Black.copy(alpha = if (dark) 0.32f else 0.10f)
 }
 
 private val EDGE = 8.dp
