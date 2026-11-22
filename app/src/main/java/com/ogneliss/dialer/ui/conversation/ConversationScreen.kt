@@ -82,6 +82,7 @@ import com.ogneliss.dialer.sms.OtpDetector
 import com.ogneliss.dialer.sms.MessageNotifications
 import com.ogneliss.dialer.sms.SmsClipboard
 import com.ogneliss.dialer.sms.SmsRole
+import com.ogneliss.dialer.ui.components.scrollEdgeFade
 import com.ogneliss.dialer.ui.components.OgnelissDialog
 import com.ogneliss.dialer.ui.components.PhotoViewerDialog
 import com.ogneliss.dialer.ui.components.ScreenScaffold
@@ -465,7 +466,14 @@ private fun MessageList(
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
-            .dragSelect(selection, listState) { key -> (key as? String)?.takeIf { it in messageKeys } },
+            .dragSelect(selection, listState) { key -> (key as? String)?.takeIf { it in messageKeys } }
+            /*
+             * Тень у края (2.9.0, автор: «в окне смс… под шапкой нужна тень, чтобы
+             * понимать, что выше что-то есть»): сверху — когда выше есть старые
+             * сообщения, снизу у поля ввода — когда ниже есть новые. Как у списков
+             * журнала, контактов и SMS (scrollEdgeFade); лента перевёрнута — reverse.
+             */
+            .scrollEdgeFade(listState, reverse = true),
         state = listState,
         reverseLayout = true,
         contentPadding = androidx.compose.foundation.layout.PaddingValues(

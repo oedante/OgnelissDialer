@@ -12,6 +12,11 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 22.11.2026 — 2.9.0 (95): тень под шапкой в переписке SMS и карточке
+
+Разбор — `docs/RELEASE_NOTES_2.9.0.md`. `scrollEdgeFade(state, reverse)` у ленты переписки;
+`Modifier.shadowBelow(visible)` у шапки карточки (список под шапкой); снимок `sms_chat_long`.
+
 ## 22.11.2026 — 2.8.9 (94): телефония необязательна (Google Play), кнопки со скруглением из настроек, стрелки по умолчанию
 
 Разбор — `docs/RELEASE_NOTES_2.8.9.md`. Манифест: `android.hardware.telephony` —
