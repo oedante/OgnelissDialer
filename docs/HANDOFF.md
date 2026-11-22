@@ -12,6 +12,14 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 22.11.2026 — 2.8.8 (93): книга контактов — только когда изменилась (к выкладке)
+
+Разбор — `docs/RELEASE_NOTES_2.8.8.md`. `ContactsRepository.changeStamp` (число контактов
+и избранных, время правки и удаления) + `ContactsStamp.mustRead`; `DialerViewModel.doRefresh`
+читает книгу только при смене отметки, `contactsReadStamp` пишется вместе с показанным.
+Лог автора (2.8.3, nubia) — без ошибок и предупреждений. «Что нового» для Play:
+`whats_new_2.8.8.txt` и сводный `whats_new_2.8.8_since_2.7.4.txt`.
+
 ## 22.11.2026 — 2.8.7 (92): «Архив» в «Меню» SMS
 
 Разбор — `docs/RELEASE_NOTES_2.8.7.md`. `SmsFolderRows(onArchive)` — «Архив» последней

@@ -1,0 +1,81 @@
+<ru-RU>
+• Приложение работает экономнее: книга контактов больше не перечитывается после каждого звонка — только когда в ней что-то изменилось.
+</ru-RU>
+<ar>
+• يعمل التطبيق بكفاءة أكبر: لم يعد يعيد قراءة جهات الاتصال بعد كل مكالمة، بل فقط عند تغيّرها.
+</ar>
+<cs-CZ>
+• Aplikace pracuje úsporněji: kontakty už nenačítá znovu po každém hovoru, jen když se v nich něco změní.
+</cs-CZ>
+<da-DK>
+• Appen arbejder mere effektivt: kontakterne læses ikke længere igen efter hvert opkald – kun når noget er ændret.
+</da-DK>
+<de-DE>
+• Die App arbeitet sparsamer: Die Kontakte werden nicht mehr nach jedem Anruf neu gelesen, sondern nur, wenn sich etwas geändert hat.
+</de-DE>
+<en-US>
+• The app works more efficiently: contacts are no longer re-read after every call, only when something has changed.
+</en-US>
+<es-ES>
+• La aplicación funciona de forma más eficiente: ya no vuelve a leer los contactos tras cada llamada, solo cuando algo ha cambiado.
+</es-ES>
+<fi-FI>
+• Sovellus toimii säästeliäämmin: yhteystietoja ei enää lueta uudelleen jokaisen puhelun jälkeen, vain kun jokin on muuttunut.
+</fi-FI>
+<fr-FR>
+• L’application est plus économe : les contacts ne sont plus relus après chaque appel, seulement quand quelque chose a changé.
+</fr-FR>
+<hi-IN>
+• ऐप अब ज़्यादा किफ़ायती है: हर कॉल के बाद संपर्क दोबारा नहीं पढ़े जाते, सिर्फ़ तब जब उनमें कुछ बदला हो।
+</hi-IN>
+<hu-HU>
+• Takarékosabb működés: a névjegyeket már nem olvassa be újra minden hívás után, csak ha valami változott.
+</hu-HU>
+<id>
+• Aplikasi bekerja lebih hemat: kontak tidak lagi dibaca ulang setelah setiap panggilan, hanya saat ada perubahan.
+</id>
+<it-IT>
+• L’app funziona in modo più efficiente: i contatti non vengono più riletti dopo ogni chiamata, solo quando qualcosa è cambiato.
+</it-IT>
+<iw-IL>
+• האפליקציה חסכונית יותר: אנשי הקשר כבר לא נקראים מחדש אחרי כל שיחה, רק כשמשהו השתנה.
+</iw-IL>
+<ja-JP>
+• 動作を効率化：通話のたびに連絡先を読み直すのをやめ、変更があったときだけ読み込むようにしました。
+</ja-JP>
+<ko-KR>
+• 앱이 더 효율적으로 동작합니다. 통화할 때마다 연락처를 다시 읽지 않고, 변경이 있을 때만 읽습니다.
+</ko-KR>
+<nl-NL>
+• De app werkt zuiniger: contacten worden niet meer na elk gesprek opnieuw gelezen, alleen als er iets is veranderd.
+</nl-NL>
+<no-NO>
+• Appen jobber mer effektivt: kontaktene leses ikke lenger på nytt etter hver samtale, bare når noe er endret.
+</no-NO>
+<pl-PL>
+• Aplikacja działa oszczędniej: kontakty nie są już wczytywane ponownie po każdym połączeniu, tylko gdy coś się zmieniło.
+</pl-PL>
+<pt-BR>
+• O app ficou mais eficiente: os contatos não são mais relidos após cada chamada, só quando algo muda.
+</pt-BR>
+<ro>
+• Aplicația funcționează mai eficient: contactele nu mai sunt recitite după fiecare apel, ci doar când s-a schimbat ceva.
+</ro>
+<sk>
+• Aplikácia pracuje úspornejšie: kontakty už nenačítava znova po každom hovore, len keď sa v nich niečo zmení.
+</sk>
+<sv-SE>
+• Appen arbetar mer effektivt: kontakterna läses inte längre om efter varje samtal, bara när något har ändrats.
+</sv-SE>
+<th>
+• แอปทำงานประหยัดขึ้น: ไม่อ่านรายชื่อติดต่อใหม่หลังทุกการโทรอีกต่อไป จะอ่านเฉพาะเมื่อมีการเปลี่ยนแปลง
+</th>
+<tr-TR>
+• Uygulama daha verimli çalışıyor: kişiler artık her aramadan sonra yeniden okunmuyor, yalnızca bir şey değiştiğinde okunuyor.
+</tr-TR>
+<vi>
+• Ứng dụng hoạt động tiết kiệm hơn: danh bạ không còn được đọc lại sau mỗi cuộc gọi, chỉ khi có thay đổi.
+</vi>
+<zh-CN>
+• 运行更省资源：不再在每次通话后重新读取联系人，只在联系人有变化时读取。
+</zh-CN>
