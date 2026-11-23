@@ -82,6 +82,49 @@ internal fun ListPanel(
     searchButtonLabel: String = searchHint,
     menuContent: @Composable () -> Unit
 ) {
+    /*
+     * РАЗДЕЛЫ СПРАВА (2.9.3, проба; SideSectionRail): кнопки — в колонке у края,
+     * внизу — только поле поиска (постоянное или открытое). У SMS постоянного поля
+     * нет: панели внизу нет совсем. ActionRow составляется всегда — передаёт колонке
+     * центральную кнопку и «Меню» и держит окно меню.
+     */
+    if (LocalSideRail.current != null) {
+        ActionRow(
+            section = section,
+            expanded = false,
+            filterActive = filterActive,
+            onToggleExpanded = onDialpad,
+            onOpenSection = onOpenSection,
+            center = center,
+            onMenu = onMenu,
+            menuContent = menuContent
+        )
+        if (!searching && onOpenSearch == null) return
+        Surface(
+            color = PanelColors.panel(),
+            tonalElevation = 0.dp,
+            modifier = Modifier.panelTopLine(com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.divider)
+        ) {
+            PanelReachesNavBar()
+            Column(
+                Modifier
+                    .navigationBarsPadding()
+                    .imePadding()
+                    .padding(vertical = Space.s)
+            ) {
+                if (searching) {
+                    PanelSearchRow(value = searchQuery, onValueChange = onSearchChange, hint = searchHint, onClose = onCloseSearch)
+                } else if (onOpenSearch != null) {
+                    PanelSearchButton(
+                        label = searchButtonLabel,
+                        onClick = onOpenSearch,
+                        modifier = Modifier.padding(horizontal = FlowUi.screenPadding)
+                    )
+                }
+            }
+        }
+        return
+    }
     Surface(
         // Цвет, форма и край — как у панели журнала (BottomControlPanel);
         // 1.7.0: без тени, край — линия (panelTopLine)

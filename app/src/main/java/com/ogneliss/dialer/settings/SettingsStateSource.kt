@@ -90,6 +90,8 @@ class SettingsStateSource @Inject constructor(
         .combine(prefs.contactSort) { a, v -> a.copy(contactSort = v) }
         .combine(prefs.messengersAnyNumber) { a, v -> a.copy(messengersAnyNumber = v) }
         .combine(prefs.panelSlots) { a, v -> a.copy(panelSlots = v) }
+        .combine(prefs.menuTools) { a, v -> a.copy(menuTools = v) }
+        .combine(prefs.panelSide) { a, v -> a.copy(panelSide = v) }
 
     /** Жесты и отклик. */
     private val gestures: Flow<Gestures> = combine(
@@ -235,6 +237,8 @@ class SettingsStateSource @Inject constructor(
             sectionIcons = a.sectionIcons,
             coloredCallArrows = a.coloredCallArrows,
             panelSlots = a.panelSlots,
+            menuTools = a.menuTools,
+            panelSide = a.panelSide,
             startSection = a.startSection,
             contactNameFormat = a.contactNameFormat,
             contactSort = a.contactSort,
@@ -322,6 +326,8 @@ class SettingsStateSource @Inject constructor(
         val sectionIcons: Boolean = false,
         val coloredCallArrows: Boolean = true,
         val panelSlots: String? = null,
+        val menuTools: String? = null,
+        val panelSide: Boolean = false,
         val startSection: StartChoice = StartChoice.JOURNAL,
         val messengersAnyNumber: Boolean = false,
         val contactNameFormat: ContactNameFormat = ContactNameFormat.GIVEN_FIRST,

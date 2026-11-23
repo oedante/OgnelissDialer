@@ -1,0 +1,135 @@
+<ru-RU>
+• «Меню»: инструменты и разделы можно переставлять и скрывать — значком рядом с «Инструментами», как папки. По умолчанию включено всё.
+• Проба: разделы справа — колонкой у края экрана вместо нижней панели, список становится выше. Настройки → Быстрый доступ → Нижняя панель → Разделы.
+• На планшете в полосе разделов появилась «SMS».
+</ru-RU>
+<ar>
+• «القائمة»: يمكن ترتيب الأدوات والأقسام وإخفاؤها — بالرمز بجانب «الأدوات»، مثل المجلدات. كل شيء مفعّل افتراضيًا.
+• تجربة: الأقسام على اليمين — عمود عند حافة الشاشة بدل الشريط السفلي، فتصبح القائمة أطول. الإعدادات ← الوصول السريع ← الشريط السفلي ← الأقسام.
+• على الجهاز اللوحي ظهر «SMS» في شريط الأقسام.
+</ar>
+<cs-CZ>
+• „Menu“: nástroje a sekce lze přeřadit a skrýt ikonou vedle „Nástroje“, stejně jako složky. Ve výchozím stavu je zapnuto vše.
+• Zkouška: sekce vpravo — sloupec u okraje místo spodního panelu, seznam je vyšší. Nastavení → Rychlý přístup → Spodní panel → Sekce.
+• Na tabletu přibyla v pruhu sekcí „SMS“.
+</cs-CZ>
+<da-DK>
+• „Menu“: værktøjer og sektioner kan flyttes og skjules med ikonet ved „Værktøjer“, ligesom mapper. Som standard er alt slået til.
+• Test: sektioner til højre — en kolonne ved kanten i stedet for bundbjælken, så listen bliver højere. Indstillinger → Hurtig adgang → Bundbjælke → Sektioner.
+• På tablet er „SMS“ kommet med i sektionsbjælken.
+</da-DK>
+<de-DE>
+• Menü: Werkzeuge und Bereiche lassen sich wie Ordner über das Symbol bei „Werkzeuge“ sortieren und ausblenden. Standardmäßig ist alles an.
+• Test: Bereiche rechts – eine Spalte am Rand statt der unteren Leiste, die Liste wird höher. Einstellungen → Schnellzugriff → Untere Leiste → Bereiche.
+• Auf dem Tablet ist „SMS“ in der Bereichsleiste.
+</de-DE>
+<en-US>
+• Menu: tools and sections can be reordered and hidden with the icon next to "Tools", just like folders. Everything is on by default.
+• Trial: sections on the right — a column at the screen edge instead of the bottom bar, so the list gets taller. Settings → Quick access → Bottom bar → Sections.
+• On tablets, SMS is now in the section rail.
+</en-US>
+<es-ES>
+• «Menú»: las herramientas y secciones se pueden reordenar y ocultar con el icono junto a «Herramientas», como las carpetas. Por defecto todo está activado.
+• Prueba: secciones a la derecha — una columna en el borde en lugar de la barra inferior, la lista gana altura. Ajustes → Acceso rápido → Barra inferior → Secciones.
+• En tabletas, «SMS» ya está en la barra de secciones.
+</es-ES>
+<fi-FI>
+• ”Valikko”: työkalut ja osiot voi järjestää ja piilottaa ”Työkalut”-kohdan kuvakkeella, kuten kansiot. Oletuksena kaikki on päällä.
+• Kokeilu: osiot oikealla — sarake reunassa alapalkin sijaan, lista on korkeampi. Asetukset → Pikakäyttö → Alapalkki → Osiot.
+• Tabletin osiopalkissa on nyt myös ”SMS”.
+</fi-FI>
+<fr-FR>
+• Menu : outils et sections se réordonnent et se masquent avec l’icône près de « Outils », comme les dossiers. Tout est activé par défaut.
+• Essai : sections à droite — une colonne au bord de l’écran au lieu de la barre du bas, la liste gagne en hauteur. Réglages → Accès rapide → Barre du bas → Sections.
+• Sur tablette, « SMS » figure désormais dans la barre des sections.
+</fr-FR>
+<hi-IN>
+• «मेनू»: टूल और अनुभाग «टूल» के पास वाले आइकन से फ़ोल्डरों की तरह क्रम बदले और छिपाए जा सकते हैं। डिफ़ॉल्ट रूप से सब चालू है।
+• परीक्षण: अनुभाग दाईं ओर — निचली पट्टी की जगह किनारे पर कॉलम, सूची ऊँची हो जाती है। सेटिंग्स → त्वरित पहुँच → निचली पट्टी → अनुभाग।
+• टैबलेट पर अनुभाग पट्टी में अब «SMS» भी है।
+</hi-IN>
+<hu-HU>
+• „Menü”: az eszközök és szakaszok átrendezhetők és elrejthetők az „Eszközök” melletti ikonnal, mint a mappák. Alapból minden be van kapcsolva.
+• Próba: szakaszok jobb oldalt — oszlop a képernyő szélén az alsó sáv helyett, a lista magasabb lesz. Beállítások → Gyors hozzáférés → Alsó sáv → Szakaszok.
+• Táblagépen a szakaszsávban megjelent az „SMS”.
+</hu-HU>
+<id>
+• “Menu”: alat dan bagian bisa diurutkan dan disembunyikan lewat ikon di samping “Alat”, seperti folder. Secara bawaan semua aktif.
+• Uji coba: bagian di kanan — kolom di tepi layar sebagai ganti bilah bawah, daftar jadi lebih tinggi. Setelan → Akses cepat → Bilah bawah → Bagian.
+• Di tablet, “SMS” kini ada di bilah bagian.
+</id>
+<it-IT>
+• «Menu»: strumenti e sezioni si riordinano e nascondono con l’icona accanto a «Strumenti», come le cartelle. Di default è tutto attivo.
+• Prova: sezioni a destra — una colonna sul bordo al posto della barra inferiore, l’elenco diventa più alto. Impostazioni → Accesso rapido → Barra inferiore → Sezioni.
+• Sul tablet «SMS» è ora nella barra delle sezioni.
+</it-IT>
+<iw-IL>
+• „תפריט”: אפשר לסדר ולהסתיר כלים ומקטעים בסמל שליד „כלים”, כמו תיקיות. כברירת מחדל הכול מופעל.
+• ניסוי: מקטעים מימין — עמודה בקצה המסך במקום הסרגל התחתון, והרשימה גבוהה יותר. הגדרות ← גישה מהירה ← סרגל תחתון ← מקטעים.
+• בטאבלט נוסף „SMS” לסרגל המקטעים.
+</iw-IL>
+<ja-JP>
+• 「メニュー」：ツールとセクションは「ツール」横のアイコンからフォルダと同様に並べ替え・非表示ができます。初期状態はすべて表示。
+• お試し：セクションを右側に — 下部バーの代わりに画面端の列に表示し、リストが縦に広がります。設定 → クイックアクセス → 下部バー → セクション。
+• タブレットのセクションバーに「SMS」を追加しました。
+</ja-JP>
+<ko-KR>
+• '메뉴': 도구와 섹션을 '도구' 옆 아이콘으로 폴더처럼 순서를 바꾸고 숨길 수 있습니다. 기본값은 모두 표시.
+• 시험 기능: 섹션을 오른쪽에 — 하단 바 대신 화면 가장자리의 열로, 목록이 더 길어집니다. 설정 → 빠른 실행 → 하단 바 → 섹션.
+• 태블릿의 섹션 바에 'SMS'가 추가되었습니다.
+</ko-KR>
+<nl-NL>
+• ‘Menu’: hulpmiddelen en secties zijn net als mappen te ordenen en te verbergen via het pictogram bij ‘Hulpmiddelen’. Standaard staat alles aan.
+• Proef: secties rechts — een kolom aan de rand in plaats van de onderbalk, de lijst wordt hoger. Instellingen → Snelle toegang → Onderbalk → Secties.
+• Op tablets staat ‘SMS’ nu in de sectiebalk.
+</nl-NL>
+<no-NO>
+• «Meny»: verktøy og seksjoner kan flyttes og skjules med ikonet ved «Verktøy», som mapper. Som standard er alt på.
+• Test: seksjoner til høyre — en kolonne ved kanten i stedet for bunnlinjen, listen blir høyere. Innstillinger → Hurtigtilgang → Bunnlinje → Seksjoner.
+• På nettbrett er «SMS» nå med i seksjonslinjen.
+</no-NO>
+<pl-PL>
+• „Menu”: narzędzia i sekcje można przestawiać i ukrywać ikoną obok „Narzędzia”, jak foldery. Domyślnie wszystko jest włączone.
+• Próba: sekcje po prawej — kolumna przy krawędzi zamiast dolnego paska, lista staje się wyższa. Ustawienia → Szybki dostęp → Dolny pasek → Sekcje.
+• Na tablecie w pasku sekcji pojawiło się „SMS”.
+</pl-PL>
+<pt-BR>
+• “Menu”: ferramentas e seções podem ser reordenadas e ocultadas pelo ícone ao lado de “Ferramentas”, como as pastas. Por padrão tudo fica ativado.
+• Teste: seções à direita — uma coluna na borda no lugar da barra inferior, a lista fica mais alta. Configurações → Acesso rápido → Barra inferior → Seções.
+• No tablet, “SMS” agora está na barra de seções.
+</pt-BR>
+<ro>
+• „Meniu”: instrumentele și secțiunile se reordonează și se ascund din pictograma de lângă „Instrumente”, ca dosarele. Implicit totul e activ.
+• Probă: secțiuni în dreapta — o coloană la marginea ecranului în locul barei inferioare, lista devine mai înaltă. Setări → Acces rapid → Bara inferioară → Secțiuni.
+• Pe tabletă, „SMS” apare acum în bara secțiunilor.
+</ro>
+<sk>
+• „Menu“: nástroje a sekcie možno preusporiadať a skryť ikonou vedľa „Nástroje“, rovnako ako priečinky. Predvolene je zapnuté všetko.
+• Skúška: sekcie vpravo — stĺpec pri okraji namiesto spodného panela, zoznam je vyšší. Nastavenia → Rýchly prístup → Spodný panel → Sekcie.
+• Na tablete pribudla v pruhu sekcií „SMS“.
+</sk>
+<sv-SE>
+• ”Meny”: verktyg och sektioner kan ordnas och döljas med ikonen vid ”Verktyg”, precis som mappar. Som standard är allt på.
+• Test: sektioner till höger — en kolumn vid kanten i stället för bottenfältet, listan blir högre. Inställningar → Snabbåtkomst → Bottenfält → Sektioner.
+• På surfplattor finns nu ”SMS” i sektionsfältet.
+</sv-SE>
+<th>
+• «เมนู»: จัดลำดับและซ่อนเครื่องมือและส่วนต่างๆ ได้จากไอคอนข้าง «เครื่องมือ» เหมือนโฟลเดอร์ ค่าเริ่มต้นเปิดทั้งหมด
+• ทดลอง: ส่วนต่างๆ ด้านขวา — เป็นคอลัมน์ที่ขอบจอแทนแถบด้านล่าง รายการจึงสูงขึ้น การตั้งค่า → เข้าถึงด่วน → แถบด้านล่าง → ส่วนต่างๆ
+• บนแท็บเล็ต แถบส่วนต่างๆ มี «SMS» แล้ว
+</th>
+<tr-TR>
+• “Menü”: araçlar ve bölümler, “Araçlar”ın yanındaki simgeyle klasörler gibi sıralanıp gizlenebilir. Varsayılan olarak hepsi açık.
+• Deneme: bölümler sağda — alt çubuk yerine ekran kenarında bir sütun, liste uzar. Ayarlar → Hızlı erişim → Alt çubuk → Bölümler.
+• Tablette bölüm çubuğunda artık “SMS” de var.
+</tr-TR>
+<vi>
+• “Menu”: có thể sắp xếp và ẩn công cụ, các mục bằng biểu tượng cạnh “Công cụ”, giống thư mục. Mặc định bật tất cả.
+• Thử nghiệm: các mục ở bên phải — một cột ở mép màn hình thay cho thanh dưới, danh sách cao hơn. Cài đặt → Truy cập nhanh → Thanh dưới → Các mục.
+• Trên máy tính bảng, thanh mục đã có “SMS”.
+</vi>
+<zh-CN>
+• “菜单”：工具和分区可通过“工具”旁的图标像文件夹一样排序和隐藏，默认全部开启。
+• 试用：分区放在右侧——以屏幕边缘的一列代替底部栏，列表更高。设置 → 快捷访问 → 底部栏 → 分区。
+• 平板的分区栏中新增了“短信”。
+</zh-CN>

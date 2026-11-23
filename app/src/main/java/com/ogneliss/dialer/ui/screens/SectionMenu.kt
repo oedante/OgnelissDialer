@@ -32,7 +32,7 @@ internal class SectionLinks(
 /**
  * «Меню» раздела заметок или напоминаний — та же боковая панель, что
  * в журнале, SMS и контактах (OverflowMenu): «Мой контакт», псевдозвонок,
- * разделы, которых нет на панели, «Приложение» и поиск.
+ * разделы (что показывать — «Инструменты меню», MenuTool), «Приложение» и поиск.
  */
 @Composable
 internal fun SectionMenu(
@@ -40,6 +40,8 @@ internal fun SectionMenu(
     expanded: Boolean,
     onDismiss: () -> Unit,
     links: SectionLinks,
+    /** Раздел, чьё это меню: его строки в «Инструментах» нет (2.9.3). */
+    current: MainSection,
     onSearch: (() -> Unit)?,
     /** Свои «папки» раздела над инструментами (отбор напоминаний по сроку); null — нет. */
     header: (@Composable ColumnScope.() -> Unit)? = null
@@ -63,8 +65,12 @@ internal fun SectionMenu(
         },
         onSettings = { onDismiss(); links.onOpenSettings() },
         onFakeCall = { onDismiss(); links.onFakeCall() },
-        onNotes = { onDismiss(); links.onOpenSection(MainSection.NOTES) },
-        onReminders = { onDismiss(); links.onOpenSection(MainSection.REMINDERS) },
+        onNotes = if (current == MainSection.NOTES) null else {
+            { onDismiss(); links.onOpenSection(MainSection.NOTES) }
+        },
+        onReminders = if (current == MainSection.REMINDERS) null else {
+            { onDismiss(); links.onOpenSection(MainSection.REMINDERS) }
+        },
         onMessages = { onDismiss(); links.onOpenSection(MainSection.MESSAGES) },
         onContacts = { onDismiss(); links.onOpenSection(MainSection.CONTACTS) },
         onHelp = { onDismiss(); links.onOpenHelp() },

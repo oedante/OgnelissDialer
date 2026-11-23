@@ -61,19 +61,9 @@ internal fun MenuFolderRows(
     Column(Modifier.fillMaxWidth()) {
         MenuBand(
             title,
-            action = if (onEdit != null) {
-                {
-                    IconButton(onClick = onEdit) {
-                        // «Настроить папки» — ползунки, как «настроить избранное» в почте
-                        // (2.7.4, автор: шестерёнку путали с «Настройками» внизу меню)
-                        Icon(
-                            OgnelissIcons.Tune,
-                            contentDescription = editLabel,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            } else null
+            // «Настроить папки» — ползунки, как «настроить избранное» в почте
+            // (2.7.4, автор: шестерёнку путали с «Настройками» внизу меню)
+            action = onEdit?.let { edit -> { TuneButton(edit, editLabel) } }
         )
         OgnelissCard { folders.forEach { folder -> FolderRow(folder) } }
     }
@@ -127,10 +117,25 @@ internal class MenuFolder(
  * в приложении нет (автор: «вид отличается от остального приложения»).
  */
 @Composable
-internal fun MenuActionRows(title: String, actions: List<MenuFolder>) {
+internal fun MenuActionRows(
+    title: String,
+    actions: List<MenuFolder>,
+    /** «Настроить» справа от подписи (2.9.3, «Инструменты» — как папки); null — значка нет. */
+    onEdit: (() -> Unit)? = null,
+    editLabel: String? = null
+) {
     Column(Modifier.fillMaxWidth()) {
-        MenuBand(title)
-        OgnelissCard { actions.forEach { FolderRow(it, role = Role.Button) } }
+        MenuBand(title, action = onEdit?.let { edit -> { TuneButton(edit, editLabel) } })
+        // Всё выключено — остаётся подпись со значком «настроить»: вернуть строки есть откуда
+        if (actions.isNotEmpty()) OgnelissCard { actions.forEach { FolderRow(it, role = Role.Button) } }
+    }
+}
+
+/** Значок «настроить» у подписи части меню — ползунки, как «настроить избранное» в почте. */
+@Composable
+private fun TuneButton(onClick: () -> Unit, label: String?) {
+    IconButton(onClick = onClick) {
+        Icon(OgnelissIcons.Tune, contentDescription = label, tint = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 

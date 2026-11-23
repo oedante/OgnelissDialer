@@ -696,6 +696,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val SMS_HIDE_TEXT = booleanPreferencesKey("sms_hide_text")
         // 2.9.2: конструктор нижней панели — разбор в PanelSlots
         val PANEL_SLOTS = stringPreferencesKey("panel_slots")
+        // 2.9.3: порядок и показ «Инструментов» меню (FolderOrder) и разделы справа (проба)
+        val MENU_TOOLS = stringPreferencesKey("menu_tools")
+        val PANEL_SIDE = booleanPreferencesKey("panel_side")
         // 2.2.0
         val SMS_UNDO_SEND = stringPreferencesKey("sms_undo_send")
         val SMS_CALLS_IN_THREAD = booleanPreferencesKey("sms_calls_in_thread")
@@ -1167,6 +1170,23 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     }
 
     suspend fun resetPanelSlots() = edit("panel_slots", "по умолчанию") { it.remove(Keys.PANEL_SLOTS) }
+
+    /**
+     * «Инструменты» меню (2.9.3, автор: «давай сделаем их настраиваемыми, как сейчас
+     * раздел папок; по умолчанию всё включено, но пользователь может выключить
+     * ненужное»): строка FolderOrder; null — всё и по порядку MenuTool.
+     */
+    val menuTools: Flow<String?> = data.map { it[Keys.MENU_TOOLS] }
+
+    suspend fun setMenuTools(v: String) = edit("menu_tools", "…") { it[Keys.MENU_TOOLS] = v }
+
+    /**
+     * Разделы справа (2.9.3, проба по макету автора): колонка разделов у правого
+     * края вместо нижней панели — разбор в SideSectionRail. Выкл. — как было.
+     */
+    val panelSide: Flow<Boolean> = data.map { it[Keys.PANEL_SIDE] ?: false }
+
+    suspend fun setPanelSide(v: Boolean) = edit("panel_side", v.toString()) { it[Keys.PANEL_SIDE] = v }
 
     /** Текст SMS в уведомлениях скрыт (2.9.1). По умолчанию — нет, текст виден. */
     val smsHideText: Flow<Boolean> = data.map { it[Keys.SMS_HIDE_TEXT] ?: false }

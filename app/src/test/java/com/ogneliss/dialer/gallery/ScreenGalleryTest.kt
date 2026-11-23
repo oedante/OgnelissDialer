@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.graphics.Shader
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.captureToImage
@@ -308,6 +309,26 @@ class ScreenGalleryTest {
         )
     }
 
+    /**
+     * Раздел с колонкой разделов справа (2.9.3, проба) — как в RootScreen:
+     * экран слева, SideSectionRail справа, действия раздела — через LocalSideRail.
+     */
+    @Composable
+    private fun SideMode(current: com.ogneliss.dialer.ui.components.MainSection, content: @Composable () -> Unit) {
+        val state = androidx.compose.runtime.remember { com.ogneliss.dialer.ui.components.SideRailState() }
+        androidx.compose.runtime.CompositionLocalProvider(com.ogneliss.dialer.ui.components.LocalSideRail provides state) {
+            androidx.compose.foundation.layout.Row(androidx.compose.ui.Modifier.fillMaxSize()) {
+                androidx.compose.foundation.layout.Box(androidx.compose.ui.Modifier.weight(1f)) { content() }
+                com.ogneliss.dialer.ui.components.SideSectionRail(
+                    state = state,
+                    slots = com.ogneliss.dialer.settings.PanelSlots.defaults(smsDefault = true),
+                    current = current,
+                    onOpenSection = {}
+                )
+            }
+        }
+    }
+
     /** Содержимое журнала — общее для всех его снимков. */
     private val journalContent: @Composable (DialerViewModel) -> Unit = { vm ->
         MainDialerScreen(
@@ -428,9 +449,12 @@ class ScreenGalleryTest {
         // 2.7.4: «Меню» журнала — папки, инструменты, приложение, поиск (снимок автора 16.11.2026)
         Shot("menu", dialog = true) { vm ->
             val settings = vm.settingsState.collectAsState().value
+            // 2.9.3: значок «настроить» у «Инструментов» и все разделы, как в журнале
+            androidx.compose.runtime.CompositionLocalProvider(com.ogneliss.dialer.ui.screens.LocalOpenMenuTools provides {}) {
             com.ogneliss.dialer.ui.screens.OverflowMenu(
                 expanded = true, onDismiss = {}, settings = settings,
                 onThemeToggle = {}, onSettings = {}, onFakeCall = {}, onNotes = {}, onReminders = {},
+                onMessages = {}, onContacts = {},
                 onHelp = {},
                 header = {
                     com.ogneliss.dialer.ui.components.MenuFolderRows(
@@ -451,6 +475,7 @@ class ScreenGalleryTest {
                 },
                 onFilters = {}, onSearch = {}
             )
+            }
         },
         // 2.8.7: «Меню» SMS — папки и «Архив» последним (автор: «в боковой панели такого пункта нет»)
         Shot("menu_sms", dialog = true) { vm ->
@@ -518,6 +543,24 @@ class ScreenGalleryTest {
             androidx.compose.runtime.CompositionLocalProvider(
                 com.ogneliss.dialer.ui.components.LocalPanelSlots provides com.ogneliss.dialer.settings.PanelSlots.defaults(smsDefault = false)
             ) { journalContent(vm) }
+        },
+        // 2.9.3: разделы справа (проба) — журнал, контакты, клавиатура набора
+        Shot("side_journal") { vm -> SideMode(com.ogneliss.dialer.ui.components.MainSection.JOURNAL) { journalContent(vm) } },
+        Shot("side_contacts") { vm -> SideMode(com.ogneliss.dialer.ui.components.MainSection.CONTACTS) { ContactsScreen(vm = vm, onBack = {}) } },
+        Shot("side_dialpad", act = { _ ->
+            rule.onAllNodesWithContentDescription(rule.activity.getString(R.string.dialpad_show))[0].performClick()
+            settle(600)
+        }) { vm -> SideMode(com.ogneliss.dialer.ui.components.MainSection.JOURNAL) { journalContent(vm) } },
+        // 2.9.3: «Инструменты меню» — порядок и показ, как папки
+        Shot("menu_tools") { _ ->
+            com.ogneliss.dialer.ui.screens.MenuFoldersScreen(
+                title = androidx.compose.ui.res.stringResource(R.string.menu_tools_title),
+                folders = com.ogneliss.dialer.ui.screens.MenuTool.items(),
+                raw = "OWN_CONTACT,FAKE_CALL,MESSAGES,CONTACTS,NOTES,-REMINDERS",
+                onSave = {}, onBack = {},
+                fixed = com.ogneliss.dialer.ui.screens.MenuTool.NO_FIXED,
+                note = { key -> if (key == "NOTES" || key == "REMINDERS") androidx.compose.ui.res.stringResource(R.string.menu_tool_off_panel) else null }
+            )
         },
         // 2.9.2: «Меню» при порядке «только звонки» — «SMS» и «Напоминания» строками «Инструментов»
         Shot("menu_dialer_only", dialog = true) { vm ->
@@ -610,6 +653,10 @@ class ScreenGalleryTest {
             mutate<com.ogneliss.dialer.ui.conversation.MessagesViewModel.UiState>(messagesVm()) { it.copy(loading = false, isDefaultSms = true, threads = threads, problem = null, autostartHint = false) }
             settle(500)
         }) { vm -> messagesContent(vm) },
+        Shot("side_sms", prepare = { grantSmsRole() }, act = { _ ->
+            mutate<com.ogneliss.dialer.ui.conversation.MessagesViewModel.UiState>(messagesVm()) { it.copy(loading = false, isDefaultSms = true, threads = threads, problem = null, autostartHint = false) }
+            settle(500)
+        }) { vm -> SideMode(com.ogneliss.dialer.ui.components.MainSection.MESSAGES) { messagesContent(vm) } },
         Shot("sms_list_empty", prepare = { grantSmsRole() }, act = { _ ->
             mutate<com.ogneliss.dialer.ui.conversation.MessagesViewModel.UiState>(messagesVm()) { it.copy(loading = false, isDefaultSms = true, threads = emptyList(), problem = null, autostartHint = false) }
             settle(500)

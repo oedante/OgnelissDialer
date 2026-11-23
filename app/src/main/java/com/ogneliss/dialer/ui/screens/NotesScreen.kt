@@ -214,7 +214,7 @@ internal fun NotesScreen(
                 onOpenSearch = { searching = true },
                 searchButtonLabel = hint,
                 menuContent = {
-                    SectionMenu(vm, menuOpen, { menuOpen = false }, links, onSearch = { searching = true })
+                    SectionMenu(vm, menuOpen, { menuOpen = false }, links, MainSection.NOTES, onSearch = { searching = true })
                 }
             )
         }
