@@ -29,6 +29,18 @@ import androidx.compose.runtime.Immutable
  */
 object SimCallPlan {
 
+    /**
+     * Карты для исходящих (2.9.1, «Карта для звонков и SMS», Prefs.OutgoingSim).
+     * Выбрана карта ([slot] ≥ 0) и она есть среди [sims] — только она: одна кнопка
+     * вызова, без окна выбора. Не выбрана или её нет (вынули, выключили) — все,
+     * как было: звонок важнее настройки, которая указывает на пустой слот.
+     */
+    fun outgoing(sims: List<SimSlot>, slot: Int): List<SimSlot> {
+        if (slot < 0) return sims
+        val chosen = sims.filter { it.slotIndex == slot }
+        return chosen.ifEmpty { sims }
+    }
+
     /** Как показывать кнопки вызова. */
     sealed interface Layout {
         /**

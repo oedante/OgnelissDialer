@@ -274,7 +274,12 @@ object SettingsRegistry {
             "dynamic_color", SettingsCategory.APPEARANCE,
             R.string.settings_dynamic_color, R.string.settings_dynamic_color_text,
             SettingKind.Switch("dynamic_color"),
-            advanced = true
+            keywordsRes = R.string.keywords_dynamic_color
+            /*
+             * 2.9.1: снова в основном «Оформлении» (было в «Расширенных» с 2.8.6).
+             * Форум, eXense: «цвет темы нельзя выбрать… monet» — а это он и есть:
+             * в «Расширенных» его не нашли. Цвет приложения — главное в оформлении.
+             */
         ),
         /*
          * 2.2.1: размер шрифта и масштаб — как в настройках Ogneliss Mail:
@@ -356,6 +361,17 @@ object SettingsRegistry {
             "sim_labels", SettingsCategory.SIM,
             R.string.settings_sim_labels, R.string.settings_sim_labels_text,
             SettingKind.Action("sim_labels")
+        ),
+        /*
+         * Карта для звонков и SMS (2.9.1, форум, Hosato: «действия (звонки, смс)
+         * только на одну симку, вторая — только для приёма входящих»). Разбор —
+         * Prefs.OutgoingSim. В основном разделе: меняет главную кнопку экрана.
+         */
+        SettingEntry(
+            "outgoing_sim", SettingsCategory.SIM,
+            R.string.settings_outgoing_sim, R.string.settings_outgoing_sim_text,
+            SettingKind.Choice("outgoing_sim"),
+            keywordsRes = R.string.keywords_outgoing_sim
         ),
         SettingEntry(
             "remember_sim", SettingsCategory.SIM,
@@ -622,6 +638,20 @@ object SettingsRegistry {
             SettingKind.Slider("sms_text_scale"),
             keywordsRes = R.string.keywords_accessibility,
             groupRes = R.string.settings_group_messages
+        ),
+        /*
+         * Скрывать текст в уведомлениях (2.9.1, форум, eXense: «прятать текст смс
+         * из всплывающих уведомлений, как в Fossify, коды подтверждения могут
+         * попасть не на те глаза»). Отправитель виден, текст — «Новое сообщение»,
+         * кнопка кода — «Копировать код» без цифр (MessageNotifications).
+         */
+        SettingEntry(
+            "sms_hide_text", SettingsCategory.MESSAGES,
+            R.string.settings_sms_hide_text, R.string.settings_sms_hide_text_text,
+            SettingKind.Switch("sms_hide_text"),
+            keywordsRes = R.string.keywords_sms_notifications,
+            groupRes = R.string.settings_group_messages,
+            advanced = true
         ),
         SettingEntry(
             "sms_calls_in_thread", SettingsCategory.MESSAGES,

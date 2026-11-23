@@ -208,8 +208,20 @@ object MessageNotifications {
             .setImportant(contact?.starred == true)
             .apply { photo?.let { setIcon(it) } }
             .build()
+        /*
+         * СКРЫТЫЙ ТЕКСТ (2.9.1, форум, eXense: «прятать текст смс из всплывающих
+         * уведомлений, как в Fossify, коды подтверждения могут попасть не на те
+         * глаза»). Отправитель виден, вместо текста — «Новое сообщение» или
+         * «Новых сообщений: N»; кнопка кода — без цифр. Открыть переписку,
+         * ответить и удалить можно, как всегда.
+         */
+        val hideText = SmsSettings.hideText(context)
+        val hiddenText = if (unread.size > 1) context.getString(R.string.sms_new_messages_count, unread.size)
+        else context.getString(R.string.sms_new_message)
         val style = NotificationCompat.MessagingStyle(me)
-        unread.forEach { m ->
+        if (hideText) {
+            style.addMessage(hiddenText, unread.last().date, them)
+        } else unread.forEach { m ->
             style.addMessage(textOf(context, m), m.date, them)
         }
         val open = PendingIntent.getActivity(
@@ -267,7 +279,11 @@ object MessageNotifications {
                 actionIntent(ACTION_COPY_CODE).putExtra(EXTRA_CODE, it),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
-            NotificationCompat.Action.Builder(0, context.getString(R.string.sms_copy_code_action, it), copyPending)
+            NotificationCompat.Action.Builder(
+                0,
+                if (hideText) context.getString(R.string.sms_copy_code_hidden) else context.getString(R.string.sms_copy_code_action, it),
+                copyPending
+            )
                 .setShowsUserInterface(false)
                 // Код с заблокированного экрана — только после разблокировки (Android 12+)
                 .setAuthenticationRequired(true)
@@ -278,7 +294,7 @@ object MessageNotifications {
             .setSmallIcon(R.drawable.ic_stat_message)
             .setStyle(style)
             .setContentTitle(name)
-            .setContentText(textOf(context, unread.last()))
+            .setContentText(if (hideText) hiddenText else textOf(context, unread.last()))
             .setCategory(Notification.CATEGORY_MESSAGE)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(open)

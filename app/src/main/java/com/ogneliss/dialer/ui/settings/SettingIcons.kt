@@ -37,6 +37,7 @@ internal fun settingIcon(id: String): ImageVector? = when (id) {
     "sim_labels" -> OgnelissIcons.SimCard
     "remember_sim" -> OgnelissIcons.CheckCircle
     "swipe_sim" -> OgnelissIcons.Swipe
+    "outgoing_sim" -> OgnelissIcons.CallMade
     "own_number" -> OgnelissIcons.Person
     "sys_sim" -> OgnelissIcons.OpenInNew
     // Жесты
@@ -59,6 +60,7 @@ internal fun settingIcon(id: String): ImageVector? = when (id) {
     "sms_default_app" -> OgnelissIcons.Textsms
     "sms_delivery_reports" -> OgnelissIcons.MarkChatRead
     "sms_notifications_off" -> OgnelissIcons.NotificationsOff
+    "sms_hide_text" -> OgnelissIcons.Lock
     "sms_undo_send" -> OgnelissIcons.Restore
     "sms_calls_in_thread" -> OgnelissIcons.Call
     "sms_otp_cleanup" -> OgnelissIcons.DeleteSweep

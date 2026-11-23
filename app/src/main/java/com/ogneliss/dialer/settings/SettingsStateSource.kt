@@ -132,6 +132,7 @@ class SettingsStateSource @Inject constructor(
         // Шестой поток — отдельным combine: у типизированной перегрузки
         // предел в пять
         .combine(prefs.journalStyle) { c, style -> c.copy(journalStyle = style) }
+        .combine(prefs.outgoingSim) { c, sim -> c.copy(outgoingSim = sim) }
 
     /** Экран после звонка и сопутствующие функции. */
     private val postCall: Flow<PostCall> = combine(
@@ -187,6 +188,7 @@ class SettingsStateSource @Inject constructor(
         Sms(reports, right, left, undo, calls)
     }.combine(prefs.smsOtpCleanup) { s, otp -> s.copy(otpCleanup = otp) }
         .combine(prefs.smsNotificationsOff) { s, off -> s.copy(notificationsOff = off) }
+        .combine(prefs.smsHideText) { s, hide -> s.copy(hideText = hide) }
 
     /**
      * Итоговый снимок.
@@ -250,6 +252,7 @@ class SettingsStateSource @Inject constructor(
             mergeCalls = c.mergeCalls,
             groupingMode = c.groupingMode,
             rememberSim = c.rememberSim,
+            outgoingSim = c.outgoingSim,
             simLabels = c.simLabels,
             carrierInfo = c.carrierInfo,
             journalStyle = c.journalStyle,
@@ -279,6 +282,7 @@ class SettingsStateSource @Inject constructor(
             smsCallsInThread = m.callsInThread,
             smsOtpCleanup = m.otpCleanup,
             smsNotificationsOff = m.notificationsOff,
+            smsHideText = m.hideText,
 
             fileLogging = true
         )
@@ -344,7 +348,8 @@ class SettingsStateSource @Inject constructor(
         val rememberSim: Boolean,
         val simLabels: Map<Int, String>,
         val carrierInfo: CarrierInfoMode,
-        val journalStyle: JournalStyle = JournalStyle.GROUPS
+        val journalStyle: JournalStyle = JournalStyle.GROUPS,
+        val outgoingSim: OutgoingSim = OutgoingSim.ASK
     )
 
     private data class PostCall(
@@ -369,7 +374,8 @@ class SettingsStateSource @Inject constructor(
         val undoSend: UndoSend,
         val callsInThread: Boolean,
         val otpCleanup: OtpCleanup = OtpCleanup.OFF,
-        val notificationsOff: Boolean = false
+        val notificationsOff: Boolean = false,
+        val hideText: Boolean = false
     )
 
     private data class CallHelp(

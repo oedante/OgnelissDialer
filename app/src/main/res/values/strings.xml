@@ -1148,4 +1148,15 @@
     <string name="settings_section_advanced">Advanced settings</string>
     <string name="settings_section_advanced_summary">Fine-tuning, rarely used options, diagnostics</string>
     <string name="settings_advanced_more">Also in “Advanced settings”</string>
+    <string name="settings_outgoing_sim">SIM for calls and SMS</string>
+    <string name="settings_outgoing_sim_text">The other SIM only receives incoming calls</string>
+    <string name="outgoing_sim_ask">Choose each time (two buttons)</string>
+    <string name="outgoing_sim_1">SIM 1 only</string>
+    <string name="outgoing_sim_2">SIM 2 only</string>
+    <string name="keywords_outgoing_sim">sim card default outgoing calls sms one only second dual</string>
+    <string name="settings_sms_hide_text">Hide text in notifications</string>
+    <string name="settings_sms_hide_text_text">Sender only, no message text or codes</string>
+    <string name="sms_new_messages_count">New messages: %1$d</string>
+    <string name="sms_copy_code_hidden">Copy code</string>
+    <string name="keywords_dynamic_color">monet material you wallpaper system colors dynamic theme accent</string>
 </resources>

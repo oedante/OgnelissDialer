@@ -1119,4 +1119,15 @@
     <string name="settings_section_advanced">Erweiterte Einstellungen</string>
     <string name="settings_section_advanced_summary">Feinabstimmung, seltene Optionen, Diagnose</string>
     <string name="settings_advanced_more">Mehr in „Erweiterte Einstellungen“</string>
+    <string name="settings_outgoing_sim">SIM für Anrufe und SMS</string>
+    <string name="settings_outgoing_sim_text">Die andere SIM nur für eingehende Anrufe</string>
+    <string name="outgoing_sim_ask">Jedes Mal wählen (zwei Tasten)</string>
+    <string name="outgoing_sim_1">Nur SIM 1</string>
+    <string name="outgoing_sim_2">Nur SIM 2</string>
+    <string name="keywords_outgoing_sim">SIM Karte Standard ausgehend Anrufe SMS nur zweite Dual</string>
+    <string name="settings_sms_hide_text">Text in Benachrichtigungen ausblenden</string>
+    <string name="settings_sms_hide_text_text">Nur Absender, ohne Nachrichtentext und Codes</string>
+    <string name="sms_new_messages_count">Neue Nachrichten: %1$d</string>
+    <string name="sms_copy_code_hidden">Code kopieren</string>
+    <string name="keywords_dynamic_color">monet material you Hintergrundbild Systemfarben dynamisch Design Akzent</string>
 </resources>

@@ -1388,7 +1388,8 @@ fun MainDialerScreen(
                 state.query.takeIf { it.length >= 4 }
                     ?.let { state.notes[PhoneFormatter.toE164(it)]?.note }
             },
-            sims = state.sims,
+            // 2.9.1: «Карта для звонков и SMS» — на клавиатуре одна кнопка выбранной карты
+            sims = com.ogneliss.dialer.data.SimCallPlan.outgoing(state.sims, settings.outgoingSim.slot),
             filter = activeFilter,
             voiceAvailable = voiceAvailable,
             pauseLabel = pauseLabel,

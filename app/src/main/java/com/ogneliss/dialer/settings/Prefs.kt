@@ -89,6 +89,28 @@ enum class SwipeAction(val key: String) {
  * Теперь одна иконка и одно действие. Карту выбирает эта настройка:
  * либо спрашиваем диалогом, либо действуем заранее выбранной.
  */
+/**
+ * КАРТА ДЛЯ ЗВОНКОВ И SMS (2.9.1, форум, Hosato: «Как назначить действия
+ * (звонки, смс) только на одну симку? Вторая симка нужна только для приёма
+ * входящих звонков»).
+ *
+ * ASK — как было: при двух картах две кнопки вызова, выбор карты в журнале
+ * и карточке. SIM1/SIM2 — все исходящие с этой карты: одна кнопка вызова на
+ * клавиатуре, журнал, карточка и свайпы звонят без вопроса, новое SMS — с неё.
+ * Входящие приходят на обе — это настройка исходящих.
+ *
+ * Хранится в прежнем ключе default_sim (номер слота, −1 — спрашивать): его
+ * давно читает вызов (DialerViewModel.call), но выставить его было негде.
+ */
+enum class OutgoingSim(val slot: Int) {
+    ASK(-1), SIM1(0), SIM2(1);
+
+    companion object {
+        fun fromSlot(slot: Int): OutgoingSim = entries.firstOrNull { it.slot == slot } ?: ASK
+        fun from(name: String?): OutgoingSim = entries.firstOrNull { it.name == name } ?: ASK
+    }
+}
+
 enum class SwipeSimMode {
     /** Спрашивать каждый раз. Значение по умолчанию. */
     ASK,
@@ -670,6 +692,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val SMS_DELIVERY_REPORTS = booleanPreferencesKey("sms_delivery_reports")
         // 2.8.6: «Отключить уведомления SMS» — разбор в SettingsRegistry
         val SMS_NOTIFICATIONS_OFF = booleanPreferencesKey("sms_notifications_off")
+        // 2.9.1: «Скрывать текст в уведомлениях» — разбор в SettingsRegistry
+        val SMS_HIDE_TEXT = booleanPreferencesKey("sms_hide_text")
         // 2.2.0
         val SMS_UNDO_SEND = stringPreferencesKey("sms_undo_send")
         val SMS_CALLS_IN_THREAD = booleanPreferencesKey("sms_calls_in_thread")
@@ -1084,6 +1108,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     /** -1 означает «спрашивать» или «использовать системную SIM по умолчанию». */
     val defaultSim: Flow<Int> = data.map { it[Keys.DEFAULT_SIM] ?: -1 }
 
+    /** Карта для звонков и SMS (2.9.1): тот же ключ default_sim, разбор у OutgoingSim. */
+    val outgoingSim: Flow<OutgoingSim> = defaultSim.map { OutgoingSim.fromSlot(it) }
+
     /**
      * Имена слотов SIM, заданные пользователем.
      * Пустая строка означает «использовать системное имя».
@@ -1129,6 +1156,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     /** Уведомления о новых SMS выключены (2.8.6). По умолчанию — нет, уведомления идут. */
     val smsNotificationsOff: Flow<Boolean> = data.map { it[Keys.SMS_NOTIFICATIONS_OFF] ?: false }
+
+    /** Текст SMS в уведомлениях скрыт (2.9.1). По умолчанию — нет, текст виден. */
+    val smsHideText: Flow<Boolean> = data.map { it[Keys.SMS_HIDE_TEXT] ?: false }
 
     /** Отмена отправки SMS (2.2.0): по умолчанию 5 секунд. */
     val smsUndoSend: Flow<UndoSend> = data.map { UndoSend.from(it[Keys.SMS_UNDO_SEND]) }
@@ -1438,6 +1468,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setMergeCalls(v: Boolean) = edit("merge_calls", v) { it[Keys.MERGE_CALLS] = v }
     suspend fun setSortOrder(v: SortOrder) = edit("sort_order", v.name) { it[Keys.SORT_ORDER] = v.name }
     suspend fun setDefaultSim(v: Int) = edit("default_sim", v) { it[Keys.DEFAULT_SIM] = v }
+    suspend fun setOutgoingSim(v: OutgoingSim) = setDefaultSim(v.slot)
     suspend fun setSimLabel(slotIndex: Int, label: String) = edit("sim_label", "…") {
         when (slotIndex) {
             0 -> it[Keys.SIM_LABEL_1] = label
@@ -1470,6 +1501,11 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setSmsNotificationsOff(v: Boolean) {
         edit("sms_notifications_off", v) { it[Keys.SMS_NOTIFICATIONS_OFF] = v }
         com.ogneliss.dialer.sms.SmsSettings.put(context, com.ogneliss.dialer.sms.SmsSettings.KEY_NOTIFICATIONS_OFF, v)
+    }
+    // 2.9.1: копия в SmsSettings — уведомление собирает приёмник SMS, без DataStore
+    suspend fun setSmsHideText(v: Boolean) {
+        edit("sms_hide_text", v) { it[Keys.SMS_HIDE_TEXT] = v }
+        com.ogneliss.dialer.sms.SmsSettings.put(context, com.ogneliss.dialer.sms.SmsSettings.KEY_HIDE_TEXT, v)
     }
     // 2.2.0: копия в SmsSettings — для приёмника SMS и очереди без корутин
     suspend fun setSmsUndoSend(v: UndoSend) {
@@ -1569,6 +1605,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
                 )
                 com.ogneliss.dialer.sms.SmsSettings.put(
                     context, com.ogneliss.dialer.sms.SmsSettings.KEY_NOTIFICATIONS_OFF, false
+                )
+                com.ogneliss.dialer.sms.SmsSettings.put(
+                    context, com.ogneliss.dialer.sms.SmsSettings.KEY_HIDE_TEXT, false
                 )
             }
             .onFailure { Logger.e(TAG, "Не удалось сбросить настройки", it) }
