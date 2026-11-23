@@ -188,6 +188,10 @@ class SettingsCommands @Inject constructor(
             "outgoing_sim" -> prefs.setOutgoingSim(OutgoingSim.from(value))
             "carrier_info" -> prefs.setCarrierInfo(CarrierInfoMode.from(value))
             "call_photo_style" -> prefs.setCallPhotoStyle(CallPhotoStyle.from(value))
+            "call_ambient_style" -> prefs.setCallAmbientStyle(
+                com.ogneliss.dialer.call.AmbientStyle.entries.firstOrNull { it.name == value }
+                    ?: com.ogneliss.dialer.call.AmbientStyle.THEME
+            )
             /*
              * Свой фон вызова (2.7.4): сюда доходит только «Обычный» — убрать
              * снимок и отметку. «Свой снимок» требует выбора файла и идёт
@@ -311,6 +315,7 @@ class SettingsCommands @Inject constructor(
         "outgoing_sim" -> state.outgoingSim.name
         "carrier_info" -> state.carrierInfo.name
         "call_photo_style" -> state.callPhotoStyle.name
+        "call_ambient_style" -> state.callAmbientStyle.name
         // 2.7.4: свой фон вызова — «Свой снимок» (CUSTOM), если отметка есть
         "call_bg_incoming" -> if (state.callBgIncoming > 0L) CALL_BG_CUSTOM else CALL_BG_DEFAULT
         "call_bg_outgoing" -> if (state.callBgOutgoing > 0L) CALL_BG_CUSTOM else CALL_BG_DEFAULT
@@ -400,6 +405,7 @@ class SettingsCommands @Inject constructor(
         )
 
         "call_photo_style" -> context.getString(callPhotoStyleLabelRes(state.callPhotoStyle))
+        "call_ambient_style" -> context.getString(ambientStyleLabelRes(state.callAmbientStyle))
         "call_bg_incoming", "call_bg_outgoing" ->
             context.getString(callBgLabelRes(currentChoice(key, state)))
         "avatar_no_photo", "avatar_unknown" ->
@@ -481,6 +487,7 @@ class SettingsCommands @Inject constructor(
             "outgoing_sim" -> R.string.settings_outgoing_sim
             "carrier_info" -> R.string.settings_carrier_info
             "call_photo_style" -> R.string.settings_call_photo
+            "call_ambient_style" -> R.string.settings_call_ambient_style
             "call_bg_incoming" -> R.string.settings_call_bg_incoming
             "call_bg_outgoing" -> R.string.settings_call_bg_outgoing
             "avatar_no_photo" -> R.string.settings_avatar_no_photo
@@ -611,6 +618,12 @@ class SettingsCommands @Inject constructor(
             CallPhotoStyle.CIRCLE -> R.string.call_photo_circle
             CallPhotoStyle.SQUARE -> R.string.call_photo_square
             CallPhotoStyle.WIDTH -> R.string.call_photo_width
+        }
+
+        /** Подпись облика живого фона (2.9.6) — для строки настройки и окна выбора. */
+        fun ambientStyleLabelRes(style: com.ogneliss.dialer.call.AmbientStyle): Int = when (style) {
+            com.ogneliss.dialer.call.AmbientStyle.THEME -> R.string.call_ambient_theme
+            com.ogneliss.dialer.call.AmbientStyle.FLAME -> R.string.call_ambient_flame
         }
 
         /** Значения выбора «Фон вызова» (2.7.4): обычный или свой снимок. */
@@ -777,6 +790,8 @@ class SettingsCommands @Inject constructor(
             // 2.9.1
             "outgoing_sim",
             "call_photo_style", "call_photo_size", "answer_mode", "ui_scale",
+            // 2.9.6
+            "call_ambient_style",
             // 2.7.4
             "call_bg_incoming", "call_bg_outgoing",
             // 2.8.0

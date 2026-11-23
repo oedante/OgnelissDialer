@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.annotation.SuppressLint
+import android.os.Build
 import android.telecom.TelecomManager
 import android.telephony.TelephonyManager
 import com.ogneliss.dialer.log.Logger
@@ -147,16 +148,27 @@ class CallActions(
              * вызов не компилируется. На устройствах он есть. Не нашёлся —
              * false, и код уйдёт обычным вызовом, как раньше.
              */
-            return runCatching {
-                TelephonyManager::class.java
-                    .getMethod("sendDialerSpecificSecretCode", String::class.java)
-                    .invoke(tm, match.groupValues[1])
-                Logger.i("Call", "Сервисный код передан системе")
-                true
+            /*
+             * 2.9.5 (автор: «не работают»): в новых Android метод переименован —
+             * sendDialerSpecialCode (он и есть в заглушках compileSdk 37), прежнее
+             * имя sendDialerSpecificSecretCode на них может отсутствовать. До 2.9.5
+             * искали только прежнее: метода нет — код молча не уходил. Теперь — оба
+             * имени по очереди; какое сработало — в журнал (код без цифр не нужен).
+             */
+            for (name in SECRET_CODE_METHODS) {
+                val sent = runCatching {
+                    TelephonyManager::class.java.getMethod(name, String::class.java).invoke(tm, match.groupValues[1])
+                }
+                if (sent.isSuccess) {
+                    Logger.i("Call", "Сервисный код передан системе ($name)")
+                    return true
+                }
+                Logger.w("Call", "Сервисный код: $name не сработал — ${sent.exceptionOrNull()?.javaClass?.simpleName}")
             }
-                .onFailure { Logger.w("Call", "Секретный код не передан", it) }
-                .getOrDefault(false)
+            return false
         }
+        // *#06# — сначала свой показ (DialerViewModel.onQueryChange, readImeis); сюда —
+        // когда прочитать IMEI нельзя: вдруг система покажет сама
         if (code == ServiceCodes.IMEI) {
             val tm = context.getSystemService(TelecomManager::class.java) ?: return false
             return runCatching { tm.handleMmi(code) }
@@ -166,6 +178,26 @@ class CallActions(
         return false
     }
 
+
+    /*
+     * IMEI ДЛЯ *#06# (2.9.5, автор: «сервисные коды не работают»).
+     *
+     * Было (2.1.0–2.9.4): *#06# уходил в TelecomManager.handleMmi — но Android
+     * разбирает там только коды PIN/PUK (**04*…, **05*…), а IMEI системная
+     * звонилка показывает сама. Ответ — false, и ничего не происходило.
+     *
+     * Теперь показываем сами: с Android 10 IMEI отдаётся приложению SMS
+     * по умолчанию (а не только системным). Не по умолчанию — SecurityException,
+     * null: окно скажет, где посмотреть IMEI. В журнал IMEI не пишется.
+     */
+    @SuppressLint("MissingPermission", "HardwareIds")
+    fun readImeis(): List<String>? = runCatching {
+        val tm = context.getSystemService(TelephonyManager::class.java) ?: return null
+        @Suppress("DEPRECATION")
+        val slots = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) tm.activeModemCount else tm.phoneCount
+        (0 until slots.coerceAtLeast(1)).mapNotNull { slot -> tm.getImei(slot)?.takeIf { it.isNotBlank() } }
+    }.onFailure { Logger.i("Call", "IMEI недоступен: ${it.javaClass.simpleName}") }
+        .getOrNull()?.takeIf { it.isNotEmpty() }
 
     /** «Написать»: переписка в диалере или приложение SMS (см. ExternalApps.sms). */
     fun openSms(number: String, body: String? = null) = start(
@@ -208,3 +240,9 @@ class CallActions(
         }
     }
 }
+
+/**
+ * Имена метода передачи сервисного кода (2.9.5): новое — в Android с compileSdk 37,
+ * прежнее — в старых. Пробуются по очереди (CallActions.handleSecretCode).
+ */
+private val SECRET_CODE_METHODS = listOf("sendDialerSpecialCode", "sendDialerSpecificSecretCode")

@@ -237,6 +237,10 @@ fun MainDialerScreen(
      * и в системном журнале вызовов, — без возможности вернуть
      * (найдено пользователем 30.09.2026).
      */
+    // *#06# — окно с IMEI (2.9.5): разбор у ImeiDialog и DialerViewModel.onQueryChange
+    val imeiInfo by vm.imeiInfo.collectAsStateWithLifecycle()
+    imeiInfo?.let { imeis -> com.ogneliss.dialer.ui.components.ImeiDialog(imeis, onDismiss = vm::dismissImei) }
+
     var confirmClearLog by remember { mutableStateOf(false) }
     if (confirmClearLog) {
         OgnelissDialog(

@@ -1,0 +1,135 @@
+<ru-RU>
+• *#06# показывает IMEI, как системная звонилка.
+• Сервисные коды *#*#…#*#* передаются системе и на новых версиях Android.
+• Экран вызова в облике «Пламя и лиса» — цвета значка и золотые волны: Настройки → Экран вызова → Облик живого фона.
+</ru-RU>
+<ar>
+• الرمز *#06# يعرض رقم IMEI مثل تطبيق الهاتف في النظام.
+• تُرسل الرموز الخدمية *#*#…#*#* إلى النظام في إصدارات Android الجديدة أيضًا.
+• شاشة المكالمة بمظهر «اللهب والثعلب» — ألوان الأيقونة وموجات ذهبية: الإعدادات ← شاشة المكالمة ← مظهر الخلفية الحية.
+</ar>
+<cs-CZ>
+• *#06# zobrazí IMEI jako systémový telefon.
+• Servisní kódy *#*#…#*#* se předávají systému i v novějších verzích Androidu.
+• Obrazovka hovoru ve vzhledu „Plamen a liška“ — barvy ikony a zlaté vlny: Nastavení → Obrazovka hovoru → Vzhled živého pozadí.
+</cs-CZ>
+<da-DK>
+• *#06# viser IMEI ligesom systemets telefonapp.
+• Servicekoder *#*#…#*#* sendes til systemet, også på nyere Android.
+• Opkaldsskærm i udseendet „Flamme og ræv“ — ikonets farver og gyldne bølger: Indstillinger → Opkaldsskærm → Live-baggrundens udseende.
+</da-DK>
+<de-DE>
+• *#06# zeigt die IMEI wie die System-Telefon-App.
+• Servicecodes *#*#…#*#* gehen auch unter neueren Android-Versionen an das System.
+• Anrufbildschirm im Look „Flamme und Fuchs“ – Farben des App-Symbols und goldene Wellen: Einstellungen → Anrufbildschirm → Aussehen des Live-Hintergrunds.
+</de-DE>
+<en-US>
+• *#06# shows the IMEI, like the system phone app.
+• Service codes *#*#…#*#* reach the system on newer Android versions too.
+• Call screen in the "Flame and fox" look — app icon colors and golden waves: Settings → Call screen → Live background look.
+</en-US>
+<es-ES>
+• *#06# muestra el IMEI, como la app de teléfono del sistema.
+• Los códigos *#*#…#*#* llegan al sistema también en versiones nuevas de Android.
+• Pantalla de llamada con el aspecto «Llama y zorro»: colores del icono y ondas doradas. Ajustes → Pantalla de llamada → Aspecto del fondo animado.
+</es-ES>
+<fi-FI>
+• *#06# näyttää IMEI-koodin kuten järjestelmän puhelinsovellus.
+• Palvelukoodit *#*#…#*#* välittyvät järjestelmälle myös uusissa Android-versioissa.
+• Puhelunäkymä ”Liekki ja kettu” -ulkoasussa — kuvakkeen värit ja kultaiset aallot: Asetukset → Puhelunäkymä → Elävän taustan ulkoasu.
+</fi-FI>
+<fr-FR>
+• *#06# affiche l’IMEI, comme l’application Téléphone du système.
+• Les codes *#*#…#*#* sont transmis au système, y compris sur les Android récents.
+• Écran d’appel au style « Flamme et renard » : couleurs de l’icône et ondes dorées. Réglages → Écran d’appel → Style du fond animé.
+</fr-FR>
+<hi-IN>
+• *#06# सिस्टम फ़ोन ऐप की तरह IMEI दिखाता है।
+• सर्विस कोड *#*#…#*#* नए Android संस्करणों पर भी सिस्टम तक पहुँचते हैं।
+• कॉल स्क्रीन «लौ और लोमड़ी» रूप में — आइकन के रंग और सुनहरी लहरें: सेटिंग्स → कॉल स्क्रीन → लाइव बैकग्राउंड का रूप।
+</hi-IN>
+<hu-HU>
+• A *#06# megmutatja az IMEI-t, mint a rendszer telefonalkalmazása.
+• A *#*#…#*#* szervizkódok újabb Androidon is eljutnak a rendszerhez.
+• Hívásképernyő „Láng és róka” megjelenéssel — az ikon színei és arany hullámok: Beállítások → Hívásképernyő → Élő háttér megjelenése.
+</hu-HU>
+<id>
+• *#06# menampilkan IMEI seperti aplikasi telepon sistem.
+• Kode layanan *#*#…#*#* juga diteruskan ke sistem di Android versi baru.
+• Layar panggilan bergaya “Api dan rubah” — warna ikon dan gelombang emas: Setelan → Layar panggilan → Tampilan latar hidup.
+</id>
+<it-IT>
+• *#06# mostra l’IMEI, come l’app Telefono di sistema.
+• I codici *#*#…#*#* arrivano al sistema anche sulle versioni recenti di Android.
+• Schermata di chiamata nello stile «Fiamma e volpe»: colori dell’icona e onde dorate. Impostazioni → Schermata di chiamata → Aspetto dello sfondo animato.
+</it-IT>
+<iw-IL>
+• הקוד *#06# מציג את ה-IMEI, כמו אפליקציית הטלפון של המערכת.
+• קודי שירות *#*#…#*#* מועברים למערכת גם בגרסאות Android חדשות.
+• מסך שיחה במראה „להבה ושועל” — צבעי הסמל וגלים מוזהבים: הגדרות ← מסך שיחה ← מראה הרקע החי.
+</iw-IL>
+<ja-JP>
+• *#06# でシステムの電話アプリと同様に IMEI を表示します。
+• サービスコード *#*#…#*#* は新しい Android でもシステムに渡されます。
+• 通話画面に「炎とキツネ」スタイル。アイコンの色と金色の波：設定 → 通話画面 → ライブ背景のスタイル。
+</ja-JP>
+<ko-KR>
+• *#06#를 입력하면 시스템 전화 앱처럼 IMEI가 표시됩니다.
+• 서비스 코드 *#*#…#*#*가 최신 Android에서도 시스템에 전달됩니다.
+• 통화 화면에 '불꽃과 여우' 스타일 — 아이콘 색상과 금빛 물결: 설정 → 통화 화면 → 라이브 배경 스타일.
+</ko-KR>
+<nl-NL>
+• *#06# toont het IMEI, net als de telefoon-app van het systeem.
+• Servicecodes *#*#…#*#* bereiken het systeem ook op nieuwere Android-versies.
+• Belscherm in de stijl ‘Vlam en vos’ — kleuren van het pictogram en gouden golven: Instellingen → Belscherm → Stijl live-achtergrond.
+</nl-NL>
+<no-NO>
+• *#06# viser IMEI, som systemets telefonapp.
+• Servicekoder *#*#…#*#* når systemet også på nyere Android.
+• Anropsskjerm i utseendet «Flamme og rev» — ikonets farger og gylne bølger: Innstillinger → Anropsskjerm → Utseende på levende bakgrunn.
+</no-NO>
+<pl-PL>
+• *#06# pokazuje IMEI, tak jak systemowa aplikacja Telefon.
+• Kody serwisowe *#*#…#*#* trafiają do systemu także w nowszych wersjach Androida.
+• Ekran połączenia w stylu „Płomień i lis” — kolory ikony i złote fale: Ustawienia → Ekran połączenia → Wygląd żywego tła.
+</pl-PL>
+<pt-BR>
+• *#06# mostra o IMEI, como o app de telefone do sistema.
+• Códigos *#*#…#*#* chegam ao sistema também nas versões novas do Android.
+• Tela de chamada no visual “Chama e raposa” — cores do ícone e ondas douradas: Configurações → Tela de chamada → Visual do fundo animado.
+</pt-BR>
+<ro>
+• *#06# afișează IMEI-ul, ca aplicația Telefon a sistemului.
+• Codurile *#*#…#*#* ajung la sistem și pe versiunile noi de Android.
+• Ecranul de apel în stilul „Flacără și vulpe” — culorile pictogramei și unde aurii: Setări → Ecranul de apel → Aspectul fundalului animat.
+</ro>
+<sk>
+• *#06# zobrazí IMEI ako systémový telefón.
+• Servisné kódy *#*#…#*#* sa odovzdávajú systému aj v novších verziách Androidu.
+• Obrazovka hovoru vo vzhľade „Plameň a líška“ — farby ikony a zlaté vlny: Nastavenia → Obrazovka hovoru → Vzhľad živého pozadia.
+</sk>
+<sv-SE>
+• *#06# visar IMEI, precis som systemets telefonapp.
+• Servicekoder *#*#…#*#* når systemet även i nyare Android-versioner.
+• Samtalsskärm i utseendet ”Låga och räv” — ikonens färger och gyllene vågor: Inställningar → Samtalsskärm → Levande bakgrundens utseende.
+</sv-SE>
+<th>
+• *#06# แสดง IMEI เหมือนแอปโทรศัพท์ของระบบ
+• รหัสบริการ *#*#…#*#* ส่งถึงระบบได้แม้ใน Android เวอร์ชันใหม่
+• หน้าจอโทรในรูปแบบ «เปลวไฟและสุนัขจิ้งจอก» — สีของไอคอนและคลื่นสีทอง: การตั้งค่า → หน้าจอโทร → รูปแบบพื้นหลังเคลื่อนไหว
+</th>
+<tr-TR>
+• *#06#, sistem telefon uygulaması gibi IMEI'yi gösterir.
+• *#*#…#*#* servis kodları yeni Android sürümlerinde de sisteme iletilir.
+• “Alev ve tilki” görünümlü arama ekranı — simge renkleri ve altın dalgalar: Ayarlar → Arama ekranı → Canlı arka plan görünümü.
+</tr-TR>
+<vi>
+• *#06# hiển thị IMEI giống ứng dụng điện thoại của hệ thống.
+• Mã dịch vụ *#*#…#*#* được chuyển đến hệ thống cả trên Android mới.
+• Màn hình cuộc gọi kiểu “Ngọn lửa và cáo” — màu biểu tượng và sóng vàng: Cài đặt → Màn hình cuộc gọi → Kiểu nền động.
+</vi>
+<zh-CN>
+• *#06# 会像系统电话应用一样显示 IMEI。
+• 服务代码 *#*#…#*#* 在新版 Android 上也能传给系统。
+• 通话界面新增“火焰与狐狸”外观：图标配色与金色波纹。设置 → 通话界面 → 动态背景外观。
+</zh-CN>

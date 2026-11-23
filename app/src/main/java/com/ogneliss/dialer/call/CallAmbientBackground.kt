@@ -28,6 +28,8 @@ import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.luminance
@@ -46,6 +48,7 @@ import kotlin.math.abs
 import kotlin.math.exp
 import kotlin.math.floor
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -116,6 +119,24 @@ import kotlin.math.sin
  */
 enum class AmbientMood { INCOMING, CONNECTING, ACTIVE, HOLDING, ENDED }
 
+/**
+ * ОБЛИК ЖИВОГО ФОНА (2.9.6, автор: «может попробуем сделать экран в светлой
+ * и тёмной теме с пламенем и лисой и анимацией волн?»).
+ *
+ * • [THEME] — как было с 1.8.4: тоны снимка звонящего или темы.
+ * • [FLAME] — цвета значка приложения: графитовый фон (в светлой теме —
+ *   тёплый светлый), золото пламени в полях и волнах. Без фото над именем —
+ *   эмблема «пламя с лисой» (та же, что на значке), волны расходятся от неё,
+ *   пламя «дышит» с каждой волной. С фото — портрет, как всегда, а фон
+ *   и волны — в цветах пламени.
+ *
+ * Выбирается настройкой (LocalAmbientStyle задаёт экран вызова).
+ */
+enum class AmbientStyle { THEME, FLAME }
+
+/** Облик живого фона для экрана вызова; по умолчанию — как было (THEME). */
+val LocalAmbientStyle = androidx.compose.runtime.staticCompositionLocalOf { AmbientStyle.THEME }
+
 /** Настроение фона по состоянию вызова Telecom. */
 fun ambientMoodOf(state: Int): AmbientMood = when (state) {
     Call.STATE_RINGING -> AmbientMood.INCOMING
@@ -162,7 +183,9 @@ fun CallAmbientBackground(
 ) {
     val scheme = MaterialTheme.colorScheme
     val dark = scheme.background.luminance() < 0.5f
-    val page = scheme.background.toArgb()
+    val flame = LocalAmbientStyle.current == AmbientStyle.FLAME
+    // «Пламя» (2.9.6): страница — цвет значка, а не темы
+    val page = if (flame) (if (dark) FLAME_PAGE_DARK else FLAME_PAGE_LIGHT) else scheme.background.toArgb()
     val textMain = scheme.onSurface.toArgb()
     val textMuted = scheme.onSurfaceVariant.toArgb()
     val accent = scheme.primary.toArgb()
@@ -172,26 +195,42 @@ fun CallAmbientBackground(
      * не в главном потоке; пока он читается — тоны темы, потом плавно
      * переходят в тоны снимка.
      */
-    val photoSwatches = rememberPhotoSwatches(photoUri)
+    val photoSwatches = rememberPhotoSwatches(photoUri.takeUnless { flame })
     val fromPhoto = photoSwatches != null
-    val tones = remember(photoSwatches, accent, dark, textMain, textMuted, mood) {
+    val tones = remember(photoSwatches, accent, dark, textMain, textMuted, mood, flame) {
         val texts = intArrayOf(textMain, textMuted)
         val base = PhotoPalette.ambientTones(
-            photoSwatches ?: PhotoPalette.themeSwatches(accent), dark, texts
+            when {
+                // «Пламя»: в светлой — золото, графит и янтарь; в тёмной — графит
+                // значка (золото там бурело на весь экран), золото — в свечении и волнах
+                flame -> if (dark) FLAME_SWATCHES_DARK else FLAME_SWATCHES
+                else -> photoSwatches ?: PhotoPalette.themeSwatches(accent)
+            },
+            dark, texts
         )
         PhotoPalette.moodTones(
             base,
             active = mood == AmbientMood.ACTIVE,
             holding = mood == AmbientMood.HOLDING,
-            fromPhoto = fromPhoto,
+            // Пламя в разговоре не зеленеет: остаётся золотым, только тише
+            fromPhoto = fromPhoto || flame,
             greenHue = CALL_GREEN_HUE,
             dark = dark,
             texts = texts
         )
     }
-    val ringTarget = remember(tones, dark) { PhotoPalette.ringTone(tones[0], dark) }
-    val haloTarget = remember(tones, dark, textMain, textMuted) {
-        PhotoPalette.haloTone(tones[0], dark, intArrayOf(textMain, textMuted))
+    val ringTarget = remember(tones, dark, flame, mood) {
+        when {
+            // Золотые волны; на удержании — серые, как фон
+            flame && mood != AmbientMood.HOLDING -> if (dark) FLAME_GOLD else FLAME_GOLD_DEEP
+            else -> PhotoPalette.ringTone(tones[0], dark)
+        }
+    }
+    val haloTarget = remember(tones, dark, textMain, textMuted, flame, mood) {
+        if (flame && mood != AmbientMood.HOLDING) {
+            // Свечение пламени — золотое (в тёмной — приглушённое, чтобы не бурело)
+            if (dark) FLAME_GLOW_DARK else FLAME_GLOW_LIGHT
+        } else PhotoPalette.haloTone(tones[0], dark, intArrayOf(textMain, textMuted))
     }
     // State, а не значения: читаются в кадре — смена цвета не пересобирает экран
     val toneA = animateColorAsState(Color(tones[0]), tween(Motion.SLOW_MS), label = "ambientA")
@@ -235,6 +274,17 @@ fun CallAmbientBackground(
     )
 
     val art = remember(dark) { AmbientArt(dark) }
+    // Эмблема «пламя с лисой» (2.9.6) — только в облике «Пламя»
+    val emblem = if (flame) androidx.compose.ui.graphics.ImageBitmap.imageResource(com.ogneliss.dialer.R.drawable.call_emblem) else null
+    val emblemStrength = animateFloatAsState(
+        when (mood) {
+            AmbientMood.ENDED -> 0f
+            AmbientMood.HOLDING -> 0.45f
+            else -> 1f
+        },
+        tween(Motion.NORMAL_MS),
+        label = "ambientEmblem"
+    )
 
     // Время движения в секундах. Копится по кадрам, а не считается
     // от часов: при смене скорости (входящий → разговор) поля
@@ -285,7 +335,19 @@ fun CallAmbientBackground(
                 val t = motion.floatValue
                 val w = size.width
                 val h = size.height
-                val target = focus()
+                val focused = focus()
+                /*
+                 * «Пламя» без портрета: эмблема над именем — и волны от неё. Фокус
+                 * становится «портретом» эмблемы: волна рождается у её края.
+                 */
+                val emblemSide = if (emblem != null && focused?.edge != true) min(w * EMBLEM_WIDTH, h * EMBLEM_HEIGHT) else 0f
+                val target = if (emblemSide > 0f) {
+                    val nameTop = focused?.let { it.center.y - it.radius } ?: (h * 0.42f)
+                    AmbientFocus(
+                        Offset(focused?.center?.x ?: (w / 2f), nameTop - EMBLEM_GAP * emblemSide - emblemSide / 2f),
+                        emblemSide * EMBLEM_RING_RADIUS
+                    )
+                } else focused
                 val center = target?.center ?: Offset(w / 2f, h * RING_CENTER_Y)
                 // Портрет — фокус с краем; имя (1.8.1) — точка без края
                 val portrait = target?.takeIf { it.edge }
@@ -359,6 +421,14 @@ fun CallAmbientBackground(
                             if (alpha * (1f - f) >= MIN_ALPHA) art.ring(canvas, k, center, rx, ry, alpha * (1f - f))
                             if (alpha * f >= MIN_ALPHA) art.ring(canvas, k + 1, center, rx, ry, alpha * f)
                         }
+                    }
+                    // Эмблема — поверх волн: волны уходят из-за неё (2.9.6)
+                    if (emblem != null && emblemSide > 0f) {
+                        val since = (ripple.floatValue * RINGS) % 1f
+                        // Пламя «дышит» — чуть растёт с рождением волны и медленно колышется
+                        val breath = if (animationsOff) 0f else (1f - since) * (1f - since)
+                        val scale = 1f + EMBLEM_BREATH * breath + 0.012f * sin(t * 1.1f)
+                        art.emblem(canvas, emblem, center, emblemSide * scale, emblemStrength.value)
                     }
                     // Зерно — поверх всего: убирает полосы мягких градиентов
                     art.grain(canvas, w, h)
@@ -492,6 +562,21 @@ private class AmbientArt(dark: Boolean) {
         canvas.drawOval(center.x - rx, center.y - ry, center.x + rx, center.y + ry, paint)
     }
 
+    private val emblemSrc = android.graphics.Rect()
+    private val emblemDst = android.graphics.RectF()
+    private val emblemPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
+
+    /** Эмблема «пламя с лисой» (2.9.6): квадрат [side] с центром [center]. */
+    fun emblem(canvas: android.graphics.Canvas, image: androidx.compose.ui.graphics.ImageBitmap, center: Offset, side: Float, alpha: Float) {
+        if (alpha <= MIN_ALPHA) return
+        val bitmap = image.asAndroidBitmap()
+        emblemSrc.set(0, 0, bitmap.width, bitmap.height)
+        val half = side / 2f
+        emblemDst.set(center.x - half, center.y - half, center.x + half, center.y + half)
+        emblemPaint.alpha = (alpha.coerceIn(0f, 1f) * 255f).roundToInt()
+        canvas.drawBitmap(bitmap, emblemSrc, emblemDst, emblemPaint)
+    }
+
     fun grain(canvas: android.graphics.Canvas, w: Float, h: Float) {
         canvas.drawRect(0f, 0f, w, h, grainPaint)
     }
@@ -586,3 +671,37 @@ private const val FRAME_MS = 33L
 private const val MAX_STEP_MS = 100L
 /** Сдвиг синуса на четверть периода — косинус. */
 private const val PHASE_COS = 1.5707964f
+
+/*
+ * «ПЛАМЯ» (2.9.6) — цвета значка (res/values/ic_launcher_background.xml):
+ * пламя #CCAA6D, фон #3A4450, лиса #D3D8DC. Страница в тёмной теме — на тон
+ * глубже фона значка (подписи читаются лучше), в светлой — тёплая светлая.
+ */
+private val FLAME_PAGE_DARK = 0xFF2B323C.toInt()
+private val FLAME_PAGE_LIGHT = 0xFFF8F4EC.toInt()
+private val FLAME_GOLD = 0xFFCCAA6D.toInt()
+/** Волны в светлой теме — темнее: светлое золото на светлом не видно. */
+private val FLAME_GOLD_DEEP = 0xFFAD8540.toInt()
+/** Поля: золото пламени, графит значка, тёплый янтарь — образцы, как у снимка звонящего. */
+private val FLAME_SWATCHES: List<PhotoPalette.Swatch> =
+    swatchesOf(FLAME_GOLD, 0xFF3A4450.toInt(), 0xFFD9A85B.toInt())
+/** Тёмная тема: синеватый графит, графит значка, тёплый графит — фон как у значка. */
+private val FLAME_SWATCHES_DARK: List<PhotoPalette.Swatch> =
+    swatchesOf(0xFF4C5C72.toInt(), 0xFF3A4450.toInt(), 0xFF5A5249.toInt())
+/** Свечение вокруг пламени: в тёмной — приглушённое золото, в светлой — тёплое. */
+private val FLAME_GLOW_DARK = 0xFF8C7444.toInt()
+private val FLAME_GLOW_LIGHT = 0xFFE9CF98.toInt()
+
+private fun swatchesOf(vararg argb: Int): List<PhotoPalette.Swatch> = argb.mapIndexed { i, c ->
+    val hsl = ThemePresetMath.toHsl(c)
+    PhotoPalette.Swatch(hsl.h, hsl.s, hsl.l, 1.0 - 0.2 * i)
+}
+/** Эмблема: доля ширины и высоты экрана (меньшее из двух). */
+private const val EMBLEM_WIDTH = 0.46f
+private const val EMBLEM_HEIGHT = 0.24f
+/** Зазор между эмблемой и именем — в долях стороны эмблемы. */
+private const val EMBLEM_GAP = 0.08f
+/** Волна рождается у края пламени: радиус «портрета» — доля стороны эмблемы. */
+private const val EMBLEM_RING_RADIUS = 0.40f
+/** «Дыхание» пламени с волной: до +4 %. */
+private const val EMBLEM_BREATH = 0.04f

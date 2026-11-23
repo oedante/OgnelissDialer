@@ -551,6 +551,30 @@ class ScreenGalleryTest {
             rule.onAllNodesWithContentDescription(rule.activity.getString(R.string.dialpad_show))[0].performClick()
             settle(600)
         }) { vm -> SideMode(com.ogneliss.dialer.ui.components.MainSection.JOURNAL) { journalContent(vm) } },
+        // 2.9.6: экран входящего — живой фон «как было» и облик «Пламя и лиса»
+        Shot("call_theme") { _ ->
+            com.ogneliss.dialer.call.FakeCallScreen(
+                name = "Анна Смирнова", number = "+79001110001", photoUri = null,
+                ambientBackground = true, bareControls = true, onAnswer = {}, onHangUp = {}
+            )
+        },
+        Shot("call_flame") { _ ->
+            androidx.compose.runtime.CompositionLocalProvider(
+                com.ogneliss.dialer.call.LocalAmbientStyle provides com.ogneliss.dialer.call.AmbientStyle.FLAME
+            ) {
+                com.ogneliss.dialer.call.FakeCallScreen(
+                    name = "Анна Смирнова", number = "+79001110001", photoUri = null,
+                    ambientBackground = true, bareControls = true, onAnswer = {}, onHangUp = {}
+                )
+            }
+        },
+        // 2.9.5: *#06# — окно IMEI (две SIM) и «IMEI недоступен» (приложение не SMS по умолчанию)
+        Shot("dialog_imei", dialog = true) { _ ->
+            com.ogneliss.dialer.ui.components.ImeiDialog(listOf("356938035643809", "356938035643817"), onDismiss = {})
+        },
+        Shot("dialog_imei_unavailable", dialog = true) { _ ->
+            com.ogneliss.dialer.ui.components.ImeiDialog(emptyList(), onDismiss = {})
+        },
         // 2.9.3: «Инструменты меню» — порядок и показ, как папки
         Shot("menu_tools") { _ ->
             com.ogneliss.dialer.ui.screens.MenuFoldersScreen(

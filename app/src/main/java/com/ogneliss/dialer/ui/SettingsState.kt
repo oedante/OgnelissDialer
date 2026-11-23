@@ -65,6 +65,8 @@ data class SettingsState(
     val uiFont: com.ogneliss.dialer.settings.UiFont = com.ogneliss.dialer.settings.UiFont.SYSTEM,
     /** Фото звонящего: на весь экран, круг или квадрат (1.5.5). */
     val callPhotoStyle: CallPhotoStyle = CallPhotoStyle.CIRCLE,
+    /** Облик живого фона вызова (2.9.6): тоны темы или «Пламя». */
+    val callAmbientStyle: com.ogneliss.dialer.call.AmbientStyle = com.ogneliss.dialer.call.AmbientStyle.THEME,
     /** Отметки своего фона экрана вызова (2.7.4): время сохранения снимка, 0 — снимка нет. */
     val callBgIncoming: Long = 0L,
     val callBgOutgoing: Long = 0L,

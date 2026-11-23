@@ -1650,6 +1650,17 @@ class DialerViewModel @Inject constructor(
      */
     private var searchJob: Job? = null
 
+    /**
+     * Окно IMEI после *#06# (2.9.5): список IMEI по слотам; пустой — прочитать
+     * нельзя (окно скажет, где посмотреть); null — окна нет. Разбор у readImeis.
+     */
+    private val _imeiInfo = MutableStateFlow<List<String>?>(null)
+    val imeiInfo: StateFlow<List<String>?> = _imeiInfo.asStateFlow()
+
+    fun dismissImei() {
+        _imeiInfo.value = null
+    }
+
     fun onQueryChange(q: String) {
         // Поле ввода обновляется мгновенно и синхронно: задержка здесь
         // означала бы, что цифра появляется с запозданием после нажатия,
@@ -1662,6 +1673,23 @@ class DialerViewModel @Inject constructor(
          * как в системной звонилке, — без кнопки вызова. Передан — поле пустеет;
          * система не приняла — код остаётся в поле, кнопка вызова попробует ещё раз.
          */
+        /*
+         * 2.9.5 (автор: «не работают»): *#06# показываем сами — окном с IMEI
+         * (CallActions.readImeis). Прочитать нельзя — пусть попробует система
+         * (handleMmi); не взяла и она — окно скажет, где посмотреть IMEI.
+         * Поле пустеет в любом случае: код отработан, звонить им некуда.
+         */
+        if (q.trim() == com.ogneliss.dialer.call.ServiceCodes.IMEI) {
+            val imeis = actions.readImeis()
+            _imeiInfo.value = when {
+                imeis != null -> imeis
+                actions.handleSecretCode(q) -> null
+                else -> emptyList()
+            }
+            _state.update { it.copy(query = "", filteredContacts = emptyList(), filteredLog = emptyList()) }
+            searchJob?.cancel()
+            return
+        }
         if (com.ogneliss.dialer.call.ServiceCodes.isComplete(q) && actions.handleSecretCode(q)) {
             _state.update { it.copy(query = "", filteredContacts = emptyList(), filteredLog = emptyList()) }
             searchJob?.cancel()

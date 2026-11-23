@@ -633,6 +633,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val AVATAR_SCOPE = stringPreferencesKey("avatar_scope")
         /** Фото звонящего: на весь экран, круг или квадрат (1.5.5). */
         val CALL_PHOTO_STYLE = stringPreferencesKey("call_photo_style")
+        // 2.9.6: облик живого фона — тоны темы или «Пламя» (AmbientStyle)
+        val CALL_AMBIENT_STYLE = stringPreferencesKey("call_ambient_style")
         /** Размер портрета на экране вызова (1.5.7). */
         val CALL_PHOTO_SIZE = stringPreferencesKey("call_photo_size")
         /** Ответ на вызов: касанием или сдвигом (1.5.8). */
@@ -1041,6 +1043,15 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     /** Фото звонящего на экране вызова (1.5.5): разбор в CallPhotoStyle. */
     val callPhotoStyle: Flow<CallPhotoStyle> = data.map { CallPhotoStyle.from(it[Keys.CALL_PHOTO_STYLE]) }
+
+    /** Облик живого фона вызова (2.9.6); не задан или незнакомый — как было (THEME). */
+    val callAmbientStyle: Flow<com.ogneliss.dialer.call.AmbientStyle> = data.map { prefs ->
+        com.ogneliss.dialer.call.AmbientStyle.entries.firstOrNull { it.name == prefs[Keys.CALL_AMBIENT_STYLE] }
+            ?: com.ogneliss.dialer.call.AmbientStyle.THEME
+    }
+
+    suspend fun setCallAmbientStyle(v: com.ogneliss.dialer.call.AmbientStyle) =
+        edit("call_ambient_style", v.name) { it[Keys.CALL_AMBIENT_STYLE] = v.name }
 
     /** Размер портрета на экране вызова (1.5.7): разбор в CallPhotoSize. */
     val callPhotoSize: Flow<CallPhotoSize> = data.map { CallPhotoSize.from(it[Keys.CALL_PHOTO_SIZE]) }

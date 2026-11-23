@@ -64,6 +64,7 @@ class SettingsStateSource @Inject constructor(
         .combine(prefs.callHideContactNumber) { a, v -> a.copy(callHideContactNumber = v) }
         .combine(prefs.callAnimation) { a, v -> a.copy(callAnimation = v) }
         .combine(prefs.callPhotoStyle) { a, v -> a.copy(callPhotoStyle = v) }
+        .combine(prefs.callAmbientStyle) { a, v -> a.copy(callAmbientStyle = v) }
         // 2.7.4: свой фон входящих и исходящих
         .combine(prefs.callBgIncoming) { a, v -> a.copy(callBgIncoming = v) }
         .combine(prefs.callBgOutgoing) { a, v -> a.copy(callBgOutgoing = v) }
@@ -218,6 +219,7 @@ class SettingsStateSource @Inject constructor(
             callHideContactNumber = a.callHideContactNumber,
             callAnimation = a.callAnimation,
             callPhotoStyle = a.callPhotoStyle,
+            callAmbientStyle = a.callAmbientStyle,
             callBgIncoming = a.callBgIncoming,
             callBgOutgoing = a.callBgOutgoing,
             avatarNoPhoto = a.avatarNoPhoto,
@@ -307,6 +309,7 @@ class SettingsStateSource @Inject constructor(
         val callHideContactNumber: Boolean = false,
         val callAnimation: Boolean = true,
         val callPhotoStyle: CallPhotoStyle = CallPhotoStyle.CIRCLE,
+        val callAmbientStyle: com.ogneliss.dialer.call.AmbientStyle = com.ogneliss.dialer.call.AmbientStyle.THEME,
         val callBgIncoming: Long = 0L,
         val callBgOutgoing: Long = 0L,
         val avatarNoPhoto: Long = 0L,
