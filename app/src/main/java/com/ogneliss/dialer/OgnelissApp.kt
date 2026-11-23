@@ -168,11 +168,21 @@ class OgnelissApp : Application(), Configuration.Provider, ImageLoaderFactory {
                 .onFailure { Logger.e("App", "Не удалось прочитать настройку логирования", it) }
         }
 
-        // 2.6.0: значки «SMS» и «Контакты» — как в настройке (данные могли
-        // очистить, а Android помнит включённые значки отдельно; SectionIcons)
+        // 2.6.0: значки «SMS» и «Контакты» сверяются с настройкой. 2.9.4 (форум,
+        // oleg_p: значки пропали после обновления): сами не убираются — включённые
+        // в Android главнее настройки; разбор у SectionIcons.reconcile
         appScope.launch {
             suspendRunCatching {
-                com.ogneliss.dialer.widget.SectionIcons.apply(this@OgnelissApp, prefs.sectionIcons.first())
+                val icons = com.ogneliss.dialer.widget.SectionIcons
+                val settingOn = prefs.sectionIcons.first()
+                val shown = icons.isEnabled(this@OgnelissApp)
+                val action = icons.reconcile(settingOn, shown)
+                Logger.i("SectionIcons", "При запуске: настройка ${if (settingOn) "вкл." else "выкл."}, значки ${if (shown) "есть" else "нет"} → $action")
+                when (action) {
+                    com.ogneliss.dialer.widget.SectionIcons.Reconcile.SHOW -> icons.apply(this@OgnelissApp, true)
+                    com.ogneliss.dialer.widget.SectionIcons.Reconcile.REMEMBER_ON -> prefs.setSectionIcons(true)
+                    com.ogneliss.dialer.widget.SectionIcons.Reconcile.NOTHING -> Unit
+                }
             }.onFailure { Logger.e("App", "Не удалось сверить значки разделов", it) }
         }
 
