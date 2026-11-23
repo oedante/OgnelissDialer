@@ -59,9 +59,17 @@ internal fun SectionTopBar(
     /** Строка под названием: что отобрано (фильтр, папка); null — одной строкой. */
     subtitle: String? = null,
     /** Действия над списком — в «⋮»; пусто — кнопки нет. */
-    menu: List<TopBarMenuItem> = emptyList()
+    menu: List<TopBarMenuItem> = emptyList(),
+    /**
+     * «Меню» первым пунктом «⋮» (2.9.2, автор: «Меню пусть будет и в панели
+     * и в Ещё сверху»): «Меню» можно убрать с нижней панели конструктором
+     * (PanelSlots), и боковая панель тогда открывается отсюда. null — пункта нет.
+     */
+    onOpenMenu: (() -> Unit)? = null
 ) {
     var menuOpen by remember { mutableStateOf(false) }
+    val menuLabel = stringResource(R.string.bar_menu)
+    val items = if (onOpenMenu == null) menu else listOf(TopBarMenuItem(OgnelissIcons.Menu, menuLabel, onClick = onOpenMenu)) + menu
     TopAppBar(
         title = {
             Column {
@@ -90,14 +98,14 @@ internal fun SectionTopBar(
             }
         },
         actions = {
-            if (menu.isNotEmpty()) {
+            if (items.isNotEmpty()) {
                 Box {
                     IconButton(onClick = { menuOpen = true }) {
                         Icon(OgnelissIcons.MoreVert, contentDescription = stringResource(R.string.topbar_list_actions))
                     }
                     DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                         ScaledSheetContent {
-                            menu.forEach { item ->
+                            items.forEach { item ->
                                 val color = if (item.destructive) MaterialTheme.colorScheme.error
                                 else MaterialTheme.colorScheme.onSurface
                                 // Пункт меню — как строка меню «Папки» и меню почты: bodyLarge, значок

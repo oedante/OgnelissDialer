@@ -42,7 +42,10 @@ import com.ogneliss.dialer.ui.components.EmptyReason
 import com.ogneliss.dialer.ui.components.CallLogSkeleton
 import com.ogneliss.dialer.ui.components.EmptyState
 import com.ogneliss.dialer.ui.components.ScreenScaffold
-import com.ogneliss.dialer.ui.components.SearchBottomBar
+import com.ogneliss.dialer.ui.components.ListPanel
+import com.ogneliss.dialer.ui.components.MainSection
+import com.ogneliss.dialer.ui.components.SectionTopBar
+import androidx.activity.compose.BackHandler
 import com.ogneliss.dialer.ui.theme.Dimens
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.ui.theme.NoteTeal
@@ -70,19 +73,25 @@ import com.ogneliss.dialer.util.PhoneFormatter
  * относится запись, чаще, чем когда её сделал.
  */
 @Composable
-fun NotesScreen(
+internal fun NotesScreen(
     vm: DialerViewModel,
     onOpenCard: (String) -> Unit,
     /** Следующий экран карусели: напоминания. */
     onSwipeNext: (() -> Unit)? = null,
     /** Предыдущий: контакты. */
     onSwipePrevious: (() -> Unit)? = null,
-    onBack: () -> Unit
+    /** Переходы раздела (2.9.2): панель и «Меню», как у журнала и контактов. */
+    links: SectionLinks = SectionLinks()
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
 
     /** Поиск идёт по имени, номеру и тексту самой заметки. */
     var search by remember { mutableStateOf("") }
+    /** Поле поиска открыто — на месте кнопок панели (ListPanel, как в контактах). */
+    var searching by remember { mutableStateOf(false) }
+    var menuOpen by remember { mutableStateOf(false) }
+    val closeSearch: () -> Unit = { searching = false; search = "" }
+    BackHandler(enabled = searching, onBack = closeSearch)
 
 
     /** Номер, заметку которого правят. */
@@ -173,16 +182,40 @@ fun NotesScreen(
         )
     }
 
+    /*
+     * РАЗДЕЛ НИЖНЕЙ ПАНЕЛИ (2.9.2). Было (1.x–2.9.1): отдельный экран со
+     * стрелкой «назад» и одним полем поиска внизу (SearchBottomBar, удалён). Теперь
+     * «Заметки» можно поставить на панель (конструктор, PanelSlots), и экран —
+     * такой же раздел, как контакты: шапка раздела с «⋮» («Меню»), внизу —
+     * постоянное поле поиска над кнопками панели и «Меню» с переходами.
+     */
     ScreenScaffold(
         title = stringResource(R.string.nav_notes),
-        onBack = onBack,
+        onBack = {},
+        topBarOverride = {
+            SectionTopBar(title = stringResource(R.string.nav_notes), onOpenMenu = { menuOpen = true })
+        },
         bottomBar = {
-            SearchBottomBar(
-                query = search,
-                onQueryChange = { search = it },
-                placeholder = stringResource(R.string.notes_search_hint),
-                onSwipeNext = onSwipeNext,
-                onSwipePrevious = onSwipePrevious
+            val hint = stringResource(R.string.notes_search_hint)
+            ListPanel(
+                section = MainSection.NOTES,
+                onOpenSection = links.onOpenSection,
+                filterActive = false,
+                onDialpad = links.onOpenDialpad,
+                searching = searching,
+                searchQuery = search,
+                searchHint = hint,
+                onSearchChange = { search = it },
+                onCloseSearch = closeSearch,
+                onMenu = { menuOpen = true },
+                // Влево — следующий раздел (напоминания), вправо — предыдущий, как в контактах
+                onSwipeLeft = onSwipeNext,
+                onSwipeRight = onSwipePrevious,
+                onOpenSearch = { searching = true },
+                searchButtonLabel = hint,
+                menuContent = {
+                    SectionMenu(vm, menuOpen, { menuOpen = false }, links, onSearch = { searching = true })
+                }
             )
         }
     ) { padding ->

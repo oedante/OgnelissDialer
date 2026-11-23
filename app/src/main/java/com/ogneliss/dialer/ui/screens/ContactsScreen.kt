@@ -641,8 +641,10 @@ fun ContactsScreen(
                     CONTACT_FOLDERS.firstOrNull { it.first == contactFilter && contactFilter != ContactFilter.ALL }?.second
                         ?: R.string.nav_contacts
                 ),
-                subtitle = if (contactFilter != ContactFilter.ALL) stringResource(R.string.nav_contacts) else null
-                // Поиск — в меню, отборы — папками в меню (2.4.0)
+                subtitle = if (contactFilter != ContactFilter.ALL) stringResource(R.string.nav_contacts) else null,
+                // Поиск — в меню, отборы — папками в меню (2.4.0).
+                // 2.9.2: «Меню» и в «⋮» — его можно убрать с панели (PanelSlots)
+                onOpenMenu = { menuOpen = true }
             )
             if (pickForPinning) com.ogneliss.dialer.ui.components.ScreenTopBar(
                 // Заголовок остаётся заголовком: поле поиска — в нижней панели,
@@ -689,7 +691,7 @@ fun ContactsScreen(
                     section = MainSection.CONTACTS,
                     // «Создать контакт» — в центре панели (2.1.3, PanelCenter)
                     center = com.ogneliss.dialer.ui.components.PanelCenter(
-                        OgnelissIcons.PersonAdd, R.string.action_create_contact
+                        OgnelissIcons.PersonAdd, R.string.action_create_contact, R.string.bar_center_create
                     ) { vm.createContact("") },
                     onOpenSection = onOpenSection,
                     filterActive = contactFilter != ContactFilter.ALL,
@@ -732,6 +734,8 @@ fun ContactsScreen(
                             onFakeCall = { menuOpen = false; onFakeCall() },
                             onNotes = { menuOpen = false; onOpenNotes() },
                             onReminders = { menuOpen = false; onOpenReminders() },
+                            // 2.9.2: «SMS» строкой меню, если её убрали с панели
+                            onMessages = { menuOpen = false; onOpenSection(MainSection.MESSAGES) },
                             onHelp = { menuOpen = false; onOpenHelp() },
                             // «Папки» контактов (2.2.2) — как папки в меню почты: те же отборы, что в «Фильтре».
                             // 2.5.0: порядок и показ — из настроек, значок справа от «ПАПКИ» (FolderOrder)

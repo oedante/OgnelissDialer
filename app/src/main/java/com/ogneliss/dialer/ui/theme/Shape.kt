@@ -1,7 +1,11 @@
 package com.ogneliss.dialer.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.setValue
@@ -91,11 +95,20 @@ fun shapesFor(k: Float): Shapes = if (k == 1f) OgnelissShapes else Shapes(
 object OgnelissShapeTokens {
 
     /*
-     * Клавиша набора, строка номера и поле поиска — «пилюля» (с 1.3.5).
-     * В 1.5.1–1.5.2 были прямоугольники 8 dp; 1.5.3 — снова пилюля
-     * (автор: «кнопки верни округлые, иначе они спорят со всей темой»).
+     * Клавиша набора, строка номера и поле поиска — по настройке «Скругление
+     * углов» (2.9.2): форма темы medium (shapesFor), как кнопки вызова (2.8.9),
+     * поле SMS и центральная кнопка нижней панели. Автор, 23.11.2026: «если
+     * меняем стиль нижней панели, то надо пересмотреть стиль клавиатуры
+     * и дополнительно у окна ввода номера сделать зависимость от настройки
+     * скругления». При «Мелком» — почти прямоугольник, при «Крупном» — мягче.
+     *
+     * История: «пилюля» 50 % (1.3.5–2.9.1); в 1.5.1–1.5.2 — прямоугольники
+     * 8 dp (автор тогда: «кнопки верни округлые, иначе они спорят со всей
+     * темой» — с 2.8.9 вся тема и кнопки вызова скруглены одинаково).
      */
-    val dialKey = RoundedCornerShape(percent = 50)
+    val dialKey: Shape
+        @Composable @ReadOnlyComposable
+        get() = MaterialTheme.shapes.medium
 
     /**
      * НИЖНЯЯ ПАНЕЛЬ.

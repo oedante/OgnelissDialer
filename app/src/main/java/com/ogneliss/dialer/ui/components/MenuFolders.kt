@@ -24,6 +24,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.theme.FlowUi
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
@@ -131,6 +133,57 @@ internal fun MenuActionRows(title: String, actions: List<MenuFolder>) {
         OgnelissCard { actions.forEach { FolderRow(it, role = Role.Button) } }
     }
 }
+
+/**
+ * «Приложение» — плитками: значок и подпись под ним, ровными долями по ширине
+ * одной карточки (2.9.2, автор по снимку боковой панели по высоте содержимого:
+ * «раздел Приложение я бы сделал панелями как раньше»). Как было в 2.5.0
+ * (AppActionsRow), но в карточке — как остальные части меню с 2.7.5.
+ *
+ * В 2.7.4 плитки сменили на строки: «отличается размер текста и много пустого
+ * пространства». Пустоты больше нет (панель — по высоте содержимого, EndDrawer),
+ * а подпись — того же размера, что подписи кнопок нижней панели, к которой
+ * меню и прилегает. Длинная подпись ужимается (FitText), а не рвётся.
+ */
+@Composable
+internal fun MenuTileRow(title: String, actions: List<MenuFolder>) {
+    Column(Modifier.fillMaxWidth()) {
+        MenuBand(title)
+        OgnelissCard {
+            Row(
+                Modifier.fillMaxWidth().padding(horizontal = Space.xs, vertical = Space.xs),
+                verticalAlignment = Alignment.Top
+            ) {
+                actions.forEach { action ->
+                    Column(
+                        Modifier
+                            .weight(1f)
+                            .clip(MaterialTheme.shapes.medium)
+                            .clickable(role = Role.Button, onClick = action.onClick)
+                            .heightIn(min = TILE_MIN_HEIGHT)
+                            .padding(horizontal = Space.xxs, vertical = Space.s),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(action.icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Spacer(Modifier.height(Space.xs))
+                        FitText(
+                            action.label,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center,
+                            // Две строки: «На главный / экран» при крупном шрифте
+                            maxLines = 2,
+                            minScale = 0.6f
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** Плитка «Приложения»: не ниже двух строк касания — значок и подпись. */
+private val TILE_MIN_HEIGHT = 64.dp
 
 /*
  * КАРТОЧКИ, КАК В НАСТРОЙКАХ (2.7.5, автор выбрал вариант «А» из трёх

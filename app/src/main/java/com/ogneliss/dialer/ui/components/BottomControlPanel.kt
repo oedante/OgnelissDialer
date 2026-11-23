@@ -632,7 +632,49 @@ internal fun ActionRow(
      * Полоса разделов слева (планшет, LocalNavigationRailShown) уже
      * показывает разделы — тогда здесь только клавиатура и «Ещё».
      */
+    /*
+     * 2.9.2 — ВАРИАНТ «А» И КОНСТРУКТОР (автор 23.11.2026). Пять равных ячеек:
+     * четыре места из конструктора (LocalPanelSlots, разбор в PanelSlots) и
+     * центральная кнопка между ними. Значки — на одной линии, подписи — на
+     * другой; выбранный раздел — цветом акцента, центр — сплошной кнопкой
+     * (LabeledIconButton.filled). Было (2.0.0–2.9.1): разделы фиксированно
+     * «Журнал · SMS · [центр] · Контакты · Меню», выбранный и центр — тоновой
+     * подложкой, центр крупнее и по середине ряда, ниже значков.
+     *
+     * Полоса разделов слева (планшет, LocalNavigationRailShown) уже показывает
+     * разделы — тогда здесь только центр и «Меню».
+     */
     val railShown = com.ogneliss.dialer.ui.adaptive.LocalNavigationRailShown.current
+    val slots = LocalPanelSlots.current
+    val menuOnPanel = railShown || com.ogneliss.dialer.settings.PanelSlot.MENU in slots
+    val menuCell: @Composable (Modifier) -> Unit = { modifier ->
+        Box(modifier, contentAlignment = Alignment.Center) {
+            Box {
+                LabeledIconButton(OgnelissIcons.Menu, R.string.bar_menu, onMenu, fitLabel = true)
+                // Отметка включённого фильтра — на значке фильтра в шапке раздела (2.2.1, SectionTopBar)
+                if (menuBadge != null) Badge(Modifier.align(Alignment.TopEnd)) { Text(menuBadge) }
+                menuContent()
+            }
+        }
+    }
+    val slotCell: @Composable (Int, Modifier) -> Unit = { index, modifier ->
+        val slot = slots.getOrNull(index)
+        when {
+            // Режим выбора: выход там, где палец (крестик в шапке дальше) — на первом месте справа
+            index == 2 && selectionActive && onStartSelection != null -> LabeledIconButton(
+                icon = OgnelissIcons.Close,
+                labelRes = R.string.bar_exit,
+                onClick = onStartSelection,
+                tint = MaterialTheme.colorScheme.primary,
+                selected = true,
+                fitLabel = true,
+                modifier = modifier
+            )
+            slot == null -> Spacer(modifier)
+            slot == com.ogneliss.dialer.settings.PanelSlot.MENU -> menuCell(modifier)
+            else -> SectionButton(slot.toSection(), section, onOpenSection, modifier)
+        }
+    }
     Row(
         Modifier
             .fillMaxWidth()
@@ -641,85 +683,76 @@ internal fun ActionRow(
             .padding(horizontal = Space.s),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            Modifier.weight(1f),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            /*
-             * РАВНЫЕ ДОЛИ (2.6.0, крайние настройки: шрифт 160 %, масштаб 110 %,
-             * экран 360 dp). Было: кнопки по своей ширине — первая забирала,
-             * сколько хотела подпись, вторая получала остаток, и «SMS»
-             * обрезалось до «S…». Теперь каждой — половина своей стороны,
-             * и длинная подпись ужимается (FitText), а не отнимает место
-             * у соседа. При обычном шрифте вид тот же.
-             */
-            if (!railShown) {
-                SectionButton(MainSection.JOURNAL, section, onOpenSection, Modifier.weight(1f))
-                SectionButton(MainSection.MESSAGES, section, onOpenSection, Modifier.weight(1f))
-            }
+        /*
+         * РАВНЫЕ ДОЛИ (2.6.0, крайние настройки: шрифт 160 %, масштаб 110 %,
+         * экран 360 dp): каждой кнопке — пятая часть ряда, длинная подпись
+         * ужимается (FitText), а не отнимает место у соседа.
+         */
+        if (railShown) {
+            Spacer(Modifier.weight(2f))
+        } else {
+            slotCell(0, Modifier.weight(1f))
+            slotCell(1, Modifier.weight(1f))
         }
 
-        FloatingActionButton(
+        LabeledIconButton(
+            icon = when {
+                center != null -> center.icon
+                expanded -> OgnelissIcons.KeyboardArrowDown
+                else -> OgnelissIcons.Dialpad
+            },
+            labelRes = when {
+                center != null -> center.labelRes
+                expanded -> R.string.bar_center_hide
+                else -> R.string.bar_center_dial
+            },
             onClick = center?.onClick ?: onToggleExpanded,
-            shape = OgnelissShapeTokens.callButton,
-            containerColor = com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.navIndicator,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            elevation = FloatingActionButtonDefaults.elevation(
-                defaultElevation = FAB_ELEVATION,
-                pressedElevation = FAB_ELEVATION,
-                focusedElevation = FAB_ELEVATION,
-                hoveredElevation = FAB_ELEVATION
+            filled = true,
+            fitLabel = true,
+            // TalkBack — действие, а не короткая подпись (было так и до 2.9.2)
+            contentDescription = stringResource(
+                when {
+                    center != null -> center.descriptionRes
+                    expanded -> R.string.dialpad_hide
+                    else -> R.string.dialpad_show
+                }
             ),
             modifier = Modifier
-                .size(width = FAB_WIDTH, height = FAB_HEIGHT)
+                .weight(1f)
                 .verticalSwipeGesture(
                     onSwipeUp = if (!expanded) onToggleExpanded else null,
                     onSwipeDown = if (expanded) onToggleExpanded else null
                 )
-        ) {
-            if (center != null) {
-                Icon(center.icon, contentDescription = stringResource(center.descriptionRes))
-            } else {
-                Icon(
-                    if (expanded) OgnelissIcons.KeyboardArrowDown else OgnelissIcons.Dialpad,
-                    contentDescription = stringResource(
-                        if (expanded) R.string.dialpad_hide else R.string.dialpad_show
-                    )
-                )
-            }
-        }
+        )
 
-        Row(
-            Modifier.weight(1f),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Режим выбора: выход там, где палец (крестик в шапке дальше)
-            if (selectionActive && onStartSelection != null) {
-                LabeledIconButton(
-                    icon = OgnelissIcons.Close,
-                    labelRes = R.string.bar_exit,
-                    onClick = onStartSelection,
-                    tint = MaterialTheme.colorScheme.primary,
-                    selected = true,
-                    fitLabel = true,
-                    modifier = Modifier.weight(1f)
-                )
-            } else if (!railShown) {
-                SectionButton(MainSection.CONTACTS, section, onOpenSection, Modifier.weight(1f))
-            }
-            // Своя доля, а метка — на самой кнопке, а не в углу доли
-            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                Box {
-                    LabeledIconButton(OgnelissIcons.MoreVert, R.string.bar_menu, onMenu, fitLabel = true)
-                    // Отметка включённого фильтра — на значке фильтра в шапке раздела (2.2.1, SectionTopBar)
-                    if (menuBadge != null) Badge(Modifier.align(Alignment.TopEnd)) { Text(menuBadge) }
-                    menuContent()
-                }
-            }
+        if (railShown) {
+            Spacer(Modifier.weight(1f))
+            menuCell(Modifier.weight(1f))
+        } else {
+            slotCell(2, Modifier.weight(1f))
+            slotCell(3, Modifier.weight(1f))
         }
     }
+    // «Меню» убрали с панели — окно меню всё равно нужно: его открывает «⋮» в шапке
+    if (!menuOnPanel) Box { menuContent() }
+}
+
+/**
+ * Места нижней панели (2.9.2, конструктор): задаются в корне (RootScreen) по
+ * настройке и роли SMS. По умолчанию — порядок для приложения SMS по умолчанию.
+ */
+val LocalPanelSlots = androidx.compose.runtime.staticCompositionLocalOf {
+    com.ogneliss.dialer.settings.PanelSlots.defaults(smsDefault = true)
+}
+
+/** Раздел места на панели; у «Меню» раздела нет. */
+internal fun com.ogneliss.dialer.settings.PanelSlot.toSection(): MainSection = when (this) {
+    com.ogneliss.dialer.settings.PanelSlot.JOURNAL -> MainSection.JOURNAL
+    com.ogneliss.dialer.settings.PanelSlot.MESSAGES -> MainSection.MESSAGES
+    com.ogneliss.dialer.settings.PanelSlot.CONTACTS -> MainSection.CONTACTS
+    com.ogneliss.dialer.settings.PanelSlot.NOTES -> MainSection.NOTES
+    com.ogneliss.dialer.settings.PanelSlot.REMINDERS -> MainSection.REMINDERS
+    com.ogneliss.dialer.settings.PanelSlot.MENU -> error("PanelSlot.MENU") // у «Меню» нет раздела: ActionRow и конструктор разбирают его раньше
 }
 
 /**
@@ -736,6 +769,8 @@ internal fun ActionRow(
 internal class PanelCenter(
     val icon: androidx.compose.ui.graphics.vector.ImageVector,
     val descriptionRes: Int,
+    /** Короткая подпись под кнопкой (2.9.2, вариант «А»): «Написать», «Создать». */
+    val labelRes: Int = descriptionRes,
     val onClick: () -> Unit
 )
 
@@ -838,7 +873,7 @@ private fun ActionRail(
         }
         // Поиск и фильтры — в «Ещё» (2.0.0); включённый фильтр — меткой здесь
         Box {
-            LabeledIconButton(OgnelissIcons.MoreVert, R.string.bar_menu, onMenu, showLabel = labels, fitLabel = true)
+            LabeledIconButton(OgnelissIcons.Menu, R.string.bar_menu, onMenu, showLabel = labels, fitLabel = true)
             if (filter.isActive) {
                 Badge(Modifier.align(Alignment.TopEnd)) { Text(filter.activeCount.toString()) }
             }
@@ -862,7 +897,6 @@ private val RAIL_MIN_HEIGHT_WITH_LABELS = 340.dp
  * Высота — минимальная у FloatingActionButton (56 dp). Тень — 0 с 1.7.0
  * («воздушный» вид): кнопку выделяет цвет, а не подъём; было 3 dp.
  */
-private val FAB_WIDTH = 64.dp
 private val FAB_HEIGHT = 56.dp
 private val FAB_ELEVATION = 0.dp
 

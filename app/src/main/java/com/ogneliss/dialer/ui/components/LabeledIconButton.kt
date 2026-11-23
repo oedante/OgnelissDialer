@@ -83,9 +83,23 @@ fun LabeledIconButton(
      * Как активный раздел нижней навигации Ogneliss Mail — голубая
      * подложка за значком и подпись темнее и плотнее.
      */
-    selected: Boolean = false
+    selected: Boolean = false,
+    /**
+     * Сплошная кнопка (2.9.2, центральная кнопка нижней панели, вариант «А»):
+     * значок на заливке цветом акцента, скругление — из «Скругления углов»
+     * (MaterialTheme.shapes.medium). Место, подпись и высота — как у соседей:
+     * значки панели на одной линии, подписи на другой.
+     */
+    filled: Boolean = false,
+    /**
+     * Описание для чтения с экрана, если подписи мало (2.9.2): у центральной
+     * кнопки подпись короткая («Набор»), а TalkBack говорит действие
+     * («Показать клавиатуру», «Новое сообщение»). null — подпись.
+     */
+    contentDescription: String? = null
 ) {
     val label = stringResource(labelRes)
+    val description = contentDescription ?: label
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -94,7 +108,7 @@ fun LabeledIconButton(
             .clip(MaterialTheme.shapes.medium)
             .clickable(onClick = onClick)
             .semantics(mergeDescendants = true) {
-                contentDescription = label
+                this.contentDescription = description
                 role = Role.Button
                 if (selected) this.selected = true
             }
@@ -124,17 +138,29 @@ fun LabeledIconButton(
          * та же), меняется только заливка. Было: белые таблетки у всех
          * кнопок (1.2.0–1.5.5).
          */
+        /*
+         * 2.9.2 — ВАРИАНТ «А» (автор по снимкам вариантов 23.11.2026; форум, eXense:
+         * «активная вкладка и центральная кнопка не должны иметь тоновый цвет
+         * выделения… несоответствие по высоте/выравниванию»). Выбранная кнопка —
+         * без подложки: значок и подпись цветом акцента. Подложка — только
+         * у центральной кнопки ([filled]), сплошная, на той же линии, что значки.
+         */
         Box(
             Modifier
                 .size(width = PILL_WIDTH, height = PILL_HEIGHT)
-                .clip(CircleShape)
-                .then(
-                    if (selected) Modifier.background(com.ogneliss.dialer.ui.theme.OgnelissTheme.surfaces.navIndicator)
-                    else Modifier
-                ),
+                .clip(if (filled) MaterialTheme.shapes.medium else CircleShape)
+                .then(if (filled) Modifier.background(MaterialTheme.colorScheme.primary) else Modifier),
             contentAlignment = Alignment.Center
         ) {
-            Icon(icon, contentDescription = null, tint = tint)
+            Icon(
+                icon,
+                contentDescription = null,
+                tint = when {
+                    filled -> MaterialTheme.colorScheme.onPrimary
+                    selected -> MaterialTheme.colorScheme.primary
+                    else -> tint
+                }
+            )
         }
 
         if (showLabel) {
@@ -159,7 +185,7 @@ fun LabeledIconButton(
                     else it
                 }
             }
-            val labelColor = if (selected) MaterialTheme.colorScheme.onSurface
+            val labelColor = if (selected) MaterialTheme.colorScheme.primary
             else MaterialTheme.colorScheme.onSurfaceVariant
             if (fitLabel) {
                 // Узкая колонка: длинное слово ужимается, а не обрезается.

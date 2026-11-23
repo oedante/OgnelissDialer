@@ -1518,6 +1518,9 @@ fun MainDialerScreen(
                     onFakeCall = { menuOpen = false; fakeCallOpen = true },
                     onNotes = { menuOpen = false; onOpenNotes() },
                     onReminders = { menuOpen = false; onOpenReminders() },
+                    // 2.9.2: «SMS» и «Контакты» строками меню, если их убрали с панели
+                    onMessages = { menuOpen = false; onOpenSection(MainSection.MESSAGES) },
+                    onContacts = { menuOpen = false; onOpenSection(MainSection.CONTACTS) },
                     onHelp = { menuOpen = false; onOpenHelp() },
                     /*
                      * «Папки» журнала (2.2.2) — как папки в меню почты и SMS:
@@ -1657,7 +1660,9 @@ fun MainDialerScreen(
                     TopBarMenuItem(
                         OgnelissIcons.DeleteSweep, stringResource(R.string.log_clear_all), destructive = true
                     ) { confirmClearLog = true }
-                )
+                ),
+                // 2.9.2: «Меню» и в «⋮» — его можно убрать с панели (PanelSlots)
+                onOpenMenu = { menuOpen = true }
             )
         },
         bottomBar = {
