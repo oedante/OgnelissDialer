@@ -87,6 +87,12 @@ internal fun OverflowMenu(
     /** Экран напоминаний. */
     onReminders: () -> Unit,
     /**
+     * Разделы «SMS» и «Контакты» (2.9.2): строкой «Инструментов», когда их нет
+     * на нижней панели (конструктор, PanelSlots). null — строки нет.
+     */
+    onMessages: (() -> Unit)? = null,
+    onContacts: (() -> Unit)? = null,
+    /**
      * «Вопросы и ответы» (1.6.0) — после «Настроек»: с вопросом идут
      * в меню, и ответ должен быть там же, а не на сайте.
      */
@@ -147,11 +153,32 @@ internal fun OverflowMenu(
          * (было прописными — выглядело жирнее остального приложения, MenuBand).
          * Верх листается, если не помещается (низкий экран, лёжа); низ — на месте.
          */
+        /*
+         * РАЗДЕЛЫ, КОТОРЫХ НЕТ НА ПАНЕЛИ (2.9.2, конструктор). Автор: «контакты,
+         * смс, меню, заметки, напоминания можно добавить или убрать из нижней
+         * панели, но они должны быть в меню». Раздел, убранный с панели, — строкой
+         * здесь (как «Избранное» меню почты); стоящий на панели — не дублируется.
+         * С полосой разделов слева (планшет) разделы и так на виду: как раньше,
+         * здесь только заметки и напоминания.
+         */
+        val slots = com.ogneliss.dialer.ui.components.LocalPanelSlots.current
+        val railShown = com.ogneliss.dialer.ui.adaptive.LocalNavigationRailShown.current
+        fun inMenu(slot: com.ogneliss.dialer.settings.PanelSlot) = !railShown && slot !in slots
         val tools = buildList {
             if (onOwnNumber != null) add(MenuFolder(OgnelissIcons.Person, ownLabel, photoUri = ownPhotoUri, onClick = onOwnNumber))
             add(MenuFolder(OgnelissIcons.PhoneCallback, fakeCallLabel, onClick = onFakeCall))
-            add(MenuFolder(OgnelissIcons.StickyNote2, notesLabel, onClick = onNotes))
-            add(MenuFolder(OgnelissIcons.Alarm, remindersLabel, onClick = onReminders))
+            if (onMessages != null && inMenu(com.ogneliss.dialer.settings.PanelSlot.MESSAGES)) {
+                add(MenuFolder(com.ogneliss.dialer.ui.components.MainSection.MESSAGES.icon, stringResource(R.string.nav_messages), onClick = onMessages))
+            }
+            if (onContacts != null && inMenu(com.ogneliss.dialer.settings.PanelSlot.CONTACTS)) {
+                add(MenuFolder(com.ogneliss.dialer.ui.components.MainSection.CONTACTS.icon, stringResource(R.string.nav_contacts), onClick = onContacts))
+            }
+            if (railShown || inMenu(com.ogneliss.dialer.settings.PanelSlot.NOTES)) {
+                add(MenuFolder(OgnelissIcons.StickyNote2, notesLabel, onClick = onNotes))
+            }
+            if (railShown || inMenu(com.ogneliss.dialer.settings.PanelSlot.REMINDERS)) {
+                add(MenuFolder(OgnelissIcons.Alarm, remindersLabel, onClick = onReminders))
+            }
         }
         // Постоянные — первыми, необязательный («на главный экран») — последним,
         // чтобы его отсутствие (журнал) не сдвигало остальные
@@ -167,21 +194,24 @@ internal fun OverflowMenu(
             )
             if (onPinToHome != null) add(MenuFolder(OgnelissIcons.AddToHomeScreen, stringResource(R.string.menu_pin_home), onClick = onPinToHome))
         }
-        Column(Modifier.fillMaxSize()) {
-            Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())) {
+        /*
+         * ПАНЕЛЬ ПО ВЫСОТЕ СОДЕРЖИМОГО (2.9.2, автор выбрал второй из двух снимков:
+         * «вариант справа отлично получился»; до того — «очень много пустого
+         * пространства»). Панель прижата к низу, к кнопке «Меню»: верх — папки
+         * и инструменты (листаются, если не помещаются), низ — «Приложение»
+         * плитками и поиск, на месте, у большого пальца.
+         */
+        Column(Modifier.fillMaxWidth()) {
+            Column(Modifier.weight(1f, fill = false).fillMaxWidth().verticalScroll(rememberScrollState())) {
                 if (header != null) header()
                 MenuActionRows(stringResource(R.string.menu_section_tools), tools)
-                /*
-                 * «Приложение» — строками, как папки и инструменты (2.7.4, автор
-                 * по снимку меню 16.11.2026: «отличается размер текста и много
-                 * пустого пространства»). Было (2.5.0): значки с подписью 12 sp
-                 * внизу панели — третий размер текста в одной панели, а между
-                 * ними и списком — пустая полоса в полэкрана. Теперь одна лента
-                 * строк одного размера, внизу — только поиск.
-                 */
-                MenuActionRows(stringResource(R.string.menu_section_app), app)
-                Spacer(Modifier.height(Space.s))
             }
+            /*
+             * «Приложение» — плитками (2.9.2, автор: «раздел Приложение я бы сделал
+             * панелями как раньше»; разбор у MenuTileRow). 2.7.4–2.9.1 — строками.
+             */
+            com.ogneliss.dialer.ui.components.MenuTileRow(stringResource(R.string.menu_section_app), app)
+            Spacer(Modifier.height(Space.s))
             // Без линии над поиском (2.7.5): карточки и так отделены от страницы
             if (onSearch != null || onFilters != null) {
                 Row(
@@ -308,7 +338,8 @@ internal fun SearchPill(label: String, onSearch: () -> Unit, modifier: Modifier 
 }
 
 /**
- * Панель у правого края во всю высоту — как выдвижное меню почты (endDrawer):
+ * Панель у правого края — как выдвижное меню почты (endDrawer); с 2.9.2 по высоте
+ * содержимого и прижата к низу (было — во всю высоту):
  * выезжает справа, остальной экран затемнён, касание по затемнению или
  * «Назад» закрывает. Ширина — как у почты: не шире 360 dp и не шире 86 %
  * экрана (слева остаётся полоса списка — видно, куда вернёшься).
@@ -330,7 +361,8 @@ private fun EndDrawer(onDismiss: () -> Unit, content: @Composable ColumnScope.()
                         onClickLabel = stringResource(R.string.nav_close),
                         onClick = onDismiss
                     ),
-                contentAlignment = Alignment.CenterEnd
+                // 2.9.2: панель по высоте содержимого, прижата к низу — к кнопке «Меню»
+                contentAlignment = Alignment.BottomEnd
             ) {
                 androidx.compose.animation.AnimatedVisibility(
                     visibleState = shown,
@@ -342,12 +374,12 @@ private fun EndDrawer(onDismiss: () -> Unit, content: @Composable ColumnScope.()
                          * на ней белые карточки частей меню. Было — цвет шторки.
                          */
                         color = com.ogneliss.dialer.ui.theme.OgnelissTheme.pageColor(com.ogneliss.dialer.ui.theme.PageTone.TINTED),
-                        // Скруглён левый край — тот, которым панель «выезжает»
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(
-                            topStart = DRAWER_CORNER, bottomStart = DRAWER_CORNER
-                        ),
+                        // Скруглён верхний левый угол — нижний стоит на краю экрана (2.9.2)
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(topStart = DRAWER_CORNER),
                         modifier = Modifier
-                            .fillMaxHeight()
+                            // Высокое меню не заходит под строку состояния
+                            .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
+                            .wrapContentHeight()
                             .fillMaxWidth(DRAWER_WIDTH_FRACTION)
                             .widthIn(max = DRAWER_MAX_WIDTH)
                             // Касание по панели её не закрывает
@@ -360,7 +392,12 @@ private fun EndDrawer(onDismiss: () -> Unit, content: @Composable ColumnScope.()
                         androidx.compose.runtime.CompositionLocalProvider(
                             com.ogneliss.dialer.ui.theme.LocalPageTone provides com.ogneliss.dialer.ui.theme.PageTone.TINTED
                         ) {
-                            Column(Modifier.windowInsetsPadding(WindowInsets.safeDrawing), content = content)
+                            Column(
+                                Modifier.windowInsetsPadding(
+                                    WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal)
+                                ),
+                                content = content
+                            )
                         }
                     }
                 }

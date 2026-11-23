@@ -1,6 +1,7 @@
 package com.ogneliss.dialer.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -109,6 +110,9 @@ internal fun ListPanel(
                     hint = searchHint,
                     onClose = onCloseSearch
                 )
+                // «Меню» из «⋮» шапки (2.9.2) открывается и во время поиска: окно меню
+                // живёт в ряду кнопок (ActionRow), а его на это время заменяет поле
+                Box { menuContent() }
             } else {
                 if (onOpenSearch != null) {
                     PanelSearchButton(

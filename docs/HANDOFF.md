@@ -12,6 +12,19 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 23.11.2026 — 2.9.2 (97): нижняя панель «вариант А» и конструктор, «Меню» по высоте, клавиатура по скруглению
+
+Разбор — `docs/RELEASE_NOTES_2.9.2.md`. `settings/PanelSlots` (4 места, порядок по роли SMS,
+`place` — обмен, «Журнал» не убрать) + `Prefs.panelSlots` → `RootScreen` (`smsDefault` на
+ON_RESUME) → `LocalPanelSlots` → `ActionRow`. Центр — `LabeledIconButton(filled)`,
+описание для TalkBack — `contentDescription`. Конструктор — `ui/settings/PanelSlotsScreen`
+(маршрут `panel_slots`, пункт в «Быстром доступе»). `SectionTopBar.onOpenMenu` — «Меню»
+в «⋮». Заметки и напоминания — разделы (`ListPanel`, `SectionMenu`/`SectionLinks`,
+`SIBLING_ROUTES`); `SearchBottomBar` удалён. `OverflowMenu`: разделы не с панели —
+в «Инструментах», «Приложение» — `MenuTileRow`; `EndDrawer` — по высоте, к низу.
+`OgnelissShapeTokens.dialKey` = `shapes.medium`. Значок `OgnelissIcons.Menu`.
+Не сделано: белый текст в тёмной теме (автор не решил), разделы сбоку (проба).
+
 ## 23.11.2026 — 2.9.1 (96): форум — коды при наборе, одна карта для исходящих, скрытый текст SMS
 
 Разбор — `docs/RELEASE_NOTES_2.9.1.md`. `ServiceCodes`; `OutgoingSim` (ключ `default_sim`) +

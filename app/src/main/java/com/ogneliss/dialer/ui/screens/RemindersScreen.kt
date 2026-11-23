@@ -22,9 +22,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -47,8 +44,12 @@ import com.ogneliss.dialer.ui.components.CallLogSkeleton
 import com.ogneliss.dialer.ui.components.EmptyState
 import com.ogneliss.dialer.ui.components.ReminderTimeDialog
 import com.ogneliss.dialer.ui.components.ScreenScaffold
-import com.ogneliss.dialer.ui.components.SearchBottomBar
-import com.ogneliss.dialer.ui.components.SingleChoiceSheet
+import com.ogneliss.dialer.ui.components.ListPanel
+import com.ogneliss.dialer.ui.components.MainSection
+import com.ogneliss.dialer.ui.components.MenuFolder
+import com.ogneliss.dialer.ui.components.MenuFolderRows
+import com.ogneliss.dialer.ui.components.SectionTopBar
+import androidx.activity.compose.BackHandler
 import com.ogneliss.dialer.ui.theme.CallGreen
 import com.ogneliss.dialer.ui.theme.Dimens
 import com.ogneliss.dialer.util.PhoneFormatter
@@ -77,20 +78,26 @@ import java.util.Date
  * которой никто не пользуется.
  */
 @Composable
-fun RemindersScreen(
+internal fun RemindersScreen(
     vm: DialerViewModel,
     onOpenCard: (String) -> Unit,
     /** Следующий экран карусели: снова журнал, круг замыкается. */
     onSwipeNext: (() -> Unit)? = null,
     /** Предыдущий: заметки. */
     onSwipePrevious: (() -> Unit)? = null,
-    onBack: () -> Unit
+    /** Переходы раздела (2.9.2): панель и «Меню», как у журнала и контактов. */
+    links: SectionLinks = SectionLinks()
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     val reminders by vm.activeReminders.collectAsStateWithLifecycle()
 
     /** Поиск по имени и номеру: текста, как у заметки, здесь нет. */
     var search by remember { mutableStateOf("") }
+    /** Поле поиска открыто — на месте кнопок панели (ListPanel, как в контактах). */
+    var searching by remember { mutableStateOf(false) }
+    var menuOpen by remember { mutableStateOf(false) }
+    val closeSearch: () -> Unit = { searching = false; search = "" }
+    BackHandler(enabled = searching, onBack = closeSearch)
 
     /**
      * Отбор по сроку: всё, сегодня, эта неделя.
@@ -100,7 +107,6 @@ fun RemindersScreen(
      * только то, что горит.
      */
     var days by remember { mutableStateOf(0) }
-    var filterOpen by remember { mutableStateOf(false) }
 
     /** Напоминание, время которого правят. */
     var editing by remember { mutableStateOf<RemindersRepository.Reminder?>(null) }
@@ -135,18 +141,17 @@ fun RemindersScreen(
         }
     }
 
-    if (filterOpen) {
-        SingleChoiceSheet(
-            options = listOf(
-                0 to R.string.contacts_all,
-                1 to R.string.reminders_filter_today,
-                7 to R.string.reminders_filter_week
-            ),
-            current = days,
-            onSelect = { days = it },
-            onDismiss = { filterOpen = false }
-        )
-    }
+    /*
+     * ОТБОР ПО СРОКУ — ПАПКАМИ В «МЕНЮ» (2.9.2), как отборы контактов и папки
+     * журнала и SMS. Было (2.7.0–2.9.1): значок фильтра в шапке и шторка
+     * выбора — единственная шапка со своим значком; теперь шапка — как у всех
+     * разделов (название и «⋮»), открытый отбор — названием в шапке.
+     */
+    val dayFolders = listOf(
+        Triple(0, R.string.contacts_all, OgnelissIcons.Alarm),
+        Triple(1, R.string.reminders_filter_today, OgnelissIcons.Schedule),
+        Triple(7, R.string.reminders_filter_week, OgnelissIcons.CalendarMonth)
+    )
 
     editing?.let { reminder ->
         ReminderTimeDialog(
@@ -162,34 +167,54 @@ fun RemindersScreen(
 
     ScreenScaffold(
         title = stringResource(R.string.nav_reminders),
-        onBack = onBack,
-        bottomBar = {
-            SearchBottomBar(
-                query = search,
-                onQueryChange = { search = it },
-                placeholder = stringResource(R.string.reminders_search_hint),
-                onSwipeNext = onSwipeNext,
-                onSwipePrevious = onSwipePrevious
+        onBack = {},
+        /*
+         * РАЗДЕЛ НИЖНЕЙ ПАНЕЛИ (2.9.2) — разбор у NotesScreen: шапка раздела
+         * с «⋮» («Меню»), внизу — поиск над кнопками панели и «Меню».
+         */
+        topBarOverride = {
+            val folderLabel = dayFolders.firstOrNull { it.first == days && days != 0 }?.second
+            SectionTopBar(
+                title = stringResource(folderLabel ?: R.string.nav_reminders),
+                subtitle = if (folderLabel != null) stringResource(R.string.nav_reminders) else null,
+                onOpenMenu = { menuOpen = true }
             )
         },
-        /*
-         * ФИЛЬТР — В ШАПКЕ (2.7.0, обзор вида 15.11.2026). Был кнопкой с подписью
-         * рядом с полем поиска — единственный экран, где фильтр жил на нижней
-         * панели: в журнале и контактах отборы — в «Меню», действия над списком —
-         * в шапке. Теперь внизу только поиск, как в заметках. Включённый отбор —
-         * значок цветом акцента и точка на нём. Выбор — той же шторкой
-         * (SingleChoiceSheet).
-         */
-        actions = {
-            IconButton(onClick = { filterOpen = true }) {
-                BadgedBox(badge = { if (days > 0) Badge() }) {
-                    Icon(
-                        OgnelissIcons.FilterList,
-                        contentDescription = stringResource(R.string.filter_title),
-                        tint = if (days > 0) MaterialTheme.colorScheme.primary else LocalContentColor.current
+        bottomBar = {
+            val hint = stringResource(R.string.reminders_search_hint)
+            ListPanel(
+                section = MainSection.REMINDERS,
+                onOpenSection = links.onOpenSection,
+                filterActive = days != 0,
+                onDialpad = links.onOpenDialpad,
+                searching = searching,
+                searchQuery = search,
+                searchHint = hint,
+                onSearchChange = { search = it },
+                onCloseSearch = closeSearch,
+                onMenu = { menuOpen = true },
+                onSwipeLeft = onSwipeNext,
+                onSwipeRight = onSwipePrevious,
+                onOpenSearch = { searching = true },
+                searchButtonLabel = hint,
+                menuContent = {
+                    SectionMenu(
+                        vm, menuOpen, { menuOpen = false }, links,
+                        onSearch = { searching = true },
+                        header = {
+                            MenuFolderRows(
+                                title = stringResource(R.string.settings_sms_folders),
+                                folders = dayFolders.map { (value, labelRes, icon) ->
+                                    MenuFolder(icon, stringResource(labelRes), selected = value == days) {
+                                        menuOpen = false
+                                        days = value
+                                    }
+                                }
+                            )
+                        }
                     )
                 }
-            }
+            )
         }
     ) { padding ->
         // Пока идёт первая загрузка — заглушка, а не «напоминаний нет»:

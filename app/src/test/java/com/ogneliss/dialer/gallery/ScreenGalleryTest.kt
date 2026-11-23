@@ -407,8 +407,8 @@ class ScreenGalleryTest {
         // 2.7.2: «Журнал вызовов» — где «Цветные стрелки вызовов» (вопрос автора: «не вижу настройки»)
         Shot("settings_log") { vm -> SettingsCategoryScreen(category = SettingsCategory.CALL_LOG, vm = vm, onBack = {}, onOpenAdvanced = {}, onAction = {}) },
         Shot("settings_quick") { vm -> SettingsCategoryScreen(category = SettingsCategory.QUICK_ACCESS, vm = vm, onBack = {}, onOpenAdvanced = {}, onAction = {}) },
-        Shot("notes") { vm -> NotesScreen(vm = vm, onOpenCard = {}, onBack = {}) },
-        Shot("reminders") { vm -> RemindersScreen(vm = vm, onOpenCard = {}, onBack = {}) },
+        Shot("notes") { vm -> NotesScreen(vm = vm, onOpenCard = {}) },
+        Shot("reminders") { vm -> RemindersScreen(vm = vm, onOpenCard = {}) },
         Shot("spam") { vm -> SpamProtectionScreen(vm = vm, onBack = {}, onOpenLists = {}) },
         Shot("block_lists") { vm -> BlockListScreen(vm = vm, onBack = {}) },
         Shot("stats") { vm -> StatsScreen(vm = vm, onBack = {}) },
@@ -505,7 +505,33 @@ class ScreenGalleryTest {
         Shot("permissions") { _ -> com.ogneliss.dialer.ui.screens.PermissionsSettingsScreen(isDefaultDialer = false, onRequestDefaultDialer = { false }, onBack = {}) },
         Shot("speed_dial") { vm -> com.ogneliss.dialer.ui.screens.SpeedDialScreen(vm = vm, onBack = {}) },
         Shot("swipe_tuning") { vm -> com.ogneliss.dialer.ui.screens.SwipeTuningScreen(vm = vm, onBack = {}) },
-        Shot("sms_folders") { _ -> com.ogneliss.dialer.ui.conversation.SmsFoldersScreen(onBack = {}) }
+        Shot("sms_folders") { _ -> com.ogneliss.dialer.ui.conversation.SmsFoldersScreen(onBack = {}) },
+        // 2.9.2: конструктор нижней панели (порядок «только звонки», меняли — есть «Как по умолчанию»)
+        Shot("panel_slots") { _ ->
+            com.ogneliss.dialer.ui.settings.PanelSlotsScreen(
+                slots = com.ogneliss.dialer.settings.PanelSlots.defaults(smsDefault = false),
+                customized = true, onPlace = { _, _ -> }, onReset = {}, onBack = {}
+            )
+        },
+        // 2.9.2: журнал при порядке «только звонки»: Журнал · Контакты · [Набор] · Заметки · Меню
+        Shot("journal_dialer_only") { vm ->
+            androidx.compose.runtime.CompositionLocalProvider(
+                com.ogneliss.dialer.ui.components.LocalPanelSlots provides com.ogneliss.dialer.settings.PanelSlots.defaults(smsDefault = false)
+            ) { journalContent(vm) }
+        },
+        // 2.9.2: «Меню» при порядке «только звонки» — «SMS» и «Напоминания» строками «Инструментов»
+        Shot("menu_dialer_only", dialog = true) { vm ->
+            val settings = vm.settingsState.collectAsState().value
+            androidx.compose.runtime.CompositionLocalProvider(
+                com.ogneliss.dialer.ui.components.LocalPanelSlots provides com.ogneliss.dialer.settings.PanelSlots.defaults(smsDefault = false)
+            ) {
+                com.ogneliss.dialer.ui.screens.OverflowMenu(
+                    expanded = true, onDismiss = {}, settings = settings,
+                    onThemeToggle = {}, onSettings = {}, onFakeCall = {}, onNotes = {}, onReminders = {},
+                    onMessages = {}, onContacts = {}, onHelp = {}, onSearch = {}
+                )
+            }
+        }
     )
 
     /**

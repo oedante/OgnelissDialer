@@ -257,7 +257,7 @@
     <string name="settings_section_sim">SIM cards</string>
     <string name="settings_section_sim_summary">Names, memory, your own number</string>
     <string name="settings_section_quick">Quick access</string>
-    <string name="settings_section_quick_summary">Pinned numbers, speed dial, fake call</string>
+    <string name="settings_section_quick_summary">Bottom bar, pinned numbers, speed dial</string>
     <string name="settings_section_system">Android settings</string>
     <string name="settings_section_system_summary">Sound, notifications, battery, default apps</string>
     <string name="settings_section_gestures">Gestures</string>
@@ -748,8 +748,8 @@
     <string name="faq_a_internet">So that your data cannot leave the phone. Without the internet permission the app cannot send anything — not the call log, not contacts, not notes; you can see this in the installed app details. The operator and region of an unknown number come from a directory inside the app, and whether to show them is up to you: %1$s. For a mobile number the region is where it was issued, not where the caller is; operator and region come from the Russian registry, in other countries only the operator is shown, and not for every number.</string>
     <string name="faq_q_transfer">How do I move notes and lists to a new phone?</string>
     <string name="faq_a_transfer">Usually they move by themselves: if you copy data from your old phone while setting up the new one (by cable or Wi‑Fi), your notes, tags, block and allow lists, reminders, drafts and settings come along. Scheduled SMS don’t move — the old phone will send them. The app saves nothing to the cloud, so without such a copy use a file: %1$s, and on the new phone %2$s — the data is added to what is already there. The call log and contacts are moved by Android and your account.</string>
-    <string name="faq_q_switch">How do I switch from the call log to contacts?</string>
-    <string name="faq_a_switch">With the first button on the bottom bar. The large icon is the list that is open now; the small circle next to it is where a tap takes you. A long press opens all sections: call log, contacts, notes and reminders. You can also swipe along the bar: left for contacts, right to go back to the call log. SMS and Contacts can also have their own icons in the app list: %1$s. The app icon then opens the call log.</string>
+    <string name="faq_q_switch">How do I switch sections and set up the bottom bar?</string>
+    <string name="faq_a_switch">With the buttons on the bottom bar: Call log, SMS, Contacts — and Notes and Reminders if you put them on the bar. Which sections are on the bar and in what order: %1$s; the rest are in the Menu. You can also swipe along the bar: left for the next section, right for the previous one. SMS and Contacts can also have their own icons in the app list: %2$s. The app icon then opens the call log.</string>
     <string name="faq_q_search">How do I find a contact by name?</string>
     <string name="faq_a_search">With the “Search” button on the bottom bar. In the call log it searches names, numbers and notes; in contacts, names. The dial pad searches with digits too — by number and by T9, in Cyrillic and Latin at once.</string>
     <string name="faq_q_undo">I deleted a call log entry by mistake. Can I get it back?</string>
@@ -1159,4 +1159,19 @@
     <string name="sms_new_messages_count">New messages: %1$d</string>
     <string name="sms_copy_code_hidden">Copy code</string>
     <string name="keywords_dynamic_color">monet material you wallpaper system colors dynamic theme accent</string>
+    <string name="bar_center_dial">Keypad</string>
+    <string name="bar_center_hide">Hide</string>
+    <string name="bar_center_write">Write</string>
+    <string name="bar_center_create">Create</string>
+    <string name="settings_panel_slots">Bottom bar</string>
+    <string name="settings_panel_slots_text">Which sections are on the bar and which stay in the Menu</string>
+    <string name="panel_slots_help">Four places on both sides of the center button: keypad, Write or Create — it always stays in the middle. Call log is always on the bar, you can only move it. A section taken off the bar appears in the Menu; without its own place, the Menu opens from ⋮ at the top.</string>
+    <string name="panel_slots_hint">Tap a place to choose a section</string>
+    <string name="panel_slot_pick">Section in this place</string>
+    <string name="panel_slot_swap">Will swap places</string>
+    <string name="panel_slot_journal_stays">Call log is always on the bar — you can swap it with another section</string>
+    <string name="panel_slot_in_menu">In the Menu</string>
+    <string name="panel_slots_reset">Reset to default</string>
+    <string name="panel_slot_cd">Place %1$d: %2$s</string>
+    <string name="keywords_panel_slots">bottom bar, panel, buttons, sections, order, menu, navigation, notes, reminders</string>
 </resources>

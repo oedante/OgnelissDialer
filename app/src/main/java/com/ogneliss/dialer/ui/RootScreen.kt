@@ -202,12 +202,21 @@ fun RootScreen(
      */
     var smsProblem by remember { mutableStateOf<com.ogneliss.dialer.sms.SmsHealth.Problem?>(null) }
     val healthContext = LocalContext.current.applicationContext
+    /*
+     * Наше ли приложение SMS (2.9.2) — для порядка нижней панели по умолчанию
+     * (PanelSlots.defaults): роль выдают и забирают в системном окне, поэтому
+     * перечитывается при каждом возвращении в приложение.
+     */
+    var smsDefault by remember {
+        mutableStateOf(runCatching { com.ogneliss.dialer.sms.SmsRole.isDefault(healthContext) }.getOrDefault(false))
+    }
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val lifecycleObserver = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 vm.onReturnedToForeground()
                 smsProblem = runCatching { com.ogneliss.dialer.sms.SmsHealth.problem(healthContext) }.getOrNull()
+                smsDefault = runCatching { com.ogneliss.dialer.sms.SmsRole.isDefault(healthContext) }.getOrDefault(smsDefault)
 
                 /*
                  * Строки возвращаются на место при возврате в приложение.
@@ -244,6 +253,20 @@ fun RootScreen(
      * для этого незачем — хватает обычного контекста.
      */
     val context = LocalContext.current
+    // Переходы разделов «Заметки» и «Напоминания» (2.9.2, SectionLinks): те же, что у контактов
+    val sectionLinks: (openCard: (String) -> Unit) -> com.ogneliss.dialer.ui.screens.SectionLinks = { openCard ->
+        com.ogneliss.dialer.ui.screens.SectionLinks(
+            onOpenSection = openSection,
+            onOpenDialpad = {
+                vm.requestDialpad()
+                openSection(MainSection.JOURNAL)
+            },
+            onOpenSettings = { nav.navigate("settings") },
+            onOpenHelp = { nav.navigate("faq") },
+            onFakeCall = { FakeCall.ringNow(context) },
+            onOpenOwnCard = { openCard(com.ogneliss.dialer.ui.screens.OWN_CARD_KEY) }
+        )
+    }
 
     /** Поле коротких сообщений: одно на всё приложение. */
     val appSnackbar = remember { SnackbarHostState() }
@@ -487,9 +510,14 @@ fun RootScreen(
             context.applicationContext, settings.avatarNoPhoto, settings.avatarUnknown, settings.avatarScope
         )
     }
+    // Места нижней панели (2.9.2): конструктор или порядок по роли SMS — разбор в PanelSlots
+    val panelSlots = remember(settings.panelSlots, smsDefault) {
+        com.ogneliss.dialer.settings.PanelSlots.resolve(settings.panelSlots, smsDefault)
+    }
     CompositionLocalProvider(
         LocalAppearance provides appearance,
-        com.ogneliss.dialer.ui.components.LocalAvatarPictures provides avatarPictures
+        com.ogneliss.dialer.ui.components.LocalAvatarPictures provides avatarPictures,
+        com.ogneliss.dialer.ui.components.LocalPanelSlots provides panelSlots
     ) {
     /*
      * ОТСТУПЫ ПОД СИСТЕМНЫЕ ПАНЕЛИ.
@@ -831,8 +859,9 @@ fun RootScreen(
                             onOpenSubscriber = openCard,
                             onOpenBlockLists = { nav.navigate("blocklists") },
                             onOpenFakeCallPicker = { nav.navigate("contacts?pick=fake") },
-                            onOpenNotes = { nav.navigate("notes") },
-                            onOpenReminders = { nav.navigate("reminders") },
+                            // 2.9.2: заметки и напоминания — разделы (openSection), как контакты
+                            onOpenNotes = { openSection(MainSection.NOTES) },
+                            onOpenReminders = { openSection(MainSection.REMINDERS) },
                             onOpenArchive = { nav.navigate("call_archive") },
                             // Полный список закреплённых — экран «Закреплённые» (2.1.0)
                             onOpenPinned = { nav.navigate("pinned") }
@@ -1183,6 +1212,26 @@ fun RootScreen(
                     com.ogneliss.dialer.ui.screens.CallArchiveScreen(vm = vm, onBack = { nav.popBackStack() })
                 }
 
+                /*
+                 * Конструктор нижней панели (2.9.2): какие разделы на каких местах.
+                 * Сохраняется сразу — панель под настройками уже другая, когда
+                 * человек вернётся. Порядок по умолчанию зависит от роли SMS
+                 * (PanelSlots.defaults), поэтому экрану нужен тот же smsDefault.
+                 */
+                composable("panel_slots") {
+                    val slotsScope = rememberCoroutineScope()
+                    com.ogneliss.dialer.ui.settings.PanelSlotsScreen(
+                        slots = panelSlots,
+                        customized = com.ogneliss.dialer.settings.PanelSlots.parse(settings.panelSlots) != null,
+                        onPlace = { index, item ->
+                            val next = com.ogneliss.dialer.settings.PanelSlots.place(panelSlots, index, item)
+                            slotsScope.launch { vm.prefs.setPanelSlots(next) }
+                        },
+                        onReset = { slotsScope.launch { vm.prefs.resetPanelSlots() } },
+                        onBack = { nav.popBackStack() }
+                    )
+                }
+
                 // Папки SMS (2.2.0): порядок и показ вкладок
                 composable("sms_folders") {
                     com.ogneliss.dialer.ui.conversation.SmsFoldersScreen(onBack = { nav.popBackStack() })
@@ -1236,7 +1285,19 @@ fun RootScreen(
                  * по времени, а не по человеку. Разбор — в шапках самих
                  * экранов.
                  */
-                composable("notes") {
+                /*
+                 * 2.9.2: заметки и напоминания — разделы нижней панели (конструктор,
+                 * PanelSlots): переход к ним и между ними — как между журналом,
+                 * SMS и контактами (openSection, растворением), у них та же панель
+                 * и то же «Меню» (SectionLinks). Было — экраны «вглубь» со стрелкой.
+                 */
+                composable(
+                    MainSection.NOTES.route,
+                    enterTransition = { if (isSectionList(initialState)) Motion.enterSibling(this) else Motion.enterForward(this) },
+                    popExitTransition = { if (isSectionList(targetState)) Motion.exitSibling(this) else Motion.exitBackward(this) },
+                    exitTransition = { if (isSectionList(targetState)) Motion.exitSibling(this) else Motion.exitForward(this) },
+                    popEnterTransition = { if (isSectionList(initialState)) Motion.enterSibling(this) else Motion.enterBackward(this) }
+                ) {
                     /*
                      * ══════════════════════════════════════════════════════════
                      * ВОТ ПОЧЕМУ СВАЙП НЕ РАБОТАЛ — И НИКОГДА НЕ РАБОТАЛ
@@ -1244,48 +1305,43 @@ fun RootScreen(
                      * Экран заметок умеет листаться, но колбэки перелистывания
                      * сюда просто не передавались: onSwipeNext и onSwipePrevious
                      * оставались по умолчанию null, а при null жест выключен
-                     * (enabled = false). Палец шёл вбок — и касание уходило полю
-                     * поиска или кнопке фильтра, потому что жеста не было вовсе.
-                     *
-                     * Три захода я чинил распознавание жеста — фазу доставки
-                     * событий, площадь касания, перехват у поля ввода. Всё это
-                     * было не о том. Подсказка была в словах «в контактах
-                     * работает, наполнение панели то же»: раз панель одна,
-                     * разница должна быть не в ней, а в том, что ей передают.
-                     *
-                     * Передача — как в контактах: с учётом той же настройки
-                     * panelSwipeNav и в том же порядке карусели
-                     * журнал → контакты → заметки → напоминания.
+                     * (enabled = false). Передача — как в контактах: с учётом той
+                     * же настройки panelSwipeNav и в том же порядке карусели
+                     * журнал → SMS → контакты → заметки → напоминания.
                      */
                     ListDetailHost(vm = vm, nav = nav) { openCard ->
                     NotesScreen(
                         vm = vm,
                         onOpenCard = openCard,
-                        onBack = { nav.popBackStack() },
-                        // Вперёд — к напоминаниям, назад — туда, откуда пришли
-                        // (из карусели это контакты), как «назад» в контактах
                         onSwipeNext = if (settings.panelSwipeNav) {
-                            { nav.navigate("reminders") }
+                            { openSection(MainSection.REMINDERS) }
                         } else null,
                         onSwipePrevious = if (settings.panelSwipeNav) {
-                            { nav.popBackStack() }
-                        } else null
+                            { openSection(MainSection.CONTACTS) }
+                        } else null,
+                        links = sectionLinks(openCard)
                     )
                     }
                 }
 
-                composable("reminders") {
+                composable(
+                    MainSection.REMINDERS.route,
+                    enterTransition = { if (isSectionList(initialState)) Motion.enterSibling(this) else Motion.enterForward(this) },
+                    popExitTransition = { if (isSectionList(targetState)) Motion.exitSibling(this) else Motion.exitBackward(this) },
+                    exitTransition = { if (isSectionList(targetState)) Motion.exitSibling(this) else Motion.exitForward(this) },
+                    popEnterTransition = { if (isSectionList(initialState)) Motion.enterSibling(this) else Motion.enterBackward(this) }
+                ) {
                     ListDetailHost(vm = vm, nav = nav) { openCard ->
                     RemindersScreen(
                         vm = vm,
                         onOpenCard = openCard,
-                        onBack = { nav.popBackStack() },
-                        // Напоминания — последний экран карусели: вперёд листать
+                        // Напоминания — последний раздел карусели: вперёд листать
                         // некуда, назад — к заметкам. Разбор — у NotesScreen выше
                         onSwipeNext = null,
                         onSwipePrevious = if (settings.panelSwipeNav) {
-                            { nav.popBackStack() }
-                        } else null
+                            { openSection(MainSection.NOTES) }
+                        } else null,
+                        links = sectionLinks(openCard)
                     )
                     }
                 }
@@ -1638,6 +1694,8 @@ private fun runSettingAction(
             com.ogneliss.dialer.backup.SmsBackup.fileName()
         )
         "sms_folders" -> nav.navigate("sms_folders")
+        // Конструктор нижней панели (2.9.2)
+        "panel_slots" -> nav.navigate("panel_slots")
         "sms_restore" -> {
             // Окно выбора файла копии — у раздела настроек (SettingsCategoryHost,
             // restoreLauncher); сюда ключ не доходит: он в ACTIONS_OF_SETTINGS_SCREEN
@@ -1884,7 +1942,13 @@ private fun contactEditRoute(id: Long = -1L, number: String = "", name: String? 
         "&name=" + android.net.Uri.encode(name.orEmpty())
 
 /** Соседи контактов в карусели (2.1.0): переход растворением, а не сдвигом. */
-private val SIBLING_ROUTES = setOf(MainSection.JOURNAL.route, MainSection.MESSAGES.route)
+private val SIBLING_ROUTES = setOf(
+    MainSection.JOURNAL.route,
+    MainSection.MESSAGES.route,
+    // 2.9.2: заметки и напоминания — тоже разделы панели (конструктор)
+    MainSection.NOTES.route,
+    MainSection.REMINDERS.route
+)
 
 /** Разделы-соседи карусели: журнал, SMS, список контактов (2.1.0). */
 private fun isSectionList(entry: androidx.navigation.NavBackStackEntry): Boolean =

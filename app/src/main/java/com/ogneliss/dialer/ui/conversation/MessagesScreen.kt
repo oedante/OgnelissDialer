@@ -441,7 +441,9 @@ fun MessagesScreen(
                         TopBarMenuItem(OgnelissIcons.Archive, stringResource(R.string.archive_title)) {
                             selection.clear(); showArchive = true
                         }
-                    ) else emptyList()
+                    ) else emptyList(),
+                    // 2.9.2: «Меню» и в «⋮» — его можно убрать с панели (PanelSlots)
+                    onOpenMenu = { menuOpen = true }
                 )
                 // Архив — своей строкой заголовка со стрелкой назад
                 showArchive -> com.ogneliss.dialer.ui.components.ScreenTopBar(
@@ -499,7 +501,7 @@ fun MessagesScreen(
                 section = MainSection.MESSAGES,
                 // «Написать» — в центре панели (2.1.3). Без роли SMS пишут
                 // в приложении SMS человека — открываем его
-                center = PanelCenter(OgnelissIcons.Edit, R.string.messages_new) {
+                center = PanelCenter(OgnelissIcons.Edit, R.string.messages_new, R.string.bar_center_write) {
                     if (state.isDefaultSms) composeNew = true
                     else com.ogneliss.dialer.sms.SmsRole.openCompanionApp(context)
                 },
@@ -539,6 +541,8 @@ fun MessagesScreen(
                         onFakeCall = { menuOpen = false; onFakeCall() },
                         onNotes = { menuOpen = false; onOpenNotes() },
                         onReminders = { menuOpen = false; onOpenReminders() },
+                        // 2.9.2: «Контакты» строкой меню, если их убрали с панели
+                        onContacts = { menuOpen = false; onOpenSection(MainSection.CONTACTS) },
                         onHelp = { menuOpen = false; onOpenHelp() },
                         // 2.1.0: значок «SMS» со счётчиком на главный экран (SectionWidgets)
                         onPinToHome = pinToHome,

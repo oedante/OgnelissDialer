@@ -694,6 +694,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val SMS_NOTIFICATIONS_OFF = booleanPreferencesKey("sms_notifications_off")
         // 2.9.1: «Скрывать текст в уведомлениях» — разбор в SettingsRegistry
         val SMS_HIDE_TEXT = booleanPreferencesKey("sms_hide_text")
+        // 2.9.2: конструктор нижней панели — разбор в PanelSlots
+        val PANEL_SLOTS = stringPreferencesKey("panel_slots")
         // 2.2.0
         val SMS_UNDO_SEND = stringPreferencesKey("sms_undo_send")
         val SMS_CALLS_IN_THREAD = booleanPreferencesKey("sms_calls_in_thread")
@@ -1156,6 +1158,15 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     /** Уведомления о новых SMS выключены (2.8.6). По умолчанию — нет, уведомления идут. */
     val smsNotificationsOff: Flow<Boolean> = data.map { it[Keys.SMS_NOTIFICATIONS_OFF] ?: false }
+
+    /** Места нижней панели (2.9.2): строка PanelSlots; null — порядок по роли SMS. */
+    val panelSlots: Flow<String?> = data.map { it[Keys.PANEL_SLOTS] }
+
+    suspend fun setPanelSlots(v: List<PanelSlot>) = edit("panel_slots", PanelSlots.encode(v)) {
+        it[Keys.PANEL_SLOTS] = PanelSlots.encode(v)
+    }
+
+    suspend fun resetPanelSlots() = edit("panel_slots", "по умолчанию") { it.remove(Keys.PANEL_SLOTS) }
 
     /** Текст SMS в уведомлениях скрыт (2.9.1). По умолчанию — нет, текст виден. */
     val smsHideText: Flow<Boolean> = data.map { it[Keys.SMS_HIDE_TEXT] ?: false }

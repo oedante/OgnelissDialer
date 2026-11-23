@@ -82,6 +82,8 @@ data class SettingsState(
     val sectionIcons: Boolean = false,
     /** Цветные стрелки типа вызова (2.7.0, форум, 21vasya): разбор в CallArrowColor. 2.8.9: по умолчанию вкл. */
     val coloredCallArrows: Boolean = true,
+    /** Места нижней панели (2.9.2, PanelSlots); null — порядок по роли SMS. */
+    val panelSlots: String? = null,
     /** Что открывать при запуске значком (2.7.0, форум, oleg_p): разбор в StartSection. */
     val startSection: com.ogneliss.dialer.settings.StartChoice = com.ogneliss.dialer.settings.StartChoice.JOURNAL,
     /** Имя контакта: «Имя Фамилия» или «Фамилия Имя» (1.6.2). */

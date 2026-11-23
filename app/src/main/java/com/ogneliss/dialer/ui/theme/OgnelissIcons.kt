@@ -3470,6 +3470,49 @@ object OgnelissIcons {
         }
     }
 
+    /**
+     * «Меню» — три полоски (2.9.2), как кнопка «Меню» нижней панели Ogneliss Mail
+     * (AppIcons.menu). Было — «⋮», тот же значок, что у «⋮» шапки с действиями
+     * над списком: две одинаковые кнопки на экране значили разное.
+     */
+    val Menu: ImageVector by lazy {
+        rounded("Menu") {
+            moveTo(160f, -240f)
+            quadTo(143f, -240f, 131.5f, -251.5f)
+            quadTo(120f, -263f, 120f, -280f)
+            quadTo(120f, -297f, 131.5f, -308.5f)
+            quadTo(143f, -320f, 160f, -320f)
+            lineTo(800f, -320f)
+            quadTo(817f, -320f, 828.5f, -308.5f)
+            quadTo(840f, -297f, 840f, -280f)
+            quadTo(840f, -263f, 828.5f, -251.5f)
+            quadTo(817f, -240f, 800f, -240f)
+            close()
+            moveTo(160f, -440f)
+            quadTo(143f, -440f, 131.5f, -451.5f)
+            quadTo(120f, -463f, 120f, -480f)
+            quadTo(120f, -497f, 131.5f, -508.5f)
+            quadTo(143f, -520f, 160f, -520f)
+            lineTo(800f, -520f)
+            quadTo(817f, -520f, 828.5f, -508.5f)
+            quadTo(840f, -497f, 840f, -480f)
+            quadTo(840f, -463f, 828.5f, -451.5f)
+            quadTo(817f, -440f, 800f, -440f)
+            close()
+            moveTo(160f, -640f)
+            quadTo(143f, -640f, 131.5f, -651.5f)
+            quadTo(120f, -663f, 120f, -680f)
+            quadTo(120f, -697f, 131.5f, -708.5f)
+            quadTo(143f, -720f, 160f, -720f)
+            lineTo(800f, -720f)
+            quadTo(817f, -720f, 828.5f, -708.5f)
+            quadTo(840f, -697f, 840f, -680f)
+            quadTo(840f, -663f, 828.5f, -651.5f)
+            quadTo(817f, -640f, 800f, -640f)
+            close()
+        }
+    }
+
     val MusicNote: ImageVector by lazy {
         rounded("MusicNote") {
             moveTo(400f, -120f)

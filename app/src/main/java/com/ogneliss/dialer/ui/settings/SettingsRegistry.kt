@@ -728,6 +728,18 @@ object SettingsRegistry {
             groupRes = R.string.settings_group_notes,
             advanced = true
         ),
+        /*
+         * Конструктор нижней панели (2.9.2, автор: «как в Ogneliss Mail сделать
+         * конструктор нижней панели»). Разбор — settings/PanelSlots.kt, экран —
+         * PanelSlotsScreen. Первым в «Быстром доступе»: панель — самое быстрое,
+         * что есть в приложении.
+         */
+        SettingEntry(
+            "panel_slots", SettingsCategory.QUICK_ACCESS,
+            R.string.settings_panel_slots, R.string.settings_panel_slots_text,
+            SettingKind.Action("panel_slots"),
+            keywordsRes = R.string.keywords_panel_slots
+        ),
         SettingEntry(
             "pinned", SettingsCategory.QUICK_ACCESS,
             R.string.settings_pinned, R.string.settings_pinned_text,

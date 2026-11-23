@@ -1,0 +1,162 @@
+<ru-RU>
+• Новая нижняя панель: разделы и кнопка в центре с подписями («Набор», «Написать», «Создать»).
+• Разделы на панели можно выбрать, в том числе заметки и напоминания: Настройки → Быстрый доступ → Нижняя панель. Остальные — в «Меню», а «Меню» есть и в «⋮» сверху.
+• «Меню» стало компактнее: по высоте содержимого, настройки и справка — плитками.
+• Клавиши и строка номера — по настройке «Скругление углов».
+</ru-RU>
+<ar>
+• شريط سفلي جديد: الأقسام وزر في الوسط بتسميات (لوحة المفاتيح، كتابة، إنشاء).
+• يمكنك اختيار الأقسام على الشريط، ومنها الملاحظات والتذكيرات: الإعدادات ← الوصول السريع ← الشريط السفلي. البقية في «القائمة»، والقائمة متاحة أيضًا من «⋮» في الأعلى.
+• «القائمة» أصغر: بارتفاع محتواها، والإعدادات والمساعدة كمربعات.
+• الأزرار وحقل الرقم يتبعان إعداد «تدوير الزوايا».
+</ar>
+<cs-CZ>
+• Nový spodní panel: sekce a tlačítko uprostřed s popisky (Klávesnice, Napsat, Vytvořit).
+• Sekce na panelu si můžete vybrat, i poznámky a připomenutí: Nastavení → Rychlý přístup → Spodní panel. Ostatní jsou v „Menu“, které je i pod „⋮“ nahoře.
+• „Menu“ je kompaktnější: vysoké podle obsahu, nastavení a nápověda jako dlaždice.
+• Klávesy a pole čísla se řídí nastavením „Zaoblení rohů“.
+</cs-CZ>
+<da-DK>
+• Ny bundbjælke: sektioner og en knap i midten med etiketter (Tastatur, Skriv, Opret).
+• Vælg sektionerne på bjælken, også noter og påmindelser: Indstillinger → Hurtig adgang → Bundbjælke. Resten er i „Menu“, som også findes under „⋮“ øverst.
+• „Menu“ er mere kompakt: så høj som indholdet, indstillinger og hjælp som fliser.
+• Taster og nummerfeltet følger indstillingen „Afrundede hjørner“.
+</da-DK>
+<de-DE>
+• Neue untere Leiste: Bereiche und eine Schaltfläche in der Mitte mit Beschriftung („Wählen“, „Schreiben“, „Erstellen“).
+• Bereiche in der Leiste frei wählbar, auch Notizen und Erinnerungen: Einstellungen → Schnellzugriff → Untere Leiste. Der Rest ist im Menü, das auch über „⋮“ oben erreichbar ist.
+• Das Menü ist kompakter: so hoch wie sein Inhalt, Einstellungen und Hilfe als Kacheln.
+• Tasten und Nummernfeld folgen der „Eckenrundung“.
+</de-DE>
+<en-US>
+• New bottom bar: sections and a center button with labels (Keypad, Write, Create).
+• Choose the sections on the bar, including Notes and Reminders: Settings → Quick access → Bottom bar. The rest are in the Menu, which is also in ⋮ at the top.
+• The Menu is more compact: as tall as its content, settings and help as tiles.
+• Keys and the number field follow the "Corner rounding" setting.
+</en-US>
+<es-ES>
+• Nueva barra inferior: secciones y un botón central con etiquetas (Teclado, Escribir, Crear).
+• Elige las secciones de la barra, también Notas y Recordatorios: Ajustes → Acceso rápido → Barra inferior. El resto está en el «Menú», que también está en «⋮» arriba.
+• El «Menú» es más compacto: tan alto como su contenido, ajustes y ayuda en mosaicos.
+• Las teclas y el campo del número siguen el ajuste «Redondeo de esquinas».
+</es-ES>
+<fi-FI>
+• Uusi alapalkki: osiot ja keskipainike nimineen (Näppäimistö, Kirjoita, Luo).
+• Valitse palkin osiot, myös muistiinpanot ja muistutukset: Asetukset → Pikakäyttö → Alapalkki. Muut ovat ”Valikossa”, joka löytyy myös ylhäältä ”⋮”.
+• ”Valikko” on tiiviimpi: sisällön korkuinen, asetukset ja ohje ruutuina.
+• Näppäimet ja numerokenttä noudattavat ”Kulmien pyöristys” -asetusta.
+</fi-FI>
+<fr-FR>
+• Nouvelle barre du bas : sections et bouton central avec libellés (Clavier, Écrire, Créer).
+• Choisissez les sections de la barre, y compris Notes et Rappels : Réglages → Accès rapide → Barre du bas. Les autres sont dans le menu, accessible aussi par « ⋮ » en haut.
+• Le menu est plus compact : à la hauteur de son contenu, réglages et aide en tuiles.
+• Les touches et le champ du numéro suivent l’« Arrondi des coins ».
+</fr-FR>
+<hi-IN>
+• नई निचली पट्टी: अनुभाग और बीच में लेबल वाला बटन (कीपैड, लिखें, बनाएँ)।
+• पट्टी पर अनुभाग चुनें, नोट्स और रिमाइंडर भी: सेटिंग्स → त्वरित पहुँच → निचली पट्टी। बाकी «मेनू» में हैं, जो ऊपर «⋮» में भी है।
+• «मेनू» अब छोटा है: सामग्री जितना ऊँचा, सेटिंग्स और सहायता टाइलों में।
+• कुंजियाँ और नंबर फ़ील्ड «कोनों की गोलाई» सेटिंग के अनुसार।
+</hi-IN>
+<hu-HU>
+• Új alsó sáv: szakaszok és középső gomb felirattal (Billentyűzet, Írás, Létrehozás).
+• A sáv szakaszai választhatók, a jegyzetek és emlékeztetők is: Beállítások → Gyors hozzáférés → Alsó sáv. A többi a „Menüben” van, amely fent a „⋮” alatt is elérhető.
+• A „Menü” kompaktabb: a tartalma magasságú, a beállítások és a súgó csempékként.
+• A billentyűk és a számmező a „Sarkok kerekítése” beállítást követik.
+</hu-HU>
+<id>
+• Bilah bawah baru: bagian dan tombol tengah berlabel (Papan tombol, Tulis, Buat).
+• Pilih bagian di bilah, termasuk Catatan dan Pengingat: Setelan → Akses cepat → Bilah bawah. Sisanya ada di “Menu”, yang juga ada di “⋮” di atas.
+• “Menu” lebih ringkas: setinggi isinya, setelan dan bantuan sebagai ubin.
+• Tombol dan kolom nomor mengikuti setelan “Pembulatan sudut”.
+</id>
+<it-IT>
+• Nuova barra inferiore: sezioni e pulsante centrale con etichette (Tastiera, Scrivi, Crea).
+• Scegli le sezioni della barra, anche Note e Promemoria: Impostazioni → Accesso rapido → Barra inferiore. Le altre sono nel «Menu», che si apre anche da «⋮» in alto.
+• Il «Menu» è più compatto: alto quanto il contenuto, impostazioni e guida a riquadri.
+• Tasti e campo del numero seguono l’impostazione «Arrotondamento angoli».
+</it-IT>
+<iw-IL>
+• סרגל תחתון חדש: מקטעים וכפתור מרכזי עם תוויות (מקלדת, כתיבה, יצירה).
+• אפשר לבחור את המקטעים בסרגל, גם הערות ותזכורות: הגדרות ← גישה מהירה ← סרגל תחתון. השאר ב„תפריט”, שזמין גם מ„⋮” למעלה.
+• „התפריט” קומפקטי יותר: בגובה התוכן, הגדרות ועזרה כאריחים.
+• המקשים ושדה המספר לפי ההגדרה „עיגול פינות”.
+</iw-IL>
+<ja-JP>
+• 新しい下部バー：セクションと中央ボタンにラベル付き（キーパッド、作成、新規）。
+• バーのセクションを選べます（メモとリマインダーも）：設定 → クイックアクセス → 下部バー。その他は「メニュー」に。メニューは上部の「⋮」からも開けます。
+• 「メニュー」がコンパクトに：内容の高さに合わせ、設定とヘルプはタイル表示。
+• キーと番号欄は「角の丸み」設定に従います。
+</ja-JP>
+<ko-KR>
+• 새 하단 바: 섹션과 라벨이 있는 가운데 버튼(키패드, 쓰기, 만들기).
+• 바의 섹션을 고를 수 있습니다(메모와 알림 포함): 설정 → 빠른 실행 → 하단 바. 나머지는 '메뉴'에 있으며, 메뉴는 위쪽 '⋮'에서도 열립니다.
+• '메뉴'가 더 간결해졌습니다: 내용 높이에 맞추고, 설정과 도움말은 타일로.
+• 키와 번호 입력란은 '모서리 둥글기' 설정을 따릅니다.
+</ko-KR>
+<nl-NL>
+• Nieuwe onderbalk: secties en een middelste knop met labels (Toetsenbord, Schrijven, Maken).
+• Kies de secties op de balk, ook Notities en Herinneringen: Instellingen → Snelle toegang → Onderbalk. De rest staat in ‘Menu’, dat ook via ‘⋮’ bovenaan opent.
+• ‘Menu’ is compacter: zo hoog als de inhoud, instellingen en hulp als tegels.
+• Toetsen en het nummerveld volgen de instelling ‘Afronding hoeken’.
+</nl-NL>
+<no-NO>
+• Ny bunnlinje: seksjoner og en midtknapp med etiketter (Tastatur, Skriv, Opprett).
+• Velg seksjonene på linjen, også notater og påminnelser: Innstillinger → Hurtigtilgang → Bunnlinje. Resten er i «Meny», som også finnes under «⋮» øverst.
+• «Meny» er mer kompakt: like høy som innholdet, innstillinger og hjelp som fliser.
+• Taster og nummerfeltet følger innstillingen «Avrunding av hjørner».
+</no-NO>
+<pl-PL>
+• Nowy dolny pasek: sekcje i środkowy przycisk z podpisami (Klawiatura, Napisz, Utwórz).
+• Sekcje na pasku można wybrać, także notatki i przypomnienia: Ustawienia → Szybki dostęp → Dolny pasek. Pozostałe są w „Menu”, dostępnym też pod „⋮” u góry.
+• „Menu” jest bardziej zwarte: wysokie jak zawartość, ustawienia i pomoc jako kafelki.
+• Klawisze i pole numeru zależą od ustawienia „Zaokrąglenie rogów”.
+</pl-PL>
+<pt-BR>
+• Nova barra inferior: seções e botão central com rótulos (Teclado, Escrever, Criar).
+• Escolha as seções da barra, incluindo Notas e Lembretes: Configurações → Acesso rápido → Barra inferior. As outras ficam no “Menu”, que também abre pelo “⋮” no topo.
+• O “Menu” ficou mais compacto: da altura do conteúdo, configurações e ajuda em blocos.
+• Teclas e campo do número seguem a configuração “Arredondamento dos cantos”.
+</pt-BR>
+<ro>
+• Bară inferioară nouă: secțiuni și buton central cu etichete (Tastatură, Scrie, Creează).
+• Alege secțiunile de pe bară, inclusiv Note și Mementouri: Setări → Acces rapid → Bara inferioară. Restul sunt în „Meniu”, disponibil și din „⋮” de sus.
+• „Meniul” e mai compact: cât conținutul, setările și ajutorul ca dale.
+• Tastele și câmpul numărului urmează setarea „Rotunjirea colțurilor”.
+</ro>
+<sk>
+• Nový spodný panel: sekcie a tlačidlo v strede s popismi (Klávesnica, Napísať, Vytvoriť).
+• Sekcie na paneli si môžete vybrať, aj poznámky a pripomienky: Nastavenia → Rýchly prístup → Spodný panel. Ostatné sú v „Menu“, ktoré je aj pod „⋮“ hore.
+• „Menu“ je kompaktnejšie: vysoké podľa obsahu, nastavenia a pomocník ako dlaždice.
+• Klávesy a pole čísla sa riadia nastavením „Zaoblenie rohov“.
+</sk>
+<sv-SE>
+• Nytt bottenfält: sektioner och en mittknapp med etiketter (Knappsats, Skriv, Skapa).
+• Välj sektionerna i fältet, även anteckningar och påminnelser: Inställningar → Snabbåtkomst → Bottenfält. Resten finns i ”Meny”, som även öppnas via ”⋮” högst upp.
+• ”Meny” är mer kompakt: lika hög som innehållet, inställningar och hjälp som rutor.
+• Knappar och nummerfältet följer inställningen ”Rundade hörn”.
+</sv-SE>
+<th>
+• แถบด้านล่างใหม่: ส่วนต่างๆ และปุ่มกลางพร้อมป้ายชื่อ (แป้นกด, เขียน, สร้าง)
+• เลือกส่วนบนแถบได้ รวมถึงโน้ตและการเตือน: การตั้งค่า → เข้าถึงด่วน → แถบด้านล่าง ส่วนที่เหลืออยู่ใน «เมนู» ซึ่งเปิดจาก «⋮» ด้านบนได้ด้วย
+• «เมนู» กะทัดรัดขึ้น: สูงเท่าเนื้อหา การตั้งค่าและความช่วยเหลือเป็นไทล์
+• ปุ่มและช่องหมายเลขเป็นไปตามการตั้งค่า «ความโค้งของมุม»
+</th>
+<tr-TR>
+• Yeni alt çubuk: bölümler ve etiketli orta düğme (Tuş takımı, Yaz, Oluştur).
+• Çubuktaki bölümleri seçin, notlar ve hatırlatıcılar dahil: Ayarlar → Hızlı erişim → Alt çubuk. Diğerleri “Menü”de; menü üstteki “⋮” ile de açılır.
+• “Menü” daha derli toplu: içeriği kadar yüksek, ayarlar ve yardım kutucuk olarak.
+• Tuşlar ve numara alanı “Köşe yuvarlaklığı” ayarına uyar.
+</tr-TR>
+<vi>
+• Thanh dưới mới: các mục và nút giữa có nhãn (Bàn phím, Viết, Tạo).
+• Chọn các mục trên thanh, kể cả Ghi chú và Lời nhắc: Cài đặt → Truy cập nhanh → Thanh dưới. Phần còn lại ở “Menu”, cũng mở được từ “⋮” phía trên.
+• “Menu” gọn hơn: cao vừa nội dung, cài đặt và trợ giúp dạng ô.
+• Phím và ô số theo cài đặt “Bo góc”.
+</vi>
+<zh-CN>
+• 全新底部栏：各分区和带标签的中央按钮（拨号盘、写短信、新建）。
+• 可自选底部栏分区，包括备注和提醒：设置 → 快捷访问 → 底部栏。其余在“菜单”中，菜单也可从顶部“⋮”打开。
+• “菜单”更紧凑：高度随内容，设置和帮助以图块显示。
+• 按键和号码栏随“圆角”设置变化。
+</zh-CN>

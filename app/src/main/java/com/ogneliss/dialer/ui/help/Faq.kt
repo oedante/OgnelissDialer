@@ -105,10 +105,11 @@ object Faq {
         FaqSection(
             R.string.faq_section_lists,
             listOf(
-                // 2.7.0: путь к «Отдельным значкам» — из пояснения настройки убрана подробность
+                // 2.7.0: путь к «Отдельным значкам» — из пояснения настройки убрана подробность.
+                // 2.9.2: ответ — про панель варианта «А» и её конструктор (было — переключатель 1.6.0)
                 FaqItem(
                     "switch", R.string.faq_q_switch, R.string.faq_a_switch,
-                    listOf(FaqLink.Setting("section_icons"))
+                    listOf(FaqLink.Setting("panel_slots"), FaqLink.Setting("section_icons"))
                 ),
                 FaqItem("search", R.string.faq_q_search, R.string.faq_a_search),
                 // 1.6.2, отзыв в Google Play: «редактировать контакты и делать
