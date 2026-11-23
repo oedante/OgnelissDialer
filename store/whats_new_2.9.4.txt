@@ -1,0 +1,81 @@
+<ru-RU>
+• Отдельные значки «SMS» и «Контакты» приложение больше не убирает само — только переключателем в настройках.
+</ru-RU>
+<ar>
+• لم يعد التطبيق يزيل أيقونتي «SMS» و«جهات الاتصال» المنفصلتين من تلقاء نفسه — فقط عبر المفتاح في الإعدادات.
+</ar>
+<cs-CZ>
+• Samostatné ikony „SMS“ a „Kontakty“ už aplikace sama neodstraňuje — jen přepínačem v nastavení.
+</cs-CZ>
+<da-DK>
+• Appen fjerner ikke længere selv de separate ikoner „SMS“ og „Kontakter“ — kun med kontakten i indstillingerne.
+</da-DK>
+<de-DE>
+• Die eigenen Symbole „SMS“ und „Kontakte“ entfernt die App nicht mehr selbst – nur über den Schalter in den Einstellungen.
+</de-DE>
+<en-US>
+• The app no longer removes the separate SMS and Contacts icons on its own — only the switch in Settings does.
+</en-US>
+<es-ES>
+• La app ya no quita por sí sola los iconos separados de «SMS» y «Contactos»: solo con el interruptor de Ajustes.
+</es-ES>
+<fi-FI>
+• Sovellus ei enää poista erillisiä ”SMS”- ja ”Yhteystiedot”-kuvakkeita itse — vain asetusten kytkimellä.
+</fi-FI>
+<fr-FR>
+• L’application ne retire plus d’elle-même les icônes séparées « SMS » et « Contacts » : seulement via l’interrupteur des réglages.
+</fr-FR>
+<hi-IN>
+• ऐप अब «SMS» और «संपर्क» के अलग आइकन खुद नहीं हटाता — केवल सेटिंग्स के स्विच से।
+</hi-IN>
+<hu-HU>
+• Az alkalmazás már nem távolítja el magától a külön „SMS” és „Névjegyek” ikont — csak a beállítások kapcsolójával.
+</hu-HU>
+<id>
+• Aplikasi tak lagi menghapus sendiri ikon terpisah “SMS” dan “Kontak” — hanya lewat sakelar di setelan.
+</id>
+<it-IT>
+• L’app non rimuove più da sola le icone separate «SMS» e «Contatti»: solo con l’interruttore nelle impostazioni.
+</it-IT>
+<iw-IL>
+• האפליקציה כבר לא מסירה בעצמה את הסמלים הנפרדים „SMS” ו„אנשי קשר” — רק המתג בהגדרות.
+</iw-IL>
+<ja-JP>
+• 「SMS」と「連絡先」の個別アイコンをアプリが勝手に消すことはなくなりました。消すのは設定のスイッチだけです。
+</ja-JP>
+<ko-KR>
+• 앱이 'SMS'와 '연락처' 개별 아이콘을 더 이상 스스로 없애지 않습니다. 설정의 스위치로만 없앨 수 있습니다.
+</ko-KR>
+<nl-NL>
+• De app verwijdert de aparte pictogrammen ‘Sms’ en ‘Contacten’ niet meer zelf — alleen via de schakelaar in de instellingen.
+</nl-NL>
+<no-NO>
+• Appen fjerner ikke lenger de egne ikonene «SMS» og «Kontakter» selv — bare med bryteren i innstillingene.
+</no-NO>
+<pl-PL>
+• Aplikacja nie usuwa już sama osobnych ikon „SMS” i „Kontakty” — tylko przełącznikiem w ustawieniach.
+</pl-PL>
+<pt-BR>
+• O app não remove mais sozinho os ícones separados “SMS” e “Contatos” — só pela chave nas configurações.
+</pt-BR>
+<ro>
+• Aplicația nu mai elimină singură pictogramele separate „SMS” și „Contacte” — doar comutatorul din setări.
+</ro>
+<sk>
+• Samostatné ikony „SMS“ a „Kontakty“ už aplikácia sama neodstraňuje — len prepínačom v nastaveniach.
+</sk>
+<sv-SE>
+• Appen tar inte längre bort de separata ikonerna ”SMS” och ”Kontakter” själv — bara med reglaget i inställningarna.
+</sv-SE>
+<th>
+• แอปไม่ลบไอคอน «SMS» และ «รายชื่อติดต่อ» แยกเองอีกต่อไป — ลบได้ด้วยสวิตช์ในการตั้งค่าเท่านั้น
+</th>
+<tr-TR>
+• Uygulama ayrı “SMS” ve “Kişiler” simgelerini artık kendiliğinden kaldırmıyor — yalnızca ayarlardaki anahtarla.
+</tr-TR>
+<vi>
+• Ứng dụng không còn tự gỡ biểu tượng riêng “SMS” và “Danh bạ” — chỉ gỡ bằng công tắc trong cài đặt.
+</vi>
+<zh-CN>
+• 应用不再自行移除单独的“短信”和“联系人”图标，只能通过设置中的开关移除。
+</zh-CN>

@@ -1613,7 +1613,19 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      * Данные (заметки, списки) при этом НЕ удаляются — они в базе.
      */
     suspend fun resetAll() {
-        runCatching { context.dataStore.edit { it.clear() } }
+        runCatching {
+            context.dataStore.edit {
+                /*
+                 * «Отдельные значки» (2.9.4) не сбрасываются: настройка повторяет
+                 * то, что хранит Android, а значки приложение само не убирает
+                 * (SectionIcons.reconcile) — иначе переключатель показывал бы
+                 * «выкл.» при значках в списке приложений.
+                 */
+                val icons = it[Keys.SECTION_ICONS]
+                it.clear()
+                if (icons != null) it[Keys.SECTION_ICONS] = icons
+            }
+        }
             .onSuccess {
                 Logger.i(TAG, "Настройки сброшены к значениям по умолчанию")
                 // 2.7.4: отметки свои фоны вызова сброшены вместе с настройками —
