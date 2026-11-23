@@ -1,0 +1,162 @@
+<ru-RU>
+• Сервисные коды (*#*#…#*#*, *#06#) срабатывают сразу при наборе.
+• Можно звонить и писать только с одной SIM: Настройки → SIM-карты.
+• Текст SMS в уведомлениях можно скрыть; в переписке легко выделить часть сообщения.
+• «Цвета системы» (Monet) снова в основном «Оформлении».
+</ru-RU>
+<ar>
+• الرموز الخدمية (*#*#…#*#* و*#06#) تعمل فور كتابتها.
+• يمكن الاتصال والمراسلة من شريحة واحدة فقط: الإعدادات ← شرائح SIM.
+• يمكن إخفاء نص الرسائل في الإشعارات؛ وتحديد جزء من الرسالة بسهولة.
+• «ألوان النظام» (Monet) عادت إلى «المظهر» الرئيسي.
+</ar>
+<cs-CZ>
+• Servisní kódy (*#*#…#*#*, *#06#) fungují hned při vytáčení.
+• Volat a psát lze jen z jedné SIM: Nastavení → SIM karty.
+• Text SMS v oznámeních lze skrýt; v konverzaci snadno označíte část zprávy.
+• „Systémové barvy“ (Monet) jsou opět v hlavním „Vzhledu“.
+</cs-CZ>
+<da-DK>
+• Servicekoder (*#*#…#*#*, *#06#) virker med det samme, når de tastes.
+• Du kan ringe og skrive fra kun ét SIM: Indstillinger → SIM-kort.
+• SMS-tekst i notifikationer kan skjules; marker nemt en del af en besked.
+• „Systemfarver“ (Monet) er tilbage under „Udseende“.
+</da-DK>
+<de-DE>
+• Servicecodes (*#*#…#*#*, *#06#) wirken sofort beim Eintippen.
+• Anrufe und SMS nur über eine SIM: Einstellungen → SIM-Karten.
+• SMS-Text in Benachrichtigungen ausblendbar; Teile einer Nachricht leicht markieren.
+• „Systemfarben“ (Monet) wieder unter „Darstellung“.
+</de-DE>
+<en-US>
+• Service codes (*#*#…#*#*, *#06#) work as soon as you type them.
+• Call and text from one SIM only: Settings → SIM cards.
+• SMS text can be hidden in notifications; easily select part of a message.
+• "System colors" (Monet) are back in the main Appearance section.
+</en-US>
+<es-ES>
+• Los códigos de servicio (*#*#…#*#*, *#06#) funcionan al marcarlos.
+• Llama y escribe solo con una SIM: Ajustes → Tarjetas SIM.
+• Puedes ocultar el texto de los SMS en notificaciones y seleccionar parte de un mensaje.
+• «Colores del sistema» (Monet) vuelven a la sección principal de Apariencia.
+</es-ES>
+<fi-FI>
+• Palvelukoodit (*#*#…#*#*, *#06#) toimivat heti näppäiltäessä.
+• Soita ja viestitä vain yhdeltä SIM-kortilta: Asetukset → SIM-kortit.
+• Tekstiviestin sisällön voi piilottaa ilmoituksista; osan viestistä voi valita helposti.
+• ”Järjestelmän värit” (Monet) taas pääasetuksissa.
+</fi-FI>
+<fr-FR>
+• Les codes de service (*#*#…#*#*, *#06#) agissent dès la saisie.
+• Appels et SMS depuis une seule SIM : Paramètres → Cartes SIM.
+• Texte des SMS masquable dans les notifications ; sélection facile d’une partie d’un message.
+• « Couleurs du système » (Monet) de retour dans l’Apparence principale.
+</fr-FR>
+<hi-IN>
+• सर्विस कोड (*#*#…#*#*, *#06#) टाइप करते ही काम करते हैं।
+• केवल एक SIM से कॉल और SMS: सेटिंग्स → SIM कार्ड।
+• सूचनाओं में SMS का टेक्स्ट छिपाया जा सकता है; संदेश का हिस्सा आसानी से चुनें।
+• «सिस्टम रंग» (Monet) फिर मुख्य «रूप» में।
+</hi-IN>
+<hu-HU>
+• A szervizkódok (*#*#…#*#*, *#06#) beírás után azonnal működnek.
+• Hívás és SMS csak egy SIM-ről: Beállítások → SIM-kártyák.
+• Az SMS szövege elrejthető az értesítésekben; az üzenet egy része könnyen kijelölhető.
+• A „Rendszerszínek” (Monet) ismét a fő „Megjelenés” alatt.
+</hu-HU>
+<id>
+• Kode layanan (*#*#…#*#*, *#06#) langsung bekerja saat diketik.
+• Telepon dan SMS hanya dari satu SIM: Setelan → Kartu SIM.
+• Teks SMS di notifikasi bisa disembunyikan; pilih sebagian pesan dengan mudah.
+• “Warna sistem” (Monet) kembali di bagian utama Tampilan.
+</id>
+<it-IT>
+• I codici di servizio (*#*#…#*#*, *#06#) funzionano appena digitati.
+• Chiamate e SMS da una sola SIM: Impostazioni → Schede SIM.
+• Testo degli SMS nascondibile nelle notifiche; selezione facile di parte di un messaggio.
+• «Colori di sistema» (Monet) di nuovo nell’Aspetto principale.
+</it-IT>
+<iw-IL>
+• קודי שירות (*#*#…#*#*, *#06#) פועלים מיד בהקלדה.
+• שיחות ו-SMS מ-SIM אחד בלבד: הגדרות ← כרטיסי SIM.
+• אפשר להסתיר את טקסט ה-SMS בהתראות; ולבחור בקלות חלק מהודעה.
+• „צבעי המערכת” (Monet) חזרו ל„מראה” הראשי.
+</iw-IL>
+<ja-JP>
+• サービスコード（*#*#…#*#*、*#06#）は入力した時点で動作します。
+• 発信と SMS を 1 枚の SIM だけに：設定 → SIM カード。
+• 通知の SMS 本文を非表示にでき、メッセージの一部も簡単に選択できます。
+• 「システムの色」（Monet）がメインの「表示」に戻りました。
+</ja-JP>
+<ko-KR>
+• 서비스 코드(*#*#…#*#*, *#06#)가 입력 즉시 작동합니다.
+• 통화와 SMS를 SIM 하나로만: 설정 → SIM 카드.
+• 알림에서 SMS 내용을 숨길 수 있고, 메시지 일부를 쉽게 선택할 수 있습니다.
+• '시스템 색상'(Monet)이 기본 '모양'으로 돌아왔습니다.
+</ko-KR>
+<nl-NL>
+• Servicecodes (*#*#…#*#*, *#06#) werken meteen bij het intoetsen.
+• Bellen en sms’en via één simkaart: Instellingen → Simkaarten.
+• Sms-tekst in meldingen te verbergen; selecteer eenvoudig een deel van een bericht.
+• ‘Systeemkleuren’ (Monet) weer onder ‘Weergave’.
+</nl-NL>
+<no-NO>
+• Servicekoder (*#*#…#*#*, *#06#) virker med en gang de tastes.
+• Ring og send SMS fra bare ett SIM: Innstillinger → SIM-kort.
+• SMS-tekst kan skjules i varsler; marker enkelt en del av en melding.
+• «Systemfarger» (Monet) er tilbake under «Utseende».
+</no-NO>
+<pl-PL>
+• Kody serwisowe (*#*#…#*#*, *#06#) działają od razu po wpisaniu.
+• Połączenia i SMS tylko z jednej karty SIM: Ustawienia → Karty SIM.
+• Tekst SMS w powiadomieniach można ukryć; łatwo zaznaczysz część wiadomości.
+• „Kolory systemu” (Monet) wróciły do głównego „Wyglądu”.
+</pl-PL>
+<pt-BR>
+• Códigos de serviço (*#*#…#*#*, *#06#) funcionam assim que digitados.
+• Ligue e envie SMS por um só SIM: Configurações → Cartões SIM.
+• O texto do SMS pode ficar oculto nas notificações; selecione parte de uma mensagem com facilidade.
+• “Cores do sistema” (Monet) de volta na Aparência principal.
+</pt-BR>
+<ro>
+• Codurile de serviciu (*#*#…#*#*, *#06#) funcționează imediat ce sunt tastate.
+• Apeluri și SMS doar de pe o singură cartelă: Setări → Cartele SIM.
+• Textul SMS poate fi ascuns în notificări; selectezi ușor o parte din mesaj.
+• „Culorile sistemului” (Monet) din nou în „Aspect”.
+</ro>
+<sk>
+• Servisné kódy (*#*#…#*#*, *#06#) fungujú hneď pri zadaní.
+• Volať a písať len z jednej SIM: Nastavenia → SIM karty.
+• Text SMS v upozorneniach možno skryť; časť správy ľahko označíte.
+• „Systémové farby“ (Monet) sú opäť v hlavnom „Vzhľade“.
+</sk>
+<sv-SE>
+• Servicekoder (*#*#…#*#*, *#06#) fungerar direkt när de knappas in.
+• Ring och sms:a från bara ett SIM: Inställningar → SIM-kort.
+• SMS-text kan döljas i aviseringar; markera enkelt en del av ett meddelande.
+• ”Systemfärger” (Monet) är tillbaka under ”Utseende”.
+</sv-SE>
+<th>
+• รหัสบริการ (*#*#…#*#*, *#06#) ทำงานทันทีที่พิมพ์
+• โทรและส่ง SMS จาก SIM เดียว: การตั้งค่า → ซิมการ์ด
+• ซ่อนข้อความ SMS ในการแจ้งเตือนได้ และเลือกบางส่วนของข้อความได้ง่าย
+• «สีของระบบ» (Monet) กลับมาอยู่ใน «รูปลักษณ์» หลัก
+</th>
+<tr-TR>
+• Servis kodları (*#*#…#*#*, *#06#) yazılır yazılmaz çalışır.
+• Yalnızca tek SIM ile arama ve SMS: Ayarlar → SIM kartlar.
+• Bildirimlerde SMS metni gizlenebilir; mesajın bir kısmını kolayca seçin.
+• “Sistem renkleri” (Monet) yeniden ana “Görünüm”de.
+</tr-TR>
+<vi>
+• Mã dịch vụ (*#*#…#*#*, *#06#) hoạt động ngay khi nhập.
+• Gọi và nhắn tin chỉ bằng một SIM: Cài đặt → Thẻ SIM.
+• Có thể ẩn nội dung SMS trong thông báo; dễ dàng chọn một phần tin nhắn.
+• “Màu hệ thống” (Monet) trở lại mục Giao diện chính.
+</vi>
+<zh-CN>
+• 服务代码（*#*#…#*#*、*#06#）输入完即生效。
+• 可仅用一张 SIM 卡拨号和发短信：设置 → SIM 卡。
+• 可在通知中隐藏短信内容；轻松选择消息的一部分。
+• “系统颜色”（Monet）回到主“外观”设置。
+</zh-CN>

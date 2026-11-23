@@ -120,6 +120,7 @@ class SettingsCommands @Inject constructor(
             "block_tagged" -> prefs.setBlockTaggedSpam(value)
             "scam_memo" -> prefs.setScamMemo(value)
             "sms_delivery_reports" -> prefs.setSmsDeliveryReports(value)
+            "sms_hide_text" -> prefs.setSmsHideText(value)
             // 2.8.6: выключили — висящие уведомления о входящих снимаются сразу
             "sms_notifications_off" -> {
                 prefs.setSmsNotificationsOff(value)
@@ -184,6 +185,7 @@ class SettingsCommands @Inject constructor(
                 NotesRetention.Scope.from(value)
             )
             "swipe_sim" -> prefs.setSwipeSimMode(SwipeSimMode.from(value))
+            "outgoing_sim" -> prefs.setOutgoingSim(OutgoingSim.from(value))
             "carrier_info" -> prefs.setCarrierInfo(CarrierInfoMode.from(value))
             "call_photo_style" -> prefs.setCallPhotoStyle(CallPhotoStyle.from(value))
             /*
@@ -306,6 +308,7 @@ class SettingsCommands @Inject constructor(
         "grouping" -> state.groupingMode.name
         "sort_order" -> state.sortOrder.name
         "swipe_sim" -> state.swipeSimMode.name
+        "outgoing_sim" -> state.outgoingSim.name
         "carrier_info" -> state.carrierInfo.name
         "call_photo_style" -> state.callPhotoStyle.name
         // 2.7.4: свой фон вызова — «Свой снимок» (CUSTOM), если отметка есть
@@ -419,6 +422,8 @@ class SettingsCommands @Inject constructor(
             context.getString(uiScaleLabelRes(state.uiScale))
         }
 
+        "outgoing_sim" -> context.getString(outgoingSimLabelRes(state.outgoingSim))
+
         "swipe_sim" -> context.getString(
             when (state.swipeSimMode) {
                 SwipeSimMode.ASK -> R.string.swipe_sim_ask
@@ -473,6 +478,7 @@ class SettingsCommands @Inject constructor(
             "grouping" -> R.string.settings_grouping
             "sort_order" -> R.string.settings_sort_order
             "swipe_sim" -> R.string.settings_swipe_sim
+            "outgoing_sim" -> R.string.settings_outgoing_sim
             "carrier_info" -> R.string.settings_carrier_info
             "call_photo_style" -> R.string.settings_call_photo
             "call_bg_incoming" -> R.string.settings_call_bg_incoming
@@ -575,6 +581,13 @@ class SettingsCommands @Inject constructor(
         }
 
         /** Подпись варианта масштаба — для строки настройки и диалога. */
+        /** Подпись «Карты для звонков и SMS» (2.9.1). */
+        fun outgoingSimLabelRes(sim: OutgoingSim): Int = when (sim) {
+            OutgoingSim.ASK -> R.string.outgoing_sim_ask
+            OutgoingSim.SIM1 -> R.string.outgoing_sim_1
+            OutgoingSim.SIM2 -> R.string.outgoing_sim_2
+        }
+
         fun uiScaleLabelRes(scale: UiScale): Int = when (scale) {
             UiScale.AUTO -> R.string.ui_scale_auto
             UiScale.S85 -> R.string.ui_scale_85
@@ -748,7 +761,9 @@ class SettingsCommands @Inject constructor(
             // 2.2.0
             "sms_calls_in_thread",
             // 2.8.6
-            "sms_notifications_off"
+            "sms_notifications_off",
+            // 2.9.1
+            "sms_hide_text"
         )
 
         /** Ключи, которые обрабатывает setChoice. */
@@ -759,6 +774,8 @@ class SettingsCommands @Inject constructor(
             // 2.2.0
             "sms_undo_send", "sms_otp_cleanup",
             "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info",
+            // 2.9.1
+            "outgoing_sim",
             "call_photo_style", "call_photo_size", "answer_mode", "ui_scale",
             // 2.7.4
             "call_bg_incoming", "call_bg_outgoing",

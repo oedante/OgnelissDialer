@@ -1128,4 +1128,15 @@
     <string name="settings_section_advanced">Расширенные настройки</string>
     <string name="settings_section_advanced_summary">Тонкая настройка, редкие пункты, диагностика</string>
     <string name="settings_advanced_more">Ещё в «Расширенных настройках»</string>
+    <string name="settings_outgoing_sim">Карта для звонков и SMS</string>
+    <string name="settings_outgoing_sim_text">Вторая карта — только для входящих</string>
+    <string name="outgoing_sim_ask">Выбирать (две кнопки)</string>
+    <string name="outgoing_sim_1">Только SIM 1</string>
+    <string name="outgoing_sim_2">Только SIM 2</string>
+    <string name="keywords_outgoing_sim">сим карта по умолчанию исходящие звонки смс одна только вторая две</string>
+    <string name="settings_sms_hide_text">Скрывать текст в уведомлениях</string>
+    <string name="settings_sms_hide_text_text">Только отправитель, без текста и кодов</string>
+    <string name="sms_new_messages_count">Новых сообщений: %1$d</string>
+    <string name="sms_copy_code_hidden">Копировать код</string>
+    <string name="keywords_dynamic_color">monet material you моне обои цвета системы динамические тема акцент</string>
 </resources>

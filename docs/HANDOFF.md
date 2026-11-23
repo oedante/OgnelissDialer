@@ -12,6 +12,13 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 23.11.2026 — 2.9.1 (96): форум — коды при наборе, одна карта для исходящих, скрытый текст SMS
+
+Разбор — `docs/RELEASE_NOTES_2.9.1.md`. `ServiceCodes`; `OutgoingSim` (ключ `default_sim`) +
+`SimCallPlan.outgoing` в `call`/`performSwipe`/`chooseSim`, клавиатуре и переписке;
+`sms_hide_text` (`SmsSettings.hideText`, `MessageNotifications`); «Выделить текст» в панели
+выбора переписки; `dynamic_color` — снова основной. Нижняя и боковая панель — варианты у автора.
+
 ## 22.11.2026 — 2.9.0 (95): тень под шапкой в переписке SMS и карточке
 
 Разбор — `docs/RELEASE_NOTES_2.9.0.md`. `scrollEdgeFade(state, reverse)` у ленты переписки;

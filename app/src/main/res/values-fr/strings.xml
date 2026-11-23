@@ -1118,4 +1118,15 @@
     <string name="settings_section_advanced">Paramètres avancés</string>
     <string name="settings_section_advanced_summary">Réglages fins, options rares, diagnostic</string>
     <string name="settings_advanced_more">Plus dans « Paramètres avancés »</string>
+    <string name="settings_outgoing_sim">SIM pour appels et SMS</string>
+    <string name="settings_outgoing_sim_text">L’autre SIM ne sert qu’aux appels entrants</string>
+    <string name="outgoing_sim_ask">Choisir à chaque fois (deux boutons)</string>
+    <string name="outgoing_sim_1">SIM 1 uniquement</string>
+    <string name="outgoing_sim_2">SIM 2 uniquement</string>
+    <string name="keywords_outgoing_sim">carte SIM par défaut sortant appels SMS seule deuxième double</string>
+    <string name="settings_sms_hide_text">Masquer le texte des notifications</string>
+    <string name="settings_sms_hide_text_text">Expéditeur seul, sans texte ni codes</string>
+    <string name="sms_new_messages_count">Nouveaux messages : %1$d</string>
+    <string name="sms_copy_code_hidden">Copier le code</string>
+    <string name="keywords_dynamic_color">monet material you fond d’écran couleurs système dynamique thème accent</string>
 </resources>

@@ -67,6 +67,9 @@ fun SettingsChoiceDialog(
             // в коде, но выбрать её было нельзя
             ThemeMode.HIGH_CONTRAST.name to stringResource(R.string.settings_theme_contrast)
         )
+        "outgoing_sim" -> com.ogneliss.dialer.settings.OutgoingSim.entries.map {
+            it.name to stringResource(com.ogneliss.dialer.settings.SettingsCommands.outgoingSimLabelRes(it))
+        }
         "swipe_sim" -> listOf(
             SwipeSimMode.ASK.name to stringResource(R.string.swipe_sim_ask),
             SwipeSimMode.FIRST.name to stringResource(R.string.swipe_sim_first),

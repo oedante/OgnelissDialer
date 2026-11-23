@@ -121,6 +121,8 @@ data class SettingsState(
     val language: String = "",
     /** Какой SIM действовать при свайпе; по умолчанию спрашиваем. */
     val swipeSimMode: SwipeSimMode = SwipeSimMode.ASK,
+    /** Карта для звонков и SMS (2.9.1): разбор у OutgoingSim. */
+    val outgoingSim: com.ogneliss.dialer.settings.OutgoingSim = com.ogneliss.dialer.settings.OutgoingSim.ASK,
     /** Перелистывание между вызовами и контактами свайпом по панели. */
     val panelSwipeNav: Boolean = true,
     /**
@@ -152,6 +154,8 @@ data class SettingsState(
     val smsDeliveryReports: Boolean = false,
     /** «Отключить уведомления SMS» (2.8.6): по умолчанию уведомления идут. */
     val smsNotificationsOff: Boolean = false,
+    /** «Скрывать текст в уведомлениях» (2.9.1). */
+    val smsHideText: Boolean = false,
     // 2.2.0
     val smsUndoSend: com.ogneliss.dialer.settings.UndoSend = com.ogneliss.dialer.settings.UndoSend.S5,
     val smsCallsInThread: Boolean = true,
@@ -194,6 +198,7 @@ data class SettingsState(
         "scam_memo" -> scamMemo
         "sms_delivery_reports" -> smsDeliveryReports
         "sms_notifications_off" -> smsNotificationsOff
+        "sms_hide_text" -> smsHideText
         "sms_calls_in_thread" -> smsCallsInThread
         else -> false
     }
@@ -225,7 +230,9 @@ data class SettingsState(
             // 2.2.0
             "sms_calls_in_thread",
             // 2.8.6
-            "sms_notifications_off"
+            "sms_notifications_off",
+            // 2.9.1
+            "sms_hide_text"
         )
     }
 }

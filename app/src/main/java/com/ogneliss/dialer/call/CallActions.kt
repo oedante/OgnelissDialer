@@ -139,7 +139,7 @@ class CallActions(
     @SuppressLint("MissingPermission")
     fun handleSecretCode(query: String): Boolean {
         val code = query.trim()
-        SECRET_CODE.matchEntire(code)?.let { match ->
+        ServiceCodes.SECRET.matchEntire(code)?.let { match ->
             val tm = context.getSystemService(TelephonyManager::class.java) ?: return false
             /*
              * Через отражение: метод открыт с API 26, но из заглушек
@@ -151,12 +151,13 @@ class CallActions(
                 TelephonyManager::class.java
                     .getMethod("sendDialerSpecificSecretCode", String::class.java)
                     .invoke(tm, match.groupValues[1])
+                Logger.i("Call", "Сервисный код передан системе")
                 true
             }
                 .onFailure { Logger.w("Call", "Секретный код не передан", it) }
                 .getOrDefault(false)
         }
-        if (code == IMEI_CODE) {
+        if (code == ServiceCodes.IMEI) {
             val tm = context.getSystemService(TelecomManager::class.java) ?: return false
             return runCatching { tm.handleMmi(code) }
                 .onFailure { Logger.w("Call", "Код IMEI не обработан системой", it) }
@@ -165,10 +166,6 @@ class CallActions(
         return false
     }
 
-    private companion object {
-        val SECRET_CODE = Regex("""\*#\*#(\d+)#\*#\*""")
-        const val IMEI_CODE = "*#06#"
-    }
 
     /** «Написать»: переписка в диалере или приложение SMS (см. ExternalApps.sms). */
     fun openSms(number: String, body: String? = null) = start(

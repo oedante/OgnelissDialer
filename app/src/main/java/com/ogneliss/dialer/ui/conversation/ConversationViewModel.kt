@@ -179,6 +179,9 @@ class ConversationViewModel @Inject constructor(
 
     private var threadId: Long? = null
 
+    /** Подписка «Карты для звонков и SMS» (2.9.1); null — не выбрана или карты нет. */
+    @Volatile private var outgoingSubId: Int? = null
+
     init {
         // Текст из намерения («Поделиться», sms:…?body=) — один раз, не поверх черновика
         if (savedState.get<Boolean>(KEY_DRAFT_SEEDED) != true) {
@@ -189,10 +192,13 @@ class ConversationViewModel @Inject constructor(
         viewModelScope.launch {
             val slots = runCatching { sims.slotsAsync() }.getOrDefault(emptyList())
             val requested = savedState.get<Int>(ConversationRequest.ARG_SUB)?.takeIf { it >= 0 }
+            // 2.9.1: «Карта для звонков и SMS» — с неё, а не с карты последнего сообщения
+            outgoingSubId = runCatching { prefs.defaultSim.first() }.getOrDefault(-1)
+                .let { slot -> slots.firstOrNull { it.slotIndex == slot }?.subscriptionId }
             _state.update {
                 // Переписка ещё читается — карту последнего сообщения выберет refresh()
                 val fallback = if (!it.loading && slots.size > 1) SmsSender.resolveSubId(app, null) else null
-                it.copy(sims = slots, subId = it.subId ?: requested ?: fallback)
+                it.copy(sims = slots, subId = requested ?: outgoingSubId ?: it.subId ?: fallback)
             }
         }
         // Черновик из базы (2.2.0) — если экран открыт заново, а не повёрнут, и текста из намерения нет
@@ -250,7 +256,7 @@ class ConversationViewModel @Inject constructor(
                 mmsEnabled = mms,
                 // Карта по умолчанию — карта последнего сообщения переписки, иначе
                 // карта SMS из настроек Android (при двух SIM — видно в строке ввода)
-                subId = s.subId ?: messages.lastOrNull { it.subId != null }?.subId
+                subId = s.subId ?: outgoingSubId ?: messages.lastOrNull { it.subId != null }?.subId
                     ?: if (s.sims.size > 1) SmsSender.resolveSubId(app, null) else null
             )
         }

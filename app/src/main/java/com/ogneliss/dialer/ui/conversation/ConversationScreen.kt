@@ -284,6 +284,20 @@ fun ConversationScreen(
                                 if (chosen.size != 1) selection.clear()
                             }
                         )
+                        /*
+                         * «Выделить текст» прямо в панели выбора (2.9.1, форум, eXense:
+                         * «текст смс копируется полностью, нельзя выделить только часть»).
+                         * Выделение было с 2.2.0, но в три шага: долгое нажатие →
+                         * «Копировать» → «Выделить текст» — его не находили. Теперь
+                         * долгое нажатие → «Выделить»: окно, где выделяется любая часть.
+                         */
+                        SelectionAction(
+                            OgnelissIcons.SelectAll, stringResource(R.string.sms_select_text), selection.count == 1,
+                            {
+                                selectTextOf = selected().firstOrNull()
+                                selection.clear()
+                            }
+                        )
                         SelectionAction(
                             OgnelissIcons.Forward, stringResource(R.string.sms_forward), selection.count > 0,
                             {

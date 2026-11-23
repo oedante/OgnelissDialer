@@ -1656,6 +1656,18 @@ class DialerViewModel @Inject constructor(
         // а это ощущается как подвисание клавиатуры
         _state.update { it.copy(query = q) }
 
+        /*
+         * СЕРВИСНЫЙ КОД — СРАЗУ, КАК НАБРАН (2.9.1, форум: «secret code обрабатывать
+         * не умеет?»). *#*#код#*#* и *#06# срабатывают на последнем символе,
+         * как в системной звонилке, — без кнопки вызова. Передан — поле пустеет;
+         * система не приняла — код остаётся в поле, кнопка вызова попробует ещё раз.
+         */
+        if (com.ogneliss.dialer.call.ServiceCodes.isComplete(q) && actions.handleSecretCode(q)) {
+            _state.update { it.copy(query = "", filteredContacts = emptyList(), filteredLog = emptyList()) }
+            searchJob?.cancel()
+            return
+        }
+
         searchJob?.cancel()
 
         // Пустой запрос очищаем сразу, без похода в фон: ждать нечего,
@@ -1783,12 +1795,21 @@ class DialerViewModel @Inject constructor(
      */
     fun call(number: String, slotIndex: Int = -1) = viewModelScope.launch {
         val e164 = com.ogneliss.dialer.util.PhoneFormatter.toE164(number)
+        /*
+         * «Карта для звонков и SMS» (2.9.1): выбрана и вставлена — она главнее
+         * запомненной для номера. Человек сказал «звонить только с этой», и
+         * прежний выбор для отдельного номера не должен увести звонок на вторую.
+         */
+        val outgoing = prefs.defaultSim.first().takeIf { slot ->
+            slot >= 0 && state.value.sims.any { it.slotIndex == slot }
+        }
 
         val slot = when {
             slotIndex >= 0 -> {
                 if (prefs.rememberSim.first()) simPrefs.remember(e164, slotIndex)
                 slotIndex
             }
+            outgoing != null -> outgoing
             else -> simPrefs.slotFor(e164)
                 ?: prefs.defaultSim.first().takeIf { it >= 0 }
                 ?: -1
@@ -2861,9 +2882,16 @@ class DialerViewModel @Inject constructor(
      * Одна карта — выбирать нечего: действие выполняется сразу, как касание.
      */
     fun chooseSim(number: String, action: SimAction, displayName: String? = null) {
-        val sims = state.value.sims
+        // 2.9.1: выбрана «Карта для звонков и SMS» — окна выбора нет, сразу с неё
+        val sims = SimCallPlan.outgoing(state.value.sims, settingsState.value.outgoingSim.slot)
         if (sims.size < 2) {
-            if (action == SimAction.CALL) call(number) else openSms(number)
+            val only = sims.singleOrNull()?.takeIf { state.value.sims.size > 1 }
+            when {
+                // Без слота: call() сам возьмёт выбранную карту и не запишет её номеру
+                action == SimAction.CALL -> call(number)
+                only != null -> openSmsFromSim(number, only)
+                else -> openSms(number)
+            }
             return
         }
         val e164 = PhoneFormatter.toE164(number)
@@ -2929,7 +2957,8 @@ class DialerViewModel @Inject constructor(
             return
         }
         val needsSim = action == SwipeAction.CALL
-        val sims = state.value.sims
+        // 2.9.1: выбрана «Карта для звонков и SMS» — карта одна, без вопроса
+        val sims = SimCallPlan.outgoing(state.value.sims, settingsState.value.outgoingSim.slot)
 
         if (!needsSim || sims.size <= 1) {
             handleSwipe(action, group)

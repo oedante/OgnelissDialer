@@ -294,6 +294,11 @@ object SmsSettings {
 
     fun notificationsOff(context: Context): Boolean = prefs(context).getBoolean(KEY_NOTIFICATIONS_OFF, false)
 
+    /** «Скрывать текст в уведомлениях» (2.9.1): отправитель виден, текст — нет. */
+    const val KEY_HIDE_TEXT = "sms_hide_text"
+
+    fun hideText(context: Context): Boolean = prefs(context).getBoolean(KEY_HIDE_TEXT, false)
+
     /*
      * Полоса «разрешите автозапуск» — один раз (2.1.0: в списке SMS,
      * SmsHealth; было — в переписке): на Huawei, OPPO, vivo, Tecno
