@@ -201,8 +201,9 @@ fun CallAmbientBackground(
         val texts = intArrayOf(textMain, textMuted)
         val base = PhotoPalette.ambientTones(
             when {
-                // «Пламя»: золото, графит и тёплый — цвета значка
-                flame -> FLAME_SWATCHES
+                // «Пламя»: в светлой — золото, графит и янтарь; в тёмной — графит
+                // значка (золото там бурело на весь экран), золото — в свечении и волнах
+                flame -> if (dark) FLAME_SWATCHES_DARK else FLAME_SWATCHES
                 else -> photoSwatches ?: PhotoPalette.themeSwatches(accent)
             },
             dark, texts
@@ -225,8 +226,11 @@ fun CallAmbientBackground(
             else -> PhotoPalette.ringTone(tones[0], dark)
         }
     }
-    val haloTarget = remember(tones, dark, textMain, textMuted) {
-        PhotoPalette.haloTone(tones[0], dark, intArrayOf(textMain, textMuted))
+    val haloTarget = remember(tones, dark, textMain, textMuted, flame, mood) {
+        if (flame && mood != AmbientMood.HOLDING) {
+            // Свечение пламени — золотое (в тёмной — приглушённое, чтобы не бурело)
+            if (dark) FLAME_GLOW_DARK else FLAME_GLOW_LIGHT
+        } else PhotoPalette.haloTone(tones[0], dark, intArrayOf(textMain, textMuted))
     }
     // State, а не значения: читаются в кадре — смена цвета не пересобирает экран
     val toneA = animateColorAsState(Color(tones[0]), tween(Motion.SLOW_MS), label = "ambientA")
@@ -678,8 +682,20 @@ private val FLAME_PAGE_LIGHT = 0xFFF8F4EC.toInt()
 private val FLAME_GOLD = 0xFFCCAA6D.toInt()
 /** Волны в светлой теме — темнее: светлое золото на светлом не видно. */
 private val FLAME_GOLD_DEEP = 0xFFAD8540.toInt()
-/** Поля: золото пламени, графит значка, тёплый янтарь. */
-private val FLAME_SWATCHES = intArrayOf(FLAME_GOLD, 0xFF3A4450.toInt(), 0xFFD9A85B.toInt())
+/** Поля: золото пламени, графит значка, тёплый янтарь — образцы, как у снимка звонящего. */
+private val FLAME_SWATCHES: List<PhotoPalette.Swatch> =
+    swatchesOf(FLAME_GOLD, 0xFF3A4450.toInt(), 0xFFD9A85B.toInt())
+/** Тёмная тема: синеватый графит, графит значка, тёплый графит — фон как у значка. */
+private val FLAME_SWATCHES_DARK: List<PhotoPalette.Swatch> =
+    swatchesOf(0xFF4C5C72.toInt(), 0xFF3A4450.toInt(), 0xFF5A5249.toInt())
+/** Свечение вокруг пламени: в тёмной — приглушённое золото, в светлой — тёплое. */
+private val FLAME_GLOW_DARK = 0xFF8C7444.toInt()
+private val FLAME_GLOW_LIGHT = 0xFFE9CF98.toInt()
+
+private fun swatchesOf(vararg argb: Int): List<PhotoPalette.Swatch> = argb.mapIndexed { i, c ->
+    val hsl = ThemePresetMath.toHsl(c)
+    PhotoPalette.Swatch(hsl.h, hsl.s, hsl.l, 1.0 - 0.2 * i)
+}
 /** Эмблема: доля ширины и высоты экрана (меньшее из двух). */
 private const val EMBLEM_WIDTH = 0.46f
 private const val EMBLEM_HEIGHT = 0.24f

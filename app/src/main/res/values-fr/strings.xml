@@ -1155,4 +1155,9 @@
     <string name="imei_sim">SIM %1$d</string>
     <string name="imei_unavailable">Android ne donne l’IMEI qu’à l’application Téléphone du système et à l’application SMS par défaut. Vous le trouverez dans les réglages du téléphone : « À propos du téléphone ».</string>
     <string name="imei_open_about">À propos du téléphone</string>
+    <string name="settings_call_ambient_style">Style du fond animé</string>
+    <string name="settings_call_ambient_style_text">Couleurs du thème et de la photo, ou flamme et renard</string>
+    <string name="call_ambient_theme">Couleurs du thème et de la photo</string>
+    <string name="call_ambient_flame">Flamme et renard</string>
+    <string name="keywords_call_ambient_style">écran d’appel, fond, animation, ondes, flamme, renard, logo, style</string>
 </resources>

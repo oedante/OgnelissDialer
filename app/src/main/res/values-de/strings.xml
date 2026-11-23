@@ -1156,4 +1156,9 @@
     <string name="imei_sim">SIM %1$d</string>
     <string name="imei_unavailable">Die IMEI gibt Android nur der System-Telefon-App und der Standard-SMS-App. Sie finden sie in den Telefoneinstellungen unter „Über das Telefon“.</string>
     <string name="imei_open_about">Über das Telefon</string>
+    <string name="settings_call_ambient_style">Aussehen des Live-Hintergrunds</string>
+    <string name="settings_call_ambient_style_text">Farben von Design und Foto oder Flamme mit Fuchs</string>
+    <string name="call_ambient_theme">Farben von Design und Foto</string>
+    <string name="call_ambient_flame">Flamme und Fuchs</string>
+    <string name="keywords_call_ambient_style">Anrufbildschirm, Hintergrund, Animation, Wellen, Flamme, Fuchs, Logo, Aussehen</string>
 </resources>

@@ -861,6 +861,16 @@ object SettingsRegistry {
             R.string.settings_call_animation, R.string.settings_call_animation_text,
             SettingKind.Switch("call_animation")
         ),
+        /*
+         * Облик живого фона (2.9.6, автор: «экран в светлой и тёмной теме с пламенем
+         * и лисой и анимацией волн»). Разбор — AmbientStyle (CallAmbientBackground).
+         */
+        SettingEntry(
+            "call_ambient_style", SettingsCategory.CALL_SCREEN,
+            R.string.settings_call_ambient_style, R.string.settings_call_ambient_style_text,
+            SettingKind.Choice("call_ambient_style"),
+            keywordsRes = R.string.keywords_call_ambient_style
+        ),
         // 2.7.4: свой снимок вместо живого фона — отдельно для входящих и исходящих
         SettingEntry(
             "call_bg_incoming", SettingsCategory.CALL_SCREEN,

@@ -12,13 +12,16 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
-## 23.11.2026 — 2.9.5 (100): *#06# показывает IMEI, сервисные коды — оба имени метода
+## 23.11.2026 — 2.9.5 (100): *#06# показывает IMEI, сервисные коды — оба имени метода; облик «Пламя и лиса»
 
 Разбор — `docs/RELEASE_NOTES_2.9.5.md`. Автор: «сервисные коды не работают». `*#06#`: `handleMmi`
 разбирает только PIN/PUK → своё окно `ImeiDialog` (`CallActions.readImeis`, IMEI доступен
 приложению SMS по умолчанию; иначе — «О телефоне»), `DialerViewModel.imeiInfo`.
 `*#*#код#*#*`: `sendDialerSpecialCode` (имя в compileSdk 37), затем прежнее
 `sendDialerSpecificSecretCode`. Коды производителей сторонней звонилке недоступны.
+Облик живого фона «Пламя и лиса» (`call_ambient_style`, `AmbientStyle.FLAME` через
+`LocalAmbientStyle` в `InCallActivity`/`FakeCallActivity`): цвета значка, эмблема
+`call_emblem` над именем без фото, золотые волны от неё.
 
 ## 23.11.2026 — 2.9.4 (99): отдельные значки «SMS» и «Контакты» приложение само не убирает
 

@@ -88,6 +88,7 @@ internal fun settingIcon(id: String): ImageVector? = when (id) {
     "start_section" -> OgnelissIcons.OpenInNew
     "call_hide_contact_number" -> OgnelissIcons.Lock
     "call_photo_style" -> OgnelissIcons.Image
+    "call_ambient_style" -> OgnelissIcons.Palette
     "call_photo_size" -> OgnelissIcons.Person
     "call_animation" -> OgnelissIcons.Bolt
     "call_bg_incoming", "call_bg_outgoing" -> OgnelissIcons.AddPhotoAlternate

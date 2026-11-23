@@ -274,6 +274,8 @@ class InCallActivity : ComponentActivity() {
             // на весь экран перед кругом
             val callPhotoStyle by prefs.callPhotoStyle
                 .collectAsStateWithLifecycle<CallPhotoStyle?>(initialValue = null)
+            // Облик живого фона (2.9.6): тоны темы или «Пламя» (AmbientStyle)
+            val ambientStyle by prefs.callAmbientStyle.collectAsStateWithLifecycle(initialValue = AmbientStyle.THEME)
             // Размер портрета (1.5.7, отзыв valmikk): обычный или крупный
             val callPhotoSize by prefs.callPhotoSize
                 .collectAsStateWithLifecycle(initialValue = CallPhotoSize.LARGE)
@@ -296,7 +298,8 @@ class InCallActivity : ComponentActivity() {
                 androidx.compose.runtime.CompositionLocalProvider(
                     com.ogneliss.dialer.ui.theme.LocalAppearance provides
                         com.ogneliss.dialer.ui.theme.Appearance(buttonLabels = buttonLabels),
-                    com.ogneliss.dialer.ui.components.LocalAvatarPictures provides avatarPictures
+                    com.ogneliss.dialer.ui.components.LocalAvatarPictures provides avatarPictures,
+                    LocalAmbientStyle provides ambientStyle
                 ) {
                 val calls by CallManager.calls.collectAsStateWithLifecycle()
                 val revision by CallManager.revision.collectAsStateWithLifecycle()
