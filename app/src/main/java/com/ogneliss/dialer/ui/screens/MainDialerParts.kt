@@ -82,13 +82,13 @@ internal fun OverflowMenu(
     onSettings: () -> Unit,
     /** Псевдозвонок: выбор, когда «позвонить». */
     onFakeCall: () -> Unit,
-    /** Экран заметок. */
-    onNotes: () -> Unit,
-    /** Экран напоминаний. */
-    onReminders: () -> Unit,
+    /** Экран заметок; null — строки нет (2.9.3: меню самих заметок). */
+    onNotes: (() -> Unit)?,
+    /** Экран напоминаний; null — строки нет (меню самих напоминаний). */
+    onReminders: (() -> Unit)?,
     /**
-     * Разделы «SMS» и «Контакты» (2.9.2): строкой «Инструментов», когда их нет
-     * на нижней панели (конструктор, PanelSlots). null — строки нет.
+     * Разделы «SMS» и «Контакты» строками «Инструментов» (2.9.2; с 2.9.3 показ —
+     * по настройке, MenuTool). null — строки нет (меню самого этого раздела).
      */
     onMessages: (() -> Unit)? = null,
     onContacts: (() -> Unit)? = null,
@@ -154,32 +154,36 @@ internal fun OverflowMenu(
          * Верх листается, если не помещается (низкий экран, лёжа); низ — на месте.
          */
         /*
-         * РАЗДЕЛЫ, КОТОРЫХ НЕТ НА ПАНЕЛИ (2.9.2, конструктор). Автор: «контакты,
-         * смс, меню, заметки, напоминания можно добавить или убрать из нижней
-         * панели, но они должны быть в меню». Раздел, убранный с панели, — строкой
-         * здесь (как «Избранное» меню почты); стоящий на панели — не дублируется.
-         * С полосой разделов слева (планшет) разделы и так на виду: как раньше,
-         * здесь только заметки и напоминания.
+         * «ИНСТРУМЕНТЫ» — В ПОРЯДКЕ И С ПОКАЗОМ ИЗ НАСТРОЙКИ (2.9.3, MenuTool).
+         * Автор: «давай сделаем их настраиваемыми, как сейчас раздел папок; по
+         * умолчанию всё включено». Было (2.9.2): разделы, стоящие на нижней
+         * панели, меню прятало само — без спроса и без способа вернуть.
+         * Строка без обработчика (SMS в меню самого раздела SMS) не показывается.
          */
-        val slots = com.ogneliss.dialer.ui.components.LocalPanelSlots.current
-        val railShown = com.ogneliss.dialer.ui.adaptive.LocalNavigationRailShown.current
-        fun inMenu(slot: com.ogneliss.dialer.settings.PanelSlot) = !railShown && slot !in slots
         val tools = buildList {
-            if (onOwnNumber != null) add(MenuFolder(OgnelissIcons.Person, ownLabel, photoUri = ownPhotoUri, onClick = onOwnNumber))
-            add(MenuFolder(OgnelissIcons.PhoneCallback, fakeCallLabel, onClick = onFakeCall))
-            if (onMessages != null && inMenu(com.ogneliss.dialer.settings.PanelSlot.MESSAGES)) {
-                add(MenuFolder(com.ogneliss.dialer.ui.components.MainSection.MESSAGES.icon, stringResource(R.string.nav_messages), onClick = onMessages))
-            }
-            if (onContacts != null && inMenu(com.ogneliss.dialer.settings.PanelSlot.CONTACTS)) {
-                add(MenuFolder(com.ogneliss.dialer.ui.components.MainSection.CONTACTS.icon, stringResource(R.string.nav_contacts), onClick = onContacts))
-            }
-            if (railShown || inMenu(com.ogneliss.dialer.settings.PanelSlot.NOTES)) {
-                add(MenuFolder(OgnelissIcons.StickyNote2, notesLabel, onClick = onNotes))
-            }
-            if (railShown || inMenu(com.ogneliss.dialer.settings.PanelSlot.REMINDERS)) {
-                add(MenuFolder(OgnelissIcons.Alarm, remindersLabel, onClick = onReminders))
+            MenuTool.visible(settings.menuTools).forEach { tool ->
+                when (tool) {
+                    MenuTool.OWN_CONTACT -> if (onOwnNumber != null) {
+                        add(MenuFolder(tool.icon, ownLabel, photoUri = ownPhotoUri, onClick = onOwnNumber))
+                    }
+                    MenuTool.FAKE_CALL -> add(MenuFolder(tool.icon, fakeCallLabel, onClick = onFakeCall))
+                    MenuTool.MESSAGES -> if (onMessages != null) {
+                        add(MenuFolder(tool.icon, stringResource(tool.labelRes), onClick = onMessages))
+                    }
+                    MenuTool.CONTACTS -> if (onContacts != null) {
+                        add(MenuFolder(tool.icon, stringResource(tool.labelRes), onClick = onContacts))
+                    }
+                    MenuTool.NOTES -> if (onNotes != null) {
+                        add(MenuFolder(tool.icon, notesLabel, onClick = onNotes))
+                    }
+                    MenuTool.REMINDERS -> if (onReminders != null) {
+                        add(MenuFolder(tool.icon, remindersLabel, onClick = onReminders))
+                    }
+                }
             }
         }
+        // Значок «настроить» у «Инструментов» — как у «Папок» (корень даёт переход)
+        val openTools = LocalOpenMenuTools.current
         // Постоянные — первыми, необязательный («на главный экран») — последним,
         // чтобы его отсутствие (журнал) не сдвигало остальные
         val app = buildList {
@@ -204,7 +208,11 @@ internal fun OverflowMenu(
         Column(Modifier.fillMaxWidth()) {
             Column(Modifier.weight(1f, fill = false).fillMaxWidth().verticalScroll(rememberScrollState())) {
                 if (header != null) header()
-                MenuActionRows(stringResource(R.string.menu_section_tools), tools)
+                MenuActionRows(
+                    stringResource(R.string.menu_section_tools), tools,
+                    onEdit = openTools?.let { open -> { onDismiss(); open() } },
+                    editLabel = stringResource(R.string.menu_tools_edit)
+                )
             }
             /*
              * «Приложение» — плитками (2.9.2, автор: «раздел Приложение я бы сделал

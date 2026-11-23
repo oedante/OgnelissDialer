@@ -720,7 +720,7 @@
     <string name="faq_q_transfer">Wie übertrage ich Notizen und Listen auf ein neues Telefon?</string>
     <string name="faq_a_transfer">Meist ziehen sie von selbst um: Wenn Sie beim Einrichten des neuen Telefons die Daten des alten kopieren (per Kabel oder WLAN), kommen Notizen, Markierungen, Sperr- und Freigabelisten, Erinnerungen, Entwürfe und Einstellungen mit. Geplante SMS ziehen nicht um — sie sendet das alte Telefon. In der Cloud speichert die App nichts; ohne eine solche Kopie also per Datei: %1$s, auf dem neuen Telefon %2$s — die Daten kommen zu den vorhandenen hinzu. Anrufliste und Kontakte übertragen Android und Ihr Konto.</string>
     <string name="faq_q_switch">Wie wechsle ich zwischen Bereichen und richte die untere Leiste ein?</string>
-    <string name="faq_a_switch">Mit den Schaltflächen der unteren Leiste: Anrufliste, SMS, Kontakte – und Notizen und Erinnerungen, wenn Sie sie in die Leiste stellen. Welche Bereiche in der Leiste stehen und in welcher Reihenfolge: %1$s; die übrigen sind im Menü. Sie können auch über die Leiste wischen: nach links zum nächsten Bereich, nach rechts zum vorherigen. Für SMS und Kontakte lassen sich eigene Symbole in der App-Liste einschalten: %2$s. Das App-Symbol öffnet dann die Anrufliste.</string>
+    <string name="faq_a_switch">Mit den Schaltflächen der unteren Leiste: Anrufliste, SMS, Kontakte – und Notizen und Erinnerungen, wenn Sie sie in die Leiste stellen. Welche Bereiche in der Leiste stehen, in welcher Reihenfolge und wo sie ist (unten oder als Spalte rechts): %1$s. Im Menü sind alle Bereiche; Unnötiges schalten Sie über das Symbol bei „Werkzeuge“ aus. Sie können auch über die Leiste wischen: nach links zum nächsten Bereich, nach rechts zum vorherigen. Für SMS und Kontakte lassen sich eigene Symbole in der App-Liste einschalten: %2$s. Das App-Symbol öffnet dann die Anrufliste.</string>
     <string name="faq_q_search">Wie finde ich einen Kontakt nach Namen?</string>
     <string name="faq_a_search">Mit der Taste „Suche“ auf der unteren Leiste. In der Anrufliste sucht sie nach Name, Nummer und Notiz, in den Kontakten nach Namen. Auch das Wähltastenfeld sucht — per Ziffern nach Nummer und per T9, kyrillisch und lateinisch zugleich.</string>
     <string name="faq_q_undo">Ich habe einen Eintrag versehentlich gelöscht. Lässt er sich zurückholen?</string>
@@ -1135,14 +1135,21 @@
     <string name="bar_center_write">Schreiben</string>
     <string name="bar_center_create">Erstellen</string>
     <string name="settings_panel_slots">Untere Leiste</string>
-    <string name="settings_panel_slots_text">Welche Bereiche in der Leiste stehen und welche im Menü</string>
-    <string name="panel_slots_help">Vier Plätze links und rechts der mittleren Schaltfläche – Tastatur, „Schreiben“ oder „Erstellen“: Sie bleibt immer in der Mitte. „Anrufliste“ bleibt immer in der Leiste, sie lässt sich nur verschieben. Ein aus der Leiste entfernter Bereich erscheint im Menü; ohne eigenen Platz öffnet sich das Menü über „⋮“ oben.</string>
+    <string name="settings_panel_slots_text">Welche Bereiche in der Leiste stehen und wo: unten oder rechts</string>
+    <string name="panel_slots_help">Vier Plätze links und rechts der mittleren Schaltfläche – Tastatur, „Schreiben“ oder „Erstellen“: Sie bleibt immer in der Mitte. „Anrufliste“ bleibt immer in der Leiste, sie lässt sich nur verschieben. Alle Bereiche sind auch im Menü (was es zeigt – unten); ohne eigenen Platz öffnet sich das Menü über „⋮“ oben.</string>
     <string name="panel_slots_hint">Tippen Sie auf einen Platz, um einen Bereich zu wählen</string>
     <string name="panel_slot_pick">Bereich an diesem Platz</string>
     <string name="panel_slot_swap">Tauschen die Plätze</string>
     <string name="panel_slot_journal_stays">„Anrufliste“ bleibt immer in der Leiste – Sie können sie mit einem anderen Bereich tauschen</string>
-    <string name="panel_slot_in_menu">Im Menü</string>
     <string name="panel_slots_reset">Standard wiederherstellen</string>
     <string name="panel_slot_cd">Platz %1$d: %2$s</string>
     <string name="keywords_panel_slots">untere Leiste, Schaltflächen, Bereiche, Reihenfolge, Menü, Navigation, Notizen, Erinnerungen</string>
+    <string name="menu_tools_title">Menü-Werkzeuge</string>
+    <string name="menu_tools_edit">Werkzeuge anpassen</string>
+    <string name="menu_tools_summary">Was das Menü zeigt und in welcher Reihenfolge</string>
+    <string name="menu_tool_off_panel">Nicht in der unteren Leiste</string>
+    <string name="panel_side_title">Bereiche</string>
+    <string name="panel_side_bottom">Unten</string>
+    <string name="panel_side_right">Rechts (Test)</string>
+    <string name="panel_side_right_text">Eine Spalte am rechten Rand statt der unteren Leiste: Plätze von oben nach unten, die Liste wird höher</string>
 </resources>

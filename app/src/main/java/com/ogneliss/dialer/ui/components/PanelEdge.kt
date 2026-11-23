@@ -25,5 +25,15 @@ fun Modifier.panelTopLine(color: Color): Modifier = drawWithContent {
     drawLine(color, Offset(0f, stroke / 2f), Offset(size.width, stroke / 2f), stroke)
 }
 
+/**
+ * Край колонки разделов справа (2.9.3, SideSectionRail) — та же линия, что над
+ * нижней панелью, но слева: колонка — та же панель, повёрнутая к краю экрана.
+ */
+fun Modifier.panelStartLine(color: Color): Modifier = drawWithContent {
+    drawContent()
+    val stroke = PANEL_LINE.toPx()
+    drawLine(color, Offset(stroke / 2f, 0f), Offset(stroke / 2f, size.height), stroke)
+}
+
 /** Толщина линии — как у OgnelissDivider. */
 private val PANEL_LINE = 1.dp

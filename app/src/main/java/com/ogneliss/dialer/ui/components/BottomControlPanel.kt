@@ -170,6 +170,29 @@ fun BottomControlPanel(
     }
     val handleHint = stringResource(R.string.gesture_handle_hint)
 
+    /*
+     * РАЗДЕЛЫ СПРАВА (2.9.3, проба; SideSectionRail): ряд кнопок журнала — в колонке,
+     * и, пока клавиатура набора и поиск закрыты, панели внизу нет вовсе: списку —
+     * вся высота. ActionRow составляется всегда (передаёт колонке «Набор»/«Скрыть»
+     * и «Меню», держит окно меню), но ничего не рисует.
+     */
+    val sideRail = if (side) null else LocalSideRail.current
+    if (sideRail != null) {
+        ActionRow(
+            section = MainSection.JOURNAL,
+            expanded = expanded,
+            filterActive = filter.isActive,
+            menuBadge = filter.activeCount.toString().takeIf { filter.isActive },
+            onToggleExpanded = onToggleExpanded,
+            onOpenSection = onOpenSection,
+            onStartSelection = onStartSelection,
+            selectionActive = selectionActive,
+            onMenu = onMenu,
+            menuContent = menuContent
+        )
+        if (!expanded && !searching) return
+    }
+
     Surface(
         // Панель лежит на уровень выше содержимого: видна граница,
         // и понятно, что список уходит под неё, а не обрывается
@@ -556,7 +579,7 @@ fun BottomControlPanel(
                     hint = searchHint,
                     onClose = onCloseSearch
                 )
-            } else AnimatedVisibility(
+            } else if (sideRail == null) AnimatedVisibility(
                 visible = !expanded,
                 enter = expandVertically(),
                 exit = shrinkVertically()
@@ -645,6 +668,43 @@ internal fun ActionRow(
      * разделы — тогда здесь только центр и «Меню».
      */
     val railShown = com.ogneliss.dialer.ui.adaptive.LocalNavigationRailShown.current
+    /*
+     * РАЗДЕЛЫ СПРАВА (2.9.3, проба; разбор в SideSectionRail): ряд не рисуется —
+     * центральная кнопка и «Меню» уходят в колонку у правого края. Окно «Меню»
+     * остаётся здесь: у каждого раздела свои папки и инструменты.
+     */
+    val sideRail = LocalSideRail.current
+    if (sideRail != null && !railShown) {
+        val owner = androidx.compose.runtime.remember { Any() }
+        val sideActions = SideRailActions(
+            centerIcon = when {
+                center != null -> center.icon
+                expanded -> OgnelissIcons.KeyboardArrowDown
+                else -> OgnelissIcons.Dialpad
+            },
+            centerLabelRes = when {
+                center != null -> center.labelRes
+                expanded -> R.string.bar_center_hide
+                else -> R.string.bar_center_dial
+            },
+            centerDescription = stringResource(
+                when {
+                    center != null -> center.descriptionRes
+                    expanded -> R.string.dialpad_hide
+                    else -> R.string.dialpad_show
+                }
+            ),
+            onCenter = center?.onClick ?: onToggleExpanded,
+            onMenu = onMenu,
+            menuBadge = menuBadge
+        )
+        androidx.compose.runtime.SideEffect { sideRail.publish(owner, sideActions) }
+        androidx.compose.runtime.DisposableEffect(sideRail, owner) {
+            onDispose { sideRail.withdraw(owner) }
+        }
+        Box { menuContent() }
+        return
+    }
     val slots = LocalPanelSlots.current
     val menuOnPanel = railShown || com.ogneliss.dialer.settings.PanelSlot.MENU in slots
     val menuCell: @Composable (Modifier) -> Unit = { modifier ->

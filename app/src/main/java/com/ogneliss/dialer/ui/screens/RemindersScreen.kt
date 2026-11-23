@@ -199,7 +199,7 @@ internal fun RemindersScreen(
                 searchButtonLabel = hint,
                 menuContent = {
                     SectionMenu(
-                        vm, menuOpen, { menuOpen = false }, links,
+                        vm, menuOpen, { menuOpen = false }, links, MainSection.REMINDERS,
                         onSearch = { searching = true },
                         header = {
                             MenuFolderRows(

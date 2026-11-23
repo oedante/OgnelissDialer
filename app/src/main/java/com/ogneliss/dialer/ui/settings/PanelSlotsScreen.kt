@@ -60,8 +60,10 @@ import com.ogneliss.dialer.ui.theme.Space
  * (её не выбирают: она всегда посередине — клавиатура, «Написать», «Создать»).
  * Касание места — шторка «Раздел на этом месте»: раздел, который уже на панели,
  * меняется местами («Поменяются местами»); «Журнал» с панели не убрать — его
- * место можно только отдать другому разделу панели. Под макетом — что сейчас
- * в «Меню», и «Как по умолчанию», если порядок меняли.
+ * место можно только отдать другому разделу панели. Под макетом — «Как по
+ * умолчанию», если порядок меняли, «Инструменты меню» (2.9.3: что показывать
+ * в «Меню», MenuTool) и где стоят разделы — внизу или справа (2.9.3, проба:
+ * SideSectionRail).
  *
  * Сохраняет вызывающий (RootScreen): сразу, без кнопки «Готово», как
  * остальные настройки. Правила мест — settings/PanelSlots.kt (PanelSlotsTest).
@@ -73,7 +75,12 @@ internal fun PanelSlotsScreen(
     customized: Boolean,
     onPlace: (index: Int, item: PanelSlot) -> Unit,
     onReset: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    /** Разделы справа (2.9.3, проба) — колонка SideSectionRail вместо нижней панели. */
+    side: Boolean = false,
+    onSideChange: (Boolean) -> Unit = {},
+    /** «Инструменты меню» (2.9.3) — порядок и показ строк «Меню»; null — пункта нет. */
+    onOpenMenuTools: (() -> Unit)? = null
 ) {
     // Номер места, для которого открыта шторка выбора; null — шторки нет
     var picking by remember { mutableStateOf<Int?>(null) }
@@ -125,17 +132,42 @@ internal fun PanelSlotsScreen(
                     modifier = Modifier.fillMaxWidth().padding(start = Space.l, end = Space.l, bottom = Space.m)
                 )
             }
-            // Что сейчас в «Меню» — разделы, убранные с панели (OverflowMenu)
-            val inMenu = PanelSlot.entries.filter { it !in slots }
-            if (inMenu.isNotEmpty()) {
-                Spacer(Modifier.height(Space.m))
-                val names = inMenu.map { stringResource(it.slotLabelRes()) }.joinToString(", ")
-                Text(
-                    stringResource(R.string.panel_slot_in_menu) + ": " + names,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = FlowUi.screenPadding)
+            /*
+             * ГДЕ РАЗДЕЛЫ (2.9.3, проба по макету автора): внизу — панель, как
+             * всегда; справа — колонка у края (SideSectionRail) с теми же местами
+             * сверху вниз. Только телефон в портрете и раскладушка: у планшета
+             * своя полоса слева, лёжа — своя колонка кнопок.
+             */
+            // Подпись группы — как подписи групп настроек (SectionCaption)
+            com.ogneliss.dialer.ui.components.SectionCaption(
+                stringResource(R.string.panel_side_title),
+                Modifier.padding(start = FlowUi.groupInset + Space.l, top = Space.l, bottom = Space.xs)
+            )
+            OgnelissCard {
+                SheetChoiceRow(
+                    selected = !side,
+                    label = stringResource(R.string.panel_side_bottom),
+                    onClick = { onSideChange(false) }
                 )
+                SheetDivider()
+                SheetChoiceRow(
+                    selected = side,
+                    label = stringResource(R.string.panel_side_right),
+                    supporting = stringResource(R.string.panel_side_right_text),
+                    onClick = { onSideChange(true) }
+                )
+            }
+            // Что показывать в «Меню» — тот же экран, что у значка «настроить» в самом меню
+            if (onOpenMenuTools != null) {
+                Spacer(Modifier.height(Space.m))
+                OgnelissCard {
+                    SettingsActionRow(
+                        title = stringResource(R.string.menu_tools_title),
+                        summary = stringResource(R.string.menu_tools_summary),
+                        icon = OgnelissIcons.Tune,
+                        onClick = onOpenMenuTools
+                    )
+                }
             }
             // «Как по умолчанию» — только когда есть что возвращать (как «barReset» почты)
             if (customized) {

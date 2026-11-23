@@ -34,6 +34,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Alignment
+import com.ogneliss.dialer.ui.components.toSection
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarResult
@@ -517,7 +518,9 @@ fun RootScreen(
     CompositionLocalProvider(
         LocalAppearance provides appearance,
         com.ogneliss.dialer.ui.components.LocalAvatarPictures provides avatarPictures,
-        com.ogneliss.dialer.ui.components.LocalPanelSlots provides panelSlots
+        com.ogneliss.dialer.ui.components.LocalPanelSlots provides panelSlots,
+        // «Настроить инструменты» в меню любого раздела (2.9.3, MenuTool)
+        com.ogneliss.dialer.ui.screens.LocalOpenMenuTools provides { nav.navigate("menu_tools") }
     ) {
     /*
      * ОТСТУПЫ ПОД СИСТЕМНЫЕ ПАНЕЛИ.
@@ -770,8 +773,25 @@ fun RootScreen(
         val showRail = railLayout.mode == LayoutMode.TABLET
         val backStack by nav.currentBackStackEntryAsState()
         val currentRoute = backStack?.destination?.route.orEmpty()
+        /*
+         * РАЗДЕЛЫ СПРАВА (2.9.3, проба; разбор в SideSectionRail). Телефон в портрете
+         * и раскладушка — у планшета полоса слева, лёжа — колонка кнопок журнала.
+         * Колонка — только в разделах-списках; состояние (действия раздела) — одно
+         * на всё приложение, разделы передают в него центральную кнопку и «Меню».
+         */
+        val sideMode = settings.panelSide &&
+            (railLayout.mode == LayoutMode.PHONE || railLayout.mode == LayoutMode.FOLDABLE)
+        val sideRailState = remember { com.ogneliss.dialer.ui.components.SideRailState() }
+        val currentSection: MainSection? = when {
+            currentRoute.startsWith(MainSection.CONTACTS.route) ->
+                MainSection.CONTACTS.takeIf { backStack?.arguments?.getString("pick").isNullOrEmpty() }
+            else -> MainSection.entries.firstOrNull { it.route == currentRoute }
+        }
 
-        CompositionLocalProvider(LocalNavigationRailShown provides showRail) {
+        CompositionLocalProvider(
+            LocalNavigationRailShown provides showRail,
+            com.ogneliss.dialer.ui.components.LocalSideRail provides (if (sideMode) sideRailState else null)
+        ) {
         Row(
             Modifier
                 .weight(1f)
@@ -1228,7 +1248,37 @@ fun RootScreen(
                             slotsScope.launch { vm.prefs.setPanelSlots(next) }
                         },
                         onReset = { slotsScope.launch { vm.prefs.resetPanelSlots() } },
-                        onBack = { nav.popBackStack() }
+                        onBack = { nav.popBackStack() },
+                        // 2.9.3: разделы справа (проба) и «Инструменты меню»
+                        side = settings.panelSide,
+                        onSideChange = { v -> slotsScope.launch { vm.prefs.setPanelSide(v) } },
+                        onOpenMenuTools = { nav.navigate("menu_tools") }
+                    )
+                }
+
+                /*
+                 * «Инструменты меню» (2.9.3, автор: «как сейчас раздел папок; по умолчанию
+                 * всё включено»): порядок и показ строк — тем же экраном, что папки.
+                 * Обязательной строки нет; раздел, которого нет на нижней панели,
+                 * помечен — выключив его здесь, человек убирает его совсем.
+                 */
+                composable("menu_tools") {
+                    val toolsScope = rememberCoroutineScope()
+                    val offPanel = stringResource(R.string.menu_tool_off_panel)
+                    com.ogneliss.dialer.ui.screens.MenuFoldersScreen(
+                        title = stringResource(R.string.menu_tools_title),
+                        folders = com.ogneliss.dialer.ui.screens.MenuTool.items(),
+                        raw = settings.menuTools,
+                        onSave = { v -> toolsScope.launch { vm.prefs.setMenuTools(v) } },
+                        onBack = { nav.popBackStack() },
+                        fixed = com.ogneliss.dialer.ui.screens.MenuTool.NO_FIXED,
+                        note = { key ->
+                            val section = com.ogneliss.dialer.ui.screens.MenuTool.valueOf(key).section
+                            val onPanel = section != null && panelSlots.any {
+                                it != com.ogneliss.dialer.settings.PanelSlot.MENU && it.toSection() == section
+                            }
+                            if (section != null && !onPanel) offPanel else null
+                        }
                     )
                 }
 
@@ -1379,6 +1429,19 @@ fun RootScreen(
                         )
                     }
                 }
+            }
+            // Колонка разделов справа (2.9.3, проба): появляется и уходит сдвигом от края
+            androidx.compose.animation.AnimatedVisibility(
+                visible = sideMode && currentSection != null,
+                enter = androidx.compose.animation.expandHorizontally(expandFrom = Alignment.Start),
+                exit = androidx.compose.animation.shrinkHorizontally(shrinkTowards = Alignment.Start)
+            ) {
+                com.ogneliss.dialer.ui.components.SideSectionRail(
+                    state = sideRailState,
+                    slots = panelSlots,
+                    current = currentSection,
+                    onOpenSection = openSection
+                )
             }
         }
         }
@@ -1531,12 +1594,8 @@ private fun AppNavigationRail(
     currentRoute: String,
     onNavigate: (String) -> Unit
 ) {
-    val items = listOf(
-        Triple("dialer", OgnelissIcons.History, R.string.nav_journal),
-        Triple("contacts", OgnelissIcons.Person, R.string.nav_contacts),
-        Triple("notes", OgnelissIcons.StickyNote2, R.string.nav_notes),
-        Triple("reminders", OgnelissIcons.Alarm, R.string.nav_reminders)
-    )
+    // 2.9.3: все разделы, как на нижней панели — «SMS» здесь не было с 2.0.0
+    val items = MainSection.entries.map { Triple(it.route, it.icon, it.labelRes) }
 
     NavigationRail(
         containerColor = PanelColors.panel()

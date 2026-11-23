@@ -84,6 +84,10 @@ data class SettingsState(
     val coloredCallArrows: Boolean = true,
     /** Места нижней панели (2.9.2, PanelSlots); null — порядок по роли SMS. */
     val panelSlots: String? = null,
+    /** «Инструменты» меню (2.9.3): строка FolderOrder; null — всё по порядку MenuTool. */
+    val menuTools: String? = null,
+    /** Разделы справа (2.9.3, проба): колонка SideSectionRail вместо нижней панели. */
+    val panelSide: Boolean = false,
     /** Что открывать при запуске значком (2.7.0, форум, oleg_p): разбор в StartSection. */
     val startSection: com.ogneliss.dialer.settings.StartChoice = com.ogneliss.dialer.settings.StartChoice.JOURNAL,
     /** Имя контакта: «Имя Фамилия» или «Фамилия Имя» (1.6.2). */

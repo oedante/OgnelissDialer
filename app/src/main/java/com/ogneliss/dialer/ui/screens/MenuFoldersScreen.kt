@@ -38,10 +38,16 @@ internal fun MenuFoldersScreen(
     folders: List<Triple<String, Int, ImageVector>>,
     raw: String?,
     onSave: (String) -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    /**
+     * Строка, которую нельзя скрыть («Все»: иначе часть списка пропала бы из
+     * виду). У «Инструментов» меню (2.9.3) такой нет — MenuTool.NO_FIXED.
+     */
+    fixed: String = folders.first().first,
+    /** Пояснение под строкой («Нет на нижней панели», 2.9.3); null — без него. */
+    note: @Composable (String) -> String? = { null }
 ) {
     val keys = folders.map { it.first }
-    val fixed = keys.first()
     val order = FolderOrder.parse(raw, keys, fixed)
     ScreenScaffold(title = title, onBack = onBack, pinnedTopBar = true) { pad ->
         LazyColumn(Modifier.padding(pad)) {
@@ -50,6 +56,7 @@ internal fun MenuFoldersScreen(
                 ListItem(
                     leadingContent = { Icon(folder.third, contentDescription = null) },
                     headlineContent = { Text(stringResource(folder.second)) },
+                    supportingContent = note(key)?.let { text -> { Text(text) } },
                     trailingContent = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             IconButton(onClick = { onSave(FolderOrder.encode(FolderOrder.move(order, i, -1), fixed)) }, enabled = i > 0) {

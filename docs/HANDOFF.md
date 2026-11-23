@@ -12,6 +12,16 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 23.11.2026 — 2.9.3 (98): «Инструменты» меню как папки; проба — разделы справа
+
+Разбор — `docs/RELEASE_NOTES_2.9.3.md`. `MenuTool` (порядок и показ строк «Инструментов»,
+`Prefs.menuTools`, FolderOrder без обязательной строки) + значок «настроить» в `MenuActionRows`
+через `LocalOpenMenuTools` → маршрут `menu_tools` (`MenuFoldersScreen` с `fixed`/`note`).
+`Prefs.panelSide` → `RootScreen.sideMode` (PHONE/FOLDABLE) → `LocalSideRail` + `SideSectionRail`
+справа от NavHost в разделах-списках; `ActionRow` в этом режиме передаёт центр и «Меню»
+в `SideRailState` и не рисует ряд; `BottomControlPanel`/`ListPanel` — только поиск
+и клавиатура. Полоса планшета — `MainSection.entries` (с «SMS»).
+
 ## 23.11.2026 — 2.9.2 (97): нижняя панель «вариант А» и конструктор, «Меню» по высоте, клавиатура по скруглению
 
 Разбор — `docs/RELEASE_NOTES_2.9.2.md`. `settings/PanelSlots` (4 места, порядок по роли SMS,

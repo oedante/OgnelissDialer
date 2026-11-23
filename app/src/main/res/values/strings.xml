@@ -749,7 +749,7 @@
     <string name="faq_q_transfer">How do I move notes and lists to a new phone?</string>
     <string name="faq_a_transfer">Usually they move by themselves: if you copy data from your old phone while setting up the new one (by cable or Wi‑Fi), your notes, tags, block and allow lists, reminders, drafts and settings come along. Scheduled SMS don’t move — the old phone will send them. The app saves nothing to the cloud, so without such a copy use a file: %1$s, and on the new phone %2$s — the data is added to what is already there. The call log and contacts are moved by Android and your account.</string>
     <string name="faq_q_switch">How do I switch sections and set up the bottom bar?</string>
-    <string name="faq_a_switch">With the buttons on the bottom bar: Call log, SMS, Contacts — and Notes and Reminders if you put them on the bar. Which sections are on the bar and in what order: %1$s; the rest are in the Menu. You can also swipe along the bar: left for the next section, right for the previous one. SMS and Contacts can also have their own icons in the app list: %2$s. The app icon then opens the call log.</string>
+    <string name="faq_a_switch">With the buttons on the bottom bar: Call log, SMS, Contacts — and Notes and Reminders if you put them on the bar. Which sections are on the bar, in what order and where it is (at the bottom or as a column on the right): %1$s. All sections are also in the Menu; switch off what you don\'t need with the icon next to “Tools”. You can also swipe along the bar: left for the next section, right for the previous one. SMS and Contacts can also have their own icons in the app list: %2$s. The app icon then opens the call log.</string>
     <string name="faq_q_search">How do I find a contact by name?</string>
     <string name="faq_a_search">With the “Search” button on the bottom bar. In the call log it searches names, numbers and notes; in contacts, names. The dial pad searches with digits too — by number and by T9, in Cyrillic and Latin at once.</string>
     <string name="faq_q_undo">I deleted a call log entry by mistake. Can I get it back?</string>
@@ -1164,14 +1164,21 @@
     <string name="bar_center_write">Write</string>
     <string name="bar_center_create">Create</string>
     <string name="settings_panel_slots">Bottom bar</string>
-    <string name="settings_panel_slots_text">Which sections are on the bar and which stay in the Menu</string>
-    <string name="panel_slots_help">Four places on both sides of the center button: keypad, Write or Create — it always stays in the middle. Call log is always on the bar, you can only move it. A section taken off the bar appears in the Menu; without its own place, the Menu opens from ⋮ at the top.</string>
+    <string name="settings_panel_slots_text">Which sections are on the bar and where it is: bottom or right</string>
+    <string name="panel_slots_help">Four places on both sides of the center button: keypad, Write or Create — it always stays in the middle. Call log is always on the bar, you can only move it. All sections are also in the Menu (what it shows — below); without its own place, the Menu opens from ⋮ at the top.</string>
     <string name="panel_slots_hint">Tap a place to choose a section</string>
     <string name="panel_slot_pick">Section in this place</string>
     <string name="panel_slot_swap">Will swap places</string>
     <string name="panel_slot_journal_stays">Call log is always on the bar — you can swap it with another section</string>
-    <string name="panel_slot_in_menu">In the Menu</string>
     <string name="panel_slots_reset">Reset to default</string>
     <string name="panel_slot_cd">Place %1$d: %2$s</string>
     <string name="keywords_panel_slots">bottom bar, panel, buttons, sections, order, menu, navigation, notes, reminders</string>
+    <string name="menu_tools_title">Menu tools</string>
+    <string name="menu_tools_edit">Set up tools</string>
+    <string name="menu_tools_summary">What the Menu shows and in what order</string>
+    <string name="menu_tool_off_panel">Not on the bottom bar</string>
+    <string name="panel_side_title">Sections</string>
+    <string name="panel_side_bottom">At the bottom</string>
+    <string name="panel_side_right">On the right (trial)</string>
+    <string name="panel_side_right_text">A column at the right edge instead of the bottom bar: places go from top to bottom, the list gets more height</string>
 </resources>

@@ -719,7 +719,7 @@
     <string name="faq_q_transfer">Comment transférer les notes et les listes sur un nouveau téléphone ?</string>
     <string name="faq_a_transfer">En général, elles suivent d’elles-mêmes : si vous copiez les données de l’ancien téléphone en configurant le nouveau (par câble ou Wi‑Fi), notes, étiquettes, listes de blocage et d’exceptions, rappels, brouillons et réglages sont transférés. Les SMS programmés ne le sont pas — l’ancien téléphone les enverra. L’application n’enregistre rien dans le cloud ; sans cette copie, passez donc par un fichier : %1$s, puis sur le nouveau téléphone %2$s — les données s’ajoutent à celles déjà présentes. Le journal d’appels et les contacts sont transférés par Android et votre compte.</string>
     <string name="faq_q_switch">Comment passer d’une section à l’autre et régler la barre du bas ?</string>
-    <string name="faq_a_switch">Avec les boutons de la barre du bas : Journal, SMS, Contacts – et Notes et Rappels si vous les placez dans la barre. Quelles sections sont dans la barre et dans quel ordre : %1$s ; les autres sont dans le menu. Vous pouvez aussi glisser le long de la barre : à gauche vers la section suivante, à droite vers la précédente. SMS et Contacts peuvent avoir leurs propres icônes dans la liste des applications : %2$s. L’icône de l’application ouvre alors le journal.</string>
+    <string name="faq_a_switch">Avec les boutons de la barre du bas : Journal, SMS, Contacts – et Notes et Rappels si vous les placez dans la barre. Quelles sections sont dans la barre, dans quel ordre et où elle se trouve (en bas ou en colonne à droite) : %1$s. Toutes les sections sont aussi dans le menu ; masquez l’inutile avec l’icône près de « Outils ». Vous pouvez aussi glisser le long de la barre : à gauche vers la section suivante, à droite vers la précédente. SMS et Contacts peuvent avoir leurs propres icônes dans la liste des applications : %2$s. L’icône de l’application ouvre alors le journal.</string>
     <string name="faq_q_search">Comment trouver un contact par son nom ?</string>
     <string name="faq_a_search">Avec le bouton « Recherche » de la barre du bas. Dans le journal, il cherche par nom, numéro et note ; dans les contacts, par nom. Le clavier cherche aussi avec des chiffres — par numéro et en T9, en cyrillique et en latin à la fois.</string>
     <string name="faq_q_undo">J’ai supprimé une entrée du journal par erreur. Peut-on la récupérer ?</string>
@@ -1134,14 +1134,21 @@
     <string name="bar_center_write">Écrire</string>
     <string name="bar_center_create">Créer</string>
     <string name="settings_panel_slots">Barre du bas</string>
-    <string name="settings_panel_slots_text">Quelles sections sont dans la barre et lesquelles dans le menu</string>
-    <string name="panel_slots_help">Quatre emplacements de part et d’autre du bouton central – clavier, « Écrire » ou « Créer » : il reste toujours au milieu. Le « Journal » est toujours dans la barre, on peut seulement le déplacer. Une section retirée de la barre apparaît dans le menu ; sans emplacement, le menu s’ouvre depuis « ⋮ » en haut.</string>
+    <string name="settings_panel_slots_text">Quelles sections sont dans la barre, et où : en bas ou à droite</string>
+    <string name="panel_slots_help">Quatre emplacements de part et d’autre du bouton central – clavier, « Écrire » ou « Créer » : il reste toujours au milieu. Le « Journal » est toujours dans la barre, on peut seulement le déplacer. Toutes les sections sont aussi dans le menu (ce qu’il affiche : plus bas) ; sans emplacement, le menu s’ouvre depuis « ⋮ » en haut.</string>
     <string name="panel_slots_hint">Touchez un emplacement pour choisir une section</string>
     <string name="panel_slot_pick">Section à cet emplacement</string>
     <string name="panel_slot_swap">Échangeront leurs places</string>
     <string name="panel_slot_journal_stays">Le « Journal » reste toujours dans la barre ; vous pouvez l’échanger avec une autre section</string>
-    <string name="panel_slot_in_menu">Dans le menu</string>
     <string name="panel_slots_reset">Rétablir par défaut</string>
     <string name="panel_slot_cd">Emplacement %1$d : %2$s</string>
     <string name="keywords_panel_slots">barre du bas, boutons, sections, ordre, menu, navigation, notes, rappels</string>
+    <string name="menu_tools_title">Outils du menu</string>
+    <string name="menu_tools_edit">Configurer les outils</string>
+    <string name="menu_tools_summary">Ce que le menu affiche et dans quel ordre</string>
+    <string name="menu_tool_off_panel">Absent de la barre du bas</string>
+    <string name="panel_side_title">Sections</string>
+    <string name="panel_side_bottom">En bas</string>
+    <string name="panel_side_right">À droite (essai)</string>
+    <string name="panel_side_right_text">Une colonne au bord droit au lieu de la barre du bas : emplacements de haut en bas, la liste gagne en hauteur</string>
 </resources>
