@@ -12,6 +12,14 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 23.11.2026 — 2.9.5 (100): *#06# показывает IMEI, сервисные коды — оба имени метода
+
+Разбор — `docs/RELEASE_NOTES_2.9.5.md`. Автор: «сервисные коды не работают». `*#06#`: `handleMmi`
+разбирает только PIN/PUK → своё окно `ImeiDialog` (`CallActions.readImeis`, IMEI доступен
+приложению SMS по умолчанию; иначе — «О телефоне»), `DialerViewModel.imeiInfo`.
+`*#*#код#*#*`: `sendDialerSpecialCode` (имя в compileSdk 37), затем прежнее
+`sendDialerSpecificSecretCode`. Коды производителей сторонней звонилке недоступны.
+
 ## 23.11.2026 — 2.9.4 (99): отдельные значки «SMS» и «Контакты» приложение само не убирает
 
 Разбор — `docs/RELEASE_NOTES_2.9.4.md`. Форум, oleg_p (S23 Ultra): значки пропали после
@@ -29,7 +37,7 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 справа от NavHost в разделах-списках; `ActionRow` в этом режиме передаёт центр и «Меню»
 в `SideRailState` и не рисует ряд; `BottomControlPanel`/`ListPanel` — только поиск
 и клавиатура. Полоса планшета — `MainSection.entries` (с «SMS»).
-В Google Play последней ушла 2.9.0: сводный «Что нового» для выкладки — `store/whats_new_2.9.3_since_2.9.0.txt` (2.9.1–2.9.3); для 2.9.4 — `store/whats_new_2.9.4_since_2.9.0.txt`.
+В Google Play последней ушла 2.9.0: сводный «Что нового» для выкладки — `store/whats_new_2.9.3_since_2.9.0.txt` (2.9.1–2.9.3); для 2.9.4 — `store/whats_new_2.9.4_since_2.9.0.txt`, для 2.9.5 — `store/whats_new_2.9.5_since_2.9.0.txt`.
 
 ## 23.11.2026 — 2.9.2 (97): нижняя панель «вариант А» и конструктор, «Меню» по высоте, клавиатура по скруглению
 

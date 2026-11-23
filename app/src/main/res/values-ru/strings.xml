@@ -1161,4 +1161,8 @@
     <string name="panel_side_bottom">Внизу</string>
     <string name="panel_side_right">Справа (проба)</string>
     <string name="panel_side_right_text">Колонка у правого края вместо нижней панели: места — сверху вниз, списку больше места по высоте</string>
+    <string name="imei_title">IMEI</string>
+    <string name="imei_sim">SIM %1$d</string>
+    <string name="imei_unavailable">IMEI Android показывает только системной звонилке и приложению SMS по умолчанию. Его можно посмотреть в настройках телефона: «О телефоне».</string>
+    <string name="imei_open_about">О телефоне</string>
 </resources>

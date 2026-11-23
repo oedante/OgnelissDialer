@@ -1152,4 +1152,8 @@
     <string name="panel_side_bottom">Unten</string>
     <string name="panel_side_right">Rechts (Test)</string>
     <string name="panel_side_right_text">Eine Spalte am rechten Rand statt der unteren Leiste: Plätze von oben nach unten, die Liste wird höher</string>
+    <string name="imei_title">IMEI</string>
+    <string name="imei_sim">SIM %1$d</string>
+    <string name="imei_unavailable">Die IMEI gibt Android nur der System-Telefon-App und der Standard-SMS-App. Sie finden sie in den Telefoneinstellungen unter „Über das Telefon“.</string>
+    <string name="imei_open_about">Über das Telefon</string>
 </resources>

@@ -1,0 +1,108 @@
+<ru-RU>
+• *#06# показывает IMEI, как системная звонилка.
+• Сервисные коды *#*#…#*#* передаются системе и на новых версиях Android.
+</ru-RU>
+<ar>
+• الرمز *#06# يعرض رقم IMEI مثل تطبيق الهاتف في النظام.
+• تُرسل الرموز الخدمية *#*#…#*#* إلى النظام في إصدارات Android الجديدة أيضًا.
+</ar>
+<cs-CZ>
+• *#06# zobrazí IMEI jako systémový telefon.
+• Servisní kódy *#*#…#*#* se předávají systému i v novějších verzích Androidu.
+</cs-CZ>
+<da-DK>
+• *#06# viser IMEI ligesom systemets telefonapp.
+• Servicekoder *#*#…#*#* sendes til systemet, også på nyere Android.
+</da-DK>
+<de-DE>
+• *#06# zeigt die IMEI wie die System-Telefon-App.
+• Servicecodes *#*#…#*#* gehen auch unter neueren Android-Versionen an das System.
+</de-DE>
+<en-US>
+• *#06# shows the IMEI, like the system phone app.
+• Service codes *#*#…#*#* reach the system on newer Android versions too.
+</en-US>
+<es-ES>
+• *#06# muestra el IMEI, como la app de teléfono del sistema.
+• Los códigos *#*#…#*#* llegan al sistema también en versiones nuevas de Android.
+</es-ES>
+<fi-FI>
+• *#06# näyttää IMEI-koodin kuten järjestelmän puhelinsovellus.
+• Palvelukoodit *#*#…#*#* välittyvät järjestelmälle myös uusissa Android-versioissa.
+</fi-FI>
+<fr-FR>
+• *#06# affiche l’IMEI, comme l’application Téléphone du système.
+• Les codes *#*#…#*#* sont transmis au système, y compris sur les Android récents.
+</fr-FR>
+<hi-IN>
+• *#06# सिस्टम फ़ोन ऐप की तरह IMEI दिखाता है।
+• सर्विस कोड *#*#…#*#* नए Android संस्करणों पर भी सिस्टम तक पहुँचते हैं।
+</hi-IN>
+<hu-HU>
+• A *#06# megmutatja az IMEI-t, mint a rendszer telefonalkalmazása.
+• A *#*#…#*#* szervizkódok újabb Androidon is eljutnak a rendszerhez.
+</hu-HU>
+<id>
+• *#06# menampilkan IMEI seperti aplikasi telepon sistem.
+• Kode layanan *#*#…#*#* juga diteruskan ke sistem di Android versi baru.
+</id>
+<it-IT>
+• *#06# mostra l’IMEI, come l’app Telefono di sistema.
+• I codici *#*#…#*#* arrivano al sistema anche sulle versioni recenti di Android.
+</it-IT>
+<iw-IL>
+• הקוד *#06# מציג את ה-IMEI, כמו אפליקציית הטלפון של המערכת.
+• קודי שירות *#*#…#*#* מועברים למערכת גם בגרסאות Android חדשות.
+</iw-IL>
+<ja-JP>
+• *#06# でシステムの電話アプリと同様に IMEI を表示します。
+• サービスコード *#*#…#*#* は新しい Android でもシステムに渡されます。
+</ja-JP>
+<ko-KR>
+• *#06#를 입력하면 시스템 전화 앱처럼 IMEI가 표시됩니다.
+• 서비스 코드 *#*#…#*#*가 최신 Android에서도 시스템에 전달됩니다.
+</ko-KR>
+<nl-NL>
+• *#06# toont het IMEI, net als de telefoon-app van het systeem.
+• Servicecodes *#*#…#*#* bereiken het systeem ook op nieuwere Android-versies.
+</nl-NL>
+<no-NO>
+• *#06# viser IMEI, som systemets telefonapp.
+• Servicekoder *#*#…#*#* når systemet også på nyere Android.
+</no-NO>
+<pl-PL>
+• *#06# pokazuje IMEI, tak jak systemowa aplikacja Telefon.
+• Kody serwisowe *#*#…#*#* trafiają do systemu także w nowszych wersjach Androida.
+</pl-PL>
+<pt-BR>
+• *#06# mostra o IMEI, como o app de telefone do sistema.
+• Códigos *#*#…#*#* chegam ao sistema também nas versões novas do Android.
+</pt-BR>
+<ro>
+• *#06# afișează IMEI-ul, ca aplicația Telefon a sistemului.
+• Codurile *#*#…#*#* ajung la sistem și pe versiunile noi de Android.
+</ro>
+<sk>
+• *#06# zobrazí IMEI ako systémový telefón.
+• Servisné kódy *#*#…#*#* sa odovzdávajú systému aj v novších verziách Androidu.
+</sk>
+<sv-SE>
+• *#06# visar IMEI, precis som systemets telefonapp.
+• Servicekoder *#*#…#*#* når systemet även i nyare Android-versioner.
+</sv-SE>
+<th>
+• *#06# แสดง IMEI เหมือนแอปโทรศัพท์ของระบบ
+• รหัสบริการ *#*#…#*#* ส่งถึงระบบได้แม้ใน Android เวอร์ชันใหม่
+</th>
+<tr-TR>
+• *#06#, sistem telefon uygulaması gibi IMEI'yi gösterir.
+• *#*#…#*#* servis kodları yeni Android sürümlerinde de sisteme iletilir.
+</tr-TR>
+<vi>
+• *#06# hiển thị IMEI giống ứng dụng điện thoại của hệ thống.
+• Mã dịch vụ *#*#…#*#* được chuyển đến hệ thống cả trên Android mới.
+</vi>
+<zh-CN>
+• *#06# 会像系统电话应用一样显示 IMEI。
+• 服务代码 *#*#…#*#* 在新版 Android 上也能传给系统。
+</zh-CN>

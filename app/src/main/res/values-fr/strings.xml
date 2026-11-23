@@ -1151,4 +1151,8 @@
     <string name="panel_side_bottom">En bas</string>
     <string name="panel_side_right">À droite (essai)</string>
     <string name="panel_side_right_text">Une colonne au bord droit au lieu de la barre du bas : emplacements de haut en bas, la liste gagne en hauteur</string>
+    <string name="imei_title">IMEI</string>
+    <string name="imei_sim">SIM %1$d</string>
+    <string name="imei_unavailable">Android ne donne l’IMEI qu’à l’application Téléphone du système et à l’application SMS par défaut. Vous le trouverez dans les réglages du téléphone : « À propos du téléphone ».</string>
+    <string name="imei_open_about">À propos du téléphone</string>
 </resources>
