@@ -1,0 +1,108 @@
+<ru-RU>
+• Настройки разложены по-новому: появились разделы «Панель и жесты», «Контакты» и «Данные», а «Быстрого доступа» больше нет.
+• Проба «Разделы справа»: кнопка действия — внизу колонки, «Меню» — в шапке, колонка стала уже.
+</ru-RU>
+<ar>
+• أُعيد ترتيب الإعدادات: أقسام جديدة «الشريط والإيماءات» و«جهات الاتصال» و«البيانات»، ولم يعد هناك «الوصول السريع».
+• تجربة «الأقسام على اليمين»: زر الإجراء أسفل العمود، و«القائمة» في الأعلى، والعمود أضيق.
+</ar>
+<cs-CZ>
+• Nastavení jsou nově uspořádána: přibyly sekce „Panel a gesta“, „Kontakty“ a „Data“, „Rychlý přístup“ už není.
+• Zkouška „Sekce vpravo“: tlačítko akce dole ve sloupci, „Menu“ v záhlaví, sloupec je užší.
+</cs-CZ>
+<da-DK>
+• Indstillingerne er ordnet på ny: nye sektioner „Bjælke og bevægelser“, „Kontakter“ og „Data“; „Hurtig adgang“ findes ikke længere.
+• Test „Sektioner til højre“: handlingsknappen nederst i kolonnen, „Menu“ i toppen, smallere kolonne.
+</da-DK>
+<de-DE>
+• Einstellungen neu geordnet: neue Bereiche „Leiste und Gesten“, „Kontakte“ und „Daten“; „Schnellzugriff“ gibt es nicht mehr.
+• Test „Bereiche rechts“: Aktionstaste unten in der Spalte, „Menü“ oben, schmalere Spalte.
+</de-DE>
+<en-US>
+• Settings are reorganized: new sections "Bar and gestures", "Contacts" and "Data"; "Quick access" is gone.
+• "Sections on the right" trial: the action button at the bottom of the column, the Menu at the top, a narrower column.
+</en-US>
+<es-ES>
+• Ajustes reorganizados: nuevas secciones «Barra y gestos», «Contactos» y «Datos»; ya no existe «Acceso rápido».
+• Prueba «Secciones a la derecha»: botón de acción abajo en la columna, «Menú» arriba, columna más estrecha.
+</es-ES>
+<fi-FI>
+• Asetukset järjestetty uudelleen: uudet osiot ”Palkki ja eleet”, ”Yhteystiedot” ja ”Tiedot”; ”Pikakäyttöä” ei enää ole.
+• Kokeilu ”Osiot oikealla”: toimintopainike sarakkeen alaosassa, ”Valikko” ylhäällä, kapeampi sarake.
+</fi-FI>
+<fr-FR>
+• Réglages réorganisés : nouvelles sections « Barre et gestes », « Contacts » et « Données » ; « Accès rapide » disparaît.
+• Essai « Sections à droite » : bouton d’action en bas de la colonne, menu en haut, colonne plus étroite.
+</fr-FR>
+<hi-IN>
+• सेटिंग्स नए ढंग से व्यवस्थित: नए अनुभाग «पट्टी और जेस्चर», «संपर्क» और «डेटा»; «त्वरित पहुँच» अब नहीं है।
+• परीक्षण «दाईं ओर अनुभाग»: कार्रवाई बटन कॉलम में नीचे, «मेनू» ऊपर, कॉलम पतला।
+</hi-IN>
+<hu-HU>
+• Átrendezett beállítások: új szakaszok – „Sáv és kézmozdulatok”, „Névjegyek” és „Adatok”; a „Gyors hozzáférés” megszűnt.
+• Próba „Szakaszok jobbra”: a műveletgomb az oszlop alján, a „Menü” fent, keskenyebb oszlop.
+</hu-HU>
+<id>
+• Setelan ditata ulang: bagian baru “Bilah dan gestur”, “Kontak”, dan “Data”; “Akses cepat” sudah tidak ada.
+• Uji coba “Bagian di kanan”: tombol aksi di bawah kolom, “Menu” di atas, kolom lebih ramping.
+</id>
+<it-IT>
+• Impostazioni riorganizzate: nuove sezioni «Barra e gesti», «Contatti» e «Dati»; «Accesso rapido» non c’è più.
+• Prova «Sezioni a destra»: pulsante di azione in fondo alla colonna, «Menu» in alto, colonna più stretta.
+</it-IT>
+<iw-IL>
+• ההגדרות סודרו מחדש: מקטעים חדשים „סרגל ומחוות”, „אנשי קשר” ו„נתונים”; „גישה מהירה” כבר לא קיימת.
+• ניסוי „מקטעים מימין”: כפתור הפעולה בתחתית העמודה, „תפריט” למעלה, עמודה צרה יותר.
+</iw-IL>
+<ja-JP>
+• 設定を整理：「バーとジェスチャー」「連絡先」「データ」を新設し、「クイックアクセス」は廃止。
+• お試し「セクションを右側に」：操作ボタンは列の下、「メニュー」は上部、列を細く。
+</ja-JP>
+<ko-KR>
+• 설정 재구성: '바 및 제스처', '연락처', '데이터' 섹션 신설, '빠른 실행'은 없어졌습니다.
+• 시험 기능 '오른쪽 섹션': 동작 버튼은 열 아래, '메뉴'는 위쪽, 열은 더 좁게.
+</ko-KR>
+<nl-NL>
+• Instellingen opnieuw ingedeeld: nieuwe secties ‘Balk en gebaren’, ‘Contacten’ en ‘Gegevens’; ‘Snelle toegang’ is verdwenen.
+• Proef ‘Secties rechts’: actieknop onderaan de kolom, ‘Menu’ bovenaan, smallere kolom.
+</nl-NL>
+<no-NO>
+• Innstillingene er ordnet på nytt: nye seksjoner «Linje og bevegelser», «Kontakter» og «Data»; «Hurtigtilgang» finnes ikke lenger.
+• Test «Seksjoner til høyre»: handlingsknappen nederst i kolonnen, «Meny» øverst, smalere kolonne.
+</no-NO>
+<pl-PL>
+• Ustawienia uporządkowane na nowo: nowe sekcje „Pasek i gesty”, „Kontakty” i „Dane”; „Szybkiego dostępu” już nie ma.
+• Próba „Sekcje po prawej”: przycisk akcji na dole kolumny, „Menu” u góry, węższa kolumna.
+</pl-PL>
+<pt-BR>
+• Configurações reorganizadas: novas seções “Barra e gestos”, “Contatos” e “Dados”; “Acesso rápido” deixou de existir.
+• Teste “Seções à direita”: botão de ação embaixo na coluna, “Menu” no topo, coluna mais estreita.
+</pt-BR>
+<ro>
+• Setări reorganizate: secțiuni noi „Bară și gesturi”, „Contacte” și „Date”; „Acces rapid” nu mai există.
+• Probă „Secțiuni în dreapta”: butonul de acțiune jos în coloană, „Meniu” sus, coloană mai îngustă.
+</ro>
+<sk>
+• Nastavenia sú nanovo usporiadané: pribudli sekcie „Panel a gestá“, „Kontakty“ a „Údaje“, „Rýchly prístup“ už nie je.
+• Skúška „Sekcie vpravo“: tlačidlo akcie dole v stĺpci, „Menu“ hore, užší stĺpec.
+</sk>
+<sv-SE>
+• Inställningarna är omordnade: nya sektioner ”Fält och gester”, ”Kontakter” och ”Data”; ”Snabbåtkomst” finns inte längre.
+• Test ”Sektioner till höger”: åtgärdsknappen längst ned i kolumnen, ”Meny” överst, smalare kolumn.
+</sv-SE>
+<th>
+• จัดการตั้งค่าใหม่: เพิ่มส่วน «แถบและท่าทาง» «รายชื่อติดต่อ» และ «ข้อมูล» และไม่มี «เข้าถึงด่วน» แล้ว
+• ทดลอง «ส่วนต่างๆ ด้านขวา»: ปุ่มการทำงานอยู่ล่างคอลัมน์ «เมนู» อยู่ด้านบน คอลัมน์แคบลง
+</th>
+<tr-TR>
+• Ayarlar yeniden düzenlendi: yeni “Çubuk ve hareketler”, “Kişiler” ve “Veriler” bölümleri; “Hızlı erişim” artık yok.
+• “Sağda bölümler” denemesi: eylem düğmesi sütunun altında, “Menü” üstte, sütun daha dar.
+</tr-TR>
+<vi>
+• Cài đặt được sắp xếp lại: thêm mục “Thanh và cử chỉ”, “Danh bạ” và “Dữ liệu”; không còn “Truy cập nhanh”.
+• Thử nghiệm “Các mục bên phải”: nút thao tác ở cuối cột, “Menu” ở trên, cột hẹp hơn.
+</vi>
+<zh-CN>
+• 设置重新整理：新增“栏与手势”“联系人”“数据”分区，“快捷访问”已取消。
+• 试用“分区在右侧”：操作按钮位于列底部，“菜单”在顶部，列更窄。
+</zh-CN>

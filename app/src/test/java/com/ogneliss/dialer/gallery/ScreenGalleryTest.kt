@@ -428,7 +428,7 @@ class ScreenGalleryTest {
         Shot("settings_calls") { vm -> SettingsCategoryScreen(category = SettingsCategory.CALLS, vm = vm, onBack = {}, onOpenAdvanced = {}, onAction = {}) },
         // 2.7.2: «Журнал вызовов» — где «Цветные стрелки вызовов» (вопрос автора: «не вижу настройки»)
         Shot("settings_log") { vm -> SettingsCategoryScreen(category = SettingsCategory.CALL_LOG, vm = vm, onBack = {}, onOpenAdvanced = {}, onAction = {}) },
-        Shot("settings_quick") { vm -> SettingsCategoryScreen(category = SettingsCategory.QUICK_ACCESS, vm = vm, onBack = {}, onOpenAdvanced = {}, onAction = {}) },
+        Shot("settings_contacts") { vm -> SettingsCategoryScreen(category = SettingsCategory.CONTACTS, vm = vm, onBack = {}, onOpenAdvanced = {}, onAction = {}) },
         Shot("notes") { vm -> NotesScreen(vm = vm, onOpenCard = {}) },
         Shot("reminders") { vm -> RemindersScreen(vm = vm, onOpenCard = {}) },
         Shot("spam") { vm -> SpamProtectionScreen(vm = vm, onBack = {}, onOpenLists = {}) },
@@ -575,6 +575,29 @@ class ScreenGalleryTest {
         },
         Shot("dialog_imei_unavailable", dialog = true) { _ ->
             com.ogneliss.dialer.ui.components.ImeiDialog(emptyList(), onDismiss = {})
+        },
+        // 2.9.6: меню в режиме колонки — сверху, с «Действиями» из «⋮» шапки
+        Shot("side_menu", dialog = true) { vm ->
+            val settings = vm.settingsState.collectAsState().value
+            val state = androidx.compose.runtime.remember { com.ogneliss.dialer.ui.components.SideRailState() }
+            val select = androidx.compose.ui.res.stringResource(R.string.selection_start)
+            val clear = androidx.compose.ui.res.stringResource(R.string.log_clear_all)
+            androidx.compose.runtime.SideEffect {
+                state.publishList(
+                    state,
+                    listOf(
+                        com.ogneliss.dialer.ui.components.TopBarMenuItem(com.ogneliss.dialer.ui.theme.OgnelissIcons.Checklist, select) {},
+                        com.ogneliss.dialer.ui.components.TopBarMenuItem(com.ogneliss.dialer.ui.theme.OgnelissIcons.DeleteSweep, clear, destructive = true) {}
+                    )
+                )
+            }
+            androidx.compose.runtime.CompositionLocalProvider(com.ogneliss.dialer.ui.components.LocalSideRail provides state) {
+                com.ogneliss.dialer.ui.screens.OverflowMenu(
+                    expanded = true, onDismiss = {}, settings = settings,
+                    onThemeToggle = {}, onSettings = {}, onFakeCall = {}, onNotes = {}, onReminders = {},
+                    onMessages = {}, onContacts = {}, onHelp = {}, onSearch = {}, onFilters = {}
+                )
+            }
         },
         // 2.9.3: «Инструменты меню» — порядок и показ, как папки
         Shot("menu_tools") { _ ->
@@ -730,7 +753,7 @@ class ScreenGalleryTest {
 
     /** Разделы настроек, которых не было выше: по одному снимку на раздел (2.7.5). */
     private val settingsShots: List<Shot> = SettingsCategory.entries
-        .filter { it !in setOf(SettingsCategory.APPEARANCE, SettingsCategory.CALLS, SettingsCategory.CALL_LOG, SettingsCategory.QUICK_ACCESS) }
+        .filter { it !in setOf(SettingsCategory.APPEARANCE, SettingsCategory.CALLS, SettingsCategory.CALL_LOG, SettingsCategory.CONTACTS) }
         .map { c -> Shot("settings_" + c.name.lowercase()) { vm -> SettingsCategoryScreen(category = c, vm = vm, onBack = {}, onOpenAdvanced = {}, onAction = {}) } }
 
     private val expShots: List<Shot> = listOf(

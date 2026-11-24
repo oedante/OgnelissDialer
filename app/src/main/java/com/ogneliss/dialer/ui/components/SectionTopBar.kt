@@ -69,7 +69,24 @@ internal fun SectionTopBar(
 ) {
     var menuOpen by remember { mutableStateOf(false) }
     val menuLabel = stringResource(R.string.bar_menu)
-    val items = if (onOpenMenu == null) menu else listOf(TopBarMenuItem(OgnelissIcons.Menu, menuLabel, onClick = onOpenMenu)) + menu
+    /*
+     * РАЗДЕЛЫ СПРАВА (2.9.6, автор: «кнопку меню перенести наверх и объединить
+     * с „Ещё“»): вместо «⋮» — одна кнопка «Меню» (три полоски); пункты «⋮»
+     * уходят в само меню частью «Действия» (SideRailState.listActions).
+     */
+    val sideRail = LocalSideRail.current
+    if (sideRail != null && onOpenMenu != null) {
+        val owner = remember { Any() }
+        androidx.compose.runtime.SideEffect { sideRail.publishList(owner, menu) }
+        androidx.compose.runtime.DisposableEffect(sideRail, owner) { onDispose { sideRail.withdrawList(owner) } }
+    }
+    // «Меню» кнопкой в шапке — только в режиме колонки; null — как всегда, через «⋮»
+    val sideMenuOpen = if (sideRail != null) onOpenMenu else null
+    val items = when {
+        sideMenuOpen != null -> emptyList()
+        onOpenMenu == null -> menu
+        else -> listOf(TopBarMenuItem(OgnelissIcons.Menu, menuLabel, onClick = onOpenMenu)) + menu
+    }
     TopAppBar(
         title = {
             Column {
@@ -98,6 +115,11 @@ internal fun SectionTopBar(
             }
         },
         actions = {
+            if (sideMenuOpen != null) {
+                IconButton(onClick = sideMenuOpen) {
+                    Icon(OgnelissIcons.Menu, contentDescription = menuLabel)
+                }
+            }
             if (items.isNotEmpty()) {
                 Box {
                     IconButton(onClick = { menuOpen = true }) {

@@ -220,20 +220,18 @@
     <string name="settings_section_about_summary">Конфиденциальность, условия, версия</string>
     <string name="settings_section_appearance">Оформление</string>
     <string name="settings_section_appearance_summary">Тема, цвета, размер шрифта, масштаб, язык</string>
-    <string name="settings_section_maintenance">Резервная копия</string>
-    <string name="settings_section_maintenance_summary">Экспорт и импорт заметок и списков</string>
+    <string name="settings_section_maintenance">Данные</string>
+    <string name="settings_section_maintenance_summary">Резервные копии, выгрузка, диагностика</string>
     <string name="settings_section_calls">Вызовы</string>
-    <string name="settings_section_calls_summary">Что происходит во время и после звонка</string>
-    <string name="settings_section_log">Журнал и контакты</string>
-    <string name="settings_section_log_summary">Вид журнала, сортировка контактов, запуск</string>
+    <string name="settings_section_calls_summary">Во время и после звонка, псевдозвонок</string>
+    <string name="settings_section_log">Журнал вызовов</string>
+    <string name="settings_section_log_summary">Группировка, оператор и регион, цветные стрелки</string>
     <string name="settings_section_sim">SIM-карты</string>
     <string name="settings_section_sim_summary">Названия, запоминание, свой номер</string>
-    <string name="settings_section_quick">Быстрый доступ</string>
-    <string name="settings_section_quick_summary">Нижняя панель, закреплённые, быстрый набор</string>
     <string name="settings_section_system">Настройки Android</string>
     <string name="settings_section_system_summary">Звук, уведомления, батарея, роли приложений</string>
-    <string name="settings_section_gestures">Жесты</string>
-    <string name="settings_section_gestures_summary">Свайпы, вибрация, тоны клавиш</string>
+    <string name="settings_section_gestures">Панель и жесты</string>
+    <string name="settings_section_gestures_summary">Нижняя панель, запуск, свайпы, вибрация</string>
     <string name="settings_section_spam">Защита от спама</string>
     <string name="settings_section_spam_summary">Чёрный и белый списки, метки</string>
     <string name="settings_show_photo">Показывать фото контактов</string>
@@ -1023,7 +1021,6 @@
     <string name="settings_sms_backup_text">Все SMS в файл XML формата SMS Backup &amp; Restore</string>
     <string name="settings_sms_restore">Восстановить SMS из файла</string>
     <string name="settings_sms_restore_text">Сообщения, которые уже есть в телефоне, пропускаются</string>
-    <string name="settings_group_sms_backup">Резервная копия</string>
     <string name="sms_forward">Переслать</string>
     <string name="sms_star">В избранное</string>
     <string name="sms_unstar">Из избранного</string>
@@ -1082,7 +1079,6 @@
     <string name="settings_start_section">При запуске открывать</string>
     <string name="settings_start_section_text">С какого экрана начинать, когда открываете значком</string>
     <string name="keywords_start_section">запуск старт открывать экран первый раздел последний журнал смс контакты главный</string>
-    <string name="settings_group_app_start">Запуск приложения</string>
     <string name="start_section_journal">Журнал</string>
     <string name="start_section_messages">SMS</string>
     <string name="start_section_contacts">Контакты</string>
@@ -1160,7 +1156,7 @@
     <string name="panel_side_title">Разделы</string>
     <string name="panel_side_bottom">Внизу</string>
     <string name="panel_side_right">Справа (проба)</string>
-    <string name="panel_side_right_text">Колонка у правого края вместо нижней панели: места — сверху вниз, списку больше места по высоте</string>
+    <string name="panel_side_right_text">Колонка у правого края вместо нижней панели: разделы сверху вниз, кнопка действия — внизу, «Меню» — в шапке</string>
     <string name="imei_title">IMEI</string>
     <string name="imei_sim">SIM %1$d</string>
     <string name="imei_unavailable">IMEI Android показывает только системной звонилке и приложению SMS по умолчанию. Его можно посмотреть в настройках телефона: «О телефоне».</string>
@@ -1170,4 +1166,9 @@
     <string name="call_ambient_theme">Цвета темы и фото</string>
     <string name="call_ambient_flame">Пламя и лиса</string>
     <string name="keywords_call_ambient_style">экран вызова, фон, анимация, волны, пламя, лиса, логотип, облик</string>
+    <string name="menu_section_actions">Действия</string>
+    <string name="settings_section_contacts">Контакты</string>
+    <string name="settings_section_contacts_summary">Фото, имена, сортировка, закреплённые</string>
+    <string name="settings_group_panel_start">Панель и запуск</string>
+    <string name="settings_home_group_contacts_sms">Контакты и сообщения</string>
 </resources>

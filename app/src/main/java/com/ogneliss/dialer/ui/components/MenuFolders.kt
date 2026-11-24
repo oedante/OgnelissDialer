@@ -108,6 +108,8 @@ internal class MenuFolder(
     val selected: Boolean = false,
     /** Фото вместо значка («Мой контакт», 2.5.0); пусто — значок. */
     val photoUri: String? = null,
+    /** Необратимое («Очистить журнал», 2.9.6, «Действия» в режиме колонки) — цветом ошибки. */
+    val destructive: Boolean = false,
     val onClick: () -> Unit
 )
 
@@ -214,10 +216,15 @@ private fun FolderRow(folder: MenuFolder, role: Role = Role.Tab) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         val photo = folder.photoUri?.takeIf { it.isNotBlank() }
+        val danger = MaterialTheme.colorScheme.error
         if (photo != null) RowAvatar(photo, size = PHOTO_SIZE)
         else Icon(
             folder.icon, contentDescription = null,
-            tint = if (on) accent else MaterialTheme.colorScheme.onSurfaceVariant,
+            tint = when {
+                folder.destructive -> danger
+                on -> accent
+                else -> MaterialTheme.colorScheme.onSurfaceVariant
+            },
             modifier = Modifier.size(ICON_SIZE)
         )
         Spacer(Modifier.width(Space.l))
@@ -225,7 +232,11 @@ private fun FolderRow(folder: MenuFolder, role: Role = Role.Tab) {
             folder.label,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = if (on) FontWeight.SemiBold else null,
-            color = if (on) accent else MaterialTheme.colorScheme.onSurface,
+            color = when {
+                folder.destructive -> danger
+                on -> accent
+                else -> MaterialTheme.colorScheme.onSurface
+            },
             modifier = Modifier.weight(1f)
         )
         // Число — только то, что требует внимания (непрочитанные): всего строк человеку не нужно

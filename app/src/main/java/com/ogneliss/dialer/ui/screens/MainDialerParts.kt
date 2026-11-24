@@ -132,7 +132,8 @@ internal fun OverflowMenu(
     val settingsLabel = stringResource(R.string.nav_settings)
     val helpLabel = stringResource(R.string.faq_title)
 
-    EndDrawer(onDismiss = onDismiss) {
+    // Разделы справа (2.9.6): «Меню» — кнопка в шапке, и панель выезжает сверху, от неё
+    EndDrawer(onDismiss = onDismiss, fromTop = com.ogneliss.dialer.ui.components.LocalSideRail.current != null) {
         /*
          * МЕНЮ — КАК ОСТАЛЬНОЕ ПРИЛОЖЕНИЕ (2.5.0). Автор, по снимкам меню журнала,
          * SMS и контактов: «почему в разделе Папки находятся фильтры?», «поиск
@@ -184,6 +185,9 @@ internal fun OverflowMenu(
         }
         // Значок «настроить» у «Инструментов» — как у «Папок» (корень даёт переход)
         val openTools = LocalOpenMenuTools.current
+        // Разделы справа (2.9.6): пункты «⋮» шапки — частью «Действия», меню — сверху
+        val sideRail = com.ogneliss.dialer.ui.components.LocalSideRail.current
+        val listActions = sideRail?.listActions.orEmpty()
         // Постоянные — первыми, необязательный («на главный экран») — последним,
         // чтобы его отсутствие (журнал) не сдвигало остальные
         val app = buildList {
@@ -208,6 +212,22 @@ internal fun OverflowMenu(
         Column(Modifier.fillMaxWidth()) {
             Column(Modifier.weight(1f, fill = false).fillMaxWidth().verticalScroll(rememberScrollState())) {
                 if (header != null) header()
+                /*
+                 * «Действия» (2.9.6): в режиме колонки справа «⋮» шапки объединён
+                 * с «Меню» (автор: «кнопку меню перенести наверх и объединить с
+                 * „Ещё“») — его пункты здесь, после папок. Пункт закрывает меню.
+                 */
+                if (listActions.isNotEmpty()) {
+                    MenuActionRows(
+                        stringResource(R.string.menu_section_actions),
+                        listActions.map { item ->
+                            MenuFolder(item.icon, item.label, destructive = item.destructive) {
+                                onDismiss()
+                                item.onClick()
+                            }
+                        }
+                    )
+                }
                 MenuActionRows(
                     stringResource(R.string.menu_section_tools), tools,
                     onEdit = openTools?.let { open -> { onDismiss(); open() } },
@@ -353,7 +373,12 @@ internal fun SearchPill(label: String, onSearch: () -> Unit, modifier: Modifier 
  * экрана (слева остаётся полоса списка — видно, куда вернёшься).
  */
 @Composable
-private fun EndDrawer(onDismiss: () -> Unit, content: @Composable ColumnScope.() -> Unit) {
+private fun EndDrawer(
+    onDismiss: () -> Unit,
+    /** Прижать к верху (2.9.6, режим колонки: «Меню» — в шапке); иначе — к низу, к кнопке «Меню» панели. */
+    fromTop: Boolean = false,
+    content: @Composable ColumnScope.() -> Unit
+) {
     val shown = remember { androidx.compose.animation.core.MutableTransitionState(false).apply { targetState = true } }
     androidx.compose.ui.window.Dialog(
         onDismissRequest = onDismiss,
@@ -369,8 +394,9 @@ private fun EndDrawer(onDismiss: () -> Unit, content: @Composable ColumnScope.()
                         onClickLabel = stringResource(R.string.nav_close),
                         onClick = onDismiss
                     ),
-                // 2.9.2: панель по высоте содержимого, прижата к низу — к кнопке «Меню»
-                contentAlignment = Alignment.BottomEnd
+                // 2.9.2: панель по высоте содержимого, прижата к низу — к кнопке «Меню»;
+                // 2.9.6: в режиме колонки — к верху, к кнопке «Меню» в шапке
+                contentAlignment = if (fromTop) Alignment.TopEnd else Alignment.BottomEnd
             ) {
                 androidx.compose.animation.AnimatedVisibility(
                     visibleState = shown,
@@ -383,7 +409,8 @@ private fun EndDrawer(onDismiss: () -> Unit, content: @Composable ColumnScope.()
                          */
                         color = com.ogneliss.dialer.ui.theme.OgnelissTheme.pageColor(com.ogneliss.dialer.ui.theme.PageTone.TINTED),
                         // Скруглён верхний левый угол — нижний стоит на краю экрана (2.9.2)
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(topStart = DRAWER_CORNER),
+                        shape = if (fromTop) androidx.compose.foundation.shape.RoundedCornerShape(bottomStart = DRAWER_CORNER)
+                        else androidx.compose.foundation.shape.RoundedCornerShape(topStart = DRAWER_CORNER),
                         modifier = Modifier
                             // Высокое меню не заходит под строку состояния
                             .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))

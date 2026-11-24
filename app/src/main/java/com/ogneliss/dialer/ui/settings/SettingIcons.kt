@@ -71,7 +71,7 @@ internal fun settingIcon(id: String): ImageVector? = when (id) {
     "sms_swipe_left" -> OgnelissIcons.SwipeLeft
     "messengers_any_number" -> OgnelissIcons.Chat
     // Быстрый доступ
-    "panel_slots" -> OgnelissIcons.Dialpad
+    "panel_slots" -> OgnelissIcons.TouchApp
     "fake_call_button", "fake_call_number" -> OgnelissIcons.PhoneCallback
     "pinned" -> OgnelissIcons.PushPin
     "speed_dial" -> OgnelissIcons.Bolt
