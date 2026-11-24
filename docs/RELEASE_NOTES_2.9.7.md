@@ -49,7 +49,19 @@
   когда при ответе появляется таймер; TalkBack по-прежнему произносит состояние.
 - Работает и на псевдозвонке.
 
+## Тесты: настоящая причина «exit value 2» (Windows, 2.9.5)
+
+Полный прогон тестов 24.11 один раз упал и здесь, на Linux, тем же «Process 'Gradle Test
+Executor N' finished with non-zero exit value 2» (повторный прогон прошёл). Код 2 — от
+самого приложения: `CrashHandler` без предыдущего обработчика вызывал `exitProcess(2)`.
+На телефоне до него всегда стоит обработчик Android, а в unit-тестах — нет; Robolectric
+создаёт приложение заново в каждом тесте, обработчики выстраивались в цепочку с
+`exitProcess(2)` в конце. Любое необработанное исключение в фоновом потоке любого теста
+убивало весь процесс тестов. Теперь обработчик ставится один раз, а без предыдущего ведёт
+себя как JVM по умолчанию (стек в stderr, процесс живёт); `CrashHandlerTest`. На телефоне
+поведение то же. Разбор — `docs/BUILD_TROUBLESHOOTING.md`.
+
 ## Проверки
 
-См. итог в HANDOFF.md. Новые тесты: `CallStatusLabelsTest`, `CallScreenStartTest`.
+См. итог в HANDOFF.md. Новые тесты: `CallStatusLabelsTest`, `CallScreenStartTest`, `CrashHandlerTest`.
 Галерея: `call_no_labels` (рядом с `call_theme`).

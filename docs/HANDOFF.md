@@ -22,6 +22,8 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 Настройка `call_status_labels` (Экран вызова, расширенная): `CallStatusLabels.shown`,
 `LocalCallStatusLabels`, `CallStatusPill(shown)` — прозрачная плашка, место и TalkBack остаются;
 «На удержании», «Вызов завершён» и таймер видны всегда.
+Тесты «exit value 2» (Windows, 2.9.5): причина — `CrashHandler` вызывал `exitProcess(2)` без
+предыдущего обработчика (в unit-тестах его нет); теперь ставится один раз и процесс не убивает.
 Для Google Play (последней ушла 2.9.0) — `store/whats_new_2.9.7_since_2.9.0.txt`.
 
 ## 24.11.2026 — 2.9.6 (101): настройки по-новому; разделы справа — действие внизу, «Меню» в шапке
