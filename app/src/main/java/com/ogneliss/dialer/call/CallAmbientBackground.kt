@@ -120,7 +120,7 @@ import kotlin.math.sin
 enum class AmbientMood { INCOMING, CONNECTING, ACTIVE, HOLDING, ENDED }
 
 /**
- * ОБЛИК ЖИВОГО ФОНА (2.9.6, автор: «может попробуем сделать экран в светлой
+ * ОБЛИК ЖИВОГО ФОНА (2.9.5, автор: «может попробуем сделать экран в светлой
  * и тёмной теме с пламенем и лисой и анимацией волн?»).
  *
  * • [THEME] — как было с 1.8.4: тоны снимка звонящего или темы.
@@ -184,7 +184,7 @@ fun CallAmbientBackground(
     val scheme = MaterialTheme.colorScheme
     val dark = scheme.background.luminance() < 0.5f
     val flame = LocalAmbientStyle.current == AmbientStyle.FLAME
-    // «Пламя» (2.9.6): страница — цвет значка, а не темы
+    // «Пламя» (2.9.5): страница — цвет значка, а не темы
     val page = if (flame) (if (dark) FLAME_PAGE_DARK else FLAME_PAGE_LIGHT) else scheme.background.toArgb()
     val textMain = scheme.onSurface.toArgb()
     val textMuted = scheme.onSurfaceVariant.toArgb()
@@ -274,7 +274,7 @@ fun CallAmbientBackground(
     )
 
     val art = remember(dark) { AmbientArt(dark) }
-    // Эмблема «пламя с лисой» (2.9.6) — только в облике «Пламя»
+    // Эмблема «пламя с лисой» (2.9.5) — только в облике «Пламя»
     val emblem = if (flame) androidx.compose.ui.graphics.ImageBitmap.imageResource(com.ogneliss.dialer.R.drawable.call_emblem) else null
     val emblemStrength = animateFloatAsState(
         when (mood) {
@@ -422,7 +422,7 @@ fun CallAmbientBackground(
                             if (alpha * f >= MIN_ALPHA) art.ring(canvas, k + 1, center, rx, ry, alpha * f)
                         }
                     }
-                    // Эмблема — поверх волн: волны уходят из-за неё (2.9.6)
+                    // Эмблема — поверх волн: волны уходят из-за неё (2.9.5)
                     if (emblem != null && emblemSide > 0f) {
                         val since = (ripple.floatValue * RINGS) % 1f
                         // Пламя «дышит» — чуть растёт с рождением волны и медленно колышется
@@ -566,7 +566,7 @@ private class AmbientArt(dark: Boolean) {
     private val emblemDst = android.graphics.RectF()
     private val emblemPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
 
-    /** Эмблема «пламя с лисой» (2.9.6): квадрат [side] с центром [center]. */
+    /** Эмблема «пламя с лисой» (2.9.5): квадрат [side] с центром [center]. */
     fun emblem(canvas: android.graphics.Canvas, image: androidx.compose.ui.graphics.ImageBitmap, center: Offset, side: Float, alpha: Float) {
         if (alpha <= MIN_ALPHA) return
         val bitmap = image.asAndroidBitmap()
@@ -673,7 +673,7 @@ private const val MAX_STEP_MS = 100L
 private const val PHASE_COS = 1.5707964f
 
 /*
- * «ПЛАМЯ» (2.9.6) — цвета значка (res/values/ic_launcher_background.xml):
+ * «ПЛАМЯ» (2.9.5) — цвета значка (res/values/ic_launcher_background.xml):
  * пламя #CCAA6D, фон #3A4450, лиса #D3D8DC. Страница в тёмной теме — на тон
  * глубже фона значка (подписи читаются лучше), в светлой — тёплая светлая.
  */

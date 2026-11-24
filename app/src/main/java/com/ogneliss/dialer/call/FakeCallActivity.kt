@@ -150,7 +150,7 @@ class FakeCallActivity : ComponentActivity() {
             val callBgIncoming by prefs.callBgIncoming.collectAsStateWithLifecycle(0L)
             // Фото звонящего — как у настоящего вызова (1.5.5); null — ещё не прочитано
             val callPhotoStyle by prefs.callPhotoStyle.collectAsStateWithLifecycle<CallPhotoStyle?>(null)
-            // Облик живого фона — как у настоящего вызова (2.9.6)
+            // Облик живого фона — как у настоящего вызова (2.9.5)
             val ambientStyle by prefs.callAmbientStyle.collectAsStateWithLifecycle(AmbientStyle.THEME)
             // Размер портрета — как у настоящего вызова (1.5.7)
             val callPhotoSize by prefs.callPhotoSize.collectAsStateWithLifecycle(CallPhotoSize.LARGE)

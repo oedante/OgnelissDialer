@@ -862,7 +862,7 @@ object SettingsRegistry {
             SettingKind.Switch("call_animation")
         ),
         /*
-         * Облик живого фона (2.9.6, автор: «экран в светлой и тёмной теме с пламенем
+         * Облик живого фона (2.9.5, автор: «экран в светлой и тёмной теме с пламенем
          * и лисой и анимацией волн»). Разбор — AmbientStyle (CallAmbientBackground).
          */
         SettingEntry(

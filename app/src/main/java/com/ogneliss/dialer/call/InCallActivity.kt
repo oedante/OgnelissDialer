@@ -274,7 +274,7 @@ class InCallActivity : ComponentActivity() {
             // на весь экран перед кругом
             val callPhotoStyle by prefs.callPhotoStyle
                 .collectAsStateWithLifecycle<CallPhotoStyle?>(initialValue = null)
-            // Облик живого фона (2.9.6): тоны темы или «Пламя» (AmbientStyle)
+            // Облик живого фона (2.9.5): тоны темы или «Пламя» (AmbientStyle)
             val ambientStyle by prefs.callAmbientStyle.collectAsStateWithLifecycle(initialValue = AmbientStyle.THEME)
             // Размер портрета (1.5.7, отзыв valmikk): обычный или крупный
             val callPhotoSize by prefs.callPhotoSize

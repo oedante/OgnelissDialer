@@ -63,3 +63,12 @@
 
 См. итог в HANDOFF.md. Галерея: `dialog_imei`, `dialog_imei_unavailable`, `call_theme`,
 `call_flame`.
+
+## Дополнение 24.11.2026 — тесты на Windows (приложение не менялось)
+
+- Автор: `testDebugUnitTest` на Windows — «Process 'Gradle Test Executor' finished with
+  non-zero exit value 2». Галерея снимков освобождает каждый снимок сразу после записи
+  (в режиме NATIVE это память вне кучи Java — копилась); процессу тестов — 2 ГБ кучи
+  (было 512 МБ по умолчанию), не больше четырёх процессов; `-PnoGallery` — прогон без
+  галереи. Разбор и порядок проверки — `docs/BUILD_TROUBLESHOOTING.md`.
+- В комментариях кода облик «Пламя» был подписан «2.9.6» — исправлено на 2.9.5.

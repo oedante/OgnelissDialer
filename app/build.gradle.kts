@@ -405,7 +405,24 @@ android {
              * и lint, которые Gradle гонит одновременно (org.gradle.parallel).
              */
             all { test ->
-                test.maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
+                // Не больше четырёх процессов (24.11.2026): по 2 ГБ кучи каждый — разбор ниже
+                test.maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).coerceIn(1, 4)
+                /*
+                 * ПАМЯТЬ ПРОЦЕССА ТЕСТОВ (24.11.2026, после 2.9.5, автор: на Windows «Process 'Gradle
+                 * Test Executor' finished with non-zero exit value 2»). У Gradle
+                 * по умолчанию 512 МБ на процесс; Robolectric с галереей снимков
+                 * (сотни экранов в одном процессе) живёт на грани. 2 ГБ и не больше
+                 * четырёх процессов: на машине с 16 ядрами было бы восемь процессов
+                 * по куче плюс память вне кучи — тесно даже для 32 ГБ.
+                 */
+                test.maxHeapSize = "2g"
+                /*
+                 * -PnoGallery — без галереи снимков (ScreenGalleryTest): быстрый
+                 * прогон и проверка, не в ней ли дело, если процесс тестов падает.
+                 */
+                if (project.hasProperty("noGallery")) {
+                    test.filter.excludeTestsMatching("*ScreenGalleryTest")
+                }
             }
         }
     }

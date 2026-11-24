@@ -255,3 +255,25 @@ index 1 is null`, затем «Could not find test-result.pb».** Падает
 `benchmark/build/reports/androidTests/managedDevice/nonminifiedrelease/allDevices/index.html`
 и посмотреть, выполнился ли `BaselineProfileGenerator.generate`.
 
+
+## testDebugUnitTest на Windows: «Process 'Gradle Test Executor N' finished with non-zero exit value 2»
+
+24.11.2026, 2.9.5, Windows. Перед этим — «Could not write '/127.0.0.1:…'. Connection reset
+by peer»: процесс тестов умер целиком, а не упал отдельный тест.
+
+**Вероятная причина — галерея снимков (`ScreenGalleryTest`).** Она снимает сотни экранов
+в одном процессе в режиме графики NATIVE; снимки — память вне кучи Java, сборщик мусора
+её почти не видит. До 24.11.2026 снимки не освобождались, и память копилась (в 2.9.5 добавились
+полноэкранные экраны вызова с градиентами). Ещё одна возможная причина — графическая
+библиотека Robolectric под Windows своя, и рисование экрана вызова через неё до 2.9.5
+не проверялось.
+
+**Что сделано (24.11.2026, после 2.9.5):** снимок освобождается сразу после записи; процессу тестов — 2 ГБ кучи
+(`maxHeapSize`, у Gradle по умолчанию 512 МБ) и не больше четырёх процессов.
+
+**Если снова падает:**
+1. `./gradlew testDebugUnitTest -PnoGallery` — все тесты без галереи. Проходит — дело
+   в галерее.
+2. `./gradlew testDebugUnitTest --tests "*ScreenGalleryTest"` — одна галерея; с
+   `$env:GALLERY_ONLY="call_theme,call_flame"` — только нужные снимки.
+3. Файл `app\hs_err_pid*.log`, если появился, — отчёт JVM о падении: прислать его.
