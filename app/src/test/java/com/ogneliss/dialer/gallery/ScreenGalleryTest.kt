@@ -576,6 +576,29 @@ class ScreenGalleryTest {
         Shot("dialog_imei_unavailable", dialog = true) { _ ->
             com.ogneliss.dialer.ui.components.ImeiDialog(emptyList(), onDismiss = {})
         },
+        // 2.9.6: меню в режиме колонки — сверху, с «Действиями» из «⋮» шапки
+        Shot("side_menu", dialog = true) { vm ->
+            val settings = vm.settingsState.collectAsState().value
+            val state = androidx.compose.runtime.remember { com.ogneliss.dialer.ui.components.SideRailState() }
+            val select = androidx.compose.ui.res.stringResource(R.string.selection_start)
+            val clear = androidx.compose.ui.res.stringResource(R.string.log_clear_all)
+            androidx.compose.runtime.SideEffect {
+                state.publishList(
+                    state,
+                    listOf(
+                        com.ogneliss.dialer.ui.components.TopBarMenuItem(com.ogneliss.dialer.ui.theme.OgnelissIcons.Checklist, select) {},
+                        com.ogneliss.dialer.ui.components.TopBarMenuItem(com.ogneliss.dialer.ui.theme.OgnelissIcons.DeleteSweep, clear, destructive = true) {}
+                    )
+                )
+            }
+            androidx.compose.runtime.CompositionLocalProvider(com.ogneliss.dialer.ui.components.LocalSideRail provides state) {
+                com.ogneliss.dialer.ui.screens.OverflowMenu(
+                    expanded = true, onDismiss = {}, settings = settings,
+                    onThemeToggle = {}, onSettings = {}, onFakeCall = {}, onNotes = {}, onReminders = {},
+                    onMessages = {}, onContacts = {}, onHelp = {}, onSearch = {}, onFilters = {}
+                )
+            }
+        },
         // 2.9.3: «Инструменты меню» — порядок и показ, как папки
         Shot("menu_tools") { _ ->
             com.ogneliss.dialer.ui.screens.MenuFoldersScreen(

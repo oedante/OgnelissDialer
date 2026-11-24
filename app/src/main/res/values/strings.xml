@@ -1180,7 +1180,7 @@
     <string name="panel_side_title">Sections</string>
     <string name="panel_side_bottom">At the bottom</string>
     <string name="panel_side_right">On the right (trial)</string>
-    <string name="panel_side_right_text">A column at the right edge instead of the bottom bar: places go from top to bottom, the list gets more height</string>
+    <string name="panel_side_right_text">A column at the right edge instead of the bottom bar: sections from top to bottom, the action button at the bottom, the Menu at the top</string>
     <string name="imei_title">IMEI</string>
     <string name="imei_sim">SIM %1$d</string>
     <string name="imei_unavailable">Android gives the IMEI only to the system phone app and to the default SMS app. You can see it in the phone settings: About phone.</string>
@@ -1190,4 +1190,5 @@
     <string name="call_ambient_theme">Theme and photo colors</string>
     <string name="call_ambient_flame">Flame and fox</string>
     <string name="keywords_call_ambient_style">call screen, background, animation, waves, flame, fox, logo, look</string>
+    <string name="menu_section_actions">Actions</string>
 </resources>

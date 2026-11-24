@@ -1,7 +1,6 @@
 package com.ogneliss.dialer.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -15,9 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.Badge
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -28,9 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.ogneliss.dialer.R
 import com.ogneliss.dialer.settings.PanelSlot
-import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import com.ogneliss.dialer.ui.theme.OgnelissTheme
 import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.ui.theme.Space
@@ -90,6 +85,28 @@ internal class SideRailState {
             actions = null
         }
     }
+
+    /**
+     * Действия над списком из «⋮» шапки (2.9.6, автор: «кнопку меню перенести наверх
+     * и объединить с „Ещё“»): в режиме колонки шапка показывает одну кнопку «Меню»,
+     * а её прежние пункты («Выбрать», «Очистить журнал», «Архив») — частью
+     * «Действия» в самом меню (OverflowMenu).
+     */
+    var listActions by mutableStateOf<List<TopBarMenuItem>>(emptyList())
+        private set
+    private var listOwner: Any? = null
+
+    fun publishList(owner: Any, items: List<TopBarMenuItem>) {
+        listOwner = owner
+        listActions = items
+    }
+
+    fun withdrawList(owner: Any) {
+        if (listOwner === owner) {
+            listOwner = null
+            listActions = emptyList()
+        }
+    }
 }
 
 /** Центральная кнопка раздела и «Меню» — для колонки справа. */
@@ -137,37 +154,26 @@ internal fun SideSectionRail(
             verticalArrangement = Arrangement.spacedBy(Space.xs, Alignment.Bottom),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val slot: @Composable (Int) -> Unit = { index ->
-                when (val item = slots.getOrNull(index)) {
-                    null -> Unit
-                    PanelSlot.MENU -> Box(Modifier.fillMaxWidth().height(CELL_HEIGHT), contentAlignment = Alignment.Center) {
-                        LabeledIconButton(
-                            OgnelissIcons.Menu, R.string.bar_menu,
-                            onClick = { actions?.onMenu?.invoke() },
-                            fitLabel = true,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        val badge = actions?.menuBadge
-                        if (badge != null) Badge(Modifier.align(Alignment.TopEnd).padding(end = Space.s)) { Text(badge) }
-                    }
-                    else -> {
-                        val section = item.toSection()
-                        LabeledIconButton(
-                            icon = section.icon,
-                            labelRes = section.labelRes,
-                            onClick = { if (section != current) onOpenSection(section) },
-                            selected = section == current,
-                            fitLabel = true,
-                            modifier = Modifier.fillMaxWidth().height(CELL_HEIGHT)
-                        )
-                    }
-                }
+            /*
+             * 2.9.6 (автор по снимку колонки): «кнопку клавиатуры / создания SMS
+             * и контакта перенести вниз, кнопку меню перенести наверх и объединить
+             * с „Ещё“». Сверху вниз — разделы из конструктора (без «Меню»: оно
+             * в шапке, SectionTopBar), в самом низу, у большого пальца, — кнопка
+             * действия раздела. Было (2.9.3): места 1–2, центр, места 3–4, «Меню».
+             */
+            slots.filter { it != PanelSlot.MENU }.forEach { item ->
+                val section = item.toSection()
+                LabeledIconButton(
+                    icon = section.icon,
+                    labelRes = section.labelRes,
+                    onClick = { if (section != current) onOpenSection(section) },
+                    selected = section == current,
+                    fitLabel = true,
+                    modifier = Modifier.fillMaxWidth().height(CELL_HEIGHT)
+                )
             }
-            slot(0)
-            slot(1)
-            // Центр — сплошной, как на нижней панели; пока раздел его не передал
-            // (открыта клавиатура набора) — пустое место той же высоты, чтобы
-            // кнопки под ним не прыгали
+            // Кнопка действия — сплошная, как центр нижней панели; пока раздел её
+            // не передал (открыта клавиатура набора) — пустое место той же высоты
             if (actions != null) {
                 LabeledIconButton(
                     icon = actions.centerIcon,
@@ -181,17 +187,16 @@ internal fun SideSectionRail(
             } else {
                 Spacer(Modifier.height(CELL_HEIGHT))
             }
-            slot(2)
-            slot(3)
         }
     }
 }
 
 /**
- * Ширина колонки: значок 24 dp в «таблетке» 56 dp и подпись под ним.
- * Длинная подпись («Напоминания») ужимается (FitText), а не переносится.
+ * Ширина колонки (2.9.6, автор: «панель всё ещё очень широкая»; было 72 dp):
+ * значок 24 dp и подпись под ним. Длинная подпись («Напоминания»)
+ * ужимается (FitText), а не переносится.
  */
-internal val SIDE_RAIL_WIDTH = 72.dp
+internal val SIDE_RAIL_WIDTH = 60.dp
 
 /** Высота места — одна на всех, чтобы колонка не прыгала без центра. */
 private val CELL_HEIGHT = 68.dp
