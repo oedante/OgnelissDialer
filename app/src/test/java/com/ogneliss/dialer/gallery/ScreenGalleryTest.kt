@@ -428,7 +428,7 @@ class ScreenGalleryTest {
         Shot("settings_calls") { vm -> SettingsCategoryScreen(category = SettingsCategory.CALLS, vm = vm, onBack = {}, onOpenAdvanced = {}, onAction = {}) },
         // 2.7.2: «Журнал вызовов» — где «Цветные стрелки вызовов» (вопрос автора: «не вижу настройки»)
         Shot("settings_log") { vm -> SettingsCategoryScreen(category = SettingsCategory.CALL_LOG, vm = vm, onBack = {}, onOpenAdvanced = {}, onAction = {}) },
-        Shot("settings_quick") { vm -> SettingsCategoryScreen(category = SettingsCategory.QUICK_ACCESS, vm = vm, onBack = {}, onOpenAdvanced = {}, onAction = {}) },
+        Shot("settings_contacts") { vm -> SettingsCategoryScreen(category = SettingsCategory.CONTACTS, vm = vm, onBack = {}, onOpenAdvanced = {}, onAction = {}) },
         Shot("notes") { vm -> NotesScreen(vm = vm, onOpenCard = {}) },
         Shot("reminders") { vm -> RemindersScreen(vm = vm, onOpenCard = {}) },
         Shot("spam") { vm -> SpamProtectionScreen(vm = vm, onBack = {}, onOpenLists = {}) },
@@ -753,7 +753,7 @@ class ScreenGalleryTest {
 
     /** Разделы настроек, которых не было выше: по одному снимку на раздел (2.7.5). */
     private val settingsShots: List<Shot> = SettingsCategory.entries
-        .filter { it !in setOf(SettingsCategory.APPEARANCE, SettingsCategory.CALLS, SettingsCategory.CALL_LOG, SettingsCategory.QUICK_ACCESS) }
+        .filter { it !in setOf(SettingsCategory.APPEARANCE, SettingsCategory.CALLS, SettingsCategory.CALL_LOG, SettingsCategory.CONTACTS) }
         .map { c -> Shot("settings_" + c.name.lowercase()) { vm -> SettingsCategoryScreen(category = c, vm = vm, onBack = {}, onOpenAdvanced = {}, onAction = {}) } }
 
     private val expShots: List<Shot> = listOf(

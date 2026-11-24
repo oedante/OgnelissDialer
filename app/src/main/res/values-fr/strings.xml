@@ -230,20 +230,18 @@
     <string name="settings_section_about_summary">Confidentialité, conditions, version</string>
     <string name="settings_section_appearance">Apparence</string>
     <string name="settings_section_appearance_summary">Thème, couleurs, taille du texte, échelle, langue</string>
-    <string name="settings_section_maintenance">Sauvegarde</string>
-    <string name="settings_section_maintenance_summary">Exporter et importer notes et listes</string>
+    <string name="settings_section_maintenance">Données</string>
+    <string name="settings_section_maintenance_summary">Sauvegardes, export, diagnostic</string>
     <string name="settings_section_calls">Appels</string>
-    <string name="settings_section_calls_summary">Ce qui se passe pendant et après un appel</string>
-    <string name="settings_section_log">Journal et contacts</string>
-    <string name="settings_section_log_summary">Affichage du journal, tri des contacts, lancement</string>
+    <string name="settings_section_calls_summary">Pendant et après l’appel, faux appel</string>
+    <string name="settings_section_log">Journal d’appels</string>
+    <string name="settings_section_log_summary">Regroupement, opérateur, flèches colorées</string>
     <string name="settings_section_sim">Cartes SIM</string>
     <string name="settings_section_sim_summary">Noms, mémorisation, votre numéro</string>
-    <string name="settings_section_quick">Accès rapide</string>
-    <string name="settings_section_quick_summary">Barre du bas, épinglés, numérotation abrégée</string>
     <string name="settings_section_system">Réglages Android</string>
     <string name="settings_section_system_summary">Son, notifications, batterie, applis par défaut</string>
-    <string name="settings_section_gestures">Gestes</string>
-    <string name="settings_section_gestures_summary">Actions de balayage, vibrations, tonalités</string>
+    <string name="settings_section_gestures">Barre et gestes</string>
+    <string name="settings_section_gestures_summary">Barre du bas, démarrage, balayages, vibration</string>
     <string name="settings_section_spam">Protection contre le spam</string>
     <string name="settings_section_spam_summary">Liste de blocage, exceptions, étiquettes</string>
     <string name="settings_show_photo">Afficher les photos des contacts</string>
@@ -1013,7 +1011,6 @@
     <string name="settings_sms_backup_text">Tous les SMS dans un fichier XML au format SMS Backup &amp; Restore</string>
     <string name="settings_sms_restore">Restaurer les SMS depuis un fichier</string>
     <string name="settings_sms_restore_text">Les messages déjà présents sont ignorés</string>
-    <string name="settings_group_sms_backup">Sauvegarde</string>
     <string name="sms_forward">Transférer</string>
     <string name="sms_star">Favori</string>
     <string name="sms_unstar">Retirer</string>
@@ -1072,7 +1069,6 @@
     <string name="settings_start_section">À l’ouverture, afficher</string>
     <string name="settings_start_section_text">L’écran affiché en ouvrant l’app par son icône</string>
     <string name="keywords_start_section">démarrage lancement ouvrir écran première section dernière journal sms contacts accueil</string>
-    <string name="settings_group_app_start">Lancement de l’app</string>
     <string name="start_section_journal">Journal</string>
     <string name="start_section_messages">SMS</string>
     <string name="start_section_contacts">Contacts</string>
@@ -1161,4 +1157,8 @@
     <string name="call_ambient_flame">Flamme et renard</string>
     <string name="keywords_call_ambient_style">écran d’appel, fond, animation, ondes, flamme, renard, logo, style</string>
     <string name="menu_section_actions">Actions</string>
+    <string name="settings_section_contacts">Contacts</string>
+    <string name="settings_section_contacts_summary">Photos, noms, tri, épinglés</string>
+    <string name="settings_group_panel_start">Barre et démarrage</string>
+    <string name="settings_home_group_contacts_sms">Contacts et messages</string>
 </resources>

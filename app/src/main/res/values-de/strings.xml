@@ -232,20 +232,18 @@
     <string name="settings_section_about_summary">Datenschutz, Bedingungen, Version</string>
     <string name="settings_section_appearance">Darstellung</string>
     <string name="settings_section_appearance_summary">Design, Farben, Schriftgröße, Skalierung, Sprache</string>
-    <string name="settings_section_maintenance">Sicherung</string>
-    <string name="settings_section_maintenance_summary">Notizen und Listen exportieren und importieren</string>
+    <string name="settings_section_maintenance">Daten</string>
+    <string name="settings_section_maintenance_summary">Sicherungen, Export, Diagnose</string>
     <string name="settings_section_calls">Anrufe</string>
-    <string name="settings_section_calls_summary">Was während und nach einem Anruf geschieht</string>
-    <string name="settings_section_log">Anrufliste und Kontakte</string>
-    <string name="settings_section_log_summary">Protokollansicht, Kontaktsortierung, Start</string>
+    <string name="settings_section_calls_summary">Während und nach dem Anruf, Scheinanruf</string>
+    <string name="settings_section_log">Anrufliste</string>
+    <string name="settings_section_log_summary">Gruppierung, Anbieter, farbige Pfeile</string>
     <string name="settings_section_sim">SIM-Karten</string>
     <string name="settings_section_sim_summary">Namen, Merken, eigene Nummer</string>
-    <string name="settings_section_quick">Schnellzugriff</string>
-    <string name="settings_section_quick_summary">Untere Leiste, angeheftete Nummern, Kurzwahl</string>
     <string name="settings_section_system">Android-Einstellungen</string>
     <string name="settings_section_system_summary">Ton, Benachrichtigungen, Akku, Standard-Apps</string>
-    <string name="settings_section_gestures">Gesten</string>
-    <string name="settings_section_gestures_summary">Wischgesten, Vibration, Tastentöne</string>
+    <string name="settings_section_gestures">Leiste und Gesten</string>
+    <string name="settings_section_gestures_summary">Untere Leiste, Start, Wischen, Vibration</string>
     <string name="settings_section_spam">Spamschutz</string>
     <string name="settings_section_spam_summary">Sperrliste, Ausnahmen, Markierungen</string>
     <string name="settings_show_photo">Kontaktfotos anzeigen</string>
@@ -1014,7 +1012,6 @@
     <string name="settings_sms_backup_text">Alle SMS in eine XML-Datei im Format von SMS Backup &amp; Restore</string>
     <string name="settings_sms_restore">SMS aus Datei wiederherstellen</string>
     <string name="settings_sms_restore_text">Bereits vorhandene Nachrichten werden übersprungen</string>
-    <string name="settings_group_sms_backup">Sicherung</string>
     <string name="sms_forward">Weiterleiten</string>
     <string name="sms_star">Markieren</string>
     <string name="sms_unstar">Entfernen</string>
@@ -1073,7 +1070,6 @@
     <string name="settings_start_section">Beim Start öffnen</string>
     <string name="settings_start_section_text">Mit welchem Bildschirm die App per Symbol startet</string>
     <string name="keywords_start_section">start öffnen bildschirm erster abschnitt letzter anrufliste sms kontakte startseite</string>
-    <string name="settings_group_app_start">App-Start</string>
     <string name="start_section_journal">Anrufliste</string>
     <string name="start_section_messages">SMS</string>
     <string name="start_section_contacts">Kontakte</string>
@@ -1162,4 +1158,8 @@
     <string name="call_ambient_flame">Flamme und Fuchs</string>
     <string name="keywords_call_ambient_style">Anrufbildschirm, Hintergrund, Animation, Wellen, Flamme, Fuchs, Logo, Aussehen</string>
     <string name="menu_section_actions">Aktionen</string>
+    <string name="settings_section_contacts">Kontakte</string>
+    <string name="settings_section_contacts_summary">Fotos, Namen, Sortierung, Angeheftete</string>
+    <string name="settings_group_panel_start">Leiste und Start</string>
+    <string name="settings_home_group_contacts_sms">Kontakte und Nachrichten</string>
 </resources>

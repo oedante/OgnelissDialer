@@ -109,11 +109,18 @@ enum class SettingsCategory(
         R.string.settings_section_log_summary,
         OgnelissIcons.List
     ),
-    QUICK_ACCESS(
-        "settings/quick",
-        R.string.settings_section_quick,
-        R.string.settings_section_quick_summary,
-        OgnelissIcons.Bolt
+    /*
+     * «Контакты» (2.9.6, перегруппировка по плану, автор: «в настройках у нас всё
+     * перемешано»): фото и имена (были в «Оформлении»), сортировка и заметки
+     * (были в «Журнале и контактах»), закреплённые и быстрый набор (были
+     * в «Быстром доступе»), картинки без фото (были в «Экране вызова»),
+     * мессенджеры (были в «SMS»). «Быстрого доступа» больше нет.
+     */
+    CONTACTS(
+        "settings/contacts",
+        R.string.settings_section_contacts,
+        R.string.settings_section_contacts_summary,
+        OgnelissIcons.Contacts
     ),
     /*
      * «SMS» (2.1.0). Было: настройки сообщений жили подгруппой в «Журнале
@@ -249,7 +256,6 @@ data class SettingEntry(
 object SettingsRegistry {
 
     val entries: List<SettingEntry> = listOf(
-
         // ── Оформление ─────────────────────────────────────────────────────
         SettingEntry(
             "language", SettingsCategory.APPEARANCE,
@@ -338,23 +344,132 @@ object SettingsRegistry {
             SettingKind.Switch("button_labels"),
             advanced = true
         ),
-        SettingEntry(
-            "show_photo", SettingsCategory.APPEARANCE,
-            R.string.settings_show_photo, null,
-            SettingKind.Switch("show_photo")
-        ),
+
+        // ── Панель и жесты ─────────────────────────────────────────────────
         /*
-         * Имена контактов (1.6.2): отзыв в Google Play — «сортировку
-         * по фамилии»; автор — «предлагать пользователю выбор, как
-         * показывать». Два пункта, как в системных «Контактах»: формат
-         * и порядок независимы. Разбор — data/ContactNames.kt.
+         * Конструктор нижней панели (2.9.2, автор: «как в Ogneliss Mail сделать
+         * конструктор нижней панели»). Разбор — settings/PanelSlots.kt, экран —
+         * PanelSlotsScreen. Первым в разделе (с 2.9.6 — «Панель и жесты», было —
+         * «Быстрый доступ»): панель — самое быстрое, что есть в приложении.
          */
         SettingEntry(
-            "contact_name_format", SettingsCategory.APPEARANCE,
-            R.string.settings_contact_name_format, R.string.settings_contact_name_format_text,
-            SettingKind.Choice("contact_name_format"),
-            keywordsRes = R.string.keywords_contact_names
+            "panel_slots", SettingsCategory.GESTURES,
+            R.string.settings_panel_slots, R.string.settings_panel_slots_text,
+            SettingKind.Action("panel_slots"),
+            keywordsRes = R.string.keywords_panel_slots,
+            groupRes = R.string.settings_group_panel_start
         ),
+        /*
+         * 2.7.0, форум (oleg_p, 15.11.2026): выбор экрана при запуске — журнал
+         * (по умолчанию), SMS, контакты или последний раздел. Разбор —
+         * settings/StartSection.kt. Свою группу завели, чтобы не путать
+         * с «Главным экраном» выше: тот про рабочий стол лаунчера.
+         */
+        SettingEntry(
+            "start_section", SettingsCategory.GESTURES,
+            R.string.settings_start_section, R.string.settings_start_section_text,
+            SettingKind.Choice("start_section"),
+            keywordsRes = R.string.keywords_start_section,
+            groupRes = R.string.settings_group_panel_start
+        ),
+        SettingEntry(
+            "dialpad_open_at_start", SettingsCategory.GESTURES,
+            R.string.settings_dialpad_open, R.string.settings_dialpad_open_text,
+            SettingKind.Switch("dialpad_open_at_start"),
+            // 2.1.0: из «Оформления» — это поведение журнала при запуске
+            groupRes = R.string.settings_group_panel_start
+        ),
+        SettingEntry(
+            "swipe_right", SettingsCategory.GESTURES,
+            R.string.settings_swipe_right, null,
+            SettingKind.Choice("swipe_right"),
+            groupRes = R.string.settings_group_row_swipe
+        ),
+        SettingEntry(
+            "swipe_left", SettingsCategory.GESTURES,
+            R.string.settings_swipe_left, null,
+            SettingKind.Choice("swipe_left"),
+            groupRes = R.string.settings_group_row_swipe
+        ),
+        SettingEntry(
+            "swipe_tuning", SettingsCategory.GESTURES,
+            R.string.settings_swipe_tuning, R.string.settings_swipe_tuning_text,
+            SettingKind.Action("swipe_tuning"),
+            groupRes = R.string.settings_group_row_swipe,
+            advanced = true
+        ),
+        SettingEntry(
+            "haptic", SettingsCategory.GESTURES,
+            R.string.settings_haptic, null,
+            SettingKind.Switch("haptic"),
+            groupRes = R.string.settings_group_feedback
+        ),
+        SettingEntry(
+            "key_tones", SettingsCategory.GESTURES,
+            R.string.settings_key_tones, null,
+            SettingKind.Switch("key_tones"),
+            groupRes = R.string.settings_group_feedback
+        ),
+        /*
+         * 2.5.0, форум: вибрация, когда вызываемый снял трубку (Prefs.vibrateOnConnect).
+         * Здесь, в «Отклике», рядом с вибрацией клавиш: в «Звонках» уже четырнадцать
+         * настроек — больше читают прокруткой (SettingsRegistryTest).
+         */
+        SettingEntry(
+            "vibrate_on_connect", SettingsCategory.GESTURES,
+            R.string.settings_vibrate_on_connect, R.string.settings_vibrate_on_connect_text,
+            SettingKind.Switch("vibrate_on_connect"),
+            groupRes = R.string.settings_group_feedback
+        ),
+        SettingEntry(
+            "panel_swipe_nav", SettingsCategory.GESTURES,
+            R.string.settings_panel_swipe_nav, R.string.settings_panel_swipe_nav_text,
+            SettingKind.Switch("panel_swipe_nav"),
+            groupRes = R.string.settings_group_screen_swipe,
+            advanced = true
+        ),
+        SettingEntry(
+            "sms_swipe_right", SettingsCategory.GESTURES,
+            R.string.settings_sms_swipe_right, R.string.settings_sms_swipe_text,
+            SettingKind.Choice("sms_swipe_right"),
+            keywordsRes = R.string.keywords_sms,
+            groupRes = R.string.settings_group_sms_swipe,
+            advanced = true
+        ),
+        SettingEntry(
+            "sms_swipe_left", SettingsCategory.GESTURES,
+            R.string.settings_sms_swipe_left, R.string.settings_sms_swipe_text,
+            SettingKind.Choice("sms_swipe_left"),
+            keywordsRes = R.string.keywords_sms,
+            groupRes = R.string.settings_group_sms_swipe,
+            advanced = true
+        ),
+        /*
+         * Форма значков «SMS» и «Контакты» на главном экране (2.1.3, автор:
+         * «чтобы по форме можно было выбрать скругление»). Разбор — WidgetShape.
+         */
+        SettingEntry(
+            "widget_shape", SettingsCategory.GESTURES,
+            R.string.settings_widget_shape, R.string.settings_widget_shape_text,
+            SettingKind.Choice("widget_shape"),
+            keywordsRes = R.string.keywords_widget_shape,
+            groupRes = R.string.settings_group_home_screen,
+            advanced = true
+        ),
+        /*
+         * 2.6.0, форум: отдельные значки «SMS» и «Контакты» в списке приложений —
+         * в док и в папку (разбор в widget/SectionIcons.kt).
+         */
+        SettingEntry(
+            "section_icons", SettingsCategory.GESTURES,
+            R.string.settings_section_icons, R.string.settings_section_icons_text,
+            SettingKind.Switch("section_icons"),
+            keywordsRes = R.string.keywords_section_icons,
+            groupRes = R.string.settings_group_home_screen,
+            advanced = true
+        ),
+
+        // ── SIM-карты ──────────────────────────────────────────────────────
         // «Цветная шапка меню» (1.3.5) снята в 1.5.7: меню долгого нажатия
         // стало карточками (ActionCards), шапки у него больше нет
         SettingEntry(
@@ -378,16 +493,12 @@ object SettingsRegistry {
             R.string.settings_remember_sim, R.string.settings_remember_sim_text,
             SettingKind.Switch("remember_sim")
         ),
-
-        // ── Жесты ──────────────────────────────────────────────────────────
         SettingEntry(
             "swipe_sim", SettingsCategory.SIM,
             R.string.settings_swipe_sim, R.string.settings_swipe_sim_text,
             SettingKind.Choice("swipe_sim"),
             advanced = true
         ),
-
-        // ── О приложении ───────────────────────────────────────────────────
         /*
          * ЭНЕРГОСБЕРЕЖЕНИЕ.
          *
@@ -434,57 +545,160 @@ object SettingsRegistry {
             "sys_sim", SettingsCategory.SIM,
             R.string.settings_sim, null, SettingKind.SystemLink("sim")
         ),
-        SettingEntry(
-            "swipe_right", SettingsCategory.GESTURES,
-            R.string.settings_swipe_right, null,
-            SettingKind.Choice("swipe_right"),
-            groupRes = R.string.settings_group_row_swipe
-        ),
-        SettingEntry(
-            "swipe_left", SettingsCategory.GESTURES,
-            R.string.settings_swipe_left, null,
-            SettingKind.Choice("swipe_left"),
-            groupRes = R.string.settings_group_row_swipe
-        ),
-        SettingEntry(
-            "swipe_tuning", SettingsCategory.GESTURES,
-            R.string.settings_swipe_tuning, R.string.settings_swipe_tuning_text,
-            SettingKind.Action("swipe_tuning"),
-            groupRes = R.string.settings_group_row_swipe,
-            advanced = true
-        ),
-        SettingEntry(
-            "panel_swipe_nav", SettingsCategory.GESTURES,
-            R.string.settings_panel_swipe_nav, R.string.settings_panel_swipe_nav_text,
-            SettingKind.Switch("panel_swipe_nav"),
-            groupRes = R.string.settings_group_screen_swipe,
-            advanced = true
-        ),
-        SettingEntry(
-            "haptic", SettingsCategory.GESTURES,
-            R.string.settings_haptic, null,
-            SettingKind.Switch("haptic"),
-            groupRes = R.string.settings_group_feedback
-        ),
-        SettingEntry(
-            "key_tones", SettingsCategory.GESTURES,
-            R.string.settings_key_tones, null,
-            SettingKind.Switch("key_tones"),
-            groupRes = R.string.settings_group_feedback
-        ),
-        /*
-         * 2.5.0, форум: вибрация, когда вызываемый снял трубку (Prefs.vibrateOnConnect).
-         * Здесь, в «Отклике», рядом с вибрацией клавиш: в «Звонках» уже четырнадцать
-         * настроек — больше читают прокруткой (SettingsRegistryTest).
-         */
-        SettingEntry(
-            "vibrate_on_connect", SettingsCategory.GESTURES,
-            R.string.settings_vibrate_on_connect, R.string.settings_vibrate_on_connect_text,
-            SettingKind.Switch("vibrate_on_connect"),
-            groupRes = R.string.settings_group_feedback
-        ),
 
         // ── Вызовы ─────────────────────────────────────────────────────────
+        // 1.5.8, обзор интерфейса (У6): ответ сдвигом — от случайного касания
+        SettingEntry(
+            "answer_mode", SettingsCategory.CALLS,
+            R.string.settings_answer_mode, R.string.settings_answer_mode_text,
+            SettingKind.Choice("answer_mode"),
+            groupRes = R.string.settings_group_during_call
+        ),
+        /*
+         * «Ответить» слева (2.1.1, просьба пользователей): привыкшим к ответу
+         * слева на прежнем телефоне. Разбор — Prefs.swapAnswer.
+         */
+        SettingEntry(
+            "swap_answer", SettingsCategory.CALLS,
+            R.string.settings_swap_answer, R.string.settings_swap_answer_text,
+            SettingKind.Switch("swap_answer"),
+            keywordsRes = R.string.keywords_swap_answer,
+            groupRes = R.string.settings_group_during_call
+        ),
+        /*
+         * Входящий поверх приложений (2.1.0, вопрос пользователя 07.11.2026):
+         * на весь экран (как было) или плашкой сверху, пока телефон
+         * разблокирован. Разбор — OgnelissInCallService.
+         */
+        SettingEntry(
+            "incoming_banner", SettingsCategory.CALLS,
+            R.string.settings_incoming_banner, R.string.settings_incoming_banner_text,
+            SettingKind.Switch("incoming_banner"),
+            keywordsRes = R.string.keywords_incoming_banner,
+            groupRes = R.string.settings_group_during_call
+        ),
+        SettingEntry(
+            "smart_speaker", SettingsCategory.CALLS,
+            R.string.settings_smart_speaker, R.string.settings_smart_speaker_text,
+            SettingKind.Switch("smart_speaker"),
+            groupRes = R.string.settings_group_during_call,
+            advanced = true
+        ),
+        SettingEntry(
+            "proximity_screen_off", SettingsCategory.CALLS,
+            R.string.settings_proximity, R.string.settings_proximity_text,
+            SettingKind.Switch("proximity_screen_off"),
+            groupRes = R.string.settings_group_during_call
+        ),
+        SettingEntry(
+            "post_call", SettingsCategory.CALLS,
+            R.string.settings_post_call, R.string.settings_post_call_text,
+            SettingKind.Switch("post_call"),
+            groupRes = R.string.settings_group_after_call
+        ),
+        SettingEntry(
+            "post_call_unknown", SettingsCategory.CALLS,
+            R.string.settings_post_call_unknown, R.string.settings_post_call_unknown_text,
+            SettingKind.Switch("post_call_unknown"),
+            groupRes = R.string.settings_group_after_call,
+            advanced = true
+        ),
+        SettingEntry(
+            "callback_suggestion", SettingsCategory.CALLS,
+            R.string.settings_callback_suggestion, R.string.settings_callback_suggestion_text,
+            SettingKind.Switch("callback_suggestion"),
+            groupRes = R.string.settings_group_after_call,
+            advanced = true
+        ),
+        /*
+         * Автодозвон (1.8.0, автор: «Автодозвон»): «занято» — набрать снова.
+         * Два пункта: режим и темп. Темп — готовыми сочетаниями, разбор
+         * в RedialPace; правила — в call/RedialPolicy.kt.
+         */
+        SettingEntry(
+            "auto_redial", SettingsCategory.CALLS,
+            R.string.settings_auto_redial, R.string.settings_auto_redial_text,
+            SettingKind.Choice("auto_redial"),
+            keywordsRes = R.string.keywords_auto_redial,
+            groupRes = R.string.settings_group_after_call
+        ),
+        SettingEntry(
+            "auto_redial_pace", SettingsCategory.CALLS,
+            R.string.settings_auto_redial_pace, R.string.settings_auto_redial_pace_text,
+            SettingKind.Choice("auto_redial_pace"),
+            keywordsRes = R.string.keywords_auto_redial,
+            groupRes = R.string.settings_group_after_call,
+            advanced = true
+        ),
+        /*
+         * Кто «звонит» при псевдозвонке.
+         *
+         * Действие, а не переключатель: открывает выбор контакта тем же
+         * экраном, что и закрепление номеров. Пусто — случайный контакт,
+         * и это разумное умолчание: настраивать заранее никто не будет.
+         */
+        SettingEntry(
+            "fake_call_button", SettingsCategory.CALLS,
+            R.string.settings_fake_call_button, R.string.settings_fake_call_button_text,
+            SettingKind.Switch("fake_call_button"),
+            groupRes = R.string.settings_group_fake_call
+        ),
+        SettingEntry(
+            "fake_call_number", SettingsCategory.CALLS,
+            R.string.settings_fake_call_number, R.string.settings_fake_call_number_text,
+            SettingKind.Action("fake_call_number"),
+            groupRes = R.string.settings_group_fake_call
+        ),
+
+        // ── Экран вызова ───────────────────────────────────────────────────
+        SettingEntry(
+            "call_photo_style", SettingsCategory.CALL_SCREEN,
+            R.string.settings_call_photo, R.string.settings_call_photo_text,
+            SettingKind.Choice("call_photo_style")
+        ),
+        // 1.5.7: отзыв valmikk — портрет крупнее (разбор в CallPhotoSize)
+        SettingEntry(
+            "call_photo_size", SettingsCategory.CALL_SCREEN,
+            R.string.settings_call_photo_size, R.string.settings_call_photo_size_text,
+            SettingKind.Choice("call_photo_size"),
+            advanced = true
+        ),
+        SettingEntry(
+            "call_hide_contact_number", SettingsCategory.CALL_SCREEN,
+            R.string.settings_hide_contact_number, R.string.settings_hide_contact_number_text,
+            SettingKind.Switch("call_hide_contact_number"),
+            advanced = true
+        ),
+        SettingEntry(
+            "call_animation", SettingsCategory.CALL_SCREEN,
+            R.string.settings_call_animation, R.string.settings_call_animation_text,
+            SettingKind.Switch("call_animation")
+        ),
+        /*
+         * Облик живого фона (2.9.5, автор: «экран в светлой и тёмной теме с пламенем
+         * и лисой и анимацией волн»). Разбор — AmbientStyle (CallAmbientBackground).
+         */
+        SettingEntry(
+            "call_ambient_style", SettingsCategory.CALL_SCREEN,
+            R.string.settings_call_ambient_style, R.string.settings_call_ambient_style_text,
+            SettingKind.Choice("call_ambient_style"),
+            keywordsRes = R.string.keywords_call_ambient_style
+        ),
+        // 2.7.4: свой снимок вместо живого фона — отдельно для входящих и исходящих
+        SettingEntry(
+            "call_bg_incoming", SettingsCategory.CALL_SCREEN,
+            R.string.settings_call_bg_incoming, R.string.settings_call_bg_incoming_text,
+            SettingKind.Choice("call_bg_incoming"),
+            keywordsRes = R.string.keywords_call_bg
+        ),
+        SettingEntry(
+            "call_bg_outgoing", SettingsCategory.CALL_SCREEN,
+            R.string.settings_call_bg_outgoing, R.string.settings_call_bg_outgoing_text,
+            SettingKind.Choice("call_bg_outgoing"),
+            keywordsRes = R.string.keywords_call_bg
+        ),
+
+        // ── Журнал вызовов ─────────────────────────────────────────────────
         SettingEntry(
             "grouping", SettingsCategory.CALL_LOG,
             R.string.settings_grouping, R.string.settings_grouping_text,
@@ -523,42 +737,6 @@ object SettingsRegistry {
             keywordsRes = R.string.keywords_colored_call_arrows,
             groupRes = R.string.settings_group_log_view
         ),
-        /*
-         * 2.8.6, перестройка настроек (автор: «в основных категориях оставить важные
-         * и основные настройки… а всё дополнительное убрать в „Расширенные
-         * настройки“»): раздел стал «Журнал и контакты» — сюда переехали
-         * сортировка контактов (из «Оформления») и экран при запуске (из «Быстрого
-         * доступа»), вместе с «Открывать клавиатуру при запуске». Подгруппа
-         * сортировки — «Контакты»: «Имена контактов» остались в «Оформлении»
-         * одним пунктом, и там он стоит в общей карточке, без заголовка.
-         */
-        SettingEntry(
-            "contact_sort", SettingsCategory.CALL_LOG,
-            R.string.settings_contact_sort, R.string.settings_contact_sort_text,
-            SettingKind.Choice("contact_sort"),
-            groupRes = R.string.nav_contacts,
-            keywordsRes = R.string.keywords_contact_names
-        ),
-        /*
-         * 2.7.0, форум (oleg_p, 15.11.2026): выбор экрана при запуске — журнал
-         * (по умолчанию), SMS, контакты или последний раздел. Разбор —
-         * settings/StartSection.kt. Свою группу завели, чтобы не путать
-         * с «Главным экраном» выше: тот про рабочий стол лаунчера.
-         */
-        SettingEntry(
-            "start_section", SettingsCategory.CALL_LOG,
-            R.string.settings_start_section, R.string.settings_start_section_text,
-            SettingKind.Choice("start_section"),
-            keywordsRes = R.string.keywords_start_section,
-            groupRes = R.string.settings_group_app_start
-        ),
-        SettingEntry(
-            "dialpad_open_at_start", SettingsCategory.CALL_LOG,
-            R.string.settings_dialpad_open, R.string.settings_dialpad_open_text,
-            SettingKind.Switch("dialpad_open_at_start"),
-            // 2.1.0: из «Оформления» — это поведение журнала при запуске
-            groupRes = R.string.settings_group_app_start
-        ),
         SettingEntry(
             "sort_order", SettingsCategory.CALL_LOG,
             R.string.settings_sort_order, R.string.settings_sort_order_text,
@@ -573,6 +751,106 @@ object SettingsRegistry {
             groupRes = R.string.settings_group_search_stats,
             advanced = true
         ),
+
+        // ── Контакты ───────────────────────────────────────────────────────
+        SettingEntry(
+            "show_photo", SettingsCategory.CONTACTS,
+            R.string.settings_show_photo, null,
+            SettingKind.Switch("show_photo")
+        ),
+        /*
+         * Имена контактов (1.6.2): отзыв в Google Play — «сортировку
+         * по фамилии»; автор — «предлагать пользователю выбор, как
+         * показывать». Два пункта, как в системных «Контактах»: формат
+         * и порядок независимы. Разбор — data/ContactNames.kt.
+         */
+        SettingEntry(
+            "contact_name_format", SettingsCategory.CONTACTS,
+            R.string.settings_contact_name_format, R.string.settings_contact_name_format_text,
+            SettingKind.Choice("contact_name_format"),
+            keywordsRes = R.string.keywords_contact_names
+        ),
+        /*
+         * 2.8.6, перестройка настроек (автор: «в основных категориях оставить важные
+         * и основные настройки… а всё дополнительное убрать в „Расширенные
+         * настройки“»): раздел стал «Журнал и контакты» — сюда переехали
+         * сортировка контактов (из «Оформления») и экран при запуске (из «Быстрого
+         * доступа»), вместе с «Открывать клавиатуру при запуске». Подгруппа
+         * сортировки — «Контакты»: «Имена контактов» остались в «Оформлении»
+         * одним пунктом, и там он стоит в общей карточке, без заголовка.
+         */
+        SettingEntry(
+            "contact_sort", SettingsCategory.CONTACTS,
+            R.string.settings_contact_sort, R.string.settings_contact_sort_text,
+            SettingKind.Choice("contact_sort"),
+            keywordsRes = R.string.keywords_contact_names
+        ),
+        SettingEntry(
+            "pinned", SettingsCategory.CONTACTS,
+            R.string.settings_pinned, R.string.settings_pinned_text,
+            SettingKind.Action("pinned"),
+            groupRes = R.string.settings_group_at_hand
+        ),
+        SettingEntry(
+            "speed_dial", SettingsCategory.CONTACTS,
+            R.string.speed_dial_title, R.string.speed_dial_summary,
+            SettingKind.Action("speed_dial"),
+            groupRes = R.string.settings_group_at_hand
+        ),
+        /*
+         * 2.8.0: картинки вместо фото (форум, iKovalsky, как в TruePhone; автор:
+         * «совместим варианты А и Б и дадим выбор, где применять»). Здесь, а не
+         * в «Оформлении»: там 16 пунктов — предел SettingsRegistryTest; а придут
+         * сюда чаще всего ради экрана вызова. Поиск по настройкам находит и так.
+         */
+        SettingEntry(
+            "avatar_no_photo", SettingsCategory.CONTACTS,
+            R.string.settings_avatar_no_photo, R.string.settings_avatar_no_photo_text,
+            SettingKind.Choice("avatar_no_photo"),
+            groupRes = R.string.settings_group_avatar_pictures,
+            keywordsRes = R.string.keywords_avatar_pictures,
+            advanced = true
+        ),
+        SettingEntry(
+            "avatar_unknown", SettingsCategory.CONTACTS,
+            R.string.settings_avatar_unknown, R.string.settings_avatar_unknown_text,
+            SettingKind.Choice("avatar_unknown"),
+            groupRes = R.string.settings_group_avatar_pictures,
+            keywordsRes = R.string.keywords_avatar_pictures,
+            advanced = true
+        ),
+        SettingEntry(
+            "avatar_scope", SettingsCategory.CONTACTS,
+            R.string.settings_avatar_scope, null,
+            SettingKind.Choice("avatar_scope"),
+            groupRes = R.string.settings_group_avatar_pictures,
+            keywordsRes = R.string.keywords_avatar_pictures,
+            advanced = true
+        ),
+        SettingEntry(
+            "notes_retention", SettingsCategory.CONTACTS,
+            R.string.settings_notes_retention, R.string.settings_notes_retention_text,
+            SettingKind.Choice("notes_retention"),
+            groupRes = R.string.settings_group_notes,
+            advanced = true
+        ),
+        SettingEntry(
+            "notes_retention_scope", SettingsCategory.CONTACTS,
+            R.string.settings_notes_scope, R.string.settings_notes_scope_text,
+            SettingKind.Choice("notes_retention_scope"),
+            groupRes = R.string.settings_group_notes,
+            advanced = true
+        ),
+        SettingEntry(
+            "messengers_any_number", SettingsCategory.CONTACTS,
+            R.string.settings_messengers_any_number, R.string.settings_messengers_any_number_text,
+            SettingKind.Switch("messengers_any_number"),
+            // 2.1.0: из «Вызовов» — это о том, куда писать
+            groupRes = R.string.settings_group_messengers,
+            advanced = true
+        ),
+
+        // ── SMS ────────────────────────────────────────────────────────────
         /*
          * Сообщения (2.0.0): SMS в журнале и переписка в диалере.
          * «Приложение SMS» — действие: роль выдаёт система своим окном.
@@ -675,301 +953,6 @@ object SettingsRegistry {
             SettingKind.Action("sms_folders"),
             keywordsRes = R.string.keywords_sms,
             groupRes = R.string.settings_group_messages
-        ),
-        SettingEntry(
-            "sms_backup", SettingsCategory.MESSAGES,
-            R.string.settings_sms_backup, R.string.settings_sms_backup_text,
-            SettingKind.Action("sms_backup"),
-            keywordsRes = R.string.keywords_sms,
-            groupRes = R.string.settings_group_sms_backup
-        ),
-        SettingEntry(
-            "sms_restore", SettingsCategory.MESSAGES,
-            R.string.settings_sms_restore, R.string.settings_sms_restore_text,
-            SettingKind.Action("sms_restore"),
-            keywordsRes = R.string.keywords_sms,
-            groupRes = R.string.settings_group_sms_backup
-        ),
-        SettingEntry(
-            "sms_swipe_right", SettingsCategory.MESSAGES,
-            R.string.settings_sms_swipe_right, R.string.settings_sms_swipe_text,
-            SettingKind.Choice("sms_swipe_right"),
-            keywordsRes = R.string.keywords_sms,
-            groupRes = R.string.settings_group_sms_swipe,
-            advanced = true
-        ),
-        SettingEntry(
-            "sms_swipe_left", SettingsCategory.MESSAGES,
-            R.string.settings_sms_swipe_left, R.string.settings_sms_swipe_text,
-            SettingKind.Choice("sms_swipe_left"),
-            keywordsRes = R.string.keywords_sms,
-            groupRes = R.string.settings_group_sms_swipe,
-            advanced = true
-        ),
-        SettingEntry(
-            "messengers_any_number", SettingsCategory.MESSAGES,
-            R.string.settings_messengers_any_number, R.string.settings_messengers_any_number_text,
-            SettingKind.Switch("messengers_any_number"),
-            // 2.1.0: из «Вызовов» — это о том, куда писать
-            groupRes = R.string.settings_group_messengers,
-            advanced = true
-        ),
-        SettingEntry(
-            "notes_retention", SettingsCategory.CALL_LOG,
-            R.string.settings_notes_retention, R.string.settings_notes_retention_text,
-            SettingKind.Choice("notes_retention"),
-            groupRes = R.string.settings_group_notes,
-            advanced = true
-        ),
-        SettingEntry(
-            "notes_retention_scope", SettingsCategory.CALL_LOG,
-            R.string.settings_notes_scope, R.string.settings_notes_scope_text,
-            SettingKind.Choice("notes_retention_scope"),
-            groupRes = R.string.settings_group_notes,
-            advanced = true
-        ),
-        /*
-         * Конструктор нижней панели (2.9.2, автор: «как в Ogneliss Mail сделать
-         * конструктор нижней панели»). Разбор — settings/PanelSlots.kt, экран —
-         * PanelSlotsScreen. Первым в «Быстром доступе»: панель — самое быстрое,
-         * что есть в приложении.
-         */
-        SettingEntry(
-            "panel_slots", SettingsCategory.QUICK_ACCESS,
-            R.string.settings_panel_slots, R.string.settings_panel_slots_text,
-            SettingKind.Action("panel_slots"),
-            keywordsRes = R.string.keywords_panel_slots
-        ),
-        SettingEntry(
-            "pinned", SettingsCategory.QUICK_ACCESS,
-            R.string.settings_pinned, R.string.settings_pinned_text,
-            SettingKind.Action("pinned"),
-            groupRes = R.string.settings_group_at_hand
-        ),
-        SettingEntry(
-            "speed_dial", SettingsCategory.QUICK_ACCESS,
-            R.string.speed_dial_title, R.string.speed_dial_summary,
-            SettingKind.Action("speed_dial"),
-            groupRes = R.string.settings_group_at_hand
-        ),
-        /*
-         * Кто «звонит» при псевдозвонке.
-         *
-         * Действие, а не переключатель: открывает выбор контакта тем же
-         * экраном, что и закрепление номеров. Пусто — случайный контакт,
-         * и это разумное умолчание: настраивать заранее никто не будет.
-         */
-        SettingEntry(
-            "fake_call_button", SettingsCategory.QUICK_ACCESS,
-            R.string.settings_fake_call_button, R.string.settings_fake_call_button_text,
-            SettingKind.Switch("fake_call_button"),
-            groupRes = R.string.settings_group_fake_call
-        ),
-        SettingEntry(
-            "fake_call_number", SettingsCategory.QUICK_ACCESS,
-            R.string.settings_fake_call_number, R.string.settings_fake_call_number_text,
-            SettingKind.Action("fake_call_number"),
-            groupRes = R.string.settings_group_fake_call
-        ),
-        /*
-         * Форма значков «SMS» и «Контакты» на главном экране (2.1.3, автор:
-         * «чтобы по форме можно было выбрать скругление»). Разбор — WidgetShape.
-         */
-        SettingEntry(
-            "widget_shape", SettingsCategory.QUICK_ACCESS,
-            R.string.settings_widget_shape, R.string.settings_widget_shape_text,
-            SettingKind.Choice("widget_shape"),
-            keywordsRes = R.string.keywords_widget_shape,
-            groupRes = R.string.settings_group_home_screen,
-            advanced = true
-        ),
-        /*
-         * 2.6.0, форум: отдельные значки «SMS» и «Контакты» в списке приложений —
-         * в док и в папку (разбор в widget/SectionIcons.kt).
-         */
-        SettingEntry(
-            "section_icons", SettingsCategory.QUICK_ACCESS,
-            R.string.settings_section_icons, R.string.settings_section_icons_text,
-            SettingKind.Switch("section_icons"),
-            keywordsRes = R.string.keywords_section_icons,
-            groupRes = R.string.settings_group_home_screen,
-            advanced = true
-        ),
-        // 1.5.8, обзор интерфейса (У6): ответ сдвигом — от случайного касания
-        SettingEntry(
-            "answer_mode", SettingsCategory.CALLS,
-            R.string.settings_answer_mode, R.string.settings_answer_mode_text,
-            SettingKind.Choice("answer_mode"),
-            groupRes = R.string.settings_group_during_call
-        ),
-        /*
-         * «Ответить» слева (2.1.1, просьба пользователей): привыкшим к ответу
-         * слева на прежнем телефоне. Разбор — Prefs.swapAnswer.
-         */
-        SettingEntry(
-            "swap_answer", SettingsCategory.CALLS,
-            R.string.settings_swap_answer, R.string.settings_swap_answer_text,
-            SettingKind.Switch("swap_answer"),
-            keywordsRes = R.string.keywords_swap_answer,
-            groupRes = R.string.settings_group_during_call
-        ),
-        /*
-         * Входящий поверх приложений (2.1.0, вопрос пользователя 07.11.2026):
-         * на весь экран (как было) или плашкой сверху, пока телефон
-         * разблокирован. Разбор — OgnelissInCallService.
-         */
-        SettingEntry(
-            "incoming_banner", SettingsCategory.CALLS,
-            R.string.settings_incoming_banner, R.string.settings_incoming_banner_text,
-            SettingKind.Switch("incoming_banner"),
-            keywordsRes = R.string.keywords_incoming_banner,
-            groupRes = R.string.settings_group_during_call
-        ),
-        SettingEntry(
-            "smart_speaker", SettingsCategory.CALLS,
-            R.string.settings_smart_speaker, R.string.settings_smart_speaker_text,
-            SettingKind.Switch("smart_speaker"),
-            groupRes = R.string.settings_group_during_call,
-            advanced = true
-        ),
-        SettingEntry(
-            "proximity_screen_off", SettingsCategory.CALLS,
-            R.string.settings_proximity, R.string.settings_proximity_text,
-            SettingKind.Switch("proximity_screen_off"),
-            groupRes = R.string.settings_group_during_call
-        ),
-        SettingEntry(
-            "call_hide_contact_number", SettingsCategory.CALL_SCREEN,
-            R.string.settings_hide_contact_number, R.string.settings_hide_contact_number_text,
-            SettingKind.Switch("call_hide_contact_number"),
-            advanced = true
-        ),
-        SettingEntry(
-            "call_photo_style", SettingsCategory.CALL_SCREEN,
-            R.string.settings_call_photo, R.string.settings_call_photo_text,
-            SettingKind.Choice("call_photo_style")
-        ),
-        // 1.5.7: отзыв valmikk — портрет крупнее (разбор в CallPhotoSize)
-        SettingEntry(
-            "call_photo_size", SettingsCategory.CALL_SCREEN,
-            R.string.settings_call_photo_size, R.string.settings_call_photo_size_text,
-            SettingKind.Choice("call_photo_size"),
-            advanced = true
-        ),
-        SettingEntry(
-            "call_animation", SettingsCategory.CALL_SCREEN,
-            R.string.settings_call_animation, R.string.settings_call_animation_text,
-            SettingKind.Switch("call_animation")
-        ),
-        /*
-         * Облик живого фона (2.9.5, автор: «экран в светлой и тёмной теме с пламенем
-         * и лисой и анимацией волн»). Разбор — AmbientStyle (CallAmbientBackground).
-         */
-        SettingEntry(
-            "call_ambient_style", SettingsCategory.CALL_SCREEN,
-            R.string.settings_call_ambient_style, R.string.settings_call_ambient_style_text,
-            SettingKind.Choice("call_ambient_style"),
-            keywordsRes = R.string.keywords_call_ambient_style
-        ),
-        // 2.7.4: свой снимок вместо живого фона — отдельно для входящих и исходящих
-        SettingEntry(
-            "call_bg_incoming", SettingsCategory.CALL_SCREEN,
-            R.string.settings_call_bg_incoming, R.string.settings_call_bg_incoming_text,
-            SettingKind.Choice("call_bg_incoming"),
-            keywordsRes = R.string.keywords_call_bg
-        ),
-        SettingEntry(
-            "call_bg_outgoing", SettingsCategory.CALL_SCREEN,
-            R.string.settings_call_bg_outgoing, R.string.settings_call_bg_outgoing_text,
-            SettingKind.Choice("call_bg_outgoing"),
-            keywordsRes = R.string.keywords_call_bg
-        ),
-        /*
-         * 2.8.0: картинки вместо фото (форум, iKovalsky, как в TruePhone; автор:
-         * «совместим варианты А и Б и дадим выбор, где применять»). Здесь, а не
-         * в «Оформлении»: там 16 пунктов — предел SettingsRegistryTest; а придут
-         * сюда чаще всего ради экрана вызова. Поиск по настройкам находит и так.
-         */
-        SettingEntry(
-            "avatar_no_photo", SettingsCategory.CALL_SCREEN,
-            R.string.settings_avatar_no_photo, R.string.settings_avatar_no_photo_text,
-            SettingKind.Choice("avatar_no_photo"),
-            groupRes = R.string.settings_group_avatar_pictures,
-            keywordsRes = R.string.keywords_avatar_pictures,
-            advanced = true
-        ),
-        SettingEntry(
-            "avatar_unknown", SettingsCategory.CALL_SCREEN,
-            R.string.settings_avatar_unknown, R.string.settings_avatar_unknown_text,
-            SettingKind.Choice("avatar_unknown"),
-            groupRes = R.string.settings_group_avatar_pictures,
-            keywordsRes = R.string.keywords_avatar_pictures,
-            advanced = true
-        ),
-        SettingEntry(
-            "avatar_scope", SettingsCategory.CALL_SCREEN,
-            R.string.settings_avatar_scope, null,
-            SettingKind.Choice("avatar_scope"),
-            groupRes = R.string.settings_group_avatar_pictures,
-            keywordsRes = R.string.keywords_avatar_pictures,
-            advanced = true
-        ),
-        SettingEntry(
-            "post_call", SettingsCategory.CALLS,
-            R.string.settings_post_call, R.string.settings_post_call_text,
-            SettingKind.Switch("post_call"),
-            groupRes = R.string.settings_group_after_call
-        ),
-        SettingEntry(
-            "post_call_unknown", SettingsCategory.CALLS,
-            R.string.settings_post_call_unknown, R.string.settings_post_call_unknown_text,
-            SettingKind.Switch("post_call_unknown"),
-            groupRes = R.string.settings_group_after_call,
-            advanced = true
-        ),
-        SettingEntry(
-            "callback_suggestion", SettingsCategory.CALLS,
-            R.string.settings_callback_suggestion, R.string.settings_callback_suggestion_text,
-            SettingKind.Switch("callback_suggestion"),
-            groupRes = R.string.settings_group_after_call,
-            advanced = true
-        ),
-        /*
-         * Автодозвон (1.8.0, автор: «Автодозвон»): «занято» — набрать снова.
-         * Два пункта: режим и темп. Темп — готовыми сочетаниями, разбор
-         * в RedialPace; правила — в call/RedialPolicy.kt.
-         */
-        SettingEntry(
-            "auto_redial", SettingsCategory.CALLS,
-            R.string.settings_auto_redial, R.string.settings_auto_redial_text,
-            SettingKind.Choice("auto_redial"),
-            keywordsRes = R.string.keywords_auto_redial,
-            groupRes = R.string.settings_group_after_call
-        ),
-        SettingEntry(
-            "auto_redial_pace", SettingsCategory.CALLS,
-            R.string.settings_auto_redial_pace, R.string.settings_auto_redial_pace_text,
-            SettingKind.Choice("auto_redial_pace"),
-            keywordsRes = R.string.keywords_auto_redial,
-            groupRes = R.string.settings_group_after_call,
-            advanced = true
-        ),
-        // 1.3.5: отзыв в Google Play — «Написать в WhatsApp тем, кого нет в контактах»
-        SettingEntry(
-            "sys_dnd", SettingsCategory.SYSTEM,
-            R.string.settings_dnd, null, SettingKind.SystemLink("dnd")
-        ),
-        SettingEntry(
-            "sys_sound", SettingsCategory.SYSTEM,
-            R.string.settings_sound, null, SettingKind.SystemLink("sound")
-        ),
-        SettingEntry(
-            "sys_notifications", SettingsCategory.SYSTEM,
-            R.string.settings_notifications, null, SettingKind.SystemLink("notifications")
-        ),
-        SettingEntry(
-            "sys_default_apps", SettingsCategory.SYSTEM,
-            R.string.settings_default_apps, null, SettingKind.SystemLink("default_apps")
         ),
 
         // ── Защита от спама ────────────────────────────────────────────────
@@ -1085,7 +1068,7 @@ object SettingsRegistry {
             advanced = true
         ),
 
-        // ── Резервная копия ────────────────────────────────────────────────
+        // ── Данные ─────────────────────────────────────────────────────────
         SettingEntry(
             "backup_export", SettingsCategory.MAINTENANCE,
             R.string.settings_backup_export, R.string.settings_backup_export_text,
@@ -1096,6 +1079,20 @@ object SettingsRegistry {
             "backup_import", SettingsCategory.MAINTENANCE,
             R.string.settings_backup_import, R.string.settings_backup_import_text,
             SettingKind.Action("backup_import"),
+            groupRes = R.string.settings_group_backup
+        ),
+        SettingEntry(
+            "sms_backup", SettingsCategory.MAINTENANCE,
+            R.string.settings_sms_backup, R.string.settings_sms_backup_text,
+            SettingKind.Action("sms_backup"),
+            keywordsRes = R.string.keywords_sms,
+            groupRes = R.string.settings_group_backup
+        ),
+        SettingEntry(
+            "sms_restore", SettingsCategory.MAINTENANCE,
+            R.string.settings_sms_restore, R.string.settings_sms_restore_text,
+            SettingKind.Action("sms_restore"),
+            keywordsRes = R.string.keywords_sms,
             groupRes = R.string.settings_group_backup
         ),
         /*
@@ -1113,8 +1110,6 @@ object SettingsRegistry {
             groupRes = R.string.settings_group_backup,
             advanced = true
         ),
-
-        // ── Диагностика ────────────────────────────────────────────────────
         SettingEntry(
             "file_logging", SettingsCategory.MAINTENANCE,
             R.string.settings_file_logging, R.string.settings_file_logging_text,
@@ -1151,6 +1146,25 @@ object SettingsRegistry {
             groupRes = R.string.settings_group_reset,
             advanced = true
         ),
+
+        // ── Настройки Android ──────────────────────────────────────────────
+        // 1.3.5: отзыв в Google Play — «Написать в WhatsApp тем, кого нет в контактах»
+        SettingEntry(
+            "sys_dnd", SettingsCategory.SYSTEM,
+            R.string.settings_dnd, null, SettingKind.SystemLink("dnd")
+        ),
+        SettingEntry(
+            "sys_sound", SettingsCategory.SYSTEM,
+            R.string.settings_sound, null, SettingKind.SystemLink("sound")
+        ),
+        SettingEntry(
+            "sys_notifications", SettingsCategory.SYSTEM,
+            R.string.settings_notifications, null, SettingKind.SystemLink("notifications")
+        ),
+        SettingEntry(
+            "sys_default_apps", SettingsCategory.SYSTEM,
+            R.string.settings_default_apps, null, SettingKind.SystemLink("default_apps")
+        ),
         SettingEntry(
             "battery", SettingsCategory.SYSTEM,
             R.string.settings_battery, R.string.settings_battery_text,
@@ -1176,6 +1190,8 @@ object SettingsRegistry {
             R.string.settings_permissions, R.string.settings_permissions_text,
             SettingKind.Action("permissions")
         ),
+
+        // ── О приложении ───────────────────────────────────────────────────
         SettingEntry(
             "privacy", SettingsCategory.ABOUT,
             R.string.settings_privacy_policy, null, SettingKind.Action("privacy")

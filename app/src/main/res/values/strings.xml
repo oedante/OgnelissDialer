@@ -248,20 +248,18 @@
     <string name="settings_section_about_summary">Privacy, terms, version</string>
     <string name="settings_section_appearance">Appearance</string>
     <string name="settings_section_appearance_summary">Theme, colors, font size, scale, language</string>
-    <string name="settings_section_maintenance">Backup</string>
-    <string name="settings_section_maintenance_summary">Export and import notes and lists</string>
+    <string name="settings_section_maintenance">Data</string>
+    <string name="settings_section_maintenance_summary">Backups, export, diagnostics</string>
     <string name="settings_section_calls">Calls</string>
-    <string name="settings_section_calls_summary">What happens during and after a call</string>
-    <string name="settings_section_log">Call log and contacts</string>
-    <string name="settings_section_log_summary">Log view, contact sorting, app launch</string>
+    <string name="settings_section_calls_summary">During and after a call, fake call</string>
+    <string name="settings_section_log">Call log</string>
+    <string name="settings_section_log_summary">Grouping, carrier and region, colored arrows</string>
     <string name="settings_section_sim">SIM cards</string>
     <string name="settings_section_sim_summary">Names, memory, your own number</string>
-    <string name="settings_section_quick">Quick access</string>
-    <string name="settings_section_quick_summary">Bottom bar, pinned numbers, speed dial</string>
     <string name="settings_section_system">Android settings</string>
     <string name="settings_section_system_summary">Sound, notifications, battery, default apps</string>
-    <string name="settings_section_gestures">Gestures</string>
-    <string name="settings_section_gestures_summary">Swipe actions, haptics, key tones</string>
+    <string name="settings_section_gestures">Bar and gestures</string>
+    <string name="settings_section_gestures_summary">Bottom bar, startup, swipes, vibration</string>
     <string name="settings_section_spam">Spam protection</string>
     <string name="settings_section_spam_summary">Block list, allow list, tags</string>
     <string name="settings_show_photo">Show contact photos</string>
@@ -1043,7 +1041,6 @@
     <string name="settings_sms_backup_text">All text messages to an XML file in the SMS Backup &amp; Restore format</string>
     <string name="settings_sms_restore">Restore SMS from a file</string>
     <string name="settings_sms_restore_text">Messages already on the phone are skipped</string>
-    <string name="settings_group_sms_backup">Backup</string>
     <string name="sms_forward">Forward</string>
     <string name="sms_star">Star</string>
     <string name="sms_unstar">Unstar</string>
@@ -1102,7 +1099,6 @@
     <string name="settings_start_section">Open on launch</string>
     <string name="settings_start_section_text">Which screen the app opens with from its icon</string>
     <string name="keywords_start_section">start launch open screen first section last journal sms contacts home</string>
-    <string name="settings_group_app_start">App launch</string>
     <string name="start_section_journal">Call log</string>
     <string name="start_section_messages">SMS</string>
     <string name="start_section_contacts">Contacts</string>
@@ -1191,4 +1187,8 @@
     <string name="call_ambient_flame">Flame and fox</string>
     <string name="keywords_call_ambient_style">call screen, background, animation, waves, flame, fox, logo, look</string>
     <string name="menu_section_actions">Actions</string>
+    <string name="settings_section_contacts">Contacts</string>
+    <string name="settings_section_contacts_summary">Photos, names, sorting, pinned, speed dial</string>
+    <string name="settings_group_panel_start">Bar and startup</string>
+    <string name="settings_home_group_contacts_sms">Contacts and messages</string>
 </resources>

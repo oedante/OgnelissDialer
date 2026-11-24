@@ -278,10 +278,14 @@ internal val HOME_GROUPS: List<Pair<Int?, List<SettingsCategory>>> = listOf(
         SettingsCategory.CALLS,
         // 2.7.5: вид экрана звонка — рядом с «Вызовами»
         SettingsCategory.CALL_SCREEN,
-        SettingsCategory.CALL_LOG,
-        SettingsCategory.QUICK_ACCESS
+        SettingsCategory.CALL_LOG
     ),
-    R.string.nav_messages to listOf(
+    /*
+     * 2.9.6 (перегруппировка по плану автора): «Контакты» — свой раздел рядом
+     * с «SMS», как разделы нижней панели; «Быстрого доступа» больше нет.
+     */
+    R.string.settings_home_group_contacts_sms to listOf(
+        SettingsCategory.CONTACTS,
         SettingsCategory.MESSAGES
     ),
     R.string.settings_home_group_protection to listOf(
