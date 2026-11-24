@@ -22,6 +22,8 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 Облик живого фона «Пламя и лиса» (`call_ambient_style`, `AmbientStyle.FLAME` через
 `LocalAmbientStyle` в `InCallActivity`/`FakeCallActivity`): цвета значка, эмблема
 `call_emblem` над именем без фото, золотые волны от неё.
+Дополнение 24.11: тесты на Windows падали с кодом 2 — галерея освобождает снимки, тестам 2 ГБ
+кучи и до 4 процессов, `-PnoGallery` — без галереи (`docs/BUILD_TROUBLESHOOTING.md`).
 
 ## 23.11.2026 — 2.9.4 (99): отдельные значки «SMS» и «Контакты» приложение само не убирает
 

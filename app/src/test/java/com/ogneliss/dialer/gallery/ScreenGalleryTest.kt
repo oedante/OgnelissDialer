@@ -140,6 +140,7 @@ class ScreenGalleryTest {
         p.color = 0xFFFF0000.toInt(); p.strokeWidth = 8f
         c.drawLine(0f, 4f, 720f, 4f, p); c.drawLine(0f, 716f, 720f, 716f, p)
         f.outputStream().use { b.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        b.recycle()
         "file://" + f.absolutePath
     }
 
@@ -551,7 +552,7 @@ class ScreenGalleryTest {
             rule.onAllNodesWithContentDescription(rule.activity.getString(R.string.dialpad_show))[0].performClick()
             settle(600)
         }) { vm -> SideMode(com.ogneliss.dialer.ui.components.MainSection.JOURNAL) { journalContent(vm) } },
-        // 2.9.6: экран входящего — живой фон «как было» и облик «Пламя и лиса»
+        // 2.9.5: экран входящего — живой фон «как было» и облик «Пламя и лиса»
         Shot("call_theme") { _ ->
             com.ogneliss.dialer.call.FakeCallScreen(
                 name = "Анна Смирнова", number = "+79001110001", photoUri = null,
@@ -774,7 +775,17 @@ class ScreenGalleryTest {
                     else -> rule.onRoot()
                 }
                 val bitmap = node.captureToImage().asAndroidBitmap()
-                File(out, "${shot.name}_$suffix.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+                /*
+                 * Картинка освобождается сразу после записи (24.11.2026, автор: на Windows
+                 * процесс тестов падал с кодом 2). В режиме NATIVE снимок — память
+                 * вне кучи Java: сборщик мусора её почти не видит, и за сотни снимков
+                 * одного процесса она копилась до падения.
+                 */
+                try {
+                    File(out, "${shot.name}_$suffix.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+                } finally {
+                    bitmap.recycle()
+                }
             }.onFailure { failed += "${shot.name}: ${it.javaClass.simpleName}: ${it.message?.lineSequence()?.firstOrNull()}" }
             runCatching {
                 shot.cleanup()

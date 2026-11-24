@@ -620,7 +620,7 @@ class SettingsCommands @Inject constructor(
             CallPhotoStyle.WIDTH -> R.string.call_photo_width
         }
 
-        /** Подпись облика живого фона (2.9.6) — для строки настройки и окна выбора. */
+        /** Подпись облика живого фона (2.9.5) — для строки настройки и окна выбора. */
         fun ambientStyleLabelRes(style: com.ogneliss.dialer.call.AmbientStyle): Int = when (style) {
             com.ogneliss.dialer.call.AmbientStyle.THEME -> R.string.call_ambient_theme
             com.ogneliss.dialer.call.AmbientStyle.FLAME -> R.string.call_ambient_flame
@@ -790,7 +790,7 @@ class SettingsCommands @Inject constructor(
             // 2.9.1
             "outgoing_sim",
             "call_photo_style", "call_photo_size", "answer_mode", "ui_scale",
-            // 2.9.6
+            // 2.9.5
             "call_ambient_style",
             // 2.7.4
             "call_bg_incoming", "call_bg_outgoing",
