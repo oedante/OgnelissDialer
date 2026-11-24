@@ -569,6 +569,17 @@ class ScreenGalleryTest {
                 )
             }
         },
+        // 2.9.7: «Подписи состояния вызова» выключены — нет «Входящий вызов», место под плашкой остаётся
+        Shot("call_no_labels") { _ ->
+            androidx.compose.runtime.CompositionLocalProvider(
+                com.ogneliss.dialer.call.LocalCallStatusLabels provides false
+            ) {
+                com.ogneliss.dialer.call.FakeCallScreen(
+                    name = "Анна Смирнова", number = "+79001110001", photoUri = null,
+                    ambientBackground = true, bareControls = true, onAnswer = {}, onHangUp = {}
+                )
+            }
+        },
         // 2.9.5: *#06# — окно IMEI (две SIM) и «IMEI недоступен» (приложение не SMS по умолчанию)
         Shot("dialog_imei", dialog = true) { _ ->
             com.ogneliss.dialer.ui.components.ImeiDialog(listOf("356938035643809", "356938035643817"), onDismiss = {})

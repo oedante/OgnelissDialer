@@ -1,7 +1,6 @@
 package com.ogneliss.dialer.log
 
 import android.content.Context
-import kotlin.system.exitProcess
 
 /**
  * ПЕРЕХВАТЧИК НЕОБРАБОТАННЫХ ИСКЛЮЧЕНИЙ.
@@ -47,10 +46,33 @@ object CrashHandler {
         stage
     }.getOrNull()
 
-    fun install(context: Context) {
-        val previous = Thread.getDefaultUncaughtExceptionHandler()
+    /** Наш обработчик, если уже стоит: второй раз не оборачиваем (2.9.7, см. install). */
+    @Volatile private var installed: Thread.UncaughtExceptionHandler? = null
 
-        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+    /**
+     * 2.9.7: ПОВТОРНАЯ УСТАНОВКА И «КОД 2» В ТЕСТАХ.
+     *
+     * Было: каждый вызов оборачивал текущий обработчик заново, а если до нас
+     * обработчика не было — после записи вызывался exitProcess(2). На телефоне
+     * до нас всегда стоит обработчик Android, и до exitProcess дело не доходит.
+     * Но в процессе unit-тестов Robolectric создаёт приложение заново для
+     * каждого теста: обработчики выстраивались в цепочку, в конце которой —
+     * exitProcess(2). Любое необработанное исключение в фоновом потоке любого
+     * теста убивало весь процесс тестов: «Process 'Gradle Test Executor N'
+     * finished with non-zero exit value 2» (у автора на Windows, 24.11 — один
+     * раз и здесь).
+     *
+     * Стало: обработчик ставится один раз (дальше обновляется только контекст);
+     * без предыдущего — как обработчик JVM по умолчанию: стек в stderr, поток
+     * завершается, процесс живёт. На телефоне поведение то же, что было.
+     */
+    fun install(context: Context) {
+        appContext = context.applicationContext ?: context
+        val current = Thread.getDefaultUncaughtExceptionHandler()
+        if (current != null && current === installed) return
+        val previous = current
+
+        val handler = Thread.UncaughtExceptionHandler { thread, throwable ->
             runCatching {
                 /*
                  * Пишем сразу в три места, потому что каждое может подвести.
@@ -82,7 +104,7 @@ object CrashHandler {
 
                 // Этап сохраняется отдельно: при следующем запуске
                 // приложение сообщит, на чём оборвалось в прошлый раз
-                saveCrashStage(context, Stage.current)
+                saveCrashStage(appContext ?: context, Stage.current)
 
                 // Даём фоновому потоку логгера шанс дописать файл
                 Thread.sleep(300)
@@ -91,8 +113,17 @@ object CrashHandler {
             if (previous != null) {
                 previous.uncaughtException(thread, throwable)
             } else {
-                exitProcess(2)
+                // Как JVM без обработчика (ThreadGroup.uncaughtException): стек
+                // в stderr, процесс не убиваем. На телефоне сюда не попадаем —
+                // до нас всегда стоит обработчик Android
+                System.err.print("Exception in thread \"${thread.name}\" ")
+                throwable.printStackTrace()
             }
         }
+        installed = handler
+        Thread.setDefaultUncaughtExceptionHandler(handler)
     }
+
+    /** Контекст для отметки этапа: последний переданный в install. */
+    @Volatile private var appContext: Context? = null
 }

@@ -136,28 +136,34 @@ class FakeCallActivity : ComponentActivity() {
 
         proximity = ProximityLock(this)
 
+        // Вид экрана — до первого кадра, как у настоящего вызова (2.9.7, CallScreenStart);
+        // пробный вызов — входящий
+        val start = CallScreenStart.read(this, prefs, incoming = true)
+
         setContent {
-            val theme by prefs.theme.collectAsStateWithLifecycle(ThemeMode.SYSTEM)
+            val theme by prefs.theme.collectAsStateWithLifecycle(start.theme)
             // Гасить экран у уха — та же настройка, что у настоящего вызова
             val proximityOn by prefs.proximityScreenOff.collectAsStateWithLifecycle(true)
             var atEar by remember { mutableStateOf(false) }
             LaunchedEffect(atEar, proximityOn) { proximity?.hold(proximityOn && atEar) }
-            val dynamic by prefs.dynamicColor.collectAsStateWithLifecycle(false)
-            val uiScale by prefs.uiScale.collectAsStateWithLifecycle(com.ogneliss.dialer.settings.UiScale.DEFAULT)
+            val dynamic by prefs.dynamicColor.collectAsStateWithLifecycle(start.dynamicColor)
+            val uiScale by prefs.uiScale.collectAsStateWithLifecycle(start.uiScale)
             // Живой фон — как у настоящего вызова (1.5.1)
-            val callAnimation by prefs.callAnimation.collectAsStateWithLifecycle(true)
+            val callAnimation by prefs.callAnimation.collectAsStateWithLifecycle(start.callAnimation)
             // Свой фон вызова (2.7.4): пробный вызов — входящий, берёт снимок входящих
-            val callBgIncoming by prefs.callBgIncoming.collectAsStateWithLifecycle(0L)
+            val callBgIncoming by prefs.callBgIncoming.collectAsStateWithLifecycle(start.callBgIncoming)
             // Фото звонящего — как у настоящего вызова (1.5.5); null — ещё не прочитано
-            val callPhotoStyle by prefs.callPhotoStyle.collectAsStateWithLifecycle<CallPhotoStyle?>(null)
+            val callPhotoStyle by prefs.callPhotoStyle.collectAsStateWithLifecycle<CallPhotoStyle?>(start.callPhotoStyle)
             // Облик живого фона — как у настоящего вызова (2.9.5)
-            val ambientStyle by prefs.callAmbientStyle.collectAsStateWithLifecycle(AmbientStyle.THEME)
+            val ambientStyle by prefs.callAmbientStyle.collectAsStateWithLifecycle(start.ambientStyle)
             // Размер портрета — как у настоящего вызова (1.5.7)
-            val callPhotoSize by prefs.callPhotoSize.collectAsStateWithLifecycle(CallPhotoSize.LARGE)
+            val callPhotoSize by prefs.callPhotoSize.collectAsStateWithLifecycle(start.callPhotoSize)
             // Ответ касанием или сдвигом — как у настоящего вызова (1.5.8)
-            val answerMode by prefs.answerMode.collectAsStateWithLifecycle(AnswerMode.TAP)
+            val answerMode by prefs.answerMode.collectAsStateWithLifecycle(start.answerMode)
             // «Ответить» слева — как у настоящего вызова (2.1.1)
-            val swapAnswer by prefs.swapAnswer.collectAsStateWithLifecycle(false)
+            val swapAnswer by prefs.swapAnswer.collectAsStateWithLifecycle(start.swapAnswer)
+            // Подпись «Входящий вызов» — как у настоящего вызова (2.9.7, CallStatusLabels)
+            val statusLabels by prefs.callStatusLabels.collectAsStateWithLifecycle(start.statusLabels)
 
             /*
              * Кто «звонит».
@@ -170,9 +176,9 @@ class FakeCallActivity : ComponentActivity() {
             var caller by remember { mutableStateOf<Pair<String, String>?>(null) }
             // Звонит сохранённый контакт (2.8.0): для картинки вместо фото — буквы или силуэт
             var callerKnown by remember { mutableStateOf(true) }
-            val avatarNoPhoto by prefs.avatarNoPhoto.collectAsStateWithLifecycle(0L)
-            val avatarUnknown by prefs.avatarUnknown.collectAsStateWithLifecycle(0L)
-            val avatarScope by prefs.avatarScope.collectAsStateWithLifecycle(com.ogneliss.dialer.settings.AvatarScope.EVERYWHERE)
+            val avatarNoPhoto by prefs.avatarNoPhoto.collectAsStateWithLifecycle(start.avatarNoPhoto)
+            val avatarUnknown by prefs.avatarUnknown.collectAsStateWithLifecycle(start.avatarUnknown)
+            val avatarScope by prefs.avatarScope.collectAsStateWithLifecycle(start.avatarScope)
             // Имя и номер — гарнитуре и машине, как только выбраны
             LaunchedEffect(caller) { caller?.let { (n, num) -> FakeTelecomCall.updateCaller(n, num) } }
             /*
@@ -221,13 +227,17 @@ class FakeCallActivity : ComponentActivity() {
             }
 
             // Тема, акцент, скругление, шрифт (1.8.4–1.9.0)
-            val themeLook by prefs.themeLook.collectAsStateWithLifecycle(com.ogneliss.dialer.settings.ThemeLook())
-            val fontScale by prefs.fontScale.collectAsStateWithLifecycle(1f)
+            val themeLook by prefs.themeLook.collectAsStateWithLifecycle(start.themeLook)
+            val fontScale by prefs.fontScale.collectAsStateWithLifecycle(start.fontScale)
             OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic, uiScale = uiScale, fontScale = fontScale, look = themeLook) {
                 // Раскладка окна: телефон, лёжа, раскладушка, планшет.
                 // Разбор — в ui/adaptive/WindowLayout.kt
                 ProvideWindowLayout(this@FakeCallActivity) {
-                androidx.compose.runtime.CompositionLocalProvider(LocalAmbientStyle provides ambientStyle) {
+                androidx.compose.runtime.CompositionLocalProvider(
+                    LocalAmbientStyle provides ambientStyle,
+                    LocalCallStatusLabels provides statusLabels,
+                    LocalStartBackground provides start.background
+                ) {
                 // Фото — тем же запросом, что у настоящего вызова (1.3.4)
                 val callerNumber = caller?.second.orEmpty()
                 val contactPhoto by produceState<String?>(initialValue = null, callerNumber) {
@@ -547,7 +557,9 @@ internal fun FakeCallScreen(
                         holding -> stringResource(R.string.incall_on_hold)
                         // Формат — как у настоящего таймера (CallScreenRules.timer): с часа — «1:05:07» (2.4.3)
                         else -> CallScreenRules.timer(seconds.toLong())
-                    }
+                    },
+                    // «Входящий вызов» — по настройке, как у настоящего вызова (2.9.7)
+                    shown = answered || LocalCallStatusLabels.current
                 )
                 }
                 }

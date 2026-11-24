@@ -372,6 +372,10 @@ internal fun BoxScope.CallCustomBackground(image: androidx.compose.ui.graphics.I
  * нет (или высокий контраст: там фон ровный ради различимости). Пока снимок
  * читается с диска (IO), возвращает null — экран рисует прежний фон, без
  * мигания пустотой; не прочитался — тоже null (причина в журнале).
+ *
+ * 2.9.7: снимок, раскодированный до первого кадра (CallScreenStart,
+ * LocalStartBackground), берётся сразу — экран открывается уже со своим фоном,
+ * а не с живым, который через мгновение сменялся снимком.
  */
 @Composable
 internal fun rememberCustomCallBackground(
@@ -379,15 +383,20 @@ internal fun rememberCustomCallBackground(
     mark: Long
 ): CustomCallBackground? {
     val context = androidx.compose.ui.platform.LocalContext.current.applicationContext
-    val image by androidx.compose.runtime.produceState<CustomCallBackground?>(null, kind, mark) {
-        value = if (mark <= 0L) null else {
-            CallBackgrounds.load(context, kind)?.let { bitmap ->
-                val (top, bottom) = CallBackgrounds.textBandLuminance(bitmap)
-                CustomCallBackground(bitmap.asImageBitmap(), top, bottom)
-            }
-        }
+    val ready = LocalStartBackground.current?.takeIf { it.kind == kind && it.mark == mark && mark > 0L }?.image
+    val image by androidx.compose.runtime.produceState(ready, kind, mark) {
+        value = ready ?: if (mark <= 0L) null else loadCustomCallBackground(context, kind)
     }
     return image
+}
+
+/** Снимок с диска и яркость его полос (2.7.4); общий для экрана и заготовки до первого кадра (2.9.7). */
+internal suspend fun loadCustomCallBackground(
+    context: android.content.Context,
+    kind: CallBackgrounds.Kind
+): CustomCallBackground? = CallBackgrounds.load(context, kind)?.let { bitmap ->
+    val (top, bottom) = CallBackgrounds.textBandLuminance(bitmap)
+    CustomCallBackground(bitmap.asImageBitmap(), top, bottom)
 }
 
 /** Свой снимок и яркость его полосы под именем и номером (2.7.6). */

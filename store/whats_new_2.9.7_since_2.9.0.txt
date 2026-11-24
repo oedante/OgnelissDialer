@@ -1,0 +1,216 @@
+<ru-RU>
+• Новая нижняя панель с подписями. Разделы на ней можно выбрать, в том числе заметки и напоминания: Настройки → Панель и жесты. Проба: разделы колонкой справа.
+• «Меню» компактнее, его строки можно переставлять и скрывать.
+• *#06# показывает IMEI, сервисные коды срабатывают сразу при наборе.
+• Звонки и SMS только с одной SIM: Настройки → SIM-карты.
+• Текст SMS можно скрыть в уведомлениях.
+• Экран вызова сразу в своём виде; подписи «Входящий вызов» и «Соединение…» можно скрыть.
+</ru-RU>
+<ar>
+• شريط سفلي جديد بتسميات. يمكن اختيار أقسامه، ومنها الملاحظات والتذكيرات: الإعدادات ← الشريط والإيماءات. تجربة: الأقسام كعمود على اليمين.
+• «القائمة» أصغر، ويمكن ترتيب عناصرها وإخفاؤها.
+• الرمز *#06# يعرض رقم IMEI، والرموز الخدمية تعمل فور كتابتها.
+• المكالمات والرسائل من شريحة واحدة فقط: الإعدادات ← شرائح SIM.
+• يمكن إخفاء نص الرسائل في الإشعارات.
+• شاشة المكالمة بمظهرك فورًا، ويمكن إخفاء «مكالمة واردة» و«جارٍ الاتصال…».
+</ar>
+<cs-CZ>
+• Nový spodní panel s popisky. Sekce na něm si vyberete, i poznámky a připomenutí: Nastavení → Panel a gesta. Zkouška: sekce ve sloupci vpravo.
+• „Menu“ je kompaktnější, jeho položky lze přeřadit a skrýt.
+• *#06# zobrazí IMEI, servisní kódy fungují hned při vytáčení.
+• Hovory a SMS jen z jedné SIM: Nastavení → SIM karty.
+• Text SMS lze v oznámeních skrýt.
+• Obrazovka hovoru hned ve vašem vzhledu; popisky „Příchozí hovor“ a „Spojování…“ lze skrýt.
+</cs-CZ>
+<da-DK>
+• Ny bundbjælke med etiketter. Vælg dens sektioner, også noter og påmindelser: Indstillinger → Bjælke og bevægelser. Test: sektioner som kolonne til højre.
+• „Menu“ er mere kompakt, og punkterne kan flyttes og skjules.
+• *#06# viser IMEI, servicekoder virker straks, når de tastes.
+• Opkald og SMS fra kun ét SIM: Indstillinger → SIM-kort.
+• SMS-tekst kan skjules i notifikationer.
+• Opkaldsskærmen straks i dit udseende; „Indgående opkald“ og „Forbinder…“ kan skjules.
+</da-DK>
+<de-DE>
+• Neue untere Leiste mit Beschriftung. Bereiche frei wählbar, auch Notizen und Erinnerungen: Einstellungen → Leiste und Gesten. Test: Bereiche als Spalte rechts.
+• Das Menü ist kompakter, Einträge lassen sich sortieren und ausblenden.
+• *#06# zeigt die IMEI, Servicecodes wirken sofort beim Eintippen.
+• Anrufe und SMS nur über eine SIM: Einstellungen → SIM-Karten.
+• SMS-Text in Benachrichtigungen ausblendbar.
+• Anrufbildschirm sofort im gewählten Aussehen; Statushinweise ausblendbar.
+</de-DE>
+<en-US>
+• New bottom bar with labels. Choose its sections, including Notes and Reminders: Settings → Bar and gestures. Trial: sections as a column on the right.
+• The Menu is more compact; its items can be reordered and hidden.
+• *#06# shows the IMEI; service codes work as soon as you type them.
+• Call and text from one SIM only: Settings → SIM cards.
+• SMS text can be hidden in notifications.
+• The call screen opens in your look at once; "Incoming call" and "Connecting…" can be hidden.
+</en-US>
+<es-ES>
+• Nueva barra inferior con etiquetas. Elige sus secciones, también Notas y Recordatorios: Ajustes → Barra y gestos. Prueba: secciones en columna a la derecha.
+• «Menú» más compacto; sus elementos se reordenan y ocultan.
+• *#06# muestra el IMEI; los códigos de servicio funcionan al marcarlos.
+• Llamadas y SMS con una sola SIM: Ajustes → Tarjetas SIM.
+• Texto de SMS ocultable en notificaciones.
+• La pantalla de llamada, ya con tu aspecto; «Llamada entrante» y «Conectando…» se pueden ocultar.
+</es-ES>
+<fi-FI>
+• Uusi alapalkki nimineen. Valitse sen osiot, myös muistiinpanot ja muistutukset: Asetukset → Palkki ja eleet. Kokeilu: osiot sarakkeena oikealla.
+• ”Valikko” on tiiviimpi, ja sen kohdat voi järjestää ja piilottaa.
+• *#06# näyttää IMEI-koodin, palvelukoodit toimivat heti näppäiltäessä.
+• Puhelut ja viestit vain yhdeltä SIM-kortilta: Asetukset → SIM-kortit.
+• SMS-tekstin voi piilottaa ilmoituksista.
+• Puhelunäkymä heti valitussa ulkoasussa; ”Saapuva puhelu” ja ”Yhdistetään…” piilotettavissa.
+</fi-FI>
+<fr-FR>
+• Nouvelle barre du bas avec libellés. Choisissez ses sections, y compris Notes et Rappels : Réglages → Barre et gestes. Essai : sections en colonne à droite.
+• Menu plus compact ; ses éléments se réordonnent et se masquent.
+• *#06# affiche l’IMEI ; les codes de service agissent dès la saisie.
+• Appels et SMS depuis une seule SIM : Réglages → Cartes SIM.
+• Texte des SMS masquable dans les notifications.
+• L’écran d’appel s’ouvre avec votre style ; « Appel entrant » et « Connexion… » masquables.
+</fr-FR>
+<hi-IN>
+• लेबल वाली नई निचली पट्टी। इसके अनुभाग चुनें, नोट्स और रिमाइंडर भी: सेटिंग्स → पट्टी और जेस्चर। परीक्षण: अनुभाग दाईं ओर कॉलम में।
+• «मेनू» छोटा हुआ, उसकी पंक्तियाँ क्रम बदलकर छिपाई जा सकती हैं।
+• *#06# IMEI दिखाता है, सर्विस कोड टाइप करते ही काम करते हैं।
+• केवल एक SIM से कॉल और SMS: सेटिंग्स → SIM कार्ड।
+• सूचनाओं में SMS का टेक्स्ट छिपाया जा सकता है।
+• कॉल स्क्रीन तुरंत आपके रूप में; «इनकमिंग कॉल» और «कनेक्ट हो रहा है…» छिपाए जा सकते हैं।
+</hi-IN>
+<hu-HU>
+• Új, feliratos alsó sáv. Szakaszai választhatók, a jegyzetek és emlékeztetők is: Beállítások → Sáv és kézmozdulatok. Próba: szakaszok oszlopban jobbra.
+• A „Menü” kompaktabb, elemei átrendezhetők és elrejthetők.
+• A *#06# megmutatja az IMEI-t, a szervizkódok beírás után azonnal működnek.
+• Hívás és SMS csak egy SIM-ről: Beállítások → SIM-kártyák.
+• Az SMS szövege elrejthető az értesítésekben.
+• A hívásképernyő azonnal a saját megjelenéssel; a „Bejövő hívás” és „Kapcsolódás…” elrejthető.
+</hu-HU>
+<id>
+• Bilah bawah baru berlabel. Pilih bagiannya, termasuk Catatan dan Pengingat: Setelan → Bilah dan gestur. Uji coba: bagian sebagai kolom di kanan.
+• “Menu” lebih ringkas; isinya bisa diurutkan dan disembunyikan.
+• *#06# menampilkan IMEI, kode layanan langsung bekerja saat diketik.
+• Telepon dan SMS hanya dari satu SIM: Setelan → Kartu SIM.
+• Teks SMS bisa disembunyikan di notifikasi.
+• Layar panggilan langsung dengan tampilan Anda; “Panggilan masuk” dan “Menghubungkan…” bisa disembunyikan.
+</id>
+<it-IT>
+• Nuova barra inferiore con etichette. Scegli le sezioni, anche Note e Promemoria: Impostazioni → Barra e gesti. Prova: sezioni in colonna a destra.
+• Il «Menu» è più compatto; le voci si riordinano e nascondono.
+• *#06# mostra l’IMEI; i codici di servizio funzionano appena digitati.
+• Chiamate e SMS da una sola SIM: Impostazioni → Schede SIM.
+• Testo degli SMS nascondibile nelle notifiche.
+• Schermata di chiamata subito nel tuo stile; «Chiamata in arrivo» e «Connessione…» nascondibili.
+</it-IT>
+<iw-IL>
+• סרגל תחתון חדש עם תוויות. אפשר לבחור את המקטעים, גם הערות ותזכורות: הגדרות ← סרגל ומחוות. ניסוי: מקטעים כעמודה מימין.
+• „התפריט” קומפקטי יותר, ואפשר לסדר ולהסתיר את פריטיו.
+• הקוד *#06# מציג את ה-IMEI, וקודי שירות פועלים מיד בהקלדה.
+• שיחות ו-SMS מ-SIM אחד בלבד: הגדרות ← כרטיסי SIM.
+• אפשר להסתיר את טקסט ה-SMS בהתראות.
+• מסך השיחה מיד במראה שלך; אפשר להסתיר „שיחה נכנסת” ו„מתחבר…”.
+</iw-IL>
+<ja-JP>
+• ラベル付きの新しい下部バー。メモやリマインダーを含めセクションを選べます：設定 → バーとジェスチャー。お試し：セクションを右側の列に。
+• 「メニュー」がコンパクトに。項目の並べ替え・非表示が可能。
+• *#06# で IMEI を表示。サービスコードは入力した時点で動作します。
+• 発信と SMS を 1 枚の SIM だけに：設定 → SIM カード。
+• 通知の SMS 本文を非表示にできます。
+• 通話画面は最初から選んだスタイルで表示。「着信」「接続中…」は非表示にできます。
+</ja-JP>
+<ko-KR>
+• 라벨이 있는 새 하단 바. 메모와 알림을 포함해 섹션을 고를 수 있습니다: 설정 → 바 및 제스처. 시험 기능: 섹션을 오른쪽 열로.
+• '메뉴'가 간결해지고 항목 순서 변경·숨기기가 가능합니다.
+• *#06#로 IMEI가 표시되고, 서비스 코드는 입력 즉시 작동합니다.
+• 통화와 SMS를 SIM 하나로만: 설정 → SIM 카드.
+• 알림에서 SMS 내용을 숨길 수 있습니다.
+• 통화 화면이 바로 선택한 스타일로 열리고, '수신 전화'·'연결 중…' 표시를 숨길 수 있습니다.
+</ko-KR>
+<nl-NL>
+• Nieuwe onderbalk met labels. Kies de secties, ook Notities en Herinneringen: Instellingen → Balk en gebaren. Proef: secties als kolom rechts.
+• ‘Menu’ is compacter; items zijn te ordenen en te verbergen.
+• *#06# toont het IMEI; servicecodes werken meteen bij het intoetsen.
+• Bellen en sms’en via één simkaart: Instellingen → Simkaarten.
+• Sms-tekst is te verbergen in meldingen.
+• Belscherm meteen in je eigen stijl; ‘Inkomende oproep’ en ‘Verbinden…’ te verbergen.
+</nl-NL>
+<no-NO>
+• Ny bunnlinje med etiketter. Velg seksjonene, også notater og påminnelser: Innstillinger → Linje og bevegelser. Test: seksjoner som kolonne til høyre.
+• «Meny» er mer kompakt, og punktene kan flyttes og skjules.
+• *#06# viser IMEI, servicekoder virker med en gang de tastes.
+• Ring og send SMS fra bare ett SIM: Innstillinger → SIM-kort.
+• SMS-tekst kan skjules i varsler.
+• Anropsskjermen straks i ditt utseende; «Innkommende anrop» og «Kobler til…» kan skjules.
+</no-NO>
+<pl-PL>
+• Nowy dolny pasek z podpisami. Sekcje można wybrać, także notatki i przypomnienia: Ustawienia → Pasek i gesty. Próba: sekcje w kolumnie po prawej.
+• „Menu” jest bardziej zwarte, pozycje można przestawiać i ukrywać.
+• *#06# pokazuje IMEI, kody serwisowe działają od razu po wpisaniu.
+• Połączenia i SMS z jednej karty SIM: Ustawienia → Karty SIM.
+• Tekst SMS w powiadomieniach można ukryć.
+• Ekran połączenia od razu w Twoim wyglądzie; „Połączenie przychodzące” i „Łączenie…” można ukryć.
+</pl-PL>
+<pt-BR>
+• Nova barra inferior com rótulos. Escolha as seções, incluindo Notas e Lembretes: Configurações → Barra e gestos. Teste: seções em coluna à direita.
+• “Menu” mais compacto; itens podem ser reordenados e ocultados.
+• *#06# mostra o IMEI; códigos de serviço funcionam assim que digitados.
+• Ligue e envie SMS por um só SIM: Configurações → Cartões SIM.
+• O texto do SMS pode ficar oculto nas notificações.
+• Tela de chamada já no seu visual; “Chamada recebida” e “Conectando…” podem ser ocultados.
+</pt-BR>
+<ro>
+• Bară inferioară nouă, cu etichete. Alege secțiunile, inclusiv Note și Mementouri: Setări → Bară și gesturi. Probă: secțiuni în coloană la dreapta.
+• „Meniul” e mai compact; elementele se reordonează și se ascund.
+• *#06# afișează IMEI-ul, codurile de serviciu funcționează imediat ce sunt tastate.
+• Apeluri și SMS doar de pe o cartelă: Setări → Cartele SIM.
+• Textul SMS poate fi ascuns în notificări.
+• Ecranul de apel direct în aspectul tău; „Apel primit” și „Se conectează…” pot fi ascunse.
+</ro>
+<sk>
+• Nový spodný panel s popismi. Sekcie si vyberiete, aj poznámky a pripomienky: Nastavenia → Panel a gestá. Skúška: sekcie v stĺpci vpravo.
+• „Menu“ je kompaktnejšie, položky možno preusporiadať a skryť.
+• *#06# zobrazí IMEI, servisné kódy fungujú hneď pri zadaní.
+• Hovory a SMS len z jednej SIM: Nastavenia → SIM karty.
+• Text SMS v upozorneniach možno skryť.
+• Obrazovka hovoru hneď vo vašom vzhľade; „Prichádzajúci hovor“ a „Spája sa…“ možno skryť.
+</sk>
+<sv-SE>
+• Nytt bottenfält med etiketter. Välj sektionerna, även anteckningar och påminnelser: Inställningar → Fält och gester. Test: sektioner som kolumn till höger.
+• ”Meny” är mer kompakt, och posterna kan ordnas och döljas.
+• *#06# visar IMEI, servicekoder fungerar direkt när de knappas in.
+• Ring och sms:a från bara ett SIM: Inställningar → SIM-kort.
+• SMS-text kan döljas i aviseringar.
+• Samtalsskärmen direkt i ditt utseende; ”Inkommande samtal” och ”Ansluter…” kan döljas.
+</sv-SE>
+<th>
+• แถบด้านล่างใหม่พร้อมป้ายชื่อ เลือกส่วนบนแถบได้ รวมถึงโน้ตและการเตือน: การตั้งค่า → แถบและท่าทาง ทดลอง: ส่วนต่างๆ เป็นคอลัมน์ด้านขวา
+• «เมนู» กะทัดรัดขึ้น จัดลำดับและซ่อนรายการได้
+• *#06# แสดง IMEI และรหัสบริการทำงานทันทีที่พิมพ์
+• โทรและส่ง SMS จาก SIM เดียว: การตั้งค่า → ซิมการ์ด
+• ซ่อนข้อความ SMS ในการแจ้งเตือนได้
+• หน้าจอโทรแสดงรูปแบบของคุณทันที ซ่อน «สายเรียกเข้า» และ «กำลังเชื่อมต่อ…» ได้
+</th>
+<tr-TR>
+• Etiketli yeni alt çubuk. Bölümlerini seçin, notlar ve hatırlatıcılar dahil: Ayarlar → Çubuk ve hareketler. Deneme: bölümler sağda sütun olarak.
+• “Menü” daha derli toplu; öğeleri sıralanıp gizlenebilir.
+• *#06# IMEI'yi gösterir; servis kodları yazılır yazılmaz çalışır.
+• Yalnızca tek SIM ile arama ve SMS: Ayarlar → SIM kartlar.
+• Bildirimlerde SMS metni gizlenebilir.
+• Arama ekranı hemen sizin görünümünüzle açılır; “Gelen arama” ve “Bağlanıyor…” gizlenebilir.
+</tr-TR>
+<vi>
+• Thanh dưới mới có nhãn. Chọn các mục trên thanh, kể cả Ghi chú và Lời nhắc: Cài đặt → Thanh và cử chỉ. Thử nghiệm: các mục thành cột bên phải.
+• “Menu” gọn hơn; có thể sắp xếp và ẩn các mục.
+• *#06# hiển thị IMEI, mã dịch vụ hoạt động ngay khi nhập.
+• Gọi và nhắn tin chỉ bằng một SIM: Cài đặt → Thẻ SIM.
+• Có thể ẩn nội dung SMS trong thông báo.
+• Màn hình cuộc gọi hiện ngay giao diện của bạn; có thể ẩn “Cuộc gọi đến” và “Đang kết nối…”.
+</vi>
+<zh-CN>
+• 全新带标签的底部栏。可自选分区，包括备注和提醒：设置 → 栏与手势。试用：分区以右侧列显示。
+• “菜单”更紧凑，项目可排序和隐藏。
+• *#06# 显示 IMEI，服务代码输入完即生效。
+• 可仅用一张 SIM 卡拨号和发短信：设置 → SIM 卡。
+• 可在通知中隐藏短信内容。
+• 通话界面直接以您的外观打开；可隐藏“来电”和“正在连接…”。
+</zh-CN>

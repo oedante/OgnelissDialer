@@ -669,6 +669,18 @@ object SettingsRegistry {
             SettingKind.Switch("call_hide_contact_number"),
             advanced = true
         ),
+        /*
+         * Подписи состояния (2.9.7, письмо пользователя: «показывать или скрывать
+         * подписи „Входящий“, „Вызов“, оставив только таймер»). Рядом с «Типом
+         * номера вместо номера» — тоже о том, сколько текста на экране вызова.
+         */
+        SettingEntry(
+            "call_status_labels", SettingsCategory.CALL_SCREEN,
+            R.string.settings_call_status_labels, R.string.settings_call_status_labels_text,
+            SettingKind.Switch("call_status_labels"),
+            keywordsRes = R.string.keywords_call_status_labels,
+            advanced = true
+        ),
         SettingEntry(
             "call_animation", SettingsCategory.CALL_SCREEN,
             R.string.settings_call_animation, R.string.settings_call_animation_text,

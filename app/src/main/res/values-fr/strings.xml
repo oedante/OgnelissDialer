@@ -1161,4 +1161,7 @@
     <string name="settings_section_contacts_summary">Photos, noms, tri, épinglés</string>
     <string name="settings_group_panel_start">Barre et démarrage</string>
     <string name="settings_home_group_contacts_sms">Contacts et messages</string>
+    <string name="settings_call_status_labels">Libellés d’état de l’appel</string>
+    <string name="settings_call_status_labels_text">« Appel entrant » et « Connexion… » ; le minuteur reste affiché</string>
+    <string name="keywords_call_status_labels">écran d’appel, état, statut, libellé, entrant, connexion, minuteur, masquer, texte</string>
 </resources>

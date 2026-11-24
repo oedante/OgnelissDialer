@@ -1171,4 +1171,7 @@
     <string name="settings_section_contacts_summary">Фото, имена, сортировка, закреплённые</string>
     <string name="settings_group_panel_start">Панель и запуск</string>
     <string name="settings_home_group_contacts_sms">Контакты и сообщения</string>
+    <string name="settings_call_status_labels">Подписи состояния вызова</string>
+    <string name="settings_call_status_labels_text">«Входящий вызов» и «Соединение…»; таймер виден всегда</string>
+    <string name="keywords_call_status_labels">экран вызова, подпись, состояние, статус, входящий, соединение, вызов, таймер, скрыть, надпись</string>
 </resources>
