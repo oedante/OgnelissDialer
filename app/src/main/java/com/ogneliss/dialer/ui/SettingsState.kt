@@ -48,6 +48,8 @@ data class SettingsState(
     val proximityScreenOff: Boolean = true,
     /** Тип номера вместо номера у контакта на экране вызова. */
     val callHideContactNumber: Boolean = false,
+    /** Подписи «Входящий вызов» и «Соединение…» (2.9.7): разбор в Prefs.callStatusLabels. */
+    val callStatusLabels: Boolean = true,
     /** Живой фон экрана вызова (1.5.1). */
     val callAnimation: Boolean = true,
     /** Масштаб интерфейса (1.5.6). */
@@ -181,6 +183,7 @@ data class SettingsState(
         "button_labels" -> buttonLabels
         "proximity_screen_off" -> proximityScreenOff
         "call_hide_contact_number" -> callHideContactNumber
+        "call_status_labels" -> callStatusLabels
         "call_animation" -> callAnimation
         "messengers_any_number" -> messengersAnyNumber
         "panel_swipe_nav" -> panelSwipeNav
@@ -229,6 +232,8 @@ data class SettingsState(
             // 1.3.3: переключатели обрабатывались (switchValue выше), но в список
             // не попали — SettingsRegistryTest падал ещё с 1.3.0
             "button_labels", "proximity_screen_off", "call_hide_contact_number",
+            // 2.9.7
+            "call_status_labels",
             "messengers_any_number",
             "call_animation",
             // 1.8.0

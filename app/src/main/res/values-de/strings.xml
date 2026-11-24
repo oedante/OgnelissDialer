@@ -1162,4 +1162,7 @@
     <string name="settings_section_contacts_summary">Fotos, Namen, Sortierung, Angeheftete</string>
     <string name="settings_group_panel_start">Leiste und Start</string>
     <string name="settings_home_group_contacts_sms">Kontakte und Nachrichten</string>
+    <string name="settings_call_status_labels">Anrufstatus anzeigen</string>
+    <string name="settings_call_status_labels_text">„Eingehender Anruf“ und „Verbindung wird hergestellt…“; Timer bleibt</string>
+    <string name="keywords_call_status_labels">Anrufbildschirm, Status, Hinweis, eingehend, Verbindung, Timer, ausblenden, Text</string>
 </resources>

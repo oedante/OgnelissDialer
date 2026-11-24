@@ -94,6 +94,7 @@ class SettingsCommands @Inject constructor(
             "button_labels" -> prefs.setButtonLabels(value)
             "proximity_screen_off" -> prefs.setProximityScreenOff(value)
             "call_hide_contact_number" -> prefs.setCallHideContactNumber(value)
+            "call_status_labels" -> prefs.setCallStatusLabels(value)
             "call_animation" -> prefs.setCallAnimation(value)
             "panel_swipe_nav" -> prefs.setPanelSwipeNav(value)
             "fake_call_button" -> prefs.setFakeCallButton(value)
@@ -755,6 +756,7 @@ class SettingsCommands @Inject constructor(
          */
         val SWITCH_KEYS = setOf(
             "dynamic_color", "large_buttons", "show_photo", "button_labels", "proximity_screen_off", "call_hide_contact_number", "call_animation", "messengers_any_number", "panel_swipe_nav",
+            "call_status_labels",
             "fake_call_button",
             "haptic", "key_tones",
             "merge_calls", "remember_sim", "smart_speaker",

@@ -1191,4 +1191,7 @@
     <string name="settings_section_contacts_summary">Photos, names, sorting, pinned, speed dial</string>
     <string name="settings_group_panel_start">Bar and startup</string>
     <string name="settings_home_group_contacts_sms">Contacts and messages</string>
+    <string name="settings_call_status_labels">Call status labels</string>
+    <string name="settings_call_status_labels_text">“Incoming call” and “Connecting…”; the timer always shows</string>
+    <string name="keywords_call_status_labels">call screen, status, label, incoming, connecting, calling, timer, hide, text</string>
 </resources>

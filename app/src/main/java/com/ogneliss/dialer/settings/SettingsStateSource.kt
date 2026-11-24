@@ -62,6 +62,7 @@ class SettingsStateSource @Inject constructor(
         // ради двух переключателей не заводим
         .combine(prefs.proximityScreenOff) { a, v -> a.copy(proximityScreenOff = v) }
         .combine(prefs.callHideContactNumber) { a, v -> a.copy(callHideContactNumber = v) }
+        .combine(prefs.callStatusLabels) { a, v -> a.copy(callStatusLabels = v) }
         .combine(prefs.callAnimation) { a, v -> a.copy(callAnimation = v) }
         .combine(prefs.callPhotoStyle) { a, v -> a.copy(callPhotoStyle = v) }
         .combine(prefs.callAmbientStyle) { a, v -> a.copy(callAmbientStyle = v) }
@@ -217,6 +218,7 @@ class SettingsStateSource @Inject constructor(
             buttonLabels = a.buttonLabels,
             proximityScreenOff = a.proximityScreenOff,
             callHideContactNumber = a.callHideContactNumber,
+            callStatusLabels = a.callStatusLabels,
             callAnimation = a.callAnimation,
             callPhotoStyle = a.callPhotoStyle,
             callAmbientStyle = a.callAmbientStyle,
@@ -307,6 +309,7 @@ class SettingsStateSource @Inject constructor(
         val buttonLabels: Boolean = true,
         val proximityScreenOff: Boolean = true,
         val callHideContactNumber: Boolean = false,
+        val callStatusLabels: Boolean = true,
         val callAnimation: Boolean = true,
         val callPhotoStyle: CallPhotoStyle = CallPhotoStyle.CIRCLE,
         val callAmbientStyle: com.ogneliss.dialer.call.AmbientStyle = com.ogneliss.dialer.call.AmbientStyle.THEME,

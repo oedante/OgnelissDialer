@@ -10,6 +10,7 @@ import androidx.compose.material3.IconButtonDefaults
 import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.ui.theme.OgnelissShapeTokens
 import androidx.compose.foundation.background
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -234,6 +235,16 @@ class InCallActivity : ComponentActivity() {
             }
         }
 
+        /*
+         * Вид экрана — до первого кадра (2.9.7, письмо пользователя: «экран
+         * открывается с мельканием классической темы, потом переходит в выбранный
+         * цвет»). Значения ниже — начальные у потоков настроек; разбор в CallScreenStart.
+         */
+        val start = CallScreenStart.read(
+            this, prefs,
+            incoming = CallManager.primary?.let { CallManager.isIncomingCall(it) }
+        )
+
         setContent {
             /*
              * Тема читается из настроек, как и на остальных экранах.
@@ -247,25 +258,27 @@ class InCallActivity : ComponentActivity() {
              * Для AMOLED это ещё и вопрос батареи: экран вызова горит
              * дольше остальных, и чёрный фон на нём экономит заметно больше.
              */
-            val theme by prefs.theme.collectAsStateWithLifecycle(initialValue = ThemeMode.SYSTEM)
-            val dynamic by prefs.dynamicColor.collectAsStateWithLifecycle(initialValue = false)
+            val theme by prefs.theme.collectAsStateWithLifecycle(initialValue = start.theme)
+            val dynamic by prefs.dynamicColor.collectAsStateWithLifecycle(initialValue = start.dynamicColor)
             // Масштаб интерфейса — тот же, что в приложении (1.5.6)
-            val uiScale by prefs.uiScale.collectAsStateWithLifecycle(initialValue = com.ogneliss.dialer.settings.UiScale.DEFAULT)
+            val uiScale by prefs.uiScale.collectAsStateWithLifecycle(initialValue = start.uiScale)
             // Подписи под кнопками — та же настройка, что во всём приложении.
             // Экран вызова — отдельная активность, корня приложения у него
             // нет, поэтому оформление ставится здесь
-            val buttonLabels by prefs.buttonLabels.collectAsStateWithLifecycle(initialValue = true)
-            val hideContactNumber by prefs.callHideContactNumber.collectAsStateWithLifecycle(initialValue = false)
+            val buttonLabels by prefs.buttonLabels.collectAsStateWithLifecycle(initialValue = start.buttonLabels)
+            val hideContactNumber by prefs.callHideContactNumber.collectAsStateWithLifecycle(initialValue = start.hideContactNumber)
+            // Подписи «Входящий вызов» и «Соединение…» (2.9.7): разбор в CallStatusLabels
+            val statusLabels by prefs.callStatusLabels.collectAsStateWithLifecycle(initialValue = start.statusLabels)
             // Живой фон (1.5.1): по настройке; в высоком контрасте — нет,
             // там фон ровный ради различимости
-            val callAnimation by prefs.callAnimation.collectAsStateWithLifecycle(initialValue = true)
+            val callAnimation by prefs.callAnimation.collectAsStateWithLifecycle(initialValue = start.callAnimation)
             // Свой фон вызова (2.7.4): отметки снимков входящих и исходящих; 0 — нет
-            val callBgIncoming by prefs.callBgIncoming.collectAsStateWithLifecycle(initialValue = 0L)
-            val callBgOutgoing by prefs.callBgOutgoing.collectAsStateWithLifecycle(initialValue = 0L)
+            val callBgIncoming by prefs.callBgIncoming.collectAsStateWithLifecycle(initialValue = start.callBgIncoming)
+            val callBgOutgoing by prefs.callBgOutgoing.collectAsStateWithLifecycle(initialValue = start.callBgOutgoing)
             // Картинки вместо фото (2.8.0, AvatarPictures): звонящий без фото
-            val avatarNoPhoto by prefs.avatarNoPhoto.collectAsStateWithLifecycle(initialValue = 0L)
-            val avatarUnknown by prefs.avatarUnknown.collectAsStateWithLifecycle(initialValue = 0L)
-            val avatarScope by prefs.avatarScope.collectAsStateWithLifecycle(initialValue = com.ogneliss.dialer.settings.AvatarScope.EVERYWHERE)
+            val avatarNoPhoto by prefs.avatarNoPhoto.collectAsStateWithLifecycle(initialValue = start.avatarNoPhoto)
+            val avatarUnknown by prefs.avatarUnknown.collectAsStateWithLifecycle(initialValue = start.avatarUnknown)
+            val avatarScope by prefs.avatarScope.collectAsStateWithLifecycle(initialValue = start.avatarScope)
             val avatarPictures = remember(avatarNoPhoto, avatarUnknown, avatarScope) {
                 com.ogneliss.dialer.ui.components.AvatarPictures.of(applicationContext, avatarNoPhoto, avatarUnknown, avatarScope)
             }
@@ -273,24 +286,24 @@ class InCallActivity : ComponentActivity() {
             // фото не показываем ни так, ни так, чтобы оно не мигнуло
             // на весь экран перед кругом
             val callPhotoStyle by prefs.callPhotoStyle
-                .collectAsStateWithLifecycle<CallPhotoStyle?>(initialValue = null)
+                .collectAsStateWithLifecycle<CallPhotoStyle?>(initialValue = start.callPhotoStyle)
             // Облик живого фона (2.9.5): тоны темы или «Пламя» (AmbientStyle)
-            val ambientStyle by prefs.callAmbientStyle.collectAsStateWithLifecycle(initialValue = AmbientStyle.THEME)
+            val ambientStyle by prefs.callAmbientStyle.collectAsStateWithLifecycle(initialValue = start.ambientStyle)
             // Размер портрета (1.5.7, отзыв valmikk): обычный или крупный
             val callPhotoSize by prefs.callPhotoSize
-                .collectAsStateWithLifecycle(initialValue = CallPhotoSize.LARGE)
+                .collectAsStateWithLifecycle(initialValue = start.callPhotoSize)
             // Ответ на вызов: касанием или сдвигом (1.5.8): разбор в AnswerMode
             val answerMode by prefs.answerMode
-                .collectAsStateWithLifecycle(initialValue = AnswerMode.TAP)
+                .collectAsStateWithLifecycle(initialValue = start.answerMode)
             // «Ответить» слева (2.1.1): разбор в Prefs.swapAnswer
-            val swapAnswer by prefs.swapAnswer.collectAsStateWithLifecycle(initialValue = false)
+            val swapAnswer by prefs.swapAnswer.collectAsStateWithLifecycle(initialValue = start.swapAnswer)
             // Имя «Фамилия Имя» (1.6.2): разбор в data/ContactNames.kt
             val nameFormat by prefs.contactNameFormat
-                .collectAsStateWithLifecycle(initialValue = ContactNameFormat.GIVEN_FIRST)
+                .collectAsStateWithLifecycle(initialValue = start.nameFormat)
 
             // Тема, акцент, скругление, шрифт (1.8.4–1.9.0)
-            val themeLook by prefs.themeLook.collectAsStateWithLifecycle(com.ogneliss.dialer.settings.ThemeLook())
-            val fontScale by prefs.fontScale.collectAsStateWithLifecycle(initialValue = 1f)
+            val themeLook by prefs.themeLook.collectAsStateWithLifecycle(start.themeLook)
+            val fontScale by prefs.fontScale.collectAsStateWithLifecycle(initialValue = start.fontScale)
             OgnelissDialerTheme(themeMode = theme, dynamicColor = dynamic, uiScale = uiScale, fontScale = fontScale, look = themeLook) {
                 // Раскладка окна: телефон, лёжа, раскладушка, планшет.
                 // Разбор — в ui/adaptive/WindowLayout.kt
@@ -299,7 +312,10 @@ class InCallActivity : ComponentActivity() {
                     com.ogneliss.dialer.ui.theme.LocalAppearance provides
                         com.ogneliss.dialer.ui.theme.Appearance(buttonLabels = buttonLabels),
                     com.ogneliss.dialer.ui.components.LocalAvatarPictures provides avatarPictures,
-                    LocalAmbientStyle provides ambientStyle
+                    LocalAmbientStyle provides ambientStyle,
+                    // 2.9.7: подписи состояния по настройке и свой фон, готовый к первому кадру
+                    LocalCallStatusLabels provides statusLabels,
+                    LocalStartBackground provides start.background
                 ) {
                 val calls by CallManager.calls.collectAsStateWithLifecycle()
                 val revision by CallManager.revision.collectAsStateWithLifecycle()
@@ -311,12 +327,12 @@ class InCallActivity : ComponentActivity() {
                  * а не отдельно для каждого экрана.
                  */
                 val carrierInfo by prefs.carrierInfo
-                    .collectAsStateWithLifecycle(initialValue = CarrierInfoMode.UNKNOWN_ONLY)
+                    .collectAsStateWithLifecycle(initialValue = start.carrierInfo)
 
                 // Автодозвон (1.8.0): сеанс держит экран между попытками
                 val redial by AutoRedial.state.collectAsStateWithLifecycle()
                 // Памятка о мошенниках (1.8.0): разбор в ScamMemo.kt
-                val scamMemo by prefs.scamMemo.collectAsStateWithLifecycle(initialValue = true)
+                val scamMemo by prefs.scamMemo.collectAsStateWithLifecycle(initialValue = start.scamMemo)
 
                 /*
                  * Экран закрывается, когда нет ни вызовов, ни автодозвона (1.8.0).
@@ -1940,7 +1956,8 @@ private fun CallStatusLine(state: Int, call: Call?) {
     // как незагрузившийся элемент
     if (text.isBlank()) return
 
-    CallStatusPill(active, text)
+    // Подписи «Входящий вызов» и «Соединение…» — по настройке (2.9.7, CallStatusLabels)
+    CallStatusPill(active, text, shown = CallStatusLabels.shown(state, LocalCallStatusLabels.current))
 }
 
 /**
@@ -1956,7 +1973,9 @@ internal fun CallStatusPill(
      * Что произнесёт TalkBack (1.8.0): у отсчёта автодозвона текст меняется
      * каждую секунду, а вслух нужен только этап. null — то же, что на экране.
      */
-    spoken: String? = null
+    spoken: String? = null,
+    /** false — подпись скрыта настройкой «Подписи состояния вызова» (2.9.7). */
+    shown: Boolean = true
 ) {
     /*
      * ЦВЕТ ПЛАШКИ МЕНЯЕТСЯ ПЛАВНО.
@@ -1997,7 +2016,8 @@ internal fun CallStatusPill(
         shape = CircleShape,
         color = background,
         contentColor = foreground,
-        modifier = Modifier.semantics {
+        // Скрыта только видом (2.9.7, CallStatusLabels): место остаётся, TalkBack слышит
+        modifier = Modifier.alpha(if (shown) 1f else 0f).semantics {
             liveRegion = LiveRegionMode.Polite
             contentDescription = stateLabel
         }

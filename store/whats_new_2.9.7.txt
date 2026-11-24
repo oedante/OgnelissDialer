@@ -1,0 +1,108 @@
+<ru-RU>
+• Экран вызова открывается сразу в выбранном виде — без мелькания стандартной темы.
+• Подписи «Входящий вызов» и «Соединение…» можно скрыть, таймер останется: Настройки → Расширенные настройки → Подписи состояния вызова.
+</ru-RU>
+<ar>
+• تُفتح شاشة المكالمة مباشرة بالمظهر الذي اخترته، دون وميض السمة الافتراضية.
+• يمكن إخفاء تسميتَي «مكالمة واردة» و«جارٍ الاتصال…» مع بقاء المؤقت: الإعدادات ← الإعدادات المتقدمة ← تسميات حالة المكالمة.
+</ar>
+<cs-CZ>
+• Obrazovka hovoru se hned otevře ve zvoleném vzhledu, bez probliknutí výchozího motivu.
+• Popisky „Příchozí hovor“ a „Spojování…“ lze skrýt, časovač zůstane: Nastavení → Pokročilá nastavení → Popisky stavu hovoru.
+</cs-CZ>
+<da-DK>
+• Opkaldsskærmen åbner straks i det valgte udseende, uden at standardtemaet blinker.
+• Etiketterne „Indgående opkald“ og „Forbinder…“ kan skjules, timeren bliver: Indstillinger → Avancerede indstillinger → Etiketter for opkaldsstatus.
+</da-DK>
+<de-DE>
+• Der Anrufbildschirm öffnet sich sofort im gewählten Aussehen, ohne kurz das Standarddesign zu zeigen.
+• „Eingehender Anruf“ und „Verbindung wird hergestellt…“ lassen sich ausblenden, der Timer bleibt: Einstellungen → Erweiterte Einstellungen → Anrufstatus anzeigen.
+</de-DE>
+<en-US>
+• The call screen now opens in your chosen look right away, without a flash of the default theme.
+• "Incoming call" and "Connecting…" labels can be hidden, the timer stays: Settings → Advanced settings → Call status labels.
+</en-US>
+<es-ES>
+• La pantalla de llamada se abre ya con el aspecto elegido, sin destello del tema predeterminado.
+• Las etiquetas «Llamada entrante» y «Conectando…» se pueden ocultar; el temporizador se queda: Ajustes → Ajustes avanzados → Etiquetas de estado de llamada.
+</es-ES>
+<fi-FI>
+• Puhelunäkymä avautuu heti valitussa ulkoasussa ilman oletusteeman välähdystä.
+• Tekstit ”Saapuva puhelu” ja ”Yhdistetään…” voi piilottaa, ajastin jää: Asetukset → Lisäasetukset → Puhelun tilan tekstit.
+</fi-FI>
+<fr-FR>
+• L’écran d’appel s’ouvre directement avec le style choisi, sans flash du thème par défaut.
+• « Appel entrant » et « Connexion… » peuvent être masqués, le minuteur reste : Réglages → Paramètres avancés → Libellés d’état de l’appel.
+</fr-FR>
+<hi-IN>
+• कॉल स्क्रीन अब सीधे आपके चुने रूप में खुलती है, डिफ़ॉल्ट थीम की झलक के बिना।
+• «इनकमिंग कॉल» और «कनेक्ट हो रहा है…» लेबल छिपाए जा सकते हैं, टाइमर बना रहता है: सेटिंग्स → उन्नत सेटिंग्स → कॉल स्थिति लेबल।
+</hi-IN>
+<hu-HU>
+• A hívásképernyő azonnal a választott megjelenéssel nyílik, az alapértelmezett téma felvillanása nélkül.
+• A „Bejövő hívás” és „Kapcsolódás…” feliratok elrejthetők, az időmérő marad: Beállítások → Speciális beállítások → Hívásállapot-feliratok.
+</hu-HU>
+<id>
+• Layar panggilan kini langsung terbuka dengan tampilan pilihan Anda, tanpa kilasan tema bawaan.
+• Label “Panggilan masuk” dan “Menghubungkan…” bisa disembunyikan, timer tetap ada: Setelan → Setelan lanjutan → Label status panggilan.
+</id>
+<it-IT>
+• La schermata di chiamata si apre subito con l’aspetto scelto, senza lampi del tema predefinito.
+• Le etichette «Chiamata in arrivo» e «Connessione…» si possono nascondere, il timer resta: Impostazioni → Impostazioni avanzate → Etichette di stato della chiamata.
+</it-IT>
+<iw-IL>
+• מסך השיחה נפתח מיד במראה שבחרת, בלי הבזק של ערכת הנושא הרגילה.
+• אפשר להסתיר את התוויות „שיחה נכנסת” ו„מתחבר…”, והטיימר נשאר: הגדרות ← הגדרות מתקדמות ← תוויות מצב השיחה.
+</iw-IL>
+<ja-JP>
+• 通話画面が最初から選んだスタイルで開くようになり、標準テーマが一瞬表示されなくなりました。
+• 「着信」「接続中…」の表示を隠せます（タイマーは残ります）：設定 → 詳細設定 → 通話状態の表示。
+</ja-JP>
+<ko-KR>
+• 통화 화면이 기본 테마가 깜박이지 않고 처음부터 선택한 스타일로 열립니다.
+• '수신 전화', '연결 중…' 표시를 숨길 수 있으며 타이머는 남습니다: 설정 → 고급 설정 → 통화 상태 표시.
+</ko-KR>
+<nl-NL>
+• Het belscherm opent meteen in de gekozen stijl, zonder flits van het standaardthema.
+• De labels ‘Inkomende oproep’ en ‘Verbinden…’ zijn te verbergen, de timer blijft: Instellingen → Geavanceerde instellingen → Labels oproepstatus.
+</nl-NL>
+<no-NO>
+• Anropsskjermen åpnes straks i valgt utseende, uten at standardtemaet blinker.
+• Etikettene «Innkommende anrop» og «Kobler til…» kan skjules, tidtakeren blir: Innstillinger → Avanserte innstillinger → Etiketter for anropsstatus.
+</no-NO>
+<pl-PL>
+• Ekran połączenia od razu otwiera się w wybranym wyglądzie, bez mignięcia domyślnego motywu.
+• Napisy „Połączenie przychodzące” i „Łączenie…” można ukryć, licznik zostaje: Ustawienia → Ustawienia zaawansowane → Napisy stanu połączenia.
+</pl-PL>
+<pt-BR>
+• A tela de chamada abre direto no visual escolhido, sem piscar o tema padrão.
+• Os rótulos “Chamada recebida” e “Conectando…” podem ser ocultados, o cronômetro fica: Configurações → Configurações avançadas → Rótulos de status da chamada.
+</pt-BR>
+<ro>
+• Ecranul de apel se deschide direct în aspectul ales, fără clipirea temei implicite.
+• Etichetele „Apel primit” și „Se conectează…” pot fi ascunse, cronometrul rămâne: Setări → Setări avansate → Etichete de stare a apelului.
+</ro>
+<sk>
+• Obrazovka hovoru sa hneď otvorí vo zvolenom vzhľade, bez prebliknutia predvolenej témy.
+• Popisy „Prichádzajúci hovor“ a „Spája sa…“ možno skryť, časovač zostane: Nastavenia → Rozšírené nastavenia → Popisy stavu hovoru.
+</sk>
+<sv-SE>
+• Samtalsskärmen öppnas direkt i valt utseende, utan att standardtemat blinkar till.
+• Etiketterna ”Inkommande samtal” och ”Ansluter…” kan döljas, timern finns kvar: Inställningar → Avancerade inställningar → Etiketter för samtalsstatus.
+</sv-SE>
+<th>
+• หน้าจอโทรเปิดในรูปแบบที่คุณเลือกทันที ไม่มีธีมเริ่มต้นแวบขึ้นมาก่อน
+• ซ่อนป้าย «สายเรียกเข้า» และ «กำลังเชื่อมต่อ…» ได้ โดยตัวจับเวลายังอยู่: การตั้งค่า → การตั้งค่าขั้นสูง → ป้ายสถานะการโทร
+</th>
+<tr-TR>
+• Arama ekranı artık varsayılan tema bir an görünmeden, doğrudan seçtiğiniz görünümle açılır.
+• “Gelen arama” ve “Bağlanıyor…” etiketleri gizlenebilir, sayaç kalır: Ayarlar → Gelişmiş ayarlar → Arama durumu etiketleri.
+</tr-TR>
+<vi>
+• Màn hình cuộc gọi mở ngay với giao diện bạn chọn, không còn chớp giao diện mặc định.
+• Có thể ẩn nhãn “Cuộc gọi đến” và “Đang kết nối…”, bộ đếm giờ vẫn còn: Cài đặt → Cài đặt nâng cao → Nhãn trạng thái cuộc gọi.
+</vi>
+<zh-CN>
+• 通话界面现在直接以所选外观打开，不再先闪现默认主题。
+• 可隐藏“来电”和“正在连接…”标签，计时器保留：设置 → 高级设置 → 通话状态标签。
+</zh-CN>
