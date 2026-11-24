@@ -80,9 +80,10 @@ internal fun SectionTopBar(
         androidx.compose.runtime.SideEffect { sideRail.publishList(owner, menu) }
         androidx.compose.runtime.DisposableEffect(sideRail, owner) { onDispose { sideRail.withdrawList(owner) } }
     }
-    val sideMenu = sideRail != null && onOpenMenu != null
+    // «Меню» кнопкой в шапке — только в режиме колонки; null — как всегда, через «⋮»
+    val sideMenuOpen = if (sideRail != null) onOpenMenu else null
     val items = when {
-        sideMenu -> emptyList()
+        sideMenuOpen != null -> emptyList()
         onOpenMenu == null -> menu
         else -> listOf(TopBarMenuItem(OgnelissIcons.Menu, menuLabel, onClick = onOpenMenu)) + menu
     }
@@ -114,8 +115,8 @@ internal fun SectionTopBar(
             }
         },
         actions = {
-            if (sideMenu && onOpenMenu != null) {
-                IconButton(onClick = onOpenMenu) {
+            if (sideMenuOpen != null) {
+                IconButton(onClick = sideMenuOpen) {
                     Icon(OgnelissIcons.Menu, contentDescription = menuLabel)
                 }
             }
