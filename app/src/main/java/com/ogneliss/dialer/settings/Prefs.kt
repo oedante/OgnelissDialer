@@ -76,6 +76,18 @@ enum class SwipeAction(val key: String) {
             else -> null
         }
 
+        /**
+         * Действие кнопки-трубки в строке по свайпам журнала (2.9.11,
+         * DialerViewModel.handsetAction): звонящие свайпы — только «Позвонить
+         * с SIM N» одной карты — эта карта; иначе «Позвонить».
+         */
+        fun handsetCall(right: SwipeAction, left: SwipeAction): SwipeAction {
+            val calls = listOf(right, left)
+                .filter { it == CALL || simSlotOf(it) != null }
+                .distinct()
+            return calls.singleOrNull()?.takeIf { simSlotOf(it) != null } ?: CALL
+        }
+
         fun from(key: String?) = if (key == RETIRED_MAX) SMS else entries.firstOrNull { it.key == key } ?: NONE
     }
 }
@@ -92,16 +104,10 @@ enum class SwipeAction(val key: String) {
  * Вместе с системным увеличением шрифта и режимом крупных кнопок
  * это даёт связный набор для тех, кому обычное оформление не подходит.
  */
-/**
- * ВЫБОР SIM ДЛЯ ДЕЙСТВИЙ СВАЙПА.
- *
- * ── Зачем настройка ────────────────────────────────────────────────────────
- * При двух активных картах свайп не может решить сам, с какой звонить.
- * Раньше он показывал две кнопки — и жест переставал быть быстрым:
- * приходилось целиться в одну из них.
- *
- * Теперь одна иконка и одно действие. Карту выбирает эта настройка:
- * либо спрашиваем диалогом, либо действуем заранее выбранной.
+/*
+ * Здесь была «SIM для действий свайпа» (enum SwipeSimMode: ASK, FIRST, SECOND).
+ * 2.9.11: убрана — карта в самом действии свайпа (CALL_SIM1/CALL_SIM2, 2.9.8),
+ * сохранённый выбор переносится один раз (SwipeSimMigration).
  */
 /**
  * КАРТА ДЛЯ ЗВОНКОВ И SMS (2.9.1, форум, Hosato: «Как назначить действия
@@ -122,18 +128,6 @@ enum class OutgoingSim(val slot: Int) {
     companion object {
         fun fromSlot(slot: Int): OutgoingSim = entries.firstOrNull { it.slot == slot } ?: ASK
         fun from(name: String?): OutgoingSim = entries.firstOrNull { it.name == name } ?: ASK
-    }
-}
-
-enum class SwipeSimMode {
-    /** Спрашивать каждый раз. Значение по умолчанию. */
-    ASK,
-    FIRST,
-    SECOND;
-
-    companion object {
-        fun from(name: String?): SwipeSimMode =
-            entries.firstOrNull { it.name == name } ?: ASK
     }
 }
 
@@ -506,7 +500,14 @@ enum class GroupingMode { CONSECUTIVE, BY_CONTACT, NONE }
 /** Порядок результатов T9-поиска. */
 enum class SortOrder { RELEVANCE, RECENCY, FREQUENCY, ALPHABET }
 
-private val Context.dataStore by preferencesDataStore("ogneliss_prefs")
+/*
+ * 2.9.11: переносы настроек — до первого чтения, в одной записи с ними
+ * (SwipeSimMigration: «SIM для действий свайпа» → «Позвонить с SIM 1/2»).
+ */
+private val Context.dataStore by preferencesDataStore(
+    name = "ogneliss_prefs",
+    produceMigrations = { listOf(SwipeSimMigration) }
+)
 
 /**
  * НАСТРОЙКИ ПРИЛОЖЕНИЯ.
@@ -583,7 +584,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val LIST_DENSITY = stringPreferencesKey("list_density")
         val UI_FONT = stringPreferencesKey("ui_font")
         val LANGUAGE = stringPreferencesKey("language")
-        val SWIPE_SIM_MODE = stringPreferencesKey("swipe_sim_mode")
         val CARRIER_INFO = stringPreferencesKey("carrier_info")
         val JOURNAL_STYLE = stringPreferencesKey("journal_style")
 
@@ -946,10 +946,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     val journalStyle: Flow<JournalStyle> = data.map { p ->
         JournalStyle.from(p[Keys.JOURNAL_STYLE])
-    }
-
-    val swipeSimMode: Flow<SwipeSimMode> = data.map { p ->
-        SwipeSimMode.from(p[Keys.SWIPE_SIM_MODE])
     }
 
     /**
@@ -1489,9 +1485,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     suspend fun setJournalStyle(style: JournalStyle) =
         edit("journal_style", style.name) { it[Keys.JOURNAL_STYLE] = style.name }
-
-    suspend fun setSwipeSimMode(mode: SwipeSimMode) =
-        edit("swipe_sim_mode", mode.name) { it[Keys.SWIPE_SIM_MODE] = mode.name }
 
     suspend fun setLanguage(tag: String) =
         edit("language", tag) { it[Keys.LANGUAGE] = tag }

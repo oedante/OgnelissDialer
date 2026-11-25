@@ -1288,6 +1288,12 @@ fun SubscriberScreen(
                 // Круги — цвета клавиши нижней панели (1.4.0): в светлой теме
                 // белые на серой панели, как клавиатура и кнопки разговора
                 val actionKey = PanelColors.key()
+                // 2.9.11: подписи всего ряда — один размер при крупном шрифте (FitText.peers)
+                val quickLabels = listOf(
+                    R.string.action_write, R.string.action_remind_short, R.string.action_call,
+                    if (knownContactId == null) R.string.action_add_contact else R.string.action_share,
+                    R.string.action_more
+                ).map { stringResource(it) }
                 /*
                  * «НАПИСАТЬ» ВМЕСТО «SMS» (1.2.5).
                  * Нет мессенджеров у контакта — сразу SMS, как было:
@@ -1298,7 +1304,7 @@ fun SubscriberScreen(
                 QuickAction(
                     OgnelissIcons.Message,
                     R.string.action_write,
-                    container = actionKey,
+                    container = actionKey, labelPeers = quickLabels,
                     enabled = !hiddenNumber,
                     onLongClick = if (multiSim) { { vm.chooseSim(group.number, DialerViewModel.SimAction.SMS, title) } } else null,
                     onLongClickLabel = stringResource(R.string.a11y_choose_sim_sms)
@@ -1323,7 +1329,7 @@ fun SubscriberScreen(
                  * в настройках свайпов и в названии канала
                  * уведомлений.
                  */
-                QuickAction(OgnelissIcons.Alarm, R.string.action_remind_short, container = actionKey, enabled = !hiddenNumber) {
+                QuickAction(OgnelissIcons.Alarm, R.string.action_remind_short, container = actionKey, labelPeers = quickLabels, enabled = !hiddenNumber) {
                     vm.requestReminder(group)
                 }
                 /*
@@ -1350,6 +1356,7 @@ fun SubscriberScreen(
                     onLongClick = if (multiSim) { { vm.chooseSim(group.number, DialerViewModel.SimAction.CALL, title) } } else null,
                     onLongClickLabel = stringResource(R.string.a11y_choose_sim),
                     prominent = true,
+                    labelPeers = quickLabels,
                     enabled = !hiddenNumber
                 ) {
                     /*
@@ -1387,11 +1394,11 @@ fun SubscriberScreen(
                  * «Поделиться» — в «Ещё». У контакта — как было.
                  */
                 if (knownContactId == null) {
-                    QuickAction(OgnelissIcons.PersonAdd, R.string.action_add_contact, container = actionKey, enabled = !hiddenNumber) {
+                    QuickAction(OgnelissIcons.PersonAdd, R.string.action_add_contact, container = actionKey, labelPeers = quickLabels, enabled = !hiddenNumber) {
                         vm.createContact(group.number, null)
                     }
                 } else {
-                    QuickAction(OgnelissIcons.Share, R.string.action_share, container = actionKey) {
+                    QuickAction(OgnelissIcons.Share, R.string.action_share, container = actionKey, labelPeers = quickLabels) {
                         shareCard()
                     }
                 }
@@ -1424,7 +1431,7 @@ fun SubscriberScreen(
                  * лишь откроет шторку. «Блок» — в ней, последним, красным.
                  * Кнопка ⋮ в верхней панели убрана: меню одно, внизу.
                  */
-                QuickAction(OgnelissIcons.MoreVert, R.string.action_more, container = actionKey) { moreOpen = true }
+                QuickAction(OgnelissIcons.MoreVert, R.string.action_more, container = actionKey, labelPeers = quickLabels) { moreOpen = true }
             }
 
             // Обложка во всю ширину, а под ней в шапке ничего: кнопки — в нижней

@@ -471,11 +471,6 @@
     <string name="reminder_custom">Choisir une heure…</string>
     <string name="reminder_tomorrow">Demain matin</string>
     <string name="sim_chooser_title">Depuis quelle SIM appeler ?</string>
-    <string name="settings_swipe_sim">SIM pour les balayages</string>
-    <string name="settings_swipe_sim_text">Quelle carte utiliser quand un balayage lance un appel</string>
-    <string name="swipe_sim_ask">Toujours demander</string>
-    <string name="swipe_sim_first">SIM 1</string>
-    <string name="swipe_sim_second">SIM 2</string>
     <string name="action_block_short">Bloquer</string>
     <string name="action_remind_short">Rappel</string>
     <string name="quick_reply_title">Envoyer et refuser</string>
@@ -1183,4 +1178,11 @@
     <string name="call_ambient_night">Nuit</string>
     <string name="notif_source_call">Appel</string>
     <string name="notif_source_sms">SMS</string>
+    <string name="notes_new">Nouvelle note</string>
+    <string name="notes_new_for_number">Note pour %1$s</string>
+    <string name="reminders_new">Nouveau rappel</string>
+    <string name="reminders_new_for_number">Rappel pour %1$s</string>
+    <string name="rail_journal">Journal</string>
+    <string name="rail_reminders">Rappels</string>
+    <string name="rail_fake_call">Faux appel</string>
 </resources>

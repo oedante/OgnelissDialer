@@ -468,11 +468,6 @@
     <string name="reminder_custom">Задать время…</string>
     <string name="reminder_tomorrow">Завтра утром</string>
     <string name="sim_chooser_title">С какой SIM звонить?</string>
-    <string name="settings_swipe_sim">SIM для действий свайпа</string>
-    <string name="settings_swipe_sim_text">Какой картой звонить, когда действие вызвано свайпом</string>
-    <string name="swipe_sim_ask">Всегда спрашивать</string>
-    <string name="swipe_sim_first">Первая SIM</string>
-    <string name="swipe_sim_second">Вторая SIM</string>
     <string name="action_block_short">Блок</string>
     <string name="action_remind_short">Напомнить</string>
     <string name="quick_reply_title">Отправить и отклонить</string>
@@ -1193,4 +1188,11 @@
     <string name="call_ambient_night">Ночь</string>
     <string name="notif_source_call">Звонок</string>
     <string name="notif_source_sms">SMS</string>
+    <string name="notes_new">Новая заметка</string>
+    <string name="notes_new_for_number">Заметка к %1$s</string>
+    <string name="reminders_new">Новое напоминание</string>
+    <string name="reminders_new_for_number">Напоминание о %1$s</string>
+    <string name="rail_journal">Журнал</string>
+    <string name="rail_reminders">Напоми\u00ADнания</string>
+    <string name="rail_fake_call">Псевдо\u00ADзвонок</string>
 </resources>

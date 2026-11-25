@@ -443,6 +443,17 @@ class ScreenGalleryTest {
         Shot("settings_contacts") { vm -> SettingsCategoryScreen(category = SettingsCategory.CONTACTS, vm = vm, onBack = {}, onOpenAdvanced = {}, onAction = {}) },
         Shot("notes") { vm -> NotesScreen(vm = vm, onOpenCard = {}) },
         Shot("reminders") { vm -> RemindersScreen(vm = vm, onOpenCard = {}) },
+        // 2.9.11: «Создать» в центре — номер для новой заметки / напоминания полем «Кому»
+        Shot("notes_pick", act = { _ ->
+            rule.onAllNodesWithContentDescription(rule.activity.getString(R.string.notes_new))[0].performClick()
+            settle(500)
+        }) { vm -> NotesScreen(vm = vm, onOpenCard = {}) },
+        Shot("reminders_pick", act = { _ ->
+            rule.onAllNodesWithContentDescription(rule.activity.getString(R.string.reminders_new))[0].performClick()
+            settle(500)
+        }) { vm -> RemindersScreen(vm = vm, onOpenCard = {}) },
+        // 2.9.11: колонка справа в «Заметках» — «Создать» внизу, подписи в две строки
+        Shot("side_notes") { vm -> SideMode(com.ogneliss.dialer.ui.components.MainSection.NOTES) { NotesScreen(vm = vm, onOpenCard = {}) } },
         Shot("spam") { vm -> SpamProtectionScreen(vm = vm, onBack = {}, onOpenLists = {}) },
         Shot("block_lists") { vm -> BlockListScreen(vm = vm, onBack = {}) },
         Shot("stats") { vm -> StatsScreen(vm = vm, onBack = {}) },

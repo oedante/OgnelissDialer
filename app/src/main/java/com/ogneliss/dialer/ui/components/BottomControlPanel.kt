@@ -707,10 +707,29 @@ internal fun ActionRow(
     }
     val slots = LocalPanelSlots.current
     val menuOnPanel = railShown || com.ogneliss.dialer.settings.PanelSlot.MENU in slots
+    val exitShown = selectionActive && onStartSelection != null
+    val centerLabelRes = when {
+        center != null -> center.labelRes
+        expanded -> R.string.bar_center_hide
+        else -> R.string.bar_center_dial
+    }
+    /*
+     * ОДИН РАЗМЕР ПОДПИСЕЙ В РЯДУ (2.9.11, обзор интерфейса, автор согласен). При
+     * крупном шрифте подписи ужимались каждая сама: «Контакты» мельче «Журнала»
+     * и «SMS». Теперь каждая знает подписи всего ряда (FitText.peers) и ужимается
+     * по самой широкой — ячейки равные, размер выходит один.
+     */
+    val rowLabelRes: List<Int> = buildList {
+        if (!railShown) (0..1).forEach { i -> slotLabelRes(slots.getOrNull(i), i, exitShown)?.let(::add) }
+        add(centerLabelRes)
+        if (railShown) add(R.string.bar_menu)
+        else (2..3).forEach { i -> slotLabelRes(slots.getOrNull(i), i, exitShown)?.let(::add) }
+    }
+    val rowLabels = rowLabelRes.map { stringResource(it) }
     val menuCell: @Composable (Modifier) -> Unit = { modifier ->
         Box(modifier, contentAlignment = Alignment.Center) {
             Box {
-                LabeledIconButton(OgnelissIcons.Menu, R.string.bar_menu, onMenu, fitLabel = true)
+                LabeledIconButton(OgnelissIcons.Menu, R.string.bar_menu, onMenu, fitLabel = true, labelPeers = rowLabels)
                 // Отметка включённого фильтра — на значке фильтра в шапке раздела (2.2.1, SectionTopBar)
                 if (menuBadge != null) Badge(Modifier.align(Alignment.TopEnd)) { Text(menuBadge) }
                 menuContent()
@@ -721,18 +740,19 @@ internal fun ActionRow(
         val slot = slots.getOrNull(index)
         when {
             // Режим выбора: выход там, где палец (крестик в шапке дальше) — на первом месте справа
-            index == 2 && selectionActive && onStartSelection != null -> LabeledIconButton(
+            index == 2 && exitShown -> LabeledIconButton(
                 icon = OgnelissIcons.Close,
                 labelRes = R.string.bar_exit,
                 onClick = onStartSelection,
                 tint = MaterialTheme.colorScheme.primary,
                 selected = true,
                 fitLabel = true,
+                labelPeers = rowLabels,
                 modifier = modifier
             )
             slot == null -> Spacer(modifier)
             slot == com.ogneliss.dialer.settings.PanelSlot.MENU -> menuCell(modifier)
-            else -> SectionButton(slot.toSection(), section, onOpenSection, modifier)
+            else -> SectionButton(slot.toSection(), section, onOpenSection, modifier, rowLabels)
         }
     }
     Row(
@@ -761,14 +781,11 @@ internal fun ActionRow(
                 expanded -> OgnelissIcons.KeyboardArrowDown
                 else -> OgnelissIcons.Dialpad
             },
-            labelRes = when {
-                center != null -> center.labelRes
-                expanded -> R.string.bar_center_hide
-                else -> R.string.bar_center_dial
-            },
+            labelRes = centerLabelRes,
             onClick = center?.onClick ?: onToggleExpanded,
             filled = true,
             fitLabel = true,
+            labelPeers = rowLabels,
             // TalkBack — действие, а не короткая подпись (было так и до 2.9.2)
             contentDescription = stringResource(
                 when {
@@ -840,7 +857,9 @@ private fun SectionButton(
     target: MainSection,
     current: MainSection,
     onOpenSection: (MainSection) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /** Подписи всего ряда — один размер (2.9.11, FitText.peers). */
+    rowLabels: List<String> = emptyList()
 ) {
     LabeledIconButton(
         icon = target.icon,
@@ -848,8 +867,17 @@ private fun SectionButton(
         onClick = { onOpenSection(target) },
         selected = current == target,
         fitLabel = true,
+        labelPeers = rowLabels,
         modifier = modifier
     )
+}
+
+/** Подпись места панели [index] (2.9.11, для общего размера ряда); пустое место — null. */
+private fun slotLabelRes(slot: com.ogneliss.dialer.settings.PanelSlot?, index: Int, exitShown: Boolean): Int? = when {
+    index == 2 && exitShown -> R.string.bar_exit
+    slot == null -> null
+    slot == com.ogneliss.dialer.settings.PanelSlot.MENU -> R.string.bar_menu
+    else -> slot.toSection().labelRes
 }
 
 

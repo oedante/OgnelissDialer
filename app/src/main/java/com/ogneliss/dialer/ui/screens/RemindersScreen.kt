@@ -43,6 +43,9 @@ import com.ogneliss.dialer.ui.components.EmptyReason
 import com.ogneliss.dialer.ui.components.CallLogSkeleton
 import com.ogneliss.dialer.ui.components.EmptyState
 import com.ogneliss.dialer.ui.components.ReminderTimeDialog
+import com.ogneliss.dialer.ui.components.ReminderDialog
+import com.ogneliss.dialer.ui.components.PanelCenter
+import androidx.compose.foundation.layout.fillMaxSize
 import com.ogneliss.dialer.ui.components.ScreenScaffold
 import com.ogneliss.dialer.ui.components.ListPanel
 import com.ogneliss.dialer.ui.components.MainSection
@@ -111,6 +114,45 @@ internal fun RemindersScreen(
     /** Напоминание, время которого правят. */
     var editing by remember { mutableStateOf<RemindersRepository.Reminder?>(null) }
 
+    /*
+     * «Создать» в центре панели (2.9.11): номер — полем «Кому» (NumberPick), потом
+     * те же окна, что из журнала: варианты срока (ReminderDialog), затем точное
+     * время (ReminderTimeDialog) — промах виден до сохранения.
+     */
+    val pick = rememberNumberPick()
+    val pickMatches = rememberPickMatches(pick, state.contacts)
+    BackHandler(enabled = pick.open) { pick.close() }
+    /** Номер и имя нового напоминания — пока выбирают срок. */
+    var newFor by remember { mutableStateOf<Pair<String, String?>?>(null) }
+    /** Номер, имя и выбранный срок — окно точного времени. */
+    var newAt by remember { mutableStateOf<Triple<String, String?, Long>?>(null) }
+    val onPicked: (String) -> Unit = { number ->
+        pick.close()
+        newFor = number to contactOfNumber(number, state.contacts)?.displayName
+    }
+
+    newFor?.let { (number, name) ->
+        ReminderDialog(
+            displayName = name ?: PhoneFormatter.format(number),
+            onPick = { at ->
+                newFor = null
+                newAt = Triple(number, name, at)
+            },
+            onDismiss = { newFor = null }
+        )
+    }
+    newAt?.let { (number, name, at) ->
+        ReminderTimeDialog(
+            displayName = name ?: PhoneFormatter.format(number),
+            initialMillis = at,
+            onSave = { chosen ->
+                vm.scheduleReminderAt(number, name, chosen)
+                newAt = null
+            },
+            onDismiss = { newAt = null }
+        )
+    }
+
     val timeFormat = remember { DateFormat.getTimeInstance(DateFormat.SHORT) }
     val dayFormat = remember { DateFormat.getDateInstance(DateFormat.FULL) }
 
@@ -174,7 +216,8 @@ internal fun RemindersScreen(
          */
         topBarOverride = {
             val folderLabel = dayFolders.firstOrNull { it.first == days && days != 0 }?.second
-            SectionTopBar(
+            // Пока выбирают номер — без шапки, как «Кому» в SMS
+            if (!pick.open) SectionTopBar(
                 title = stringResource(folderLabel ?: R.string.nav_reminders),
                 subtitle = if (folderLabel != null) stringResource(R.string.nav_reminders) else null,
                 onOpenMenu = { menuOpen = true }
@@ -182,8 +225,14 @@ internal fun RemindersScreen(
         },
         bottomBar = {
             val hint = stringResource(R.string.reminders_search_hint)
-            ListPanel(
+            if (pick.open) NumberPickBar(pick, pickMatches, R.string.reminders_new, onPicked)
+            else ListPanel(
                 section = MainSection.REMINDERS,
+                // 2.9.11: в центре — «Создать» (новое напоминание), а не клавиатура набора
+                center = PanelCenter(OgnelissIcons.Add, R.string.reminders_new, R.string.bar_center_create) {
+                    closeSearch()
+                    pick.start()
+                },
                 onOpenSection = links.onOpenSection,
                 filterActive = days != 0,
                 onDialpad = links.onOpenDialpad,
@@ -217,6 +266,18 @@ internal fun RemindersScreen(
             )
         }
     ) { padding ->
+        if (pick.open) {
+            NumberPickList(
+                pick = pick,
+                state = state,
+                matches = pickMatches,
+                typedTitleRes = R.string.reminders_new_for_number,
+                typedIcon = OgnelissIcons.Alarm,
+                onPick = onPicked,
+                modifier = Modifier.padding(padding).fillMaxSize()
+            )
+            return@ScreenScaffold
+        }
         // Пока идёт первая загрузка — заглушка, а не «напоминаний нет»:
         // разбор в NotesScreen, здесь то же самое
         if (grouped.isEmpty() && state.loading && search.isBlank()) {

@@ -186,7 +186,6 @@ class SettingsCommands @Inject constructor(
             "notes_retention_scope" -> prefs.setNotesRetentionScope(
                 NotesRetention.Scope.from(value)
             )
-            "swipe_sim" -> prefs.setSwipeSimMode(SwipeSimMode.from(value))
             "outgoing_sim" -> prefs.setOutgoingSim(OutgoingSim.from(value))
             "carrier_info" -> prefs.setCarrierInfo(CarrierInfoMode.from(value))
             "call_photo_style" -> prefs.setCallPhotoStyle(CallPhotoStyle.from(value))
@@ -314,7 +313,6 @@ class SettingsCommands @Inject constructor(
         "sms_otp_cleanup" -> state.smsOtpCleanup.name
         "grouping" -> state.groupingMode.name
         "sort_order" -> state.sortOrder.name
-        "swipe_sim" -> state.swipeSimMode.name
         "outgoing_sim" -> state.outgoingSim.name
         "carrier_info" -> state.carrierInfo.name
         "call_photo_style" -> state.callPhotoStyle.name
@@ -435,14 +433,6 @@ class SettingsCommands @Inject constructor(
 
         "outgoing_sim" -> context.getString(outgoingSimLabelRes(state.outgoingSim))
 
-        "swipe_sim" -> context.getString(
-            when (state.swipeSimMode) {
-                SwipeSimMode.ASK -> R.string.swipe_sim_ask
-                SwipeSimMode.FIRST -> R.string.swipe_sim_first
-                SwipeSimMode.SECOND -> R.string.swipe_sim_second
-            }
-        )
-
         "notes_retention" -> context.getString(
             when (state.notesRetention) {
                 NotesRetention.Period.NEVER -> R.string.retention_never
@@ -488,7 +478,6 @@ class SettingsCommands @Inject constructor(
             "sms_otp_cleanup" -> R.string.settings_sms_otp_cleanup
             "grouping" -> R.string.settings_grouping
             "sort_order" -> R.string.settings_sort_order
-            "swipe_sim" -> R.string.settings_swipe_sim
             "outgoing_sim" -> R.string.settings_outgoing_sim
             "carrier_info" -> R.string.settings_carrier_info
             "call_photo_style" -> R.string.settings_call_photo
@@ -807,7 +796,7 @@ class SettingsCommands @Inject constructor(
             "sms_swipe_right", "sms_swipe_left",
             // 2.2.0
             "sms_undo_send", "sms_otp_cleanup",
-            "notes_retention", "notes_retention_scope", "swipe_sim", "carrier_info",
+            "notes_retention", "notes_retention_scope", "carrier_info",
             // 2.9.1
             "outgoing_sim",
             "call_photo_style", "call_photo_size", "answer_mode", "ui_scale",

@@ -473,11 +473,6 @@
     <string name="reminder_custom">Zeit wählen…</string>
     <string name="reminder_tomorrow">Morgen früh</string>
     <string name="sim_chooser_title">Mit welcher SIM anrufen?</string>
-    <string name="settings_swipe_sim">SIM für Wischgesten</string>
-    <string name="settings_swipe_sim_text">Welche Karte bei einem Anruf per Wischgeste genutzt wird</string>
-    <string name="swipe_sim_ask">Immer fragen</string>
-    <string name="swipe_sim_first">SIM 1</string>
-    <string name="swipe_sim_second">SIM 2</string>
     <string name="action_block_short">Sperren</string>
     <string name="action_remind_short">Erinnern</string>
     <string name="quick_reply_title">Senden und ablehnen</string>
@@ -1184,4 +1179,11 @@
     <string name="call_ambient_night">Nacht</string>
     <string name="notif_source_call">Anruf</string>
     <string name="notif_source_sms">SMS</string>
+    <string name="notes_new">Neue Notiz</string>
+    <string name="notes_new_for_number">Notiz zu %1$s</string>
+    <string name="reminders_new">Neue Erinnerung</string>
+    <string name="reminders_new_for_number">Erinnerung für %1$s</string>
+    <string name="rail_journal">Anruf\u00ADliste</string>
+    <string name="rail_reminders">Erinne\u00ADrungen</string>
+    <string name="rail_fake_call">Fingierter Anruf</string>
 </resources>

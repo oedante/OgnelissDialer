@@ -193,7 +193,13 @@ internal fun NewMessageSuggestions(
     suggestions: List<NewMessage.Suggestion>,
     recents: List<NewMessage.Suggestion>,
     onPick: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /*
+     * 2.9.11: тот же выбор номера — для новой заметки и напоминания
+     * (NumberPick): строка набранного номера — «Заметка к …», «Напоминание о …».
+     */
+    typedTitleRes: Int = R.string.messages_new_to_number,
+    typedIcon: androidx.compose.ui.graphics.vector.ImageVector = OgnelissIcons.Edit
 ) {
     val typed = NewMessage.typedNumber(query)
     val rows = if (query.isBlank()) recents else suggestions
@@ -206,7 +212,7 @@ internal fun NewMessageSuggestions(
         if (typed != null) {
             item(key = "typed") {
                 SuggestionRow(
-                    title = stringResource(R.string.messages_new_to_number, PhoneFormatter.format(typed)),
+                    title = stringResource(typedTitleRes, PhoneFormatter.format(typed)),
                     subtitle = null,
                     onClick = { onPick(typed) }
                 ) {
@@ -218,7 +224,7 @@ internal fun NewMessageSuggestions(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            OgnelissIcons.Edit,
+                            typedIcon,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
@@ -299,7 +305,9 @@ internal fun NewMessageBar(
     /** «Дальше» есть куда: набран номер или подсказка одна. */
     canGo: Boolean,
     onGo: () -> Unit,
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    /** Подпись «Дальше» для TalkBack (2.9.11: и «Новая заметка», «Новое напоминание»). */
+    goDescriptionRes: Int = R.string.messages_write
 ) {
     val focusRequester = remember { FocusRequester() }
     val keyboard = LocalSoftwareKeyboardController.current
@@ -366,7 +374,7 @@ internal fun NewMessageBar(
                 FilledIconButton(onClick = onGo, enabled = canGo) {
                     Icon(
                         OgnelissIcons.KeyboardArrowRight,
-                        contentDescription = stringResource(R.string.messages_write)
+                        contentDescription = stringResource(goDescriptionRes)
                     )
                 }
             }

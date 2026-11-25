@@ -502,11 +502,6 @@
     <string name="reminder_custom">Pick a time…</string>
     <string name="reminder_tomorrow">Tomorrow morning</string>
     <string name="sim_chooser_title">Which SIM to call from?</string>
-    <string name="settings_swipe_sim">SIM for swipe actions</string>
-    <string name="settings_swipe_sim_text">Which card to use when a swipe places a call</string>
-    <string name="swipe_sim_ask">Always ask</string>
-    <string name="swipe_sim_first">SIM 1</string>
-    <string name="swipe_sim_second">SIM 2</string>
     <string name="action_block_short">Block</string>
     <string name="action_remind_short">Remind</string>
     <string name="quick_reply_title">Send and decline</string>
@@ -1214,4 +1209,11 @@
     <string name="call_ambient_night">Night</string>
     <string name="notif_source_call">Call</string>
     <string name="notif_source_sms">SMS</string>
+    <string name="notes_new">New note</string>
+    <string name="notes_new_for_number">Note for %1$s</string>
+    <string name="reminders_new">New reminder</string>
+    <string name="reminders_new_for_number">Reminder for %1$s</string>
+    <string name="rail_journal">Call log</string>
+    <string name="rail_reminders">Remind\u00ADers</string>
+    <string name="rail_fake_call">Fake call</string>
 </resources>

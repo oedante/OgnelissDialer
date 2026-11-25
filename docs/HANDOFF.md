@@ -12,6 +12,25 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 25.11.2026 — 2.9.11 (106): подписи одного размера, колонка в две строки; «Создать» в заметках и напоминаниях; без «SIM для действий свайпа»
+
+Разбор — `docs/RELEASE_NOTES_2.9.11.md`. Четыре предложения обзора интерфейса (автор: «я с тобой согласен»).
+`FitText.peers` — подпись ужимается по самой широкой из ряда (мерка полужирным): `ActionRow`
+(`rowLabels`, `slotLabelRes`), `QuickAction.labelPeers` (карточка), `MenuTileRow`.
+`LabeledIconButton.twoLineLabel` — колонка справа: две строки, `RailItem.railLabelRes` (мягкий перенос
+в `rail_journal`/`rail_reminders`/`rail_fake_call`), `FitText.hyphenate` + `hyphenatesCleanly`; места
+`heightIn(min = 68.dp)`. `ui/screens/NumberPick.kt` — выбор номера полем «Кому» (`NewMessageBar`,
+`NewMessageSuggestions` с параметрами) для «Создать» в `NotesScreen`/`RemindersScreen` (`PanelCenter`).
+`swipe_sim` убрана: `settings/SwipeSimMigration.kt` (DataMigration в `preferencesDataStore`) — «call» →
+`call_sim1`/`call_sim2` во всех 8 ключах свайпов при FIRST/SECOND, ключ удаляется; трубка в строке —
+`DialerViewModel.handsetAction` / `SwipeAction.handsetCall`.
+«Что нового»: `store/whats_new_2.9.11.txt`; если 2.9.8–2.9.10 не публиковались —
+`store/whats_new_2.9.11_since_2.9.7.txt`.
+Проверки: 830 unit-тестов — без ошибок; релизная сборка без предупреждений; lint — новых замечаний
+нет; `prebuild_check`, `import_check`, `audit`, `ui_roles_check`, `check_no_internet`,
+`check_ringing_flag`, `design_tokens_check`, `faq_site --check` — без замечаний. Перенос по слогам
+на телефоне не проверен: в Robolectric правил переноса нет (колонка там — по мягкому переносу).
+
 ## 25.11.2026 — 2.9.10 (105): живой фон — облики, отсвет, батарея; имя «Ogneliss» в уведомлениях
 
 Разбор — `docs/RELEASE_NOTES_2.9.10.md`. Номер — 2.9.10 (автор: «глобальных изменений нет»).

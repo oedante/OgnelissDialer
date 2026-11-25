@@ -17,7 +17,6 @@ import com.ogneliss.dialer.settings.GroupingMode
 import com.ogneliss.dialer.data.NotesRetention
 import com.ogneliss.dialer.settings.SortOrder
 import com.ogneliss.dialer.settings.SwipeAction
-import com.ogneliss.dialer.settings.SwipeSimMode
 import com.ogneliss.dialer.settings.ThemeMode
 
 /**
@@ -135,8 +134,6 @@ data class SettingsState(
     val notesRetention: NotesRetention.Period = NotesRetention.Period.NEVER,
     val notesRetentionScope: NotesRetention.Scope = NotesRetention.Scope.UNKNOWN_ONLY,
     val language: String = "",
-    /** Какой SIM действовать при свайпе; по умолчанию спрашиваем. */
-    val swipeSimMode: SwipeSimMode = SwipeSimMode.ASK,
     /** Карта для звонков и SMS (2.9.1): разбор у OutgoingSim. */
     val outgoingSim: com.ogneliss.dialer.settings.OutgoingSim = com.ogneliss.dialer.settings.OutgoingSim.ASK,
     /** Перелистывание между вызовами и контактами свайпом по панели. */
