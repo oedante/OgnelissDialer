@@ -1,0 +1,135 @@
+<ru-RU>
+• Новые облики живого фона вызова — «Абстракция», «Закат», «Ночь»: Настройки → Экран вызова → Облик живого фона. У «Пламени и лисы» эмблема по центру и с мягким отсветом.
+• Живой фон бережёт батарею: при энергосбережении неподвижен, в долгом разговоре спокойнее.
+• Уведомления подписаны «Звонок» или «SMS».
+</ru-RU>
+<ar>
+• مظاهر جديدة للخلفية الحية للمكالمة: «تجريد» و«غروب» و«ليل»: الإعدادات ← شاشة المكالمة ← مظهر الخلفية الحية. شعار «اللهب والثعلب» في المنتصف مع توهج ناعم.
+• الخلفية الحية توفّر البطارية: ثابتة في وضع توفير الطاقة، وأهدأ في المكالمات الطويلة.
+• الإشعارات موسومة بـ«مكالمة» أو «رسالة».
+</ar>
+<cs-CZ>
+• Nové vzhledy živého pozadí hovoru — „Abstrakce“, „Západ slunce“, „Noc“: Nastavení → Obrazovka hovoru → Vzhled živého pozadí. Znak „Plamen a liška“ uprostřed a s jemnou září.
+• Živé pozadí šetří baterii: v úsporném režimu stojí, v dlouhém hovoru je klidnější.
+• Oznámení nesou popisek „Hovor“ nebo „SMS“.
+</cs-CZ>
+<da-DK>
+• Nye udseender til opkaldets levende baggrund — „Abstrakt“, „Solnedgang“, „Nat“: Indstillinger → Opkaldsskærm → Live-baggrundens udseende. „Flamme og ræv“ er centreret med blødt skær.
+• Den levende baggrund sparer batteri: stille i strømbesparelse, roligere i lange samtaler.
+• Notifikationer mærkes „Opkald“ eller „SMS“.
+</da-DK>
+<de-DE>
+• Neue Looks für den Live-Hintergrund – „Abstrakt“, „Sonnenuntergang“, „Nacht“: Einstellungen → Anrufbildschirm → Aussehen des Live-Hintergrunds. „Flamme und Fuchs“ mittig und mit sanftem Schein.
+• Der Live-Hintergrund schont den Akku: im Energiesparmodus still, in langen Gesprächen ruhiger.
+• Benachrichtigungen tragen „Anruf“ oder „SMS“.
+</de-DE>
+<en-US>
+• New live call background looks — Abstract, Sunset, Night: Settings → Call screen → Live background look. The Flame and fox emblem is centered, with a soft glow.
+• The live background saves battery: still in power saving mode, calmer during long calls.
+• Notifications are labeled "Call" or "SMS".
+</en-US>
+<es-ES>
+• Nuevos aspectos del fondo animado de llamada: «Abstracto», «Atardecer», «Noche»: Ajustes → Pantalla de llamada → Aspecto del fondo animado. «Llama y zorro», centrado y con un brillo suave.
+• El fondo animado ahorra batería: quieto en ahorro de energía, más tranquilo en llamadas largas.
+• Las notificaciones llevan «Llamada» o «SMS».
+</es-ES>
+<fi-FI>
+• Uusia eläviä puhelutaustoja — ”Abstrakti”, ”Auringonlasku”, ”Yö”: Asetukset → Puhelunäkymä → Elävän taustan ulkoasu. ”Liekki ja kettu” keskellä ja pehmeällä hehkulla.
+• Elävä tausta säästää akkua: virransäästössä paikallaan, pitkissä puheluissa rauhallisempi.
+• Ilmoituksissa lukee ”Puhelu” tai ”SMS”.
+</fi-FI>
+<fr-FR>
+• Nouveaux styles du fond animé d’appel : « Abstrait », « Coucher de soleil », « Nuit » : Réglages → Écran d’appel → Style du fond animé. « Flamme et renard » centré, avec une douce lueur.
+• Le fond animé ménage la batterie : immobile en économie d’énergie, plus calme en appel long.
+• Les notifications portent « Appel » ou « SMS ».
+</fr-FR>
+<hi-IN>
+• कॉल की लाइव पृष्ठभूमि के नए रूप — «अमूर्त», «सूर्यास्त», «रात»: सेटिंग्स → कॉल स्क्रीन → लाइव बैकग्राउंड का रूप। «लौ और लोमड़ी» बीच में और हल्की चमक के साथ।
+• लाइव पृष्ठभूमि बैटरी बचाती है: पावर सेविंग में स्थिर, लंबी बातचीत में शांत।
+• सूचनाओं पर «कॉल» या «SMS» लिखा होता है।
+</hi-IN>
+<hu-HU>
+• Új élő hívásháttér-megjelenések – „Absztrakt”, „Naplemente”, „Éjszaka”: Beállítások → Hívásképernyő → Élő háttér megjelenése. A „Láng és róka” középen, lágy fénnyel.
+• Az élő háttér kíméli az akkut: energiatakarékos módban áll, hosszú hívásban nyugodtabb.
+• Az értesítéseken „Hívás” vagy „SMS” felirat.
+</hu-HU>
+<id>
+• Tampilan baru latar hidup panggilan — “Abstrak”, “Senja”, “Malam”: Setelan → Layar panggilan → Tampilan latar hidup. “Api dan rubah” di tengah dengan cahaya lembut.
+• Latar hidup hemat baterai: diam saat hemat daya, lebih tenang di panggilan panjang.
+• Notifikasi berlabel “Panggilan” atau “SMS”.
+</id>
+<it-IT>
+• Nuovi aspetti dello sfondo animato di chiamata: «Astratto», «Tramonto», «Notte»: Impostazioni → Schermata di chiamata → Aspetto dello sfondo animato. «Fiamma e volpe» al centro, con un bagliore morbido.
+• Lo sfondo animato risparmia batteria: fermo in risparmio energetico, più calmo nelle chiamate lunghe.
+• Le notifiche riportano «Chiamata» o «SMS».
+</it-IT>
+<iw-IL>
+• מראות חדשים לרקע החי של השיחה — „מופשט”, „שקיעה”, „לילה”: הגדרות ← מסך שיחה ← מראה הרקע החי. „להבה ושועל” במרכז ועם זוהר רך.
+• הרקע החי חוסך סוללה: קבוע במצב חיסכון, רגוע יותר בשיחות ארוכות.
+• ההתראות מסומנות „שיחה” או „SMS”.
+</iw-IL>
+<ja-JP>
+• 通話のライブ背景に新スタイル「アブストラクト」「夕焼け」「夜」：設定 → 通話画面 → ライブ背景のスタイル。「炎とキツネ」は中央に配置し、やわらかな光を追加。
+• ライブ背景は電池にやさしく：省電力モードでは静止、長い通話では穏やかに。
+• 通知に「通話」または「SMS」と表示。
+</ja-JP>
+<ko-KR>
+• 통화 라이브 배경에 새 스타일 '추상', '노을', '밤': 설정 → 통화 화면 → 라이브 배경 스타일. '불꽃과 여우'는 가운데, 부드러운 빛 추가.
+• 라이브 배경이 배터리를 아낍니다: 절전 모드에서는 정지, 긴 통화에서는 더 차분하게.
+• 알림에 '통화' 또는 'SMS' 표시.
+</ko-KR>
+<nl-NL>
+• Nieuwe stijlen voor de live-achtergrond — ‘Abstract’, ‘Zonsondergang’, ‘Nacht’: Instellingen → Belscherm → Stijl live-achtergrond. ‘Vlam en vos’ gecentreerd, met zachte gloed.
+• De live-achtergrond spaart de batterij: stil in batterijbesparing, rustiger bij lange gesprekken.
+• Meldingen dragen ‘Oproep’ of ‘Sms’.
+</nl-NL>
+<no-NO>
+• Nye utseender for levende anropsbakgrunn — «Abstrakt», «Solnedgang», «Natt»: Innstillinger → Anropsskjerm → Utseende på levende bakgrunn. «Flamme og rev» midtstilt med mykt skjær.
+• Levende bakgrunn sparer batteri: stille i strømsparing, roligere i lange samtaler.
+• Varsler merkes «Anrop» eller «SMS».
+</no-NO>
+<pl-PL>
+• Nowe wyglądy żywego tła połączenia — „Abstrakcja”, „Zachód słońca”, „Noc”: Ustawienia → Ekran połączenia → Wygląd żywego tła. „Płomień i lis” na środku, z miękką poświatą.
+• Żywe tło oszczędza baterię: nieruchome w oszczędzaniu energii, spokojniejsze w długich rozmowach.
+• Powiadomienia mają podpis „Połączenie” lub „SMS”.
+</pl-PL>
+<pt-BR>
+• Novos visuais do fundo animado da chamada — “Abstrato”, “Pôr do sol”, “Noite”: Configurações → Tela de chamada → Visual do fundo animado. “Chama e raposa” centralizado, com brilho suave.
+• O fundo animado poupa bateria: parado na economia de energia, mais calmo em chamadas longas.
+• As notificações trazem “Chamada” ou “SMS”.
+</pt-BR>
+<ro>
+• Aspecte noi pentru fundalul animat al apelului — „Abstract”, „Apus”, „Noapte”: Setări → Ecranul de apel → Aspectul fundalului animat. „Flacără și vulpe” centrat, cu o strălucire blândă.
+• Fundalul animat cruță bateria: nemișcat în economisirea energiei, mai calm în apeluri lungi.
+• Notificările poartă „Apel” sau „SMS”.
+</ro>
+<sk>
+• Nové vzhľady živého pozadia hovoru — „Abstrakcia“, „Západ slnka“, „Noc“: Nastavenia → Obrazovka hovoru → Vzhľad živého pozadia. Znak „Plameň a líška“ v strede a s jemnou žiarou.
+• Živé pozadie šetrí batériu: v úspornom režime stojí, v dlhom hovore je pokojnejšie.
+• Upozornenia nesú popis „Hovor“ alebo „SMS“.
+</sk>
+<sv-SE>
+• Nya utseenden för levande samtalsbakgrund — ”Abstrakt”, ”Solnedgång”, ”Natt”: Inställningar → Samtalsskärm → Levande bakgrundens utseende. ”Låga och räv” centrerad med mjukt sken.
+• Levande bakgrund sparar batteri: stilla i energisparläge, lugnare i långa samtal.
+• Aviseringar märks ”Samtal” eller ”SMS”.
+</sv-SE>
+<th>
+• รูปแบบใหม่ของพื้นหลังเคลื่อนไหวขณะโทร — «นามธรรม» «พระอาทิตย์ตก» «กลางคืน»: การตั้งค่า → หน้าจอโทร → รูปแบบพื้นหลังเคลื่อนไหว «เปลวไฟและสุนัขจิ้งจอก» อยู่กึ่งกลางพร้อมแสงนุ่ม
+• พื้นหลังเคลื่อนไหวประหยัดแบตเตอรี่: นิ่งในโหมดประหยัดพลังงาน สงบขึ้นเมื่อคุยนาน
+• การแจ้งเตือนมีป้าย «การโทร» หรือ «SMS»
+</th>
+<tr-TR>
+• Canlı arama arka planına yeni görünümler — “Soyut”, “Gün batımı”, “Gece”: Ayarlar → Arama ekranı → Canlı arka plan görünümü. “Alev ve tilki” ortada, yumuşak bir parıltıyla.
+• Canlı arka plan pili korur: güç tasarrufunda sabit, uzun görüşmelerde daha sakin.
+• Bildirimlerde “Arama” ya da “SMS” yazar.
+</tr-TR>
+<vi>
+• Kiểu mới cho nền động cuộc gọi — “Trừu tượng”, “Hoàng hôn”, “Đêm”: Cài đặt → Màn hình cuộc gọi → Kiểu nền động. “Ngọn lửa và cáo” ở giữa, có ánh sáng dịu.
+• Nền động tiết kiệm pin: đứng yên khi tiết kiệm pin, êm hơn khi gọi lâu.
+• Thông báo ghi “Cuộc gọi” hoặc “SMS”.
+</vi>
+<zh-CN>
+• 通话动态背景新增“抽象”“日落”“夜晚”外观：设置 → 通话界面 → 动态背景外观。“火焰与狐狸”标志居中，并带柔和光晕。
+• 动态背景更省电：省电模式下静止，长时间通话时更平缓。
+• 通知标注“通话”或“短信”。
+</zh-CN>
