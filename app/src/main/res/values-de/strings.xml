@@ -712,7 +712,7 @@
     <string name="faq_section_calls">Anrufe</string>
     <string name="faq_section_about">Über die App</string>
     <string name="faq_q_default">Wie mache ich Ogneliss Dialer zur Standard-Telefon-App?</string>
-    <string name="faq_a_default">Beim ersten Start bietet die App an, Standard-Telefon-App zu werden. Wenn Sie abgelehnt haben, öffnen Sie %1$s und wählen Sie Ogneliss Dialer unter „Telefon“ — je nach Gerät heißt der Punkt etwas anders. Anrufliste und Kontakte bleiben, wie sie sind: Sie werden von Android gespeichert, nicht von der App, und auch beim Wechsel zurück geht nichts verloren. Wurde die App aus einer APK-Datei installiert und meldet Android „Eingeschränkte Einstellung“, öffnen Sie zuerst App-Info → ⋮ → „Eingeschränkte Einstellungen zulassen“.</string>
+    <string name="faq_a_default">Beim ersten Start bietet die App an, Standard-Telefon-App zu werden. Wenn Sie abgelehnt haben, öffnen Sie %1$s und wählen Sie Ogneliss unter „Telefon“ — je nach Gerät heißt der Punkt etwas anders. Anrufliste und Kontakte bleiben, wie sie sind: Sie werden von Android gespeichert, nicht von der App, und auch beim Wechsel zurück geht nichts verloren. Wurde die App aus einer APK-Datei installiert und meldet Android „Eingeschränkte Einstellung“, öffnen Sie zuerst App-Info → ⋮ → „Eingeschränkte Einstellungen zulassen“.</string>
     <string name="faq_q_internet">Warum hat die App keinen Internetzugang?</string>
     <string name="faq_a_internet">Damit Ihre Daten das Telefon nicht verlassen können. Ohne Internetberechtigung kann die App nichts senden — weder die Anrufliste noch Kontakte oder Notizen; das sehen Sie in den Details der installierten App. Anbieter und Region einer unbekannten Nummer stammen aus einem Verzeichnis in der App, und ob sie angezeigt werden, entscheiden Sie: %1$s. Bei einer Mobilnummer ist das die Region der Vergabe, nicht der Aufenthaltsort; Anbieter und Region stammen aus dem russischen Register, in anderen Ländern wird nur der Anbieter angezeigt, und nicht bei jeder Nummer.</string>
     <string name="faq_q_transfer">Wie übertrage ich Notizen und Listen auf ein neues Telefon?</string>
@@ -1156,7 +1156,7 @@
     <string name="settings_call_ambient_style_text">Farben von Design und Foto oder Flamme mit Fuchs</string>
     <string name="call_ambient_theme">Farben von Design und Foto</string>
     <string name="call_ambient_flame">Flamme und Fuchs</string>
-    <string name="keywords_call_ambient_style">Anrufbildschirm, Hintergrund, Animation, Wellen, Flamme, Fuchs, Logo, Aussehen</string>
+    <string name="keywords_call_ambient_style">Anrufbildschirm, Hintergrund, Animation, Wellen, Flamme, Fuchs, Logo, Aussehen, abstrakt, Sonnenuntergang, Nacht</string>
     <string name="menu_section_actions">Aktionen</string>
     <string name="settings_section_contacts">Kontakte</string>
     <string name="settings_section_contacts_summary">Fotos, Namen, Sortierung, Angeheftete</string>
@@ -1179,4 +1179,9 @@
     <string name="rail_items_title">Spalte rechts</string>
     <string name="rail_items_summary">Reihenfolge und Anzeige: der erste neben der Aktionstaste</string>
     <string name="rail_items_near_action">Neben der Aktionstaste</string>
+    <string name="call_ambient_abstract">Abstrakt</string>
+    <string name="call_ambient_sunset">Sonnenuntergang</string>
+    <string name="call_ambient_night">Nacht</string>
+    <string name="notif_source_call">Anruf</string>
+    <string name="notif_source_sms">SMS</string>
 </resources>

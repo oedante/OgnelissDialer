@@ -711,7 +711,7 @@
     <string name="faq_section_calls">Appels</string>
     <string name="faq_section_about">À propos de l’application</string>
     <string name="faq_q_default">Comment faire d’Ogneliss Dialer l’application Téléphone par défaut ?</string>
-    <string name="faq_a_default">Au premier lancement, l’application propose de devenir l’application Téléphone par défaut. Si vous avez refusé, ouvrez %1$s et choisissez Ogneliss Dialer sous « Téléphone » — l’intitulé varie un peu selon les appareils. Le journal d’appels et les contacts restent tels quels : c’est Android qui les conserve, pas l’application, et rien n’est perdu si vous revenez à l’ancienne. Si l\'application a été installée depuis un fichier APK et qu\'Android affiche « Paramètre restreint », ouvrez d\'abord Infos sur l\'appli → ⋮ → « Autoriser les paramètres restreints ».</string>
+    <string name="faq_a_default">Au premier lancement, l’application propose de devenir l’application Téléphone par défaut. Si vous avez refusé, ouvrez %1$s et choisissez Ogneliss sous « Téléphone » — l’intitulé varie un peu selon les appareils. Le journal d’appels et les contacts restent tels quels : c’est Android qui les conserve, pas l’application, et rien n’est perdu si vous revenez à l’ancienne. Si l\'application a été installée depuis un fichier APK et qu\'Android affiche « Paramètre restreint », ouvrez d\'abord Infos sur l\'appli → ⋮ → « Autoriser les paramètres restreints ».</string>
     <string name="faq_q_internet">Pourquoi l’application n’a-t-elle pas accès à Internet ?</string>
     <string name="faq_a_internet">Pour que vos données ne puissent pas quitter le téléphone. Sans l’autorisation d’accès à Internet, l’application ne peut rien envoyer — ni le journal, ni les contacts, ni les notes ; vous pouvez le vérifier dans les détails de l’application installée. L’opérateur et la région d’un numéro inconnu viennent d’un annuaire intégré à l’application, et c’est vous qui décidez de les afficher : %1$s. Pour un mobile, c’est la région d’attribution, pas le lieu de l’appelant ; l’opérateur et la région viennent du registre russe, ailleurs seul l’opérateur est affiché, et pas pour tous les numéros.</string>
     <string name="faq_q_transfer">Comment transférer les notes et les listes sur un nouveau téléphone ?</string>
@@ -1155,7 +1155,7 @@
     <string name="settings_call_ambient_style_text">Couleurs du thème et de la photo, ou flamme et renard</string>
     <string name="call_ambient_theme">Couleurs du thème et de la photo</string>
     <string name="call_ambient_flame">Flamme et renard</string>
-    <string name="keywords_call_ambient_style">écran d’appel, fond, animation, ondes, flamme, renard, logo, style</string>
+    <string name="keywords_call_ambient_style">écran d’appel, fond, animation, ondes, flamme, renard, logo, style, abstrait, coucher de soleil, nuit</string>
     <string name="menu_section_actions">Actions</string>
     <string name="settings_section_contacts">Contacts</string>
     <string name="settings_section_contacts_summary">Photos, noms, tri, épinglés</string>
@@ -1178,4 +1178,9 @@
     <string name="rail_items_title">Colonne de droite</string>
     <string name="rail_items_summary">Ordre et affichage : le premier près du bouton d’action</string>
     <string name="rail_items_near_action">Près du bouton d’action</string>
+    <string name="call_ambient_abstract">Abstrait</string>
+    <string name="call_ambient_sunset">Coucher de soleil</string>
+    <string name="call_ambient_night">Nuit</string>
+    <string name="notif_source_call">Appel</string>
+    <string name="notif_source_sms">SMS</string>
 </resources>

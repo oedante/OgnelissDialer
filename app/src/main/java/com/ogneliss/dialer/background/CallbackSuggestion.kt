@@ -106,6 +106,8 @@ object CallbackSuggestion {
 
         val builder = NotificationCompat.Builder(context, CallNotifications.CHANNEL_MISSED)
             .setSmallIcon(R.drawable.ic_stat_callback)  // 1.3.4: свой значок у каждого типа уведомления
+            // 2.9.10: в шапке — «Ogneliss • Звонок» (автор: «в уведомлении писать на локальном языке звонок или SMS»)
+            .setSubText(context.getString(R.string.notif_source_call))
             .setContentTitle(context.getString(R.string.callback_suggestion_title, title))
             .setContentText(text)
             // Длинная заметка иначе обрезается на середине слова:

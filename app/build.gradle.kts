@@ -134,8 +134,8 @@ android {
          * Перед публикацией в открытый доступ сменить на 1.0.0
          * и поднять versionCode.
          */
-        versionCode = 104
-        versionName = "2.9.9"
+        versionCode = 105
+        versionName = "2.9.10"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -159,8 +159,13 @@ android {
 
     buildTypes {
         release {
-            // В релизе метка берётся из ресурсов — она локализована
-            manifestPlaceholders["appLabel"] = "@string/app_name"
+            /*
+             * В релизе метка берётся из ресурсов. 2.9.10 (автор, по просьбе пользователя:
+             * «приходит SMS — надпись Ogneliss Dialer»): общее имя приложения — «Ogneliss»
+             * (уведомления, роли, список приложений), значок на рабочем столе — по-прежнему
+             * «Ogneliss Dialer» (android:label у MainActivity).
+             */
+            manifestPlaceholders["appLabel"] = "@string/app_label"
 
             /*
              * ОТЛАДОЧНЫЕ СИМВОЛЫ ДЛЯ НАТИВНОГО КОДА.

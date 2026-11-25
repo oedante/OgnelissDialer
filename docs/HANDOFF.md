@@ -12,6 +12,18 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 25.11.2026 — 2.9.10 (105): живой фон — облики, отсвет, батарея; имя «Ogneliss» в уведомлениях
+
+Разбор — `docs/RELEASE_NOTES_2.9.10.md`. Номер — 2.9.10 (автор: «глобальных изменений нет»).
+`call_emblem.png` выровнен по центру; `emblemRoom` — эмблема ниже строки состояния.
+`call/AmbientPalettes.kt` — цвета обликов (`AmbientStyle` THEME, FLAME, ABSTRACT, SUNSET, NIGHT);
+`AmbientArt.glowOf` — отсвет за эмблемой (готовится один раз); `rememberPowerSaveMode` — при
+экономии энергии фон неподвижен; разговор > 12 с — 10 кадров/с (`FRAME_MS_CALM`, `CALM_SPEED`).
+Имя приложения — `app_label` «Ogneliss», значок — `app_name` у `MainActivity`; `setSubText`
+`notif_source_call`/`notif_source_sms` во всех уведомлениях звонков и SMS.
+«Что нового»: `store/whats_new_2.9.10.txt`; если 2.9.8–2.9.9 не публиковались —
+`store/whats_new_2.9.10_since_2.9.7.txt`.
+
 ## 25.11.2026 — 2.9.9 (104): «Назад» из разделов сворачивает приложение; колонка справа настраивается
 
 Разбор — `docs/RELEASE_NOTES_2.9.9.md`. `ui/SectionNavigator.kt`: раздел — основание стека

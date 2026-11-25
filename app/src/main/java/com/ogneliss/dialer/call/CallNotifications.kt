@@ -162,6 +162,8 @@ object CallNotifications {
         val person = caller(callerName, number, card)
         val builder = NotificationCompat.Builder(context, if (alert) CHANNEL_INCOMING else CHANNEL_ONGOING)
             .setSmallIcon(R.drawable.ic_call)
+            // 2.9.10: в шапке — «Ogneliss • Звонок» (автор: «в уведомлении писать на локальном языке звонок или SMS»)
+            .setSubText(context.getString(R.string.notif_source_call))
             .setContentTitle(callerName)
             // «Мобильный · Входящий вызов» — тип номера, как в стандартных звонилках (2.1.0)
             .setContentText(listOfNotNull(card?.typeLabel, text).joinToString(" · "))
@@ -239,6 +241,8 @@ object CallNotifications {
         val person = caller(callerName, number, card)
         val builder = NotificationCompat.Builder(context, CHANNEL_ONGOING)
             .setSmallIcon(R.drawable.ic_call)
+            // 2.9.10: в шапке — «Ogneliss • Звонок» (автор: «в уведомлении писать на локальном языке звонок или SMS»)
+            .setSubText(context.getString(R.string.notif_source_call))
             .setContentTitle(callerName)
             .setContentText(context.getString(R.string.incall_ongoing))
             // Фото звонящего (2.1.0): до Android 12 — справа; с 12 — кругом CallStyle

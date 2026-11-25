@@ -266,6 +266,8 @@ class CallForegroundService : Service() {
     private fun fallbackNotification(name: String): Notification =
         androidx.core.app.NotificationCompat.Builder(this, CallNotifications.CHANNEL_ONGOING)
             .setSmallIcon(com.ogneliss.dialer.R.drawable.ic_call)
+            // 2.9.10: в шапке — «Ogneliss • Звонок» (автор: «в уведомлении писать на локальном языке звонок или SMS»)
+            .setSubText(getString(com.ogneliss.dialer.R.string.notif_source_call))
             .setContentTitle(name)
             .setCategory(androidx.core.app.NotificationCompat.CATEGORY_CALL)
             .setOngoing(true)

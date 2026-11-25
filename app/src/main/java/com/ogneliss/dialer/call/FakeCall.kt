@@ -158,6 +158,8 @@ object FakeCall {
             )
             val notification = androidx.core.app.NotificationCompat.Builder(context, CHANNEL_RING)
                 .setSmallIcon(com.ogneliss.dialer.R.drawable.ic_call)
+                // 2.9.10: в шапке — «Ogneliss • Звонок» (автор: «в уведомлении писать на локальном языке звонок или SMS»)
+                .setSubText(context.getString(com.ogneliss.dialer.R.string.notif_source_call))
                 .setContentTitle(context.getString(com.ogneliss.dialer.R.string.incall_incoming))
                 .setCategory(androidx.core.app.NotificationCompat.CATEGORY_CALL)
                 .setPriority(androidx.core.app.NotificationCompat.PRIORITY_MAX)

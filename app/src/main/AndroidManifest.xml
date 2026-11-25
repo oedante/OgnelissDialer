@@ -134,8 +134,13 @@
 
         <!-- ГЛАВНЫЙ ЭКРАН. Набор intent-filter ниже — обязательное условие,
              чтобы система предложила приложение как "Телефон по умолчанию". -->
+        <!--
+          2.9.10: подпись значка — «Ogneliss Dialer», а общее имя приложения (уведомления,
+          роли «Телефон» и «SMS», список приложений) — «Ogneliss» (application label).
+        -->
         <activity
             android:name=".MainActivity"
+            android:label="@string/app_name"
             android:exported="true"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize"

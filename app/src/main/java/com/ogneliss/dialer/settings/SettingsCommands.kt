@@ -637,6 +637,10 @@ class SettingsCommands @Inject constructor(
         fun ambientStyleLabelRes(style: com.ogneliss.dialer.call.AmbientStyle): Int = when (style) {
             com.ogneliss.dialer.call.AmbientStyle.THEME -> R.string.call_ambient_theme
             com.ogneliss.dialer.call.AmbientStyle.FLAME -> R.string.call_ambient_flame
+            // 2.9.10: облики без картинок — та же анимация в других цветах (AmbientPalettes)
+            com.ogneliss.dialer.call.AmbientStyle.ABSTRACT -> R.string.call_ambient_abstract
+            com.ogneliss.dialer.call.AmbientStyle.SUNSET -> R.string.call_ambient_sunset
+            com.ogneliss.dialer.call.AmbientStyle.NIGHT -> R.string.call_ambient_night
         }
 
         /** Значения выбора «Фон вызова» (2.7.4): обычный или свой снимок. */
