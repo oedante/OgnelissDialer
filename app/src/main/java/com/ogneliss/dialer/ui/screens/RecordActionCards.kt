@@ -678,7 +678,7 @@ private fun previewTypeIcon(type: CallType) = when (type) {
 
 /** Порядок мессенджеров — как в «Написать» карточки абонента. */
 private val MESSENGER_ORDER = listOf(
-    SwipeAction.TELEGRAM, SwipeAction.WHATSAPP, SwipeAction.MAX, SwipeAction.VIBER
+    SwipeAction.TELEGRAM, SwipeAction.WHATSAPP, SwipeAction.VIBER
 )
 private val PREVIEW_AVATAR = 52.dp
 private val PREVIEW_META_ICON = 16.dp

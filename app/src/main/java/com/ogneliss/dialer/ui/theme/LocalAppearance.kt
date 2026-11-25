@@ -59,7 +59,9 @@ data class Appearance(
      * синим входящий, красным неотвеченный»). 2.8.9: по умолчанию включено
      * (автор). Выбор цвета — callArrowTint (CallArrowColor.kt).
      */
-    val coloredCallArrows: Boolean = true
+    val coloredCallArrows: Boolean = true,
+    /** Длительность разговора рядом с датой в журнале (2.9.8): разбор в Prefs.callLogDuration. */
+    val callLogDuration: Boolean = false
 ) {
     /** Высота клавиши с учётом режима крупных кнопок. */
     val dialKeyHeight: Dp

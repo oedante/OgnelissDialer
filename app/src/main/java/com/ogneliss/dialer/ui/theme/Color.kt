@@ -249,9 +249,6 @@ internal val TelegramBlue = androidx.compose.ui.graphics.Color(0xFF1B7FA8)
 /** Фирменный фиолетовый Viber. */
 internal val ViberPurple = androidx.compose.ui.graphics.Color(0xFF5B4BC4)
 
-/** Фирменный синий MAX. */
-internal val MaxBlue = androidx.compose.ui.graphics.Color(0xFF0057BF)
-
 /**
  * Напоминание перезвонить.
  *

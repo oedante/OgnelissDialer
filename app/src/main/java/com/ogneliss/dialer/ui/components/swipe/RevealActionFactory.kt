@@ -5,7 +5,6 @@ import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.ogneliss.dialer.ui.theme.ReminderAmber
-import com.ogneliss.dialer.ui.theme.MaxBlue
 import com.ogneliss.dialer.ui.theme.ViberPurple
 import com.ogneliss.dialer.ui.theme.TelegramBlue
 import com.ogneliss.dialer.ui.theme.WhatsAppGreen
@@ -76,6 +75,8 @@ object RevealActionFactory {
             description = strings.actionLabel(action),
             color = color,
             icon = icon,
+            // «Позвонить с SIM N» (2.9.8): значок карты рядом с трубкой
+            simBadge = SwipeAction.simSlotOf(action)?.plus(1),
             onClick = {}
         )
     }
@@ -114,6 +115,7 @@ object RevealActionFactory {
             description = strings.actionLabel(action),
             color = color,
             icon = icon,
+            simBadge = SwipeAction.simSlotOf(action)?.plus(1),
             onClick = onPerform
         )
     }
@@ -145,6 +147,20 @@ object RevealActionFactory {
             SwipeAction.CALL -> buildCallActions(
                 numbers, labels, allLabels, sims, strings, onCall
             )
+            // 2.9.8: «Позвонить с SIM N» — по кнопке на номер, карта — в самом действии
+            SwipeAction.CALL_SIM1, SwipeAction.CALL_SIM2 -> {
+                val slot = SwipeAction.simSlotOf(action) ?: 0
+                numbers.mapIndexed { i, number ->
+                    RevealAction(
+                        label = chip(number, labels.getOrNull(i), allLabels),
+                        description = strings.callWithSim(number, "SIM ${slot + 1}"),
+                        color = CallGreen,
+                        icon = OgnelissIcons.Call,
+                        simBadge = slot + 1,
+                        onClick = { onCall(number, slot) }
+                    )
+                }
+            }
 
             SwipeAction.SMS -> numbers.mapIndexed { i, number ->
                 RevealAction(
@@ -157,7 +173,7 @@ object RevealActionFactory {
             }
 
             SwipeAction.WHATSAPP, SwipeAction.TELEGRAM,
-            SwipeAction.VIBER, SwipeAction.MAX ->
+            SwipeAction.VIBER ->
                 numbers.mapIndexed { i, number ->
                     RevealAction(
                         label = chip(number, labels.getOrNull(i), allLabels),
@@ -289,14 +305,13 @@ object RevealActionFactory {
 
     private fun visuals(action: SwipeAction): Pair<ImageVector, Color> = when (action) {
         // Вызов
-        SwipeAction.CALL -> OgnelissIcons.Call to CallGreen
+        SwipeAction.CALL, SwipeAction.CALL_SIM1, SwipeAction.CALL_SIM2 -> OgnelissIcons.Call to CallGreen
 
         // Сообщения
         SwipeAction.SMS -> OgnelissIcons.Message to MessageBlue
         SwipeAction.WHATSAPP -> OgnelissIcons.Chat to WhatsAppGreen
         SwipeAction.TELEGRAM -> OgnelissIcons.Send to TelegramBlue
         SwipeAction.VIBER -> OgnelissIcons.Forum to ViberPurple
-        SwipeAction.MAX -> OgnelissIcons.Textsms to MaxBlue
         SwipeAction.EMAIL -> OgnelissIcons.Email to NeutralGrey
 
         // Работа с записью

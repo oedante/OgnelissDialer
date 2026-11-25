@@ -749,6 +749,14 @@ object SettingsRegistry {
             keywordsRes = R.string.keywords_colored_call_arrows,
             groupRes = R.string.settings_group_log_view
         ),
+        // 2.9.8: форум, Bublikov34 — «не нашёл включение отображения длительности звонка в журнале»
+        SettingEntry(
+            "call_log_duration", SettingsCategory.CALL_LOG,
+            R.string.settings_call_log_duration, R.string.settings_call_log_duration_text,
+            SettingKind.Switch("call_log_duration"),
+            keywordsRes = R.string.keywords_call_log_duration,
+            groupRes = R.string.settings_group_log_view
+        ),
         SettingEntry(
             "sort_order", SettingsCategory.CALL_LOG,
             R.string.settings_sort_order, R.string.settings_sort_order_text,
@@ -1042,6 +1050,17 @@ object SettingsRegistry {
             keywordsRes = R.string.keywords_quiet_hours,
             groupRes = R.string.settings_group_block_rules,
             advanced = true
+        ),
+        /*
+         * Правила — для какой SIM (2.9.8, форум, Bublikov34: «разделение настроек
+         * спама на разные сим-карты»). Разбор — call/SpamSimScope.kt.
+         */
+        SettingEntry(
+            "spam_sim_scope", SettingsCategory.SPAM,
+            R.string.settings_spam_sim_scope, R.string.settings_spam_sim_scope_text,
+            SettingKind.Choice("spam_sim_scope"),
+            keywordsRes = R.string.keywords_spam_sim_scope,
+            groupRes = R.string.settings_group_block_rules
         ),
         /*
          * Автоблокировки по оценке риска и порога уверенности здесь

@@ -23,6 +23,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -69,7 +70,15 @@ fun SwipeActionsDialog(
             extra.filter { it != SwipeAction.NONE && it != primary }.take(MAX - 1).forEach { add(it) }
         }
     }
-    val options = SwipeAction.entries.filter { it != SwipeAction.NONE }
+    /*
+     * «Позвонить с SIM 1 / 2» (2.9.8) — только при двух картах: с одной картой
+     * выбирать нечего. Уже выбранное остаётся в списке, чтобы его можно было снять.
+     */
+    val dualSim = vm.state.collectAsStateWithLifecycle().value.sims.size > 1
+    val options = SwipeAction.entries.filter { action ->
+        action != SwipeAction.NONE &&
+            (dualSim || SwipeAction.simSlotOf(action) == null || action in chosen)
+    }
 
     OgnelissDialog(
         onDismissRequest = onDismiss,

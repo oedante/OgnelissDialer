@@ -85,11 +85,13 @@ internal fun settingIcon(id: String): ImageVector? = when (id) {
     "vibrate_on_connect" -> OgnelissIcons.CallMade
     "section_icons" -> OgnelissIcons.AddToHomeScreen
     "colored_call_arrows" -> OgnelissIcons.CallReceived
+    "call_log_duration" -> OgnelissIcons.Schedule
     "start_section" -> OgnelissIcons.OpenInNew
     "call_hide_contact_number" -> OgnelissIcons.Lock
     "call_status_labels" -> OgnelissIcons.Info
     "call_photo_style" -> OgnelissIcons.Image
     "call_ambient_style" -> OgnelissIcons.Palette
+    "spam_sim_scope" -> OgnelissIcons.SimCard
     "call_photo_size" -> OgnelissIcons.Person
     "call_animation" -> OgnelissIcons.Bolt
     "call_bg_incoming", "call_bg_outgoing" -> OgnelissIcons.AddPhotoAlternate

@@ -858,14 +858,7 @@ internal fun WriteSheet(
                         val visual = RevealActionFactory.iconOf(link.kind)
                         SheetRow(
                             visual?.first ?: OgnelissIcons.Message,
-                            stringResource(
-                                when (link.kind) {
-                                    SwipeAction.WHATSAPP -> R.string.action_whatsapp
-                                    SwipeAction.TELEGRAM -> R.string.action_telegram
-                                    SwipeAction.VIBER -> R.string.action_viber
-                                    else -> R.string.action_max
-                                }
-                            ),
+                            stringResource(com.ogneliss.dialer.settings.SettingsCommands.swipeActionLabelRes(link.kind)),
                             iconTint = visual?.second,
                             // Номер — чтобы различать, если номеров у контакта несколько
                             supporting = link.summary?.let {
@@ -879,14 +872,7 @@ internal fun WriteSheet(
                         val visual = RevealActionFactory.iconOf(kind)
                         SheetRow(
                             visual?.first ?: OgnelissIcons.Message,
-                            stringResource(
-                                when (kind) {
-                                    SwipeAction.WHATSAPP -> R.string.action_whatsapp
-                                    SwipeAction.TELEGRAM -> R.string.action_telegram
-                                    SwipeAction.VIBER -> R.string.action_viber
-                                    else -> R.string.action_max
-                                }
-                            ),
+                            stringResource(com.ogneliss.dialer.settings.SettingsCommands.swipeActionLabelRes(kind)),
                             iconTint = visual?.second,
                             // Номер — если у контакта их несколько: по какому откроется чат
                             supporting = PhoneFormatter.format(byNumberTarget).takeIf { numbers.size > 1 },

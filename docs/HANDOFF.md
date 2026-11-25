@@ -12,6 +12,19 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 25.11.2026 — 2.9.8 (103): форум — свайпы с SIM, длительность, спам по SIM, «Назад»; колонка справа; без Max
+
+Разбор — `docs/RELEASE_NOTES_2.9.8.md`. `SwipeAction.CALL_SIM1/CALL_SIM2` (`simSlotOf`; значок
+карты в `DirectActionHint`, в выборе — только при двух SIM). `call_log_duration` →
+`Appearance.callLogDuration` → `CallLogCard` (`CallDurationText`). `spam_sim_scope` →
+`SpamPolicy.Settings.simScope` + `SpamInput.simSlot` (`OgnelissCallScreeningService` по
+`accountHandle`); не своя карта — `listsOnly()`. RootScreen: `openSectionAsRoot` — раздел,
+открытый снаружи, — основание навигации; `openSection` без журнала в стеке — тоже основанием.
+Колонка: «Меню» сверху, разделы и инструменты (`MenuTool.visible`, `SideRailState.tools` от
+`OverflowMenu`), полоса у открытого раздела (`RailCell`); в шапке и в меню этого режима —
+без «Меню» и «Инструментов». Max удалён (`SwipeAction.from("max")` → SMS).
+Для Google Play — `store/whats_new_2.9.8_since_2.9.0.txt`.
+
 ## 24.11.2026 — 2.9.7 (102): экран вызова сразу в своём виде; подписи состояния можно скрыть
 
 Разбор — `docs/RELEASE_NOTES_2.9.7.md`. Письмо пользователя: «экран открывается с мельканием

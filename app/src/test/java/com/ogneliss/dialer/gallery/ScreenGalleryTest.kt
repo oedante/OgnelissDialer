@@ -323,6 +323,8 @@ class ScreenGalleryTest {
                 com.ogneliss.dialer.ui.components.SideSectionRail(
                     state = state,
                     slots = com.ogneliss.dialer.settings.PanelSlots.defaults(smsDefault = true),
+                    // 2.9.8: инструменты меню — на колонке
+                    tools = com.ogneliss.dialer.ui.screens.MenuTool.visible(null),
                     current = current,
                     onOpenSection = {}
                 )

@@ -116,6 +116,9 @@ fun SettingsChoiceDialog(
             it.name to stringResource(SettingsCommands.callPhotoStyleLabelRes(it))
         }
         // 2.9.5: облик живого фона — тоны темы или «Пламя» (CallAmbientBackground)
+        "spam_sim_scope" -> com.ogneliss.dialer.call.SpamSimScope.entries.map {
+            it.name to stringResource(SettingsCommands.spamSimScopeLabelRes(it))
+        }
         "call_ambient_style" -> com.ogneliss.dialer.call.AmbientStyle.entries.map {
             it.name to stringResource(SettingsCommands.ambientStyleLabelRes(it))
         }

@@ -81,10 +81,11 @@ object SwipeActionPlan {
     /** Зависит ли действие от того, какой именно номер выбран. */
     private fun SwipeAction.dependsOnNumber(): Boolean = when (this) {
         SwipeAction.CALL,
+        SwipeAction.CALL_SIM1, SwipeAction.CALL_SIM2,
         SwipeAction.SMS,
         SwipeAction.WHATSAPP,
         SwipeAction.TELEGRAM,
-        SwipeAction.VIBER, SwipeAction.MAX,
+        SwipeAction.VIBER,
         SwipeAction.EMAIL,
         SwipeAction.EDIT_BEFORE_CALL,
         SwipeAction.COPY_NUMBER,

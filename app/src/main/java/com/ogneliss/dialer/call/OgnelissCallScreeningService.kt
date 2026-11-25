@@ -51,6 +51,9 @@ class OgnelissCallScreeningService : CallScreeningService() {
      */
     @Inject lateinit var blockedCallLog: BlockedCallLog
 
+    /** Слот SIM вызова — для «Правила — для SIM» (2.9.8, SpamSimScope). */
+    @Inject lateinit var sims: com.ogneliss.dialer.data.SimRepository
+
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private companion object { const val TAG = "Screening" }
@@ -73,7 +76,9 @@ class OgnelissCallScreeningService : CallScreeningService() {
                 }
 
                 val e164 = PhoneFormatter.toE164(number.orEmpty())
-                val input = collector.collect(number, e164)
+                // Карта вызова (2.9.8): одна SIM или аккаунта нет — null, правила как обычно
+                val simSlot = runCatching { sims.slotForAccountId(callDetails.accountHandle?.id) }.getOrNull()
+                val input = collector.collect(number, e164, simSlot)
                 val decision = SpamPolicy.evaluate(input)
 
                 /*

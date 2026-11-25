@@ -424,7 +424,6 @@
     <string name="settings_dialpad_open">Open keypad on launch</string>
     <string name="settings_dialpad_open_text">Dial pad is open right after launch</string>
     <string name="incall_dtmf_hint">Tone dialing</string>
-    <string name="action_max" translatable="false">Max</string>
     <string name="settings_theme_contrast">High contrast (low vision)</string>
 
     <string name="settings_notes_retention">Delete old notes</string>
@@ -939,7 +938,7 @@
     <!-- Вопросы о сообщениях (2.0.0) -->
     <string name="faq_section_messages">Messages</string>
     <string name="faq_q_sms">Can I send and receive SMS in the dialer?</string>
-    <string name="faq_a_sms">Yes. When the dialer is your default SMS app (%1$s), conversations, incoming SMS and pictures (MMS) are right here, in the SMS section of the bottom bar, with the same swipes as in the call log; the call log stays calls only. When another app handles SMS, the “Message” buttons simply open the conversation there — nothing to set up. On a phone with an RCS app (Google Messages, Samsung Messages) the dialer does not ask for the SMS role by itself: RCS chat works only in that app and turns off when another app takes SMS. To stop, choose another SMS app at any time — the dialer stops reading messages right away. If you turn on “Messengers for any number”, “Message” also offers WhatsApp, Telegram, Viber and Max for numbers not in contacts; Telegram opens a chat only if the person allows being found by number.</string>
+    <string name="faq_a_sms">Yes. When the dialer is your default SMS app (%1$s), conversations, incoming SMS and pictures (MMS) are right here, in the SMS section of the bottom bar, with the same swipes as in the call log; the call log stays calls only. When another app handles SMS, the “Message” buttons simply open the conversation there — nothing to set up. On a phone with an RCS app (Google Messages, Samsung Messages) the dialer does not ask for the SMS role by itself: RCS chat works only in that app and turns off when another app takes SMS. To stop, choose another SMS app at any time — the dialer stops reading messages right away. If you turn on “Messengers for any number”, “Message” also offers WhatsApp, Telegram and Viber for numbers not in contacts; Telegram opens a chat only if the person allows being found by number.</string>
     <string name="faq_q_codes">How do I paste a code from an SMS?</string>
     <string name="faq_a_codes">When a message contains a verification code, the notification gets a “Copy 123456” button, and the conversation shows the same button under the message. The code goes to the clipboard marked as sensitive, and your keyboard offers to paste it with one tap. Filling the code into another app automatically is done by your keyboard or autofill service (for example, Gboard or Autofill with Google) — that keeps working with the dialer as your SMS app. The code is found on the phone: the dialer has no internet access. Long-press a message to copy the whole text, a phone number from it, or select any part.</string>
 
@@ -1194,4 +1193,15 @@
     <string name="settings_call_status_labels">Call status labels</string>
     <string name="settings_call_status_labels_text">“Incoming call” and “Connecting…”; the timer always shows</string>
     <string name="keywords_call_status_labels">call screen, status, label, incoming, connecting, calling, timer, hide, text</string>
+    <string name="settings_call_log_duration">Call duration</string>
+    <string name="settings_call_log_duration_text">Next to the date: “Today, 14:05 · 2:35”</string>
+    <string name="keywords_call_log_duration">call log, duration, length, time, minutes, seconds, talk</string>
+    <string name="action_call_sim1">Call from SIM 1</string>
+    <string name="action_call_sim2">Call from SIM 2</string>
+    <string name="settings_spam_sim_scope">Rules apply to</string>
+    <string name="settings_spam_sim_scope_text">The other SIM gets every call except the lists</string>
+    <string name="keywords_spam_sim_scope">spam, block, SIM, card, second, work, personal, rules</string>
+    <string name="spam_sim_scope_all">All SIM cards</string>
+    <string name="spam_sim_scope_sim1">SIM 1 only</string>
+    <string name="spam_sim_scope_sim2">SIM 2 only</string>
 </resources>

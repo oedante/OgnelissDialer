@@ -1,5 +1,17 @@
 package com.ogneliss.dialer.ui.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Badge
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.ui.draw.clip
+import com.ogneliss.dialer.R
+import com.ogneliss.dialer.ui.theme.OgnelissIcons
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -46,10 +58,10 @@ import com.ogneliss.dialer.ui.theme.Space
  *   строке журнала, SMS и контактов — кнопка звонка, и плавающие кнопки её
  *   закрывали бы. Список становится уже на ширину колонки, зато ничего
  *   не перекрыто.
- * • В колонке — то же, что на нижней панели, и в том же порядке (конструктор
- *   PanelSlots): места 1–2, центральная кнопка раздела («Набор», «Написать»,
- *   «Создать»), места 3–4 — сверху вниз и прижаты к низу, к большому пальцу.
- *   По умолчанию «Меню» — самое нижнее.
+ * • В колонке — разделы из конструктора (PanelSlots) и кнопка действия раздела
+ *   («Набор», «Написать», «Создать»). Было (2.9.3): места 1–2, центр, места 3–4,
+ *   «Меню» — сверху вниз. С 2.9.6 кнопка действия — в самом низу; с 2.9.8 «Меню» —
+ *   наверху колонки, а «Инструменты» меню — на колонке, под разделами.
  * • Внизу экрана остаётся только нужное в этот момент: постоянное поле поиска
  *   (контакты, заметки, напоминания), клавиатура набора и поиск журнала, когда
  *   они открыты. Списку — вся высота.
@@ -107,7 +119,35 @@ internal class SideRailState {
             listActions = emptyList()
         }
     }
+
+    /**
+     * «Мой контакт» и псевдозвонок для колонки (2.9.8, автор: «на панель перенесём
+     * из „Ещё“ инструменты»). У каждого раздела они свои (в журнале псевдозвонок
+     * открывает выбор времени), поэтому их передаёт меню раздела (OverflowMenu),
+     * как «⋮» шапки — [listActions]. Разделы-инструменты колонка открывает сама.
+     */
+    var tools by mutableStateOf<SideRailTools?>(null)
+        private set
+    private var toolsOwner: Any? = null
+
+    fun publishTools(owner: Any, tools: SideRailTools) {
+        toolsOwner = owner
+        this.tools = tools
+    }
+
+    fun withdrawTools(owner: Any) {
+        if (toolsOwner === owner) {
+            toolsOwner = null
+            tools = null
+        }
+    }
 }
+
+/** Инструменты раздела без своего раздела: null — в этом разделе строки нет. */
+internal class SideRailTools(
+    val onOwnContact: (() -> Unit)?,
+    val onFakeCall: (() -> Unit)?
+)
 
 /** Центральная кнопка раздела и «Меню» — для колонки справа. */
 internal class SideRailActions(
@@ -131,12 +171,16 @@ internal val LocalSideRail = staticCompositionLocalOf<SideRailState?> { null }
 internal fun SideSectionRail(
     state: SideRailState,
     slots: List<PanelSlot>,
-    /** Открытый раздел — подсвечен, как на нижней панели. */
+    /** «Инструменты» из настройки (MenuTool.visible) — в порядке и с показом, как в меню. */
+    tools: List<com.ogneliss.dialer.ui.screens.MenuTool>,
+    /** Открытый раздел — отмечен, как на нижней панели. */
     current: MainSection?,
     onOpenSection: (MainSection) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val actions = state.actions
+    val extras = state.tools
+    val sections = slots.filter { it != PanelSlot.MENU }.map { it.toSection() }
     Surface(
         // Цвет нижней панели и её линия — слева: та же панель, повёрнутая к краю
         color = PanelColors.panel(),
@@ -150,28 +194,65 @@ internal fun SideSectionRail(
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Vertical + WindowInsetsSides.End))
                 .padding(vertical = Space.s),
-            // Прижато к низу — к большому пальцу; сверху — пустая полоса панели
-            verticalArrangement = Arrangement.spacedBy(Space.xs, Alignment.Bottom),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             /*
-             * 2.9.6 (автор по снимку колонки): «кнопку клавиатуры / создания SMS
-             * и контакта перенести вниз, кнопку меню перенести наверх и объединить
-             * с „Ещё“». Сверху вниз — разделы из конструктора (без «Меню»: оно
-             * в шапке, SectionTopBar), в самом низу, у большого пальца, — кнопка
-             * действия раздела. Было (2.9.3): места 1–2, центр, места 3–4, «Меню».
+             * 2.9.8 (автор: «на панель перенесём из „Ещё“ инструменты и саму кнопку
+             * „Ещё“; в режиме панели справа не отмечается активная вкладка»).
+             * Сверху — «Меню» (было в шапке, 2.9.6): папки, «Действия», приложение
+             * и поиск. Ниже, прижатые к низу, — разделы из конструктора, затем
+             * инструменты (их больше нет в самом меню), в самом низу — кнопка
+             * действия раздела. Не помещается (низкий экран, крупный шрифт) —
+             * середина листается, «Меню» и кнопка действия на месте.
              */
-            slots.filter { it != PanelSlot.MENU }.forEach { item ->
-                val section = item.toSection()
+            Box {
                 LabeledIconButton(
-                    icon = section.icon,
-                    labelRes = section.labelRes,
-                    onClick = { if (section != current) onOpenSection(section) },
-                    selected = section == current,
+                    icon = OgnelissIcons.Menu,
+                    labelRes = R.string.bar_menu,
+                    onClick = { actions?.onMenu?.invoke() },
                     fitLabel = true,
                     modifier = Modifier.fillMaxWidth().height(CELL_HEIGHT)
                 )
+                // Число условий фильтра журнала — на «Меню», как на нижней панели
+                val badge = actions?.menuBadge
+                if (badge != null) Badge(Modifier.align(Alignment.TopEnd).padding(end = Space.s)) { Text(badge) }
             }
+            Box(Modifier.weight(1f).fillMaxWidth()) {
+                Column(
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(Space.xs),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    sections.forEach { section ->
+                        RailCell(section.icon, section.labelRes, selected = section == current) {
+                            if (section != current) onOpenSection(section)
+                        }
+                    }
+                    val toolCells = tools.filter { tool -> tool.section == null || tool.section !in sections }
+                    if (toolCells.isNotEmpty() && sections.isNotEmpty()) {
+                        HorizontalDivider(
+                            Modifier.padding(horizontal = Space.m, vertical = Space.xxs),
+                            color = OgnelissTheme.surfaces.divider
+                        )
+                    }
+                    toolCells.forEach { tool ->
+                        val section = tool.section
+                        when {
+                            section != null -> RailCell(tool.icon, tool.labelRes, selected = section == current) {
+                                if (section != current) onOpenSection(section)
+                            }
+                            tool == com.ogneliss.dialer.ui.screens.MenuTool.OWN_CONTACT ->
+                                extras?.onOwnContact?.let { RailCell(tool.icon, tool.labelRes, onClick = it) }
+                            tool == com.ogneliss.dialer.ui.screens.MenuTool.FAKE_CALL ->
+                                extras?.onFakeCall?.let { RailCell(tool.icon, tool.labelRes, onClick = it) }
+                        }
+                    }
+                }
+            }
+            Spacer(Modifier.height(Space.xs))
             // Кнопка действия — сплошная, как центр нижней панели; пока раздел её
             // не передал (открыта клавиатура набора) — пустое место той же высоты
             if (actions != null) {
@@ -190,6 +271,40 @@ internal fun SideSectionRail(
         }
     }
 }
+
+/**
+ * Место колонки: значок и подпись. Открытый раздел (2.9.8, автор: «не отмечается
+ * активная вкладка») — кроме цвета акцента, полоса акцента у внутреннего края,
+ * со стороны списка: одного цвета на узкой колонке было не видно. Тоновой
+ * подложки нет — как на нижней панели («вариант А», 2.9.2).
+ */
+@Composable
+private fun RailCell(icon: ImageVector, labelRes: Int, selected: Boolean = false, onClick: () -> Unit) {
+    Box(Modifier.fillMaxWidth().height(CELL_HEIGHT)) {
+        LabeledIconButton(
+            icon = icon,
+            labelRes = labelRes,
+            onClick = onClick,
+            selected = selected,
+            fitLabel = true,
+            modifier = Modifier.fillMaxSize()
+        )
+        if (selected) {
+            Box(
+                Modifier
+                    .align(Alignment.CenterStart)
+                    .width(SELECTED_MARK_WIDTH)
+                    .height(SELECTED_MARK_HEIGHT)
+                    .clip(RoundedCornerShape(topEnd = SELECTED_MARK_WIDTH, bottomEnd = SELECTED_MARK_WIDTH))
+                    .background(MaterialTheme.colorScheme.primary)
+            )
+        }
+    }
+}
+
+/** Полоса открытого раздела (2.9.8): толщина и высота — как у отметки вкладки. */
+private val SELECTED_MARK_WIDTH = 3.dp
+private val SELECTED_MARK_HEIGHT = 32.dp
 
 /**
  * Ширина колонки (2.9.6, автор: «панель всё ещё очень широкая»; было 72 dp):

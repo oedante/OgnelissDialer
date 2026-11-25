@@ -118,6 +118,20 @@ internal fun OverflowMenu(
     /** Сколько условий фильтра включено — число на кнопке; 0 — без числа. */
     filtersCount: Int = 0
 ) {
+    /*
+     * Разделы справа (2.9.8, автор: «на панель перенесём из „Ещё“ инструменты»):
+     * «Мой контакт» и псевдозвонок этого раздела — колонке, даже пока меню закрыто;
+     * разделы-инструменты колонка открывает сама. В самом меню «Инструментов» тогда нет.
+     */
+    val sideRail = com.ogneliss.dialer.ui.components.LocalSideRail.current
+    if (sideRail != null) {
+        val toolsOwner = androidx.compose.runtime.remember { Any() }
+        val railTools = com.ogneliss.dialer.ui.components.SideRailTools(onOwnContact = onOwnNumber, onFakeCall = onFakeCall)
+        androidx.compose.runtime.SideEffect { sideRail.publishTools(toolsOwner, railTools) }
+        androidx.compose.runtime.DisposableEffect(sideRail, toolsOwner) {
+            onDispose { sideRail.withdrawTools(toolsOwner) }
+        }
+    }
     if (!expanded) return
 
     val fakeCallLabel = stringResource(R.string.fake_call_title)
@@ -186,7 +200,6 @@ internal fun OverflowMenu(
         // Значок «настроить» у «Инструментов» — как у «Папок» (корень даёт переход)
         val openTools = LocalOpenMenuTools.current
         // Разделы справа (2.9.6): пункты «⋮» шапки — частью «Действия», меню — сверху
-        val sideRail = com.ogneliss.dialer.ui.components.LocalSideRail.current
         val listActions = sideRail?.listActions.orEmpty()
         // Постоянные — первыми, необязательный («на главный экран») — последним,
         // чтобы его отсутствие (журнал) не сдвигало остальные
@@ -228,11 +241,14 @@ internal fun OverflowMenu(
                         }
                     )
                 }
-                MenuActionRows(
-                    stringResource(R.string.menu_section_tools), tools,
-                    onEdit = openTools?.let { open -> { onDismiss(); open() } },
-                    editLabel = stringResource(R.string.menu_tools_edit)
-                )
+                // Разделы справа (2.9.8): инструменты — на колонке, здесь их нет
+                if (sideRail == null) {
+                    MenuActionRows(
+                        stringResource(R.string.menu_section_tools), tools,
+                        onEdit = openTools?.let { open -> { onDismiss(); open() } },
+                        editLabel = stringResource(R.string.menu_tools_edit)
+                    )
+                }
             }
             /*
              * «Приложение» — плитками (2.9.2, автор: «раздел Приложение я бы сделал

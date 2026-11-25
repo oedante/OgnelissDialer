@@ -114,6 +114,7 @@ class SettingsCommands @Inject constructor(
                 prefs.setSectionIcons(value)
             }
             "colored_call_arrows" -> prefs.setColoredCallArrows(value)
+            "call_log_duration" -> prefs.setCallLogDuration(value)
             "post_call" -> prefs.setPostCallEnabled(value)
             "post_call_unknown" -> prefs.setPostCallUnknownOnly(value)
             "block_hidden" -> prefs.setBlockHidden(value)
@@ -189,6 +190,7 @@ class SettingsCommands @Inject constructor(
             "outgoing_sim" -> prefs.setOutgoingSim(OutgoingSim.from(value))
             "carrier_info" -> prefs.setCarrierInfo(CarrierInfoMode.from(value))
             "call_photo_style" -> prefs.setCallPhotoStyle(CallPhotoStyle.from(value))
+            "spam_sim_scope" -> prefs.setSpamSimScope(com.ogneliss.dialer.call.SpamSimScope.from(value))
             "call_ambient_style" -> prefs.setCallAmbientStyle(
                 com.ogneliss.dialer.call.AmbientStyle.entries.firstOrNull { it.name == value }
                     ?: com.ogneliss.dialer.call.AmbientStyle.THEME
@@ -317,6 +319,7 @@ class SettingsCommands @Inject constructor(
         "carrier_info" -> state.carrierInfo.name
         "call_photo_style" -> state.callPhotoStyle.name
         "call_ambient_style" -> state.callAmbientStyle.name
+        "spam_sim_scope" -> state.spamSimScope.name
         // 2.7.4: свой фон вызова — «Свой снимок» (CUSTOM), если отметка есть
         "call_bg_incoming" -> if (state.callBgIncoming > 0L) CALL_BG_CUSTOM else CALL_BG_DEFAULT
         "call_bg_outgoing" -> if (state.callBgOutgoing > 0L) CALL_BG_CUSTOM else CALL_BG_DEFAULT
@@ -407,6 +410,7 @@ class SettingsCommands @Inject constructor(
 
         "call_photo_style" -> context.getString(callPhotoStyleLabelRes(state.callPhotoStyle))
         "call_ambient_style" -> context.getString(ambientStyleLabelRes(state.callAmbientStyle))
+        "spam_sim_scope" -> context.getString(spamSimScopeLabelRes(state.spamSimScope))
         "call_bg_incoming", "call_bg_outgoing" ->
             context.getString(callBgLabelRes(currentChoice(key, state)))
         "avatar_no_photo", "avatar_unknown" ->
@@ -489,6 +493,7 @@ class SettingsCommands @Inject constructor(
             "carrier_info" -> R.string.settings_carrier_info
             "call_photo_style" -> R.string.settings_call_photo
             "call_ambient_style" -> R.string.settings_call_ambient_style
+            "spam_sim_scope" -> R.string.settings_spam_sim_scope
             "call_bg_incoming" -> R.string.settings_call_bg_incoming
             "call_bg_outgoing" -> R.string.settings_call_bg_outgoing
             "avatar_no_photo" -> R.string.settings_avatar_no_photo
@@ -621,6 +626,13 @@ class SettingsCommands @Inject constructor(
             CallPhotoStyle.WIDTH -> R.string.call_photo_width
         }
 
+        /** Подпись «Правила — для SIM» (2.9.8) — для строки настройки и окна выбора. */
+        fun spamSimScopeLabelRes(scope: com.ogneliss.dialer.call.SpamSimScope): Int = when (scope) {
+            com.ogneliss.dialer.call.SpamSimScope.ALL -> R.string.spam_sim_scope_all
+            com.ogneliss.dialer.call.SpamSimScope.SIM1 -> R.string.spam_sim_scope_sim1
+            com.ogneliss.dialer.call.SpamSimScope.SIM2 -> R.string.spam_sim_scope_sim2
+        }
+
         /** Подпись облика живого фона (2.9.5) — для строки настройки и окна выбора. */
         fun ambientStyleLabelRes(style: com.ogneliss.dialer.call.AmbientStyle): Int = when (style) {
             com.ogneliss.dialer.call.AmbientStyle.THEME -> R.string.call_ambient_theme
@@ -733,11 +745,12 @@ class SettingsCommands @Inject constructor(
         fun swipeActionLabelRes(action: SwipeAction): Int = when (action) {
             SwipeAction.NONE -> R.string.action_none
             SwipeAction.CALL -> R.string.action_call
+            SwipeAction.CALL_SIM1 -> R.string.action_call_sim1
+            SwipeAction.CALL_SIM2 -> R.string.action_call_sim2
             SwipeAction.SMS -> R.string.action_sms
             SwipeAction.WHATSAPP -> R.string.action_whatsapp
             SwipeAction.TELEGRAM -> R.string.action_telegram
             SwipeAction.VIBER -> R.string.action_viber
-            SwipeAction.MAX -> R.string.action_max
             SwipeAction.EMAIL -> R.string.action_email
             SwipeAction.DELETE_FROM_LOG -> R.string.action_delete_from_log
             SwipeAction.BLOCK_NUMBER -> R.string.action_block
@@ -768,6 +781,8 @@ class SettingsCommands @Inject constructor(
             // 2.7.0
             "colored_call_arrows",
             "block_hidden", "block_unknown", "block_tagged", "file_logging",
+            // 2.9.8
+            "call_log_duration",
             "dialpad_open_at_start",
             // 1.8.0
             "scam_memo",
@@ -794,6 +809,8 @@ class SettingsCommands @Inject constructor(
             "call_photo_style", "call_photo_size", "answer_mode", "ui_scale",
             // 2.9.5
             "call_ambient_style",
+            // 2.9.8
+            "spam_sim_scope",
             // 2.7.4
             "call_bg_incoming", "call_bg_outgoing",
             // 2.8.0

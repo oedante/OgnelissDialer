@@ -29,20 +29,19 @@ import javax.inject.Singleton
 enum class SwipeAction(val key: String) {
     NONE("none"),
     CALL("call"),
+
+    /**
+     * Позвонить с SIM 1 / SIM 2 (2.9.8, форум, Bublikov34: «свайп в одну сторону —
+     * сим-карта 1 с её значком в момент свайпа, в другую — сим-карта 2»). Без
+     * вопроса и без настройки «С какой SIM звонить свайпом»: карта — в самом
+     * действии. Карты в этом слоте нет — звонок по общим правилам (CALL).
+     */
+    CALL_SIM1("call_sim1"),
+    CALL_SIM2("call_sim2"),
     SMS("sms"),
     WHATSAPP("whatsapp"),
     TELEGRAM("telegram"),
     VIBER("viber"),
-
-    /**
-     * Мессенджер Max.
-     *
-     * Российский мессенджер, набравший распространение в 2025 году.
-     * Работает по тому же принципу, что WhatsApp и Viber: приложение
-     * регистрирует обработчик для номера телефона, и мы просто передаём
-     * ему намерение — своей интеграции не требуется.
-     */
-    MAX("max"),
     EMAIL("email"),
     DELETE_FROM_LOG("delete_log"),
     BLOCK_NUMBER("block"),
@@ -62,7 +61,22 @@ enum class SwipeAction(val key: String) {
     ADD_NOTE("note");
 
     companion object {
-        fun from(key: String?) = entries.firstOrNull { it.key == key } ?: NONE
+        /**
+         * Max убран (2.9.8, автор: «свайпы и звонки для мессенджера Max убираем,
+         * у них так и не заработал выбор абонента по номеру»; форум, galadij:
+         * «ссылка устарела или не действует»). Сохранённый ключ «max» —
+         * «SMS»: свайп «написать» остаётся «написать», а не пропадает молча.
+         */
+        private const val RETIRED_MAX = "max"
+
+        /** Слот SIM действия «Позвонить с SIM N» (0, 1); null — действие не про карту. */
+        fun simSlotOf(action: SwipeAction): Int? = when (action) {
+            CALL_SIM1 -> 0
+            CALL_SIM2 -> 1
+            else -> null
+        }
+
+        fun from(key: String?) = if (key == RETIRED_MAX) SMS else entries.firstOrNull { it.key == key } ?: NONE
     }
 }
 
@@ -637,6 +651,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val CALL_PHOTO_STYLE = stringPreferencesKey("call_photo_style")
         // 2.9.5: облик живого фона — тоны темы или «Пламя» (AmbientStyle)
         val CALL_AMBIENT_STYLE = stringPreferencesKey("call_ambient_style")
+        /** Правила защиты от спама — для какой SIM (2.9.8, SpamSimScope). */
+        val SPAM_SIM_SCOPE = stringPreferencesKey("spam_sim_scope")
         /** Размер портрета на экране вызова (1.5.7). */
         val CALL_PHOTO_SIZE = stringPreferencesKey("call_photo_size")
         /** Ответ на вызов: касанием или сдвигом (1.5.8). */
@@ -646,6 +662,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val SECTION_ICONS = booleanPreferencesKey("section_icons")
         /** Цветные стрелки типа вызова (2.7.0, форум, 21vasya; выкл.): разбор в CallArrowColor. */
         val COLORED_CALL_ARROWS = booleanPreferencesKey("colored_call_arrows")
+        /** Длительность разговора в строке журнала (2.9.8, форум, Bublikov34; выкл.). */
+        val CALL_LOG_DURATION = booleanPreferencesKey("call_log_duration")
         /** «При запуске открывать» (2.7.0, форум, oleg_p): разбор в StartSection. */
         val START_SECTION = stringPreferencesKey("start_section")
         /** Последний открытый главный раздел — для «Последний раздел» (2.7.0). */
@@ -1065,6 +1083,13 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setCallAmbientStyle(v: com.ogneliss.dialer.call.AmbientStyle) =
         edit("call_ambient_style", v.name) { it[Keys.CALL_AMBIENT_STYLE] = v.name }
 
+    /** Правила защиты от спама — для какой SIM (2.9.8): разбор в SpamSimScope; по умолчанию — для всех. */
+    val spamSimScope: Flow<com.ogneliss.dialer.call.SpamSimScope> =
+        data.map { com.ogneliss.dialer.call.SpamSimScope.from(it[Keys.SPAM_SIM_SCOPE]) }
+
+    suspend fun setSpamSimScope(v: com.ogneliss.dialer.call.SpamSimScope) =
+        edit("spam_sim_scope", v.name) { it[Keys.SPAM_SIM_SCOPE] = v.name }
+
     /** Размер портрета на экране вызова (1.5.7): разбор в CallPhotoSize. */
     val callPhotoSize: Flow<CallPhotoSize> = data.map { CallPhotoSize.from(it[Keys.CALL_PHOTO_SIZE]) }
 
@@ -1083,6 +1108,14 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      * выключено). Кто выключил сам — у того записано false, оно и остаётся.
      */
     val coloredCallArrows: Flow<Boolean> = data.map { it[Keys.COLORED_CALL_ARROWS] ?: true }
+
+    /**
+     * Длительность разговора в строке журнала (2.9.8, форум, Bublikov34: «не нашёл
+     * включение отображения длительности звонка в журнале, такое есть?»). Рядом
+     * с датой: «Сегодня, 14:05 · 2:35». По умолчанию — нет, как было: длительность
+     * видна в карточке абонента.
+     */
+    val callLogDuration: Flow<Boolean> = data.map { it[Keys.CALL_LOG_DURATION] ?: false }
 
     /** Что открывать при запуске значком (2.7.0): по умолчанию журнал. Разбор — StartSection. */
     val startSection: Flow<StartChoice> = data.map { StartChoice.from(it[Keys.START_SECTION]) }
@@ -1507,6 +1540,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setSectionIcons(v: Boolean) = edit("section_icons", v) { it[Keys.SECTION_ICONS] = v }
     suspend fun setColoredCallArrows(v: Boolean) =
         edit("colored_call_arrows", v) { it[Keys.COLORED_CALL_ARROWS] = v }
+    suspend fun setCallLogDuration(v: Boolean) =
+        edit("call_log_duration", v) { it[Keys.CALL_LOG_DURATION] = v }
     suspend fun setStartSection(v: StartChoice) =
         edit("start_section", v.name) { it[Keys.START_SECTION] = v.name }
     suspend fun setLastSection(route: String) =
