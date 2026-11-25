@@ -52,6 +52,8 @@ import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sin
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.ui.unit.dp
 
 /**
  * ЖИВОЙ ФОН ЭКРАНА ВЫЗОВА (1.5.1, автор: «лёгкая и плавная анимация
@@ -276,6 +278,14 @@ fun CallAmbientBackground(
     val art = remember(dark) { AmbientArt(dark) }
     // Эмблема «пламя с лисой» (2.9.5) — только в облике «Пламя»
     val emblem = if (flame) androidx.compose.ui.graphics.ImageBitmap.imageResource(com.ogneliss.dialer.R.drawable.call_emblem) else null
+    /*
+     * Верх, под который эмблема не заходит (снимок автора 25.11.2026: пламя заходило
+     * под строку состояния): системная полоса и зазор. Фон рисуется на весь экран,
+     * поэтому отступ берём из окна, а не из раскладки.
+     */
+    val density = androidx.compose.ui.platform.LocalDensity.current
+    val emblemTopLimit = androidx.compose.foundation.layout.WindowInsets.safeDrawing.getTop(density) +
+        with(density) { EMBLEM_TOP_MARGIN.toPx() }.toInt()
     val emblemStrength = animateFloatAsState(
         when (mood) {
             AmbientMood.ENDED -> 0f
@@ -340,9 +350,17 @@ fun CallAmbientBackground(
                  * «Пламя» без портрета: эмблема над именем — и волны от неё. Фокус
                  * становится «портретом» эмблемы: волна рождается у её края.
                  */
-                val emblemSide = if (emblem != null && focused?.edge != true) min(w * EMBLEM_WIDTH, h * EMBLEM_HEIGHT) else 0f
+                val nameTop = focused?.let { it.center.y - it.radius } ?: (h * 0.42f)
+                /*
+                 * Сторона эмблемы — меньшее из доли экрана и места между строкой
+                 * состояния и именем (25.11.2026): с «дыханием» (+EMBLEM_BREATH) верх
+                 * остаётся ниже строки состояния. Места совсем мало — эмблемы нет.
+                 */
+                val emblemRoom = (nameTop - emblemTopLimit) / (1f + EMBLEM_GAP + EMBLEM_BREATH)
+                val emblemSide = if (emblem != null && focused?.edge != true) {
+                    min(min(w * EMBLEM_WIDTH, h * EMBLEM_HEIGHT), emblemRoom).takeIf { it >= w * EMBLEM_MIN_WIDTH } ?: 0f
+                } else 0f
                 val target = if (emblemSide > 0f) {
-                    val nameTop = focused?.let { it.center.y - it.radius } ?: (h * 0.42f)
                     AmbientFocus(
                         Offset(focused?.center?.x ?: (w / 2f), nameTop - EMBLEM_GAP * emblemSide - emblemSide / 2f),
                         emblemSide * EMBLEM_RING_RADIUS
@@ -566,7 +584,11 @@ private class AmbientArt(dark: Boolean) {
     private val emblemDst = android.graphics.RectF()
     private val emblemPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
 
-    /** Эмблема «пламя с лисой» (2.9.5): квадрат [side] с центром [center]. */
+    /**
+     * Эмблема «пламя с лисой» (2.9.5): квадрат [side] с центром [center].
+     * Рисунок в call_emblem.png выровнен по центру (25.11.2026, снимок автора: пламя
+     * было сдвинуто вправо — в исходнике оно стояло не посередине картинки).
+     */
     fun emblem(canvas: android.graphics.Canvas, image: androidx.compose.ui.graphics.ImageBitmap, center: Offset, side: Float, alpha: Float) {
         if (alpha <= MIN_ALPHA) return
         val bitmap = image.asAndroidBitmap()
@@ -705,3 +727,7 @@ private const val EMBLEM_GAP = 0.08f
 private const val EMBLEM_RING_RADIUS = 0.40f
 /** «Дыхание» пламени с волной: до +4 %. */
 private const val EMBLEM_BREATH = 0.04f
+/** Зазор от строки состояния до верха эмблемы (25.11.2026). */
+private val EMBLEM_TOP_MARGIN = 8.dp
+/** Меньше этой доли ширины эмблема не рисуется: на низком экране (лёжа) ей нет места. */
+private const val EMBLEM_MIN_WIDTH = 0.18f
