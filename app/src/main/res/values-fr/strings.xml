@@ -1175,4 +1175,7 @@
     <string name="spam_sim_scope_all">Toutes les SIM</string>
     <string name="spam_sim_scope_sim1">SIM 1 seulement</string>
     <string name="spam_sim_scope_sim2">SIM 2 seulement</string>
+    <string name="rail_items_title">Colonne de droite</string>
+    <string name="rail_items_summary">Ordre et affichage : le premier près du bouton d’action</string>
+    <string name="rail_items_near_action">Près du bouton d’action</string>
 </resources>

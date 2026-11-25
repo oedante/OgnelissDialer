@@ -80,7 +80,9 @@ internal fun PanelSlotsScreen(
     side: Boolean = false,
     onSideChange: (Boolean) -> Unit = {},
     /** «Инструменты меню» (2.9.3) — порядок и показ строк «Меню»; null — пункта нет. */
-    onOpenMenuTools: (() -> Unit)? = null
+    onOpenMenuTools: (() -> Unit)? = null,
+    /** «Колонка справа» — порядок и показ (2.9.9, RailItem); видна, когда выбраны разделы справа. */
+    onOpenRailItems: (() -> Unit)? = null
 ) {
     // Номер места, для которого открыта шторка выбора; null — шторки нет
     var picking by remember { mutableStateOf<Int?>(null) }
@@ -156,6 +158,18 @@ internal fun PanelSlotsScreen(
                     supporting = stringResource(R.string.panel_side_right_text),
                     onClick = { onSideChange(true) }
                 )
+            }
+            // 2.9.9: колонка справа — свой порядок и показ (первый — у кнопки действия)
+            if (side && onOpenRailItems != null) {
+                Spacer(Modifier.height(Space.m))
+                OgnelissCard {
+                    SettingsActionRow(
+                        title = stringResource(R.string.rail_items_title),
+                        summary = stringResource(R.string.rail_items_summary),
+                        icon = OgnelissIcons.Tune,
+                        onClick = onOpenRailItems
+                    )
+                }
             }
             // Что показывать в «Меню» — тот же экран, что у значка «настроить» в самом меню
             if (onOpenMenuTools != null) {

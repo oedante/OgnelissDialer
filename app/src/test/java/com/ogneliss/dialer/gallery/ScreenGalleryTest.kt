@@ -322,9 +322,8 @@ class ScreenGalleryTest {
                 androidx.compose.foundation.layout.Box(androidx.compose.ui.Modifier.weight(1f)) { content() }
                 com.ogneliss.dialer.ui.components.SideSectionRail(
                     state = state,
-                    slots = com.ogneliss.dialer.settings.PanelSlots.defaults(smsDefault = true),
-                    // 2.9.8: инструменты меню — на колонке
-                    tools = com.ogneliss.dialer.ui.screens.MenuTool.visible(null),
+                    // 2.9.9: «Колонка справа» по умолчанию — журнал у кнопки действия, выше остальное
+                    items = com.ogneliss.dialer.ui.screens.RailItem.visible(null),
                     current = current,
                     onOpenSection = {}
                 )
@@ -532,6 +531,18 @@ class ScreenGalleryTest {
         },
         Shot("permissions") { _ -> com.ogneliss.dialer.ui.screens.PermissionsSettingsScreen(isDefaultDialer = false, onRequestDefaultDialer = { false }, onBack = {}) },
         Shot("speed_dial") { vm -> com.ogneliss.dialer.ui.screens.SpeedDialScreen(vm = vm, onBack = {}) },
+        // 2.9.9: «Колонка справа» — порядок и показ (первый — у кнопки действия)
+        Shot("rail_items") { _ ->
+            com.ogneliss.dialer.ui.screens.MenuFoldersScreen(
+                title = androidx.compose.ui.res.stringResource(R.string.rail_items_title),
+                folders = com.ogneliss.dialer.ui.screens.RailItem.items(),
+                raw = "JOURNAL,MESSAGES,CONTACTS,-NOTES,REMINDERS,-OWN_CONTACT,FAKE_CALL",
+                onSave = {},
+                onBack = {},
+                fixed = com.ogneliss.dialer.ui.screens.RailItem.FIXED,
+                note = { key -> if (key == "JOURNAL") androidx.compose.ui.res.stringResource(R.string.rail_items_near_action) else null }
+            )
+        },
         Shot("swipe_tuning") { vm -> com.ogneliss.dialer.ui.screens.SwipeTuningScreen(vm = vm, onBack = {}) },
         Shot("sms_folders") { _ -> com.ogneliss.dialer.ui.conversation.SmsFoldersScreen(onBack = {}) },
         // 2.9.2: конструктор нижней панели (порядок «только звонки», меняли — есть «Как по умолчанию»)

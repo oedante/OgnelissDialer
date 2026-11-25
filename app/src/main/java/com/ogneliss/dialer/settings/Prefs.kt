@@ -720,6 +720,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val PANEL_SLOTS = stringPreferencesKey("panel_slots")
         // 2.9.3: порядок и показ «Инструментов» меню (FolderOrder) и разделы справа (проба)
         val MENU_TOOLS = stringPreferencesKey("menu_tools")
+        /** 2.9.9: порядок и показ пунктов колонки справа (RailItem, FolderOrder). */
+        val RAIL_ITEMS = stringPreferencesKey("rail_items")
         val PANEL_SIDE = booleanPreferencesKey("panel_side")
         // 2.2.0
         val SMS_UNDO_SEND = stringPreferencesKey("sms_undo_send")
@@ -1235,6 +1237,14 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     val menuTools: Flow<String?> = data.map { it[Keys.MENU_TOOLS] }
 
     suspend fun setMenuTools(v: String) = edit("menu_tools", "…") { it[Keys.MENU_TOOLS] = v }
+
+    /**
+     * Колонка справа (2.9.9, автор: «боковую панель тоже желательно настраивать —
+     * порядок, отображение»): строка FolderOrder; null — всё и по порядку RailItem.
+     */
+    val railItems: Flow<String?> = data.map { it[Keys.RAIL_ITEMS] }
+
+    suspend fun setRailItems(v: String) = edit("rail_items", "…") { it[Keys.RAIL_ITEMS] = v }
 
     /**
      * Разделы справа (2.9.3, проба по макету автора): колонка разделов у правого
