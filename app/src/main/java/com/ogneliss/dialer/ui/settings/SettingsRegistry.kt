@@ -493,12 +493,11 @@ object SettingsRegistry {
             R.string.settings_remember_sim, R.string.settings_remember_sim_text,
             SettingKind.Switch("remember_sim")
         ),
-        SettingEntry(
-            "swipe_sim", SettingsCategory.SIM,
-            R.string.settings_swipe_sim, R.string.settings_swipe_sim_text,
-            SettingKind.Choice("swipe_sim"),
-            advanced = true
-        ),
+        /*
+         * Здесь была «SIM для действий свайпа» (swipe_sim, 1.x). 2.9.11: убрана — карта
+         * теперь в самом действии свайпа («Позвонить с SIM 1/2», 2.9.8); сохранённый
+         * выбор переносится в свайпы один раз (SwipeSimMigration).
+         */
         /*
          * ЭНЕРГОСБЕРЕЖЕНИЕ.
          *

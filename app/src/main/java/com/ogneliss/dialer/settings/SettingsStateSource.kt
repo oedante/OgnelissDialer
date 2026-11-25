@@ -99,33 +99,26 @@ class SettingsStateSource @Inject constructor(
         .combine(prefs.panelSide) { a, v -> a.copy(panelSide = v) }
 
     /** Жесты и отклик. */
+    /*
+     * 2.9.11: без «SIM для действий свайпа» потоков шесть — пять в типизированном
+     * combine, шестой — отдельным .combine (на шести Kotlin переходит на массив).
+     */
     private val gestures: Flow<Gestures> = combine(
         prefs.haptic,
         prefs.keyTones,
         prefs.swipeRight,
         prefs.swipeLeft,
-        prefs.swipeSimMode
-    ) { haptic, tones, right, left, simMode ->
-        // Пятерка — предел типизированного combine. Шестой поток
-        // добавляется отдельным combine: иначе Kotlin переходит
-        // на вариант с массивом и теряет типы
-        arrayOf<Any>(haptic, tones, right, left, simMode)
-    }.combine(
-        // Седьмой поток тем же приёмом: типизированный combine
-        // заканчивается на пяти
-        combine(prefs.panelSwipeNav, prefs.fakeCallButton) { nav, button -> nav to button }
-    ) { base, extra ->
-        val (panelNav, fakeButton) = extra
+        prefs.panelSwipeNav
+    ) { haptic, tones, right, left, panelNav ->
         Gestures(
-            haptic = base[0] as Boolean,
-            keyTones = base[1] as Boolean,
-            swipeRight = base[2] as SwipeAction,
-            swipeLeft = base[3] as SwipeAction,
-            swipeSimMode = base[4] as SwipeSimMode,
+            haptic = haptic,
+            keyTones = tones,
+            swipeRight = right,
+            swipeLeft = left,
             panelSwipeNav = panelNav,
-            fakeCallButton = fakeButton
+            fakeCallButton = false
         )
-    }
+    }.combine(prefs.fakeCallButton) { g, button -> g.copy(fakeCallButton = button) }
 
     /** Поведение вызовов. */
     private val calls: Flow<Calls> = combine(
@@ -261,7 +254,6 @@ class SettingsStateSource @Inject constructor(
             keyTones = g.keyTones,
             swipeRight = g.swipeRight,
             swipeLeft = g.swipeLeft,
-            swipeSimMode = g.swipeSimMode,
             panelSwipeNav = g.panelSwipeNav,
             fakeCallButton = g.fakeCallButton,
 
@@ -361,7 +353,6 @@ class SettingsStateSource @Inject constructor(
         val keyTones: Boolean,
         val swipeRight: SwipeAction,
         val swipeLeft: SwipeAction,
-        val swipeSimMode: SwipeSimMode,
         val panelSwipeNav: Boolean,
         val fakeCallButton: Boolean
     )

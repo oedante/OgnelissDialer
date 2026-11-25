@@ -34,6 +34,21 @@ internal enum class RailItem(@StringRes val labelRes: Int) {
     OWN_CONTACT(R.string.menu_my_contact),
     FAKE_CALL(R.string.fake_call_title);
 
+    /**
+     * Подпись на самой колонке (2.9.11): там она в две строки, и длинное слово
+     * переносится по мягкому переносу из строки («Напоми-/нания», «Псевдо-/звонок»).
+     * Правила переноса Android для русского есть не везде — место разрыва задано
+     * в тексте. Короткие подписи — те же, что у раздела.
+     */
+    @get:StringRes
+    val railLabelRes: Int
+        get() = when (this) {
+            JOURNAL -> R.string.rail_journal
+            REMINDERS -> R.string.rail_reminders
+            FAKE_CALL -> R.string.rail_fake_call
+            else -> labelRes
+        }
+
     /** Раздел пункта; у «Моего контакта» и псевдозвонка раздела нет. */
     val section: MainSection?
         get() = when (this) {

@@ -76,6 +76,11 @@ fun RowScope.QuickAction(
      * нажимается — как у системного диалера; ряд не перестраивается.
      */
     enabled: Boolean = true,
+    /**
+     * Подписи всех кнопок ряда (2.9.11, FitText.peers): при крупном шрифте все
+     * ужимаются одинаково, по самой широкой («Поделиться» не мельче «Ещё»).
+     */
+    labelPeers: List<String> = emptyList(),
     onClick: () -> Unit
 ) {
     val label = stringResource(labelRes)
@@ -173,7 +178,8 @@ fun RowScope.QuickAction(
                 textAlign = TextAlign.Center,
                 maxLines = 2,
                 minScale = 0.6f,
-                color = if (prominent) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
+                color = if (prominent) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                peers = labelPeers
             )
         }
     }

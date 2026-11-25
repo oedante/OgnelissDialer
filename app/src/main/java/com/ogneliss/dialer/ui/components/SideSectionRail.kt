@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -34,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.theme.OgnelissTheme
@@ -217,7 +219,8 @@ internal fun SideSectionRail(
                     labelRes = R.string.bar_menu,
                     onClick = { actions?.onMenu?.invoke() },
                     fitLabel = true,
-                    modifier = Modifier.fillMaxWidth().height(CELL_HEIGHT)
+                    twoLineLabel = true,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = CELL_HEIGHT)
                 )
                 // Число условий фильтра журнала — на «Меню», как на нижней панели
                 val badge = actions?.menuBadge
@@ -236,13 +239,13 @@ internal fun SideSectionRail(
                     items.asReversed().forEach { item ->
                         val section = item.section
                         when {
-                            section != null -> RailCell(item.icon, item.labelRes, selected = section == current) {
+                            section != null -> RailCell(item.icon, item.railLabelRes, item.labelRes, selected = section == current) {
                                 if (section != current) onOpenSection(section)
                             }
                             item == com.ogneliss.dialer.ui.screens.RailItem.OWN_CONTACT ->
-                                extras?.onOwnContact?.let { RailCell(item.icon, item.labelRes, onClick = it) }
+                                extras?.onOwnContact?.let { RailCell(item.icon, item.railLabelRes, item.labelRes, onClick = it) }
                             item == com.ogneliss.dialer.ui.screens.RailItem.FAKE_CALL ->
-                                extras?.onFakeCall?.let { RailCell(item.icon, item.labelRes, onClick = it) }
+                                extras?.onFakeCall?.let { RailCell(item.icon, item.railLabelRes, item.labelRes, onClick = it) }
                         }
                     }
                 }
@@ -257,8 +260,9 @@ internal fun SideSectionRail(
                     onClick = actions.onCenter,
                     filled = true,
                     fitLabel = true,
+                    twoLineLabel = true,
                     contentDescription = actions.centerDescription,
-                    modifier = Modifier.fillMaxWidth().height(CELL_HEIGHT)
+                    modifier = Modifier.fillMaxWidth().heightIn(min = CELL_HEIGHT)
                 )
             } else {
                 Spacer(Modifier.height(CELL_HEIGHT))
@@ -274,15 +278,30 @@ internal fun SideSectionRail(
  * подложки нет — как на нижней панели («вариант А», 2.9.2).
  */
 @Composable
-private fun RailCell(icon: ImageVector, labelRes: Int, selected: Boolean = false, onClick: () -> Unit) {
-    Box(Modifier.fillMaxWidth().height(CELL_HEIGHT)) {
+private fun RailCell(
+    icon: ImageVector,
+    labelRes: Int,
+    /** Для TalkBack — подпись без мягкого переноса (RailItem.labelRes, 2.9.11). */
+    descriptionRes: Int,
+    selected: Boolean = false,
+    onClick: () -> Unit
+) {
+    /*
+     * 2.9.11 (обзор интерфейса, автор согласен): подпись — в две строки, длинное
+     * слово — переносом по слогам («Мой / контакт», «Напоми- / нания»). Было: одна
+     * строка, ужатая до 60 % — при обычном шрифте мельче остального текста.
+     * Высота места — не меньше прежней, с двумя строками — больше.
+     */
+    Box(Modifier.fillMaxWidth().heightIn(min = CELL_HEIGHT)) {
         LabeledIconButton(
             icon = icon,
             labelRes = labelRes,
             onClick = onClick,
             selected = selected,
             fitLabel = true,
-            modifier = Modifier.fillMaxSize()
+            twoLineLabel = true,
+            contentDescription = stringResource(descriptionRes),
+            modifier = Modifier.fillMaxWidth().heightIn(min = CELL_HEIGHT)
         )
         if (selected) {
             Box(
@@ -303,10 +322,13 @@ private val SELECTED_MARK_HEIGHT = 32.dp
 
 /**
  * Ширина колонки (2.9.6, автор: «панель всё ещё очень широкая»; было 72 dp):
- * значок 24 dp и подпись под ним. Длинная подпись («Напоминания»)
- * ужимается (FitText), а не переносится.
+ * значок 24 dp и подпись под ним. Длинная подпись («Напоминания») — с 2.9.11
+ * в две строки, переносом по слогам; без правил переноса — ужимается (FitText).
  */
 internal val SIDE_RAIL_WIDTH = 60.dp
 
-/** Высота места — одна на всех, чтобы колонка не прыгала без центра. */
+/**
+ * Высота места — не меньше этой (с 2.9.11 — «не меньше»: подпись в две строки
+ * выше), чтобы колонка не прыгала без центра.
+ */
 private val CELL_HEIGHT = 68.dp

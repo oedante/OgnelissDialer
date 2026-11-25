@@ -920,8 +920,9 @@ fun ContactsScreen(
                              * номера и SIM.
                              */
                             onCall = {
+                                // 2.9.11: карта — как у свайпа вызова (handsetAction)
                                 vm.performSwipe(
-                                    SwipeAction.CALL, contactAsGroup(contact)
+                                    vm.handsetAction(), contactAsGroup(contact)
                                 ) { swipeController.close() }
                             },
                             /*
@@ -1022,8 +1023,9 @@ fun ContactsScreen(
                              * номера и SIM.
                              */
                             onCall = {
+                                // 2.9.11: карта — как у свайпа вызова (handsetAction)
                                 vm.performSwipe(
-                                    SwipeAction.CALL, contactAsGroup(contact)
+                                    vm.handsetAction(), contactAsGroup(contact)
                                 ) { swipeController.close() }
                             },
                             /*

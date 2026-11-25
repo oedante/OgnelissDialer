@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.settings.SettingsCommands
 import com.ogneliss.dialer.settings.SwipeAction
-import com.ogneliss.dialer.settings.SwipeSimMode
 import com.ogneliss.dialer.settings.ThemeMode
 import com.ogneliss.dialer.ui.DialerViewModel
 import com.ogneliss.dialer.ui.components.ChoiceSheet
@@ -70,11 +69,6 @@ fun SettingsChoiceDialog(
         "outgoing_sim" -> com.ogneliss.dialer.settings.OutgoingSim.entries.map {
             it.name to stringResource(com.ogneliss.dialer.settings.SettingsCommands.outgoingSimLabelRes(it))
         }
-        "swipe_sim" -> listOf(
-            SwipeSimMode.ASK.name to stringResource(R.string.swipe_sim_ask),
-            SwipeSimMode.FIRST.name to stringResource(R.string.swipe_sim_first),
-            SwipeSimMode.SECOND.name to stringResource(R.string.swipe_sim_second)
-        )
         "notes_retention" -> listOf(
             "NEVER" to stringResource(R.string.retention_never),
             "MONTH" to stringResource(R.string.retention_month),

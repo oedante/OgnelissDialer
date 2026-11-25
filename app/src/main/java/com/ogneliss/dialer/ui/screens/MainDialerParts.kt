@@ -628,8 +628,11 @@ internal fun CallLogRow(
              * у абонента их несколько, появится тот же выбор, что при
              * свайпе. Звонить напрямую значило бы дать двум способам
              * сделать одно разное поведение.
+             *
+             * 2.9.11: свайп звонит с одной карты («Позвонить с SIM N») —
+             * трубка тоже с неё (DialerViewModel.handsetAction).
              */
-            vm.performSwipe(SwipeAction.CALL, group) { swipeController.close() }
+            vm.performSwipe(vm.handsetAction(), group) { swipeController.close() }
         },
         // Долгое нажатие на трубку — выбор SIM для этого номера (1.8.0)
         onCallLongPress = if (state.sims.size > 1) {

@@ -25,7 +25,6 @@ import com.ogneliss.dialer.settings.ContactNameFormat
 import com.ogneliss.dialer.settings.SpeedDialStore
 import com.ogneliss.dialer.settings.SwipeAction
 import com.ogneliss.dialer.ui.theme.MessageBlue
-import com.ogneliss.dialer.settings.SwipeSimMode
 import com.ogneliss.dialer.settings.SwipeTuning
 import com.ogneliss.dialer.data.CallLogLoader
 import com.ogneliss.dialer.data.CallLogRowMapper
@@ -2867,11 +2866,28 @@ class DialerViewModel @Inject constructor(
 
     // ── Выбор SIM для действия свайпа ──────────────────────────────────────
 
-    val swipeSimMode = prefs.swipeSimMode
-        .stateIn(viewModelScope, SharingStarted.Eagerly, SwipeSimMode.ASK)
+    /*
+     * Здесь жила «SIM для действий свайпа» (swipeSimMode). 2.9.11: убрана — карта
+     * в самом действии («Позвонить с SIM 1/2»), сохранённый выбор перенесён
+     * в свайпы (SwipeSimMigration). Кнопка-трубка в строке — handsetAction.
+     */
 
-    fun setSwipeSimMode(mode: SwipeSimMode) = viewModelScope.launch {
-        prefs.setSwipeSimMode(mode)
+    /**
+     * ЧЕМ ЗВОНИТ КНОПКА-ТРУБКА В СТРОКЕ ЖУРНАЛА И КОНТАКТОВ (2.9.11).
+     *
+     * Трубка идёт тем же путём, что свайп вызова (два способа сделать одно
+     * не должны давать разное). До 2.9.11 обоих вела «SIM для действий свайпа»;
+     * её выбор теперь в свайпах, и трубка берёт карту оттуда же:
+     *  - звонящие свайпы журнала — только «Позвонить с SIM N» (одна карта) — с неё;
+     *  - есть «Позвонить» или свайпы на разные карты — как «Позвонить»: при двух
+     *    картах спросить. Молча выбрать одну из двух нельзя — это звонок с другого
+     *    номера (см. call);
+     *  - выбрана «Карта для звонков и SMS» — «Позвонить»: call возьмёт её.
+     */
+    fun handsetAction(): SwipeAction {
+        val s = settingsState.value
+        if (s.outgoingSim != com.ogneliss.dialer.settings.OutgoingSim.ASK) return SwipeAction.CALL
+        return SwipeAction.handsetCall(s.swipeRight, s.swipeLeft)
     }
 
     /**
@@ -2967,10 +2983,10 @@ class DialerViewModel @Inject constructor(
      * журнала продолжает разговор, который в ней записан, а не открывает
      * выбор из всех номеров абонента.
      *
-     * Карта определяется настройкой. При «спрашивать» и двух активных
-     * картах поднимается диалог — но только для действий, которым карта
-     * нужна: SMS отправляется приложением сообщений, и выбор карты
-     * делает оно.
+     * При двух активных картах «Позвонить» поднимает выбор карты — только
+     * это действие: у «Позвонить с SIM N» карта в самом действии (2.9.11:
+     * отдельной «SIM для действий свайпа» больше нет), а SMS отправляет
+     * приложение сообщений, и карту выбирает оно.
      */
     /**
      * @param onBeforeDialog вызывается перед показом диалога выбора SIM
@@ -3003,15 +3019,9 @@ class DialerViewModel @Inject constructor(
             return
         }
 
-        when (swipeSimMode.value) {
-            SwipeSimMode.FIRST -> call(group.number, sims.getOrNull(0)?.slotIndex ?: -1)
-            SwipeSimMode.SECOND -> call(group.number, sims.getOrNull(1)?.slotIndex ?: -1)
-            SwipeSimMode.ASK -> {
-                // Сначала возвращаем строку, потом показываем выбор
-                onBeforeDialog()
-                chooseSim(group.number, SimAction.CALL, group.displayName)
-            }
-        }
+        // Сначала возвращаем строку, потом показываем выбор
+        onBeforeDialog()
+        chooseSim(group.number, SimAction.CALL, group.displayName)
     }
 
     // ── Напоминание перезвонить ────────────────────────────────────────────

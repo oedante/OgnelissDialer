@@ -43,6 +43,8 @@ import com.ogneliss.dialer.ui.components.CallLogSkeleton
 import com.ogneliss.dialer.ui.components.EmptyState
 import com.ogneliss.dialer.ui.components.ScreenScaffold
 import com.ogneliss.dialer.ui.components.ListPanel
+import com.ogneliss.dialer.ui.components.PanelCenter
+import androidx.compose.foundation.layout.fillMaxSize
 import com.ogneliss.dialer.ui.components.MainSection
 import com.ogneliss.dialer.ui.components.SectionTopBar
 import androidx.activity.compose.BackHandler
@@ -96,6 +98,16 @@ internal fun NotesScreen(
 
     /** Номер, заметку которого правят. */
     var editing by remember { mutableStateOf<String?>(null) }
+
+    /** «Создать» в центре панели (2.9.11): сперва номер — полем «Кому» (NumberPick). */
+    val pick = rememberNumberPick()
+    val pickMatches = rememberPickMatches(pick, state.contacts)
+    BackHandler(enabled = pick.open) { pick.close() }
+    val onPicked: (String) -> Unit = { number ->
+        pick.close()
+        // Заметка у номера уже есть — откроется она: заметка к номеру одна
+        editing = PhoneFormatter.toE164(number).ifBlank { number }
+    }
 
     /*
      * Заметки с именами и группировкой.
@@ -171,7 +183,8 @@ internal fun NotesScreen(
     editing?.let { e164 ->
         val note = state.notes[e164]
         NoteEditorDialog(
-            displayName = PhoneFormatter.format(e164),
+            // 2.9.11: имя контакта, если номер в книге (новая заметка — номер из выбора)
+            displayName = contactOfNumber(e164, state.contacts)?.displayName ?: PhoneFormatter.format(e164),
             initialNote = note?.note.orEmpty(),
             initialTags = note?.tags.orEmpty().toSet(),
             onSave = { text, tags ->
@@ -193,12 +206,21 @@ internal fun NotesScreen(
         title = stringResource(R.string.nav_notes),
         onBack = {},
         topBarOverride = {
-            SectionTopBar(title = stringResource(R.string.nav_notes), onOpenMenu = { menuOpen = true })
+            // Пока выбирают номер — без шапки, как «Кому» в SMS: экран занят подсказками
+            if (!pick.open) {
+                SectionTopBar(title = stringResource(R.string.nav_notes), onOpenMenu = { menuOpen = true })
+            }
         },
         bottomBar = {
             val hint = stringResource(R.string.notes_search_hint)
-            ListPanel(
+            if (pick.open) NumberPickBar(pick, pickMatches, R.string.notes_new, onPicked)
+            else ListPanel(
                 section = MainSection.NOTES,
+                // 2.9.11: в центре — «Создать» (новая заметка), а не клавиатура набора
+                center = PanelCenter(OgnelissIcons.EditNote, R.string.notes_new, R.string.bar_center_create) {
+                    closeSearch()
+                    pick.start()
+                },
                 onOpenSection = links.onOpenSection,
                 filterActive = false,
                 onDialpad = links.onOpenDialpad,
@@ -219,6 +241,18 @@ internal fun NotesScreen(
             )
         }
     ) { padding ->
+        if (pick.open) {
+            NumberPickList(
+                pick = pick,
+                state = state,
+                matches = pickMatches,
+                typedTitleRes = R.string.notes_new_for_number,
+                typedIcon = OgnelissIcons.EditNote,
+                onPick = onPicked,
+                modifier = Modifier.padding(padding).fillMaxSize()
+            )
+            return@ScreenScaffold
+        }
         /*
          * ══════════════════════════════════════════════════════════════════
          * ПОКА ГРУЗИТСЯ — ЗАГЛУШКА, А НЕ «ЗАМЕТОК НЕТ»

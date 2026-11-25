@@ -96,7 +96,17 @@ fun LabeledIconButton(
      * кнопки подпись короткая («Набор»), а TalkBack говорит действие
      * («Показать клавиатуру», «Новое сообщение»). null — подпись.
      */
-    contentDescription: String? = null
+    contentDescription: String? = null,
+    /**
+     * Подписи соседей по ряду (2.9.11, FitText.peers): при крупном шрифте все
+     * подписи ряда ужимаются одинаково, по самой широкой. Только с [fitLabel].
+     */
+    labelPeers: List<String> = emptyList(),
+    /**
+     * Две строки подписи с переносом по слогам (2.9.11, колонка справа: «Мой
+     * контакт», «Напоми-нания» — вместо подписи, ужатой до 60 %). Только с [fitLabel].
+     */
+    twoLineLabel: Boolean = false
 ) {
     val label = stringResource(labelRes)
     val description = contentDescription ?: label
@@ -196,8 +206,11 @@ fun LabeledIconButton(
                     label,
                     style = labelStyle,
                     color = labelColor,
-                    maxLines = 1,
-                    minScale = 0.6f
+                    maxLines = if (twoLineLabel) 2 else 1,
+                    minScale = 0.6f,
+                    textAlign = if (twoLineLabel) androidx.compose.ui.text.style.TextAlign.Center else null,
+                    peers = labelPeers,
+                    hyphenate = twoLineLabel
                 )
             } else {
                 Text(

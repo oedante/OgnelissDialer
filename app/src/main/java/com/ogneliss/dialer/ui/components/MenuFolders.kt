@@ -154,6 +154,7 @@ private fun TuneButton(onClick: () -> Unit, label: String?) {
  */
 @Composable
 internal fun MenuTileRow(title: String, actions: List<MenuFolder>) {
+    val peers = actions.map { it.label }
     Column(Modifier.fillMaxWidth()) {
         MenuBand(title)
         OgnelissCard {
@@ -180,7 +181,9 @@ internal fun MenuTileRow(title: String, actions: List<MenuFolder>) {
                             textAlign = TextAlign.Center,
                             // Две строки: «На главный / экран» при крупном шрифте
                             maxLines = 2,
-                            minScale = 0.6f
+                            minScale = 0.6f,
+                            // 2.9.11: один размер на ряд плиток — по самой широкой подписи
+                            peers = peers
                         )
                     }
                 }
