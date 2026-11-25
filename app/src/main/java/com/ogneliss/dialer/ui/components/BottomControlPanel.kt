@@ -743,7 +743,7 @@ internal fun ActionRow(
             index == 2 && exitShown -> LabeledIconButton(
                 icon = OgnelissIcons.Close,
                 labelRes = R.string.bar_exit,
-                onClick = onStartSelection ?: {},
+                onClick = onStartSelection,
                 tint = MaterialTheme.colorScheme.primary,
                 selected = true,
                 fitLabel = true,

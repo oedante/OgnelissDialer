@@ -26,6 +26,10 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 `DialerViewModel.handsetAction` / `SwipeAction.handsetCall`.
 «Что нового»: `store/whats_new_2.9.11.txt`; если 2.9.8–2.9.10 не публиковались —
 `store/whats_new_2.9.11_since_2.9.7.txt`.
+Проверки: 830 unit-тестов — без ошибок; релизная сборка без предупреждений; lint — новых замечаний
+нет; `prebuild_check`, `import_check`, `audit`, `ui_roles_check`, `check_no_internet`,
+`check_ringing_flag`, `design_tokens_check`, `faq_site --check` — без замечаний. Перенос по слогам
+на телефоне не проверен: в Robolectric правил переноса нет (колонка там — по мягкому переносу).
 
 ## 25.11.2026 — 2.9.10 (105): живой фон — облики, отсвет, батарея; имя «Ogneliss» в уведомлениях
 
