@@ -380,8 +380,12 @@ fun CallLogCard(
                             SimBadge(slot)
                         }
                         Spacer(Modifier.width(6.dp))
+                        // 2.9.8: длительность последнего разговора — по настройке (CallDurationText)
+                        val duration = if (com.ogneliss.dialer.ui.theme.LocalAppearance.current.callLogDuration) {
+                            com.ogneliss.dialer.util.CallDurationText.short(row.group.durationSec)
+                        } else null
                         Text(
-                            row.dateLabel,
+                            if (duration != null) "${row.dateLabel} · $duration" else row.dateLabel,
                             style = MaterialTheme.typography.bodySmall,
                             // Пропущенный — красная дата рядом с красной стрелкой
                             // (1.4.0): единственный цветной сигнал строки

@@ -1921,7 +1921,6 @@ class DialerViewModel @Inject constructor(
             SwipeAction.WHATSAPP -> actions.openWhatsApp(group.number)
             SwipeAction.TELEGRAM -> ExternalApps.telegram(app, group.number)
             SwipeAction.VIBER -> ExternalApps.viber(app, group.number)
-            SwipeAction.MAX -> ExternalApps.max(app, group.number)
             else -> Unit
         }
     }
@@ -1929,6 +1928,17 @@ class DialerViewModel @Inject constructor(
     fun handleSwipe(action: SwipeAction, group: CallLogGroup) = viewModelScope.launch {
         when (action) {
             SwipeAction.CALL -> actions.placeCall(group.number)
+            /*
+             * «Позвонить с SIM N» (2.9.8, форум, Bublikov34): карта — в самом действии,
+             * без вопроса. Слот пуст (одна карта, вторую вынули) — звонок по общим
+             * правилам, как обычный «Позвонить»; строка в журнале.
+             */
+            SwipeAction.CALL_SIM1, SwipeAction.CALL_SIM2 -> {
+                val slot = SwipeAction.simSlotOf(action) ?: -1
+                val present = state.value.sims.any { it.slotIndex == slot }
+                if (!present) Logger.i(TAG, "Свайп «с SIM ${slot + 1}»: карты в слоте нет — звонок по общим правилам")
+                call(group.number, if (present) slot else -1)
+            }
             SwipeAction.SMS -> actions.openSms(group.number)
             /*
              * Мессенджеры — через телефонную книгу (1.2.5): открывается чат
@@ -1938,7 +1948,7 @@ class DialerViewModel @Inject constructor(
              * книги нет (номер не в контактах), — по номеру, как было.
              */
             SwipeAction.WHATSAPP, SwipeAction.TELEGRAM,
-            SwipeAction.VIBER, SwipeAction.MAX -> openMessenger(action, group)
+            SwipeAction.VIBER -> openMessenger(action, group)
 
             /*
              * Заметка открывается редактором, а не сохраняется молча:

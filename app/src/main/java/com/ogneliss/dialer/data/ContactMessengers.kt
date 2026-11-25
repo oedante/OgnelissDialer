@@ -24,9 +24,8 @@ import com.ogneliss.dialer.util.PermissionGuard
  * установлен у нас. Интернет не нужен: это чтение книги, доступ к ней
  * у диалера уже есть.
  *
- * Max — по тому же признаку, если его строки в книге есть (тип содержит
- * «ru.oneme»). Если Max строк не кладёт, он в выборе не появится:
- * лучше не предложить, чем предложить мессенджер, которого у человека нет.
+ * Max убран в 2.9.8: чат с абонентом по его строке книги и по номеру
+ * у Max так и не открывается («ссылка устарела или не действует»).
  *
  * ── Как открываем ─────────────────────────────────────────────────────────
  * Той же строкой книги: ACTION_VIEW на её адрес с её типом. Мессенджер
@@ -49,12 +48,11 @@ object ContactMessengers {
         mime.contains("com.whatsapp.profile") -> SwipeAction.WHATSAPP
         mime.contains("org.telegram.messenger") && mime.endsWith(".profile") -> SwipeAction.TELEGRAM
         mime.contains("com.viber.voip.viber_number_message") -> SwipeAction.VIBER
-        mime.contains("ru.oneme") -> SwipeAction.MAX
         else -> null
     }
 
     /** Порядок в выборе: как в России ими пользуются чаще. */
-    private val ORDER = listOf(SwipeAction.TELEGRAM, SwipeAction.WHATSAPP, SwipeAction.MAX, SwipeAction.VIBER)
+    private val ORDER = listOf(SwipeAction.TELEGRAM, SwipeAction.WHATSAPP, SwipeAction.VIBER)
 
     fun linksFor(context: Context, contactId: Long): List<Link> {
         if (!PermissionGuard.canReadContacts(context)) return emptyList()

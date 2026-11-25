@@ -942,8 +942,35 @@ private fun DirectActionHint(
                     )
                 }
             }
+            /*
+             * Карта действия (2.9.8, «Позвонить с SIM N»; форум, Bublikov34: «сим-карта 1
+             * с её значком в момент свайпа»): значок SIM с номером в цвете карты, как
+             * пометка в строке журнала, — рядом с трубкой с первых миллиметров.
+             */
+            val sim: @Composable () -> Unit = {
+                action.simBadge?.let { number ->
+                    val simColor = com.ogneliss.dialer.ui.theme.SimColors.of(number - 1)
+                    Row(
+                        Modifier.graphicsLayer { alpha = 0.45f + 0.55f * eased },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            com.ogneliss.dialer.ui.theme.OgnelissIcons.SimCard,
+                            contentDescription = null,
+                            tint = simColor,
+                            modifier = Modifier.size(SIM_MARK_ICON)
+                        )
+                        Text(
+                            number.toString(),
+                            color = simColor,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
             // Значок — у края, подпись — дальше от края: значок не сдвигается
-            if (fromStart) { icon(); label() } else { label(); icon() }
+            if (fromStart) { icon(); sim(); label() } else { label(); sim(); icon() }
         }
     }
 }
@@ -953,6 +980,9 @@ private val LABEL_ROOM = 16.dp
 
 /** Значок свайпа — 28 dp, как в почте (было 24). */
 private val SWIPE_ICON = 28.dp
+
+/** Значок карты у «Позвонить с SIM N» (2.9.8): заметно, но мельче трубки. */
+private val SIM_MARK_ICON = 20.dp
 
 /** Место под мягкий круг за значком: значок в его центре, круг не сдвигает значок. */
 private val HALO_BOX = 48.dp

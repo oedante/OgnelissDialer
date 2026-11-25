@@ -69,6 +69,8 @@ data class SettingsState(
     val callPhotoStyle: CallPhotoStyle = CallPhotoStyle.CIRCLE,
     /** Облик живого фона вызова (2.9.5): тоны темы или «Пламя». */
     val callAmbientStyle: com.ogneliss.dialer.call.AmbientStyle = com.ogneliss.dialer.call.AmbientStyle.THEME,
+    /** Правила защиты от спама — для какой SIM (2.9.8): разбор в SpamSimScope. */
+    val spamSimScope: com.ogneliss.dialer.call.SpamSimScope = com.ogneliss.dialer.call.SpamSimScope.ALL,
     /** Отметки своего фона экрана вызова (2.7.4): время сохранения снимка, 0 — снимка нет. */
     val callBgIncoming: Long = 0L,
     val callBgOutgoing: Long = 0L,
@@ -86,6 +88,8 @@ data class SettingsState(
     val sectionIcons: Boolean = false,
     /** Цветные стрелки типа вызова (2.7.0, форум, 21vasya): разбор в CallArrowColor. 2.8.9: по умолчанию вкл. */
     val coloredCallArrows: Boolean = true,
+    /** Длительность разговора в строке журнала (2.9.8): разбор в Prefs.callLogDuration. */
+    val callLogDuration: Boolean = false,
     /** Места нижней панели (2.9.2, PanelSlots); null — порядок по роли SMS. */
     val panelSlots: String? = null,
     /** «Инструменты» меню (2.9.3): строка FolderOrder; null — всё по порядку MenuTool. */
@@ -200,6 +204,7 @@ data class SettingsState(
         "vibrate_on_connect" -> vibrateOnConnect
         "section_icons" -> sectionIcons
         "colored_call_arrows" -> coloredCallArrows
+        "call_log_duration" -> callLogDuration
         "post_call" -> postCallEnabled
         "post_call_unknown" -> postCallUnknownOnly
         "block_hidden" -> blockHidden
@@ -228,6 +233,8 @@ data class SettingsState(
             "section_icons",
             // 2.7.0
             "colored_call_arrows",
+            // 2.9.8
+            "call_log_duration",
             "block_hidden", "block_unknown", "block_tagged", "file_logging",
             // 1.3.3: переключатели обрабатывались (switchValue выше), но в список
             // не попали — SettingsRegistryTest падал ещё с 1.3.0

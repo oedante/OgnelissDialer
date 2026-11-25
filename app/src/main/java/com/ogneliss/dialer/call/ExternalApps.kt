@@ -17,7 +17,6 @@ object ExternalApps {
     private const val PKG_WHATSAPP = "com.whatsapp"
     private const val PKG_TELEGRAM = "org.telegram.messenger"
     private const val PKG_VIBER = "com.viber.voip"
-    private const val PKG_MAX = "ru.oneme.app"
 
     private fun isInstalled(context: Context, pkg: String): Boolean = runCatching {
         context.packageManager.getPackageInfo(pkg, 0); true
@@ -88,28 +87,19 @@ object ExternalApps {
         launch(context, Intent(Intent.ACTION_VIEW,
             Uri.parse("viber://chat?number=${number.filter { it.isDigit() }}")))
 
-    /**
-     * Чат в мессенджере Max.
-     *
-     * Ссылка вида max.ru/<номер> — тот же приём, что у WhatsApp
-     * и Telegram: приложение перехватывает свой домен и открывает
-     * чат само. Если приложение не установлено, ссылка откроется
-     * в браузере, и человек увидит предложение установить —
-     * это лучше, чем молчаливое бездействие.
+    /*
+     * Max (ссылка max.ru/<номер>) убран в 2.9.8: чат по номеру у него так
+     * и не открывается — «ссылка устарела или не действует» (форум, galadij).
      */
-    fun max(context: Context, number: String) =
-        launch(context, Intent(Intent.ACTION_VIEW,
-            Uri.parse("https://max.ru/${number.filter { it.isDigit() }}")))
 
     /**
      * Установленные мессенджеры — для «Написать» по любому номеру (1.3.5,
      * настройка «Мессенджеры для любого номера»). Порядок — как в выборе
-     * мессенджеров контакта (ContactMessengers): Telegram, WhatsApp, Max, Viber.
+     * мессенджеров контакта (ContactMessengers): Telegram, WhatsApp, Viber.
      */
     fun installedMessengers(context: Context): List<com.ogneliss.dialer.settings.SwipeAction> = listOf(
         com.ogneliss.dialer.settings.SwipeAction.TELEGRAM to PKG_TELEGRAM,
         com.ogneliss.dialer.settings.SwipeAction.WHATSAPP to PKG_WHATSAPP,
-        com.ogneliss.dialer.settings.SwipeAction.MAX to PKG_MAX,
         com.ogneliss.dialer.settings.SwipeAction.VIBER to PKG_VIBER
     ).filter { (_, pkg) -> isInstalled(context, pkg) }.map { it.first }
 
@@ -119,13 +109,9 @@ object ExternalApps {
             com.ogneliss.dialer.settings.SwipeAction.WHATSAPP -> whatsapp(context, number)
             com.ogneliss.dialer.settings.SwipeAction.TELEGRAM -> telegram(context, number)
             com.ogneliss.dialer.settings.SwipeAction.VIBER -> viber(context, number)
-            com.ogneliss.dialer.settings.SwipeAction.MAX -> max(context, number)
             else -> Unit
         }
     }
-
-    /** Установлен ли Max — для показа действия только когда оно сработает. */
-    fun isMaxInstalled(context: Context): Boolean = isInstalled(context, PKG_MAX)
 
     fun email(context: Context, address: String) =
         launch(context, Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:$address")))

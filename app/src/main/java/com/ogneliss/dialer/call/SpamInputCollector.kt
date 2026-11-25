@@ -84,16 +84,21 @@ class SpamInputCollector @Inject constructor(
         const val BUDGET_MS = 1500L
     }
 
-    suspend fun collect(number: String?, e164: String): SpamPolicy.SpamInput =
+    suspend fun collect(
+        number: String?,
+        e164: String,
+        /** Слот SIM вызова (2.9.8, SpamSimScope); null — неизвестно. */
+        simSlot: Int? = null
+    ): SpamPolicy.SpamInput =
         withContext(io) {
             val started = System.currentTimeMillis()
             val input = try {
-                withTimeout(BUDGET_MS) { collectParallel(number, e164) }
+                withTimeout(BUDGET_MS) { collectParallel(number, e164).copy(simSlot = simSlot) }
             } catch (t: TimeoutCancellationException) {
                 // Не уложились — решаем по минимуму. Практически это означает
                 // «пропустить», если номер не в явных списках
                 Logger.w(TAG, "Сбор данных не уложился в $BUDGET_MS мс, решаю по минимуму")
-                SpamPolicy.SpamInput(number = number, e164 = e164, isInContacts = false)
+                SpamPolicy.SpamInput(number = number, e164 = e164, isInContacts = false, simSlot = simSlot)
             }
             Logger.d(TAG, "Данные собраны за ${System.currentTimeMillis() - started} мс")
             input
@@ -181,12 +186,14 @@ class SpamInputCollector @Inject constructor(
         }
         val tagged = async { safe("blockTaggedSpam", true) { prefs.blockTaggedSpam.first() } }
         val quiet = async { safe("quietHours", QuietHours.OFF) { prefs.quietHours.first() } }
+        val scope = async { safe("spamSimScope", SpamSimScope.ALL) { prefs.spamSimScope.first() } }
 
         SpamPolicy.Settings(
             blockHidden = hidden.await(),
             blockNotInContacts = unknown.await(),
             blockTaggedSpam = tagged.await(),
-            quietHours = quiet.await()
+            quietHours = quiet.await(),
+            simScope = scope.await()
         )
     }
 

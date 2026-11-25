@@ -66,7 +66,9 @@ object SpamPolicy {
          * Этот номер уже звонил без звука в тихие часы за последние
          * 15 минут — значит, перезванивает: пропускаем со звуком.
          */
-        val repeatCall: Boolean = false
+        val repeatCall: Boolean = false,
+        /** Слот SIM вызова (2.9.8, SpamSimScope); null — неизвестно или карта одна. */
+        val simSlot: Int? = null
     )
 
     /** Снимок настроек фильтрации. */
@@ -75,8 +77,18 @@ object SpamPolicy {
         val blockNotInContacts: Boolean = false,
         val blockTaggedSpam: Boolean = true,
         /** Тихие часы для незнакомых (1.8.0): разбор в QuietHours. */
-        val quietHours: QuietHours = QuietHours.OFF
-    )
+        val quietHours: QuietHours = QuietHours.OFF,
+        /** Для какой SIM правила выше (2.9.8): разбор в SpamSimScope. */
+        val simScope: SpamSimScope = SpamSimScope.ALL
+    ) {
+        /** Без правил — только списки: вызов на карту, к которой правила не относятся. */
+        fun listsOnly(): Settings = copy(
+            blockHidden = false,
+            blockNotInContacts = false,
+            blockTaggedSpam = false,
+            quietHours = QuietHours.OFF
+        )
+    }
 
     /**
      * ЧТО СДЕЛАТЬ С ВЫЗОВОМ.
@@ -138,7 +150,14 @@ object SpamPolicy {
 
     fun evaluate(input: SpamInput): Decision {
         val masked = Logger.mask(input.e164)
-        val s = input.settings
+        /*
+         * 2.9.8: правила — для выбранной SIM (SpamSimScope). Вызов на другую
+         * карту проверяется только по спискам: белый, системный, чёрный.
+         */
+        val s = if (input.settings.simScope.covers(input.simSlot)) input.settings else {
+            Logger.i(TAG, "Вызов на SIM ${input.simSlot?.plus(1)}: правила — для другой карты, только списки")
+            input.settings.listsOnly()
+        }
 
         // 1. Белый список побеждает всё. Без этого правило «блокировать всех
         //    не из контактов» отрезало бы школу, врача и курьера.
@@ -149,7 +168,7 @@ object SpamPolicy {
         if (input.number.isNullOrBlank()) {
             return when {
                 s.blockHidden -> deny(HIDDEN_LABEL, Reason.HIDDEN_BLOCKED)
-                isQuietNow(input) -> silence(HIDDEN_LABEL, Reason.QUIET_HOURS)
+                isQuietNow(input, s) -> silence(HIDDEN_LABEL, Reason.QUIET_HOURS)
                 else -> allow(HIDDEN_LABEL, Reason.HIDDEN_ALLOWED)
             }
         }
@@ -173,7 +192,7 @@ object SpamPolicy {
 
         // 8. Тихие часы (1.8.0): не блокировка, а беззвучный пропуск —
         //    вызов останется в журнале. Перезвонил за 15 минут — срочно
-        if (isQuietNow(input)) {
+        if (isQuietNow(input, s)) {
             return if (input.repeatCall) allow(masked, Reason.QUIET_REPEAT)
             else silence(masked, Reason.QUIET_HOURS)
         }
@@ -205,8 +224,8 @@ object SpamPolicy {
         return allow(masked, Reason.NO_RULE_MATCHED)
     }
 
-    private fun isQuietNow(input: SpamInput): Boolean =
-        input.minuteOfDay >= 0 && input.settings.quietHours.contains(input.minuteOfDay)
+    private fun isQuietNow(input: SpamInput, s: Settings): Boolean =
+        input.minuteOfDay >= 0 && s.quietHours.contains(input.minuteOfDay)
 
     private fun allow(masked: String, reason: Reason): Decision {
         Logger.i(TAG, "ПРОПУЩЕН $masked: $reason")

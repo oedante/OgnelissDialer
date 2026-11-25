@@ -66,6 +66,7 @@ class SettingsStateSource @Inject constructor(
         .combine(prefs.callAnimation) { a, v -> a.copy(callAnimation = v) }
         .combine(prefs.callPhotoStyle) { a, v -> a.copy(callPhotoStyle = v) }
         .combine(prefs.callAmbientStyle) { a, v -> a.copy(callAmbientStyle = v) }
+        .combine(prefs.spamSimScope) { a, v -> a.copy(spamSimScope = v) }
         // 2.7.4: свой фон входящих и исходящих
         .combine(prefs.callBgIncoming) { a, v -> a.copy(callBgIncoming = v) }
         .combine(prefs.callBgOutgoing) { a, v -> a.copy(callBgOutgoing = v) }
@@ -87,6 +88,7 @@ class SettingsStateSource @Inject constructor(
         .combine(prefs.widgetShape) { a, v -> a.copy(widgetShape = v) }
         .combine(prefs.sectionIcons) { a, v -> a.copy(sectionIcons = v) }
         .combine(prefs.coloredCallArrows) { a, v -> a.copy(coloredCallArrows = v) }
+        .combine(prefs.callLogDuration) { a, v -> a.copy(callLogDuration = v) }
         .combine(prefs.startSection) { a, v -> a.copy(startSection = v) }
         .combine(prefs.contactNameFormat) { a, v -> a.copy(contactNameFormat = v) }
         .combine(prefs.contactSort) { a, v -> a.copy(contactSort = v) }
@@ -222,6 +224,7 @@ class SettingsStateSource @Inject constructor(
             callAnimation = a.callAnimation,
             callPhotoStyle = a.callPhotoStyle,
             callAmbientStyle = a.callAmbientStyle,
+            spamSimScope = a.spamSimScope,
             callBgIncoming = a.callBgIncoming,
             callBgOutgoing = a.callBgOutgoing,
             avatarNoPhoto = a.avatarNoPhoto,
@@ -240,6 +243,7 @@ class SettingsStateSource @Inject constructor(
             widgetShape = a.widgetShape,
             sectionIcons = a.sectionIcons,
             coloredCallArrows = a.coloredCallArrows,
+            callLogDuration = a.callLogDuration,
             panelSlots = a.panelSlots,
             menuTools = a.menuTools,
             panelSide = a.panelSide,
@@ -313,6 +317,7 @@ class SettingsStateSource @Inject constructor(
         val callAnimation: Boolean = true,
         val callPhotoStyle: CallPhotoStyle = CallPhotoStyle.CIRCLE,
         val callAmbientStyle: com.ogneliss.dialer.call.AmbientStyle = com.ogneliss.dialer.call.AmbientStyle.THEME,
+        val spamSimScope: com.ogneliss.dialer.call.SpamSimScope = com.ogneliss.dialer.call.SpamSimScope.ALL,
         val callBgIncoming: Long = 0L,
         val callBgOutgoing: Long = 0L,
         val avatarNoPhoto: Long = 0L,
@@ -331,6 +336,7 @@ class SettingsStateSource @Inject constructor(
         val widgetShape: WidgetShape = WidgetShape.AUTO,
         val sectionIcons: Boolean = false,
         val coloredCallArrows: Boolean = true,
+        val callLogDuration: Boolean = false,
         val panelSlots: String? = null,
         val menuTools: String? = null,
         val panelSide: Boolean = false,

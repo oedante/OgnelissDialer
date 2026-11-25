@@ -1,0 +1,216 @@
+<ru-RU>
+• Свайпы «Позвонить с SIM 1» и «с SIM 2» — со значком карты прямо при свайпе.
+• Длительность разговора в журнале: Настройки → Журнал вызовов.
+• Правила защиты от спама — для одной SIM или для обеих: Настройки → Защита от спама.
+• «SMS» и «Контакты», открытые своим значком, закрываются «Назад», а не ведут в журнал.
+• Разделы справа: «Меню» и инструменты — на колонке, открытый раздел отмечен.
+• Max убран из свайпов и «Написать»: чат по номеру он не открывает.
+</ru-RU>
+<ar>
+• سحب «اتصال من SIM 1» و«من SIM 2» مع أيقونة الشريحة أثناء السحب.
+• مدة المكالمة في السجل: الإعدادات ← سجل المكالمات.
+• قواعد الحماية من الرسائل المزعجة لشريحة واحدة أو للاثنتين: الإعدادات ← الحماية من الإزعاج.
+• «الرسائل» و«جهات الاتصال» المفتوحة من أيقونتها تُغلق بزر الرجوع بدل الانتقال إلى السجل.
+• الأقسام على اليمين: «القائمة» والأدوات في العمود، والقسم المفتوح مميّز.
+• أُزيل Max من السحب و«مراسلة»: لا يفتح محادثة بالرقم.
+</ar>
+<cs-CZ>
+• Přejetí „Volat ze SIM 1“ a „ze SIM 2“ s ikonou karty už při přejetí.
+• Délka hovoru ve výpisu: Nastavení → Výpis hovorů.
+• Pravidla ochrany před spamem pro jednu SIM nebo obě: Nastavení → Ochrana před spamem.
+• „SMS“ a „Kontakty“ otevřené vlastní ikonou zavře Zpět, místo přechodu do výpisu.
+• Sekce vpravo: „Menu“ a nástroje ve sloupci, otevřená sekce je označena.
+• Max odebrán z přejetí a „Napsat“: chat podle čísla neotevře.
+</cs-CZ>
+<da-DK>
+• Swipes „Ring fra SIM 1“ og „fra SIM 2“ med SIM-ikon allerede under swipet.
+• Samtalens varighed i opkaldsloggen: Indstillinger → Opkaldslog.
+• Spamregler for ét SIM eller begge: Indstillinger → Spambeskyttelse.
+• „SMS“ og „Kontakter“ åbnet fra eget ikon lukkes med Tilbage i stedet for at gå til loggen.
+• Sektioner til højre: „Menu“ og værktøjer i kolonnen, åben sektion er markeret.
+• Max fjernet fra swipes og „Skriv“: det åbner ikke chat ud fra nummer.
+</da-DK>
+<de-DE>
+• Wischgesten „Anruf mit SIM 1“ und „mit SIM 2“ – mit SIM-Symbol schon beim Wischen.
+• Gesprächsdauer in der Anrufliste: Einstellungen → Anrufliste.
+• Spamregeln für eine SIM oder beide: Einstellungen → Spamschutz.
+• Über eigenes Symbol geöffnete „SMS“ und „Kontakte“ schließt Zurück, statt zur Anrufliste.
+• Bereiche rechts: „Menü“ und Werkzeuge in der Spalte, offener Bereich markiert.
+• Max aus Wischgesten und „Schreiben“ entfernt: Chat per Nummer klappt dort nicht.
+</de-DE>
+<en-US>
+• "Call from SIM 1" and "Call from SIM 2" swipes, with the SIM icon as you swipe.
+• Call duration in the call log: Settings → Call log.
+• Spam protection rules for one SIM or both: Settings → Spam protection.
+• SMS and Contacts opened from their own icon close with Back instead of going to the call log.
+• Sections on the right: Menu and tools on the column, the open section is marked.
+• Max removed from swipes and "Message": it can't open a chat by number.
+</en-US>
+<es-ES>
+• Deslizar «Llamar con SIM 1» y «con SIM 2», con el icono de la SIM al deslizar.
+• Duración de la llamada en el registro: Ajustes → Registro de llamadas.
+• Reglas antispam para una SIM o ambas: Ajustes → Protección antispam.
+• «SMS» y «Contactos» abiertos con su icono se cierran con Atrás, sin ir al registro.
+• Secciones a la derecha: «Menú» y herramientas en la columna, la sección abierta se marca.
+• Max eliminado de deslizar y «Escribir»: no abre chats por número.
+</es-ES>
+<fi-FI>
+• Pyyhkäisyt ”Soita SIM 1:llä” ja ”SIM 2:lla”, SIM-kuvake jo pyyhkäistessä.
+• Puhelun kesto lokissa: Asetukset → Puheluloki.
+• Roskapuhelusäännöt yhdelle SIMille tai molemmille: Asetukset → Roskasuojaus.
+• Omasta kuvakkeesta avatut ”SMS” ja ”Yhteystiedot” sulkeutuvat Takaisin-painikkeella.
+• Osiot oikealla: ”Valikko” ja työkalut sarakkeessa, avoin osio on merkitty.
+• Max poistettu pyyhkäisyistä ja ”Kirjoita”-valinnasta: se ei avaa keskustelua numerolla.
+</fi-FI>
+<fr-FR>
+• Balayages « Appeler avec la SIM 1 » et « la SIM 2 », avec l’icône de la SIM pendant le geste.
+• Durée de l’appel dans le journal : Réglages → Journal d’appels.
+• Règles anti-spam pour une SIM ou les deux : Réglages → Protection contre le spam.
+• « SMS » et « Contacts » ouverts par leur icône se ferment avec Retour.
+• Sections à droite : menu et outils dans la colonne, section ouverte marquée.
+• Max retiré des balayages et de « Écrire » : il n’ouvre pas de discussion par numéro.
+</fr-FR>
+<hi-IN>
+• «SIM 1 से कॉल» और «SIM 2 से कॉल» स्वाइप, स्वाइप करते समय SIM आइकन के साथ।
+• कॉल लॉग में बातचीत की अवधि: सेटिंग्स → कॉल लॉग।
+• स्पैम सुरक्षा नियम एक SIM या दोनों के लिए: सेटिंग्स → स्पैम सुरक्षा।
+• अपने आइकन से खुले «SMS» और «संपर्क» वापस बटन से बंद होते हैं, लॉग में नहीं जाते।
+• दाईं ओर अनुभाग: «मेनू» और टूल कॉलम में, खुला अनुभाग चिह्नित।
+• Max को स्वाइप और «लिखें» से हटाया: यह नंबर से चैट नहीं खोलता।
+</hi-IN>
+<hu-HU>
+• „Hívás SIM 1-ről” és „SIM 2-ről” csúsztatás, a SIM ikonjával már húzás közben.
+• Hívás hossza a hívásnaplóban: Beállítások → Hívásnapló.
+• Spamszabályok egy SIM-re vagy mindkettőre: Beállítások → Spamvédelem.
+• Saját ikonról nyitott „SMS” és „Névjegyek” a Vissza gombbal bezárul, nem a naplóba visz.
+• Szakaszok jobbra: „Menü” és eszközök az oszlopban, a nyitott szakasz jelölve.
+• A Max kikerült a csúsztatásokból és az „Írás” közül: szám alapján nem nyit csevegést.
+</hu-HU>
+<id>
+• Usap “Panggil dari SIM 1” dan “dari SIM 2”, dengan ikon SIM saat mengusap.
+• Durasi panggilan di log: Setelan → Log panggilan.
+• Aturan antispam untuk satu SIM atau keduanya: Setelan → Perlindungan spam.
+• “SMS” dan “Kontak” yang dibuka dari ikonnya ditutup dengan Kembali, bukan ke log.
+• Bagian di kanan: “Menu” dan alat di kolom, bagian yang terbuka ditandai.
+• Max dihapus dari usap dan “Tulis”: tidak bisa membuka chat dari nomor.
+</id>
+<it-IT>
+• Scorrimenti «Chiama con SIM 1» e «con SIM 2», con l’icona della SIM già durante il gesto.
+• Durata della chiamata nel registro: Impostazioni → Registro chiamate.
+• Regole antispam per una SIM o entrambe: Impostazioni → Protezione spam.
+• «SMS» e «Contatti» aperti dalla loro icona si chiudono con Indietro, senza andare al registro.
+• Sezioni a destra: «Menu» e strumenti nella colonna, sezione aperta evidenziata.
+• Max rimosso da scorrimenti e «Scrivi»: non apre chat dal numero.
+</it-IT>
+<iw-IL>
+• החלקות „התקשר מ-SIM 1” ו„מ-SIM 2”, עם סמל ה-SIM כבר בזמן ההחלקה.
+• משך השיחה ביומן: הגדרות ← יומן שיחות.
+• כללי הגנה מספאם ל-SIM אחד או לשניהם: הגדרות ← הגנה מספאם.
+• „SMS” ו„אנשי קשר” שנפתחו מהסמל שלהם נסגרים ב„חזרה”, בלי לעבור ליומן.
+• מקטעים מימין: „תפריט” וכלים בעמודה, המקטע הפתוח מסומן.
+• Max הוסר מההחלקות ומ„כתיבה”: הוא לא פותח צ'אט לפי מספר.
+</iw-IL>
+<ja-JP>
+• 「SIM 1 で発信」「SIM 2 で発信」スワイプを追加。スワイプ中に SIM アイコンを表示。
+• 履歴に通話時間を表示：設定 → 通話履歴。
+• 迷惑電話のルールを片方の SIM だけに：設定 → 迷惑電話対策。
+• 専用アイコンで開いた「SMS」「連絡先」は戻るで閉じ、履歴に移りません。
+• 右側のセクション：「メニュー」とツールを列に配置、開いているセクションを表示。
+• Max をスワイプと「メッセージ」から削除：番号でチャットを開けないため。
+</ja-JP>
+<ko-KR>
+• 'SIM 1로 전화', 'SIM 2로 전화' 스와이프 추가, 스와이프 중 SIM 아이콘 표시.
+• 통화 기록에 통화 시간 표시: 설정 → 통화 기록.
+• 스팸 차단 규칙을 SIM 하나 또는 둘 다에: 설정 → 스팸 차단.
+• 전용 아이콘으로 연 'SMS'와 '연락처'는 뒤로 가기로 닫히고 통화 기록으로 가지 않습니다.
+• 오른쪽 섹션: '메뉴'와 도구를 열에 배치, 열린 섹션 표시.
+• Max를 스와이프와 '메시지'에서 제거: 번호로 채팅을 열 수 없습니다.
+</ko-KR>
+<nl-NL>
+• Vegen ‘Bellen met sim 1’ en ‘met sim 2’, met het simpictogram al tijdens het vegen.
+• Gespreksduur in de oproeplijst: Instellingen → Oproeplijst.
+• Spamregels voor één simkaart of beide: Instellingen → Spambescherming.
+• ‘Sms’ en ‘Contacten’ geopend via hun eigen pictogram sluiten met Terug, niet naar de lijst.
+• Secties rechts: ‘Menu’ en hulpmiddelen in de kolom, open sectie gemarkeerd.
+• Max verwijderd uit vegen en ‘Schrijven’: het opent geen chat via nummer.
+</nl-NL>
+<no-NO>
+• Sveip «Ring fra SIM 1» og «fra SIM 2», med SIM-ikon allerede under sveipet.
+• Samtalens varighet i anropsloggen: Innstillinger → Anropslogg.
+• Spamregler for ett SIM eller begge: Innstillinger → Spambeskyttelse.
+• «SMS» og «Kontakter» åpnet fra eget ikon lukkes med Tilbake, ikke til loggen.
+• Seksjoner til høyre: «Meny» og verktøy i kolonnen, åpen seksjon er markert.
+• Max fjernet fra sveip og «Skriv»: det åpner ikke chat via nummer.
+</no-NO>
+<pl-PL>
+• Przesunięcia „Zadzwoń z SIM 1” i „z SIM 2” z ikoną karty już podczas gestu.
+• Czas rozmowy w rejestrze: Ustawienia → Rejestr połączeń.
+• Reguły ochrony przed spamem dla jednej karty lub obu: Ustawienia → Ochrona przed spamem.
+• „SMS” i „Kontakty” otwarte własną ikoną zamyka Wstecz, bez przejścia do rejestru.
+• Sekcje po prawej: „Menu” i narzędzia w kolumnie, otwarta sekcja oznaczona.
+• Max usunięty z przesunięć i „Napisz”: nie otwiera czatu po numerze.
+</pl-PL>
+<pt-BR>
+• Deslizes “Ligar do SIM 1” e “do SIM 2”, com o ícone do SIM ao deslizar.
+• Duração da chamada no registro: Configurações → Registro de chamadas.
+• Regras antispam para um SIM ou ambos: Configurações → Proteção contra spam.
+• “SMS” e “Contatos” abertos pelo próprio ícone fecham com Voltar, sem ir ao registro.
+• Seções à direita: “Menu” e ferramentas na coluna, seção aberta marcada.
+• Max removido dos deslizes e de “Escrever”: não abre conversa pelo número.
+</pt-BR>
+<ro>
+• Glisări „Sună de pe SIM 1” și „de pe SIM 2”, cu pictograma SIM chiar la glisare.
+• Durata apelului în jurnal: Setări → Jurnal de apeluri.
+• Reguli antispam pentru un SIM sau ambele: Setări → Protecție antispam.
+• „SMS” și „Contacte” deschise din propria pictogramă se închid cu Înapoi, nu duc în jurnal.
+• Secțiuni în dreapta: „Meniu” și instrumente în coloană, secțiunea deschisă marcată.
+• Max eliminat din glisări și „Scrie”: nu deschide chat după număr.
+</ro>
+<sk>
+• Potiahnutia „Volať zo SIM 1“ a „zo SIM 2“ s ikonou karty už počas potiahnutia.
+• Dĺžka hovoru vo výpise: Nastavenia → Výpis hovorov.
+• Pravidlá ochrany pred spamom pre jednu SIM alebo obe: Nastavenia → Ochrana pred spamom.
+• „SMS“ a „Kontakty“ otvorené vlastnou ikonou zavrie Späť, bez prechodu do výpisu.
+• Sekcie vpravo: „Menu“ a nástroje v stĺpci, otvorená sekcia je označená.
+• Max odstránený z potiahnutí a „Napísať“: chat podľa čísla neotvorí.
+</sk>
+<sv-SE>
+• Svep ”Ring från SIM 1” och ”från SIM 2”, med SIM-ikonen redan under svepet.
+• Samtalets längd i samtalsloggen: Inställningar → Samtalslogg.
+• Spamregler för ett SIM eller båda: Inställningar → Spamskydd.
+• ”SMS” och ”Kontakter” öppnade från egen ikon stängs med Tillbaka, inte till loggen.
+• Sektioner till höger: ”Meny” och verktyg i kolumnen, öppen sektion markerad.
+• Max borttaget från svep och ”Skriv”: det öppnar inte chatt via nummer.
+</sv-SE>
+<th>
+• ปัด «โทรจาก SIM 1» และ «จาก SIM 2» พร้อมไอคอน SIM ขณะปัด
+• ระยะเวลาการโทรในบันทึก: การตั้งค่า → บันทึกการโทร
+• กฎป้องกันสแปมสำหรับ SIM เดียวหรือทั้งสอง: การตั้งค่า → ป้องกันสแปม
+• «SMS» และ «รายชื่อติดต่อ» ที่เปิดจากไอคอนของตัวเองจะปิดด้วยปุ่มย้อนกลับ ไม่ไปที่บันทึก
+• ส่วนด้านขวา: «เมนู» และเครื่องมืออยู่ในคอลัมน์ ส่วนที่เปิดมีเครื่องหมาย
+• นำ Max ออกจากการปัดและ «เขียน»: เปิดแชทจากหมายเลขไม่ได้
+</th>
+<tr-TR>
+• “SIM 1 ile ara” ve “SIM 2 ile ara” kaydırmaları, kaydırırken SIM simgesiyle.
+• Arama kaydında konuşma süresi: Ayarlar → Arama kaydı.
+• Spam kuralları tek SIM ya da ikisi için: Ayarlar → Spam koruması.
+• Kendi simgesinden açılan “SMS” ve “Kişiler” Geri ile kapanır, kayda gitmez.
+• Sağda bölümler: “Menü” ve araçlar sütunda, açık bölüm işaretli.
+• Max kaydırmalardan ve “Yaz”dan kaldırıldı: numarayla sohbet açamıyor.
+</tr-TR>
+<vi>
+• Vuốt “Gọi bằng SIM 1” và “bằng SIM 2”, hiện biểu tượng SIM ngay khi vuốt.
+• Thời lượng cuộc gọi trong nhật ký: Cài đặt → Nhật ký cuộc gọi.
+• Quy tắc chặn spam cho một SIM hoặc cả hai: Cài đặt → Chống spam.
+• “SMS” và “Danh bạ” mở từ biểu tượng riêng sẽ đóng bằng Quay lại, không về nhật ký.
+• Các mục bên phải: “Menu” và công cụ trên cột, mục đang mở được đánh dấu.
+• Đã bỏ Max khỏi vuốt và “Nhắn”: không mở được trò chuyện theo số.
+</vi>
+<zh-CN>
+• 新增“用 SIM 1 拨打”“用 SIM 2 拨打”滑动操作，滑动时即显示 SIM 图标。
+• 通话记录显示通话时长：设置 → 通话记录。
+• 防骚扰规则可只用于一张 SIM：设置 → 防骚扰。
+• 从独立图标打开的“短信”“联系人”按返回即关闭，不再跳到通话记录。
+• 右侧分区：“菜单”和工具位于列中，当前分区有标记。
+• 已从滑动和“发消息”中移除 Max：它无法按号码打开聊天。
+</zh-CN>

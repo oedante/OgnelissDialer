@@ -910,7 +910,7 @@
     <!-- Вопросы о сообщениях (2.0.0) -->
     <string name="faq_section_messages">Nachrichten</string>
     <string name="faq_q_sms">Kann ich im Dialer SMS schreiben und empfangen?</string>
-    <string name="faq_a_sms">Ja. Ist der Dialer Ihre Standard-SMS-App (%1$s), finden Sie Unterhaltungen, eingehende SMS und Bilder (MMS) direkt hier im Bereich „SMS“ der unteren Leiste, mit denselben Wischgesten wie in der Anrufliste; die Anrufliste zeigt weiterhin nur Anrufe. Verwaltet eine andere App die SMS, öffnen die „Nachricht“-Tasten die Unterhaltung einfach dort – einzurichten ist nichts. Auf einem Telefon mit einer RCS-App (Google Messages, Samsung Messages) fragt der Dialer nicht von selbst nach der SMS-Rolle: RCS-Chats funktionieren nur in dieser App und werden ausgeschaltet, wenn eine andere App die SMS übernimmt. Zurück geht es jederzeit, indem Sie eine andere SMS-App wählen – der Dialer liest dann sofort keine Nachrichten mehr. Wenn Sie „Messenger für jede Nummer“ einschalten, bietet „Nachricht“ auch für Nummern außerhalb der Kontakte WhatsApp, Telegram, Viber und Max an; Telegram öffnet den Chat nur, wenn die Person die Suche nach Nummer erlaubt.</string>
+    <string name="faq_a_sms">Ja. Ist der Dialer Ihre Standard-SMS-App (%1$s), finden Sie Unterhaltungen, eingehende SMS und Bilder (MMS) direkt hier im Bereich „SMS“ der unteren Leiste, mit denselben Wischgesten wie in der Anrufliste; die Anrufliste zeigt weiterhin nur Anrufe. Verwaltet eine andere App die SMS, öffnen die „Nachricht“-Tasten die Unterhaltung einfach dort – einzurichten ist nichts. Auf einem Telefon mit einer RCS-App (Google Messages, Samsung Messages) fragt der Dialer nicht von selbst nach der SMS-Rolle: RCS-Chats funktionieren nur in dieser App und werden ausgeschaltet, wenn eine andere App die SMS übernimmt. Zurück geht es jederzeit, indem Sie eine andere SMS-App wählen – der Dialer liest dann sofort keine Nachrichten mehr. Wenn Sie „Messenger für jede Nummer“ einschalten, bietet „Nachricht“ auch für Nummern außerhalb der Kontakte WhatsApp, Telegram und Viber an; Telegram öffnet den Chat nur, wenn die Person die Suche nach Nummer erlaubt.</string>
     <string name="faq_q_codes">Wie füge ich einen Code aus einer SMS ein?</string>
     <string name="faq_a_codes">Enthält eine Nachricht einen Bestätigungscode, zeigt die Benachrichtigung die Taste „123456 kopieren“, und in der Unterhaltung steht dieselbe Taste unter der Nachricht. Der Code landet als vertraulich markiert in der Zwischenablage, und Ihre Tastatur bietet ihn mit einem Tippen zum Einfügen an. Das automatische Ausfüllen in anderen Apps übernimmt Ihre Tastatur oder Ihr Autofill-Dienst (etwa Gboard oder Autofill mit Google) – das funktioniert mit dem Dialer als SMS-App weiter. Der Code wird auf dem Telefon erkannt: Der Dialer hat keinen Internetzugriff. Langes Drücken auf eine Nachricht kopiert den ganzen Text, eine Nummer daraus oder einen markierten Teil.</string>
 
@@ -1165,4 +1165,15 @@
     <string name="settings_call_status_labels">Anrufstatus anzeigen</string>
     <string name="settings_call_status_labels_text">„Eingehender Anruf“ und „Verbindung wird hergestellt…“; Timer bleibt</string>
     <string name="keywords_call_status_labels">Anrufbildschirm, Status, Hinweis, eingehend, Verbindung, Timer, ausblenden, Text</string>
+    <string name="settings_call_log_duration">Gesprächsdauer</string>
+    <string name="settings_call_log_duration_text">Neben dem Datum: „Heute, 14:05 · 2:35“</string>
+    <string name="keywords_call_log_duration">Anrufliste, Dauer, Länge, Zeit, Minuten, Sekunden, Gespräch</string>
+    <string name="action_call_sim1">Anruf mit SIM 1</string>
+    <string name="action_call_sim2">Anruf mit SIM 2</string>
+    <string name="settings_spam_sim_scope">Regeln gelten für</string>
+    <string name="settings_spam_sim_scope_text">Auf die andere SIM ruft jeder an, außer den Listen</string>
+    <string name="keywords_spam_sim_scope">Spam, Sperre, SIM, Karte, zweite, Arbeit, privat, Regeln</string>
+    <string name="spam_sim_scope_all">Alle SIM-Karten</string>
+    <string name="spam_sim_scope_sim1">Nur SIM 1</string>
+    <string name="spam_sim_scope_sim2">Nur SIM 2</string>
 </resources>
