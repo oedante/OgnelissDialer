@@ -1,0 +1,108 @@
+<ru-RU>
+• «Назад» в журнале, SMS и контактах сворачивает приложение. Переписка из уведомления открывается поверх списка SMS: «Назад» — к списку, ещё «Назад» — выход.
+• Колонка справа настраивается — порядок и показ, частое — у кнопки действия: Настройки → Панель и жесты → Нижняя панель → «Колонка справа».
+</ru-RU>
+<ar>
+• زر الرجوع في السجل والرسائل وجهات الاتصال يُخفي التطبيق. المحادثة من الإشعار تُفتح فوق قائمة الرسائل: رجوع — إلى القائمة، ورجوع مرة أخرى — خروج.
+• يمكن ضبط العمود الأيمن: الترتيب والإظهار، والأكثر استخدامًا بجانب زر الإجراء: الإعدادات ← الشريط والإيماءات ← الشريط السفلي ← «العمود الأيمن».
+</ar>
+<cs-CZ>
+• Zpět ve výpisu, SMS a kontaktech aplikaci skryje. Konverzace z oznámení se otevře nad seznamem SMS: Zpět — na seznam, znovu Zpět — odchod.
+• Sloupec vpravo lze nastavit — pořadí a zobrazení, časté u tlačítka akce: Nastavení → Panel a gesta → Spodní panel → „Sloupec vpravo“.
+</cs-CZ>
+<da-DK>
+• Tilbage i opkaldsloggen, SMS og kontakter skjuler appen. En samtale fra en notifikation åbner over SMS-listen: Tilbage — til listen, Tilbage igen — ud.
+• Kolonnen til højre kan tilpasses — rækkefølge og visning, det hyppige ved handlingsknappen: Indstillinger → Bjælke og bevægelser → Bundbjælke → „Kolonne til højre“.
+</da-DK>
+<de-DE>
+• Zurück in Anrufliste, SMS und Kontakten blendet die App aus. Eine Unterhaltung aus der Benachrichtigung öffnet über der SMS-Liste: Zurück – zur Liste, nochmals Zurück – raus.
+• Spalte rechts anpassbar – Reihenfolge und Anzeige, Häufiges an der Aktionstaste: Einstellungen → Leiste und Gesten → Untere Leiste → „Spalte rechts“.
+</de-DE>
+<en-US>
+• Back in the call log, SMS and contacts hides the app. A conversation from a notification opens over the SMS list: Back — to the list, Back again — out.
+• The right column is customizable — order and visibility, frequent items next to the action button: Settings → Bar and gestures → Bottom bar → "Right column".
+</en-US>
+<es-ES>
+• Atrás en el registro, SMS y contactos oculta la app. Una conversación desde la notificación se abre sobre la lista de SMS: Atrás — a la lista, otra vez Atrás — salir.
+• La columna derecha se ajusta — orden y visibilidad, lo frecuente junto al botón de acción: Ajustes → Barra y gestos → Barra inferior → «Columna derecha».
+</es-ES>
+<fi-FI>
+• Takaisin lokissa, SMS:ssä ja yhteystiedoissa piilottaa sovelluksen. Ilmoituksesta avattu keskustelu aukeaa SMS-listan päälle: Takaisin — listaan, uudelleen — ulos.
+• Oikean sarakkeen voi muokata — järjestys ja näkyvyys, usein käytetyt toimintopainikkeen vieressä: Asetukset → Palkki ja eleet → Alapalkki → ”Sarake oikealla”.
+</fi-FI>
+<fr-FR>
+• Retour dans le journal, les SMS et les contacts masque l’appli. Une conversation ouverte depuis une notification s’affiche sur la liste des SMS : Retour — la liste, encore Retour — sortie.
+• Colonne de droite réglable — ordre et affichage, le plus utilisé près du bouton d’action : Réglages → Barre et gestes → Barre du bas → « Colonne de droite ».
+</fr-FR>
+<hi-IN>
+• कॉल लॉग, SMS और संपर्कों में वापस बटन ऐप छिपाता है। सूचना से खुली बातचीत SMS सूची के ऊपर खुलती है: वापस — सूची, फिर वापस — बाहर।
+• दाईं ओर का कॉलम सेट करें — क्रम और दिखना, बार-बार वाला कार्रवाई बटन के पास: सेटिंग्स → पट्टी और जेस्चर → निचली पट्टी → «दाईं ओर कॉलम»।
+</hi-IN>
+<hu-HU>
+• A Vissza a hívásnaplóban, SMS-ben és névjegyekben elrejti az alkalmazást. Értesítésből nyitott beszélgetés az SMS-lista fölött nyílik: Vissza — a listára, újra Vissza — kilépés.
+• A jobb oldali oszlop állítható — sorrend és megjelenítés, a gyakori a műveletgomb mellett: Beállítások → Sáv és kézmozdulatok → Alsó sáv → „Jobb oldali oszlop”.
+</hu-HU>
+<id>
+• Kembali di log panggilan, SMS, dan kontak menyembunyikan aplikasi. Percakapan dari notifikasi terbuka di atas daftar SMS: Kembali — ke daftar, Kembali lagi — keluar.
+• Kolom kanan bisa diatur — urutan dan tampilan, yang sering dipakai di dekat tombol aksi: Setelan → Bilah dan gestur → Bilah bawah → “Kolom kanan”.
+</id>
+<it-IT>
+• Indietro in registro, SMS e contatti nasconde l’app. Una conversazione dalla notifica si apre sopra l’elenco SMS: Indietro — all’elenco, di nuovo Indietro — uscita.
+• Colonna destra personalizzabile — ordine e visibilità, il più usato accanto al pulsante d’azione: Impostazioni → Barra e gesti → Barra inferiore → «Colonna destra».
+</it-IT>
+<iw-IL>
+• „חזרה” ביומן, ב-SMS ובאנשי הקשר מסתירה את האפליקציה. שיחה מהתראה נפתחת מעל רשימת ה-SMS: „חזרה” — לרשימה, שוב „חזרה” — יציאה.
+• אפשר להתאים את העמודה מימין — סדר ותצוגה, השכיח ליד כפתור הפעולה: הגדרות ← סרגל ומחוות ← סרגל תחתון ← „עמודה מימין”.
+</iw-IL>
+<ja-JP>
+• 通話履歴・SMS・連絡先で「戻る」を押すとアプリを閉じます。通知から開いた会話は SMS 一覧の上に開き、戻るで一覧へ、もう一度で終了します。
+• 右側の列をカスタマイズ可能：順序と表示、よく使うものを操作ボタンの近くに。設定 → バーとジェスチャー → 下部バー → 「右側の列」。
+</ja-JP>
+<ko-KR>
+• 통화 기록, SMS, 연락처에서 뒤로 가기를 누르면 앱이 숨겨집니다. 알림에서 연 대화는 SMS 목록 위에 열리고, 뒤로 — 목록, 다시 뒤로 — 종료.
+• 오른쪽 열 설정 가능: 순서와 표시, 자주 쓰는 항목은 동작 버튼 옆에: 설정 → 바 및 제스처 → 하단 바 → '오른쪽 열'.
+</ko-KR>
+<nl-NL>
+• Terug in de oproeplijst, sms en contacten verbergt de app. Een gesprek uit een melding opent boven de sms-lijst: Terug — naar de lijst, nogmaals Terug — weg.
+• De kolom rechts is in te stellen — volgorde en weergave, veelgebruikt bij de actieknop: Instellingen → Balk en gebaren → Onderbalk → ‘Kolom rechts’.
+</nl-NL>
+<no-NO>
+• Tilbake i anropsloggen, SMS og kontakter skjuler appen. En samtale fra et varsel åpnes over SMS-listen: Tilbake — til listen, Tilbake igjen — ut.
+• Kolonnen til høyre kan tilpasses — rekkefølge og visning, det vanligste ved handlingsknappen: Innstillinger → Linje og bevegelser → Bunnlinje → «Kolonne til høyre».
+</no-NO>
+<pl-PL>
+• Wstecz w rejestrze, SMS i kontaktach ukrywa aplikację. Rozmowa z powiadomienia otwiera się nad listą SMS: Wstecz — do listy, znów Wstecz — wyjście.
+• Kolumnę po prawej można ustawić — kolejność i widoczność, częste przy przycisku akcji: Ustawienia → Pasek i gesty → Dolny pasek → „Kolumna po prawej”.
+</pl-PL>
+<pt-BR>
+• Voltar no registro, SMS e contatos oculta o app. Uma conversa aberta pela notificação aparece sobre a lista de SMS: Voltar — à lista, Voltar de novo — sair.
+• A coluna da direita é configurável — ordem e exibição, o mais usado junto ao botão de ação: Configurações → Barra e gestos → Barra inferior → “Coluna da direita”.
+</pt-BR>
+<ro>
+• Înapoi în jurnal, SMS și contacte ascunde aplicația. O conversație din notificare se deschide peste lista SMS: Înapoi — la listă, încă o dată — ieșire.
+• Coloana din dreapta se poate regla — ordine și afișare, cele frecvente lângă butonul de acțiune: Setări → Bară și gesturi → Bara inferioară → „Coloana din dreapta”.
+</ro>
+<sk>
+• Späť vo výpise, SMS a kontaktoch aplikáciu skryje. Konverzácia z upozornenia sa otvorí nad zoznamom SMS: Späť — na zoznam, znova Späť — odchod.
+• Stĺpec vpravo sa dá nastaviť — poradie a zobrazenie, časté pri tlačidle akcie: Nastavenia → Panel a gestá → Spodný panel → „Stĺpec vpravo“.
+</sk>
+<sv-SE>
+• Tillbaka i samtalsloggen, SMS och kontakter döljer appen. En konversation från en avisering öppnas över SMS-listan: Tillbaka — till listan, Tillbaka igen — ut.
+• Kolumnen till höger kan anpassas — ordning och visning, det vanligaste vid åtgärdsknappen: Inställningar → Fält och gester → Bottenfält → ”Kolumn till höger”.
+</sv-SE>
+<th>
+• ปุ่มย้อนกลับในบันทึกการโทร SMS และรายชื่อติดต่อจะซ่อนแอป แชทจากการแจ้งเตือนเปิดบนรายการ SMS: ย้อนกลับ — ไปที่รายการ กดอีกครั้ง — ออก
+• ปรับคอลัมน์ด้านขวาได้ ทั้งลำดับและการแสดง รายการที่ใช้บ่อยอยู่ข้างปุ่มการทำงาน: การตั้งค่า → แถบและท่าทาง → แถบด้านล่าง → «คอลัมน์ด้านขวา»
+</th>
+<tr-TR>
+• Arama kaydı, SMS ve kişilerde Geri uygulamayı gizler. Bildirimden açılan sohbet SMS listesinin üstünde açılır: Geri — listeye, tekrar Geri — çıkış.
+• Sağdaki sütun ayarlanabilir — sıra ve görünürlük, sık kullanılanlar eylem düğmesinin yanında: Ayarlar → Çubuk ve hareketler → Alt çubuk → “Sağ sütun”.
+</tr-TR>
+<vi>
+• Quay lại trong nhật ký, SMS và danh bạ sẽ ẩn ứng dụng. Cuộc trò chuyện từ thông báo mở trên danh sách SMS: Quay lại — về danh sách, thêm lần nữa — thoát.
+• Cột bên phải có thể tùy chỉnh — thứ tự và hiển thị, mục hay dùng cạnh nút thao tác: Cài đặt → Thanh và cử chỉ → Thanh dưới → “Cột bên phải”.
+</vi>
+<zh-CN>
+• 在通话记录、短信和联系人中按返回会隐藏应用。从通知打开的会话显示在短信列表之上：返回到列表，再按返回即退出。
+• 右侧列可自定义：顺序和显示，常用项靠近操作按钮：设置 → 栏与手势 → 底部栏 → “右侧列”。
+</zh-CN>

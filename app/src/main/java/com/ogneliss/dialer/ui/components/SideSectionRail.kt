@@ -6,7 +6,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.draw.clip
@@ -37,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.ogneliss.dialer.settings.PanelSlot
 import com.ogneliss.dialer.ui.theme.OgnelissTheme
 import com.ogneliss.dialer.ui.theme.PanelColors
 import com.ogneliss.dialer.ui.theme.Space
@@ -58,10 +56,11 @@ import com.ogneliss.dialer.ui.theme.Space
  *   строке журнала, SMS и контактов — кнопка звонка, и плавающие кнопки её
  *   закрывали бы. Список становится уже на ширину колонки, зато ничего
  *   не перекрыто.
- * • В колонке — разделы из конструктора (PanelSlots) и кнопка действия раздела
- *   («Набор», «Написать», «Создать»). Было (2.9.3): места 1–2, центр, места 3–4,
- *   «Меню» — сверху вниз. С 2.9.6 кнопка действия — в самом низу; с 2.9.8 «Меню» —
- *   наверху колонки, а «Инструменты» меню — на колонке, под разделами.
+ * • В колонке — «Меню» наверху, кнопка действия раздела («Набор», «Написать»,
+ *   «Создать») в самом низу и между ними пункты «Колонки справа» (RailItem):
+ *   первый — у кнопки действия, дальше вверх. Было (2.9.3): места нижней панели
+ *   сверху вниз; 2.9.6 — кнопка действия внизу; 2.9.8 — «Меню» наверху
+ *   и инструменты меню на колонке; 2.9.9 — свой порядок и показ, снизу вверх.
  * • Внизу экрана остаётся только нужное в этот момент: постоянное поле поиска
  *   (контакты, заметки, напоминания), клавиатура набора и поиск журнала, когда
  *   они открыты. Списку — вся высота.
@@ -170,9 +169,11 @@ internal val LocalSideRail = staticCompositionLocalOf<SideRailState?> { null }
 @Composable
 internal fun SideSectionRail(
     state: SideRailState,
-    slots: List<PanelSlot>,
-    /** «Инструменты» из настройки (MenuTool.visible) — в порядке и с показом, как в меню. */
-    tools: List<com.ogneliss.dialer.ui.screens.MenuTool>,
+    /**
+     * Пункты колонки по порядку (2.9.9, RailItem.visible): первый — у кнопки
+     * действия, дальше — вверх.
+     */
+    items: List<com.ogneliss.dialer.ui.screens.RailItem>,
     /** Открытый раздел — отмечен, как на нижней панели. */
     current: MainSection?,
     onOpenSection: (MainSection) -> Unit,
@@ -180,7 +181,6 @@ internal fun SideSectionRail(
 ) {
     val actions = state.actions
     val extras = state.tools
-    val sections = slots.filter { it != PanelSlot.MENU }.map { it.toSection() }
     Surface(
         // Цвет нижней панели и её линия — слева: та же панель, повёрнутая к краю
         color = PanelColors.panel(),
@@ -200,10 +200,16 @@ internal fun SideSectionRail(
              * 2.9.8 (автор: «на панель перенесём из „Ещё“ инструменты и саму кнопку
              * „Ещё“; в режиме панели справа не отмечается активная вкладка»).
              * Сверху — «Меню» (было в шапке, 2.9.6): папки, «Действия», приложение
-             * и поиск. Ниже, прижатые к низу, — разделы из конструктора, затем
-             * инструменты (их больше нет в самом меню), в самом низу — кнопка
-             * действия раздела. Не помещается (низкий экран, крупный шрифт) —
-             * середина листается, «Меню» и кнопка действия на месте.
+             * и поиск. В самом низу — кнопка действия раздела.
+             *
+             * 2.9.9 (автор: «частое — ближе к нижнему правому углу, от кнопки
+             * клавиатуры или создания: журнал, SMS, контакты и остальное»; «боковую
+             * панель тоже настраивать — порядок, отображение»). Между ними — пункты
+             * из настройки «Колонка справа» (RailItem): первый — сразу над кнопкой
+             * действия, следующие — выше. Было (2.9.8): разделы из конструктора
+             * нижней панели сверху вниз, под ними инструменты меню через черту.
+             * Не помещается (низкий экран, крупный шрифт) — середина листается,
+             * «Меню» и кнопка действия на месте.
              */
             Box {
                 LabeledIconButton(
@@ -226,28 +232,17 @@ internal fun SideSectionRail(
                     verticalArrangement = Arrangement.spacedBy(Space.xs),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    sections.forEach { section ->
-                        RailCell(section.icon, section.labelRes, selected = section == current) {
-                            if (section != current) onOpenSection(section)
-                        }
-                    }
-                    val toolCells = tools.filter { tool -> tool.section == null || tool.section !in sections }
-                    if (toolCells.isNotEmpty() && sections.isNotEmpty()) {
-                        HorizontalDivider(
-                            Modifier.padding(horizontal = Space.m, vertical = Space.xxs),
-                            color = OgnelissTheme.surfaces.divider
-                        )
-                    }
-                    toolCells.forEach { tool ->
-                        val section = tool.section
+                    // Снизу вверх: первый пункт — у кнопки действия
+                    items.asReversed().forEach { item ->
+                        val section = item.section
                         when {
-                            section != null -> RailCell(tool.icon, tool.labelRes, selected = section == current) {
+                            section != null -> RailCell(item.icon, item.labelRes, selected = section == current) {
                                 if (section != current) onOpenSection(section)
                             }
-                            tool == com.ogneliss.dialer.ui.screens.MenuTool.OWN_CONTACT ->
-                                extras?.onOwnContact?.let { RailCell(tool.icon, tool.labelRes, onClick = it) }
-                            tool == com.ogneliss.dialer.ui.screens.MenuTool.FAKE_CALL ->
-                                extras?.onFakeCall?.let { RailCell(tool.icon, tool.labelRes, onClick = it) }
+                            item == com.ogneliss.dialer.ui.screens.RailItem.OWN_CONTACT ->
+                                extras?.onOwnContact?.let { RailCell(item.icon, item.labelRes, onClick = it) }
+                            item == com.ogneliss.dialer.ui.screens.RailItem.FAKE_CALL ->
+                                extras?.onFakeCall?.let { RailCell(item.icon, item.labelRes, onClick = it) }
                         }
                     }
                 }

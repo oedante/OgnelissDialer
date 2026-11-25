@@ -1185,4 +1185,7 @@
     <string name="spam_sim_scope_all">Все SIM-карты</string>
     <string name="spam_sim_scope_sim1">Только SIM 1</string>
     <string name="spam_sim_scope_sim2">Только SIM 2</string>
+    <string name="rail_items_title">Колонка справа</string>
+    <string name="rail_items_summary">Порядок и показ: первый — у кнопки действия</string>
+    <string name="rail_items_near_action">У кнопки действия</string>
 </resources>

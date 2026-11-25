@@ -1176,4 +1176,7 @@
     <string name="spam_sim_scope_all">Alle SIM-Karten</string>
     <string name="spam_sim_scope_sim1">Nur SIM 1</string>
     <string name="spam_sim_scope_sim2">Nur SIM 2</string>
+    <string name="rail_items_title">Spalte rechts</string>
+    <string name="rail_items_summary">Reihenfolge und Anzeige: der erste neben der Aktionstaste</string>
+    <string name="rail_items_near_action">Neben der Aktionstaste</string>
 </resources>

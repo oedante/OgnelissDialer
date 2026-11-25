@@ -95,6 +95,7 @@ class SettingsStateSource @Inject constructor(
         .combine(prefs.messengersAnyNumber) { a, v -> a.copy(messengersAnyNumber = v) }
         .combine(prefs.panelSlots) { a, v -> a.copy(panelSlots = v) }
         .combine(prefs.menuTools) { a, v -> a.copy(menuTools = v) }
+        .combine(prefs.railItems) { a, v -> a.copy(railItems = v) }
         .combine(prefs.panelSide) { a, v -> a.copy(panelSide = v) }
 
     /** Жесты и отклик. */
@@ -246,6 +247,7 @@ class SettingsStateSource @Inject constructor(
             callLogDuration = a.callLogDuration,
             panelSlots = a.panelSlots,
             menuTools = a.menuTools,
+            railItems = a.railItems,
             panelSide = a.panelSide,
             startSection = a.startSection,
             contactNameFormat = a.contactNameFormat,
@@ -339,6 +341,7 @@ class SettingsStateSource @Inject constructor(
         val callLogDuration: Boolean = false,
         val panelSlots: String? = null,
         val menuTools: String? = null,
+        val railItems: String? = null,
         val panelSide: Boolean = false,
         val startSection: StartChoice = StartChoice.JOURNAL,
         val messengersAnyNumber: Boolean = false,

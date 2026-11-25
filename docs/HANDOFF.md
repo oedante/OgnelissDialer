@@ -12,6 +12,17 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
+## 25.11.2026 — 2.9.9 (104): «Назад» из разделов сворачивает приложение; колонка справа настраивается
+
+Разбор — `docs/RELEASE_NOTES_2.9.9.md`. `ui/SectionNavigator.kt`: раздел — основание стека
+(`open`: popUpTo прежнего основания inclusive + saveState, restoreState; `openFromOutside`;
+`ensureRoot` — переписка снаружи поверх SMS, карточка из уведомления поверх журнала); основание
+хранится в RootScreen (`rememberSaveable`). Маршрут контактов — `SectionNavigator.CONTACTS_ROUTE`.
+Колонка: `RailItem` (`rail_items`, FolderOrder, «Журнал» обязателен), снизу вверх от кнопки
+действия; экран — `MenuFoldersScreen` по маршруту `rail_items`, вход — с «Нижней панели».
+2.9.8 в Google Play могла не уйти: «Что нового» — `store/whats_new_2.9.9.txt` (только 2.9.9)
+и `store/whats_new_2.9.9_since_2.9.7.txt` (2.9.8 + 2.9.9).
+
 ## 25.11.2026 — 2.9.8 (103): форум — свайпы с SIM, длительность, спам по SIM, «Назад»; колонка справа; без Max
 
 Разбор — `docs/RELEASE_NOTES_2.9.8.md`. `SwipeAction.CALL_SIM1/CALL_SIM2` (`simSlotOf`; значок

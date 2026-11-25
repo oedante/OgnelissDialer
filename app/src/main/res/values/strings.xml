@@ -1204,4 +1204,7 @@
     <string name="spam_sim_scope_all">All SIM cards</string>
     <string name="spam_sim_scope_sim1">SIM 1 only</string>
     <string name="spam_sim_scope_sim2">SIM 2 only</string>
+    <string name="rail_items_title">Right column</string>
+    <string name="rail_items_summary">Order and visibility: the first is next to the action button</string>
+    <string name="rail_items_near_action">Next to the action button</string>
 </resources>

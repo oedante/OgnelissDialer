@@ -1,0 +1,216 @@
+<ru-RU>
+• Свайпы «Позвонить с SIM 1 / SIM 2» — со значком карты при свайпе.
+• Длительность разговора в журнале.
+• Правила защиты от спама — для одной SIM или для обеих.
+• «Назад» в журнале, SMS и контактах сворачивает приложение; переписка из уведомления — поверх списка SMS.
+• Колонка справа: «Меню» и инструменты на ней, свой порядок и показ, открытый раздел отмечен.
+• Max убран из свайпов и «Написать».
+</ru-RU>
+<ar>
+• سحب «اتصال من SIM 1 / SIM 2» مع أيقونة الشريحة.
+• مدة المكالمة في السجل.
+• قواعد الحماية من الإزعاج لشريحة واحدة أو للاثنتين.
+• الرجوع في السجل والرسائل وجهات الاتصال يُخفي التطبيق؛ المحادثة من الإشعار فوق قائمة الرسائل.
+• العمود الأيمن: «القائمة» والأدوات فيه، بترتيب وإظهار حسب رغبتك، والقسم المفتوح مميّز.
+• أُزيل Max من السحب و«مراسلة».
+</ar>
+<cs-CZ>
+• Přejetí „Volat ze SIM 1 / SIM 2“ s ikonou karty.
+• Délka hovoru ve výpisu.
+• Pravidla ochrany před spamem pro jednu SIM nebo obě.
+• Zpět ve výpisu, SMS a kontaktech aplikaci skryje; konverzace z oznámení nad seznamem SMS.
+• Sloupec vpravo: „Menu“ a nástroje na něm, vlastní pořadí a zobrazení, otevřená sekce označena.
+• Max odebrán z přejetí a „Napsat“.
+</cs-CZ>
+<da-DK>
+• Swipes „Ring fra SIM 1 / SIM 2“ med SIM-ikon.
+• Samtalens varighed i loggen.
+• Spamregler for ét SIM eller begge.
+• Tilbage i log, SMS og kontakter skjuler appen; samtale fra notifikation åbner over SMS-listen.
+• Kolonne til højre: „Menu“ og værktøjer på den, egen rækkefølge og visning, åben sektion markeret.
+• Max fjernet fra swipes og „Skriv“.
+</da-DK>
+<de-DE>
+• Wischen „Anruf mit SIM 1 / SIM 2“ mit SIM-Symbol.
+• Gesprächsdauer in der Anrufliste.
+• Spamregeln für eine SIM oder beide.
+• Zurück in Anrufliste, SMS und Kontakten blendet die App aus; Unterhaltung aus Benachrichtigung über der SMS-Liste.
+• Spalte rechts: „Menü“ und Werkzeuge darauf, eigene Reihenfolge, offener Bereich markiert.
+• Max aus Wischen und „Schreiben“ entfernt.
+</de-DE>
+<en-US>
+• "Call from SIM 1 / SIM 2" swipes with the SIM icon.
+• Call duration in the call log.
+• Spam protection rules for one SIM or both.
+• Back in the call log, SMS and contacts hides the app; a conversation from a notification opens over the SMS list.
+• Right column: Menu and tools on it, your own order and visibility, the open section is marked.
+• Max removed from swipes and "Message".
+</en-US>
+<es-ES>
+• Deslizar «Llamar con SIM 1 / SIM 2» con el icono de la SIM.
+• Duración de la llamada en el registro.
+• Reglas antispam para una SIM o ambas.
+• Atrás en registro, SMS y contactos oculta la app; la conversación desde la notificación, sobre la lista de SMS.
+• Columna derecha: «Menú» y herramientas en ella, orden propio, sección abierta marcada.
+• Max eliminado de deslizar y «Escribir».
+</es-ES>
+<fi-FI>
+• Pyyhkäisyt ”Soita SIM 1:llä / SIM 2:lla” SIM-kuvakkeella.
+• Puhelun kesto lokissa.
+• Roskapuhelusäännöt yhdelle SIMille tai molemmille.
+• Takaisin lokissa, SMS:ssä ja yhteystiedoissa piilottaa sovelluksen; ilmoituksen keskustelu SMS-listan päälle.
+• Oikea sarake: ”Valikko” ja työkalut siinä, oma järjestys, avoin osio merkitty.
+• Max poistettu pyyhkäisyistä ja ”Kirjoita”-valinnasta.
+</fi-FI>
+<fr-FR>
+• Balayages « Appeler avec la SIM 1 / SIM 2 » avec l’icône de la SIM.
+• Durée des appels dans le journal.
+• Règles anti-spam pour une SIM ou les deux.
+• Retour dans le journal, les SMS et les contacts masque l’appli ; la conversation d’une notification s’ouvre sur la liste des SMS.
+• Colonne de droite : menu et outils, ordre réglable, section ouverte marquée.
+• Max retiré des balayages et de « Écrire ».
+</fr-FR>
+<hi-IN>
+• «SIM 1 / SIM 2 से कॉल» स्वाइप, SIM आइकन के साथ।
+• लॉग में कॉल की अवधि।
+• स्पैम सुरक्षा नियम एक SIM या दोनों के लिए।
+• लॉग, SMS और संपर्कों में वापस बटन ऐप छिपाता है; सूचना की बातचीत SMS सूची के ऊपर।
+• दाईं ओर कॉलम: «मेनू» और टूल उसमें, अपना क्रम, खुला अनुभाग चिह्नित।
+• Max को स्वाइप और «लिखें» से हटाया।
+</hi-IN>
+<hu-HU>
+• „Hívás SIM 1-ről / SIM 2-ről” csúsztatás a SIM ikonjával.
+• Hívás hossza a naplóban.
+• Spamszabályok egy SIM-re vagy mindkettőre.
+• A Vissza a naplóban, SMS-ben és névjegyekben elrejti az appot; értesítésből nyitott beszélgetés az SMS-lista fölött.
+• Jobb oszlop: „Menü” és eszközök rajta, saját sorrend, nyitott szakasz jelölve.
+• A Max kikerült a csúsztatásokból és az „Írás” közül.
+</hu-HU>
+<id>
+• Usap “Panggil dari SIM 1 / SIM 2” dengan ikon SIM.
+• Durasi panggilan di log.
+• Aturan antispam untuk satu SIM atau keduanya.
+• Kembali di log, SMS, dan kontak menyembunyikan aplikasi; percakapan dari notifikasi di atas daftar SMS.
+• Kolom kanan: “Menu” dan alat di sana, urutan sendiri, bagian terbuka ditandai.
+• Max dihapus dari usap dan “Tulis”.
+</id>
+<it-IT>
+• Scorrimenti «Chiama con SIM 1 / SIM 2» con l’icona della SIM.
+• Durata delle chiamate nel registro.
+• Regole antispam per una SIM o entrambe.
+• Indietro in registro, SMS e contatti nasconde l’app; la conversazione dalla notifica si apre sopra l’elenco SMS.
+• Colonna destra: «Menu» e strumenti, ordine personale, sezione aperta evidenziata.
+• Max rimosso da scorrimenti e «Scrivi».
+</it-IT>
+<iw-IL>
+• החלקות „התקשר מ-SIM 1 / SIM 2” עם סמל ה-SIM.
+• משך השיחה ביומן.
+• כללי הגנה מספאם ל-SIM אחד או לשניהם.
+• „חזרה” ביומן, ב-SMS ובאנשי הקשר מסתירה את האפליקציה; שיחה מהתראה נפתחת מעל רשימת ה-SMS.
+• העמודה מימין: „תפריט” וכלים בה, סדר משלכם, המקטע הפתוח מסומן.
+• Max הוסר מההחלקות ומ„כתיבה”.
+</iw-IL>
+<ja-JP>
+• 「SIM 1 / SIM 2 で発信」スワイプ（SIM アイコン付き）。
+• 通話履歴に通話時間。
+• 迷惑電話ルールを片方の SIM だけに。
+• 通話履歴・SMS・連絡先で「戻る」でアプリを閉じる。通知の会話は SMS 一覧の上に開く。
+• 右側の列：「メニュー」とツールを配置、順序を自由に、開いているセクションを表示。
+• Max をスワイプと「メッセージ」から削除。
+</ja-JP>
+<ko-KR>
+• 'SIM 1 / SIM 2로 전화' 스와이프, SIM 아이콘 표시.
+• 통화 기록에 통화 시간.
+• 스팸 차단 규칙을 SIM 하나 또는 둘 다에.
+• 통화 기록, SMS, 연락처에서 뒤로 가기로 앱 숨기기; 알림의 대화는 SMS 목록 위에.
+• 오른쪽 열: '메뉴'와 도구 배치, 순서 설정, 열린 섹션 표시.
+• Max를 스와이프와 '메시지'에서 제거.
+</ko-KR>
+<nl-NL>
+• Vegen ‘Bellen met sim 1 / sim 2’ met simpictogram.
+• Gespreksduur in de oproeplijst.
+• Spamregels voor één simkaart of beide.
+• Terug in oproeplijst, sms en contacten verbergt de app; gesprek uit melding boven de sms-lijst.
+• Kolom rechts: ‘Menu’ en hulpmiddelen erop, eigen volgorde, open sectie gemarkeerd.
+• Max verwijderd uit vegen en ‘Schrijven’.
+</nl-NL>
+<no-NO>
+• Sveip «Ring fra SIM 1 / SIM 2» med SIM-ikon.
+• Samtalens varighet i loggen.
+• Spamregler for ett SIM eller begge.
+• Tilbake i logg, SMS og kontakter skjuler appen; samtale fra varsel åpnes over SMS-listen.
+• Kolonne til høyre: «Meny» og verktøy på den, egen rekkefølge, åpen seksjon markert.
+• Max fjernet fra sveip og «Skriv».
+</no-NO>
+<pl-PL>
+• Przesunięcia „Zadzwoń z SIM 1 / SIM 2” z ikoną karty.
+• Czas rozmowy w rejestrze.
+• Reguły ochrony przed spamem dla jednej karty lub obu.
+• Wstecz w rejestrze, SMS i kontaktach ukrywa aplikację; rozmowa z powiadomienia nad listą SMS.
+• Kolumna po prawej: „Menu” i narzędzia na niej, własna kolejność, otwarta sekcja oznaczona.
+• Max usunięty z przesunięć i „Napisz”.
+</pl-PL>
+<pt-BR>
+• Deslizes “Ligar do SIM 1 / SIM 2” com o ícone do SIM.
+• Duração das chamadas no registro.
+• Regras antispam para um SIM ou ambos.
+• Voltar no registro, SMS e contatos oculta o app; conversa da notificação abre sobre a lista de SMS.
+• Coluna da direita: “Menu” e ferramentas nela, ordem própria, seção aberta marcada.
+• Max removido dos deslizes e de “Escrever”.
+</pt-BR>
+<ro>
+• Glisări „Sună de pe SIM 1 / SIM 2” cu pictograma SIM.
+• Durata apelului în jurnal.
+• Reguli antispam pentru un SIM sau ambele.
+• Înapoi în jurnal, SMS și contacte ascunde aplicația; conversația din notificare se deschide peste lista SMS.
+• Coloana din dreapta: „Meniu” și instrumente pe ea, ordine proprie, secțiunea deschisă marcată.
+• Max eliminat din glisări și „Scrie”.
+</ro>
+<sk>
+• Potiahnutia „Volať zo SIM 1 / SIM 2“ s ikonou karty.
+• Dĺžka hovoru vo výpise.
+• Pravidlá ochrany pred spamom pre jednu SIM alebo obe.
+• Späť vo výpise, SMS a kontaktoch aplikáciu skryje; konverzácia z upozornenia nad zoznamom SMS.
+• Stĺpec vpravo: „Menu“ a nástroje na ňom, vlastné poradie, otvorená sekcia označená.
+• Max odstránený z potiahnutí a „Napísať“.
+</sk>
+<sv-SE>
+• Svep ”Ring från SIM 1 / SIM 2” med SIM-ikon.
+• Samtalets längd i loggen.
+• Spamregler för ett SIM eller båda.
+• Tillbaka i logg, SMS och kontakter döljer appen; konversation från avisering öppnas över SMS-listan.
+• Kolumn till höger: ”Meny” och verktyg på den, egen ordning, öppen sektion markerad.
+• Max borttaget från svep och ”Skriv”.
+</sv-SE>
+<th>
+• ปัด «โทรจาก SIM 1 / SIM 2» พร้อมไอคอน SIM
+• ระยะเวลาการโทรในบันทึก
+• กฎป้องกันสแปมสำหรับ SIM เดียวหรือทั้งสอง
+• ปุ่มย้อนกลับในบันทึก SMS และรายชื่อติดต่อจะซ่อนแอป แชทจากการแจ้งเตือนเปิดบนรายการ SMS
+• คอลัมน์ด้านขวา: «เมนู» และเครื่องมืออยู่บนคอลัมน์ จัดลำดับเองได้ ส่วนที่เปิดมีเครื่องหมาย
+• นำ Max ออกจากการปัดและ «เขียน»
+</th>
+<tr-TR>
+• SIM simgeli “SIM 1 / SIM 2 ile ara” kaydırmaları.
+• Arama kaydında konuşma süresi.
+• Spam kuralları tek SIM ya da ikisi için.
+• Kayıt, SMS ve kişilerde Geri uygulamayı gizler; bildirimden sohbet SMS listesinin üstünde açılır.
+• Sağ sütun: “Menü” ve araçlar üzerinde, kendi sıranız, açık bölüm işaretli.
+• Max kaydırmalardan ve “Yaz”dan kaldırıldı.
+</tr-TR>
+<vi>
+• Vuốt “Gọi bằng SIM 1 / SIM 2” kèm biểu tượng SIM.
+• Thời lượng cuộc gọi trong nhật ký.
+• Quy tắc chặn spam cho một SIM hoặc cả hai.
+• Quay lại trong nhật ký, SMS và danh bạ sẽ ẩn ứng dụng; trò chuyện từ thông báo mở trên danh sách SMS.
+• Cột bên phải: “Menu” và công cụ trên cột, thứ tự riêng, mục đang mở được đánh dấu.
+• Đã bỏ Max khỏi vuốt và “Nhắn”.
+</vi>
+<zh-CN>
+• “用 SIM 1 / SIM 2 拨打”滑动操作，带 SIM 图标。
+• 通话记录显示通话时长。
+• 防骚扰规则可只用于一张 SIM。
+• 在通话记录、短信、联系人中按返回即隐藏应用；通知中的会话显示在短信列表之上。
+• 右侧列：“菜单”和工具在列上，顺序可自定，当前分区有标记。
+• 已从滑动和“发消息”中移除 Max。
+</zh-CN>

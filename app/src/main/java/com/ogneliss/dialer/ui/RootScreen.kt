@@ -159,49 +159,18 @@ fun RootScreen(
      * ПЕРЕХОД МЕЖДУ РАЗДЕЛАМИ (1.6.0, вариант «Б»).
      *
      * Журнал, контакты, заметки, напоминания — соседи, а не экраны друг
-     * в друге: в стеке под любым из них только журнал. «Назад» из контактов
-     * ведёт в журнал, а не в то, что открывали перед ними, и экраны не
-     * громоздятся при переключении туда-обратно. Так же ведёт боковая
+     * в друге: экраны не громоздятся при переключении туда-обратно. До 2.9.9
+     * под любым из них в стеке был журнал и «Назад» вело в него; теперь
+     * раздел сам — основание (разбор ниже). Так же ведёт боковая
      * полоса планшета; на телефоне — переключатель на панели и список
      * разделов по долгому нажатию на него.
      */
-    /*
-     * РАЗДЕЛЫ И «НАЗАД».
-     * Журнал — основание: разделы открываются поверх него, «Назад» в разделе
-     * возвращает в журнал, «Назад» в журнале сворачивает приложение.
-     *
-     * 2.9.8 — РАЗДЕЛ, ОТКРЫТЫЙ СНАРУЖИ (форум, Bublikov34: «если использовать
-     * приложение SMS, при свайпе назад вместо выхода в журнал попадаешь»; автор:
-     * «пересмотрю логику»). Значок «SMS» или «Контакты», виджет, «При запуске
-     * открывать» — раздел, с которого человек начал, сам становится основанием
-     * ([openSectionAsRoot]): «Назад» в нём сворачивает приложение, как у отдельного
-     * приложения. Журнала под ним нет; открыл журнал с панели — журнал снова
-     * основание, и дальше всё как прежде. Своего обработчика «Назад» нет: при
-     * одном экране в стеке навигация «Назад» не забирает, и его выполняет система.
-     */
-    val journalInStack: () -> Boolean = {
-        runCatching { nav.getBackStackEntry(MainSection.JOURNAL.route) }.isSuccess
-    }
-    val openSectionAsRoot: (MainSection) -> Unit = { section ->
-        nav.navigate(section.route) {
-            // Весь стек — долой, раздел — с чистого листа: сохранённое состояние
-            // прежнего основания здесь только путало бы, что вернётся по «Назад»
-            popUpTo(nav.graph.id) { inclusive = true }
-            launchSingleTop = true
-        }
-    }
-    val openSection: (MainSection) -> Unit = { section ->
-        when {
-            // Раздел открыт снаружи, журнала под ним нет — журнал становится основанием
-            !journalInStack() -> openSectionAsRoot(section)
-            section == MainSection.JOURNAL -> nav.popBackStack(MainSection.JOURNAL.route, inclusive = false)
-            else -> nav.navigate(section.route) {
-                popUpTo(MainSection.JOURNAL.route) { saveState = true }
-                launchSingleTop = true
-                restoreState = true
-            }
-        }
-    }
+    // Разделы и «Назад» (2.9.9): раздел — основание стека, разбор в SectionNavigator
+    val rootSectionState = rememberSaveable { mutableStateOf(MainSection.JOURNAL.name) }
+    val sections = remember(nav) { SectionNavigator(nav, rootSectionState) }
+    val openSection: (MainSection) -> Unit = { section -> sections.open(section) }
+    val openSectionFromOutside: (MainSection) -> Unit = { section -> sections.openFromOutside(section) }
+
     val vm: DialerViewModel = hiltViewModel()
 
     // Экран после звонка показывается поверх ЛЮБОГО экрана приложения:
@@ -396,8 +365,8 @@ fun RootScreen(
 
     // Значок раздела на главном экране (2.1.0): ключ — и раздел, и счётчик намерений
     LaunchedEffect(openSectionRoute, prefillToken) {
-        // 2.9.8: открыт снаружи — основанием, «Назад» в нём сворачивает приложение
-        MainSection.entries.firstOrNull { it.route == openSectionRoute }?.let(openSectionAsRoot)
+        // Открыт снаружи — основанием, «Назад» в нём сворачивает приложение (2.9.8–2.9.9)
+        MainSection.entries.firstOrNull { it.route == openSectionRoute }?.let(openSectionFromOutside)
     }
 
     /*
@@ -420,6 +389,9 @@ fun RootScreen(
 
     LaunchedEffect(openCardForNumber) {
         openCardForNumber?.let { number ->
+            // 2.9.9: карточка из уведомления (пропущенный, напоминание) — поверх журнала:
+            // «Назад» — журнал, ещё «Назад» — приложение свёрнуто
+            sections.ensureRoot(MainSection.JOURNAL)
             nav.navigate("subscriber/" + android.net.Uri.encode("number:$number"))
         }
     }
@@ -432,6 +404,12 @@ fun RootScreen(
      */
     LaunchedEffect(openConversation, prefillToken) {
         openConversation?.let { request ->
+            /*
+             * 2.9.9 (автор: «по уведомлению открывают SMS, отвечают, „Назад“ — в список
+             * SMS, ещё „Назад“ — ожидают скрытие приложения»): переписка снаружи
+             * (уведомление, «Написать» из другого приложения) — поверх раздела SMS.
+             */
+            sections.ensureRoot(MainSection.MESSAGES)
             nav.navigate(request.route()) {
                 popUpTo(com.ogneliss.dialer.ui.conversation.ConversationRequest.ROUTE) { inclusive = true }
                 launchSingleTop = true
@@ -917,7 +895,7 @@ fun RootScreen(
                     }
                 }
                 composable(
-                    "contacts?pick={pick}&number={number}",
+                    SectionNavigator.CONTACTS_ROUTE,
                     arguments = listOf(
                         navArgument("pick") { defaultValue = ""; type = NavType.StringType },
                         // Номер для «Добавить номер к контакту» (1.7.0)
@@ -1280,7 +1258,34 @@ fun RootScreen(
                         // 2.9.3: разделы справа (проба) и «Инструменты меню»
                         side = settings.panelSide,
                         onSideChange = { v -> slotsScope.launch { vm.prefs.setPanelSide(v) } },
-                        onOpenMenuTools = { nav.navigate("menu_tools") }
+                        onOpenMenuTools = { nav.navigate("menu_tools") },
+                        // 2.9.9: порядок и показ колонки справа
+                        onOpenRailItems = { nav.navigate("rail_items") }
+                    )
+                }
+
+                /*
+                 * «Колонка справа» (2.9.9, автор: «боковую панель тоже желательно
+                 * настраивать — порядок, отображение»): тем же экраном, что папки
+                 * и «Инструменты меню». Первый пункт — у кнопки действия; «Журнал»
+                 * не скрыть, как на нижней панели. Разбор — RailItem.
+                 */
+                composable("rail_items") {
+                    val railScope = rememberCoroutineScope()
+                    val nearAction = stringResource(R.string.rail_items_near_action)
+                    com.ogneliss.dialer.ui.screens.MenuFoldersScreen(
+                        title = stringResource(R.string.rail_items_title),
+                        folders = com.ogneliss.dialer.ui.screens.RailItem.items(),
+                        raw = settings.railItems,
+                        onSave = { v -> railScope.launch { vm.prefs.setRailItems(v) } },
+                        onBack = { nav.popBackStack() },
+                        fixed = com.ogneliss.dialer.ui.screens.RailItem.FIXED,
+                        // Первый видимый — сразу над кнопкой действия: подсказка, откуда счёт
+                        note = { key ->
+                            nearAction.takeIf {
+                                com.ogneliss.dialer.ui.screens.RailItem.visible(settings.railItems).firstOrNull()?.name == key
+                            }
+                        }
                     )
                 }
 
@@ -1466,9 +1471,8 @@ fun RootScreen(
             ) {
                 com.ogneliss.dialer.ui.components.SideSectionRail(
                     state = sideRailState,
-                    slots = panelSlots,
-                    // 2.9.8: инструменты меню — на колонке
-                    tools = com.ogneliss.dialer.ui.screens.MenuTool.visible(settings.menuTools),
+                    // 2.9.9: свой порядок и показ — «Колонка справа» (RailItem)
+                    items = com.ogneliss.dialer.ui.screens.RailItem.visible(settings.railItems),
                     current = currentSection,
                     onOpenSection = openSection
                 )

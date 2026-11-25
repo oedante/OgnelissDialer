@@ -94,6 +94,8 @@ data class SettingsState(
     val panelSlots: String? = null,
     /** «Инструменты» меню (2.9.3): строка FolderOrder; null — всё по порядку MenuTool. */
     val menuTools: String? = null,
+    /** Колонка справа (2.9.9): строка FolderOrder; null — всё по порядку RailItem. */
+    val railItems: String? = null,
     /** Разделы справа (2.9.3, проба): колонка SideSectionRail вместо нижней панели. */
     val panelSide: Boolean = false,
     /** Что открывать при запуске значком (2.7.0, форум, oleg_p): разбор в StartSection. */
