@@ -161,6 +161,8 @@ object MissedCallsNotifier {
         val text = textFor(card)
         val notification = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_stat_missed)  // 1.3.4: свой значок у каждого типа уведомления
+            // 2.9.10: в шапке — «Ogneliss • Звонок» (автор: «в уведомлении писать на локальном языке звонок или SMS»)
+            .setSubText(context.getString(R.string.notif_source_call))
             .setContentTitle(title)
             .apply { if (text != null) setContentText(text) }
             .apply { card?.photo?.let { setLargeIcon(it) } }

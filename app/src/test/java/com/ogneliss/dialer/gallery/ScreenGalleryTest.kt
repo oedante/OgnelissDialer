@@ -331,6 +331,17 @@ class ScreenGalleryTest {
         }
     }
 
+    /** Псевдозвонок в облике живого фона [style] (2.9.10): как снимок «call_flame». */
+    @Composable
+    private fun AmbientShot(style: com.ogneliss.dialer.call.AmbientStyle) {
+        androidx.compose.runtime.CompositionLocalProvider(com.ogneliss.dialer.call.LocalAmbientStyle provides style) {
+            com.ogneliss.dialer.call.FakeCallScreen(
+                name = "Анна Смирнова", number = "+79001110001", photoUri = null,
+                ambientBackground = true, bareControls = true, onAnswer = {}, onHangUp = {}
+            )
+        }
+    }
+
     /** Содержимое журнала — общее для всех его снимков. */
     private val journalContent: @Composable (DialerViewModel) -> Unit = { vm ->
         MainDialerScreen(
@@ -582,6 +593,10 @@ class ScreenGalleryTest {
                 )
             }
         },
+        // 2.9.10: облики без картинок — «Абстракция», «Закат», «Ночь»
+        Shot("call_abstract") { _ -> AmbientShot(com.ogneliss.dialer.call.AmbientStyle.ABSTRACT) },
+        Shot("call_sunset") { _ -> AmbientShot(com.ogneliss.dialer.call.AmbientStyle.SUNSET) },
+        Shot("call_night") { _ -> AmbientShot(com.ogneliss.dialer.call.AmbientStyle.NIGHT) },
         // 2.9.7: «Подписи состояния вызова» выключены — нет «Входящий вызов», место под плашкой остаётся
         Shot("call_no_labels") { _ ->
             androidx.compose.runtime.CompositionLocalProvider(

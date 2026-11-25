@@ -292,6 +292,8 @@ object MessageNotifications {
         val shortcut = conversationShortcut(context, address, name, them, photo)
         val notification = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_stat_message)
+            // 2.9.10: в шапке — «Ogneliss • SMS» (автор: «писать на локальном языке звонок или SMS»)
+            .setSubText(context.getString(R.string.notif_source_sms))
             .setStyle(style)
             .setContentTitle(name)
             .setContentText(if (hideText) hiddenText else textOf(context, unread.last()))
@@ -309,6 +311,8 @@ object MessageNotifications {
             .setPublicVersion(
                 NotificationCompat.Builder(context, CHANNEL)
                     .setSmallIcon(R.drawable.ic_stat_message)
+                    // 2.9.10: в шапке — «Ogneliss • SMS» (автор: «писать на локальном языке звонок или SMS»)
+                    .setSubText(context.getString(R.string.notif_source_sms))
                     .setContentTitle(context.getString(R.string.sms_new_message))
                     .setCategory(Notification.CATEGORY_MESSAGE)
                     .setNumber(unread.size)
@@ -441,6 +445,8 @@ object MessageNotifications {
         )
         val n = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_stat_message)
+            // 2.9.10: в шапке — «Ogneliss • SMS» (автор: «писать на локальном языке звонок или SMS»)
+            .setSubText(context.getString(R.string.notif_source_sms))
             .setContentTitle(context.getString(R.string.sms_send_failed))
             .setContentIntent(open)
             .setAutoCancel(true)
@@ -476,6 +482,8 @@ object MessageNotifications {
         )
         val n = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_stat_message)
+            // 2.9.10: в шапке — «Ogneliss • SMS» (автор: «писать на локальном языке звонок или SMS»)
+            .setSubText(context.getString(R.string.notif_source_sms))
             .setContentTitle(
                 context.getString(
                     when {
@@ -525,6 +533,8 @@ object MessageNotifications {
         )
         val n = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_stat_message)
+            // 2.9.10: в шапке — «Ogneliss • SMS» (автор: «писать на локальном языке звонок или SMS»)
+            .setSubText(context.getString(R.string.notif_source_sms))
             .setContentTitle(who)
             .setContentText(context.getString(R.string.sms_mms_not_downloaded))
             .setCategory(Notification.CATEGORY_MESSAGE)

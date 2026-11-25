@@ -721,7 +721,7 @@
     <string name="faq_section_calls">Вызовы</string>
     <string name="faq_section_about">О приложении</string>
     <string name="faq_q_default">Как сделать Ogneliss Dialer основным приложением для звонков?</string>
-    <string name="faq_a_default">При первом запуске приложение само предлагает стать телефоном по умолчанию. Если вы отказались, откройте %1$s и выберите Ogneliss Dialer в пункте «Телефон» — на разных телефонах он называется немного по-разному. Журнал вызовов и контакты останутся прежними: их хранит Android, а не приложение, и при возврате к прежнему приложению ничего не пропадёт. Если приложение установлено из файла APK и Android пишет «Ограниченная настройка», сначала откройте «О приложении» → ⋮ → «Разрешить ограниченные настройки».</string>
+    <string name="faq_a_default">При первом запуске приложение само предлагает стать телефоном по умолчанию. Если вы отказались, откройте %1$s и выберите Ogneliss в пункте «Телефон» — на разных телефонах он называется немного по-разному. Журнал вызовов и контакты останутся прежними: их хранит Android, а не приложение, и при возврате к прежнему приложению ничего не пропадёт. Если приложение установлено из файла APK и Android пишет «Ограниченная настройка», сначала откройте «О приложении» → ⋮ → «Разрешить ограниченные настройки».</string>
     <string name="faq_q_internet">Почему у приложения нет доступа в интернет?</string>
     <string name="faq_a_internet">Чтобы ваши данные не могли уйти с телефона. Без разрешения на интернет приложение не может ничего отправить — ни журнал, ни контакты, ни заметки; это видно в свойствах установленного приложения. Оператор и регион незнакомого номера определяются по справочнику внутри приложения, а показывать ли их, решаете вы: %1$s. Для мобильного это регион выдачи номера, а не место звонящего; оператор и регион — по реестру России, в других странах показывается только оператор и не у всех номеров.</string>
     <string name="faq_q_transfer">Как перенести заметки и списки на новый телефон?</string>
@@ -1165,7 +1165,7 @@
     <string name="settings_call_ambient_style_text">Цвета темы и фото или пламя с лисой</string>
     <string name="call_ambient_theme">Цвета темы и фото</string>
     <string name="call_ambient_flame">Пламя и лиса</string>
-    <string name="keywords_call_ambient_style">экран вызова, фон, анимация, волны, пламя, лиса, логотип, облик</string>
+    <string name="keywords_call_ambient_style">экран вызова, фон, анимация, волны, пламя, лиса, логотип, облик, абстракция, закат, ночь</string>
     <string name="menu_section_actions">Действия</string>
     <string name="settings_section_contacts">Контакты</string>
     <string name="settings_section_contacts_summary">Фото, имена, сортировка, закреплённые</string>
@@ -1188,4 +1188,9 @@
     <string name="rail_items_title">Колонка справа</string>
     <string name="rail_items_summary">Порядок и показ: первый — у кнопки действия</string>
     <string name="rail_items_near_action">У кнопки действия</string>
+    <string name="call_ambient_abstract">Абстракция</string>
+    <string name="call_ambient_sunset">Закат</string>
+    <string name="call_ambient_night">Ночь</string>
+    <string name="notif_source_call">Звонок</string>
+    <string name="notif_source_sms">SMS</string>
 </resources>

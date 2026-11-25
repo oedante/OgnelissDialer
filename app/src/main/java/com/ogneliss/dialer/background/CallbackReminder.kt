@@ -242,6 +242,8 @@ object CallbackReminder {
             com.ogneliss.dialer.call.CallerCard.notifyWithPhoto(context, number) { card ->
             val n = NotificationCompat.Builder(context, CallNotifications.CHANNEL_REMINDER)
                 .setSmallIcon(R.drawable.ic_stat_reminder)  // 1.3.4: свой значок у каждого типа уведомления
+                // 2.9.10: в шапке — «Ogneliss • Звонок» (автор: «в уведомлении писать на локальном языке звонок или SMS»)
+                .setSubText(context.getString(R.string.notif_source_call))
                 .setContentTitle(context.getString(R.string.reminder_title, name))
                 .setContentText(number)
                 .apply { card?.photo?.let { setLargeIcon(it) } }
