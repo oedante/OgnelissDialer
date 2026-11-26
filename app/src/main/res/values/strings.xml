@@ -753,7 +753,7 @@
     <string name="faq_q_slide">How do I answer calls by sliding — or get the buttons back?</string>
     <string name="faq_a_slide">%1$s. “Tap” gives two ordinary buttons. With “Slide” you move the button: right to answer, left to decline — so a call is not answered or rejected by accident while you take the phone out of your pocket. With TalkBack, calls are always answered with buttons.</string>
     <string name="faq_q_sim">How do I choose the SIM card for a call?</string>
-    <string name="faq_a_sim">Long-press any call or SMS button — in the call log, contacts, a contact card — and choose the card for that action. The app remembers the card chosen for a number and offers it again next time (%1$s). To tell the cards apart, name them: %2$s.</string>
+    <string name="faq_a_sim">Long-press any call or SMS button — in the call log, contacts, a contact card — and choose the card for that action. The app remembers the card chosen for a number and offers it again next time (%1$s). To tell the cards apart, name them: %2$s. To call without being asked, set rules (%3$s): by how the number starts (+7 495 → SIM 1; * is any digit), by region or operator from the numbering plan (Краснодар* — both the city and the region; region names are in Russian, as in the plan; Beeline, MTS). A card chosen by hand or remembered for the number wins over rules; the more precise rule wins. Region and operator are those the number was issued to: a number moved to another operator follows the old one.</string>
     <string name="faq_q_missed">Missed calls only appear when I open the app. What can I do?</string>
     <string name="faq_a_missed">Most likely the system puts the app to sleep to save battery. Allow it to work in the background — %1$s — and missed calls will appear right away.</string>
     <string name="faq_q_incoming">The call screen does not appear for incoming calls. What can I do?</string>
@@ -1216,4 +1216,15 @@
     <string name="rail_journal">Call log</string>
     <string name="rail_reminders">Remind\u00ADers</string>
     <string name="rail_fake_call">Fake call</string>
+    <string name="settings_sim_rules">SIM by number</string>
+    <string name="settings_sim_rules_text">The right SIM by number start, region or operator</string>
+    <string name="keywords_sim_rules">sim card number mask prefix area code region city operator carrier rule automatic two</string>
+    <string name="sim_rules_empty">No rules yet</string>
+    <string name="sim_rules_add">Add rule</string>
+    <string name="sim_rule_new">New rule</string>
+    <string name="sim_rule_edit">Rule</string>
+    <string name="sim_rule_mask">Number start, region or operator</string>
+    <string name="sim_rule_mask_hint">+7 495, Краснодар*, MTS</string>
+    <string name="sim_rule_mask_help">* is any digit in a number, any letters in a name</string>
+    <string name="sim_rule_call_from">Call from</string>
 </resources>

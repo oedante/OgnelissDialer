@@ -689,6 +689,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val GROUPING_MODE = stringPreferencesKey("grouping_mode")
         val SORT_ORDER = stringPreferencesKey("sort_order")
         val DEFAULT_SIM = intPreferencesKey("default_sim")
+        // 2.9.11: «Карта по номеру» — правила «слот|маска» строками (SimRules)
+        val SIM_RULES = stringPreferencesKey("sim_rules")
         /** Пользовательские имена слотов: "Рабочая", "Личная". */
         val SIM_LABEL_1 = stringPreferencesKey("sim_label_1")
         val SIM_LABEL_2 = stringPreferencesKey("sim_label_2")
@@ -1170,6 +1172,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     /** Карта для звонков и SMS (2.9.1): тот же ключ default_sim, разбор у OutgoingSim. */
     val outgoingSim: Flow<OutgoingSim> = defaultSim.map { OutgoingSim.fromSlot(it) }
 
+    /** «Карта по номеру» (2.9.11): правила выбора SIM по началу номера, разбор у SimRules. */
+    val simRules: Flow<List<SimRule>> = data.map { SimRules.parse(it[Keys.SIM_RULES]) }.distinctUntilChanged()
+
     /**
      * Имена слотов SIM, заданные пользователем.
      * Пустая строка означает «использовать системное имя».
@@ -1563,6 +1568,10 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setSortOrder(v: SortOrder) = edit("sort_order", v.name) { it[Keys.SORT_ORDER] = v.name }
     suspend fun setDefaultSim(v: Int) = edit("default_sim", v) { it[Keys.DEFAULT_SIM] = v }
     suspend fun setOutgoingSim(v: OutgoingSim) = setDefaultSim(v.slot)
+
+    /** В журнал — только число правил: маска бывает целым номером. */
+    suspend fun setSimRules(rules: List<SimRule>) =
+        edit("sim_rules", rules.size) { it[Keys.SIM_RULES] = SimRules.format(rules) }
     suspend fun setSimLabel(slotIndex: Int, label: String) = edit("sim_label", "…") {
         when (slotIndex) {
             0 -> it[Keys.SIM_LABEL_1] = label

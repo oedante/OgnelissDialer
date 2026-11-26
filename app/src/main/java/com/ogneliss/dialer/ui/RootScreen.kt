@@ -1127,6 +1127,10 @@ fun RootScreen(
                     ExternalLookupScreen(vm = vm, onBack = { nav.popBackStack() })
                 }
 
+                composable("sim_rules") {
+                    com.ogneliss.dialer.ui.screens.SimRulesScreen(vm = vm, onBack = { nav.popBackStack() })
+                }
+
                 composable("pinned") {
                     PinnedContactsScreen(
                         vm = vm,
@@ -1813,6 +1817,8 @@ private fun runSettingAction(
             }
         }
         "swipe_tuning" -> nav.navigate("swipe_tuning")
+        // 2.9.11: «Карта по номеру» — свой экран со списком правил
+        "sim_rules" -> nav.navigate("sim_rules")
         "pinned" -> nav.navigate("pinned")
         /*
          * Свой номер: диалог поверх настроек.

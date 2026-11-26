@@ -12,9 +12,18 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 название и значок — за автором (`TRADEMARKS.md`).
 Автор — Олег (oedante@gmail.com), отзывы — Google Play и форум.
 
-## 25.11.2026 — 2.9.11 (106): подписи одного размера, колонка в две строки; «Создать» в заметках и напоминаниях; без «SIM для действий свайпа»
+## 25–26.11.2026 — 2.9.11 (106): «Карта по номеру»; подписи одного размера, колонка в две строки; «Создать» в заметках и напоминаниях; без «SIM для действий свайпа»
 
-Разбор — `docs/RELEASE_NOTES_2.9.11.md`. Четыре предложения обзора интерфейса (автор: «я с тобой согласен»).
+Разбор — `docs/RELEASE_NOTES_2.9.11.md`. 26.11 (автор: «пользователи просят звонки с разных SIM по маске
+номера»; версию не поднимать — 2.9.11 ещё не выпускалась): `settings/SimRules.kt` (маска → слот, хранение
+`sim_rules` строками «слот|маска»), `call/SimRouter.kt` («Карта для звонков и SMS» → правило; копии
+настроек для `CallActions.placeCall`, чтение с ожиданием для службы), `OgnelissInCallService.pickAccountByRule`
+отвечает на SELECT_PHONE_ACCOUNT (`CallManager.holdAccountChoice` прячет окно выбора на время), в
+`performSwipe` при правиле — `call()` без окна (запомненная карта главнее правила); экран
+`ui/screens/SimRulesScreen.kt`, маршрут `sim_rules`. Следом (автор): правила и по региону/оператору из реестра
+(«Краснодар*», «МТС») — `SimRules.namePattern`/`nameMatches`/`operatorMatches`, `NumberFacts` из `NumberingPlan`
+в `SimRouter.facts`; точность названия — как «+7 XXX». Сама по оператору карта не выбирается — только по правилу.
+25.11: Четыре предложения обзора интерфейса (автор: «я с тобой согласен»).
 `FitText.peers` — подпись ужимается по самой широкой из ряда (мерка полужирным): `ActionRow`
 (`rowLabels`, `slotLabelRes`), `QuickAction.labelPeers` (карточка), `MenuTileRow`.
 `LabeledIconButton.twoLineLabel` — колонка справа: две строки, `RailItem.railLabelRes` (мягкий перенос
@@ -26,10 +35,12 @@ Android-диалер (замена системного) — `com.ogneliss.diale
 `DialerViewModel.handsetAction` / `SwipeAction.handsetCall`.
 «Что нового»: `store/whats_new_2.9.11.txt`; если 2.9.8–2.9.10 не публиковались —
 `store/whats_new_2.9.11_since_2.9.7.txt`.
-Проверки: 830 unit-тестов — без ошибок; релизная сборка без предупреждений; lint — новых замечаний
-нет; `prebuild_check`, `import_check`, `audit`, `ui_roles_check`, `check_no_internet`,
+Проверки (26.11, с «Картой по номеру»): 846 unit-тестов — без ошибок; релизная сборка без предупреждений;
+lint — новых замечаний нет; `prebuild_check`, `import_check`, `audit`, `ui_roles_check`, `check_no_internet`,
 `check_ringing_flag`, `design_tokens_check`, `faq_site --check` — без замечаний. Перенос по слогам
 на телефоне не проверен: в Robolectric правил переноса нет (колонка там — по мягкому переносу).
+«Карта по номеру» на телефоне не проверена: звонок с правилом из журнала, карточки и из другого
+приложения (вопрос «с какой SIM?» не должен появиться), правило по региону и оператору.
 
 ## 25.11.2026 — 2.9.10 (105): живой фон — облики, отсвет, батарея; имя «Ogneliss» в уведомлениях
 

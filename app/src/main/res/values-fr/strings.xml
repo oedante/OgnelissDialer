@@ -722,7 +722,7 @@
     <string name="faq_q_slide">Comment répondre en faisant glisser — ou retrouver les boutons ?</string>
     <string name="faq_a_slide">%1$s. « Toucher » affiche deux boutons ordinaires. Avec « Glisser », on fait glisser le bouton : à droite pour répondre, à gauche pour refuser — impossible ainsi de répondre ou de refuser par mégarde en sortant le téléphone de la poche. Avec TalkBack, les appels se prennent toujours avec des boutons.</string>
     <string name="faq_q_sim">Comment choisir la carte SIM pour un appel ?</string>
-    <string name="faq_a_sim">Appuyez longuement sur n’importe quel bouton d’appel ou de SMS — dans le journal, les contacts, une fiche — et choisissez la carte pour cette action. L’application retient la carte choisie pour un numéro et la propose de nouveau la fois suivante (%1$s). Pour ne pas confondre les cartes, nommez-les : %2$s.</string>
+    <string name="faq_a_sim">Appuyez longuement sur n’importe quel bouton d’appel ou de SMS — dans le journal, les contacts, une fiche — et choisissez la carte pour cette action. L’application retient la carte choisie pour un numéro et la propose de nouveau la fois suivante (%1$s). Pour ne pas confondre les cartes, nommez-les : %2$s. Pour appeler sans question, définissez des règles (%3$s) : selon le début du numéro (+7 495 → SIM 1 ; * remplace un chiffre), selon la région ou l’opérateur du plan de numérotation (Краснодар* — la ville et la région ; régions en russe, comme dans le plan ; Beeline, MTS). Une carte choisie à la main ou retenue pour le numéro passe avant les règles ; parmi les règles, la plus précise. La région et l’opérateur sont ceux d’attribution : un numéro porté chez un autre opérateur suit l’ancien.</string>
     <string name="faq_q_missed">Les appels manqués n’apparaissent qu’à l’ouverture de l’application. Que faire ?</string>
     <string name="faq_a_missed">Le système met probablement l’application en veille pour économiser la batterie. Autorisez-la à fonctionner en arrière-plan — %1$s — et les appels manqués s’afficheront aussitôt.</string>
     <string name="faq_q_incoming">L’écran d’appel ne s’affiche pas lors d’un appel entrant. Que faire ?</string>
@@ -1185,4 +1185,15 @@
     <string name="rail_journal">Journal</string>
     <string name="rail_reminders">Rappels</string>
     <string name="rail_fake_call">Faux appel</string>
+    <string name="settings_sim_rules">SIM selon le numéro</string>
+    <string name="settings_sim_rules_text">La bonne SIM selon le début du numéro, la région ou l\'opérateur</string>
+    <string name="keywords_sim_rules">sim carte masque préfixe indicatif région ville opérateur règle automatique deux</string>
+    <string name="sim_rules_empty">Aucune règle pour l\'instant</string>
+    <string name="sim_rules_add">Ajouter une règle</string>
+    <string name="sim_rule_new">Nouvelle règle</string>
+    <string name="sim_rule_edit">Règle</string>
+    <string name="sim_rule_mask">Début du numéro, région ou opérateur</string>
+    <string name="sim_rule_mask_hint">+7 495, Краснодар*, MTS</string>
+    <string name="sim_rule_mask_help">* remplace un chiffre dans un numéro, des lettres dans un nom</string>
+    <string name="sim_rule_call_from">Appeler avec</string>
 </resources>

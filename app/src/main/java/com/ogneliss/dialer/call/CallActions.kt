@@ -37,7 +37,12 @@ import com.ogneliss.dialer.data.SimRepository
  */
 class CallActions(
     private val context: Context,
-    private val simRepository: SimRepository
+    private val simRepository: SimRepository,
+    /**
+     * Карта, когда её не выбрали явно (2.9.11): «Карта для звонков и SMS» или
+     * правило «Карты по номеру» — SimRouter.cachedSlot. null — решает система.
+     */
+    private val autoSlot: (String) -> Int? = { null }
 ) {
 
     /*
@@ -71,8 +76,20 @@ class CallActions(
         }
         val uri = Uri.fromParts("tel", number, null)
         val extras = Bundle()
-        if (slotIndex >= 0) {
-            simRepository.accountForSlot(slotIndex)?.let {
+        /*
+         * КАРТА БЕЗ ВОПРОСА (2.9.11, «Карта по номеру»): карту не выбрали явно —
+         * спрашиваем SimRouter. Экстренному номеру карту выбирает система: она знает,
+         * какая сеть сейчас доступна.
+         */
+        val slot = when {
+            slotIndex >= 0 -> slotIndex
+            else -> autoSlot(number)
+                ?.takeUnless { emergency || com.ogneliss.dialer.util.EmergencyNumbers.isEmergency(context, number) }
+                ?.also { Logger.i("Call", "Карта без вопроса: SIM ${it + 1} (Карта по номеру / для звонков)") }
+                ?: -1
+        }
+        if (slot >= 0) {
+            simRepository.accountForSlot(slot)?.let {
                 extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, it)
             }
         }

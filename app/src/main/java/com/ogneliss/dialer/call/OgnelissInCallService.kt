@@ -73,6 +73,10 @@ class OgnelissInCallService : InCallService() {
     /** Имена от оператора (1.8.0): журнал покажет их после звонка. */
     @Inject lateinit var networkNames: com.ogneliss.dialer.data.NetworkNames
 
+    /** Карта без вопроса (2.9.11): «Карта по номеру» и «Карта для звонков и SMS». */
+    @Inject lateinit var simRouter: SimRouter
+    @Inject lateinit var simRepository: com.ogneliss.dialer.data.SimRepository
+
     /** Область приложения: запись имени переживёт остановку службы. */
     @Inject @com.ogneliss.dialer.di.ApplicationScope
     lateinit var appScope: CoroutineScope
@@ -184,6 +188,38 @@ class OgnelissInCallService : InCallService() {
     }
 
     /*
+     * «С КАКОЙ SIM?» — ОТВЕТ ПО ПРАВИЛУ (2.9.11, «Карта по номеру»).
+     *
+     * Звонок из другого приложения, по ссылке tel: или из напоминания без карты
+     * приходит в состоянии SELECT_PHONE_ACCOUNT: Telecom ждёт, что экран вызова
+     * спросит SIM (SimSelectDialog, 2.1.0). Если карту знает SimRouter — правило
+     * по началу номера или «Карта для звонков и SMS», — отвечаем сами, без окна.
+     * Пока ответ готовится (чтение настроек при холодном запуске), окно не
+     * показываем (CallManager.holdAccountChoice), чтобы оно не мелькнуло.
+     * Карта должна быть среди тех, что Telecom предложил: иначе вопрос остаётся
+     * человеку.
+     */
+    @Suppress("DEPRECATION")
+    private fun pickAccountByRule(call: Call) {
+        val number = CallDetailsCompat.number(call.details)
+        if (number.isNullOrBlank()) return
+        CallManager.holdAccountChoice(call)
+        serviceScope.launch {
+            try {
+                val slot = runCatching { simRouter.slotFor(number) }.getOrNull() ?: return@launch
+                val handle = simRepository.accountForSlot(slot) ?: return@launch
+                val offered = CallManager.suggestedAccounts(call)
+                if (offered.isNotEmpty() && handle !in offered) return@launch
+                if (call.state != Call.STATE_SELECT_PHONE_ACCOUNT) return@launch
+                Logger.i(TAG, "Карта без вопроса: SIM ${slot + 1} (Карта по номеру / для звонков)")
+                CallManager.selectAccount(call, handle)
+            } finally {
+                CallManager.releaseAccountChoice(call)
+            }
+        }
+    }
+
+    /*
      * @Suppress("DEPRECATION") — про call.state.
      *
      * Замена, Call.getDetails().getState(), появилась только в API 31,
@@ -226,6 +262,8 @@ class OgnelissInCallService : InCallService() {
             MissedCallsNotifier.clear(this)
             outgoingCalls += call
         }
+        @Suppress("DEPRECATION")
+        if (call.state == Call.STATE_SELECT_PHONE_ACCOUNT) pickAccountByRule(call)
         // Автодозвон: своя попытка идёт, чужой вызов — сеанс окончен
         AutoRedial.onCallAdded(CallDetailsCompat.number(call.details), outgoing)
         // Имя от оператора приходит с входящим — пишем сразу: системный журнал

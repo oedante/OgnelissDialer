@@ -723,7 +723,7 @@
     <string name="faq_q_slide">Wie nehme ich Anrufe durch Schieben an — oder bekomme die Tasten zurück?</string>
     <string name="faq_a_slide">%1$s. „Tippen“ zeigt zwei gewöhnliche Tasten. Bei „Schieben“ verschieben Sie die Taste: nach rechts annehmen, nach links ablehnen — so wird kein Anruf versehentlich angenommen oder abgelehnt, wenn Sie das Telefon aus der Tasche ziehen. Mit TalkBack werden Anrufe immer mit Tasten angenommen.</string>
     <string name="faq_q_sim">Wie wähle ich die SIM-Karte für einen Anruf?</string>
-    <string name="faq_a_sim">Halten Sie eine Anruf- oder SMS-Taste gedrückt — in der Anrufliste, den Kontakten, einer Kontaktkarte — und wählen Sie die Karte für diese Aktion. Die für eine Nummer gewählte Karte merkt sich die App und schlägt sie beim nächsten Mal wieder vor (%1$s). Damit Sie die Karten nicht verwechseln, benennen Sie sie: %2$s.</string>
+    <string name="faq_a_sim">Halten Sie eine Anruf- oder SMS-Taste gedrückt — in der Anrufliste, den Kontakten, einer Kontaktkarte — und wählen Sie die Karte für diese Aktion. Die für eine Nummer gewählte Karte merkt sich die App und schlägt sie beim nächsten Mal wieder vor (%1$s). Damit Sie die Karten nicht verwechseln, benennen Sie sie: %2$s. Um ohne Nachfrage anzurufen, legen Sie Regeln fest (%3$s): nach Nummernanfang (+7 495 → SIM 1; * steht für eine Ziffer), nach Region oder Betreiber aus dem Nummernplan (Краснодар* — Stadt und Region; Regionen auf Russisch, wie im Plan; Beeline, MTS). Eine von Hand gewählte oder für die Nummer gemerkte Karte geht vor; von den Regeln die genauere. Region und Betreiber sind die, an die die Nummer vergeben wurde: Eine portierte Nummer folgt dem alten Betreiber.</string>
     <string name="faq_q_missed">Verpasste Anrufe erscheinen erst, wenn ich die App öffne. Was tun?</string>
     <string name="faq_a_missed">Wahrscheinlich schickt das System die App in den Ruhezustand, um Akku zu sparen. Erlauben Sie ihr den Hintergrundbetrieb — %1$s —, dann erscheinen verpasste Anrufe sofort.</string>
     <string name="faq_q_incoming">Bei eingehenden Anrufen erscheint kein Anrufbildschirm. Was tun?</string>
@@ -1186,4 +1186,15 @@
     <string name="rail_journal">Anruf\u00ADliste</string>
     <string name="rail_reminders">Erinne\u00ADrungen</string>
     <string name="rail_fake_call">Fingierter Anruf</string>
+    <string name="settings_sim_rules">SIM nach Nummer</string>
+    <string name="settings_sim_rules_text">Passende SIM nach Nummernanfang, Region oder Betreiber</string>
+    <string name="keywords_sim_rules">sim karte maske präfix vorwahl region stadt betreiber netz regel automatisch zwei</string>
+    <string name="sim_rules_empty">Noch keine Regeln</string>
+    <string name="sim_rules_add">Regel hinzufügen</string>
+    <string name="sim_rule_new">Neue Regel</string>
+    <string name="sim_rule_edit">Regel</string>
+    <string name="sim_rule_mask">Nummernanfang, Region oder Betreiber</string>
+    <string name="sim_rule_mask_hint">+7 495, Краснодар*, MTS</string>
+    <string name="sim_rule_mask_help">* steht für eine Ziffer in der Nummer, für Buchstaben im Namen</string>
+    <string name="sim_rule_call_from">Anrufen mit</string>
 </resources>

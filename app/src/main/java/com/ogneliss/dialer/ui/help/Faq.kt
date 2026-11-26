@@ -132,9 +132,11 @@ object Faq {
                     "slide", R.string.faq_q_slide, R.string.faq_a_slide,
                     listOf(FaqLink.Setting("answer_mode"))
                 ),
+                // 2.9.11: и «Карта по номеру» — правила по началу номера (комментарий не внутри
+                // FaqItem: scripts/faq_site.py разбирает его регулярным выражением)
                 FaqItem(
                     "sim", R.string.faq_q_sim, R.string.faq_a_sim,
-                    listOf(FaqLink.Setting("remember_sim"), FaqLink.Setting("sim_labels"))
+                    listOf(FaqLink.Setting("remember_sim"), FaqLink.Setting("sim_labels"), FaqLink.Setting("sim_rules"))
                 ),
                 // 1.8.0: автодозвон, тихие часы, имя от оператора, памятка
                 FaqItem(
