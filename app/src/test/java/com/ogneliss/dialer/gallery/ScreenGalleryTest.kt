@@ -464,7 +464,7 @@ class ScreenGalleryTest {
             )
             settle(600)
         }) { vm -> com.ogneliss.dialer.ui.screens.SimRulesScreen(vm = vm, onBack = {}) },
-        // 2.9.11: свои правила защиты от спама для SIM 2 (форум, Bublikov34)
+        // 2.9.12: свои правила защиты от спама для SIM 2 (форум, Bublikov34)
         Shot("spam_sim2") { vm -> com.ogneliss.dialer.ui.screens.SpamSim2Screen(vm = vm, onBack = {}) },
         // 2.9.11: колонка справа в «Заметках» — «Создать» внизу, подписи в две строки
         Shot("side_notes") { vm -> SideMode(com.ogneliss.dialer.ui.components.MainSection.NOTES) { NotesScreen(vm = vm, onOpenCard = {}) } },

@@ -1,216 +1,162 @@
 <ru-RU>
-• «Карта по номеру» (Настройки → SIM-карты): SIM по началу номера, региону или оператору — +7 495, «Краснодар*», «МТС».
-• Защита от спама: свои правила для каждой SIM.
-• «Посмотреть экран вызова» — с выбранными настройками, без звонка.
-• Текст SMS в уведомлениях можно скрыть до раскрытия.
-• Подписи кнопок одного размера; «Создать» в заметках и напоминаниях.
-• «SIM для действий свайпа» перешла в свайпы «Позвонить с SIM 1 / SIM 2».
+• «Карта по номеру» (Настройки → SIM-карты): звонок с нужной SIM по началу номера, региону или оператору — например, +7 495, «Краснодар*», «МТС» → SIM 1.
+• Подписи кнопок одного размера при крупном шрифте, на колонке справа — в две строки.
+• «Заметки» и «Напоминания»: в центре панели — «Создать».
+• Настройка «SIM для действий свайпа» убрана: выбранная карта перешла в свайпы «Позвонить с SIM 1 / SIM 2».
 </ru-RU>
 <ar>
-• اختيار الشريحة حسب بداية الرقم أو المنطقة أو المشغّل.
-• الحماية من الإزعاج: قواعد خاصة لكل شريحة.
-• معاينة شاشة المكالمة بإعداداتك دون اتصال.
-• يمكن إخفاء نص الرسائل في الإشعار حتى توسيعه.
-• تسميات الأزرار بحجم واحد؛ «إنشاء» في الملاحظات والتذكيرات.
-• انتقل إعداد «SIM للسحب» إلى سحب «اتصال من SIM 1 / SIM 2».
+• اختيار الشريحة تلقائيًا حسب بداية الرقم أو المنطقة أو المشغّل، مثل ‎+7 495 → SIM 1.
+• تسميات الأزرار بحجم واحد عند الخط الكبير، وفي العمود الأيمن تظهر في سطرين.
+• الملاحظات والتذكيرات: «إنشاء» في وسط اللوحة.
+• أُزيل إعداد «SIM لإجراءات السحب»: انتقلت الشريحة المختارة إلى سحب «اتصال من SIM 1 / SIM 2».
 </ar>
 <cs-CZ>
-• SIM podle začátku čísla, regionu nebo operátora — např. +7 495.
-• Ochrana před spamem: vlastní pravidla pro každou SIM.
-• Náhled obrazovky hovoru s vašimi nastaveními, bez volání.
-• Text SMS v oznámeních lze skrýt do rozbalení.
-• Popisky tlačítek stejně velké; „Vytvořit“ v Poznámkách a Připomenutích.
-• „SIM pro přejetí“ přešla do přejetí „Volat ze SIM 1 / SIM 2“.
+• Volání ze správné SIM podle začátku čísla, regionu nebo operátora, např. +7 495 → SIM 1.
+• Popisky tlačítek mají při velkém písmu stejnou velikost, ve sloupci vpravo jsou na dva řádky.
+• Poznámky a Připomenutí: uprostřed panelu „Vytvořit“.
+• Nastavení „SIM pro akce přejetí“ odstraněno: zvolená SIM přešla do přejetí „Volat ze SIM 1 / SIM 2“.
 </cs-CZ>
 <da-DK>
-• SIM efter nummerets begyndelse, region eller operatør — f.eks. +7 495.
-• Spambeskyttelse: egne regler for hvert SIM.
-• Forhåndsvis opkaldsskærmen med dine indstillinger uden opkald.
-• SMS-tekst i notifikationer kan skjules, til de foldes ud.
-• Knapetiketter i samme størrelse; „Opret“ i Noter og Påmindelser.
-• „SIM til swipes“ er flyttet til swipes „Ring fra SIM 1 / SIM 2“.
+• Ring fra det rigtige SIM efter nummerets begyndelse, region eller operatør, f.eks. +7 495 → SIM 1.
+• Knapetiketter har samme størrelse ved stor skrift; i kolonnen til højre står de på to linjer.
+• Noter og Påmindelser: „Opret“ midt i panelet.
+• Indstillingen „SIM til swipe-handlinger“ er fjernet: det valgte SIM er flyttet til swipes „Ring fra SIM 1 / SIM 2“.
 </da-DK>
 <de-DE>
-• „SIM nach Nummer“: SIM nach Nummernanfang, Region oder Betreiber — +7 495, „Краснодар*“, „MTS“.
-• Spamschutz: eigene Regeln für jede SIM.
-• „Anrufbildschirm ansehen“ mit Ihren Einstellungen, ohne Anruf.
-• SMS-Text in Benachrichtigungen bis zum Aufklappen verbergen.
-• Beschriftungen gleich groß; „Erstellen“ in Notizen und Erinnerungen.
-• „SIM für Wischaktionen“ steckt jetzt in „Anruf mit SIM 1 / SIM 2“.
+• „SIM nach Nummer“ (Einstellungen → SIM-Karten): passende SIM nach Nummernanfang, Region oder Betreiber, z. B. +7 495, „Краснодар*“, „MTS“ → SIM 1.
+• Beschriftungen der Schaltflächen bei großer Schrift gleich groß, in der Spalte rechts zweizeilig.
+• Notizen und Erinnerungen: „Erstellen“ in der Mitte der Leiste.
+• Einstellung „SIM für Wischaktionen“ entfernt: Die gewählte SIM steckt jetzt im Wischen „Anruf mit SIM 1 / SIM 2“.
 </de-DE>
 <en-US>
-• "SIM by number" (Settings → SIM cards): SIM by number start, region or operator — +7 495, "Краснодар*", "MTS".
-• Spam protection: own rules for each SIM.
-• "Preview the call screen" with your settings, no call needed.
-• SMS text in notifications can stay hidden until expanded.
-• Button labels in one size; "Create" in Notes and Reminders.
-• "SIM for swipe actions" moved into "Call from SIM 1 / SIM 2" swipes.
+• "SIM by number" (Settings → SIM cards): the right SIM by number start, region or operator, e.g. +7 495, "Краснодар*", "MTS" → SIM 1.
+• Button labels are one size at large font; in the right column they wrap to two lines.
+• Notes and Reminders: "Create" in the middle of the panel.
+• The "SIM for swipe actions" setting is gone: your chosen SIM moved into the "Call from SIM 1 / SIM 2" swipes.
 </en-US>
 <es-ES>
-• SIM según el inicio del número, la región o el operador — p. ej. +7 495.
-• Protección antispam: reglas propias para cada SIM.
-• Vista previa de la pantalla de llamada con tus ajustes, sin llamar.
-• El texto de los SMS puede ocultarse hasta expandir la notificación.
-• Etiquetas del mismo tamaño; «Crear» en Notas y Recordatorios.
-• «SIM para deslizar» pasó a «Llamar con SIM 1 / SIM 2».
+• Llamadas desde la SIM adecuada según el inicio del número, la región o el operador, p. ej. +7 495 → SIM 1.
+• Las etiquetas de los botones tienen el mismo tamaño con letra grande; en la columna derecha, en dos líneas.
+• Notas y Recordatorios: «Crear» en el centro del panel.
+• Se quitó el ajuste «SIM para deslizar»: la SIM elegida pasó a los deslizamientos «Llamar con SIM 1 / SIM 2».
 </es-ES>
 <fi-FI>
-• SIM numeron alun, alueen tai operaattorin mukaan — esim. +7 495.
-• Roskapuhelusuoja: omat säännöt kullekin SIM-kortille.
-• Puhelunäkymän esikatselu omilla asetuksilla ilman puhelua.
-• Tekstiviestin teksti piiloon, kunnes ilmoitus avataan.
-• Painiketekstit samankokoisia; ”Luo” muistiinpanoissa ja muistutuksissa.
-• ”SIM pyyhkäisyille” siirtyi pyyhkäisyihin ”Soita SIM 1:llä / SIM 2:lla”.
+• Soitto oikealla SIM-kortilla numeron alun, alueen tai operaattorin mukaan, esim. +7 495 → SIM 1.
+• Painikkeiden tekstit ovat suurella fontilla samankokoisia, oikeassa sarakkeessa kahdella rivillä.
+• Muistiinpanot ja Muistutukset: paneelin keskellä ”Luo”.
+• Asetus ”SIM pyyhkäisytoiminnoille” poistettu: valittu SIM siirtyi pyyhkäisyihin ”Soita SIM 1:llä / SIM 2:lla”.
 </fi-FI>
 <fr-FR>
-• « SIM selon le numéro » : SIM selon le début du numéro, la région ou l’opérateur — +7 495, « MTS ».
-• Anti-spam : des règles propres à chaque SIM.
-• « Aperçu de l’écran d’appel » avec vos réglages, sans appel.
-• Texte des SMS caché jusqu’à l’ouverture de la notification.
-• Libellés de même taille ; « Créer » dans Notes et Rappels.
-• « SIM des balayages » passe dans « Appeler avec la SIM 1 / SIM 2 ».
+• « SIM selon le numéro » (Réglages → Cartes SIM) : la bonne SIM selon le début du numéro, la région ou l’opérateur, p. ex. +7 495, « MTS » → SIM 1.
+• Libellés des boutons de même taille en grande police ; dans la colonne de droite, sur deux lignes.
+• Notes et Rappels : « Créer » au centre du panneau.
+• Réglage « SIM des balayages » supprimé : la SIM choisie est passée dans les balayages « Appeler avec la SIM 1 / SIM 2 ».
 </fr-FR>
 <hi-IN>
-• नंबर की शुरुआत, क्षेत्र या ऑपरेटर के अनुसार SIM।
-• स्पैम सुरक्षा: हर SIM के अपने नियम।
-• आपकी सेटिंग्स के साथ कॉल स्क्रीन का पूर्वावलोकन, बिना कॉल के।
-• सूचना खोलने तक SMS का टेक्स्ट छिपाया जा सकता है।
-• बटन लेबल एक आकार के; नोट्स और रिमाइंडर में «बनाएँ»।
-• «स्वाइप के लिए SIM» अब «SIM 1 / SIM 2 से कॉल» स्वाइप में है।
+• नंबर की शुरुआत, क्षेत्र या ऑपरेटर के अनुसार सही SIM से कॉल, जैसे +7 495 → SIM 1।
+• बड़े फ़ॉन्ट में बटनों के लेबल एक ही आकार के; दाईं ओर कॉलम में दो पंक्तियों में।
+• नोट्स और रिमाइंडर: पैनल के बीच में «बनाएँ»।
+• «स्वाइप के लिए SIM» सेटिंग हटाई गई: चुनी गई SIM अब «SIM 1 / SIM 2 से कॉल» स्वाइप में है।
 </hi-IN>
 <hu-HU>
-• SIM a szám eleje, a régió vagy a szolgáltató alapján — pl. +7 495.
-• Spamvédelem: saját szabályok minden SIM-hez.
-• A hívásképernyő előnézete a beállításaival, hívás nélkül.
-• Az SMS szövege kinyitásig elrejthető az értesítésben.
-• Egyforma gombfeliratok; „Létrehozás” a jegyzeteknél és emlékeztetőknél.
-• A „SIM a csúsztatáshoz” a „Hívás SIM 1-ről / SIM 2-ről” csúsztatásba került.
+• Hívás a megfelelő SIM-ről a szám eleje, a régió vagy a szolgáltató alapján, pl. +7 495 → SIM 1.
+• A gombfeliratok nagy betűméretnél egyforma méretűek, a jobb oszlopban két sorban.
+• Jegyzetek és Emlékeztetők: a panel közepén „Létrehozás”.
+• Megszűnt a „SIM a csúsztatásokhoz” beállítás: a választott SIM a „Hívás SIM 1-ről / SIM 2-ről” csúsztatásba került.
 </hu-HU>
 <id>
-• SIM menurut awal nomor, wilayah, atau operator — mis. +7 495.
-• Perlindungan spam: aturan sendiri untuk tiap SIM.
-• Pratinjau layar panggilan dengan setelan Anda, tanpa menelepon.
-• Teks SMS di notifikasi bisa disembunyikan sampai dibuka.
-• Label tombol berukuran sama; “Buat” di Catatan dan Pengingat.
-• “SIM untuk usap” pindah ke usap “Panggil dari SIM 1 / SIM 2”.
+• Panggil dari SIM yang tepat menurut awal nomor, wilayah, atau operator, mis. +7 495 → SIM 1.
+• Label tombol berukuran sama saat font besar; di kolom kanan tampil dua baris.
+• Catatan dan Pengingat: “Buat” di tengah panel.
+• Setelan “SIM untuk usap” dihapus: SIM pilihan Anda pindah ke usap “Panggil dari SIM 1 / SIM 2”.
 </id>
 <it-IT>
-• SIM in base all'inizio del numero, alla regione o all'operatore — es. +7 495.
-• Antispam: regole proprie per ogni SIM.
-• Anteprima della schermata di chiamata con le tue impostazioni, senza chiamare.
-• Il testo degli SMS può restare nascosto finché non apri la notifica.
-• Etichette della stessa dimensione; «Crea» in Note e Promemoria.
-• «SIM per gli scorrimenti» passa a «Chiama con SIM 1 / SIM 2».
+• Chiamate dalla SIM giusta in base all'inizio del numero, alla regione o all'operatore, es. +7 495 → SIM 1.
+• Etichette dei pulsanti della stessa dimensione con carattere grande; nella colonna destra su due righe.
+• Note e Promemoria: «Crea» al centro del pannello.
+• Rimossa l'impostazione «SIM per gli scorrimenti»: la SIM scelta è passata agli scorrimenti «Chiama con SIM 1 / SIM 2».
 </it-IT>
 <iw-IL>
-• SIM לפי תחילת המספר, האזור או המפעיל.
-• הגנה מספאם: כללים משלה לכל SIM.
-• תצוגה מקדימה של מסך השיחה עם ההגדרות שלכם, בלי שיחה.
-• אפשר להסתיר את טקסט ה-SMS בהתראה עד שפותחים אותה.
-• תוויות כפתורים באותו גודל; „יצירה” בפתקים ובתזכורות.
-• „SIM להחלקות” עבר להחלקות „התקשר מ-SIM 1 / SIM 2”.
+• שיחה מה-SIM הנכון לפי תחילת המספר, האזור או המפעיל, למשל ‎+7 495 → SIM 1.
+• תוויות הכפתורים באותו גודל בגופן גדול; בעמודה מימין – בשתי שורות.
+• פתקים ותזכורות: „יצירה” במרכז הלוח.
+• ההגדרה „SIM להחלקות” הוסרה: ה-SIM שבחרתם עבר להחלקות „התקשר מ-SIM 1 / SIM 2”.
 </iw-IL>
 <ja-JP>
-• 番号の先頭・地域・事業者でSIMを自動選択。
-• 迷惑電話対策：SIMごとに別のルール。
-• 設定どおりの通話画面をプレビュー（発信不要）。
-• SMS本文を通知を開くまで非表示に。
-• ボタンのラベルは同じサイズ、メモとリマインダーに「作成」。
-• 「スワイプ用のSIM」は「SIM 1 / SIM 2 で発信」スワイプへ。
+• 番号の先頭・地域・通信事業者でSIMを自動選択（例：+7 495 → SIM 1）。
+• 大きな文字でもボタンのラベルは同じサイズに。右側の列では2行で表示。
+• メモとリマインダー：パネル中央に「作成」。
+• 「スワイプ用のSIM」設定を削除：選んだSIMは「SIM 1 / SIM 2 で発信」スワイプに移行。
 </ja-JP>
 <ko-KR>
-• 번호 앞자리·지역·통신사에 따라 SIM 자동 선택.
-• 스팸 차단: SIM마다 별도 규칙.
-• 설정대로 통화 화면 미리 보기(전화 없이).
-• 알림을 펼치기 전까지 SMS 본문 숨기기.
-• 버튼 라벨 크기 통일, 메모와 알림에 '만들기'.
-• '스와이프용 SIM'은 'SIM 1 / SIM 2로 전화' 스와이프로 이동.
+• 번호 앞자리, 지역, 통신사에 따라 SIM 자동 선택 (예: +7 495 → SIM 1).
+• 큰 글꼴에서도 버튼 라벨 크기가 같습니다. 오른쪽 열에서는 두 줄로 표시됩니다.
+• 메모와 알림: 패널 가운데에 '만들기'.
+• '스와이프용 SIM' 설정 삭제: 선택한 SIM은 'SIM 1 / SIM 2로 전화' 스와이프로 옮겨졌습니다.
 </ko-KR>
 <nl-NL>
-• Sim op basis van nummerbegin, regio of provider — bijv. +7 495.
-• Spambescherming: eigen regels per sim.
-• Voorbeeld van het belscherm met je instellingen, zonder te bellen.
-• Sms-tekst in meldingen verborgen tot je ze openklapt.
-• Knoplabels even groot; ‘Maken’ in Notities en Herinneringen.
-• ‘Sim voor veegacties’ zit nu in ‘Bellen met sim 1 / sim 2’.
+• Bellen met de juiste sim op basis van nummerbegin, regio of provider, bijv. +7 495 → sim 1.
+• Knoplabels even groot bij grote letters; in de kolom rechts op twee regels.
+• Notities en Herinneringen: ‘Maken’ midden in het paneel.
+• Instelling ‘Sim voor veegacties’ verwijderd: de gekozen sim zit nu in vegen ‘Bellen met sim 1 / sim 2’.
 </nl-NL>
 <no-NO>
-• SIM etter nummerets begynnelse, region eller operatør — f.eks. +7 495.
-• Spambeskyttelse: egne regler for hvert SIM.
-• Forhåndsvis anropsskjermen med dine innstillinger, uten anrop.
-• SMS-tekst i varsler kan skjules til de utvides.
-• Knappetiketter i lik størrelse; «Opprett» i Notater og Påminnelser.
-• «SIM for sveip» er flyttet til sveip «Ring fra SIM 1 / SIM 2».
+• Ring fra riktig SIM etter nummerets begynnelse, region eller operatør, f.eks. +7 495 → SIM 1.
+• Knappetiketter har lik størrelse ved stor skrift; i kolonnen til høyre står de på to linjer.
+• Notater og Påminnelser: «Opprett» midt i panelet.
+• Innstillingen «SIM for sveip» er fjernet: valgt SIM er flyttet til sveip «Ring fra SIM 1 / SIM 2».
 </no-NO>
 <pl-PL>
-• SIM według początku numeru, regionu lub operatora — np. +7 495.
-• Ochrona przed spamem: własne reguły dla każdej SIM.
-• Podgląd ekranu połączenia z Twoimi ustawieniami, bez dzwonienia.
-• Tekst SMS w powiadomieniu można ukryć do rozwinięcia.
-• Etykiety przycisków jednego rozmiaru; „Utwórz” w Notatkach.
-• „SIM dla przesunięć” przeszła do „Zadzwoń z SIM 1 / SIM 2”.
+• Połączenia z właściwej karty SIM według początku numeru, regionu lub operatora, np. +7 495 → SIM 1.
+• Etykiety przycisków mają jeden rozmiar przy dużej czcionce, w kolumnie po prawej — dwa wiersze.
+• Notatki i Przypomnienia: „Utwórz” na środku panelu.
+• Usunięto ustawienie „SIM dla przesunięć”: wybrana karta przeszła do przesunięć „Zadzwoń z SIM 1 / SIM 2”.
 </pl-PL>
 <pt-BR>
-• SIM pelo início do número, região ou operadora — por ex. +7 495.
-• Proteção contra spam: regras próprias para cada SIM.
-• Prévia da tela de chamada com seus ajustes, sem ligar.
-• O texto do SMS pode ficar oculto até expandir a notificação.
-• Rótulos do mesmo tamanho; “Criar” em Notas e Lembretes.
-• “SIM para deslizar” passou para “Ligar do SIM 1 / SIM 2”.
+• Ligar do SIM certo pelo início do número, região ou operadora, por ex. +7 495 → SIM 1.
+• Rótulos dos botões com o mesmo tamanho em fonte grande; na coluna da direita, em duas linhas.
+• Notas e Lembretes: “Criar” no centro do painel.
+• Ajuste “SIM para deslizar” removido: o SIM escolhido passou para os deslizes “Ligar do SIM 1 / SIM 2”.
 </pt-BR>
 <ro>
-• SIM după începutul numărului, regiune sau operator — de ex. +7 495.
-• Protecție anti-spam: reguli proprii pentru fiecare SIM.
-• Previzualizarea ecranului de apel cu setările tale, fără apel.
-• Textul SMS poate rămâne ascuns până la extinderea notificării.
-• Etichete de aceeași mărime; „Creează” în Note și Mementouri.
-• „SIM pentru glisări” a trecut în „Sună de pe SIM 1 / SIM 2”.
+• Apel de pe SIM-ul potrivit după începutul numărului, regiune sau operator, de ex. +7 495 → SIM 1.
+• Etichetele butoanelor au aceeași mărime la font mare; în coloana din dreapta, pe două rânduri.
+• Note și Mementouri: „Creează” în centrul panoului.
+• Setarea „SIM pentru glisări” a fost eliminată: SIM-ul ales a trecut în glisările „Sună de pe SIM 1 / SIM 2”.
 </ro>
 <sk>
-• SIM podľa začiatku čísla, regiónu alebo operátora — napr. +7 495.
-• Ochrana pred spamom: vlastné pravidlá pre každú SIM.
-• Náhľad obrazovky hovoru s vašimi nastaveniami, bez volania.
-• Text SMS v upozornení sa dá skryť do rozbalenia.
-• Popisy tlačidiel rovnako veľké; „Vytvoriť“ v Poznámkach a Pripomienkach.
-• „SIM pre potiahnutia“ prešla do „Volať zo SIM 1 / SIM 2“.
+• Volanie zo správnej SIM podľa začiatku čísla, regiónu alebo operátora, napr. +7 495 → SIM 1.
+• Popisy tlačidiel majú pri veľkom písme rovnakú veľkosť, v stĺpci vpravo sú na dva riadky.
+• Poznámky a Pripomienky: v strede panela „Vytvoriť“.
+• Nastavenie „SIM pre potiahnutia“ odstránené: zvolená SIM prešla do potiahnutí „Volať zo SIM 1 / SIM 2“.
 </sk>
 <sv-SE>
-• SIM utifrån nummerbörjan, region eller operatör — t.ex. +7 495.
-• Spamskydd: egna regler för varje SIM.
-• Förhandsvisa samtalsskärmen med dina inställningar, utan samtal.
-• Sms-text i aviseringar kan döljas tills de fälls ut.
-• Knappetiketter i samma storlek; ”Skapa” i Anteckningar och Påminnelser.
-• ”SIM för svep” finns nu i svepen ”Ring från SIM 1 / SIM 2”.
+• Ring från rätt SIM utifrån nummerbörjan, region eller operatör, t.ex. +7 495 → SIM 1.
+• Knappetiketter har samma storlek vid stor text; i kolumnen till höger visas de på två rader.
+• Anteckningar och Påminnelser: ”Skapa” mitt i panelen.
+• Inställningen ”SIM för svep” är borttagen: valt SIM finns nu i svepen ”Ring från SIM 1 / SIM 2”.
 </sv-SE>
 <th>
-• เลือก SIM ตามต้นหมายเลข ภูมิภาค หรือผู้ให้บริการ
-• ป้องกันสแปม: กฎแยกสำหรับแต่ละ SIM
-• ดูตัวอย่างหน้าจอการโทรตามการตั้งค่า โดยไม่ต้องโทร
-• ซ่อนข้อความ SMS ในการแจ้งเตือนจนกว่าจะขยาย
-• ป้ายปุ่มขนาดเท่ากัน «สร้าง» ในโน้ตและการเตือน
-• «SIM สำหรับการปัด» ย้ายไปอยู่ในการปัด «โทรจาก SIM 1 / SIM 2»
+• เลือก SIM อัตโนมัติตามต้นหมายเลข ภูมิภาค หรือผู้ให้บริการ เช่น +7 495 → SIM 1
+• ป้ายปุ่มมีขนาดเท่ากันเมื่อใช้ตัวอักษรใหญ่ ในคอลัมน์ด้านขวาแสดงสองบรรทัด
+• โน้ตและการเตือน: «สร้าง» ตรงกลางแผง
+• นำการตั้งค่า «SIM สำหรับการปัด» ออกแล้ว: SIM ที่เลือกย้ายไปอยู่ในการปัด «โทรจาก SIM 1 / SIM 2»
 </th>
 <tr-TR>
-• Numaranın başı, bölge veya operatöre göre SIM — ör. +7 495.
-• Spam koruması: her SIM için ayrı kurallar.
-• Ayarlarınızla arama ekranı önizlemesi, arama yapmadan.
-• SMS metni bildirim genişletilene kadar gizlenebilir.
-• Düğme etiketleri aynı boyutta; Notlar ve Hatırlatıcılarda “Oluştur”.
-• “Kaydırma için SIM”, “SIM 1 / SIM 2 ile ara” kaydırmalarına taşındı.
+• Numaranın başı, bölge veya operatöre göre doğru SIM'den arama, ör. +7 495 → SIM 1.
+• Büyük yazı tipinde düğme etiketleri aynı boyutta; sağ sütunda iki satır halinde.
+• Notlar ve Hatırlatıcılar: panelin ortasında “Oluştur”.
+• “Kaydırma için SIM” ayarı kaldırıldı: seçilen SIM, “SIM 1 / SIM 2 ile ara” kaydırmalarına taşındı.
 </tr-TR>
 <vi>
-• SIM theo đầu số, vùng hoặc nhà mạng — ví dụ +7 495.
-• Chống spam: quy tắc riêng cho từng SIM.
-• Xem trước màn hình cuộc gọi theo cài đặt, không cần gọi.
-• Có thể ẩn nội dung SMS trong thông báo đến khi mở rộng.
-• Nhãn nút cùng cỡ; “Tạo” trong Ghi chú và Lời nhắc.
-• “SIM cho thao tác vuốt” chuyển sang vuốt “Gọi bằng SIM 1 / SIM 2”.
+• Gọi bằng SIM phù hợp theo đầu số, vùng hoặc nhà mạng, ví dụ +7 495 → SIM 1.
+• Nhãn nút có cùng cỡ khi dùng chữ lớn; ở cột bên phải hiển thị hai dòng.
+• Ghi chú và Lời nhắc: “Tạo” ở giữa bảng.
+• Đã bỏ cài đặt “SIM cho thao tác vuốt”: SIM đã chọn chuyển sang vuốt “Gọi bằng SIM 1 / SIM 2”.
 </vi>
 <zh-CN>
-• 按号码开头、地区或运营商选择 SIM 卡。
-• 防骚扰：每张 SIM 卡可设各自规则。
-• 按当前设置预览通话界面，无需拨打。
-• 短信内容可在通知展开前隐藏。
-• 按钮标签大小一致；备注和提醒中可“新建”。
-• “滑动所用 SIM 卡”已转入“用 SIM 1 / SIM 2 拨打”滑动。
+• 按号码开头、地区或运营商自动选择 SIM 卡，例如 +7 495 → SIM 1。
+• 大字体时按钮标签大小一致；右侧列中标签可分两行显示。
+• 备注和提醒：面板中央为“新建”。
+• 移除“滑动所用 SIM 卡”设置：所选 SIM 卡已转入“用 SIM 1 / SIM 2 拨打”滑动。
 </zh-CN>

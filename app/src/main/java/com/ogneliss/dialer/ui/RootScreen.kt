@@ -1823,9 +1823,9 @@ private fun runSettingAction(
         "swipe_tuning" -> nav.navigate("swipe_tuning")
         // 2.9.11: «Карта по номеру» — свой экран со списком правил
         "sim_rules" -> nav.navigate("sim_rules")
-        // 2.9.11: свои правила защиты от спама для SIM 2
+        // 2.9.12: свои правила защиты от спама для SIM 2
         "spam_sim2" -> nav.navigate("spam_sim2")
-        // 2.9.11: экран вызова с текущими настройками, тихо (псевдозвонок без звука)
+        // 2.9.12: экран вызова с текущими настройками, тихо (псевдозвонок без звука)
         "call_preview" -> { com.ogneliss.dialer.call.FakeCall.preview(context) }
         "pinned" -> nav.navigate("pinned")
         /*

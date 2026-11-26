@@ -98,7 +98,7 @@ class FakeCallActivity : ComponentActivity() {
     private var proximity: ProximityLock? = null
     private var vibrator: Vibrator? = null
 
-    /** Предпросмотр экрана вызова из настроек (2.9.11, FakeCall.preview): тихо, без вызова в системе. */
+    /** Предпросмотр экрана вызова из настроек (2.9.12, FakeCall.preview): тихо, без вызова в системе. */
     private val preview: Boolean by lazy { intent?.getBooleanExtra(EXTRA_PREVIEW, false) == true }
 
     companion object {
@@ -117,7 +117,7 @@ class FakeCallActivity : ComponentActivity() {
          * ярлыком — вызова ещё нет, создаём; открыла система (по времени) —
          * он уже есть, start ничего не делает. При повороте экрана — не трогаем.
          */
-        // Предпросмотр (2.9.11) — не вызов: в системе его нет, гарнитура о нём не узнает
+        // Предпросмотр (2.9.12) — не вызов: в системе его нет, гарнитура о нём не узнает
         if (!preview) {
             FakeTelecomCall.activityVisible = true
             if (savedInstanceState == null) FakeTelecomCall.start(this)
@@ -231,7 +231,7 @@ class FakeCallActivity : ComponentActivity() {
                 } else {
                     val random = suspendRunCatching {
                         val withNumbers = contactsRepo.loadAll().filter { it.numbers.isNotEmpty() }
-                        // Предпросмотр (2.9.11): контакт с фото, если такие есть
+                        // Предпросмотр (2.9.12): контакт с фото, если такие есть
                         (if (preview) withNumbers.filter { !it.photoUri.isNullOrBlank() }.randomOrNull() else null)
                             ?: withNumbers.randomOrNull()
                     }.getOrNull()

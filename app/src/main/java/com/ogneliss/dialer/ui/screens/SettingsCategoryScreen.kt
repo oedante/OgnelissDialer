@@ -97,7 +97,7 @@ fun SettingsCategoryScreen(
     var editingSimLabels by remember { mutableStateOf(false) }
 
     val state by vm.settingsState.collectAsStateWithLifecycle()
-    // 2.9.11: пункты, зависящие от другой настройки («Правила для SIM 2»), — SettingsRegistry.visibleFor
+    // 2.9.12: пункты, зависящие от другой настройки («Правила для SIM 2»), — SettingsRegistry.visibleFor
     val entries = allEntries.filter { SettingsRegistry.visibleFor(it, state) }
 
     /*

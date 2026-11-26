@@ -216,7 +216,7 @@ object MessageNotifications {
          * ответить и удалить можно, как всегда.
          */
         /*
-         * 2.9.11 — ТРИ ВАРИАНТА (SmsTextMode; форум, eXense: «если развернуть — тоже
+         * 2.9.12 — ТРИ ВАРИАНТА (SmsTextMode; форум, eXense: «если развернуть — тоже
          * „Новое сообщение“, ожидалось, что хоть развернуть можно будет текст»).
          * «Разговор» (MessagingStyle) показывает одно и то же свёрнутым и раскрытым,
          * поэтому «до раскрытия» — обычное уведомление с длинным текстом (BigTextStyle):
@@ -312,7 +312,7 @@ object MessageNotifications {
             .setStyle(style)
             .setContentTitle(name)
             .setContentText(if (hideText) hiddenText else textOf(context, unread.last()))
-            // Без «разговора» портрета у сообщения нет — крупным значком (2.9.11)
+            // Без «разговора» портрета у сообщения нет — крупным значком (2.9.12)
             .apply {
                 if (textMode == SmsTextMode.UNTIL_EXPANDED) photo?.let { setLargeIcon(it.toIcon(context)) }
             }
