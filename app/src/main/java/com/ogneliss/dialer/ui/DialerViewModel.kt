@@ -162,10 +162,16 @@ class DialerViewModel @Inject constructor(
     private val pinned: com.ogneliss.dialer.data.PinnedController,
     private val directoryRepo: DirectoryLookupRepository,
     private val externalCallerId: ExternalCallerIdController,
+    /** Карта без вопроса (2.9.11): «Карта по номеру» и «Карта для звонков и SMS». */
+    private val simRouter: com.ogneliss.dialer.call.SimRouter,
     val prefs: Prefs
 ) : AndroidViewModel(app) {
 
-    val actions = CallActions(app, simRepo)
+    val actions = CallActions(app, simRepo, simRouter::cachedSlot)
+
+    /** Правила «Карты по номеру» (2.9.11) — экран SimRulesScreen. */
+    val simRules = prefs.simRules.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    fun setSimRules(rules: List<com.ogneliss.dialer.settings.SimRule>) = viewModelScope.launch { prefs.setSimRules(rules) }
 
     /** Слот SIM записи журнала — для истории карточки (2.1.3); null — карта одна. */
     fun simSlotForAccount(accountId: String?): Int? = simRepo.slotForAccountId(accountId)
@@ -3019,6 +3025,16 @@ class DialerViewModel @Inject constructor(
             return
         }
 
+        /*
+         * «Карта по номеру» (2.9.11): есть правило для номера — звоним без окна выбора.
+         * Через call(): запомненная для номера карта главнее правила (разбор у
+         * SimRouter), иначе CallActions.placeCall спросит SimRouter. Выбрать другую
+         * карту — долгим нажатием на трубку, как раньше.
+         */
+        if (simRouter.ruleSlot(group.number) != null) {
+            call(group.number)
+            return
+        }
         // Сначала возвращаем строку, потом показываем выбор
         onBeforeDialog()
         chooseSim(group.number, SimAction.CALL, group.displayName)

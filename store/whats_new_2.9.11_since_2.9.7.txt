@@ -5,7 +5,7 @@
 • Колонка справа: «Меню» и инструменты на ней, свой порядок.
 • Живой фон вызова: облики «Абстракция», «Закат», «Ночь», бережнее к батарее.
 • Уведомления подписаны «Звонок» или «SMS»; Max убран.
-• «Создать» в заметках и напоминаниях; подписи кнопок одного размера.
+• «Карта по номеру»: SIM по началу номера, региону, оператору; «Создать» в заметках и напоминаниях.
 </ru-RU>
 <ar>
 • سحب «اتصال من SIM 1 / SIM 2»، ومدة المكالمة في السجل.
@@ -14,7 +14,7 @@
 • العمود الأيمن: «القائمة» والأدوات فيه، بترتيبك.
 • الخلفية الحية: مظاهر «تجريد» و«غروب» و«ليل»، وتوفير أكثر للبطارية.
 • الإشعارات موسومة بـ«مكالمة» أو «رسالة»؛ أُزيل Max.
-• «إنشاء» في الملاحظات والتذكيرات؛ تسميات الأزرار بحجم واحد.
+• شريحة SIM حسب بداية الرقم أو المنطقة أو المشغّل؛ «إنشاء» في الملاحظات والتذكيرات.
 </ar>
 <cs-CZ>
 • Přejetí „Volat ze SIM 1 / SIM 2“, délka hovoru ve výpisu.
@@ -23,7 +23,7 @@
 • Sloupec vpravo: „Menu“ a nástroje na něm, vlastní pořadí.
 • Živé pozadí: vzhledy „Abstrakce“, „Západ slunce“, „Noc“, šetrnější k baterii.
 • Oznámení s popiskem „Hovor“ nebo „SMS“; Max odebrán.
-• „Vytvořit“ v Poznámkách a Připomenutích; popisky tlačítek stejně velké.
+• SIM podle začátku čísla, regionu, operátora; „Vytvořit“ v Poznámkách a Připomenutích.
 </cs-CZ>
 <da-DK>
 • Swipes „Ring fra SIM 1 / SIM 2“, samtalens varighed i loggen.
@@ -32,7 +32,7 @@
 • Kolonne til højre: „Menu“ og værktøjer på den, egen rækkefølge.
 • Levende baggrund: „Abstrakt“, „Solnedgang“, „Nat“, sparer mere batteri.
 • Notifikationer mærket „Opkald“ eller „SMS“; Max fjernet.
-• „Opret“ i Noter og Påmindelser; knapetiketter i samme størrelse.
+• SIM efter nummerstart, region, operatør; „Opret“ i Noter og Påmindelser.
 </da-DK>
 <de-DE>
 • Wischen „Anruf mit SIM 1 / SIM 2“, Gesprächsdauer in der Anrufliste.
@@ -41,7 +41,7 @@
 • Spalte rechts: „Menü“ und Werkzeuge darauf, eigene Reihenfolge.
 • Live-Hintergrund: „Abstrakt“, „Sonnenuntergang“, „Nacht“, akkuschonender.
 • Benachrichtigungen mit „Anruf“ oder „SMS“; Max entfernt.
-• „Erstellen“ in Notizen und Erinnerungen; Beschriftungen gleich groß.
+• „SIM nach Nummer“: nach Nummernanfang, Region, Betreiber; „Erstellen“ in Notizen und Erinnerungen.
 </de-DE>
 <en-US>
 • "Call from SIM 1 / SIM 2" swipes, call duration in the call log.
@@ -50,7 +50,7 @@
 • Right column: Menu and tools on it, your own order.
 • Live call background: Abstract, Sunset and Night looks, easier on the battery.
 • Notifications labeled "Call" or "SMS"; Max removed.
-• "Create" in Notes and Reminders; button labels in one size.
+• "SIM by number": by number start, region, operator; "Create" in Notes and Reminders.
 </en-US>
 <es-ES>
 • Deslizar «Llamar con SIM 1 / SIM 2», duración de la llamada en el registro.
@@ -59,7 +59,7 @@
 • Columna derecha: «Menú» y herramientas en ella, orden propio.
 • Fondo animado: «Abstracto», «Atardecer», «Noche», ahorra más batería.
 • Notificaciones con «Llamada» o «SMS»; Max eliminado.
-• «Crear» en Notas y Recordatorios; etiquetas de botones del mismo tamaño.
+• SIM según inicio del número, región, operador; «Crear» en Notas y Recordatorios.
 </es-ES>
 <fi-FI>
 • Pyyhkäisyt ”Soita SIM 1:llä / SIM 2:lla”, puhelun kesto lokissa.
@@ -68,7 +68,7 @@
 • Oikea sarake: ”Valikko” ja työkalut siinä, oma järjestys.
 • Elävä tausta: ”Abstrakti”, ”Auringonlasku”, ”Yö”, säästää akkua.
 • Ilmoituksissa ”Puhelu” tai ”SMS”; Max poistettu.
-• ”Luo” muistiinpanoissa ja muistutuksissa; painiketekstit samankokoisia.
+• SIM numeron alun, alueen, operaattorin mukaan; ”Luo” muistiinpanoissa ja muistutuksissa.
 </fi-FI>
 <fr-FR>
 • Balayages « Appeler avec la SIM 1 / SIM 2 », durée des appels au journal.
@@ -77,7 +77,7 @@
 • Colonne de droite : menu et outils, ordre réglable.
 • Fond animé : styles « Abstrait », « Coucher de soleil », « Nuit », plus économe.
 • Notifications marquées « Appel » ou « SMS » ; Max retiré.
-• « Créer » dans Notes et Rappels ; libellés des boutons de même taille.
+• « SIM selon le numéro » : début, région, opérateur ; « Créer » dans Notes et Rappels.
 </fr-FR>
 <hi-IN>
 • «SIM 1 / SIM 2 से कॉल» स्वाइप, लॉग में कॉल की अवधि।
@@ -86,7 +86,7 @@
 • दाईं ओर कॉलम: «मेनू» और टूल उसमें, अपना क्रम।
 • लाइव पृष्ठभूमि: «अमूर्त», «सूर्यास्त», «रात», कम बैटरी खर्च।
 • सूचनाओं पर «कॉल» या «SMS»; Max हटाया।
-• नोट्स और रिमाइंडर में «बनाएँ»; बटन लेबल एक आकार के।
+• नंबर की शुरुआत, क्षेत्र, ऑपरेटर के अनुसार SIM; नोट्स और रिमाइंडर में «बनाएँ»।
 </hi-IN>
 <hu-HU>
 • „Hívás SIM 1-ről / SIM 2-ről” csúsztatás, hívás hossza a naplóban.
@@ -95,7 +95,7 @@
 • Jobb oszlop: „Menü” és eszközök rajta, saját sorrend.
 • Élő háttér: „Absztrakt”, „Naplemente”, „Éjszaka”, akkukímélőbb.
 • Értesítéseken „Hívás” vagy „SMS”; a Max kikerült.
-• „Létrehozás” a jegyzeteknél és emlékeztetőknél; egyforma gombfeliratok.
+• SIM a szám eleje, régió, szolgáltató alapján; „Létrehozás” a jegyzeteknél.
 </hu-HU>
 <id>
 • Usap “Panggil dari SIM 1 / SIM 2”, durasi panggilan di log.
@@ -104,7 +104,7 @@
 • Kolom kanan: “Menu” dan alat di sana, urutan sendiri.
 • Latar hidup: “Abstrak”, “Senja”, “Malam”, lebih hemat baterai.
 • Notifikasi berlabel “Panggilan” atau “SMS”; Max dihapus.
-• “Buat” di Catatan dan Pengingat; label tombol berukuran sama.
+• SIM menurut awal nomor, wilayah, operator; “Buat” di Catatan dan Pengingat.
 </id>
 <it-IT>
 • Scorrimenti «Chiama con SIM 1 / SIM 2», durata delle chiamate nel registro.
@@ -113,7 +113,7 @@
 • Colonna destra: «Menu» e strumenti, ordine personale.
 • Sfondo animato: «Astratto», «Tramonto», «Notte», risparmia batteria.
 • Notifiche con «Chiamata» o «SMS»; Max rimosso.
-• «Crea» in Note e Promemoria; etichette dei pulsanti della stessa dimensione.
+• SIM per inizio del numero, regione, operatore; «Crea» in Note e Promemoria.
 </it-IT>
 <iw-IL>
 • החלקות „התקשר מ-SIM 1 / SIM 2”, משך השיחה ביומן.
@@ -122,7 +122,7 @@
 • העמודה מימין: „תפריט” וכלים בה, סדר משלכם.
 • רקע חי: „מופשט”, „שקיעה”, „לילה”, חוסך יותר סוללה.
 • התראות מסומנות „שיחה” או „SMS”; Max הוסר.
-• „יצירה” בפתקים ובתזכורות; תוויות כפתורים באותו גודל.
+• SIM לפי תחילת המספר, אזור, מפעיל; „יצירה” בפתקים ובתזכורות.
 </iw-IL>
 <ja-JP>
 • 「SIM 1 / SIM 2 で発信」スワイプ、履歴に通話時間。
@@ -131,7 +131,7 @@
 • 右側の列：「メニュー」とツールを配置、順序は自由。
 • ライブ背景：「アブストラクト」「夕焼け」「夜」、電池にやさしく。
 • 通知に「通話」「SMS」を表示。Max を削除。
-• メモとリマインダーに「作成」、ボタンのラベルは同じサイズに。
+• 番号の先頭・地域・事業者でSIMを選択、メモとリマインダーに「作成」。
 </ja-JP>
 <ko-KR>
 • 'SIM 1 / SIM 2로 전화' 스와이프, 통화 기록에 통화 시간.
@@ -140,7 +140,7 @@
 • 오른쪽 열: '메뉴'와 도구, 순서 설정.
 • 라이브 배경: '추상', '노을', '밤', 배터리 절약.
 • 알림에 '통화' 또는 'SMS' 표시; Max 제거.
-• 메모와 알림에 '만들기', 버튼 라벨 크기 통일.
+• 번호 앞자리·지역·통신사로 SIM 선택, 메모와 알림에 '만들기'.
 </ko-KR>
 <nl-NL>
 • Vegen ‘Bellen met sim 1 / sim 2’, gespreksduur in de oproeplijst.
@@ -149,7 +149,7 @@
 • Kolom rechts: ‘Menu’ en hulpmiddelen erop, eigen volgorde.
 • Live-achtergrond: ‘Abstract’, ‘Zonsondergang’, ‘Nacht’, zuiniger.
 • Meldingen met ‘Oproep’ of ‘Sms’; Max verwijderd.
-• ‘Maken’ in Notities en Herinneringen; knoplabels even groot.
+• Sim op nummerbegin, regio, provider; ‘Maken’ in Notities en Herinneringen.
 </nl-NL>
 <no-NO>
 • Sveip «Ring fra SIM 1 / SIM 2», samtalens varighet i loggen.
@@ -158,7 +158,7 @@
 • Kolonne til høyre: «Meny» og verktøy på den, egen rekkefølge.
 • Levende bakgrunn: «Abstrakt», «Solnedgang», «Natt», sparer batteri.
 • Varsler merket «Anrop» eller «SMS»; Max fjernet.
-• «Opprett» i Notater og Påminnelser; knappetiketter i lik størrelse.
+• SIM etter nummerstart, region, operatør; «Opprett» i Notater og Påminnelser.
 </no-NO>
 <pl-PL>
 • Przesunięcia „Zadzwoń z SIM 1 / SIM 2”, czas rozmowy w rejestrze.
@@ -167,7 +167,7 @@
 • Kolumna po prawej: „Menu” i narzędzia na niej, własna kolejność.
 • Żywe tło: „Abstrakcja”, „Zachód słońca”, „Noc”, oszczędniejsze.
 • Powiadomienia z podpisem „Połączenie” lub „SMS”; Max usunięty.
-• „Utwórz” w Notatkach i Przypomnieniach; etykiety przycisków jednego rozmiaru.
+• SIM według początku numeru, regionu, operatora; „Utwórz” w Notatkach.
 </pl-PL>
 <pt-BR>
 • Deslizes “Ligar do SIM 1 / SIM 2”, duração das chamadas no registro.
@@ -176,7 +176,7 @@
 • Coluna da direita: “Menu” e ferramentas nela, ordem própria.
 • Fundo animado: “Abstrato”, “Pôr do sol”, “Noite”, poupa bateria.
 • Notificações com “Chamada” ou “SMS”; Max removido.
-• “Criar” em Notas e Lembretes; rótulos dos botões do mesmo tamanho.
+• SIM pelo início do número, região, operadora; “Criar” em Notas e Lembretes.
 </pt-BR>
 <ro>
 • Glisări „Sună de pe SIM 1 / SIM 2”, durata apelului în jurnal.
@@ -185,7 +185,7 @@
 • Coloana din dreapta: „Meniu” și instrumente pe ea, ordine proprie.
 • Fundal animat: „Abstract”, „Apus”, „Noapte”, mai econom.
 • Notificări cu „Apel” sau „SMS”; Max eliminat.
-• „Creează” în Note și Mementouri; etichete de butoane de aceeași mărime.
+• SIM după începutul numărului, regiune, operator; „Creează” în Note și Mementouri.
 </ro>
 <sk>
 • Potiahnutia „Volať zo SIM 1 / SIM 2“, dĺžka hovoru vo výpise.
@@ -194,7 +194,7 @@
 • Stĺpec vpravo: „Menu“ a nástroje na ňom, vlastné poradie.
 • Živé pozadie: „Abstrakcia“, „Západ slnka“, „Noc“, šetrnejšie k batérii.
 • Upozornenia s popisom „Hovor“ alebo „SMS“; Max odstránený.
-• „Vytvoriť“ v Poznámkach a Pripomienkach; popisy tlačidiel rovnako veľké.
+• SIM podľa začiatku čísla, regiónu, operátora; „Vytvoriť“ v Poznámkach.
 </sk>
 <sv-SE>
 • Svep ”Ring från SIM 1 / SIM 2”, samtalets längd i loggen.
@@ -203,7 +203,7 @@
 • Kolumn till höger: ”Meny” och verktyg på den, egen ordning.
 • Levande bakgrund: ”Abstrakt”, ”Solnedgång”, ”Natt”, sparar batteri.
 • Aviseringar märkta ”Samtal” eller ”SMS”; Max borttaget.
-• ”Skapa” i Anteckningar och Påminnelser; knappetiketter i samma storlek.
+• SIM utifrån nummerbörjan, region, operatör; ”Skapa” i Anteckningar och Påminnelser.
 </sv-SE>
 <th>
 • ปัด «โทรจาก SIM 1 / SIM 2» และระยะเวลาการโทรในบันทึก
@@ -212,7 +212,7 @@
 • คอลัมน์ด้านขวา: «เมนู» และเครื่องมือ จัดลำดับเองได้
 • พื้นหลังเคลื่อนไหว: «นามธรรม» «พระอาทิตย์ตก» «กลางคืน» ประหยัดแบตขึ้น
 • การแจ้งเตือนมีป้าย «การโทร» หรือ «SMS» นำ Max ออก
-• «สร้าง» ในโน้ตและการเตือน ป้ายปุ่มขนาดเท่ากัน
+• เลือก SIM ตามต้นหมายเลข ภูมิภาค ผู้ให้บริการ «สร้าง» ในโน้ตและการเตือน
 </th>
 <tr-TR>
 • “SIM 1 / SIM 2 ile ara” kaydırmaları, kayıtta konuşma süresi.
@@ -221,7 +221,7 @@
 • Sağ sütun: “Menü” ve araçlar üzerinde, kendi sıranız.
 • Canlı arka plan: “Soyut”, “Gün batımı”, “Gece”, pili daha az yorar.
 • Bildirimlerde “Arama” ya da “SMS”; Max kaldırıldı.
-• Notlar ve Hatırlatıcılarda “Oluştur”; düğme etiketleri aynı boyutta.
+• Numara başı, bölge, operatöre göre SIM; Notlar ve Hatırlatıcılarda “Oluştur”.
 </tr-TR>
 <vi>
 • Vuốt “Gọi bằng SIM 1 / SIM 2”, thời lượng cuộc gọi trong nhật ký.
@@ -230,7 +230,7 @@
 • Cột bên phải: “Menu” và công cụ, thứ tự riêng.
 • Nền động: “Trừu tượng”, “Hoàng hôn”, “Đêm”, tiết kiệm pin hơn.
 • Thông báo ghi “Cuộc gọi” hoặc “SMS”; đã bỏ Max.
-• “Tạo” trong Ghi chú và Lời nhắc; nhãn nút cùng cỡ.
+• SIM theo đầu số, vùng, nhà mạng; “Tạo” trong Ghi chú và Lời nhắc.
 </vi>
 <zh-CN>
 • “用 SIM 1 / SIM 2 拨打”滑动，通话记录显示时长。
@@ -239,5 +239,5 @@
 • 右侧列：“菜单”和工具在列上，顺序可自定。
 • 动态背景：“抽象”“日落”“夜晚”外观，更省电。
 • 通知标注“通话”或“短信”；已移除 Max。
-• 备注和提醒中可“新建”；按钮标签大小一致。
+• 按号码开头、地区、运营商选择 SIM 卡；备注和提醒中可“新建”。
 </zh-CN>

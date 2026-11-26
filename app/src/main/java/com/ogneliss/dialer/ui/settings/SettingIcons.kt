@@ -35,6 +35,7 @@ internal fun settingIcon(id: String): ImageVector? = when (id) {
     "show_photo" -> OgnelissIcons.Image
     // SIM
     "sim_labels" -> OgnelissIcons.SimCard
+    "sim_rules" -> OgnelissIcons.CallSplit
     "remember_sim" -> OgnelissIcons.CheckCircle
     "outgoing_sim" -> OgnelissIcons.CallMade
     "own_number" -> OgnelissIcons.Person

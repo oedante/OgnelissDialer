@@ -488,6 +488,17 @@ object SettingsRegistry {
             SettingKind.Choice("outgoing_sim"),
             keywordsRes = R.string.keywords_outgoing_sim
         ),
+        /*
+         * «Карта по номеру» (2.9.11, автор: «пользователи просят звонки с разных
+         * SIM по маске номера»): правила «начало номера → карта», свой экран
+         * (SimRulesScreen). Где действуют и что главнее — разбор у SimRouter.
+         */
+        SettingEntry(
+            "sim_rules", SettingsCategory.SIM,
+            R.string.settings_sim_rules, R.string.settings_sim_rules_text,
+            SettingKind.Action("sim_rules"),
+            keywordsRes = R.string.keywords_sim_rules
+        ),
         SettingEntry(
             "remember_sim", SettingsCategory.SIM,
             R.string.settings_remember_sim, R.string.settings_remember_sim_text,

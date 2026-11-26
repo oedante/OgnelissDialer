@@ -105,7 +105,26 @@ object CallManager {
      */
     @Suppress("DEPRECATION")
     val awaitingAccount: Call?
-        get() = CallLines.topLevel(lines).firstOrNull { it.state == Call.STATE_SELECT_PHONE_ACCOUNT }?.key
+        get() = CallLines.topLevel(lines)
+            .firstOrNull { it.state == Call.STATE_SELECT_PHONE_ACCOUNT && it.key !in choosingByRule }?.key
+
+    /*
+     * Карту выбирает правило (2.9.11, OgnelissInCallService.pickAccountByRule): пока
+     * ответ готовится, окно выбора на экране вызова не показываем — не мелькнуло бы.
+     * Правило не подошло — окно появится, как прежде.
+     */
+    private val choosingByRule: MutableSet<Call> =
+        java.util.Collections.synchronizedSet(java.util.Collections.newSetFromMap(java.util.WeakHashMap()))
+
+    internal fun holdAccountChoice(call: Call) {
+        choosingByRule += call
+        _revision.value++
+    }
+
+    internal fun releaseAccountChoice(call: Call) {
+        choosingByRule -= call
+        _revision.value++
+    }
 
     /**
      * Аккаунты, которые Telecom предложил для выбора; пусто — взять все свои.
