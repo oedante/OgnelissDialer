@@ -728,7 +728,7 @@
     <string name="faq_q_undo">Запись из журнала удалена по ошибке. Можно вернуть?</string>
     <string name="faq_a_undo">Да, если сразу. После удаления внизу на несколько секунд появляется «Удалено из журнала» с кнопкой «Отменить» — нажмите её, пока сообщение на экране. Потом записи удаляются и из системного журнала телефона, и вернуть их уже нельзя. Очистку всего журнала из меню отменить нельзя — поэтому перед ней приложение переспрашивает.</string>
     <string name="faq_q_spam">Как заблокировать спам и нежелательные номера?</string>
-    <string name="faq_a_spam">Долгое нажатие на запись → «Блок»: номер попадёт в чёрный список и больше не дозвонится. Там же, в «Ещё», — метка «Спам»: такие номера тоже не дозваниваются, а метка видна в журнале и на экране вызова. Маски номеров, скрытые и незнакомые номера, белый список исключений — в разделе %1$s. Блокировка незнакомых номеров не пропустит и курьеров, поликлиники, школы — сначала добавьте их в белый список.</string>
+    <string name="faq_a_spam">Долгое нажатие на запись → «Блок»: номер попадёт в чёрный список и больше не дозвонится. Там же, в «Ещё», — метка «Спам»: такие номера тоже не дозваниваются, а метка видна в журнале и на экране вызова. Маски номеров, скрытые и незнакомые номера, белый список исключений — в разделе %1$s. Блокировка незнакомых номеров не пропустит и курьеров, поликлиники, школы — сначала добавьте их в белый список. С двумя SIM правила можно сделать своими для каждой: «Правила — для карты» → «Свои для каждой SIM», затем «Правила для SIM 2» — например, на личной блокировать незнакомых, на рабочей только спам; списки — общие.</string>
     <string name="faq_q_slide">Как отвечать на вызов сдвигом — или вернуть кнопки?</string>
     <string name="faq_a_slide">%1$s. «Касанием» — две обычные кнопки. «Сдвигом» — кнопку нужно сдвинуть: вправо — ответить, влево — отклонить; так вызов не принять и не сбросить случайно, доставая телефон из кармана. С TalkBack вызов всегда принимается кнопками.</string>
     <string name="faq_q_sim">Как выбрать SIM-карту для звонка?</string>
@@ -1125,8 +1125,6 @@
     <string name="outgoing_sim_1">Только SIM 1</string>
     <string name="outgoing_sim_2">Только SIM 2</string>
     <string name="keywords_outgoing_sim">сим карта по умолчанию исходящие звонки смс одна только вторая две</string>
-    <string name="settings_sms_hide_text">Скрывать текст в уведомлениях</string>
-    <string name="settings_sms_hide_text_text">Только отправитель, без текста и кодов</string>
     <string name="sms_new_messages_count">Новых сообщений: %1$d</string>
     <string name="sms_copy_code_hidden">Копировать код</string>
     <string name="keywords_dynamic_color">monet material you моне обои цвета системы динамические тема акцент</string>
@@ -1206,4 +1204,18 @@
     <string name="sim_rule_mask_hint">+7 495, Краснодар*, МТС</string>
     <string name="sim_rule_mask_help">* — любая цифра в номере, любые буквы в названии</string>
     <string name="sim_rule_call_from">Звонить с</string>
+    <string name="spam_sim_scope_separate">Свои для каждой SIM</string>
+    <string name="settings_spam_sim2">Правила для SIM 2</string>
+    <string name="settings_spam_sim2_text">Правила выше — для SIM 1</string>
+    <string name="keywords_spam_sim2">спам блокировка вторая сим карта правила отдельно свои</string>
+    <string name="settings_sms_text_mode">Текст SMS в уведомлениях</string>
+    <string name="settings_sms_text_mode_text">Скрыть текст и коды от чужих глаз</string>
+    <string name="sms_text_show">Показывать</string>
+    <string name="sms_text_until_expanded">Скрывать до раскрытия</string>
+    <string name="sms_text_hide">Скрывать всегда</string>
+    <string name="sms_text_until_expanded_hint">Текст — в раскрытом уведомлении; не в «Разговорах»</string>
+    <string name="sms_text_hide_hint">Только отправитель, без текста и кодов</string>
+    <string name="settings_call_preview">Посмотреть экран вызова</string>
+    <string name="settings_call_preview_text">С выбранными сейчас настройками, без звука</string>
+    <string name="keywords_call_preview">предпросмотр просмотр экран вызова вид посмотреть пример</string>
 </resources>

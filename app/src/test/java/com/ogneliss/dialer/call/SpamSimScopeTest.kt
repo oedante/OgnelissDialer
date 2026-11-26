@@ -50,6 +50,47 @@ class SpamSimScopeTest {
         assertEquals(SpamPolicy.Action.BLOCK, SpamPolicy.evaluate(stranger(null)).action)
     }
 
+    /*
+     * 2.9.11 — свои правила для каждой SIM (форум, Bublikov34: «на личной — запрет на
+     * номера не из контактов, на рабочей — только спам блокировать»).
+     */
+    private val personalAndWork = SpamPolicy.Settings(
+        blockNotInContacts = true,
+        blockTaggedSpam = true,
+        simScope = SpamSimScope.SEPARATE,
+        sim2 = SpamPolicy.Settings(blockNotInContacts = false, blockTaggedSpam = true)
+    )
+
+    private fun call(slot: Int?, tags: List<String> = emptyList()) =
+        stranger(slot).copy(settings = personalAndWork, tags = tags)
+
+    @Test
+    fun `свои правила - незнакомый на личной SIM 1 отклонён`() {
+        assertEquals(SpamPolicy.Action.BLOCK, SpamPolicy.evaluate(call(0)).action)
+    }
+
+    @Test
+    fun `свои правила - незнакомый на рабочей SIM 2 проходит`() {
+        assertEquals(SpamPolicy.Action.ALLOW, SpamPolicy.evaluate(call(1)).action)
+    }
+
+    @Test
+    fun `свои правила - метка спам на SIM 2 по её правилу`() {
+        val spam = call(1, tags = SpamPolicy.BLOCKING_TAGS.take(1).toList())
+        assertEquals(SpamPolicy.Action.BLOCK, SpamPolicy.evaluate(spam).action)
+    }
+
+    @Test
+    fun `свои правила - карта неизвестна, действуют общие`() {
+        assertEquals(SpamPolicy.Action.BLOCK, SpamPolicy.evaluate(call(null)).action)
+    }
+
+    @Test
+    fun `свои правила не заданы - для SIM 2 общие`() {
+        val noOwn = call(1).copy(settings = personalAndWork.copy(sim2 = null))
+        assertEquals(SpamPolicy.Action.BLOCK, SpamPolicy.evaluate(noOwn).action)
+    }
+
     @Test
     fun `по умолчанию - все карты, как было`() {
         val all = stranger(1).copy(settings = strictOnSim1.copy(simScope = SpamSimScope.ALL))

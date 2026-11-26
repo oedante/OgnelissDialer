@@ -122,7 +122,6 @@ class SettingsCommands @Inject constructor(
             "block_tagged" -> prefs.setBlockTaggedSpam(value)
             "scam_memo" -> prefs.setScamMemo(value)
             "sms_delivery_reports" -> prefs.setSmsDeliveryReports(value)
-            "sms_hide_text" -> prefs.setSmsHideText(value)
             // 2.8.6: выключили — висящие уведомления о входящих снимаются сразу
             "sms_notifications_off" -> {
                 prefs.setSmsNotificationsOff(value)
@@ -176,6 +175,9 @@ class SettingsCommands @Inject constructor(
             // 2.2.0
             "sms_undo_send" -> prefs.setSmsUndoSend(UndoSend.from(value))
             "sms_otp_cleanup" -> prefs.setSmsOtpCleanup(OtpCleanup.from(value))
+            "sms_text_mode" -> prefs.setSmsTextMode(
+                com.ogneliss.dialer.sms.SmsTextMode.parse(value) ?: com.ogneliss.dialer.sms.SmsTextMode.SHOW
+            )
             "grouping" -> prefs.setGroupingMode(
                 runCatching { GroupingMode.valueOf(value) }
                     .getOrDefault(GroupingMode.BY_CONTACT)
@@ -311,6 +313,7 @@ class SettingsCommands @Inject constructor(
         "sms_swipe_left" -> state.smsSwipeLeft.key
         "sms_undo_send" -> state.smsUndoSend.name
         "sms_otp_cleanup" -> state.smsOtpCleanup.name
+        "sms_text_mode" -> state.smsTextMode.name
         "grouping" -> state.groupingMode.name
         "sort_order" -> state.sortOrder.name
         "outgoing_sim" -> state.outgoingSim.name
@@ -382,6 +385,7 @@ class SettingsCommands @Inject constructor(
         "sms_swipe_left" -> context.getString(swipeActionLabelRes(state.smsSwipeLeft, forSms = true))
         "sms_undo_send" -> context.getString(undoSendLabelRes(state.smsUndoSend))
         "sms_otp_cleanup" -> context.getString(otpCleanupLabelRes(state.smsOtpCleanup))
+        "sms_text_mode" -> context.getString(smsTextModeLabelRes(state.smsTextMode))
 
         "grouping" -> context.getString(
             when (state.groupingMode) {
@@ -476,6 +480,7 @@ class SettingsCommands @Inject constructor(
             "sms_swipe_left" -> R.string.settings_sms_swipe_left
             "sms_undo_send" -> R.string.settings_sms_undo_send
             "sms_otp_cleanup" -> R.string.settings_sms_otp_cleanup
+            "sms_text_mode" -> R.string.settings_sms_text_mode
             "grouping" -> R.string.settings_grouping
             "sort_order" -> R.string.settings_sort_order
             "outgoing_sim" -> R.string.settings_outgoing_sim
@@ -616,10 +621,18 @@ class SettingsCommands @Inject constructor(
         }
 
         /** Подпись «Правила — для SIM» (2.9.8) — для строки настройки и окна выбора. */
+        /** Подпись варианта «Текст SMS в уведомлениях» (2.9.11). */
+        fun smsTextModeLabelRes(mode: com.ogneliss.dialer.sms.SmsTextMode): Int = when (mode) {
+            com.ogneliss.dialer.sms.SmsTextMode.SHOW -> R.string.sms_text_show
+            com.ogneliss.dialer.sms.SmsTextMode.UNTIL_EXPANDED -> R.string.sms_text_until_expanded
+            com.ogneliss.dialer.sms.SmsTextMode.HIDE -> R.string.sms_text_hide
+        }
+
         fun spamSimScopeLabelRes(scope: com.ogneliss.dialer.call.SpamSimScope): Int = when (scope) {
             com.ogneliss.dialer.call.SpamSimScope.ALL -> R.string.spam_sim_scope_all
             com.ogneliss.dialer.call.SpamSimScope.SIM1 -> R.string.spam_sim_scope_sim1
             com.ogneliss.dialer.call.SpamSimScope.SIM2 -> R.string.spam_sim_scope_sim2
+            com.ogneliss.dialer.call.SpamSimScope.SEPARATE -> R.string.spam_sim_scope_separate
         }
 
         /** Подпись облика живого фона (2.9.5) — для строки настройки и окна выбора. */
@@ -784,9 +797,8 @@ class SettingsCommands @Inject constructor(
             // 2.2.0
             "sms_calls_in_thread",
             // 2.8.6
-            "sms_notifications_off",
-            // 2.9.1
-            "sms_hide_text"
+            "sms_notifications_off"
+            // 2.9.11: «sms_hide_text» стал выбором «sms_text_mode»
         )
 
         /** Ключи, которые обрабатывает setChoice. */
@@ -796,6 +808,8 @@ class SettingsCommands @Inject constructor(
             "sms_swipe_right", "sms_swipe_left",
             // 2.2.0
             "sms_undo_send", "sms_otp_cleanup",
+            // 2.9.11 (было переключателем sms_hide_text)
+            "sms_text_mode",
             "notes_retention", "notes_retention_scope", "carrier_info",
             // 2.9.1
             "outgoing_sim",

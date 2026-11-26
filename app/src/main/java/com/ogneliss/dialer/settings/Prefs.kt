@@ -653,6 +653,11 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val CALL_AMBIENT_STYLE = stringPreferencesKey("call_ambient_style")
         /** Правила защиты от спама — для какой SIM (2.9.8, SpamSimScope). */
         val SPAM_SIM_SCOPE = stringPreferencesKey("spam_sim_scope")
+        // 2.9.11: свои правила SIM 2 («Свои для каждой SIM»); нет ключа — как у общих
+        val SPAM_SIM2_HIDDEN = booleanPreferencesKey("spam_sim2_block_hidden")
+        val SPAM_SIM2_NOT_IN_CONTACTS = booleanPreferencesKey("spam_sim2_block_not_in_contacts")
+        val SPAM_SIM2_TAGGED = booleanPreferencesKey("spam_sim2_block_tagged_spam")
+        val SPAM_SIM2_QUIET = stringPreferencesKey("spam_sim2_quiet_hours")
         /** Размер портрета на экране вызова (1.5.7). */
         val CALL_PHOTO_SIZE = stringPreferencesKey("call_photo_size")
         /** Ответ на вызов: касанием или сдвигом (1.5.8). */
@@ -718,6 +723,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val SMS_NOTIFICATIONS_OFF = booleanPreferencesKey("sms_notifications_off")
         // 2.9.1: «Скрывать текст в уведомлениях» — разбор в SettingsRegistry
         val SMS_HIDE_TEXT = booleanPreferencesKey("sms_hide_text")
+        // 2.9.11: вместо переключателя — выбор из трёх (SmsTextMode); без него решает прежний
+        val SMS_TEXT_MODE = stringPreferencesKey("sms_text_mode")
         // 2.9.2: конструктор нижней панели — разбор в PanelSlots
         val PANEL_SLOTS = stringPreferencesKey("panel_slots")
         // 2.9.3: порядок и показ «Инструментов» меню (FolderOrder) и разделы справа (проба)
@@ -1090,6 +1097,29 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setSpamSimScope(v: com.ogneliss.dialer.call.SpamSimScope) =
         edit("spam_sim_scope", v.name) { it[Keys.SPAM_SIM_SCOPE] = v.name }
 
+    /**
+     * Свои правила SIM 2 (2.9.11, SpamSimScope.SEPARATE). Пока правило не меняли —
+     * значение общего: включив «Свои для каждой SIM», человек начинает с того же
+     * набора и меняет только то, что у второй карты иначе.
+     */
+    val spamSim2Rules: Flow<com.ogneliss.dialer.call.SpamPolicy.Settings> = data.map { p ->
+        com.ogneliss.dialer.call.SpamPolicy.Settings(
+            blockHidden = p[Keys.SPAM_SIM2_HIDDEN] ?: p[Keys.BLOCK_HIDDEN] ?: false,
+            blockNotInContacts = p[Keys.SPAM_SIM2_NOT_IN_CONTACTS] ?: p[Keys.BLOCK_NOT_IN_CONTACTS] ?: false,
+            blockTaggedSpam = p[Keys.SPAM_SIM2_TAGGED] ?: p[Keys.BLOCK_TAGGED_SPAM] ?: true,
+            quietHours = QuietHours.from(p[Keys.SPAM_SIM2_QUIET] ?: p[Keys.QUIET_HOURS])
+        )
+    }.distinctUntilChanged()
+
+    suspend fun setSpamSim2BlockHidden(v: Boolean) =
+        edit("spam_sim2_block_hidden", v) { it[Keys.SPAM_SIM2_HIDDEN] = v }
+    suspend fun setSpamSim2BlockNotInContacts(v: Boolean) =
+        edit("spam_sim2_block_not_in_contacts", v) { it[Keys.SPAM_SIM2_NOT_IN_CONTACTS] = v }
+    suspend fun setSpamSim2BlockTagged(v: Boolean) =
+        edit("spam_sim2_block_tagged_spam", v) { it[Keys.SPAM_SIM2_TAGGED] = v }
+    suspend fun setSpamSim2QuietHours(v: QuietHours) =
+        edit("spam_sim2_quiet_hours", v.name) { it[Keys.SPAM_SIM2_QUIET] = v.name }
+
     /** Размер портрета на экране вызова (1.5.7): разбор в CallPhotoSize. */
     val callPhotoSize: Flow<CallPhotoSize> = data.map { CallPhotoSize.from(it[Keys.CALL_PHOTO_SIZE]) }
 
@@ -1256,7 +1286,10 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setPanelSide(v: Boolean) = edit("panel_side", v.toString()) { it[Keys.PANEL_SIDE] = v }
 
     /** Текст SMS в уведомлениях скрыт (2.9.1). По умолчанию — нет, текст виден. */
-    val smsHideText: Flow<Boolean> = data.map { it[Keys.SMS_HIDE_TEXT] ?: false }
+    /** Текст SMS в уведомлениях (2.9.11): выбор, а не выбран — прежний переключатель 2.9.1. */
+    val smsTextMode: Flow<com.ogneliss.dialer.sms.SmsTextMode> = data.map {
+        com.ogneliss.dialer.sms.SmsTextMode.resolve(it[Keys.SMS_TEXT_MODE], it[Keys.SMS_HIDE_TEXT])
+    }
 
     /** Отмена отправки SMS (2.2.0): по умолчанию 5 секунд. */
     val smsUndoSend: Flow<UndoSend> = data.map { UndoSend.from(it[Keys.SMS_UNDO_SEND]) }
@@ -1606,9 +1639,10 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         com.ogneliss.dialer.sms.SmsSettings.put(context, com.ogneliss.dialer.sms.SmsSettings.KEY_NOTIFICATIONS_OFF, v)
     }
     // 2.9.1: копия в SmsSettings — уведомление собирает приёмник SMS, без DataStore
-    suspend fun setSmsHideText(v: Boolean) {
-        edit("sms_hide_text", v) { it[Keys.SMS_HIDE_TEXT] = v }
-        com.ogneliss.dialer.sms.SmsSettings.put(context, com.ogneliss.dialer.sms.SmsSettings.KEY_HIDE_TEXT, v)
+    suspend fun setSmsTextMode(v: com.ogneliss.dialer.sms.SmsTextMode) {
+        edit("sms_text_mode", v.name) { it[Keys.SMS_TEXT_MODE] = v.name }
+        // Копия для уведомлений — они строятся без корутин (SmsSettings)
+        com.ogneliss.dialer.sms.SmsSettings.putString(context, com.ogneliss.dialer.sms.SmsSettings.KEY_TEXT_MODE, v.name)
     }
     // 2.2.0: копия в SmsSettings — для приёмника SMS и очереди без корутин
     suspend fun setSmsUndoSend(v: UndoSend) {
@@ -1723,6 +1757,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
                 )
                 com.ogneliss.dialer.sms.SmsSettings.put(
                     context, com.ogneliss.dialer.sms.SmsSettings.KEY_HIDE_TEXT, false
+                )
+                com.ogneliss.dialer.sms.SmsSettings.putString(
+                    context, com.ogneliss.dialer.sms.SmsSettings.KEY_TEXT_MODE, com.ogneliss.dialer.sms.SmsTextMode.SHOW.name
                 )
             }
             .onFailure { Logger.e(TAG, "Не удалось сбросить настройки", it) }

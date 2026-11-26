@@ -167,8 +167,8 @@ data class SettingsState(
     val smsDeliveryReports: Boolean = false,
     /** «Отключить уведомления SMS» (2.8.6): по умолчанию уведомления идут. */
     val smsNotificationsOff: Boolean = false,
-    /** «Скрывать текст в уведомлениях» (2.9.1). */
-    val smsHideText: Boolean = false,
+    /** Текст SMS в уведомлениях (2.9.11; в 2.9.1 — переключатель «Скрывать текст»): SmsTextMode. */
+    val smsTextMode: com.ogneliss.dialer.sms.SmsTextMode = com.ogneliss.dialer.sms.SmsTextMode.SHOW,
     // 2.2.0
     val smsUndoSend: com.ogneliss.dialer.settings.UndoSend = com.ogneliss.dialer.settings.UndoSend.S5,
     val smsCallsInThread: Boolean = true,
@@ -213,7 +213,6 @@ data class SettingsState(
         "scam_memo" -> scamMemo
         "sms_delivery_reports" -> smsDeliveryReports
         "sms_notifications_off" -> smsNotificationsOff
-        "sms_hide_text" -> smsHideText
         "sms_calls_in_thread" -> smsCallsInThread
         else -> false
     }
@@ -249,9 +248,8 @@ data class SettingsState(
             // 2.2.0
             "sms_calls_in_thread",
             // 2.8.6
-            "sms_notifications_off",
-            // 2.9.1
-            "sms_hide_text"
+            "sms_notifications_off"
+            // 2.9.11: «sms_hide_text» стал выбором «sms_text_mode» (SmsTextMode)
         )
     }
 }

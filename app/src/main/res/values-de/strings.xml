@@ -719,7 +719,7 @@
     <string name="faq_q_undo">Ich habe einen Eintrag versehentlich gelöscht. Lässt er sich zurückholen?</string>
     <string name="faq_a_undo">Ja, wenn Sie gleich handeln. Nach dem Löschen erscheint unten einige Sekunden lang „Aus der Anrufliste entfernt“ mit der Taste „Rückgängig“ — tippen Sie darauf, solange die Meldung zu sehen ist. Danach werden die Einträge auch aus der Systemanrufliste gelöscht und lassen sich nicht wiederherstellen. Das Leeren der ganzen Anrufliste über das Menü lässt sich nicht rückgängig machen — deshalb fragt die App vorher nach.</string>
     <string name="faq_q_spam">Wie sperre ich Spam und unerwünschte Nummern?</string>
-    <string name="faq_a_spam">Eintrag lange drücken → „Sperren“: Die Nummer kommt auf die Sperrliste und kommt nicht mehr durch. Am selben Ort, unter „Mehr“, gibt es die Markierung „Spam“: Auch solche Nummern kommen nicht durch, und die Markierung ist in der Anrufliste und auf dem Anrufbildschirm zu sehen. Nummernmasken, unterdrückte und unbekannte Nummern sowie eine Freigabeliste für Ausnahmen finden Sie unter %1$s. Das Sperren unbekannter Nummern hält auch Kurierdienste, Arztpraxen und Schulen ab — tragen Sie sie zuerst in die Freigabeliste ein.</string>
+    <string name="faq_a_spam">Eintrag lange drücken → „Sperren“: Die Nummer kommt auf die Sperrliste und kommt nicht mehr durch. Am selben Ort, unter „Mehr“, gibt es die Markierung „Spam“: Auch solche Nummern kommen nicht durch, und die Markierung ist in der Anrufliste und auf dem Anrufbildschirm zu sehen. Nummernmasken, unterdrückte und unbekannte Nummern sowie eine Freigabeliste für Ausnahmen finden Sie unter %1$s. Das Sperren unbekannter Nummern hält auch Kurierdienste, Arztpraxen und Schulen ab — tragen Sie sie zuerst in die Freigabeliste ein. Mit zwei SIMs können die Regeln für jede eigene sein: „Regeln gelten für“ → „Eigene für jede SIM“, dann „Regeln für SIM 2“ — z. B. auf der privaten Unbekannte sperren, auf der dienstlichen nur Spam; die Listen gelten für beide.</string>
     <string name="faq_q_slide">Wie nehme ich Anrufe durch Schieben an — oder bekomme die Tasten zurück?</string>
     <string name="faq_a_slide">%1$s. „Tippen“ zeigt zwei gewöhnliche Tasten. Bei „Schieben“ verschieben Sie die Taste: nach rechts annehmen, nach links ablehnen — so wird kein Anruf versehentlich angenommen oder abgelehnt, wenn Sie das Telefon aus der Tasche ziehen. Mit TalkBack werden Anrufe immer mit Tasten angenommen.</string>
     <string name="faq_q_sim">Wie wähle ich die SIM-Karte für einen Anruf?</string>
@@ -1116,8 +1116,6 @@
     <string name="outgoing_sim_1">Nur SIM 1</string>
     <string name="outgoing_sim_2">Nur SIM 2</string>
     <string name="keywords_outgoing_sim">SIM Karte Standard ausgehend Anrufe SMS nur zweite Dual</string>
-    <string name="settings_sms_hide_text">Text in Benachrichtigungen ausblenden</string>
-    <string name="settings_sms_hide_text_text">Nur Absender, ohne Nachrichtentext und Codes</string>
     <string name="sms_new_messages_count">Neue Nachrichten: %1$d</string>
     <string name="sms_copy_code_hidden">Code kopieren</string>
     <string name="keywords_dynamic_color">monet material you Hintergrundbild Systemfarben dynamisch Design Akzent</string>
@@ -1197,4 +1195,18 @@
     <string name="sim_rule_mask_hint">+7 495, Краснодар*, MTS</string>
     <string name="sim_rule_mask_help">* steht für eine Ziffer in der Nummer, für Buchstaben im Namen</string>
     <string name="sim_rule_call_from">Anrufen mit</string>
+    <string name="spam_sim_scope_separate">Eigene für jede SIM</string>
+    <string name="settings_spam_sim2">Regeln für SIM 2</string>
+    <string name="settings_spam_sim2_text">Die Regeln oben gelten für SIM 1</string>
+    <string name="keywords_spam_sim2">spam sperren zweite sim karte regeln getrennt eigene</string>
+    <string name="settings_sms_text_mode">SMS-Text in Benachrichtigungen</string>
+    <string name="settings_sms_text_mode_text">Text und Codes vor fremden Blicken verbergen</string>
+    <string name="sms_text_show">Anzeigen</string>
+    <string name="sms_text_until_expanded">Bis zum Aufklappen verbergen</string>
+    <string name="sms_text_hide">Immer verbergen</string>
+    <string name="sms_text_until_expanded_hint">Text in der aufgeklappten Benachrichtigung; nicht unter Unterhaltungen</string>
+    <string name="sms_text_hide_hint">Nur Absender, ohne Text und Codes</string>
+    <string name="settings_call_preview">Anrufbildschirm ansehen</string>
+    <string name="settings_call_preview_text">Mit den jetzigen Einstellungen, ohne Ton</string>
+    <string name="keywords_call_preview">vorschau anrufbildschirm aussehen ansehen</string>
 </resources>

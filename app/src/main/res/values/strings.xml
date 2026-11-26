@@ -749,7 +749,7 @@
     <string name="faq_q_undo">I deleted a call log entry by mistake. Can I get it back?</string>
     <string name="faq_a_undo">Yes, if you act right away. After deleting, “Removed from the call list” with an “Undo” button appears at the bottom for a few seconds — tap it while the message is shown. After that the entries are removed from the phone’s system call log too and cannot be restored. Clearing the whole call log from the menu cannot be undone, which is why the app asks first.</string>
     <string name="faq_q_spam">How do I block spam and unwanted numbers?</string>
-    <string name="faq_a_spam">Long-press an entry → “Block”: the number goes to the block list and can no longer get through. In the same place, under “More”, there is the “Spam” tag: such numbers can’t get through either, and the tag is shown in the call log and on the call screen. Number masks, hidden and unknown numbers and an allow list of exceptions are in %1$s. Blocking numbers not in contacts also stops couriers, clinics and schools: add them to the allow list first.</string>
+    <string name="faq_a_spam">Long-press an entry → “Block”: the number goes to the block list and can no longer get through. In the same place, under “More”, there is the “Spam” tag: such numbers can’t get through either, and the tag is shown in the call log and on the call screen. Number masks, hidden and unknown numbers and an allow list of exceptions are in %1$s. Blocking numbers not in contacts also stops couriers, clinics and schools: add them to the allow list first. With two SIMs, the rules can be your own for each: “Rules apply to” → “Own rules for each SIM”, then “Rules for SIM 2” — e.g. block unknown numbers on a personal SIM and only spam on a work one; lists are shared.</string>
     <string name="faq_q_slide">How do I answer calls by sliding — or get the buttons back?</string>
     <string name="faq_a_slide">%1$s. “Tap” gives two ordinary buttons. With “Slide” you move the button: right to answer, left to decline — so a call is not answered or rejected by accident while you take the phone out of your pocket. With TalkBack, calls are always answered with buttons.</string>
     <string name="faq_q_sim">How do I choose the SIM card for a call?</string>
@@ -1146,8 +1146,6 @@
     <string name="outgoing_sim_1">SIM 1 only</string>
     <string name="outgoing_sim_2">SIM 2 only</string>
     <string name="keywords_outgoing_sim">sim card default outgoing calls sms one only second dual</string>
-    <string name="settings_sms_hide_text">Hide text in notifications</string>
-    <string name="settings_sms_hide_text_text">Sender only, no message text or codes</string>
     <string name="sms_new_messages_count">New messages: %1$d</string>
     <string name="sms_copy_code_hidden">Copy code</string>
     <string name="keywords_dynamic_color">monet material you wallpaper system colors dynamic theme accent</string>
@@ -1227,4 +1225,18 @@
     <string name="sim_rule_mask_hint">+7 495, Краснодар*, MTS</string>
     <string name="sim_rule_mask_help">* is any digit in a number, any letters in a name</string>
     <string name="sim_rule_call_from">Call from</string>
+    <string name="spam_sim_scope_separate">Own rules for each SIM</string>
+    <string name="settings_spam_sim2">Rules for SIM 2</string>
+    <string name="settings_spam_sim2_text">The rules above are for SIM 1</string>
+    <string name="keywords_spam_sim2">spam block second sim card rules separate own</string>
+    <string name="settings_sms_text_mode">Message text in notifications</string>
+    <string name="settings_sms_text_mode_text">Hide text and codes from other eyes</string>
+    <string name="sms_text_show">Show</string>
+    <string name="sms_text_until_expanded">Hide until expanded</string>
+    <string name="sms_text_hide">Always hide</string>
+    <string name="sms_text_until_expanded_hint">Text in the expanded notification; not among conversations</string>
+    <string name="sms_text_hide_hint">Sender only, no message text or codes</string>
+    <string name="settings_call_preview">Preview the call screen</string>
+    <string name="settings_call_preview_text">With the settings chosen now, silently</string>
+    <string name="keywords_call_preview">preview call screen look try see</string>
 </resources>

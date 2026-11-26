@@ -215,14 +215,29 @@ object MessageNotifications {
          * «Новых сообщений: N»; кнопка кода — без цифр. Открыть переписку,
          * ответить и удалить можно, как всегда.
          */
-        val hideText = SmsSettings.hideText(context)
+        /*
+         * 2.9.11 — ТРИ ВАРИАНТА (SmsTextMode; форум, eXense: «если развернуть — тоже
+         * „Новое сообщение“, ожидалось, что хоть развернуть можно будет текст»).
+         * «Разговор» (MessagingStyle) показывает одно и то же свёрнутым и раскрытым,
+         * поэтому «до раскрытия» — обычное уведомление с длинным текстом (BigTextStyle):
+         * свёрнутое и всплывающее — «Новое сообщение», раскрытое — текст; портрет —
+         * крупным значком. В разделе «Разговоры» шторки такого нет — это цена.
+         * Кнопка кода без цифр в обоих вариантах со скрытием: она видна и свёрнутой.
+         */
+        val textMode = SmsSettings.textMode(context)
+        val hideText = textMode != SmsTextMode.SHOW
         val hiddenText = if (unread.size > 1) context.getString(R.string.sms_new_messages_count, unread.size)
         else context.getString(R.string.sms_new_message)
-        val style = NotificationCompat.MessagingStyle(me)
-        if (hideText) {
-            style.addMessage(hiddenText, unread.last().date, them)
-        } else unread.forEach { m ->
-            style.addMessage(textOf(context, m), m.date, them)
+        val style: NotificationCompat.Style = if (textMode == SmsTextMode.UNTIL_EXPANDED) {
+            NotificationCompat.BigTextStyle()
+                .setBigContentTitle(name)
+                .bigText(unread.joinToString("\n") { m -> textOf(context, m) })
+        } else NotificationCompat.MessagingStyle(me).also { messaging ->
+            if (hideText) {
+                messaging.addMessage(hiddenText, unread.last().date, them)
+            } else unread.forEach { m ->
+                messaging.addMessage(textOf(context, m), m.date, them)
+            }
         }
         val open = PendingIntent.getActivity(
             context, id, openIntent(context, address),
@@ -297,6 +312,10 @@ object MessageNotifications {
             .setStyle(style)
             .setContentTitle(name)
             .setContentText(if (hideText) hiddenText else textOf(context, unread.last()))
+            // Без «разговора» портрета у сообщения нет — крупным значком (2.9.11)
+            .apply {
+                if (textMode == SmsTextMode.UNTIL_EXPANDED) photo?.let { setLargeIcon(it.toIcon(context)) }
+            }
             .setCategory(Notification.CATEGORY_MESSAGE)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(open)

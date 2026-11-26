@@ -1131,6 +1131,10 @@ fun RootScreen(
                     com.ogneliss.dialer.ui.screens.SimRulesScreen(vm = vm, onBack = { nav.popBackStack() })
                 }
 
+                composable("spam_sim2") {
+                    com.ogneliss.dialer.ui.screens.SpamSim2Screen(vm = vm, onBack = { nav.popBackStack() })
+                }
+
                 composable("pinned") {
                     PinnedContactsScreen(
                         vm = vm,
@@ -1819,6 +1823,10 @@ private fun runSettingAction(
         "swipe_tuning" -> nav.navigate("swipe_tuning")
         // 2.9.11: «Карта по номеру» — свой экран со списком правил
         "sim_rules" -> nav.navigate("sim_rules")
+        // 2.9.11: свои правила защиты от спама для SIM 2
+        "spam_sim2" -> nav.navigate("spam_sim2")
+        // 2.9.11: экран вызова с текущими настройками, тихо (псевдозвонок без звука)
+        "call_preview" -> { com.ogneliss.dialer.call.FakeCall.preview(context) }
         "pinned" -> nav.navigate("pinned")
         /*
          * Свой номер: диалог поверх настроек.
