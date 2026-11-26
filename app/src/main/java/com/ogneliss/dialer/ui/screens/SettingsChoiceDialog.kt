@@ -138,7 +138,7 @@ fun SettingsChoiceDialog(
         "sms_undo_send" -> com.ogneliss.dialer.settings.UndoSend.entries.map {
             it.name to stringResource(SettingsCommands.undoSendLabelRes(it))
         }
-        // 2.9.11: текст SMS в уведомлениях — три варианта (SmsTextMode)
+        // 2.9.12: текст SMS в уведомлениях — три варианта (SmsTextMode)
         "sms_text_mode" -> com.ogneliss.dialer.sms.SmsTextMode.entries.map {
             it.name to stringResource(SettingsCommands.smsTextModeLabelRes(it))
         }
@@ -251,7 +251,7 @@ fun SettingsChoiceDialog(
     }
 
     /*
-     * ПРЕДПРОСМОТР ПРИ ВЫБОРЕ (2.9.11, форум, Bublikov34: «настройки отображения
+     * ПРЕДПРОСМОТР ПРИ ВЫБОРЕ (2.9.12, форум, Bublikov34: «настройки отображения
      * вызовов как-то просматривать при выборе, до применения»). У настроек вида
      * экрана вызова шторка после выбора не закрывается, а внизу — «Посмотреть
      * экран вызова» (FakeCall.preview): выбрал — посмотрел — вернулся в ту же
@@ -304,7 +304,7 @@ fun SettingsChoiceDialog(
 
 /**
  * Настройки вида экрана вызова, у которых в шторке есть «Посмотреть экран вызова»
- * (2.9.11). Свой фон («Свой снимок») — нет: после выбора снимка шторка закрывается сама.
+ * (2.9.12). Свой фон («Свой снимок») — нет: после выбора снимка шторка закрывается сама.
  */
 private val CALL_PREVIEW_KEYS = setOf("call_photo_style", "call_photo_size", "call_ambient_style", "answer_mode")
 
@@ -314,7 +314,7 @@ private val CALL_PREVIEW_KEYS = setOf("call_photo_style", "call_photo_size", "ca
  */
 @Composable
 private fun choiceHint(key: String, value: String): String? = when (key) {
-    // 2.9.11: что значит вариант текста SMS — коротко, подробнее в «Вопросах и ответах»
+    // 2.9.12: что значит вариант текста SMS — коротко, подробнее в «Вопросах и ответах»
     "sms_text_mode" -> when (value) {
         com.ogneliss.dialer.sms.SmsTextMode.UNTIL_EXPANDED.name -> stringResource(R.string.sms_text_until_expanded_hint)
         com.ogneliss.dialer.sms.SmsTextMode.HIDE.name -> stringResource(R.string.sms_text_hide_hint)

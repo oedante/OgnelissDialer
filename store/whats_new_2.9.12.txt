@@ -1,0 +1,135 @@
+<ru-RU>
+• Защита от спама: свои правила для каждой SIM.
+• «Посмотреть экран вызова» — с выбранными настройками, без звонка.
+• Текст SMS в уведомлениях можно скрыть до раскрытия.
+</ru-RU>
+<ar>
+• الحماية من الإزعاج: قواعد خاصة لكل شريحة.
+• معاينة شاشة المكالمة بإعداداتك دون اتصال.
+• يمكن إخفاء نص الرسائل في الإشعار حتى توسيعه.
+</ar>
+<cs-CZ>
+• Ochrana před spamem: vlastní pravidla pro každou SIM.
+• Náhled obrazovky hovoru s vašimi nastaveními, bez volání.
+• Text SMS v oznámeních lze skrýt do rozbalení.
+</cs-CZ>
+<da-DK>
+• Spambeskyttelse: egne regler for hvert SIM.
+• Forhåndsvis opkaldsskærmen med dine indstillinger uden opkald.
+• SMS-tekst i notifikationer kan skjules, til de foldes ud.
+</da-DK>
+<de-DE>
+• Spamschutz: eigene Regeln für jede SIM.
+• „Anrufbildschirm ansehen“ mit Ihren Einstellungen, ohne Anruf.
+• SMS-Text in Benachrichtigungen bis zum Aufklappen verbergen.
+</de-DE>
+<en-US>
+• Spam protection: own rules for each SIM.
+• "Preview the call screen" with your settings, no call needed.
+• SMS text in notifications can stay hidden until expanded.
+</en-US>
+<es-ES>
+• Protección antispam: reglas propias para cada SIM.
+• Vista previa de la pantalla de llamada con tus ajustes, sin llamar.
+• El texto de los SMS puede ocultarse hasta expandir la notificación.
+</es-ES>
+<fi-FI>
+• Roskapuhelusuoja: omat säännöt kullekin SIM-kortille.
+• Puhelunäkymän esikatselu omilla asetuksilla ilman puhelua.
+• Tekstiviestin teksti piiloon, kunnes ilmoitus avataan.
+</fi-FI>
+<fr-FR>
+• Anti-spam : des règles propres à chaque SIM.
+• « Aperçu de l’écran d’appel » avec vos réglages, sans appel.
+• Texte des SMS caché jusqu’à l’ouverture de la notification.
+</fr-FR>
+<hi-IN>
+• स्पैम सुरक्षा: हर SIM के अपने नियम।
+• आपकी सेटिंग्स के साथ कॉल स्क्रीन का पूर्वावलोकन, बिना कॉल के।
+• सूचना खोलने तक SMS का टेक्स्ट छिपाया जा सकता है।
+</hi-IN>
+<hu-HU>
+• Spamvédelem: saját szabályok minden SIM-hez.
+• A hívásképernyő előnézete a beállításaival, hívás nélkül.
+• Az SMS szövege kinyitásig elrejthető az értesítésben.
+</hu-HU>
+<id>
+• Perlindungan spam: aturan sendiri untuk tiap SIM.
+• Pratinjau layar panggilan dengan setelan Anda, tanpa menelepon.
+• Teks SMS di notifikasi bisa disembunyikan sampai dibuka.
+</id>
+<it-IT>
+• Antispam: regole proprie per ogni SIM.
+• Anteprima della schermata di chiamata con le tue impostazioni, senza chiamare.
+• Il testo degli SMS può restare nascosto finché non apri la notifica.
+</it-IT>
+<iw-IL>
+• הגנה מספאם: כללים משלה לכל SIM.
+• תצוגה מקדימה של מסך השיחה עם ההגדרות שלכם, בלי שיחה.
+• אפשר להסתיר את טקסט ה-SMS בהתראה עד שפותחים אותה.
+</iw-IL>
+<ja-JP>
+• 迷惑電話対策：SIMごとに別のルール。
+• 設定どおりの通話画面をプレビュー（発信不要）。
+• SMS本文を通知を開くまで非表示に。
+</ja-JP>
+<ko-KR>
+• 스팸 차단: SIM마다 별도 규칙.
+• 설정대로 통화 화면 미리 보기(전화 없이).
+• 알림을 펼치기 전까지 SMS 본문 숨기기.
+</ko-KR>
+<nl-NL>
+• Spambescherming: eigen regels per sim.
+• Voorbeeld van het belscherm met je instellingen, zonder te bellen.
+• Sms-tekst in meldingen verborgen tot je ze openklapt.
+</nl-NL>
+<no-NO>
+• Spambeskyttelse: egne regler for hvert SIM.
+• Forhåndsvis anropsskjermen med dine innstillinger, uten anrop.
+• SMS-tekst i varsler kan skjules til de utvides.
+</no-NO>
+<pl-PL>
+• Ochrona przed spamem: własne reguły dla każdej SIM.
+• Podgląd ekranu połączenia z Twoimi ustawieniami, bez dzwonienia.
+• Tekst SMS w powiadomieniu można ukryć do rozwinięcia.
+</pl-PL>
+<pt-BR>
+• Proteção contra spam: regras próprias para cada SIM.
+• Prévia da tela de chamada com seus ajustes, sem ligar.
+• O texto do SMS pode ficar oculto até expandir a notificação.
+</pt-BR>
+<ro>
+• Protecție anti-spam: reguli proprii pentru fiecare SIM.
+• Previzualizarea ecranului de apel cu setările tale, fără apel.
+• Textul SMS poate rămâne ascuns până la extinderea notificării.
+</ro>
+<sk>
+• Ochrana pred spamom: vlastné pravidlá pre každú SIM.
+• Náhľad obrazovky hovoru s vašimi nastaveniami, bez volania.
+• Text SMS v upozornení sa dá skryť do rozbalenia.
+</sk>
+<sv-SE>
+• Spamskydd: egna regler för varje SIM.
+• Förhandsvisa samtalsskärmen med dina inställningar, utan samtal.
+• Sms-text i aviseringar kan döljas tills de fälls ut.
+</sv-SE>
+<th>
+• ป้องกันสแปม: กฎแยกสำหรับแต่ละ SIM
+• ดูตัวอย่างหน้าจอการโทรตามการตั้งค่า โดยไม่ต้องโทร
+• ซ่อนข้อความ SMS ในการแจ้งเตือนจนกว่าจะขยาย
+</th>
+<tr-TR>
+• Spam koruması: her SIM için ayrı kurallar.
+• Ayarlarınızla arama ekranı önizlemesi, arama yapmadan.
+• SMS metni bildirim genişletilene kadar gizlenebilir.
+</tr-TR>
+<vi>
+• Chống spam: quy tắc riêng cho từng SIM.
+• Xem trước màn hình cuộc gọi theo cài đặt, không cần gọi.
+• Có thể ẩn nội dung SMS trong thông báo đến khi mở rộng.
+</vi>
+<zh-CN>
+• 防骚扰：每张 SIM 卡可设各自规则。
+• 按当前设置预览通话界面，无需拨打。
+• 短信内容可在通知展开前隐藏。
+</zh-CN>

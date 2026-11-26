@@ -81,7 +81,7 @@ object SpamPolicy {
         /** Для какой SIM правила выше (2.9.8): разбор в SpamSimScope. */
         val simScope: SpamSimScope = SpamSimScope.ALL,
         /**
-         * Свои правила SIM 2 (2.9.11, SpamSimScope.SEPARATE); null — не заданы
+         * Свои правила SIM 2 (2.9.12, SpamSimScope.SEPARATE); null — не заданы
          * (для вызова на SIM 2 — правила выше). Списки и область у них не свои.
          */
         val sim2: Settings? = null
@@ -228,7 +228,7 @@ object SpamPolicy {
 
     /**
      * Правила для карты вызова. 2.9.8: правила — для выбранной SIM (SpamSimScope);
-     * вызов на другую карту проверяется только по спискам. 2.9.11: «Свои для каждой
+     * вызов на другую карту проверяется только по спискам. 2.9.12: «Свои для каждой
      * SIM» — вызов на SIM 2 по её правилам (Settings.sim2), остальные — по общим.
      */
     internal fun rulesFor(input: SpamInput): Settings {

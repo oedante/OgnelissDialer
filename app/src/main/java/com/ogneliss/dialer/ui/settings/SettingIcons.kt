@@ -118,7 +118,7 @@ internal fun settingIcon(id: String): ImageVector? = when (id) {
     "block_hidden" -> OgnelissIcons.PhoneDisabled
     "block_unknown" -> OgnelissIcons.PersonOff
     "quiet_hours" -> OgnelissIcons.Schedule
-    // 2.9.11: свои правила второй карты
+    // 2.9.12: свои правила второй карты
     "spam_sim2" -> OgnelissIcons.SimCard
     "call_preview" -> OgnelissIcons.Smartphone
     "allow_list" -> OgnelissIcons.CheckCircle

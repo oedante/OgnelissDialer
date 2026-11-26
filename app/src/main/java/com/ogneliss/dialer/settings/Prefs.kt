@@ -653,7 +653,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val CALL_AMBIENT_STYLE = stringPreferencesKey("call_ambient_style")
         /** Правила защиты от спама — для какой SIM (2.9.8, SpamSimScope). */
         val SPAM_SIM_SCOPE = stringPreferencesKey("spam_sim_scope")
-        // 2.9.11: свои правила SIM 2 («Свои для каждой SIM»); нет ключа — как у общих
+        // 2.9.12: свои правила SIM 2 («Свои для каждой SIM»); нет ключа — как у общих
         val SPAM_SIM2_HIDDEN = booleanPreferencesKey("spam_sim2_block_hidden")
         val SPAM_SIM2_NOT_IN_CONTACTS = booleanPreferencesKey("spam_sim2_block_not_in_contacts")
         val SPAM_SIM2_TAGGED = booleanPreferencesKey("spam_sim2_block_tagged_spam")
@@ -723,7 +723,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val SMS_NOTIFICATIONS_OFF = booleanPreferencesKey("sms_notifications_off")
         // 2.9.1: «Скрывать текст в уведомлениях» — разбор в SettingsRegistry
         val SMS_HIDE_TEXT = booleanPreferencesKey("sms_hide_text")
-        // 2.9.11: вместо переключателя — выбор из трёх (SmsTextMode); без него решает прежний
+        // 2.9.12: вместо переключателя — выбор из трёх (SmsTextMode); без него решает прежний
         val SMS_TEXT_MODE = stringPreferencesKey("sms_text_mode")
         // 2.9.2: конструктор нижней панели — разбор в PanelSlots
         val PANEL_SLOTS = stringPreferencesKey("panel_slots")
@@ -1098,7 +1098,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("spam_sim_scope", v.name) { it[Keys.SPAM_SIM_SCOPE] = v.name }
 
     /**
-     * Свои правила SIM 2 (2.9.11, SpamSimScope.SEPARATE). Пока правило не меняли —
+     * Свои правила SIM 2 (2.9.12, SpamSimScope.SEPARATE). Пока правило не меняли —
      * значение общего: включив «Свои для каждой SIM», человек начинает с того же
      * набора и меняет только то, что у второй карты иначе.
      */
@@ -1286,7 +1286,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setPanelSide(v: Boolean) = edit("panel_side", v.toString()) { it[Keys.PANEL_SIDE] = v }
 
     /** Текст SMS в уведомлениях скрыт (2.9.1). По умолчанию — нет, текст виден. */
-    /** Текст SMS в уведомлениях (2.9.11): выбор, а не выбран — прежний переключатель 2.9.1. */
+    /** Текст SMS в уведомлениях (2.9.12): выбор, а не выбран — прежний переключатель 2.9.1. */
     val smsTextMode: Flow<com.ogneliss.dialer.sms.SmsTextMode> = data.map {
         com.ogneliss.dialer.sms.SmsTextMode.resolve(it[Keys.SMS_TEXT_MODE], it[Keys.SMS_HIDE_TEXT])
     }

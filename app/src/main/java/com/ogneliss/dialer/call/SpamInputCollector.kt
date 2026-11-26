@@ -187,7 +187,7 @@ class SpamInputCollector @Inject constructor(
         val tagged = async { safe("blockTaggedSpam", true) { prefs.blockTaggedSpam.first() } }
         val quiet = async { safe("quietHours", QuietHours.OFF) { prefs.quietHours.first() } }
         val scope = async { safe("spamSimScope", SpamSimScope.ALL) { prefs.spamSimScope.first() } }
-        // 2.9.11: свои правила SIM 2 — для «Свои для каждой SIM»; не прочитались — общие
+        // 2.9.12: свои правила SIM 2 — для «Свои для каждой SIM»; не прочитались — общие
         val sim2 = async { safe<SpamPolicy.Settings?>("spamSim2Rules", null) { prefs.spamSim2Rules.first() } }
 
         val simScope = scope.await()

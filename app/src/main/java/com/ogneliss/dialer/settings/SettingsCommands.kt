@@ -621,7 +621,7 @@ class SettingsCommands @Inject constructor(
         }
 
         /** Подпись «Правила — для SIM» (2.9.8) — для строки настройки и окна выбора. */
-        /** Подпись варианта «Текст SMS в уведомлениях» (2.9.11). */
+        /** Подпись варианта «Текст SMS в уведомлениях» (2.9.12). */
         fun smsTextModeLabelRes(mode: com.ogneliss.dialer.sms.SmsTextMode): Int = when (mode) {
             com.ogneliss.dialer.sms.SmsTextMode.SHOW -> R.string.sms_text_show
             com.ogneliss.dialer.sms.SmsTextMode.UNTIL_EXPANDED -> R.string.sms_text_until_expanded
@@ -798,7 +798,7 @@ class SettingsCommands @Inject constructor(
             "sms_calls_in_thread",
             // 2.8.6
             "sms_notifications_off"
-            // 2.9.11: «sms_hide_text» стал выбором «sms_text_mode»
+            // 2.9.12: «sms_hide_text» стал выбором «sms_text_mode»
         )
 
         /** Ключи, которые обрабатывает setChoice. */
@@ -808,7 +808,7 @@ class SettingsCommands @Inject constructor(
             "sms_swipe_right", "sms_swipe_left",
             // 2.2.0
             "sms_undo_send", "sms_otp_cleanup",
-            // 2.9.11 (было переключателем sms_hide_text)
+            // 2.9.12 (было переключателем sms_hide_text)
             "sms_text_mode",
             "notes_retention", "notes_retention_scope", "carrier_info",
             // 2.9.1

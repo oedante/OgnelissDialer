@@ -51,7 +51,7 @@ class SpamSimScopeTest {
     }
 
     /*
-     * 2.9.11 — свои правила для каждой SIM (форум, Bublikov34: «на личной — запрет на
+     * 2.9.12 — свои правила для каждой SIM (форум, Bublikov34: «на личной — запрет на
      * номера не из контактов, на рабочей — только спам блокировать»).
      */
     private val personalAndWork = SpamPolicy.Settings(

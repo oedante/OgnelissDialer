@@ -295,10 +295,10 @@ object SmsSettings {
 
     fun notificationsOff(context: Context): Boolean = prefs(context).getBoolean(KEY_NOTIFICATIONS_OFF, false)
 
-    /** «Скрывать текст в уведомлениях» (2.9.1): с 2.9.11 — только чтобы прочитать прежний выбор. */
+    /** «Скрывать текст в уведомлениях» (2.9.1): с 2.9.12 — только чтобы прочитать прежний выбор. */
     const val KEY_HIDE_TEXT = "sms_hide_text"
 
-    /** «Текст SMS в уведомлениях» (2.9.11): разбор у SmsTextMode. */
+    /** «Текст SMS в уведомлениях» (2.9.12): разбор у SmsTextMode. */
     const val KEY_TEXT_MODE = "sms_text_mode"
 
     fun textMode(context: Context): SmsTextMode = prefs(context).let { p ->
@@ -341,7 +341,7 @@ object SmsSettings {
         prefs(context).edit().putInt(key, value).apply()
     }
 
-    // 2.9.11: через KTX (lint UseKtx); соседние put/putInt — как были, их замечание старое
+    // 2.9.12: через KTX (lint UseKtx); соседние put/putInt — как были, их замечание старое
     fun putString(context: Context, key: String, value: String) {
         prefs(context).edit { putString(key, value) }
     }
