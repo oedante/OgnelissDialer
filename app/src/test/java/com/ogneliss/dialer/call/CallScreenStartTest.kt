@@ -39,15 +39,27 @@ class CallScreenStartTest {
         assertFalse(start.statusLabels)
     }
 
+    /*
+     * 2.9.11 (Windows, автор: тест падал на assertNotNull). Было: read() — первое
+     * обращение к настройкам в тесте. Robolectric создаёт контекст заново в каждом
+     * тесте, а с ним и DataStore: чтение шло с диска «холодным», и на Windows не
+     * укладывалось в бюджет read() (PREFS_BUDGET_MS, 250 мс) — приходили значения по
+     * умолчанию, у фото это null. Так read() и задуман (главный поток ждать дольше
+     * не может), а тест проверяет обычный случай: настройки уже в памяти. Поэтому
+     * ожидаемое значение читаем первым — оно же и прогревает DataStore.
+     */
     @Test
     fun `фото звонящего прочитано - не null, как до чтения`() {
+        val expected = runBlocking { prefs.callPhotoStyle.first() }
         val start = CallScreenStart.read(context, prefs, incoming = null)
         assertNotNull(start.callPhotoStyle)
-        assertEquals(runBlocking { prefs.callPhotoStyle.first() }, start.callPhotoStyle)
+        assertEquals(expected, start.callPhotoStyle)
     }
 
     @Test
     fun `без своего снимка заготовки фона нет`() {
+        // Настройки — в память до read(), как в тесте выше: проверяем снимок, а не бюджет
+        runBlocking { prefs.callPhotoStyle.first() }
         val start = CallScreenStart.read(context, prefs, incoming = true)
         assertNull(start.background)
     }
