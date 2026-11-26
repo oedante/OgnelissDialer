@@ -718,7 +718,7 @@
     <string name="faq_q_undo">J’ai supprimé une entrée du journal par erreur. Peut-on la récupérer ?</string>
     <string name="faq_a_undo">Oui, si vous réagissez tout de suite. Après la suppression, « Supprimé de la liste des appels » s’affiche en bas pendant quelques secondes avec le bouton « Annuler » — appuyez dessus tant que le message est visible. Ensuite, les entrées sont aussi supprimées du journal système du téléphone et ne peuvent plus être restaurées. Effacer tout le journal depuis le menu est définitif : c’est pourquoi l’application demande d’abord confirmation.</string>
     <string name="faq_q_spam">Comment bloquer le spam et les numéros indésirables ?</string>
-    <string name="faq_a_spam">Appui long sur une entrée → « Bloquer » : le numéro passe dans la liste de blocage et ne peut plus vous joindre. Au même endroit, sous « Plus », il y a l’étiquette « Spam » : ces numéros ne passent pas non plus, et l’étiquette apparaît dans le journal et sur l’écran d’appel. Masques de numéros, numéros masqués et inconnus, liste d’exceptions : tout est dans %1$s. Bloquer les numéros inconnus arrête aussi livreurs, cabinets médicaux et écoles : ajoutez-les d’abord à la liste d’exceptions.</string>
+    <string name="faq_a_spam">Appui long sur une entrée → « Bloquer » : le numéro passe dans la liste de blocage et ne peut plus vous joindre. Au même endroit, sous « Plus », il y a l’étiquette « Spam » : ces numéros ne passent pas non plus, et l’étiquette apparaît dans le journal et sur l’écran d’appel. Masques de numéros, numéros masqués et inconnus, liste d’exceptions : tout est dans %1$s. Bloquer les numéros inconnus arrête aussi livreurs, cabinets médicaux et écoles : ajoutez-les d’abord à la liste d’exceptions. Avec deux SIM, les règles peuvent être propres à chacune : « Règles pour » → « Propres à chaque SIM », puis « Règles de la SIM 2 » — par exemple bloquer les inconnus sur la SIM perso et seulement le spam sur la SIM pro ; les listes sont communes.</string>
     <string name="faq_q_slide">Comment répondre en faisant glisser — ou retrouver les boutons ?</string>
     <string name="faq_a_slide">%1$s. « Toucher » affiche deux boutons ordinaires. Avec « Glisser », on fait glisser le bouton : à droite pour répondre, à gauche pour refuser — impossible ainsi de répondre ou de refuser par mégarde en sortant le téléphone de la poche. Avec TalkBack, les appels se prennent toujours avec des boutons.</string>
     <string name="faq_q_sim">Comment choisir la carte SIM pour un appel ?</string>
@@ -1115,8 +1115,6 @@
     <string name="outgoing_sim_1">SIM 1 uniquement</string>
     <string name="outgoing_sim_2">SIM 2 uniquement</string>
     <string name="keywords_outgoing_sim">carte SIM par défaut sortant appels SMS seule deuxième double</string>
-    <string name="settings_sms_hide_text">Masquer le texte des notifications</string>
-    <string name="settings_sms_hide_text_text">Expéditeur seul, sans texte ni codes</string>
     <string name="sms_new_messages_count">Nouveaux messages : %1$d</string>
     <string name="sms_copy_code_hidden">Copier le code</string>
     <string name="keywords_dynamic_color">monet material you fond d’écran couleurs système dynamique thème accent</string>
@@ -1196,4 +1194,18 @@
     <string name="sim_rule_mask_hint">+7 495, Краснодар*, MTS</string>
     <string name="sim_rule_mask_help">* remplace un chiffre dans un numéro, des lettres dans un nom</string>
     <string name="sim_rule_call_from">Appeler avec</string>
+    <string name="spam_sim_scope_separate">Propres à chaque SIM</string>
+    <string name="settings_spam_sim2">Règles de la SIM 2</string>
+    <string name="settings_spam_sim2_text">Les règles ci-dessus valent pour la SIM 1</string>
+    <string name="keywords_spam_sim2">spam blocage deuxième sim carte règles séparées propres</string>
+    <string name="settings_sms_text_mode">Texte des SMS dans les notifications</string>
+    <string name="settings_sms_text_mode_text">Cacher le texte et les codes aux regards</string>
+    <string name="sms_text_show">Afficher</string>
+    <string name="sms_text_until_expanded">Cacher jusqu\'à l\'ouverture</string>
+    <string name="sms_text_hide">Toujours cacher</string>
+    <string name="sms_text_until_expanded_hint">Texte dans la notification ouverte ; hors des conversations</string>
+    <string name="sms_text_hide_hint">Expéditeur seul, sans texte ni codes</string>
+    <string name="settings_call_preview">Aperçu de l\'écran d\'appel</string>
+    <string name="settings_call_preview_text">Avec les réglages actuels, sans son</string>
+    <string name="keywords_call_preview">aperçu écran d\'appel apparence voir</string>
 </resources>

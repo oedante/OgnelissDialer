@@ -1,243 +1,243 @@
 <ru-RU>
+• «Карта по номеру»: SIM по началу номера, региону или оператору.
 • Свайпы «Позвонить с SIM 1 / SIM 2», длительность разговора в журнале.
-• Правила защиты от спама — для одной SIM или обеих.
+• Защита от спама: правила для одной SIM или свои для каждой.
 • «Назад» в журнале, SMS и контактах сворачивает приложение.
-• Колонка справа: «Меню» и инструменты на ней, свой порядок.
-• Живой фон вызова: облики «Абстракция», «Закат», «Ночь», бережнее к батарее.
-• Уведомления подписаны «Звонок» или «SMS»; Max убран.
-• «Карта по номеру»: SIM по началу номера, региону, оператору; «Создать» в заметках и напоминаниях.
+• Экран вызова: облики «Абстракция», «Закат», «Ночь», предпросмотр.
+• Текст SMS можно скрыть до раскрытия; уведомления подписаны «Звонок»/«SMS».
+• «Создать» в заметках и напоминаниях; Max убран.
 </ru-RU>
 <ar>
+• اختيار الشريحة حسب بداية الرقم أو المنطقة أو المشغّل.
 • سحب «اتصال من SIM 1 / SIM 2»، ومدة المكالمة في السجل.
-• قواعد الحماية من الإزعاج لشريحة واحدة أو للاثنتين.
-• الرجوع في السجل والرسائل وجهات الاتصال يُخفي التطبيق.
-• العمود الأيمن: «القائمة» والأدوات فيه، بترتيبك.
-• الخلفية الحية: مظاهر «تجريد» و«غروب» و«ليل»، وتوفير أكثر للبطارية.
-• الإشعارات موسومة بـ«مكالمة» أو «رسالة»؛ أُزيل Max.
-• شريحة SIM حسب بداية الرقم أو المنطقة أو المشغّل؛ «إنشاء» في الملاحظات والتذكيرات.
+• الحماية من الإزعاج: قواعد لشريحة واحدة أو لكل شريحة.
+• «رجوع» في السجل والرسائل وجهات الاتصال يغلق التطبيق.
+• شاشة المكالمة: مظاهر «تجريدي» و«غروب» و«ليل»، ومعاينة.
+• إخفاء نص الرسائل حتى توسيع الإشعار؛ إشعارات بعنوان «مكالمة»/«رسالة».
+• «إنشاء» في الملاحظات والتذكيرات؛ أُزيل Max.
 </ar>
 <cs-CZ>
+• SIM podle začátku čísla, regionu nebo operátora.
 • Přejetí „Volat ze SIM 1 / SIM 2“, délka hovoru ve výpisu.
-• Pravidla ochrany před spamem pro jednu SIM nebo obě.
-• Zpět ve výpisu, SMS a kontaktech aplikaci skryje.
-• Sloupec vpravo: „Menu“ a nástroje na něm, vlastní pořadí.
-• Živé pozadí: vzhledy „Abstrakce“, „Západ slunce“, „Noc“, šetrnější k baterii.
-• Oznámení s popiskem „Hovor“ nebo „SMS“; Max odebrán.
-• SIM podle začátku čísla, regionu, operátora; „Vytvořit“ v Poznámkách a Připomenutích.
+• Ochrana před spamem: pravidla pro jednu SIM nebo vlastní pro každou.
+• „Zpět“ ve výpisu, SMS a kontaktech aplikaci zavře.
+• Obrazovka hovoru: vzhledy Abstrakce, Západ slunce, Noc, náhled.
+• Text SMS skrytý do rozbalení; oznámení s „Hovor“/„SMS“.
+• „Vytvořit“ v Poznámkách a Připomenutích; Max odstraněn.
 </cs-CZ>
 <da-DK>
+• SIM efter nummerets begyndelse, region eller operatør.
 • Swipes „Ring fra SIM 1 / SIM 2“, samtalens varighed i loggen.
-• Spamregler for ét SIM eller begge.
-• Tilbage i log, SMS og kontakter skjuler appen.
-• Kolonne til højre: „Menu“ og værktøjer på den, egen rækkefølge.
-• Levende baggrund: „Abstrakt“, „Solnedgang“, „Nat“, sparer mere batteri.
-• Notifikationer mærket „Opkald“ eller „SMS“; Max fjernet.
-• SIM efter nummerstart, region, operatør; „Opret“ i Noter og Påmindelser.
+• Spambeskyttelse: regler for ét SIM eller egne for hvert.
+• „Tilbage“ i log, SMS og kontakter lukker appen.
+• Opkaldsskærm: udseenderne Abstrakt, Solnedgang, Nat, forhåndsvisning.
+• SMS-tekst skjult, til den foldes ud; notifikationer med „Opkald“/„SMS“.
+• „Opret“ i Noter og Påmindelser; Max fjernet.
 </da-DK>
 <de-DE>
+• „SIM nach Nummer“: nach Nummernanfang, Region oder Betreiber.
 • Wischen „Anruf mit SIM 1 / SIM 2“, Gesprächsdauer in der Anrufliste.
-• Spamregeln für eine SIM oder beide.
-• Zurück in Anrufliste, SMS und Kontakten blendet die App aus.
-• Spalte rechts: „Menü“ und Werkzeuge darauf, eigene Reihenfolge.
-• Live-Hintergrund: „Abstrakt“, „Sonnenuntergang“, „Nacht“, akkuschonender.
-• Benachrichtigungen mit „Anruf“ oder „SMS“; Max entfernt.
-• „SIM nach Nummer“: nach Nummernanfang, Region, Betreiber; „Erstellen“ in Notizen und Erinnerungen.
+• Spamschutz: Regeln für eine SIM oder eigene für jede.
+• „Zurück“ in Anrufliste, SMS und Kontakten schließt die App.
+• Anrufbildschirm: Looks „Abstrakt“, „Sonnenuntergang“, „Nacht“, Vorschau.
+• SMS-Text bis zum Aufklappen verbergen; Hinweise mit „Anruf“/„SMS“.
+• „Erstellen“ in Notizen und Erinnerungen; Max entfernt.
 </de-DE>
 <en-US>
+• "SIM by number": SIM by number start, region or operator.
 • "Call from SIM 1 / SIM 2" swipes, call duration in the call log.
-• Spam protection rules for one SIM or both.
+• Spam protection: rules for one SIM or each its own.
 • Back in the call log, SMS and contacts hides the app.
-• Right column: Menu and tools on it, your own order.
-• Live call background: Abstract, Sunset and Night looks, easier on the battery.
-• Notifications labeled "Call" or "SMS"; Max removed.
-• "SIM by number": by number start, region, operator; "Create" in Notes and Reminders.
+• Call screen: Abstract, Sunset and Night looks, preview in settings.
+• SMS text can stay hidden until expanded; notifications labeled "Call"/"SMS".
+• "Create" in Notes and Reminders; Max removed.
 </en-US>
 <es-ES>
+• SIM según el inicio del número, la región o el operador.
 • Deslizar «Llamar con SIM 1 / SIM 2», duración de la llamada en el registro.
-• Reglas antispam para una SIM o ambas.
-• Atrás en registro, SMS y contactos oculta la app.
-• Columna derecha: «Menú» y herramientas en ella, orden propio.
-• Fondo animado: «Abstracto», «Atardecer», «Noche», ahorra más batería.
-• Notificaciones con «Llamada» o «SMS»; Max eliminado.
-• SIM según inicio del número, región, operador; «Crear» en Notas y Recordatorios.
+• Antispam: reglas para una SIM o propias para cada una.
+• Atrás en registro, SMS y contactos cierra la app.
+• Pantalla de llamada: estilos Abstracto, Atardecer, Noche, vista previa.
+• Texto del SMS oculto hasta expandir; avisos con «Llamada»/«SMS».
+• «Crear» en Notas y Recordatorios; Max eliminado.
 </es-ES>
 <fi-FI>
+• SIM numeron alun, alueen tai operaattorin mukaan.
 • Pyyhkäisyt ”Soita SIM 1:llä / SIM 2:lla”, puhelun kesto lokissa.
-• Roskapuhelusäännöt yhdelle SIMille tai molemmille.
-• Takaisin lokissa, SMS:ssä ja yhteystiedoissa piilottaa sovelluksen.
-• Oikea sarake: ”Valikko” ja työkalut siinä, oma järjestys.
-• Elävä tausta: ”Abstrakti”, ”Auringonlasku”, ”Yö”, säästää akkua.
-• Ilmoituksissa ”Puhelu” tai ”SMS”; Max poistettu.
-• SIM numeron alun, alueen, operaattorin mukaan; ”Luo” muistiinpanoissa ja muistutuksissa.
+• Roskapuhelusuoja: säännöt yhdelle SIM:lle tai omat kullekin.
+• ”Takaisin” lokissa, viesteissä ja yhteystiedoissa sulkee sovelluksen.
+• Puhelunäkymä: tyylit Abstrakti, Auringonlasku, Yö, esikatselu.
+• Viestin teksti piiloon avaamiseen asti; ilmoitukset ”Puhelu”/”SMS”.
+• ”Luo” muistiinpanoissa ja muistutuksissa; Max poistettu.
 </fi-FI>
 <fr-FR>
+• « SIM selon le numéro » : début, région ou opérateur.
 • Balayages « Appeler avec la SIM 1 / SIM 2 », durée des appels au journal.
-• Règles anti-spam pour une SIM ou les deux.
-• Retour dans le journal, les SMS et les contacts masque l’appli.
-• Colonne de droite : menu et outils, ordre réglable.
-• Fond animé : styles « Abstrait », « Coucher de soleil », « Nuit », plus économe.
-• Notifications marquées « Appel » ou « SMS » ; Max retiré.
-• « SIM selon le numéro » : début, région, opérateur ; « Créer » dans Notes et Rappels.
+• Anti-spam : règles pour une SIM ou propres à chacune.
+• Retour dans le journal, les SMS et les contacts ferme l’app.
+• Écran d’appel : styles Abstrait, Coucher de soleil, Nuit, aperçu.
+• Texte des SMS caché jusqu’à l’ouverture ; notifications « Appel »/« SMS ».
+• « Créer » dans Notes et Rappels ; Max retiré.
 </fr-FR>
 <hi-IN>
+• नंबर की शुरुआत, क्षेत्र या ऑपरेटर के अनुसार SIM।
 • «SIM 1 / SIM 2 से कॉल» स्वाइप, लॉग में कॉल की अवधि।
-• स्पैम सुरक्षा नियम एक SIM या दोनों के लिए।
-• लॉग, SMS और संपर्कों में वापस बटन ऐप छिपाता है।
-• दाईं ओर कॉलम: «मेनू» और टूल उसमें, अपना क्रम।
-• लाइव पृष्ठभूमि: «अमूर्त», «सूर्यास्त», «रात», कम बैटरी खर्च।
-• सूचनाओं पर «कॉल» या «SMS»; Max हटाया।
-• नंबर की शुरुआत, क्षेत्र, ऑपरेटर के अनुसार SIM; नोट्स और रिमाइंडर में «बनाएँ»।
+• स्पैम सुरक्षा: एक SIM के लिए या हर SIM के अपने नियम।
+• लॉग, SMS और संपर्कों में «वापस» ऐप बंद करता है।
+• कॉल स्क्रीन: «अमूर्त», «सूर्यास्त», «रात» रूप, पूर्वावलोकन।
+• SMS टेक्स्ट सूचना खोलने तक छिपा; सूचनाओं पर «कॉल»/«SMS»।
+• नोट्स और रिमाइंडर में «बनाएँ»; Max हटाया गया।
 </hi-IN>
 <hu-HU>
+• SIM a szám eleje, a régió vagy a szolgáltató alapján.
 • „Hívás SIM 1-ről / SIM 2-ről” csúsztatás, hívás hossza a naplóban.
-• Spamszabályok egy SIM-re vagy mindkettőre.
-• A Vissza a naplóban, SMS-ben és névjegyekben elrejti az appot.
-• Jobb oszlop: „Menü” és eszközök rajta, saját sorrend.
-• Élő háttér: „Absztrakt”, „Naplemente”, „Éjszaka”, akkukímélőbb.
-• Értesítéseken „Hívás” vagy „SMS”; a Max kikerült.
-• SIM a szám eleje, régió, szolgáltató alapján; „Létrehozás” a jegyzeteknél.
+• Spamvédelem: szabályok egy SIM-re vagy mindegyikre külön.
+• A „Vissza” a naplóban, SMS-ekben és névjegyekben bezárja az appot.
+• Hívásképernyő: Absztrakt, Naplemente, Éjszaka stílus, előnézet.
+• Az SMS szövege kinyitásig rejtve; értesítések „Hívás”/„SMS” címmel.
+• „Létrehozás” a jegyzeteknél; a Max eltávolítva.
 </hu-HU>
 <id>
+• SIM menurut awal nomor, wilayah, atau operator.
 • Usap “Panggil dari SIM 1 / SIM 2”, durasi panggilan di log.
-• Aturan antispam untuk satu SIM atau keduanya.
-• Kembali di log, SMS, dan kontak menyembunyikan aplikasi.
-• Kolom kanan: “Menu” dan alat di sana, urutan sendiri.
-• Latar hidup: “Abstrak”, “Senja”, “Malam”, lebih hemat baterai.
-• Notifikasi berlabel “Panggilan” atau “SMS”; Max dihapus.
-• SIM menurut awal nomor, wilayah, operator; “Buat” di Catatan dan Pengingat.
+• Perlindungan spam: aturan untuk satu SIM atau masing-masing.
+• Kembali di log, SMS, dan kontak menutup aplikasi.
+• Layar panggilan: tampilan Abstrak, Senja, Malam, pratinjau.
+• Teks SMS tersembunyi sampai dibuka; notifikasi “Panggilan”/“SMS”.
+• “Buat” di Catatan dan Pengingat; Max dihapus.
 </id>
 <it-IT>
+• SIM in base all'inizio del numero, alla regione o all'operatore.
 • Scorrimenti «Chiama con SIM 1 / SIM 2», durata delle chiamate nel registro.
-• Regole antispam per una SIM o entrambe.
-• Indietro in registro, SMS e contatti nasconde l’app.
-• Colonna destra: «Menu» e strumenti, ordine personale.
-• Sfondo animato: «Astratto», «Tramonto», «Notte», risparmia batteria.
-• Notifiche con «Chiamata» o «SMS»; Max rimosso.
-• SIM per inizio del numero, regione, operatore; «Crea» in Note e Promemoria.
+• Antispam: regole per una SIM o proprie per ciascuna.
+• Indietro in registro, SMS e contatti chiude l'app.
+• Schermata di chiamata: stili Astratto, Tramonto, Notte, anteprima.
+• Testo SMS nascosto fino all'apertura; notifiche «Chiamata»/«SMS».
+• «Crea» in Note e Promemoria; Max rimosso.
 </it-IT>
 <iw-IL>
+• SIM לפי תחילת המספר, האזור או המפעיל.
 • החלקות „התקשר מ-SIM 1 / SIM 2”, משך השיחה ביומן.
-• כללי הגנה מספאם ל-SIM אחד או לשניהם.
-• „חזרה” ביומן, ב-SMS ובאנשי הקשר מסתירה את האפליקציה.
-• העמודה מימין: „תפריט” וכלים בה, סדר משלכם.
-• רקע חי: „מופשט”, „שקיעה”, „לילה”, חוסך יותר סוללה.
-• התראות מסומנות „שיחה” או „SMS”; Max הוסר.
-• SIM לפי תחילת המספר, אזור, מפעיל; „יצירה” בפתקים ובתזכורות.
+• הגנה מספאם: כללים ל-SIM אחד או לכל אחד משלו.
+• „חזרה” ביומן, ב-SMS ובאנשי הקשר סוגרת את האפליקציה.
+• מסך שיחה: מראות „מופשט”, „שקיעה”, „לילה”, תצוגה מקדימה.
+• טקסט SMS מוסתר עד הפתיחה; התראות „שיחה”/„SMS”.
+• „יצירה” בפתקים ובתזכורות; Max הוסר.
 </iw-IL>
 <ja-JP>
+• 番号の先頭・地域・事業者でSIMを選択。
 • 「SIM 1 / SIM 2 で発信」スワイプ、履歴に通話時間。
-• 迷惑電話ルールを片方の SIM だけに。
-• 通話履歴・SMS・連絡先で「戻る」でアプリを閉じる。
-• 右側の列：「メニュー」とツールを配置、順序は自由。
-• ライブ背景：「アブストラクト」「夕焼け」「夜」、電池にやさしく。
-• 通知に「通話」「SMS」を表示。Max を削除。
-• 番号の先頭・地域・事業者でSIMを選択、メモとリマインダーに「作成」。
+• 迷惑電話対策：1枚だけ、またはSIMごとのルール。
+• 履歴・SMS・連絡先で「戻る」とアプリを閉じる。
+• 通話画面：「抽象」「夕焼け」「夜」、プレビュー。
+• SMS本文は通知を開くまで非表示に；通知に「通話」「SMS」。
+• メモとリマインダーに「作成」；Maxを削除。
 </ja-JP>
 <ko-KR>
+• 번호 앞자리·지역·통신사로 SIM 선택.
 • 'SIM 1 / SIM 2로 전화' 스와이프, 통화 기록에 통화 시간.
-• 스팸 차단 규칙을 SIM 하나 또는 둘 다에.
-• 통화 기록, SMS, 연락처에서 뒤로 가기로 앱 숨기기.
-• 오른쪽 열: '메뉴'와 도구, 순서 설정.
-• 라이브 배경: '추상', '노을', '밤', 배터리 절약.
-• 알림에 '통화' 또는 'SMS' 표시; Max 제거.
-• 번호 앞자리·지역·통신사로 SIM 선택, 메모와 알림에 '만들기'.
+• 스팸 차단: SIM 하나 또는 SIM별 규칙.
+• 기록·SMS·연락처에서 '뒤로'를 누르면 앱 닫힘.
+• 통화 화면: '추상'·'노을'·'밤' 스타일, 미리 보기.
+• 알림을 펼치기 전까지 SMS 본문 숨김, 알림에 '전화'/'SMS'.
+• 메모와 알림에 '만들기', Max 삭제.
 </ko-KR>
 <nl-NL>
+• Sim op basis van nummerbegin, regio of provider.
 • Vegen ‘Bellen met sim 1 / sim 2’, gespreksduur in de oproeplijst.
-• Spamregels voor één simkaart of beide.
-• Terug in oproeplijst, sms en contacten verbergt de app.
-• Kolom rechts: ‘Menu’ en hulpmiddelen erop, eigen volgorde.
-• Live-achtergrond: ‘Abstract’, ‘Zonsondergang’, ‘Nacht’, zuiniger.
-• Meldingen met ‘Oproep’ of ‘Sms’; Max verwijderd.
-• Sim op nummerbegin, regio, provider; ‘Maken’ in Notities en Herinneringen.
+• Spambescherming: regels voor één sim of eigen per sim.
+• Terug in oproeplijst, sms en contacten sluit de app.
+• Belscherm: stijlen Abstract, Zonsondergang, Nacht, voorbeeld.
+• Sms-tekst verborgen tot openklappen; meldingen ‘Oproep’/‘Sms’.
+• ‘Maken’ in Notities en Herinneringen; Max verwijderd.
 </nl-NL>
 <no-NO>
+• SIM etter nummerets begynnelse, region eller operatør.
 • Sveip «Ring fra SIM 1 / SIM 2», samtalens varighet i loggen.
-• Spamregler for ett SIM eller begge.
-• Tilbake i logg, SMS og kontakter skjuler appen.
-• Kolonne til høyre: «Meny» og verktøy på den, egen rekkefølge.
-• Levende bakgrunn: «Abstrakt», «Solnedgang», «Natt», sparer batteri.
-• Varsler merket «Anrop» eller «SMS»; Max fjernet.
-• SIM etter nummerstart, region, operatør; «Opprett» i Notater og Påminnelser.
+• Spambeskyttelse: regler for ett SIM eller egne for hvert.
+• «Tilbake» i logg, SMS og kontakter lukker appen.
+• Anropsskjerm: stilene Abstrakt, Solnedgang, Natt, forhåndsvisning.
+• SMS-tekst skjult til utvidet; varsler merket «Anrop»/«SMS».
+• «Opprett» i Notater og Påminnelser; Max fjernet.
 </no-NO>
 <pl-PL>
+• SIM według początku numeru, regionu lub operatora.
 • Przesunięcia „Zadzwoń z SIM 1 / SIM 2”, czas rozmowy w rejestrze.
-• Reguły ochrony przed spamem dla jednej karty lub obu.
-• Wstecz w rejestrze, SMS i kontaktach ukrywa aplikację.
-• Kolumna po prawej: „Menu” i narzędzia na niej, własna kolejność.
-• Żywe tło: „Abstrakcja”, „Zachód słońca”, „Noc”, oszczędniejsze.
-• Powiadomienia z podpisem „Połączenie” lub „SMS”; Max usunięty.
-• SIM według początku numeru, regionu, operatora; „Utwórz” w Notatkach.
+• Ochrona przed spamem: reguły dla jednej SIM lub dla każdej osobno.
+• „Wstecz” w rejestrze, SMS i kontaktach zamyka aplikację.
+• Ekran połączenia: style Abstrakcja, Zachód słońca, Noc, podgląd.
+• Tekst SMS ukryty do rozwinięcia; powiadomienia „Połączenie”/„SMS”.
+• „Utwórz” w Notatkach; Max usunięty.
 </pl-PL>
 <pt-BR>
+• SIM pelo início do número, região ou operadora.
 • Deslizes “Ligar do SIM 1 / SIM 2”, duração das chamadas no registro.
-• Regras antispam para um SIM ou ambos.
-• Voltar no registro, SMS e contatos oculta o app.
-• Coluna da direita: “Menu” e ferramentas nela, ordem própria.
-• Fundo animado: “Abstrato”, “Pôr do sol”, “Noite”, poupa bateria.
-• Notificações com “Chamada” ou “SMS”; Max removido.
-• SIM pelo início do número, região, operadora; “Criar” em Notas e Lembretes.
+• Proteção contra spam: regras para um SIM ou próprias para cada.
+• Voltar no registro, SMS e contatos fecha o app.
+• Tela de chamada: estilos Abstrato, Pôr do sol, Noite, prévia.
+• Texto do SMS oculto até expandir; notificações “Chamada”/“SMS”.
+• “Criar” em Notas e Lembretes; Max removido.
 </pt-BR>
 <ro>
+• SIM după începutul numărului, regiune sau operator.
 • Glisări „Sună de pe SIM 1 / SIM 2”, durata apelului în jurnal.
-• Reguli antispam pentru un SIM sau ambele.
-• Înapoi în jurnal, SMS și contacte ascunde aplicația.
-• Coloana din dreapta: „Meniu” și instrumente pe ea, ordine proprie.
-• Fundal animat: „Abstract”, „Apus”, „Noapte”, mai econom.
-• Notificări cu „Apel” sau „SMS”; Max eliminat.
-• SIM după începutul numărului, regiune, operator; „Creează” în Note și Mementouri.
+• Anti-spam: reguli pentru un SIM sau proprii pentru fiecare.
+• „Înapoi” în jurnal, SMS și contacte închide aplicația.
+• Ecran de apel: stiluri Abstract, Apus, Noapte, previzualizare.
+• Text SMS ascuns până la extindere; notificări „Apel”/„SMS”.
+• „Creează” în Note și Mementouri; Max eliminat.
 </ro>
 <sk>
+• SIM podľa začiatku čísla, regiónu alebo operátora.
 • Potiahnutia „Volať zo SIM 1 / SIM 2“, dĺžka hovoru vo výpise.
-• Pravidlá ochrany pred spamom pre jednu SIM alebo obe.
-• Späť vo výpise, SMS a kontaktoch aplikáciu skryje.
-• Stĺpec vpravo: „Menu“ a nástroje na ňom, vlastné poradie.
-• Živé pozadie: „Abstrakcia“, „Západ slnka“, „Noc“, šetrnejšie k batérii.
-• Upozornenia s popisom „Hovor“ alebo „SMS“; Max odstránený.
-• SIM podľa začiatku čísla, regiónu, operátora; „Vytvoriť“ v Poznámkach.
+• Ochrana pred spamom: pravidlá pre jednu SIM alebo vlastné pre každú.
+• „Späť“ vo výpise, SMS a kontaktoch zavrie aplikáciu.
+• Obrazovka hovoru: vzhľady Abstrakcia, Západ slnka, Noc, náhľad.
+• Text SMS skrytý do rozbalenia; upozornenia „Hovor“/„SMS“.
+• „Vytvoriť“ v Poznámkach; Max odstránený.
 </sk>
 <sv-SE>
+• SIM utifrån nummerbörjan, region eller operatör.
 • Svep ”Ring från SIM 1 / SIM 2”, samtalets längd i loggen.
-• Spamregler för ett SIM eller båda.
-• Tillbaka i logg, SMS och kontakter döljer appen.
-• Kolumn till höger: ”Meny” och verktyg på den, egen ordning.
-• Levande bakgrund: ”Abstrakt”, ”Solnedgång”, ”Natt”, sparar batteri.
-• Aviseringar märkta ”Samtal” eller ”SMS”; Max borttaget.
-• SIM utifrån nummerbörjan, region, operatör; ”Skapa” i Anteckningar och Påminnelser.
+• Spamskydd: regler för ett SIM eller egna för varje.
+• ”Tillbaka” i logg, sms och kontakter stänger appen.
+• Samtalsskärm: stilarna Abstrakt, Solnedgång, Natt, förhandsvisning.
+• Sms-text dold tills den fälls ut; aviseringar ”Samtal”/”Sms”.
+• ”Skapa” i Anteckningar och Påminnelser; Max borttagen.
 </sv-SE>
 <th>
+• เลือก SIM ตามต้นหมายเลข ภูมิภาค หรือผู้ให้บริการ
 • ปัด «โทรจาก SIM 1 / SIM 2» และระยะเวลาการโทรในบันทึก
-• กฎป้องกันสแปมสำหรับ SIM เดียวหรือทั้งสอง
-• ปุ่มย้อนกลับในบันทึก SMS และรายชื่อติดต่อจะซ่อนแอป
-• คอลัมน์ด้านขวา: «เมนู» และเครื่องมือ จัดลำดับเองได้
-• พื้นหลังเคลื่อนไหว: «นามธรรม» «พระอาทิตย์ตก» «กลางคืน» ประหยัดแบตขึ้น
-• การแจ้งเตือนมีป้าย «การโทร» หรือ «SMS» นำ Max ออก
-• เลือก SIM ตามต้นหมายเลข ภูมิภาค ผู้ให้บริการ «สร้าง» ในโน้ตและการเตือน
+• ป้องกันสแปม: กฎสำหรับ SIM เดียวหรือแยกแต่ละ SIM
+• «ย้อนกลับ» ในบันทึก SMS และรายชื่อจะปิดแอป
+• หน้าจอการโทร: «นามธรรม» «พระอาทิตย์ตก» «กลางคืน» และดูตัวอย่าง
+• ซ่อนข้อความ SMS จนกว่าจะขยาย การแจ้งเตือนมีป้าย «โทร»/«SMS»
+• «สร้าง» ในโน้ตและการเตือน นำ Max ออกแล้ว
 </th>
 <tr-TR>
+• Numaranın başı, bölge veya operatöre göre SIM.
 • “SIM 1 / SIM 2 ile ara” kaydırmaları, kayıtta konuşma süresi.
-• Spam kuralları tek SIM ya da ikisi için.
-• Kayıt, SMS ve kişilerde Geri uygulamayı gizler.
-• Sağ sütun: “Menü” ve araçlar üzerinde, kendi sıranız.
-• Canlı arka plan: “Soyut”, “Gün batımı”, “Gece”, pili daha az yorar.
-• Bildirimlerde “Arama” ya da “SMS”; Max kaldırıldı.
-• Numara başı, bölge, operatöre göre SIM; Notlar ve Hatırlatıcılarda “Oluştur”.
+• Spam koruması: tek SIM için ya da her SIM'e ayrı kurallar.
+• Kayıt, SMS ve kişilerde “Geri” uygulamayı kapatır.
+• Arama ekranı: Soyut, Gün batımı, Gece görünümleri, önizleme.
+• SMS metni genişletilene kadar gizli; bildirimlerde “Arama”/“SMS”.
+• Notlar ve Hatırlatıcılarda “Oluştur”; Max kaldırıldı.
 </tr-TR>
 <vi>
+• SIM theo đầu số, vùng hoặc nhà mạng.
 • Vuốt “Gọi bằng SIM 1 / SIM 2”, thời lượng cuộc gọi trong nhật ký.
-• Quy tắc chặn spam cho một SIM hoặc cả hai.
-• Quay lại trong nhật ký, SMS và danh bạ sẽ ẩn ứng dụng.
-• Cột bên phải: “Menu” và công cụ, thứ tự riêng.
-• Nền động: “Trừu tượng”, “Hoàng hôn”, “Đêm”, tiết kiệm pin hơn.
-• Thông báo ghi “Cuộc gọi” hoặc “SMS”; đã bỏ Max.
-• SIM theo đầu số, vùng, nhà mạng; “Tạo” trong Ghi chú và Lời nhắc.
+• Chống spam: quy tắc cho một SIM hoặc riêng từng SIM.
+• Quay lại trong nhật ký, SMS và danh bạ sẽ đóng ứng dụng.
+• Màn hình cuộc gọi: kiểu Trừu tượng, Hoàng hôn, Đêm, xem trước.
+• Ẩn nội dung SMS đến khi mở rộng; thông báo ghi “Cuộc gọi”/“SMS”.
+• “Tạo” trong Ghi chú và Lời nhắc; đã bỏ Max.
 </vi>
 <zh-CN>
+• 按号码开头、地区或运营商选择 SIM 卡。
 • “用 SIM 1 / SIM 2 拨打”滑动，通话记录显示时长。
-• 防骚扰规则可只用于一张 SIM。
-• 在通话记录、短信、联系人中按返回即隐藏应用。
-• 右侧列：“菜单”和工具在列上，顺序可自定。
-• 动态背景：“抽象”“日落”“夜晚”外观，更省电。
-• 通知标注“通话”或“短信”；已移除 Max。
-• 按号码开头、地区、运营商选择 SIM 卡；备注和提醒中可“新建”。
+• 防骚扰：规则可只针对一张卡，或每张卡各自设置。
+• 在通话记录、短信和联系人中按“返回”即关闭应用。
+• 通话界面：“抽象”“日落”“夜晚”外观，可预览。
+• 短信内容可在通知展开前隐藏；通知标注“通话”/“短信”。
+• 备注和提醒中可“新建”；移除 Max。
 </zh-CN>

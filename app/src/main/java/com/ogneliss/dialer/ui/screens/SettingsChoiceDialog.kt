@@ -138,6 +138,10 @@ fun SettingsChoiceDialog(
         "sms_undo_send" -> com.ogneliss.dialer.settings.UndoSend.entries.map {
             it.name to stringResource(SettingsCommands.undoSendLabelRes(it))
         }
+        // 2.9.11: текст SMS в уведомлениях — три варианта (SmsTextMode)
+        "sms_text_mode" -> com.ogneliss.dialer.sms.SmsTextMode.entries.map {
+            it.name to stringResource(SettingsCommands.smsTextModeLabelRes(it))
+        }
         "sms_otp_cleanup" -> com.ogneliss.dialer.settings.OtpCleanup.entries.map {
             it.name to stringResource(SettingsCommands.otpCleanupLabelRes(it))
         }
@@ -246,6 +250,14 @@ fun SettingsChoiceDialog(
         onDismiss()
     }
 
+    /*
+     * ПРЕДПРОСМОТР ПРИ ВЫБОРЕ (2.9.11, форум, Bublikov34: «настройки отображения
+     * вызовов как-то просматривать при выборе, до применения»). У настроек вида
+     * экрана вызова шторка после выбора не закрывается, а внизу — «Посмотреть
+     * экран вызова» (FakeCall.preview): выбрал — посмотрел — вернулся в ту же
+     * шторку и выбрал другое. Закрывается, как всегда, смахиванием и касанием мимо.
+     */
+    val previewable = settingKey in CALL_PREVIEW_KEYS
     ChoiceSheet(title = vm.choiceTitle(ctx, settingKey), onDismiss = onDismiss) {
         Column(
             Modifier
@@ -269,11 +281,21 @@ fun SettingsChoiceDialog(
                                 )
                             } else {
                                 vm.setChoice(settingKey, value)
-                                onDismiss()
+                                if (!previewable) onDismiss()
                             }
                         }
                     )
                     if (index < options.lastIndex) SheetDivider()
+                }
+            }
+            if (previewable) {
+                androidx.compose.material3.FilledTonalButton(
+                    onClick = { com.ogneliss.dialer.call.FakeCall.preview(ctx) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = com.ogneliss.dialer.ui.theme.FlowUi.screenPadding, vertical = com.ogneliss.dialer.ui.theme.Space.m)
+                ) {
+                    androidx.compose.material3.Text(stringResource(R.string.settings_call_preview))
                 }
             }
         }
@@ -281,11 +303,23 @@ fun SettingsChoiceDialog(
 }
 
 /**
+ * Настройки вида экрана вызова, у которых в шторке есть «Посмотреть экран вызова»
+ * (2.9.11). Свой фон («Свой снимок») — нет: после выбора снимка шторка закрывается сама.
+ */
+private val CALL_PREVIEW_KEYS = setOf("call_photo_style", "call_photo_size", "call_ambient_style", "answer_mode")
+
+/**
  * Пояснение под вариантом (1.9.0) — как подписи вариантов в «Оформлении»
  * почты: плотность — что меняется, шрифт — откуда он.
  */
 @Composable
 private fun choiceHint(key: String, value: String): String? = when (key) {
+    // 2.9.11: что значит вариант текста SMS — коротко, подробнее в «Вопросах и ответах»
+    "sms_text_mode" -> when (value) {
+        com.ogneliss.dialer.sms.SmsTextMode.UNTIL_EXPANDED.name -> stringResource(R.string.sms_text_until_expanded_hint)
+        com.ogneliss.dialer.sms.SmsTextMode.HIDE.name -> stringResource(R.string.sms_text_hide_hint)
+        else -> null
+    }
     "list_density" -> when (value) {
         "COMPACT" -> stringResource(R.string.list_density_compact_hint)
         "COMFORTABLE" -> stringResource(R.string.list_density_comfortable_hint)

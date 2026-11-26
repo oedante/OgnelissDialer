@@ -69,7 +69,7 @@ fun SettingsCategoryScreen(
 ) {
     val ctx = LocalContext.current
     // Без Google Play «Оценить» не показывается (2.1.0): разбор у SettingsRegistry.shown
-    val entries = remember(category) {
+    val allEntries = remember(category) {
         SettingsRegistry.shown(SettingsRegistry.byCategory(category), InstallSource.isGooglePlay(ctx))
     }
 
@@ -79,7 +79,7 @@ fun SettingsCategoryScreen(
      * перечитывается при возвращении: разрешение выдают в системном окне.
      */
     val lifecycle = androidx.lifecycle.compose.LocalLifecycleOwner.current.lifecycle
-    val hasBattery = remember(entries) { entries.any { it.id == "battery" } }
+    val hasBattery = remember(allEntries) { allEntries.any { it.id == "battery" } }
     var batteryAllowed by remember { mutableStateOf(hasBattery && AppPermissions.isIgnoringBatteryOptimizations(ctx)) }
     DisposableEffect(lifecycle, hasBattery) {
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
@@ -97,6 +97,8 @@ fun SettingsCategoryScreen(
     var editingSimLabels by remember { mutableStateOf(false) }
 
     val state by vm.settingsState.collectAsStateWithLifecycle()
+    // 2.9.11: пункты, зависящие от другой настройки («Правила для SIM 2»), — SettingsRegistry.visibleFor
+    val entries = allEntries.filter { SettingsRegistry.visibleFor(it, state) }
 
     /*
      * ОТМЕТКИ И «ВЕРНУТЬ КАК БЫЛО» (1.5.8, обзор, У7).

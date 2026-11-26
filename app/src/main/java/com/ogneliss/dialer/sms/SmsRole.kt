@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.role.RoleManager
 import android.content.ComponentName
 import android.content.Context
+import androidx.core.content.edit
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -294,10 +295,15 @@ object SmsSettings {
 
     fun notificationsOff(context: Context): Boolean = prefs(context).getBoolean(KEY_NOTIFICATIONS_OFF, false)
 
-    /** «Скрывать текст в уведомлениях» (2.9.1): отправитель виден, текст — нет. */
+    /** «Скрывать текст в уведомлениях» (2.9.1): с 2.9.11 — только чтобы прочитать прежний выбор. */
     const val KEY_HIDE_TEXT = "sms_hide_text"
 
-    fun hideText(context: Context): Boolean = prefs(context).getBoolean(KEY_HIDE_TEXT, false)
+    /** «Текст SMS в уведомлениях» (2.9.11): разбор у SmsTextMode. */
+    const val KEY_TEXT_MODE = "sms_text_mode"
+
+    fun textMode(context: Context): SmsTextMode = prefs(context).let { p ->
+        SmsTextMode.resolve(p.getString(KEY_TEXT_MODE, null), p.getBoolean(KEY_HIDE_TEXT, false))
+    }
 
     /*
      * Полоса «разрешите автозапуск» — один раз (2.1.0: в списке SMS,
@@ -333,6 +339,11 @@ object SmsSettings {
 
     fun putInt(context: Context, key: String, value: Int) {
         prefs(context).edit().putInt(key, value).apply()
+    }
+
+    // 2.9.11: через KTX (lint UseKtx); соседние put/putInt — как были, их замечание старое
+    fun putString(context: Context, key: String, value: String) {
+        prefs(context).edit { putString(key, value) }
     }
 
     /** Отмена отправки, секунды (2.2.0; по умолчанию 5 — как UndoSend.S5). */

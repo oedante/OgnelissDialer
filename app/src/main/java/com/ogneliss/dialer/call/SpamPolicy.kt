@@ -79,7 +79,12 @@ object SpamPolicy {
         /** Тихие часы для незнакомых (1.8.0): разбор в QuietHours. */
         val quietHours: QuietHours = QuietHours.OFF,
         /** Для какой SIM правила выше (2.9.8): разбор в SpamSimScope. */
-        val simScope: SpamSimScope = SpamSimScope.ALL
+        val simScope: SpamSimScope = SpamSimScope.ALL,
+        /**
+         * Свои правила SIM 2 (2.9.11, SpamSimScope.SEPARATE); null — не заданы
+         * (для вызова на SIM 2 — правила выше). Списки и область у них не свои.
+         */
+        val sim2: Settings? = null
     ) {
         /** Без правил — только списки: вызов на карту, к которой правила не относятся. */
         fun listsOnly(): Settings = copy(
@@ -154,10 +159,7 @@ object SpamPolicy {
          * 2.9.8: правила — для выбранной SIM (SpamSimScope). Вызов на другую
          * карту проверяется только по спискам: белый, системный, чёрный.
          */
-        val s = if (input.settings.simScope.covers(input.simSlot)) input.settings else {
-            Logger.i(TAG, "Вызов на SIM ${input.simSlot?.plus(1)}: правила — для другой карты, только списки")
-            input.settings.listsOnly()
-        }
+        val s = rulesFor(input)
 
         // 1. Белый список побеждает всё. Без этого правило «блокировать всех
         //    не из контактов» отрезало бы школу, врача и курьера.
@@ -222,6 +224,24 @@ object SpamPolicy {
          */
 
         return allow(masked, Reason.NO_RULE_MATCHED)
+    }
+
+    /**
+     * Правила для карты вызова. 2.9.8: правила — для выбранной SIM (SpamSimScope);
+     * вызов на другую карту проверяется только по спискам. 2.9.11: «Свои для каждой
+     * SIM» — вызов на SIM 2 по её правилам (Settings.sim2), остальные — по общим.
+     */
+    internal fun rulesFor(input: SpamInput): Settings {
+        val settings = input.settings
+        if (settings.simScope == SpamSimScope.SEPARATE && input.simSlot == 1) {
+            settings.sim2?.let { own ->
+                Logger.i(TAG, "Вызов на SIM 2: свои правила этой карты")
+                return own
+            }
+        }
+        if (settings.simScope.covers(input.simSlot)) return settings
+        Logger.i(TAG, "Вызов на SIM ${input.simSlot?.plus(1)}: правила — для другой карты, только списки")
+        return settings.listsOnly()
     }
 
     private fun isQuietNow(input: SpamInput, s: Settings): Boolean =

@@ -81,6 +81,26 @@ object FakeCall {
         }
     }
 
+    /**
+     * ПРЕДПРОСМОТР ЭКРАНА ВЫЗОВА (2.9.11, форум, Bublikov34: «возможно ли настройки
+     * отображения вызовов как-то просматривать при выборе, до применения и звонка
+     * кому-то?»; автор: «можно, надо подумать, как лучше реализовать предпросмотр»).
+     *
+     * Тот же экран псевдозвонка с текущими настройками вида, но тихо: без мелодии
+     * и вибрации, без «вызова в системе» (гарнитура и машина о нём не узнают), без
+     * показа поверх экрана блокировки и без датчика приближения. «Ответить» — вид
+     * разговора, «Отклонить» и «Назад» — обратно в настройки. Открывается из
+     * «Экрана вызова» (строка «Посмотреть экран вызова») и из окон выбора его
+     * настроек (SettingsChoiceDialog, CALL_PREVIEW_KEYS).
+     */
+    fun preview(context: Context) {
+        context.startActivity(
+            Intent(context, FakeCallActivity::class.java)
+                .putExtra(FakeCallActivity.EXTRA_PREVIEW, true)
+                .apply { if (context !is android.app.Activity) addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+        )
+    }
+
     fun ringNow(context: Context) {
         reportUsed(context)
         context.startActivity(

@@ -98,6 +98,14 @@ class FakeCallActivity : ComponentActivity() {
     private var proximity: ProximityLock? = null
     private var vibrator: Vibrator? = null
 
+    /** Предпросмотр экрана вызова из настроек (2.9.11, FakeCall.preview): тихо, без вызова в системе. */
+    private val preview: Boolean by lazy { intent?.getBooleanExtra(EXTRA_PREVIEW, false) == true }
+
+    companion object {
+        /** Признак предпросмотра в намерении (FakeCall.preview). */
+        const val EXTRA_PREVIEW = "com.ogneliss.dialer.extra.CALL_PREVIEW"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -109,8 +117,11 @@ class FakeCallActivity : ComponentActivity() {
          * ярлыком — вызова ещё нет, создаём; открыла система (по времени) —
          * он уже есть, start ничего не делает. При повороте экрана — не трогаем.
          */
-        FakeTelecomCall.activityVisible = true
-        if (savedInstanceState == null) FakeTelecomCall.start(this)
+        // Предпросмотр (2.9.11) — не вызов: в системе его нет, гарнитура о нём не узнает
+        if (!preview) {
+            FakeTelecomCall.activityVisible = true
+            if (savedInstanceState == null) FakeTelecomCall.start(this)
+        }
 
         /*
          * БЕЗ БЕЛОЙ ПОДЛОЖКИ ПОД КНОПКАМИ НАВИГАЦИИ (1.5.1, снимки автора
@@ -127,14 +138,15 @@ class FakeCallActivity : ComponentActivity() {
 
         // Поверх экрана блокировки: телефон обычно лежит заблокированным,
         // а звонок должен быть виден так же, как настоящий
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+        if (!preview && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
         }
 
-        startRinging()
+        // Предпросмотр — без мелодии и вибрации: смотрят в настройках, а не ждут звонка
+        if (!preview) startRinging()
 
-        proximity = ProximityLock(this)
+        proximity = if (preview) null else ProximityLock(this)
 
         // Вид экрана — до первого кадра, как у настоящего вызова (2.9.7, CallScreenStart);
         // пробный вызов — входящий
@@ -180,7 +192,9 @@ class FakeCallActivity : ComponentActivity() {
             val avatarUnknown by prefs.avatarUnknown.collectAsStateWithLifecycle(start.avatarUnknown)
             val avatarScope by prefs.avatarScope.collectAsStateWithLifecycle(start.avatarScope)
             // Имя и номер — гарнитуре и машине, как только выбраны
-            LaunchedEffect(caller) { caller?.let { (n, num) -> FakeTelecomCall.updateCaller(n, num) } }
+            LaunchedEffect(caller) {
+                if (!preview) caller?.let { (n, num) -> FakeTelecomCall.updateCaller(n, num) }
+            }
             /*
              * Ответили или сбросили в гарнитуре (2.7.8): ответ — экран переходит
              * в разговор, мелодия смолкает; сброс — экран закрывается. «Был
@@ -189,6 +203,8 @@ class FakeCallActivity : ComponentActivity() {
             val telecom by FakeTelecomCall.state.collectAsStateWithLifecycle()
             var hadTelecomCall by remember { mutableStateOf(false) }
             LaunchedEffect(telecom) {
+                // Предпросмотр не связан с «вызовом в системе» — чужой псевдозвонок его не закроет
+                if (preview) return@LaunchedEffect
                 when (telecom) {
                     FakeTelecomCall.State.RINGING -> hadTelecomCall = true
                     FakeTelecomCall.State.ACTIVE -> { hadTelecomCall = true; stopRinging() }
@@ -197,7 +213,8 @@ class FakeCallActivity : ComponentActivity() {
             }
 
             LaunchedEffect(Unit) {
-                val chosen = prefs.fakeCallNumber.first()
+                // Предпросмотр: контакт с фото, если есть, — видно, как ляжет фото звонящего
+                val chosen = if (preview) "" else prefs.fakeCallNumber.first()
                 // Имя — в той же форме, что у настоящего вызова (1.6.2)
                 val nameFormat = prefs.contactNameFormat.first()
                 caller = if (chosen.isNotBlank()) {
@@ -213,7 +230,10 @@ class FakeCallActivity : ComponentActivity() {
                     (name ?: PhoneFormatter.format(chosen)) to chosen
                 } else {
                     val random = suspendRunCatching {
-                        contactsRepo.loadAll().filter { it.numbers.isNotEmpty() }.randomOrNull()
+                        val withNumbers = contactsRepo.loadAll().filter { it.numbers.isNotEmpty() }
+                        // Предпросмотр (2.9.11): контакт с фото, если такие есть
+                        (if (preview) withNumbers.filter { !it.photoUri.isNullOrBlank() }.randomOrNull() else null)
+                            ?: withNumbers.randomOrNull()
                     }.getOrNull()
 
                     if (random != null) {
@@ -263,9 +283,9 @@ class FakeCallActivity : ComponentActivity() {
                     slideToAnswer = answerMode != AnswerMode.TAP,
                     verticalAnswer = answerMode == AnswerMode.SWIPE_VERTICAL,
                     swapAnswer = swapAnswer,
-                    onAnswer = { stopRinging(); FakeTelecomCall.answer() },
-                    onHangUp = { FakeTelecomCall.end(); finish() },
-                    answeredOutside = telecom == FakeTelecomCall.State.ACTIVE,
+                    onAnswer = { stopRinging(); if (!preview) FakeTelecomCall.answer() },
+                    onHangUp = { if (!preview) FakeTelecomCall.end(); finish() },
+                    answeredOutside = !preview && telecom == FakeTelecomCall.State.ACTIVE,
                     onAtEarChanged = { atEar = it }
                 )
                 }
@@ -315,7 +335,7 @@ class FakeCallActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        FakeTelecomCall.activityVisible = true
+        if (!preview) FakeTelecomCall.activityVisible = true
     }
 
     override fun onResume() {
@@ -325,13 +345,13 @@ class FakeCallActivity : ComponentActivity() {
     }
 
     override fun onStop() {
-        FakeTelecomCall.activityVisible = false
+        if (!preview) FakeTelecomCall.activityVisible = false
         super.onStop()
     }
 
     override fun onDestroy() {
         // Экран закрыли насовсем — и вызов в системе завершается (гарнитура, машина)
-        if (isFinishing) FakeTelecomCall.end()
+        if (isFinishing && !preview) FakeTelecomCall.end()
         stopRinging()
         // Ещё у уха — экран загорится, когда отнимут (как у настоящего вызова)
         proximity?.release(waitForFar = true)

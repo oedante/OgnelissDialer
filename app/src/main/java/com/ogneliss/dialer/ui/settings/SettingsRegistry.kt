@@ -661,6 +661,18 @@ object SettingsRegistry {
         ),
 
         // ── Экран вызова ───────────────────────────────────────────────────
+        /*
+         * Предпросмотр (2.9.11, форум, Bublikov34: «настройки отображения вызовов
+         * как-то просматривать при выборе, до применения и звонка кому-то»): экран
+         * псевдозвонка с текущими настройками, тихо (FakeCall.preview). Первым в
+         * разделе — поменял ниже, посмотрел здесь; то же — кнопкой в окнах выбора.
+         */
+        SettingEntry(
+            "call_preview", SettingsCategory.CALL_SCREEN,
+            R.string.settings_call_preview, R.string.settings_call_preview_text,
+            SettingKind.Action("call_preview"),
+            keywordsRes = R.string.keywords_call_preview
+        ),
         SettingEntry(
             "call_photo_style", SettingsCategory.CALL_SCREEN,
             R.string.settings_call_photo, R.string.settings_call_photo_text,
@@ -948,15 +960,16 @@ object SettingsRegistry {
             groupRes = R.string.settings_group_messages
         ),
         /*
-         * Скрывать текст в уведомлениях (2.9.1, форум, eXense: «прятать текст смс
-         * из всплывающих уведомлений, как в Fossify, коды подтверждения могут
-         * попасть не на те глаза»). Отправитель виден, текст — «Новое сообщение»,
-         * кнопка кода — «Копировать код» без цифр (MessageNotifications).
+         * Текст SMS в уведомлениях (2.9.1 — переключатель «Скрывать текст», форум, eXense:
+         * «прятать текст смс из всплывающих уведомлений… коды подтверждения могут попасть
+         * не на те глаза»). 2.9.11 — выбор из трёх (eXense: «ожидалось, что хоть развернуть
+         * можно будет текст»): показывать, скрывать до раскрытия, скрывать всегда.
+         * Отправитель виден всегда; разбор — sms/SmsTextMode.kt, MessageNotifications.
          */
         SettingEntry(
-            "sms_hide_text", SettingsCategory.MESSAGES,
-            R.string.settings_sms_hide_text, R.string.settings_sms_hide_text_text,
-            SettingKind.Switch("sms_hide_text"),
+            "sms_text_mode", SettingsCategory.MESSAGES,
+            R.string.settings_sms_text_mode, R.string.settings_sms_text_mode_text,
+            SettingKind.Choice("sms_text_mode"),
             keywordsRes = R.string.keywords_sms_notifications,
             groupRes = R.string.settings_group_messages,
             advanced = true
@@ -1070,6 +1083,18 @@ object SettingsRegistry {
             R.string.settings_spam_sim_scope, R.string.settings_spam_sim_scope_text,
             SettingKind.Choice("spam_sim_scope"),
             keywordsRes = R.string.keywords_spam_sim_scope,
+            groupRes = R.string.settings_group_block_rules
+        ),
+        /*
+         * Свои правила второй карты (2.9.11, форум, Bublikov34: «на личной — запрет
+         * не из контактов, на рабочей — только спам»). Виден, только когда выбрано
+         * «Свои для каждой SIM» (visibleFor); экран — SpamSim2Screen.
+         */
+        SettingEntry(
+            "spam_sim2", SettingsCategory.SPAM,
+            R.string.settings_spam_sim2, R.string.settings_spam_sim2_text,
+            SettingKind.Action("spam_sim2"),
+            keywordsRes = R.string.keywords_spam_sim2,
             groupRes = R.string.settings_group_block_rules
         ),
         /*
@@ -1351,6 +1376,15 @@ object SettingsRegistry {
      */
     fun shown(list: List<SettingEntry>, fromGooglePlay: Boolean): List<SettingEntry> =
         if (fromGooglePlay) list else list.filter { it.id !in STORE_ONLY }
+
+    /**
+     * Пункт зависит от другой настройки (2.9.11): «Правила для SIM 2» — только при
+     * «Свои для каждой SIM». Остальные пункты видны всегда.
+     */
+    fun visibleFor(entry: SettingEntry, state: com.ogneliss.dialer.ui.SettingsState): Boolean = when (entry.id) {
+        "spam_sim2" -> state.spamSimScope == com.ogneliss.dialer.call.SpamSimScope.SEPARATE
+        else -> true
+    }
 
     /** Пункты, которым без Google Play некуда вести. */
     private val STORE_ONLY = setOf("rate_app")

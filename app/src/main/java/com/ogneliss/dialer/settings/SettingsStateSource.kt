@@ -189,7 +189,7 @@ class SettingsStateSource @Inject constructor(
         Sms(reports, right, left, undo, calls)
     }.combine(prefs.smsOtpCleanup) { s, otp -> s.copy(otpCleanup = otp) }
         .combine(prefs.smsNotificationsOff) { s, off -> s.copy(notificationsOff = off) }
-        .combine(prefs.smsHideText) { s, hide -> s.copy(hideText = hide) }
+        .combine(prefs.smsTextMode) { s, mode -> s.copy(textMode = mode) }
 
     /**
      * Итоговый снимок.
@@ -290,7 +290,7 @@ class SettingsStateSource @Inject constructor(
             smsCallsInThread = m.callsInThread,
             smsOtpCleanup = m.otpCleanup,
             smsNotificationsOff = m.notificationsOff,
-            smsHideText = m.hideText,
+            smsTextMode = m.textMode,
 
             fileLogging = true
         )
@@ -390,7 +390,7 @@ class SettingsStateSource @Inject constructor(
         val callsInThread: Boolean,
         val otpCleanup: OtpCleanup = OtpCleanup.OFF,
         val notificationsOff: Boolean = false,
-        val hideText: Boolean = false
+        val textMode: com.ogneliss.dialer.sms.SmsTextMode = com.ogneliss.dialer.sms.SmsTextMode.SHOW
     )
 
     private data class CallHelp(

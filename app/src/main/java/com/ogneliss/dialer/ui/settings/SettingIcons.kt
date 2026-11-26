@@ -60,7 +60,7 @@ internal fun settingIcon(id: String): ImageVector? = when (id) {
     "sms_default_app" -> OgnelissIcons.Textsms
     "sms_delivery_reports" -> OgnelissIcons.MarkChatRead
     "sms_notifications_off" -> OgnelissIcons.NotificationsOff
-    "sms_hide_text" -> OgnelissIcons.Lock
+    "sms_text_mode" -> OgnelissIcons.Lock
     "sms_undo_send" -> OgnelissIcons.Restore
     "sms_calls_in_thread" -> OgnelissIcons.Call
     "sms_otp_cleanup" -> OgnelissIcons.DeleteSweep
@@ -118,6 +118,9 @@ internal fun settingIcon(id: String): ImageVector? = when (id) {
     "block_hidden" -> OgnelissIcons.PhoneDisabled
     "block_unknown" -> OgnelissIcons.PersonOff
     "quiet_hours" -> OgnelissIcons.Schedule
+    // 2.9.11: свои правила второй карты
+    "spam_sim2" -> OgnelissIcons.SimCard
+    "call_preview" -> OgnelissIcons.Smartphone
     "allow_list" -> OgnelissIcons.CheckCircle
     "block_list" -> OgnelissIcons.Block
     "sys_blocked" -> OgnelissIcons.OpenInNew
