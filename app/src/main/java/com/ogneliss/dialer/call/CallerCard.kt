@@ -43,6 +43,14 @@ object CallerCard {
     data class Info(val photo: Bitmap?, val typeLabel: String?, val name: String? = null)
 
     private const val TAG = "CallerCard"
+
+    /**
+     * Показывать тип номера в уведомлении о входящем (2.9.15, настройка
+     * SwitchSetting.CALL_NOTIFICATION_NUMBER_TYPE). Копия настройки: уведомление
+     * собирается сразу, без чтения DataStore; значение кладёт служба вызовов
+     * (OgnelissInCallService), пока она жива. До первого значения — умолчание.
+     */
+    @Volatile var showNumberType: Boolean = true
     /**
      * Сторона снимка. Книга хранит миниатюры 96 px, а уведомление рисует
      * звонящего кругом в 40–48 dp; больше не нужно — снимок едет в уведомление

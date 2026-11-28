@@ -709,6 +709,17 @@ object SettingsRegistry {
             keywordsRes = R.string.keywords_call_status_labels,
             advanced = true
         ),
+        /*
+         * Тип номера в уведомлении о входящем (2.9.15, письмо пользователя: «remove
+         * the label mobile below the name»). Рядом с подписями состояния — тоже
+         * о том, сколько текста вокруг имени звонящего.
+         */
+        SettingEntry(
+            "call_notification_number_type", SettingsCategory.CALL_SCREEN,
+            R.string.settings_call_notification_number_type, R.string.settings_call_notification_number_type_text,
+            SettingKind.Switch(SwitchSetting.CALL_NOTIFICATION_NUMBER_TYPE),
+            advanced = true
+        ),
         SettingEntry(
             "call_animation", SettingsCategory.CALL_SCREEN,
             R.string.settings_call_animation, R.string.settings_call_animation_text,
@@ -745,13 +756,7 @@ object SettingsRegistry {
             SettingKind.Choice("grouping"),
             groupRes = R.string.settings_group_log_view
         ),
-        SettingEntry(
-            "merge_calls", SettingsCategory.CALL_LOG,
-            R.string.settings_merge_calls, R.string.settings_merge_calls_text,
-            SettingKind.Switch(SwitchSetting.MERGE_CALLS),
-            groupRes = R.string.settings_group_log_view,
-            advanced = true
-        ),
+        // «Группировать вызовы одного номера» убран в 2.9.15 — ни на что не влиял (SwitchSetting)
         /*
          * «Вид журнала» (Карточки / Группы по дням) убран в 1.5.3: в сплошном
          * списке строки идут во всю ширину без зазоров, и оба вида выглядели

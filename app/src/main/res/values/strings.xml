@@ -231,8 +231,6 @@
     <string name="settings_calllog_export_text">The whole log as a CSV table</string>
     <string name="settings_log_save">Save the log to a file</string>
     <string name="settings_log_save_text">The technical log, written to a file you choose</string>
-    <string name="settings_merge_calls">Group calls from the same number</string>
-    <string name="settings_merge_calls_text">Consecutive calls appear as one entry with a counter.</string>
     <string name="settings_notifications">App notifications</string>
     <string name="settings_post_call">Show screen after a call</string>
     <string name="settings_post_call_text">Add a note, a tag or a reminder right after hanging up.</string>
@@ -612,9 +610,6 @@
     <string name="incall_conference_drop">Disconnect</string>
     <string name="incall_hidden_number">Private number</string>
     <!-- Вид журнала: разбор в JournalStyle -->
-    <string name="settings_journal_style">Call log style</string>
-    <string name="journal_style_cards">Cards</string>
-    <string name="journal_style_groups">Groups by day</string>
     <string name="action_mark_spam">Mark as spam</string>
     <string name="sim_kind_esim" translatable="false">eSIM</string>
     <string name="sim_kind_physical">SIM card</string>
@@ -1239,4 +1234,6 @@
     <string name="settings_call_preview">Preview the call screen</string>
     <string name="settings_call_preview_text">With the settings chosen now, silently</string>
     <string name="keywords_call_preview">preview call screen look try see</string>
+    <string name="settings_call_notification_number_type">Number type in call notification</string>
+    <string name="settings_call_notification_number_type_text">“Mobile”, “Work” under the name in the incoming call notification</string>
 </resources>

@@ -138,22 +138,41 @@ commands_path = os.path.join(SRC, 'settings/SettingsCommands.kt')
 settings_commands = open(commands_path, encoding='utf-8').read() \
     if os.path.exists(commands_path) else ''
 
-switch_keys = set(re.findall(r'SettingKind\.Switch\("(\w+)"\)', registry))
-state_keys = set(re.findall(r'"(\w+)" ->', state))
-for k in switch_keys - state_keys:
-    problems['Переключатель не обрабатывается в SettingsState'].append(k)
+# 2.9.14–2.9.15 (техдолг, этап 2): переключатели и однотипные выборы — по описаниям
+# (settings/SwitchSetting.kt, settings/ChoiceSetting.kt). Прежние правила искали
+# строковые ключи в SettingsState и ветках setSwitch — после перехода на описания
+# они молча перестали что-либо находить. Теперь проверяется по-новому.
+switch_src = open(os.path.join(SRC, 'settings/SwitchSetting.kt'), encoding='utf-8').read()
+switch_names = set(re.findall(r'^    ([A-Z][A-Z0-9_]+)\(\s*"', switch_src, re.M))
+# Переключатель должен на что-то влиять: упоминаться вне описания и реестра
+outside = ''
+for f in kt_files():
+    if f.endswith(('settings/SwitchSetting.kt', 'ui/settings/SettingsRegistry.kt')):
+        continue
+    outside += open(f, encoding='utf-8').read()
+def switch_entry(n):
+    """Текст строки описания переключателя — от имени до следующего."""
+    m = re.search(rf'^    {n}\((.*?)(?=^    [A-Z][A-Z0-9_]+\(|^    /\*|^    // ──|;$)', switch_src, re.M | re.S)
+    return m.group(1) if m else ''
+for n in sorted(switch_names):
+    # С копией для приёмника SMS (mirror) — применяется через SmsSettings
+    if f'SwitchSetting.{n}' not in outside and 'mirror' not in switch_entry(n):
+        problems['Переключатель нигде не применяется'].append(n)
+for n in sorted(switch_names):
+    if f'SettingKind.Switch(SwitchSetting.{n})' not in registry:
+        problems['Переключатель без пункта в реестре'].append(n)
 
-# Ветка может быть как однострочной, так и блоком в фигурных скобках
-vm_switch = set(re.findall(r'"(\w+)" -> prefs\.set', settings_commands))
-vm_switch |= set(re.findall(r'"(\w+)" -> \{[^}]*prefs\.set', settings_commands, re.S))
-vm_switch |= set(re.findall(r'"(\w+)" -> prefs\.set', vm))
-for k in switch_keys - vm_switch:
-    problems['Переключатель нигде не применяется'].append(k)
+choice_src = open(os.path.join(SRC, 'settings/ChoiceSetting.kt'), encoding='utf-8').read()
+described = dict(re.findall(r'val ([A-Z][A-Z0-9_]+) = ChoiceSetting\(\s*"(\w+)"', choice_src))
+all_list = choice_src[choice_src.index('val ALL'):]
+for n in sorted(described):
+    if not re.search(rf'\b{n}\b', all_list):
+        problems['Описание выбора не в Choices.ALL'].append(n)
 
 choice_keys = set(re.findall(r'SettingKind\.Choice\("(\w+)"\)', registry))
 dialog = open(os.path.join(SRC, 'ui/screens/SettingsChoiceDialog.kt'), encoding='utf-8').read()
 for k in choice_keys:
-    if f'"{k}"' not in dialog:
+    if f'"{k}"' not in dialog and k not in described.values():
         problems['Выбор без вариантов в диалоге'].append(k)
 
 action_keys = set(re.findall(r'SettingKind\.Action\("(\w+)"\)', registry))

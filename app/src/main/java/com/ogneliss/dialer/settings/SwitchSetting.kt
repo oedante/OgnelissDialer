@@ -66,7 +66,12 @@ enum class SwitchSetting(
     COLORED_CALL_ARROWS("colored_call_arrows", { true }),
     /** Длительность разговора в строке журнала (2.9.8). */
     CALL_LOG_DURATION("call_log_duration", { false }),
-    MERGE_CALLS("merge_calls", { true }),
+    /*
+     * «Группировать вызовы одного номера» (merge_calls) убран в 2.9.15: с 1.5.5
+     * он ни на что не влиял — значение только переносилось в снимок настроек,
+     * а журнал группирует по выбору «Группировка» (там и «Подряд идущие»).
+     * Нашло правило audit.py «переключатель нигде не применяется».
+     */
     /** Мессенджеры для любого номера, а не только для того, что в контакте. */
     MESSENGERS_ANY_NUMBER("messengers_any_number", { false }),
 
@@ -101,6 +106,14 @@ enum class SwitchSetting(
      * в IncomingCallAccess (2.2.2).
      */
     INCOMING_BANNER("incoming_banner", { !IncomingCallAccess.restrictiveShell }),
+    /**
+     * Тип номера («Мобильный», «Рабочий») под именем в уведомлении о входящем
+     * (2.9.15). Подпись добавили в 2.1.0 по просьбе пользователя («плашка сверху
+     * с фото и „мобильный“»); 28.11.2026 другой попросил её убрать («if it possible
+     * to remove the label mobile below the name»). Поэтому выбор, а не удаление:
+     * по умолчанию — как было. Читает служба вызовов (копия в CallerCard).
+     */
+    CALL_NOTIFICATION_NUMBER_TYPE("call_notification_number_type", { true }),
     /** «Ответить» слева (2.1.1). */
     SWAP_ANSWER("swap_answer", { false }),
     /** Вибрация, когда вызываемый снял трубку (2.5.0). */

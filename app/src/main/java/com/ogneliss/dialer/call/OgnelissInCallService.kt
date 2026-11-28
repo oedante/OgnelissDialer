@@ -120,6 +120,10 @@ class OgnelissInCallService : InCallService() {
         }
         serviceScope.launch { prefs.flow(SwitchSetting.CALLBACK_SUGGESTION).collect { callbackSuggestionOn = it } }
         serviceScope.launch { prefs.flow(SwitchSetting.VIBRATE_ON_CONNECT).collect { vibrateOnConnect = it } }
+        // 2.9.15: тип номера в уведомлении о входящем — копия для CallNotifications
+        serviceScope.launch {
+            prefs.flow(SwitchSetting.CALL_NOTIFICATION_NUMBER_TYPE).collect { CallerCard.showNumberType = it }
+        }
         serviceScope.launch {
             prefs.flow(SwitchSetting.INCOMING_BANNER).collect {
                 incomingBannerOn = it
