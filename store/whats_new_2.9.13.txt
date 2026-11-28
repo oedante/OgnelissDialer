@@ -1,0 +1,135 @@
+<ru-RU>
+• Поиск имени с клавиатуры набора: совпадение подсвечивается на своём месте, и в именах с дефисом.
+• Блокировка по маске с выходом на международную линию 00 или 810 (например, 0049*) теперь срабатывает.
+• Больше автоматических проверок звонков, SMS и экстренных номеров.
+</ru-RU>
+<ar>
+• البحث عن الأسماء من لوحة الأرقام: يُبرز التطابق في مكانه الصحيح، حتى في الأسماء التي تحتوي على شرطة.
+• أقنعة الحظر ببادئة دولية 00 أو 810 (مثل 0049*) تعمل الآن.
+• مزيد من الفحوص التلقائية للمكالمات والرسائل وأرقام الطوارئ.
+</ar>
+<cs-CZ>
+• Hledání jmen z číselníku: shoda je zvýrazněna na správném místě, i ve jménech se spojovníkem.
+• Masky blokování s mezinárodní předvolbou 00 nebo 810 (např. 0049*) nyní fungují.
+• Více automatických kontrol hovorů, SMS a tísňových čísel.
+</cs-CZ>
+<da-DK>
+• Navnesøgning fra tastaturet: match fremhæves det rigtige sted, også i navne med bindestreg.
+• Blokeringsmasker med internationalt præfiks 00 eller 810 (f.eks. 0049*) virker nu.
+• Flere automatiske tjek af opkald, sms og alarmnumre.
+</da-DK>
+<de-DE>
+• Namenssuche über die Wähltastatur: Treffer wird an der richtigen Stelle markiert, auch bei Namen mit Bindestrich.
+• Sperrmasken mit Auslandsvorwahl 00 oder 810 (z. B. 0049*) greifen jetzt.
+• Mehr automatische Prüfungen für Anrufe, SMS und Notrufnummern.
+</de-DE>
+<en-US>
+• Keypad name search: the match is highlighted in the right place, also in hyphenated names.
+• Block masks with an international prefix 00 or 810 (e.g. 0049*) now work.
+• More automatic checks for calls, SMS and emergency numbers.
+</en-US>
+<es-ES>
+• Búsqueda de nombres con el teclado: la coincidencia se resalta en su sitio, también en nombres con guion.
+• Las máscaras de bloqueo con prefijo internacional 00 u 810 (p. ej., 0049*) ya funcionan.
+• Más comprobaciones automáticas de llamadas, SMS y números de emergencia.
+</es-ES>
+<fi-FI>
+• Nimihaku näppäimistöltä: osuma korostetaan oikeassa kohdassa myös yhdysmerkillisissä nimissä.
+• Estomaskit kansainvälisellä etuliitteellä 00 tai 810 (esim. 0049*) toimivat nyt.
+• Lisää automaattisia tarkistuksia puheluille, tekstiviesteille ja hätänumeroille.
+</fi-FI>
+<fr-FR>
+• Recherche de nom au clavier : la correspondance est surlignée au bon endroit, y compris dans les noms composés.
+• Les masques de blocage avec préfixe international 00 ou 810 (ex. 0049*) fonctionnent désormais.
+• Plus de vérifications automatiques des appels, SMS et numéros d'urgence.
+</fr-FR>
+<hi-IN>
+• कीपैड से नाम खोज: मिलान सही जगह हाइलाइट होता है, हाइफ़न वाले नामों में भी।
+• अंतरराष्ट्रीय उपसर्ग 00 या 810 वाले ब्लॉक मास्क (जैसे 0049*) अब काम करते हैं।
+• कॉल, SMS और आपातकालीन नंबरों की अधिक स्वचालित जाँच।
+</hi-IN>
+<hu-HU>
+• Névkeresés a tárcsázóról: a találat a helyes helyen kiemelve, kötőjeles nevekben is.
+• A 00 vagy 810 nemzetközi előtagos tiltási maszkok (pl. 0049*) most már működnek.
+• Több automatikus ellenőrzés a hívásokhoz, SMS-ekhez és segélyhívó számokhoz.
+</hu-HU>
+<id>
+• Cari nama dari papan tombol: kecocokan disorot di tempat yang tepat, juga pada nama dengan tanda hubung.
+• Masker blokir dengan awalan internasional 00 atau 810 (mis. 0049*) kini berfungsi.
+• Lebih banyak pemeriksaan otomatis untuk panggilan, SMS, dan nomor darurat.
+</id>
+<it-IT>
+• Ricerca nomi dal tastierino: la corrispondenza è evidenziata nel punto giusto, anche nei nomi con trattino.
+• Le maschere di blocco con prefisso internazionale 00 o 810 (es. 0049*) ora funzionano.
+• Più controlli automatici per chiamate, SMS e numeri di emergenza.
+</it-IT>
+<iw-IL>
+• חיפוש שמות מלוח המקשים: ההתאמה מודגשת במקום הנכון, גם בשמות עם מקף.
+• מסכות חסימה עם קידומת בינלאומית 00 או 810 (למשל 0049*) עובדות עכשיו.
+• יותר בדיקות אוטומטיות לשיחות, SMS ומספרי חירום.
+</iw-IL>
+<ja-JP>
+• キーパッドでの名前検索：一致箇所が正しい位置で強調表示されます（ハイフン入りの名前も）。
+• 国際プレフィックス00または810のブロックマスク（例：0049*）が機能するようになりました。
+• 通話・SMS・緊急番号の自動チェックを強化しました。
+</ja-JP>
+<ko-KR>
+• 키패드 이름 검색: 하이픈이 있는 이름에서도 일치 부분이 정확한 위치에 강조됩니다.
+• 국제 접두사 00 또는 810이 붙은 차단 마스크(예: 0049*)가 이제 작동합니다.
+• 통화, SMS, 긴급 번호에 대한 자동 검사가 늘었습니다.
+</ko-KR>
+<nl-NL>
+• Namen zoeken via het toetsenblok: de overeenkomst wordt op de juiste plek gemarkeerd, ook in namen met een koppelteken.
+• Blokkeermaskers met internationaal voorvoegsel 00 of 810 (bijv. 0049*) werken nu.
+• Meer automatische controles van oproepen, sms en alarmnummers.
+</nl-NL>
+<no-NO>
+• Navnesøk fra tastaturet: treffet markeres på riktig sted, også i navn med bindestrek.
+• Blokkeringsmasker med internasjonalt prefiks 00 eller 810 (f.eks. 0049*) virker nå.
+• Flere automatiske kontroller av anrop, SMS og nødnumre.
+</no-NO>
+<pl-PL>
+• Wyszukiwanie nazw z klawiatury: dopasowanie jest podświetlane we właściwym miejscu, także w nazwach z łącznikiem.
+• Maski blokowania z prefiksem międzynarodowym 00 lub 810 (np. 0049*) teraz działają.
+• Więcej automatycznych testów połączeń, SMS i numerów alarmowych.
+</pl-PL>
+<pt-BR>
+• Busca de nomes pelo teclado: a correspondência é destacada no lugar certo, também em nomes com hífen.
+• Máscaras de bloqueio com prefixo internacional 00 ou 810 (ex.: 0049*) agora funcionam.
+• Mais verificações automáticas de chamadas, SMS e números de emergência.
+</pt-BR>
+<ro>
+• Căutarea numelor de la tastatură: potrivirea este evidențiată la locul potrivit, și în numele cu cratimă.
+• Măștile de blocare cu prefix internațional 00 sau 810 (ex. 0049*) funcționează acum.
+• Mai multe verificări automate pentru apeluri, SMS și numere de urgență.
+</ro>
+<sk>
+• Hľadanie mien z číselníka: zhoda je zvýraznená na správnom mieste, aj v menách so spojovníkom.
+• Masky blokovania s medzinárodnou predvoľbou 00 alebo 810 (napr. 0049*) teraz fungujú.
+• Viac automatických kontrol hovorov, SMS a tiesňových čísel.
+</sk>
+<sv-SE>
+• Namnsökning från knappsatsen: träffen markeras på rätt ställe, även i namn med bindestreck.
+• Blockeringsmasker med internationellt prefix 00 eller 810 (t.ex. 0049*) fungerar nu.
+• Fler automatiska kontroller av samtal, sms och nödnummer.
+</sv-SE>
+<th>
+• ค้นหาชื่อจากแป้นกด: ไฮไลต์ส่วนที่ตรงกันถูกตำแหน่ง รวมถึงชื่อที่มีขีดกลาง
+• มาสก์บล็อกที่ใช้รหัสระหว่างประเทศ 00 หรือ 810 (เช่น 0049*) ใช้งานได้แล้ว
+• ตรวจสอบอัตโนมัติเพิ่มขึ้นสำหรับการโทร SMS และหมายเลขฉุกเฉิน
+</th>
+<tr-TR>
+• Tuş takımıyla ad arama: eşleşme doğru yerde vurgulanır, kısa çizgili adlarda da.
+• 00 veya 810 uluslararası önekli engelleme maskeleri (ör. 0049*) artık çalışıyor.
+• Aramalar, SMS ve acil durum numaraları için daha fazla otomatik denetim.
+</tr-TR>
+<vi>
+• Tìm tên bằng bàn phím số: phần khớp được tô sáng đúng chỗ, kể cả tên có dấu gạch nối.
+• Mặt nạ chặn có tiền tố quốc tế 00 hoặc 810 (vd. 0049*) nay đã hoạt động.
+• Thêm kiểm tra tự động cho cuộc gọi, SMS và số khẩn cấp.
+</vi>
+<zh-CN>
+• 拨号键盘搜索姓名：匹配内容在正确位置高亮，带连字符的名字也一样。
+• 带国际前缀 00 或 810 的拦截掩码（如 0049*）现已生效。
+• 增加了通话、短信和紧急号码的自动检查。
+</zh-CN>

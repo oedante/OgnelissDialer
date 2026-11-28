@@ -4,13 +4,10 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.telecom.PhoneAccountHandle
 import android.telecom.TelecomManager
-import android.telephony.PhoneNumberUtils
-import android.telephony.TelephonyManager
 import androidx.annotation.MainThread
 import androidx.core.content.ContextCompat
 import com.ogneliss.dialer.call.RedialPolicy.Decision
@@ -318,16 +315,14 @@ object AutoRedial {
      * Экстренный номер — по данным системы: у неё список для страны,
      * SIM и сети. Не удалось спросить — считаем экстренным: лишний раз
      * не повторить безопаснее, чем повторить 112 без человека.
+     *
+     * 2.9.13 (техдолг, этап 1.1): была своя копия проверки — без
+     * «112 и 911 всегда» и без очистки записи номера от пробелов и
+     * дефисов. Теперь общая EmergencyNumbers; «не удалось спросить —
+     * экстренный» сохранено параметром ifUnknown.
      */
-    private fun isEmergency(context: Context, number: String): Boolean = runCatching {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            context.getSystemService(TelephonyManager::class.java)?.isEmergencyNumber(number) == true
-        } else {
-            // Замена появилась только в API 29; ниже — прежний способ
-            @Suppress("DEPRECATION")
-            PhoneNumberUtils.isEmergencyNumber(number)
-        }
-    }.getOrDefault(true)
+    private fun isEmergency(context: Context, number: String): Boolean =
+        com.ogneliss.dialer.util.EmergencyNumbers.isEmergency(context, number, ifUnknown = true)
 
     private fun sameNumber(a: String?, b: String?): Boolean {
         if (a.isNullOrBlank() || b.isNullOrBlank()) return false

@@ -106,6 +106,28 @@ object T9Engine {
             if (toDigitsCached(word).startsWith(query)) return offset
         }
         val idx = toDigitsCached(name).indexOf(query)
-        return if (idx >= 0) idx else -1
+        return if (idx >= 0) nameIndexOf(name, idx) else -1
+    }
+
+    /*
+     * ПОЗИЦИЯ В ИМЕНИ ПО ПОЗИЦИИ В ЦИФРАХ (2.9.13, техдолг, этап 1.3).
+     *
+     * Было: совпадение в середине слова возвращалось позицией в цифровой
+     * строке. Знаки без цифры (дефис, точка, скобка) в цифры не попадают,
+     * поэтому после них позиции расходились: у «Ab-cde» по «33» подсвечивалось
+     * «cd» вместо «de». Нашёл перебор в InvariantsTest.
+     *
+     * Стало: шагаем по имени и считаем символы, которые дают цифру, —
+     * так же, как toDigits. Считается только при найденном совпадении.
+     */
+    private fun nameIndexOf(name: String, digitIndex: Int): Int {
+        var seen = 0
+        name.forEachIndexed { i, ch ->
+            if (map[ch.lowercaseChar()] != null || ch.isDigit()) {
+                if (seen == digitIndex) return i
+                seen++
+            }
+        }
+        return -1
     }
 }

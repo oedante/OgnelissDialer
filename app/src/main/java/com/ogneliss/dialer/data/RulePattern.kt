@@ -96,15 +96,24 @@ object RulePattern {
      * иначе привычное «8800*» не совпало бы ни с одним номером.
      */
     private fun normalizeMask(input: String): String {
-        var s = input.filter { it.isDigit() || it == '+' || it == '*' || it == '?' }
+        val s = input.filter { it.isDigit() || it == '+' || it == '*' || it == '?' }
 
-        if (s.startsWith("8") && !s.startsWith("+")) {
-            s = "+7" + s.substring(1)
-        } else if (!s.startsWith("+") && s.firstOrNull()?.isDigit() == true) {
+        return when {
+            s.startsWith("+") -> s
+            /*
+             * МЕЖДУНАРОДНЫЙ ВЫХОД (2.9.13, техдолг, этап 1.3): «00» и «810» —
+             * то же, что «+». Было: «0049*» становилось «+70049*», «810 49*» —
+             * «+71049*», и правило молча не срабатывало ни разу (случай 2 из
+             * начала файла). Российских кодов на «0» и «10» нет — путаницы
+             * с местным номером не будет. Нашёл перебор в InvariantsTest.
+             */
+            s.startsWith("00") -> "+" + s.substring(2)
+            s.startsWith("810") -> "+" + s.substring(3)
+            s.startsWith("8") -> "+7" + s.substring(1)
             // Номер без кода страны: считаем российским
-            s = "+7$s"
+            s.firstOrNull()?.isDigit() == true -> "+7$s"
+            else -> s
         }
-        return s
     }
 
     /**

@@ -901,4 +901,40 @@ class ScreenGalleryTest {
             "journal_fakecall", "journal_dialpad"
         )
     )
+
+    /*
+     * ДРУГИЕ ЭКРАНЫ (2.9.13, техдолг, этап 1.4).
+     *
+     * Аудит 28.11.2026: галерея снимала один размер — телефон 393 dp в портрете.
+     * Планшет, раскладушка и телефон боком — те же экраны с другой шириной: здесь
+     * видно растянутые строки, кнопки посреди пустоты, обрезанные панели.
+     * Конфигурация у метода заменяет классовую целиком — язык и плотность указаны
+     * снова. Раскладка «список + подробности» (ListDetailHost) живёт в RootScreen
+     * и здесь не видна: галерея рисует экраны по одному.
+     */
+    private val formFactorShots = setOf(
+        "journal", "journal_dialpad", "contacts", "card_plain", "settings_home", "settings_calls",
+        "sms_list", "sms_chat", "menu", "notes"
+    )
+
+    @Test
+    @Config(sdk = [35], qualifiers = "ru-w1280dp-h800dp-land-xhdpi")
+    fun `планшет — главные экраны собираются`() = render("tablet", ThemeMode.LIGHT, only = formFactorShots)
+
+    @Test
+    @Config(sdk = [35], qualifiers = "ru-w673dp-h841dp-xhdpi")
+    fun `раскладушка открытая — главные экраны собираются`() = render("fold", ThemeMode.LIGHT, only = formFactorShots)
+
+    @Test
+    @Config(sdk = [35], qualifiers = "ru-w873dp-h393dp-land-xxhdpi")
+    fun `телефон боком — главные экраны собираются`() = render("land", ThemeMode.LIGHT, only = formFactorShots)
+
+    /*
+     * Справа налево: Google Play переводит приложение и на арабский, иврит, фарси, урду
+     * (res/xml/locales_config.xml). В исходниках этих переводов нет — строки здесь
+     * английские, но раскладка зеркальная, как у человека с арабским языком.
+     */
+    @Test
+    @Config(sdk = [35], qualifiers = "ar-ldrtl-w393dp-h873dp-xxhdpi")
+    fun `справа налево — главные экраны собираются`() = render("rtl", ThemeMode.LIGHT, only = formFactorShots)
 }

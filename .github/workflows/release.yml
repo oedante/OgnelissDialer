@@ -114,6 +114,11 @@ jobs:
       - name: Сборка APK
         run: ./gradlew assembleRelease
 
+      # 2.9.13 (техдолг, аудит 28.11.2026): 2.9.12 — 8,5 МБ, порог с запасом;
+      # разбор — scripts/apk_size_check.py
+      - name: Размер APK
+        run: python3 scripts/apk_size_check.py app/build/outputs/apk/release/app-release.apk 10
+
       # Обещание «данные не покидают телефон» держится на отсутствии
       # разрешения INTERNET — проверяем и выпускную сборку
       - name: Нет разрешения INTERNET
