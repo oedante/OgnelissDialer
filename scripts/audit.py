@@ -209,4 +209,6 @@ for category in sorted(problems):
     if len(items) > 25:
         print(f'    … ещё {len(items) - 25}')
 print()
-sys.exit(0)
+# 2.9.13 (техдолг, этап 1.5): замечание — ошибка сборки, а не строчка в логе CI.
+# Было: всегда 0 — CI печатал список и шёл дальше, список не рос только на честном слове.
+sys.exit(1 if total else 0)

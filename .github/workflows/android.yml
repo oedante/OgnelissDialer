@@ -2,9 +2,11 @@
 # Ловит регрессии до того, как они попадут в сборку для тестировщиков.
 name: Android CI
 
+# 2.9.13 (техдолг): было branches [ main, develop ] — таких веток нет, основная —
+# master; после слияния PR сборка не запускалась вовсе.
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ master ]
   pull_request:
 
 jobs:
@@ -37,11 +39,26 @@ jobs:
           python3 scripts/ui_roles_check.py
           python3 scripts/design_tokens_check.py
 
+      # -Pcompose.metrics=true — у ВСЕХ вызовов Gradle ниже (2.9.13): флаг меняет
+      # параметры компилятора, и без него у одного из шагов код собирался бы заново
       - name: Статический анализ (Android Lint)
-        run: ./gradlew lintDebug
+        run: ./gradlew lintDebug -Pcompose.metrics=true
 
       - name: Юнит-тесты
-        run: ./gradlew testDebugUnitTest
+        run: ./gradlew testDebugUnitTest -Pcompose.metrics=true
+
+      # 2.9.13 (техдолг, аудит 28.11.2026): неустойчивых классов и непропускаемых
+      # функций Compose не больше порога scripts/compose_stability_baseline.json
+      - name: Стабильность Compose
+        run: python3 scripts/compose_stability_check.py
+
+      - name: Метрики Compose
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: compose-metrics
+          path: app/build/compose_metrics/
+          if-no-files-found: ignore
 
       # КРИТИЧЕСКАЯ ПРОВЕРКА ПРИВАТНОСТИ.
       # Любая новая зависимость может протащить разрешение INTERNET через
@@ -49,7 +66,7 @@ jobs:
       # держится на его отсутствии, поэтому проверка ломает сборку.
       - name: Проверка отсутствия разрешения INTERNET
         run: |
-          ./gradlew processDebugMainManifest
+          ./gradlew processDebugMainManifest -Pcompose.metrics=true
           MANIFEST=$(find app/build -name AndroidManifest.xml -path "*merged*" | head -1)
           echo "Проверяю $MANIFEST"
           if grep -q 'android.permission.INTERNET' "$MANIFEST"; then
@@ -61,9 +78,12 @@ jobs:
 
       # Модуль замеров собирается, но не запускается в CI:
       # Macrobenchmark требует реального устройства, на эмуляторе
-      # его цифры не имеют смысла
+      # его цифры не имеют смысла.
+      # 2.9.13 (техдолг): было «:benchmark:assembleDebug || true» — такой задачи
+      # у модуля нет (варианты benchmark/nonMinified), и «|| true» прятал ошибку:
+      # шаг не проверял ничего с самого появления. Теперь — компиляция кода замеров.
       - name: Проверка компиляции модуля замеров
-        run: ./gradlew :benchmark:assembleDebug || true
+        run: ./gradlew :benchmark:compileBenchmarkBenchmarkKotlin -Pcompose.metrics=true
 
       # Флаг IN_CALL_SERVICE_RINGING без своего проигрывателя даёт
       # беззвучные входящие вызовы. На эмуляторе не обнаруживается
@@ -71,7 +91,11 @@ jobs:
         run: ./scripts/check_ringing_flag.sh
 
       - name: Сборка debug APK
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug -Pcompose.metrics=true
+
+      # 2.9.13 (техдолг): порог размера — разбор в scripts/apk_size_check.py
+      - name: Размер debug APK
+        run: python3 scripts/apk_size_check.py app/build/outputs/apk/debug/app-debug.apk 27
 
       - name: Публикация артефакта
         uses: actions/upload-artifact@v5

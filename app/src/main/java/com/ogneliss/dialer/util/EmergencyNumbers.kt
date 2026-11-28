@@ -36,21 +36,31 @@ object EmergencyNumbers {
      */
     private val ALWAYS = setOf("112", "911")
 
-    fun isEmergency(context: Context, number: String?): Boolean {
+    /**
+     * Экстренный ли номер. Запись — любая: пробелы, скобки, дефисы не важны.
+     *
+     * @param ifUnknown ответ, когда система не ответила (исключение). По умолчанию
+     *   false — так решают фильтр и подсказки; автодозвон передаёт true: не повторить
+     *   безопаснее, чем повторить экстренный без человека (2.9.13).
+     */
+    fun isEmergency(context: Context, number: String?, ifUnknown: Boolean = false): Boolean {
         val digits = number?.filter { it.isDigit() || it == '+' }.orEmpty()
         if (digits.isEmpty()) return false
         if (digits in ALWAYS) return true
         return runCatching {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                context.getSystemService(TelephonyManager::class.java)
-                    ?.isEmergencyNumber(digits) == true
+                // Нет телефонии (планшет без модема, сбой службы) — «не знаю», а не «нет»:
+                // для автодозвона это разница между «не повторять» и «повторить» (2.9.13)
+                val telephony = context.getSystemService(TelephonyManager::class.java)
+                    ?: return ifUnknown
+                telephony.isEmergencyNumber(digits)
             } else {
                 @Suppress("DEPRECATION") // единственный способ до Android 10
                 PhoneNumberUtils.isEmergencyNumber(digits)
             }
         }.getOrElse {
             Logger.w(TAG, "Система не ответила, экстренный ли номер", it)
-            false
+            ifUnknown
         }
     }
 

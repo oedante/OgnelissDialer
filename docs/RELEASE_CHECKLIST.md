@@ -3,18 +3,44 @@
 Проходить целиком перед каждой отправкой в Google Play.
 Порядок важен: пункты сверху дешевле исправить.
 
+## 0. Короткий прогон на телефоне — 15 минут, перед КАЖДЫМ выпуском
+
+2.9.13 (аудит 28.11.2026: «одностраничный чек-лист релиза»). Остальные разделы —
+полный разбор, этот — минимум, который не пропускается даже в выпуске «только
+исправления». Release-сборку ставить ПОВЕРХ прошлой версии (`adb install -r`),
+не начисто: так проверяется перенос настроек.
+
+- [ ] Запуск: журнал на месте, нет плашки «сделайте приложением по умолчанию»,
+      настройки, правила и списки — прежние
+- [ ] Исходящий с каждой SIM; номер под правилом «Карты по номеру» уходит без вопроса о карте
+- [ ] Входящий на разблокированном и на заблокированном экране: звук, ответ, завершение
+- [ ] Второй входящий во время разговора: удержание и возврат
+- [ ] Пропущенный: уведомление, перезвон из него
+- [ ] SMS: пришло, ответ ушёл, уведомление — как выбрано в «Текст SMS в уведомлениях»
+- [ ] Номер из чёрного списка не звонит (с другого телефона)
+- [ ] Напоминание «перезвонить» через минуту срабатывает вовремя
+- [ ] Экстренный номер НЕ набирать: достаточно, что «112» на клавиатуре — без подсказки «платный»
+- [ ] TalkBack, одна минута: входящий — ответить — завершить
+- [ ] Тёмная тема и шрифт 200 %: журнал и экран вызова без обрезки
+- [ ] «Сохранить журнал в файл» (Настройки → Обслуживание): за прогон нет строк с ошибками (E)
+
+Что не прошло или не проверялось — строкой в `docs/RELEASE_NOTES_<версия>.md`
+(«На телефоне не проверялось: …»).
+
 ## 1. Локальная проверка (минуты)
 
 ```bash
 python3 scripts/prebuild_check.py    # статические ошибки сборки
-python3 scripts/audit.py             # локализация, мёртвый код, комментарии
+python3 scripts/audit.py             # локализация, мёртвый код, комментарии (с 2.9.13 — код ошибки)
 ./scripts/check_no_internet.sh       # отсутствие разрешения INTERNET
 ./scripts/check_ringing_flag.sh      # флаг рингтона без проигрывателя
-./gradlew testDebugUnitTest          # 229 юнит-тестов
-./gradlew lintRelease                # статический анализ Android
+./gradlew testDebugUnitTest          # около 900 юнит-тестов (2.9.13), с галереей снимков
+./gradlew lintDebug                  # статический анализ Android (release — сам при assembleRelease)
 ```
 
-Все пять скриптов встроены в CI и валят сборку при нарушении.
+Все скрипты встроены в CI (`.github/workflows/android.yml`) и валят сборку при
+нарушении. С 2.9.13 там же: стабильность Compose (`scripts/compose_stability_check.py`)
+и порог размера APK (`scripts/apk_size_check.py`; release — в `release.yml`).
 
 Код открыт (1.5.7): перед отправкой в GitHub — `python3 scripts/oss_audit.py`
 (ключи, пароли, чужие номера и адреса). Порядок публикации — `docs/OPEN_SOURCE.md`.
@@ -81,14 +107,16 @@ aapt dump permissions app/build/outputs/apk/release/app-release.apk
 aapt dump permissions app/build/outputs/apk/release/app-release.apk | grep INTERNET
 ```
 
-Ожидаемый список разрешений (24 штуки):
+Ожидаемый список разрешений (25 штук; сверено по release 2.9.12):
 `CALL_PHONE`, `READ_PHONE_STATE`, `READ_PHONE_NUMBERS`, `ANSWER_PHONE_CALLS`,
 `READ_CALL_LOG`, `WRITE_CALL_LOG`, `READ_CONTACTS`, `WRITE_CONTACTS`,
 `MANAGE_OWN_CALLS`, `POST_NOTIFICATIONS`, `VIBRATE`, `MODIFY_AUDIO_SETTINGS`,
 `BLUETOOTH_CONNECT`, `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_PHONE_CALL`,
 `SYSTEM_ALERT_WINDOW`, `SCHEDULE_EXACT_ALARM`, `RECEIVE_BOOT_COMPLETED`,
 `USE_FULL_SCREEN_INTENT`, `WAKE_LOCK` (с 1.8.1 объявлен явно; его же добавляет WorkManager),
-`SEND_SMS`, `READ_SMS`, `RECEIVE_SMS`, `RECEIVE_MMS` (с 2.0.0: сообщения; см. PLAY_COMPLIANCE.md, раздел 1а).
+`SEND_SMS`, `READ_SMS`, `RECEIVE_SMS`, `RECEIVE_MMS` (с 2.0.0: сообщения; см. PLAY_COMPLIANCE.md, раздел 1а),
+`ACCESS_NETWORK_STATE` (с 2.1.0: повтор скачивания MMS ждёт сеть — знать, есть ли сеть, не выход в неё).
+Плюс служебное `com.ogneliss.dialer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` — его добавляет AndroidX.
 
 **Ничего сверх этого списка быть не должно.** Лишнее разрешение —
 повод для вопросов на ревью и падения конверсии установок.
