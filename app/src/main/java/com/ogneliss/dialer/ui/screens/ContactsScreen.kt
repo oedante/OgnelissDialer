@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import com.ogneliss.dialer.ui.components.MenuFolder
 import com.ogneliss.dialer.ui.components.MenuFolderRows
 import com.ogneliss.dialer.ui.components.SectionTopBar
@@ -610,7 +611,7 @@ fun ContactsScreen(
             // Кнопку можно выключить: она видна всем, кто смотрит
             // на экран, а нужна не каждому
             // При поиске висела бы над клавиатурой — прячем (1.6.0)
-            if (settings.fakeCallButton && !searching) SmallFloatingActionButton(
+            if (settings[SwitchSetting.FAKE_CALL_BUTTON] && !searching) SmallFloatingActionButton(
                 onClick = onFakeCall,
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -707,8 +708,8 @@ fun ContactsScreen(
                     onMenu = { menuOpen = true },
                     // Перелистывание по панели (настройка): вправо — SMS (2.1.0),
                     // влево — заметки, как раньше
-                    onSwipeRight = if (settings.panelSwipeNav) toJournal else null,
-                    onSwipeLeft = if (settings.panelSwipeNav) onOpenNotes else null,
+                    onSwipeRight = if (settings[SwitchSetting.PANEL_SWIPE_NAV]) toJournal else null,
+                    onSwipeLeft = if (settings[SwitchSetting.PANEL_SWIPE_NAV]) onOpenNotes else null,
                     menuContent = {
                         val pinContext = androidx.compose.ui.platform.LocalContext.current
                         val pinToHome: (() -> Unit)? = if (com.ogneliss.dialer.widget.SectionWidgets.pinSupported(pinContext)) {
@@ -1088,7 +1089,7 @@ fun ContactsScreen(
                 // Под кнопкой псевдозвонка — запас, чтобы последняя строка
                 // выходила из-под неё (1.5.7, снимок автора)
                 item {
-                    Spacer(Modifier.height(if (settings.fakeCallButton) FAB_CLEARANCE else Space.xxl))
+                    Spacer(Modifier.height(if (settings[SwitchSetting.FAKE_CALL_BUTTON]) FAB_CLEARANCE else Space.xxl))
                 }
             }
             // «Наверх» — при прокрутке вверх далеко от начала (1.5.7)

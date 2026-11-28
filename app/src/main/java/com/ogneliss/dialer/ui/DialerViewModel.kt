@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import com.ogneliss.dialer.data.ContactNames
@@ -1839,7 +1840,7 @@ class DialerViewModel @Inject constructor(
 
         val slot = when {
             slotIndex >= 0 -> {
-                if (prefs.rememberSim.first()) simPrefs.remember(e164, slotIndex)
+                if (prefs.flow(SwitchSetting.REMEMBER_SIM).first()) simPrefs.remember(e164, slotIndex)
                 slotIndex
             }
             outgoing != null -> outgoing
@@ -2517,8 +2518,8 @@ class DialerViewModel @Inject constructor(
     val pendingPostCall: StateFlow<PostCallCoordinator.CompletedCall?> =
         combine(
             postCallCoordinator.pending,
-            prefs.postCallEnabled,
-            prefs.postCallUnknownOnly,
+            prefs.flow(SwitchSetting.POST_CALL_ENABLED),
+            prefs.flow(SwitchSetting.POST_CALL_UNKNOWN_ONLY),
             state
         ) { event, enabled, unknownOnly, uiState ->
             val known = event != null && uiState.contacts.any { contact ->
@@ -2959,7 +2960,7 @@ class DialerViewModel @Inject constructor(
         // Оператор номера — тот же разбор, что у строки журнала; из кэша, если он там есть
         val info = state.value.numberInfo[e164] ?: numberInfoRepo.describe(number, contact != null)
         viewModelScope.launch {
-            val remembers = action == SimAction.CALL && prefs.rememberSim.first()
+            val remembers = action == SimAction.CALL && prefs.flow(SwitchSetting.REMEMBER_SIM).first()
             _simRequest.value = SimRequest(
                 displayName = displayName?.takeIf { it.isNotBlank() }
                     ?: contact?.displayName

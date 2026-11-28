@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import com.ogneliss.dialer.ui.theme.RowIcon
 import com.ogneliss.dialer.data.ContactNames
 import com.ogneliss.dialer.ui.theme.PanelReachesNavBar
@@ -593,8 +594,8 @@ fun SubscriberScreen(
     // «Мессенджеры для любого номера» (1.3.5): установленные, которых нет
     // у контакта в книге, — по номеру карточки
     val settingsNow by vm.settingsState.collectAsStateWithLifecycle()
-    val byNumberMessengers by produceState(emptyList<SwipeAction>(), settingsNow.messengersAnyNumber, messengerLinks) {
-        value = if (settingsNow.messengersAnyNumber) {
+    val byNumberMessengers by produceState(emptyList<SwipeAction>(), settingsNow[SwitchSetting.MESSENGERS_ANY_NUMBER], messengerLinks) {
+        value = if (settingsNow[SwitchSetting.MESSENGERS_ANY_NUMBER]) {
             val inBook = messengerLinks.map { it.kind }.toSet()
             withContext(Dispatchers.IO) { ExternalApps.installedMessengers(appContext) }
                 .filter { it !in inBook }
@@ -783,14 +784,14 @@ fun SubscriberScreen(
     // В меню места много — полные подписи, а не «Блок» / «Разблок.»
     val blockLabelRes = when {
         // Скрытый номер — блокировка всех скрытых (2.6.0)
-        hiddenNumber -> if (settingsNow.blockHidden) R.string.card_unblock_hidden else R.string.card_block_hidden
+        hiddenNumber -> if (settingsNow[SwitchSetting.BLOCK_HIDDEN]) R.string.card_unblock_hidden else R.string.card_block_hidden
         isBlocked || blockingMask != null -> R.string.action_unblock
         else -> R.string.action_block
     }
     val onBlockAction: () -> Unit = {
         haptics()
         when {
-            hiddenNumber -> vm.setSwitch("block_hidden", !settingsNow.blockHidden)
+            hiddenNumber -> vm.setSwitch("block_hidden", !settingsNow[SwitchSetting.BLOCK_HIDDEN])
             isBlocked -> vm.removeRule(group.e164)
             // Под маской — в белый список с «Отменить» (2.1.0, разбор у blockingMask)
             blockingMask != null -> vm.allowNumber(group.e164)

@@ -138,8 +138,8 @@ android {
          * («сменить на 1.0.0», «rc — release candidate») — приложение давно
          * в магазине, и она сбивала с толку.
          */
-        versionCode = 108
-        versionName = "2.9.13"
+        versionCode = 109
+        versionName = "2.9.14"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

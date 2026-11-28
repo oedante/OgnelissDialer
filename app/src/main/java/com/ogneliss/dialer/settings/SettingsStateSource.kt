@@ -7,6 +7,7 @@ import com.ogneliss.dialer.data.NotesRetention
 import com.ogneliss.dialer.ui.SettingsState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -47,26 +48,20 @@ class SettingsStateSource @Inject constructor(
 ) {
 
     /** Оформление: тема, размеры, показ фото. */
+    /*
+     * 2.9.14 (техдолг, этап 2): переключатели — не здесь, а одним потоком
+     * prefs.switches (описания — SwitchSetting); раньше каждый был своим
+     * .combine в этих группах.
+     */
     private val appearance: Flow<Appearance> = combine(
         prefs.theme,
-        prefs.dynamicColor,
-        prefs.largeButtons,
-        prefs.showPhoto,
-        prefs.sortOrder
-    ) { theme, dynamic, large, photo, sort ->
-        Appearance(theme, dynamic, large, photo, sort)
+        prefs.sortOrder,
+        prefs.callPhotoStyle,
+        prefs.callAmbientStyle,
+        prefs.spamSimScope
+    ) { theme, sort, photoStyle, ambient, simScope ->
+        Appearance(theme, sort, callPhotoStyle = photoStyle, callAmbientStyle = ambient, spamSimScope = simScope)
     }
-        // Шестой поток — отдельно: у типизированного combine предел пять
-        .combine(prefs.buttonLabels) { a, labels -> a.copy(buttonLabels = labels) }
-        // Настройки экрана вызова — сюда же: отдельной группы потоков
-        // ради двух переключателей не заводим
-        .combine(prefs.proximityScreenOff) { a, v -> a.copy(proximityScreenOff = v) }
-        .combine(prefs.callHideContactNumber) { a, v -> a.copy(callHideContactNumber = v) }
-        .combine(prefs.callStatusLabels) { a, v -> a.copy(callStatusLabels = v) }
-        .combine(prefs.callAnimation) { a, v -> a.copy(callAnimation = v) }
-        .combine(prefs.callPhotoStyle) { a, v -> a.copy(callPhotoStyle = v) }
-        .combine(prefs.callAmbientStyle) { a, v -> a.copy(callAmbientStyle = v) }
-        .combine(prefs.spamSimScope) { a, v -> a.copy(spamSimScope = v) }
         // 2.7.4: свой фон входящих и исходящих
         .combine(prefs.callBgIncoming) { a, v -> a.copy(callBgIncoming = v) }
         .combine(prefs.callBgOutgoing) { a, v -> a.copy(callBgOutgoing = v) }
@@ -86,13 +81,9 @@ class SettingsStateSource @Inject constructor(
         .combine(prefs.callPhotoSize) { a, v -> a.copy(callPhotoSize = v) }
         .combine(prefs.answerMode) { a, v -> a.copy(answerMode = v) }
         .combine(prefs.widgetShape) { a, v -> a.copy(widgetShape = v) }
-        .combine(prefs.sectionIcons) { a, v -> a.copy(sectionIcons = v) }
-        .combine(prefs.coloredCallArrows) { a, v -> a.copy(coloredCallArrows = v) }
-        .combine(prefs.callLogDuration) { a, v -> a.copy(callLogDuration = v) }
         .combine(prefs.startSection) { a, v -> a.copy(startSection = v) }
         .combine(prefs.contactNameFormat) { a, v -> a.copy(contactNameFormat = v) }
         .combine(prefs.contactSort) { a, v -> a.copy(contactSort = v) }
-        .combine(prefs.messengersAnyNumber) { a, v -> a.copy(messengersAnyNumber = v) }
         .combine(prefs.panelSlots) { a, v -> a.copy(panelSlots = v) }
         .combine(prefs.menuTools) { a, v -> a.copy(menuTools = v) }
         .combine(prefs.railItems) { a, v -> a.copy(railItems = v) }
@@ -104,46 +95,19 @@ class SettingsStateSource @Inject constructor(
      * combine, шестой — отдельным .combine (на шести Kotlin переходит на массив).
      */
     private val gestures: Flow<Gestures> = combine(
-        prefs.haptic,
-        prefs.keyTones,
         prefs.swipeRight,
-        prefs.swipeLeft,
-        prefs.panelSwipeNav
-    ) { haptic, tones, right, left, panelNav ->
-        Gestures(
-            haptic = haptic,
-            keyTones = tones,
-            swipeRight = right,
-            swipeLeft = left,
-            panelSwipeNav = panelNav,
-            fakeCallButton = false
-        )
-    }.combine(prefs.fakeCallButton) { g, button -> g.copy(fakeCallButton = button) }
+        prefs.swipeLeft
+    ) { right, left -> Gestures(swipeRight = right, swipeLeft = left) }
 
     /** Поведение вызовов. */
     private val calls: Flow<Calls> = combine(
-        prefs.mergeCalls,
         prefs.groupingMode,
-        prefs.rememberSim,
         prefs.simLabels,
-        prefs.carrierInfo
-    ) { merge, grouping, rememberSim, labels, carrier ->
-        Calls(merge, grouping, rememberSim, labels, carrier)
-    }
-        // Шестой поток — отдельным combine: у типизированной перегрузки
-        // предел в пять
-        .combine(prefs.journalStyle) { c, style -> c.copy(journalStyle = style) }
-        .combine(prefs.outgoingSim) { c, sim -> c.copy(outgoingSim = sim) }
-
-    /** Экран после звонка и сопутствующие функции. */
-    private val postCall: Flow<PostCall> = combine(
-        prefs.postCallEnabled,
-        prefs.postCallUnknownOnly,
-        prefs.smartSpeaker,
-        prefs.callbackSuggestion,
-        prefs.dialpadOpenAtStart
-    ) { enabled, unknownOnly, speaker, callback, dialpadOpen ->
-        PostCall(enabled, unknownOnly, speaker, callback, dialpadOpen)
+        prefs.carrierInfo,
+        prefs.journalStyle,
+        prefs.outgoingSim
+    ) { grouping, labels, carrier, style, sim ->
+        Calls(grouping, labels, carrier, style, sim)
     }
 
     /** Заметки: срок хранения и область очистки. */
@@ -156,40 +120,24 @@ class SettingsStateSource @Inject constructor(
     }
 
     /** Фильтрация вызовов. Тихие часы (1.8.0) — сюда же: это правило входящих. */
-    private val spam: Flow<Spam> = combine(
-        prefs.blockHidden,
-        prefs.blockNotInContacts,
-        prefs.blockTaggedSpam,
-        prefs.quietHours
-    ) { hidden, unknown, tagged, quiet ->
-        Spam(hidden, unknown, tagged, quiet)
-    }
+    private val spam: Flow<Spam> = prefs.quietHours.map { Spam(it) }
 
     /** Помощь во время и после вызова (1.8.0): автодозвон и памятка. */
     private val callHelp: Flow<CallHelp> = combine(
         prefs.autoRedialMode,
-        prefs.autoRedialPace,
-        prefs.scamMemo,
-        prefs.incomingBanner,
-        prefs.swapAnswer
-    ) { mode, pace, memo, banner, swap ->
-        CallHelp(mode, pace, memo, banner, swap)
-    }
-        // Шестой поток — отдельно: у типизированного combine предел пять (2.5.0)
-        .combine(prefs.vibrateOnConnect) { h, v -> h.copy(vibrateOnConnect = v) }
+        prefs.autoRedialPace
+    ) { mode, pace -> CallHelp(mode, pace) }
 
     /** Сообщения (2.0.0). 2.1.0: без «Писать SMS в диалере» — решает роль SMS. */
     private val sms: Flow<Sms> = combine(
-        prefs.smsDeliveryReports,
         prefs.smsSwipeRight,
         prefs.smsSwipeLeft,
         prefs.smsUndoSend,
-        prefs.smsCallsInThread
-    ) { reports, right, left, undo, calls ->
-        Sms(reports, right, left, undo, calls)
-    }.combine(prefs.smsOtpCleanup) { s, otp -> s.copy(otpCleanup = otp) }
-        .combine(prefs.smsNotificationsOff) { s, off -> s.copy(notificationsOff = off) }
-        .combine(prefs.smsTextMode) { s, mode -> s.copy(textMode = mode) }
+        prefs.smsOtpCleanup,
+        prefs.smsTextMode
+    ) { right, left, undo, otp, mode ->
+        Sms(right, left, undo, otp, mode)
+    }
 
     /**
      * Итоговый снимок.
@@ -199,23 +147,17 @@ class SettingsStateSource @Inject constructor(
      */
     val state: Flow<SettingsState> = combine(
         combine(appearance, notes) { a, n -> a to n },
-        gestures, calls,
-        // Шестая группа — парой со «после звонка»: у combine предел пять
-        combine(postCall, callHelp) { p, h -> p to h },
+        // Все переключатели одним снимком (2.9.14) — парой с жестами: у combine предел пять
+        combine(prefs.switches, gestures) { sw, g -> sw to g },
+        calls,
+        callHelp,
         // Сообщения (2.0.0) — парой с фильтрацией по той же причине
         combine(spam, sms) { s, m -> s to m }
-    ) { (a, n), g, c, (p, h), (s, m) ->
+    ) { (a, n), (sw, g), c, h, (s, m) ->
         SettingsState(
+            switches = sw,
             theme = a.theme,
-            dynamicColor = a.dynamicColor,
-            largeButtons = a.largeButtons,
-            showPhoto = a.showPhoto,
             sortOrder = a.sortOrder,
-            buttonLabels = a.buttonLabels,
-            proximityScreenOff = a.proximityScreenOff,
-            callHideContactNumber = a.callHideContactNumber,
-            callStatusLabels = a.callStatusLabels,
-            callAnimation = a.callAnimation,
             callPhotoStyle = a.callPhotoStyle,
             callAmbientStyle = a.callAmbientStyle,
             spamSimScope = a.spamSimScope,
@@ -235,9 +177,6 @@ class SettingsStateSource @Inject constructor(
             callPhotoSize = a.callPhotoSize,
             answerMode = a.answerMode,
             widgetShape = a.widgetShape,
-            sectionIcons = a.sectionIcons,
-            coloredCallArrows = a.coloredCallArrows,
-            callLogDuration = a.callLogDuration,
             panelSlots = a.panelSlots,
             menuTools = a.menuTools,
             railItems = a.railItems,
@@ -245,54 +184,29 @@ class SettingsStateSource @Inject constructor(
             startSection = a.startSection,
             contactNameFormat = a.contactNameFormat,
             contactSort = a.contactSort,
-            messengersAnyNumber = a.messengersAnyNumber,
             notesRetention = n.retention,
             notesRetentionScope = n.scope,
             language = n.language,
 
-            haptic = g.haptic,
-            keyTones = g.keyTones,
             swipeRight = g.swipeRight,
             swipeLeft = g.swipeLeft,
-            panelSwipeNav = g.panelSwipeNav,
-            fakeCallButton = g.fakeCallButton,
 
-            mergeCalls = c.mergeCalls,
             groupingMode = c.groupingMode,
-            rememberSim = c.rememberSim,
             outgoingSim = c.outgoingSim,
             simLabels = c.simLabels,
             carrierInfo = c.carrierInfo,
             journalStyle = c.journalStyle,
 
-            postCallEnabled = p.postCallEnabled,
-            postCallUnknownOnly = p.postCallUnknownOnly,
-            smartSpeaker = p.smartSpeaker,
-            callbackSuggestion = p.callbackSuggestion,
-            dialpadOpenAtStart = p.dialpadOpenAtStart,
-
-            blockHidden = s.blockHidden,
-            blockNotInContacts = s.blockNotInContacts,
-            blockTaggedSpam = s.blockTaggedSpam,
             quietHours = s.quietHours,
 
             autoRedialMode = h.autoRedialMode,
             autoRedialPace = h.autoRedialPace,
-            scamMemo = h.scamMemo,
-            incomingBanner = h.incomingBanner,
-            swapAnswer = h.swapAnswer,
-            vibrateOnConnect = h.vibrateOnConnect,
 
-            smsDeliveryReports = m.deliveryReports,
             smsSwipeRight = m.swipeRight,
             smsSwipeLeft = m.swipeLeft,
             smsUndoSend = m.undoSend,
-            smsCallsInThread = m.callsInThread,
             smsOtpCleanup = m.otpCleanup,
-            smsNotificationsOff = m.notificationsOff,
-            smsTextMode = m.textMode,
-
-            fileLogging = true
+            smsTextMode = m.textMode
         )
     }
 
@@ -300,15 +214,7 @@ class SettingsStateSource @Inject constructor(
     // именно они убирают доступ по индексу
     private data class Appearance(
         val theme: ThemeMode,
-        val dynamicColor: Boolean,
-        val largeButtons: Boolean,
-        val showPhoto: Boolean,
         val sortOrder: SortOrder,
-        val buttonLabels: Boolean = true,
-        val proximityScreenOff: Boolean = true,
-        val callHideContactNumber: Boolean = false,
-        val callStatusLabels: Boolean = true,
-        val callAnimation: Boolean = true,
         val callPhotoStyle: CallPhotoStyle = CallPhotoStyle.CIRCLE,
         val callAmbientStyle: com.ogneliss.dialer.call.AmbientStyle = com.ogneliss.dialer.call.AmbientStyle.THEME,
         val spamSimScope: com.ogneliss.dialer.call.SpamSimScope = com.ogneliss.dialer.call.SpamSimScope.ALL,
@@ -328,15 +234,11 @@ class SettingsStateSource @Inject constructor(
         val callPhotoSize: CallPhotoSize = CallPhotoSize.LARGE,
         val answerMode: AnswerMode = AnswerMode.TAP,
         val widgetShape: WidgetShape = WidgetShape.AUTO,
-        val sectionIcons: Boolean = false,
-        val coloredCallArrows: Boolean = true,
-        val callLogDuration: Boolean = false,
         val panelSlots: String? = null,
         val menuTools: String? = null,
         val railItems: String? = null,
         val panelSide: Boolean = false,
         val startSection: StartChoice = StartChoice.JOURNAL,
-        val messengersAnyNumber: Boolean = false,
         val contactNameFormat: ContactNameFormat = ContactNameFormat.GIVEN_FIRST,
         val contactSort: ContactSort = ContactSort.GIVEN
     )
@@ -349,56 +251,32 @@ class SettingsStateSource @Inject constructor(
     )
 
     private data class Gestures(
-        val haptic: Boolean,
-        val keyTones: Boolean,
         val swipeRight: SwipeAction,
-        val swipeLeft: SwipeAction,
-        val panelSwipeNav: Boolean,
-        val fakeCallButton: Boolean
+        val swipeLeft: SwipeAction
     )
 
     private data class Calls(
-        val mergeCalls: Boolean,
         val groupingMode: GroupingMode,
-        val rememberSim: Boolean,
         val simLabels: Map<Int, String>,
         val carrierInfo: CarrierInfoMode,
         val journalStyle: JournalStyle = JournalStyle.GROUPS,
         val outgoingSim: OutgoingSim = OutgoingSim.ASK
     )
 
-    private data class PostCall(
-        val postCallEnabled: Boolean,
-        val postCallUnknownOnly: Boolean,
-        val smartSpeaker: Boolean,
-        val callbackSuggestion: Boolean,
-        val dialpadOpenAtStart: Boolean
-    )
-
     private data class Spam(
-        val blockHidden: Boolean,
-        val blockNotInContacts: Boolean,
-        val blockTaggedSpam: Boolean,
         val quietHours: QuietHours
     )
 
     private data class Sms(
-        val deliveryReports: Boolean,
         val swipeRight: SwipeAction,
         val swipeLeft: SwipeAction,
         val undoSend: UndoSend,
-        val callsInThread: Boolean,
         val otpCleanup: OtpCleanup = OtpCleanup.OFF,
-        val notificationsOff: Boolean = false,
         val textMode: com.ogneliss.dialer.sms.SmsTextMode = com.ogneliss.dialer.sms.SmsTextMode.SHOW
     )
 
     private data class CallHelp(
         val autoRedialMode: AutoRedialMode,
-        val autoRedialPace: RedialPace,
-        val scamMemo: Boolean,
-        val incomingBanner: Boolean,
-        val swapAnswer: Boolean,
-        val vibrateOnConnect: Boolean = true
+        val autoRedialPace: RedialPace
     )
 }

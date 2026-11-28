@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.call
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import com.ogneliss.dialer.ui.theme.ScaledSheetContent
 import com.ogneliss.dialer.settings.ContactNameFormat
 import androidx.compose.ui.semantics.contentDescription
@@ -214,7 +215,7 @@ class InCallActivity : ComponentActivity() {
          */
         lifecycleScope.launch {
             kotlinx.coroutines.flow.combine(
-                CallManager.revision, CallManager.audioState, prefs.proximityScreenOff
+                CallManager.revision, CallManager.audioState, prefs.flow(SwitchSetting.PROXIMITY_SCREEN_OFF)
             ) { _, audio, on -> audio to on }.collect { (audio, on) ->
                 @Suppress("DEPRECATION")
                 val state = CallManager.primary?.state
@@ -226,7 +227,7 @@ class InCallActivity : ComponentActivity() {
         // Авто-громкая связь: подписка на датчики только если функция
         // включена, иначе разговор час жёг бы батарею впустую
         lifecycleScope.launch {
-            if (prefs.smartSpeaker.first()) {
+            if (prefs.flow(SwitchSetting.SMART_SPEAKER).first()) {
                 smartSpeaker = SmartSpeakerController(this@InCallActivity) { route ->
                     CallManager.setAudioRoute(route)
                 }.also { controller ->
@@ -259,19 +260,19 @@ class InCallActivity : ComponentActivity() {
              * дольше остальных, и чёрный фон на нём экономит заметно больше.
              */
             val theme by prefs.theme.collectAsStateWithLifecycle(initialValue = start.theme)
-            val dynamic by prefs.dynamicColor.collectAsStateWithLifecycle(initialValue = start.dynamicColor)
+            val dynamic by prefs.flow(SwitchSetting.DYNAMIC_COLOR).collectAsStateWithLifecycle(initialValue = start.dynamicColor)
             // Масштаб интерфейса — тот же, что в приложении (1.5.6)
             val uiScale by prefs.uiScale.collectAsStateWithLifecycle(initialValue = start.uiScale)
             // Подписи под кнопками — та же настройка, что во всём приложении.
             // Экран вызова — отдельная активность, корня приложения у него
             // нет, поэтому оформление ставится здесь
-            val buttonLabels by prefs.buttonLabels.collectAsStateWithLifecycle(initialValue = start.buttonLabels)
-            val hideContactNumber by prefs.callHideContactNumber.collectAsStateWithLifecycle(initialValue = start.hideContactNumber)
+            val buttonLabels by prefs.flow(SwitchSetting.BUTTON_LABELS).collectAsStateWithLifecycle(initialValue = start.buttonLabels)
+            val hideContactNumber by prefs.flow(SwitchSetting.CALL_HIDE_CONTACT_NUMBER).collectAsStateWithLifecycle(initialValue = start.hideContactNumber)
             // Подписи «Входящий вызов» и «Соединение…» (2.9.7): разбор в CallStatusLabels
-            val statusLabels by prefs.callStatusLabels.collectAsStateWithLifecycle(initialValue = start.statusLabels)
+            val statusLabels by prefs.flow(SwitchSetting.CALL_STATUS_LABELS).collectAsStateWithLifecycle(initialValue = start.statusLabels)
             // Живой фон (1.5.1): по настройке; в высоком контрасте — нет,
             // там фон ровный ради различимости
-            val callAnimation by prefs.callAnimation.collectAsStateWithLifecycle(initialValue = start.callAnimation)
+            val callAnimation by prefs.flow(SwitchSetting.CALL_ANIMATION).collectAsStateWithLifecycle(initialValue = start.callAnimation)
             // Свой фон вызова (2.7.4): отметки снимков входящих и исходящих; 0 — нет
             val callBgIncoming by prefs.callBgIncoming.collectAsStateWithLifecycle(initialValue = start.callBgIncoming)
             val callBgOutgoing by prefs.callBgOutgoing.collectAsStateWithLifecycle(initialValue = start.callBgOutgoing)
@@ -296,7 +297,7 @@ class InCallActivity : ComponentActivity() {
             val answerMode by prefs.answerMode
                 .collectAsStateWithLifecycle(initialValue = start.answerMode)
             // «Ответить» слева (2.1.1): разбор в Prefs.swapAnswer
-            val swapAnswer by prefs.swapAnswer.collectAsStateWithLifecycle(initialValue = start.swapAnswer)
+            val swapAnswer by prefs.flow(SwitchSetting.SWAP_ANSWER).collectAsStateWithLifecycle(initialValue = start.swapAnswer)
             // Имя «Фамилия Имя» (1.6.2): разбор в data/ContactNames.kt
             val nameFormat by prefs.contactNameFormat
                 .collectAsStateWithLifecycle(initialValue = start.nameFormat)
@@ -332,7 +333,7 @@ class InCallActivity : ComponentActivity() {
                 // Автодозвон (1.8.0): сеанс держит экран между попытками
                 val redial by AutoRedial.state.collectAsStateWithLifecycle()
                 // Памятка о мошенниках (1.8.0): разбор в ScamMemo.kt
-                val scamMemo by prefs.scamMemo.collectAsStateWithLifecycle(initialValue = start.scamMemo)
+                val scamMemo by prefs.flow(SwitchSetting.SCAM_MEMO).collectAsStateWithLifecycle(initialValue = start.scamMemo)
 
                 /*
                  * Экран закрывается, когда нет ни вызовов, ни автодозвона (1.8.0).

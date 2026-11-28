@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.call
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import androidx.test.core.app.ApplicationProvider
 import com.ogneliss.dialer.settings.CallPhotoStyle
 import com.ogneliss.dialer.settings.Prefs
@@ -31,7 +32,7 @@ class CallScreenStartTest {
         runBlocking {
             prefs.setTheme(ThemeMode.DARK)
             prefs.setCallAmbientStyle(AmbientStyle.FLAME)
-            prefs.setCallStatusLabels(false)
+            prefs.set(SwitchSetting.CALL_STATUS_LABELS, false)
         }
         val start = CallScreenStart.read(context, prefs, incoming = null)
         assertEquals(ThemeMode.DARK, start.theme)

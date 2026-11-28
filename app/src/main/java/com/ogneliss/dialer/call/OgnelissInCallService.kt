@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.call
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import com.ogneliss.dialer.log.CallDiagnostics
 import android.content.Intent
 import android.telecom.Call
@@ -117,10 +118,10 @@ class OgnelissInCallService : InCallService() {
                 AutoRedial.Config(mode, pace)
             }.collect { AutoRedial.config = it }
         }
-        serviceScope.launch { prefs.callbackSuggestion.collect { callbackSuggestionOn = it } }
-        serviceScope.launch { prefs.vibrateOnConnect.collect { vibrateOnConnect = it } }
+        serviceScope.launch { prefs.flow(SwitchSetting.CALLBACK_SUGGESTION).collect { callbackSuggestionOn = it } }
+        serviceScope.launch { prefs.flow(SwitchSetting.VIBRATE_ON_CONNECT).collect { vibrateOnConnect = it } }
         serviceScope.launch {
-            prefs.incomingBanner.collect {
+            prefs.flow(SwitchSetting.INCOMING_BANNER).collect {
                 incomingBannerOn = it
                 incomingBannerKnown = true
             }
@@ -496,7 +497,7 @@ class OgnelissInCallService : InCallService() {
     private fun incomingBannerWanted(): Boolean {
         if (incomingBannerKnown) return incomingBannerOn
         return runCatching {
-            runBlocking { withTimeoutOrNull(BANNER_PREF_WAIT_MS) { prefs.incomingBanner.first() } }
+            runBlocking { withTimeoutOrNull(BANNER_PREF_WAIT_MS) { prefs.flow(SwitchSetting.INCOMING_BANNER).first() } }
         }.onFailure { Logger.w(TAG, "Настройка плашки не прочиталась", it) }
             .getOrNull() ?: incomingBannerOn
     }

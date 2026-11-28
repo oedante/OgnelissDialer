@@ -1,5 +1,6 @@
 package com.ogneliss.dialer
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import com.ogneliss.dialer.concurrency.suspendRunCatching
 
 import android.app.Application
@@ -164,7 +165,7 @@ class OgnelissApp : Application(), Configuration.Provider, ImageLoaderFactory {
 
         // Настройка чтения асинхронна, до её загрузки пишем в файл по умолчанию
         appScope.launch {
-            suspendRunCatching { Logger.setFileLogging(prefs.fileLogging.first()) }
+            suspendRunCatching { Logger.setFileLogging(prefs.flow(SwitchSetting.FILE_LOGGING).first()) }
                 .onFailure { Logger.e("App", "Не удалось прочитать настройку логирования", it) }
         }
 
@@ -174,13 +175,13 @@ class OgnelissApp : Application(), Configuration.Provider, ImageLoaderFactory {
         appScope.launch {
             suspendRunCatching {
                 val icons = com.ogneliss.dialer.widget.SectionIcons
-                val settingOn = prefs.sectionIcons.first()
+                val settingOn = prefs.flow(SwitchSetting.SECTION_ICONS).first()
                 val shown = icons.isEnabled(this@OgnelissApp)
                 val action = icons.reconcile(settingOn, shown)
                 Logger.i("SectionIcons", "При запуске: настройка ${if (settingOn) "вкл." else "выкл."}, значки ${if (shown) "есть" else "нет"} → $action")
                 when (action) {
                     com.ogneliss.dialer.widget.SectionIcons.Reconcile.SHOW -> icons.apply(this@OgnelissApp, true)
-                    com.ogneliss.dialer.widget.SectionIcons.Reconcile.REMEMBER_ON -> prefs.setSectionIcons(true)
+                    com.ogneliss.dialer.widget.SectionIcons.Reconcile.REMEMBER_ON -> prefs.set(SwitchSetting.SECTION_ICONS, true)
                     com.ogneliss.dialer.widget.SectionIcons.Reconcile.NOTHING -> Unit
                 }
             }.onFailure { Logger.e("App", "Не удалось сверить значки разделов", it) }

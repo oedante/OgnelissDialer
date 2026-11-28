@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.call
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import com.ogneliss.dialer.data.*
 import com.ogneliss.dialer.di.IoDispatcher
 import com.ogneliss.dialer.log.Logger
@@ -180,11 +181,11 @@ class SpamInputCollector @Inject constructor(
 
     /** Настройки читаются одним заходом, тоже параллельно. */
     private suspend fun collectSettings(): SpamPolicy.Settings = coroutineScope {
-        val hidden = async { safe("blockHidden", false) { prefs.blockHidden.first() } }
+        val hidden = async { safe("blockHidden", false) { prefs.flow(SwitchSetting.BLOCK_HIDDEN).first() } }
         val unknown = async {
-            safe("blockNotInContacts", false) { prefs.blockNotInContacts.first() }
+            safe("blockNotInContacts", false) { prefs.flow(SwitchSetting.BLOCK_NOT_IN_CONTACTS).first() }
         }
-        val tagged = async { safe("blockTaggedSpam", true) { prefs.blockTaggedSpam.first() } }
+        val tagged = async { safe("blockTaggedSpam", true) { prefs.flow(SwitchSetting.BLOCK_TAGGED_SPAM).first() } }
         val quiet = async { safe("quietHours", QuietHours.OFF) { prefs.quietHours.first() } }
         val scope = async { safe("spamSimScope", SpamSimScope.ALL) { prefs.spamSimScope.first() } }
         // 2.9.12: свои правила SIM 2 — для «Свои для каждой SIM»; не прочитались — общие

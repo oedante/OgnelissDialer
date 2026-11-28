@@ -86,53 +86,25 @@ class SettingsCommands @Inject constructor(
      * оставлять след, а не проходить незамеченным.
      */
     suspend fun setSwitch(key: String, value: Boolean) {
-        when (key) {
-            "dynamic_color" -> prefs.setDynamicColor(value)
-            "large_buttons" -> prefs.setLargeButtons(value)
-            "show_photo" -> prefs.setShowPhoto(value)
-            "messengers_any_number" -> prefs.setMessengersAnyNumber(value)
-            "button_labels" -> prefs.setButtonLabels(value)
-            "proximity_screen_off" -> prefs.setProximityScreenOff(value)
-            "call_hide_contact_number" -> prefs.setCallHideContactNumber(value)
-            "call_status_labels" -> prefs.setCallStatusLabels(value)
-            "call_animation" -> prefs.setCallAnimation(value)
-            "panel_swipe_nav" -> prefs.setPanelSwipeNav(value)
-            "fake_call_button" -> prefs.setFakeCallButton(value)
-            "haptic" -> prefs.setHaptic(value)
-            "key_tones" -> prefs.setKeyTones(value)
-            "merge_calls" -> prefs.setMergeCalls(value)
-            "remember_sim" -> prefs.setRememberSim(value)
-            "dialpad_open_at_start" -> prefs.setDialpadOpenAtStart(value)
-            "smart_speaker" -> prefs.setSmartSpeaker(value)
-            "callback_suggestion" -> prefs.setCallbackSuggestion(value)
-            "incoming_banner" -> prefs.setIncomingBanner(value)
-            "swap_answer" -> prefs.setSwapAnswer(value)
-            "vibrate_on_connect" -> prefs.setVibrateOnConnect(value)
-            // 2.6.0: сначала сами значки (Android), потом настройка — разбор в SectionIcons
-            "section_icons" -> {
-                com.ogneliss.dialer.widget.SectionIcons.apply(appContext, value)
-                prefs.setSectionIcons(value)
-            }
-            "colored_call_arrows" -> prefs.setColoredCallArrows(value)
-            "call_log_duration" -> prefs.setCallLogDuration(value)
-            "post_call" -> prefs.setPostCallEnabled(value)
-            "post_call_unknown" -> prefs.setPostCallUnknownOnly(value)
-            "block_hidden" -> prefs.setBlockHidden(value)
-            "block_unknown" -> prefs.setBlockNotInContacts(value)
-            "block_tagged" -> prefs.setBlockTaggedSpam(value)
-            "scam_memo" -> prefs.setScamMemo(value)
-            "sms_delivery_reports" -> prefs.setSmsDeliveryReports(value)
+        /*
+         * 2.9.14 (техдолг, этап 2): запись — по описанию (SwitchSetting), здесь
+         * только побочные действия. Было: ветка на каждый из 34 переключателей.
+         */
+        val setting = SwitchSetting.of(key) ?: run {
+            Logger.w(TAG, "Неизвестный ключ переключателя: $key")
+            return
+        }
+        // 2.6.0: сначала сами значки (Android), потом настройка — разбор в SectionIcons
+        if (setting == SwitchSetting.SECTION_ICONS) {
+            com.ogneliss.dialer.widget.SectionIcons.apply(appContext, value)
+        }
+        prefs.set(setting, value)
+        when (setting) {
             // 2.8.6: выключили — висящие уведомления о входящих снимаются сразу
-            "sms_notifications_off" -> {
-                prefs.setSmsNotificationsOff(value)
+            SwitchSetting.SMS_NOTIFICATIONS_OFF ->
                 if (value) com.ogneliss.dialer.sms.MessageNotifications.cancelAllIncoming(appContext)
-            }
-            "sms_calls_in_thread" -> prefs.setSmsCallsInThread(value)
-            "file_logging" -> {
-                prefs.setFileLogging(value)
-                Logger.setFileLogging(value)
-            }
-            else -> Logger.w(TAG, "Неизвестный ключ переключателя: $key")
+            SwitchSetting.FILE_LOGGING -> Logger.setFileLogging(value)
+            else -> Unit
         }
     }
 
@@ -235,8 +207,8 @@ class SettingsCommands @Inject constructor(
                 val (preset, accent) = parseThemeChoice(value)
                 prefs.setThemePreset(preset)
                 prefs.setAccentColor(accent)
-                if ((preset != ThemePreset.CLASSIC || accent != null) && prefs.dynamicColor.first()) {
-                    prefs.setDynamicColor(false)
+                if ((preset != ThemePreset.CLASSIC || accent != null) && prefs.flow(SwitchSetting.DYNAMIC_COLOR).first()) {
+                    prefs.set(SwitchSetting.DYNAMIC_COLOR, false)
                 }
             }
             // 1.9.0: скругление, плотность, шрифт — как в Ogneliss Mail
@@ -769,37 +741,10 @@ class SettingsCommands @Inject constructor(
         }
 
         /**
-         * Ключи, которые обрабатывает setSwitch.
-         * Сверяется тестом с реестром настроек: расхождение означает
-         * молча неработающий переключатель.
+         * Ключи, которые обрабатывает setSwitch — выводятся из описаний
+         * (2.9.14; был список из 34 строк, сверявшийся тестом с реестром).
          */
-        val SWITCH_KEYS = setOf(
-            "dynamic_color", "large_buttons", "show_photo", "button_labels", "proximity_screen_off", "call_hide_contact_number", "call_animation", "messengers_any_number", "panel_swipe_nav",
-            "call_status_labels",
-            "fake_call_button",
-            "haptic", "key_tones",
-            "merge_calls", "remember_sim", "smart_speaker",
-            "callback_suggestion", "post_call", "post_call_unknown", "incoming_banner", "swap_answer",
-            // 2.5.0
-            "vibrate_on_connect",
-            // 2.6.0
-            "section_icons",
-            // 2.7.0
-            "colored_call_arrows",
-            "block_hidden", "block_unknown", "block_tagged", "file_logging",
-            // 2.9.8
-            "call_log_duration",
-            "dialpad_open_at_start",
-            // 1.8.0
-            "scam_memo",
-            // 2.0.0
-            "sms_delivery_reports",
-            // 2.2.0
-            "sms_calls_in_thread",
-            // 2.8.6
-            "sms_notifications_off"
-            // 2.9.12: «sms_hide_text» стал выбором «sms_text_mode»
-        )
+        val SWITCH_KEYS: Set<String> get() = SwitchSetting.KEYS
 
         /** Ключи, которые обрабатывает setChoice. */
         val CHOICE_KEYS = setOf(

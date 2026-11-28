@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.conversation
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import android.content.Context
 import android.net.Uri
 import android.provider.ContactsContract
@@ -409,7 +410,7 @@ class ConversationViewModel @Inject constructor(
     /** Звонки с собеседником в ленту (2.2.0): настройка, номер, не старше первого сообщения. */
     private suspend fun loadCalls(messages: List<Message>): List<CallEvent> {
         if (messages.isEmpty() || !_state.value.dialable) return emptyList()
-        if (!runCatching { prefs.smsCallsInThread.first() }.getOrDefault(true)) return emptyList()
+        if (!runCatching { prefs.flow(SwitchSetting.SMS_CALLS_IN_THREAD).first() }.getOrDefault(true)) return emptyList()
         val oldest = messages.first().date
         return withContext(io) {
             runCatching { callLog.historyFor(address, CALLS_LIMIT) }.getOrDefault(emptyList())

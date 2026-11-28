@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.settings
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import com.ogneliss.dialer.ui.theme.OgnelissIcons
 
 import androidx.annotation.StringRes
@@ -195,8 +196,13 @@ enum class SettingsCategory(
  * и что происходит при нажатии.
  */
 sealed interface SettingKind {
-    /** Переключатель вкл/выкл. */
-    data class Switch(val key: String) : SettingKind
+    /**
+     * Переключатель вкл/выкл. 2.9.14: хранит само описание (SwitchSetting), а не
+     * строку ключа — пункт без описания или с опечаткой в ключе не скомпилируется.
+     */
+    data class Switch(val setting: SwitchSetting) : SettingKind {
+        val key: String get() = setting.key
+    }
     /** Выбор из списка вариантов (открывает диалог). */
     data class Choice(val key: String) : SettingKind
     /**
@@ -279,7 +285,7 @@ object SettingsRegistry {
         SettingEntry(
             "dynamic_color", SettingsCategory.APPEARANCE,
             R.string.settings_dynamic_color, R.string.settings_dynamic_color_text,
-            SettingKind.Switch("dynamic_color"),
+            SettingKind.Switch(SwitchSetting.DYNAMIC_COLOR),
             keywordsRes = R.string.keywords_dynamic_color
             /*
              * 2.9.1: снова в основном «Оформлении» (было в «Расширенных» с 2.8.6).
@@ -334,14 +340,14 @@ object SettingsRegistry {
         SettingEntry(
             "large_buttons", SettingsCategory.APPEARANCE,
             R.string.settings_large_buttons, R.string.settings_large_buttons_text,
-            SettingKind.Switch("large_buttons"),
+            SettingKind.Switch(SwitchSetting.LARGE_BUTTONS),
             keywordsRes = R.string.keywords_accessibility,
             advanced = true
         ),
         SettingEntry(
             "button_labels", SettingsCategory.APPEARANCE,
             R.string.settings_button_labels, R.string.settings_button_labels_text,
-            SettingKind.Switch("button_labels"),
+            SettingKind.Switch(SwitchSetting.BUTTON_LABELS),
             advanced = true
         ),
 
@@ -375,7 +381,7 @@ object SettingsRegistry {
         SettingEntry(
             "dialpad_open_at_start", SettingsCategory.GESTURES,
             R.string.settings_dialpad_open, R.string.settings_dialpad_open_text,
-            SettingKind.Switch("dialpad_open_at_start"),
+            SettingKind.Switch(SwitchSetting.DIALPAD_OPEN_AT_START),
             // 2.1.0: из «Оформления» — это поведение журнала при запуске
             groupRes = R.string.settings_group_panel_start
         ),
@@ -401,13 +407,13 @@ object SettingsRegistry {
         SettingEntry(
             "haptic", SettingsCategory.GESTURES,
             R.string.settings_haptic, null,
-            SettingKind.Switch("haptic"),
+            SettingKind.Switch(SwitchSetting.HAPTIC),
             groupRes = R.string.settings_group_feedback
         ),
         SettingEntry(
             "key_tones", SettingsCategory.GESTURES,
             R.string.settings_key_tones, null,
-            SettingKind.Switch("key_tones"),
+            SettingKind.Switch(SwitchSetting.KEY_TONES),
             groupRes = R.string.settings_group_feedback
         ),
         /*
@@ -418,13 +424,13 @@ object SettingsRegistry {
         SettingEntry(
             "vibrate_on_connect", SettingsCategory.GESTURES,
             R.string.settings_vibrate_on_connect, R.string.settings_vibrate_on_connect_text,
-            SettingKind.Switch("vibrate_on_connect"),
+            SettingKind.Switch(SwitchSetting.VIBRATE_ON_CONNECT),
             groupRes = R.string.settings_group_feedback
         ),
         SettingEntry(
             "panel_swipe_nav", SettingsCategory.GESTURES,
             R.string.settings_panel_swipe_nav, R.string.settings_panel_swipe_nav_text,
-            SettingKind.Switch("panel_swipe_nav"),
+            SettingKind.Switch(SwitchSetting.PANEL_SWIPE_NAV),
             groupRes = R.string.settings_group_screen_swipe,
             advanced = true
         ),
@@ -463,7 +469,7 @@ object SettingsRegistry {
         SettingEntry(
             "section_icons", SettingsCategory.GESTURES,
             R.string.settings_section_icons, R.string.settings_section_icons_text,
-            SettingKind.Switch("section_icons"),
+            SettingKind.Switch(SwitchSetting.SECTION_ICONS),
             keywordsRes = R.string.keywords_section_icons,
             groupRes = R.string.settings_group_home_screen,
             advanced = true
@@ -502,7 +508,7 @@ object SettingsRegistry {
         SettingEntry(
             "remember_sim", SettingsCategory.SIM,
             R.string.settings_remember_sim, R.string.settings_remember_sim_text,
-            SettingKind.Switch("remember_sim")
+            SettingKind.Switch(SwitchSetting.REMEMBER_SIM)
         ),
         /*
          * Здесь была «SIM для действий свайпа» (swipe_sim, 1.x). 2.9.11: убрана — карта
@@ -571,7 +577,7 @@ object SettingsRegistry {
         SettingEntry(
             "swap_answer", SettingsCategory.CALLS,
             R.string.settings_swap_answer, R.string.settings_swap_answer_text,
-            SettingKind.Switch("swap_answer"),
+            SettingKind.Switch(SwitchSetting.SWAP_ANSWER),
             keywordsRes = R.string.keywords_swap_answer,
             groupRes = R.string.settings_group_during_call
         ),
@@ -583,40 +589,40 @@ object SettingsRegistry {
         SettingEntry(
             "incoming_banner", SettingsCategory.CALLS,
             R.string.settings_incoming_banner, R.string.settings_incoming_banner_text,
-            SettingKind.Switch("incoming_banner"),
+            SettingKind.Switch(SwitchSetting.INCOMING_BANNER),
             keywordsRes = R.string.keywords_incoming_banner,
             groupRes = R.string.settings_group_during_call
         ),
         SettingEntry(
             "smart_speaker", SettingsCategory.CALLS,
             R.string.settings_smart_speaker, R.string.settings_smart_speaker_text,
-            SettingKind.Switch("smart_speaker"),
+            SettingKind.Switch(SwitchSetting.SMART_SPEAKER),
             groupRes = R.string.settings_group_during_call,
             advanced = true
         ),
         SettingEntry(
             "proximity_screen_off", SettingsCategory.CALLS,
             R.string.settings_proximity, R.string.settings_proximity_text,
-            SettingKind.Switch("proximity_screen_off"),
+            SettingKind.Switch(SwitchSetting.PROXIMITY_SCREEN_OFF),
             groupRes = R.string.settings_group_during_call
         ),
         SettingEntry(
             "post_call", SettingsCategory.CALLS,
             R.string.settings_post_call, R.string.settings_post_call_text,
-            SettingKind.Switch("post_call"),
+            SettingKind.Switch(SwitchSetting.POST_CALL_ENABLED),
             groupRes = R.string.settings_group_after_call
         ),
         SettingEntry(
             "post_call_unknown", SettingsCategory.CALLS,
             R.string.settings_post_call_unknown, R.string.settings_post_call_unknown_text,
-            SettingKind.Switch("post_call_unknown"),
+            SettingKind.Switch(SwitchSetting.POST_CALL_UNKNOWN_ONLY),
             groupRes = R.string.settings_group_after_call,
             advanced = true
         ),
         SettingEntry(
             "callback_suggestion", SettingsCategory.CALLS,
             R.string.settings_callback_suggestion, R.string.settings_callback_suggestion_text,
-            SettingKind.Switch("callback_suggestion"),
+            SettingKind.Switch(SwitchSetting.CALLBACK_SUGGESTION),
             groupRes = R.string.settings_group_after_call,
             advanced = true
         ),
@@ -650,7 +656,7 @@ object SettingsRegistry {
         SettingEntry(
             "fake_call_button", SettingsCategory.CALLS,
             R.string.settings_fake_call_button, R.string.settings_fake_call_button_text,
-            SettingKind.Switch("fake_call_button"),
+            SettingKind.Switch(SwitchSetting.FAKE_CALL_BUTTON),
             groupRes = R.string.settings_group_fake_call
         ),
         SettingEntry(
@@ -688,7 +694,7 @@ object SettingsRegistry {
         SettingEntry(
             "call_hide_contact_number", SettingsCategory.CALL_SCREEN,
             R.string.settings_hide_contact_number, R.string.settings_hide_contact_number_text,
-            SettingKind.Switch("call_hide_contact_number"),
+            SettingKind.Switch(SwitchSetting.CALL_HIDE_CONTACT_NUMBER),
             advanced = true
         ),
         /*
@@ -699,14 +705,14 @@ object SettingsRegistry {
         SettingEntry(
             "call_status_labels", SettingsCategory.CALL_SCREEN,
             R.string.settings_call_status_labels, R.string.settings_call_status_labels_text,
-            SettingKind.Switch("call_status_labels"),
+            SettingKind.Switch(SwitchSetting.CALL_STATUS_LABELS),
             keywordsRes = R.string.keywords_call_status_labels,
             advanced = true
         ),
         SettingEntry(
             "call_animation", SettingsCategory.CALL_SCREEN,
             R.string.settings_call_animation, R.string.settings_call_animation_text,
-            SettingKind.Switch("call_animation")
+            SettingKind.Switch(SwitchSetting.CALL_ANIMATION)
         ),
         /*
          * Облик живого фона (2.9.5, автор: «экран в светлой и тёмной теме с пламенем
@@ -742,7 +748,7 @@ object SettingsRegistry {
         SettingEntry(
             "merge_calls", SettingsCategory.CALL_LOG,
             R.string.settings_merge_calls, R.string.settings_merge_calls_text,
-            SettingKind.Switch("merge_calls"),
+            SettingKind.Switch(SwitchSetting.MERGE_CALLS),
             groupRes = R.string.settings_group_log_view,
             advanced = true
         ),
@@ -767,7 +773,7 @@ object SettingsRegistry {
         SettingEntry(
             "colored_call_arrows", SettingsCategory.CALL_LOG,
             R.string.settings_colored_call_arrows, R.string.settings_colored_call_arrows_text,
-            SettingKind.Switch("colored_call_arrows"),
+            SettingKind.Switch(SwitchSetting.COLORED_CALL_ARROWS),
             keywordsRes = R.string.keywords_colored_call_arrows,
             groupRes = R.string.settings_group_log_view
         ),
@@ -775,7 +781,7 @@ object SettingsRegistry {
         SettingEntry(
             "call_log_duration", SettingsCategory.CALL_LOG,
             R.string.settings_call_log_duration, R.string.settings_call_log_duration_text,
-            SettingKind.Switch("call_log_duration"),
+            SettingKind.Switch(SwitchSetting.CALL_LOG_DURATION),
             keywordsRes = R.string.keywords_call_log_duration,
             groupRes = R.string.settings_group_log_view
         ),
@@ -798,7 +804,7 @@ object SettingsRegistry {
         SettingEntry(
             "show_photo", SettingsCategory.CONTACTS,
             R.string.settings_show_photo, null,
-            SettingKind.Switch("show_photo")
+            SettingKind.Switch(SwitchSetting.SHOW_PHOTO)
         ),
         /*
          * Имена контактов (1.6.2): отзыв в Google Play — «сортировку
@@ -886,7 +892,7 @@ object SettingsRegistry {
         SettingEntry(
             "messengers_any_number", SettingsCategory.CONTACTS,
             R.string.settings_messengers_any_number, R.string.settings_messengers_any_number_text,
-            SettingKind.Switch("messengers_any_number"),
+            SettingKind.Switch(SwitchSetting.MESSENGERS_ANY_NUMBER),
             // 2.1.0: из «Вызовов» — это о том, куда писать
             groupRes = R.string.settings_group_messengers,
             advanced = true
@@ -915,7 +921,7 @@ object SettingsRegistry {
         SettingEntry(
             "sms_notifications_off", SettingsCategory.MESSAGES,
             R.string.settings_sms_notifications_off, R.string.settings_sms_notifications_off_text,
-            SettingKind.Switch("sms_notifications_off"),
+            SettingKind.Switch(SwitchSetting.SMS_NOTIFICATIONS_OFF),
             dangerous = true,
             keywordsRes = R.string.keywords_sms_notifications,
             groupRes = R.string.settings_group_messages
@@ -928,7 +934,7 @@ object SettingsRegistry {
         SettingEntry(
             "sms_delivery_reports", SettingsCategory.MESSAGES,
             R.string.settings_sms_delivery_reports, R.string.settings_sms_delivery_reports_text,
-            SettingKind.Switch("sms_delivery_reports"),
+            SettingKind.Switch(SwitchSetting.SMS_DELIVERY_REPORTS),
             keywordsRes = R.string.keywords_sms,
             groupRes = R.string.settings_group_messages
         ),
@@ -977,7 +983,7 @@ object SettingsRegistry {
         SettingEntry(
             "sms_calls_in_thread", SettingsCategory.MESSAGES,
             R.string.settings_sms_calls_in_thread, R.string.settings_sms_calls_in_thread_text,
-            SettingKind.Switch("sms_calls_in_thread"),
+            SettingKind.Switch(SwitchSetting.SMS_CALLS_IN_THREAD),
             keywordsRes = R.string.keywords_sms,
             groupRes = R.string.settings_group_messages,
             advanced = true
@@ -1044,20 +1050,20 @@ object SettingsRegistry {
         SettingEntry(
             "block_tagged", SettingsCategory.SPAM,
             R.string.settings_block_tagged, R.string.settings_block_tagged_text,
-            SettingKind.Switch("block_tagged"),
+            SettingKind.Switch(SwitchSetting.BLOCK_TAGGED_SPAM),
             keywordsRes = R.string.keywords_spam,
             groupRes = R.string.settings_group_block_rules
         ),
         SettingEntry(
             "block_hidden", SettingsCategory.SPAM,
             R.string.settings_block_hidden, null,
-            SettingKind.Switch("block_hidden"),
+            SettingKind.Switch(SwitchSetting.BLOCK_HIDDEN),
             groupRes = R.string.settings_group_block_rules
         ),
         SettingEntry(
             "block_unknown", SettingsCategory.SPAM,
             R.string.settings_block_unknown, R.string.settings_block_unknown_text,
-            SettingKind.Switch("block_unknown"),
+            SettingKind.Switch(SwitchSetting.BLOCK_NOT_IN_CONTACTS),
             dangerous = true,
             groupRes = R.string.settings_group_block_rules
         ),
@@ -1128,7 +1134,7 @@ object SettingsRegistry {
         SettingEntry(
             "scam_memo", SettingsCategory.SPAM,
             R.string.settings_scam_memo, R.string.settings_scam_memo_text,
-            SettingKind.Switch("scam_memo"),
+            SettingKind.Switch(SwitchSetting.SCAM_MEMO),
             keywordsRes = R.string.keywords_scam_memo,
             groupRes = R.string.settings_group_during_call,
             advanced = true
@@ -1179,7 +1185,7 @@ object SettingsRegistry {
         SettingEntry(
             "file_logging", SettingsCategory.MAINTENANCE,
             R.string.settings_file_logging, R.string.settings_file_logging_text,
-            SettingKind.Switch("file_logging"),
+            SettingKind.Switch(SwitchSetting.FILE_LOGGING),
             groupRes = R.string.settings_group_diagnostics,
             advanced = true
         ),

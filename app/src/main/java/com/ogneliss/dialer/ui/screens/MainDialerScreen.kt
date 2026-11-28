@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import com.ogneliss.dialer.data.JournalFolder
 import com.ogneliss.dialer.ui.components.MenuFolder
 import com.ogneliss.dialer.ui.components.MenuFolderRows
@@ -175,8 +176,8 @@ fun MainDialerScreen(
         searching = false
         vm.onQueryChange("")
     }
-    LaunchedEffect(settings.dialpadOpenAtStart) {
-        if (settings.dialpadOpenAtStart) dialpadExpanded = true
+    LaunchedEffect(settings[SwitchSetting.DIALPAD_OPEN_AT_START]) {
+        if (settings[SwitchSetting.DIALPAD_OPEN_AT_START]) dialpadExpanded = true
     }
 
     /*
@@ -206,7 +207,7 @@ fun MainDialerScreen(
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     // Настройку читаем через rememberUpdatedState: наблюдатель создаётся
     // один раз, и без этого он помнил бы значение на момент создания
-    val openAtStart by rememberUpdatedState(settings.dialpadOpenAtStart)
+    val openAtStart by rememberUpdatedState(settings[SwitchSetting.DIALPAD_OPEN_AT_START])
     DisposableEffect(lifecycleOwner) {
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
             if (event == androidx.lifecycle.Lifecycle.Event.ON_START) {
@@ -1188,7 +1189,7 @@ fun MainDialerScreen(
          * в согласии с ним: разойдутся — журнал начнёт врать о том,
          * что происходит со звонками.
          */
-        val blockedByTag = dangerTag && settings.blockTaggedSpam
+        val blockedByTag = dangerTag && settings[SwitchSetting.BLOCK_TAGGED_SPAM]
         val isBlocked = blocked || blockedByTag
 
         val warning = when {
@@ -1465,7 +1466,7 @@ fun MainDialerScreen(
             onMenu = { menuOpen = true },
             // 2.1.0: влево — соседний раздел «SMS», а не контакты через голову
             // (карусель журнал → SMS → контакты → заметки → напоминания)
-            onSwipeToContacts = if (settings.panelSwipeNav) { { onOpenSection(MainSection.MESSAGES) } } else null,
+            onSwipeToContacts = if (settings[SwitchSetting.PANEL_SWIPE_NAV]) { { onOpenSection(MainSection.MESSAGES) } } else null,
             // 2.7.7: «Контакты» справа от кнопок вызова (форум, oleg_p)
             onOpenContacts = { onOpenSection(MainSection.CONTACTS) },
             menuContent = {
@@ -1601,7 +1602,7 @@ fun MainDialerScreen(
             // на экран, а нужна не каждому
             // При клавиатуре сбоку кнопка легла бы поверх неё — прячем
             // При поиске кнопка висела бы над клавиатурой — прячем (1.6.0)
-            if (settings.fakeCallButton && !sideDialpad && !searching) SmallFloatingActionButton(
+            if (settings[SwitchSetting.FAKE_CALL_BUTTON] && !sideDialpad && !searching) SmallFloatingActionButton(
                 onClick = { fakeCallOpen = true },
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -1780,7 +1781,7 @@ fun MainDialerScreen(
                      */
                     contentPadding = PaddingValues(
                         top = Space.xs,
-                        bottom = if (settings.fakeCallButton && !sideDialpad) FAB_CLEARANCE else Space.xs
+                        bottom = if (settings[SwitchSetting.FAKE_CALL_BUTTON] && !sideDialpad) FAB_CLEARANCE else Space.xs
                     )
                 ) {
                     /*

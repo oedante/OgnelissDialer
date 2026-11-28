@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import com.ogneliss.dialer.ui.theme.listName
 import com.ogneliss.dialer.ui.components.ActionIconButton
 import androidx.compose.foundation.layout.Column
@@ -172,13 +173,13 @@ fun RecordActionCards(
     // «Мессенджеры для любого номера» — установленные (как «Написать»
     // в карточке абонента)
     val messengerKinds by produceState(
-        emptyList<SwipeAction>(), contact?.id, settings.messengersAnyNumber
+        emptyList<SwipeAction>(), contact?.id, settings[SwitchSetting.MESSENGERS_ANY_NUMBER]
     ) {
         value = withContext(Dispatchers.IO) {
             val inBook = contact?.id
                 ?.let { id -> ContactMessengers.linksFor(appContext, id).map { it.kind } }
                 .orEmpty()
-            val installed = if (settings.messengersAnyNumber) {
+            val installed = if (settings[SwitchSetting.MESSENGERS_ANY_NUMBER]) {
                 ExternalApps.installedMessengers(appContext)
             } else {
                 emptyList()
@@ -304,9 +305,9 @@ fun RecordActionCards(
     val hiddenNumber = group.presentation.hidden
     val blockHidden = CardAction(
         OgnelissIcons.Block,
-        stringResource(if (settings.blockHidden) R.string.card_unblock_hidden else R.string.card_block_hidden),
-        onClick = { haptics(); vm.setSwitch("block_hidden", !settings.blockHidden) },
-        tint = if (settings.blockHidden) scheme.primary else BlockRed
+        stringResource(if (settings[SwitchSetting.BLOCK_HIDDEN]) R.string.card_unblock_hidden else R.string.card_block_hidden),
+        onClick = { haptics(); vm.setSwitch("block_hidden", !settings[SwitchSetting.BLOCK_HIDDEN]) },
+        tint = if (settings[SwitchSetting.BLOCK_HIDDEN]) scheme.primary else BlockRed
     )
 
     val quick = when {
