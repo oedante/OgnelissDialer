@@ -2,6 +2,7 @@
 
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -106,7 +107,7 @@ internal fun ColorThemeDialog(
      * сохраняется и заработает, когда контраст выключат.
      */
     fun pick(p: ThemePreset, a: Int?) {
-        if (settings.dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (settings[SwitchSetting.DYNAMIC_COLOR] && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             vm.setSwitch("dynamic_color", false)
         }
         vm.setChoice("theme_preset", SettingsCommands.themeChoice(p, a))

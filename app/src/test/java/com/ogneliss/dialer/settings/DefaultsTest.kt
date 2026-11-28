@@ -10,14 +10,11 @@ import org.junit.Test
  * ТЕСТЫ ЗНАЧЕНИЙ ПО УМОЛЧАНИЮ.
  *
  * ── Зачем фиксировать умолчания тестом ─────────────────────────────────────
- * Умолчание задаётся в двух местах: в `Prefs` для чтения из хранилища
- * и в `SettingsState` как начальное значение до его загрузки. Разойтись
- * они могут незаметно — экран покажет одно, а хранилище вернёт другое,
- * и настройка на долю секунды «мигнёт» при запуске.
- *
- * Здесь проверяется вторая половина: значения `SettingsState`.
- * Соответствие первой обеспечивается тем, что обе константы правятся
- * вместе, а тест напоминает об этом при расхождении.
+ * 2.9.14: у переключателей умолчание одно — в описании (SwitchSetting), и
+ * SettingsState() берёт его оттуда. Раньше оно жило дважды — в Prefs и в
+ * SettingsState — и у «Входящий плашкой сверху» однажды разошлось. У настроек
+ * с выбором умолчания пока по-прежнему в двух местах (Prefs и SettingsState);
+ * тест напоминает о них при расхождении.
  */
 class DefaultsTest {
 
@@ -38,22 +35,22 @@ class DefaultsTest {
     fun `фильтрация спама выключена по умолчанию`() {
         // Ложное срабатывание вредит сильнее, чем один пропущенный
         // спам-звонок: заблокированным окажется звонок из поликлиники
-        assertFalse(defaults.blockNotInContacts)
-        assertFalse(defaults.blockHidden)
+        assertFalse(defaults[SwitchSetting.BLOCK_NOT_IN_CONTACTS])
+        assertFalse(defaults[SwitchSetting.BLOCK_HIDDEN])
     }
 
     @Test
     fun `клавиатура при запуске свёрнута`() {
         // Приложение чаще открывают посмотреть, кто звонил,
         // чем набрать номер
-        assertFalse(defaults.dialpadOpenAtStart)
+        assertFalse(defaults[SwitchSetting.DIALPAD_OPEN_AT_START])
     }
 
     @Test
     fun `цвета из обоев выключены`() {
         // Результат непредсказуем: при одних обоях интерфейс
         // контрастный, при других блёклый, проверить заранее нельзя
-        assertFalse(defaults.dynamicColor)
+        assertFalse(defaults[SwitchSetting.DYNAMIC_COLOR])
     }
 
     @Test
@@ -79,7 +76,7 @@ class DefaultsTest {
     @Test
     fun `отклик клавиш включён`() {
         // Набирают вслепую, и подтверждение нажатия нужно
-        assertTrue(defaults.haptic)
+        assertTrue(defaults[SwitchSetting.HAPTIC])
     }
 
     @Test
@@ -91,12 +88,12 @@ class DefaultsTest {
          * за возможность, доступную и без него: заметку можно
          * записать из карточки или свайпом.
          */
-        assertFalse(defaults.postCallEnabled)
+        assertFalse(defaults[SwitchSetting.POST_CALL_ENABLED])
     }
 
     @Test
     fun `экран после звонка показывается только для незнакомых`() {
         // Всплывающее окно после каждого звонка родным быстро надоедает
-        assertTrue(defaults.postCallUnknownOnly)
+        assertTrue(defaults[SwitchSetting.POST_CALL_UNKNOWN_ONLY])
     }
 }

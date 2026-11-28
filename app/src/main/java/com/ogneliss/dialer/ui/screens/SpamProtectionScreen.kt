@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import androidx.compose.ui.unit.dp
 import com.ogneliss.dialer.ui.theme.Space
 
@@ -145,7 +146,7 @@ fun SpamProtectionScreen(
                 icon = OgnelissIcons.Rule,
                 title = stringResource(R.string.spam_layer_rules),
                 text = stringResource(R.string.spam_layer_rules_text, rules.size),
-                active = rules.isNotEmpty() || settings.blockTaggedSpam,
+                active = rules.isNotEmpty() || settings[SwitchSetting.BLOCK_TAGGED_SPAM],
                 onClick = onOpenLists
             )
 

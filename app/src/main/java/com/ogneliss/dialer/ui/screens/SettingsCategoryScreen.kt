@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.screens
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import com.ogneliss.dialer.ui.components.RowDivider
 import com.ogneliss.dialer.ui.theme.Space
 
@@ -225,7 +226,7 @@ fun SettingsCategoryScreen(
                         entry.id == "battery" && batteryAllowed ->
                             stringResource(R.string.settings_battery_already)
                         // 2.8.6: уведомления SMS отключены — так и написано, красной строкой
-                        entry.id == "sms_notifications_off" && state.smsNotificationsOff ->
+                        entry.id == "sms_notifications_off" && state[SwitchSetting.SMS_NOTIFICATIONS_OFF] ->
                             stringResource(R.string.settings_sms_notifications_off_on)
                         // Прошивка может не пропустить плашку (2.2.2) — что разрешить в телефоне
                         entry.id == "incoming_banner" &&

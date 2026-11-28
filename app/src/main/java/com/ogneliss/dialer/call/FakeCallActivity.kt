@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.call
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import com.ogneliss.dialer.settings.ContactNameFormat
 import com.ogneliss.dialer.data.ContactNames
 import androidx.compose.foundation.layout.FlowRow
@@ -155,13 +156,13 @@ class FakeCallActivity : ComponentActivity() {
         setContent {
             val theme by prefs.theme.collectAsStateWithLifecycle(start.theme)
             // Гасить экран у уха — та же настройка, что у настоящего вызова
-            val proximityOn by prefs.proximityScreenOff.collectAsStateWithLifecycle(true)
+            val proximityOn by prefs.flow(SwitchSetting.PROXIMITY_SCREEN_OFF).collectAsStateWithLifecycle(true)
             var atEar by remember { mutableStateOf(false) }
             LaunchedEffect(atEar, proximityOn) { proximity?.hold(proximityOn && atEar) }
-            val dynamic by prefs.dynamicColor.collectAsStateWithLifecycle(start.dynamicColor)
+            val dynamic by prefs.flow(SwitchSetting.DYNAMIC_COLOR).collectAsStateWithLifecycle(start.dynamicColor)
             val uiScale by prefs.uiScale.collectAsStateWithLifecycle(start.uiScale)
             // Живой фон — как у настоящего вызова (1.5.1)
-            val callAnimation by prefs.callAnimation.collectAsStateWithLifecycle(start.callAnimation)
+            val callAnimation by prefs.flow(SwitchSetting.CALL_ANIMATION).collectAsStateWithLifecycle(start.callAnimation)
             // Свой фон вызова (2.7.4): пробный вызов — входящий, берёт снимок входящих
             val callBgIncoming by prefs.callBgIncoming.collectAsStateWithLifecycle(start.callBgIncoming)
             // Фото звонящего — как у настоящего вызова (1.5.5); null — ещё не прочитано
@@ -173,9 +174,9 @@ class FakeCallActivity : ComponentActivity() {
             // Ответ касанием или сдвигом — как у настоящего вызова (1.5.8)
             val answerMode by prefs.answerMode.collectAsStateWithLifecycle(start.answerMode)
             // «Ответить» слева — как у настоящего вызова (2.1.1)
-            val swapAnswer by prefs.swapAnswer.collectAsStateWithLifecycle(start.swapAnswer)
+            val swapAnswer by prefs.flow(SwitchSetting.SWAP_ANSWER).collectAsStateWithLifecycle(start.swapAnswer)
             // Подпись «Входящий вызов» — как у настоящего вызова (2.9.7, CallStatusLabels)
-            val statusLabels by prefs.callStatusLabels.collectAsStateWithLifecycle(start.statusLabels)
+            val statusLabels by prefs.flow(SwitchSetting.CALL_STATUS_LABELS).collectAsStateWithLifecycle(start.statusLabels)
 
             /*
              * Кто «звонит».

@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.call
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import android.content.Context
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.ogneliss.dialer.log.Logger
@@ -106,27 +107,27 @@ internal data class CallScreenStart(
 
         private suspend fun readPrefs(prefs: Prefs) = CallScreenStart(
             theme = prefs.theme.first(),
-            dynamicColor = prefs.dynamicColor.first(),
+            dynamicColor = prefs.flow(SwitchSetting.DYNAMIC_COLOR).first(),
             uiScale = prefs.uiScale.first(),
             fontScale = prefs.fontScale.first(),
             themeLook = prefs.themeLook.first(),
-            buttonLabels = prefs.buttonLabels.first(),
-            callAnimation = prefs.callAnimation.first(),
+            buttonLabels = prefs.flow(SwitchSetting.BUTTON_LABELS).first(),
+            callAnimation = prefs.flow(SwitchSetting.CALL_ANIMATION).first(),
             ambientStyle = prefs.callAmbientStyle.first(),
             callPhotoStyle = prefs.callPhotoStyle.first(),
             callPhotoSize = prefs.callPhotoSize.first(),
-            hideContactNumber = prefs.callHideContactNumber.first(),
-            statusLabels = prefs.callStatusLabels.first(),
+            hideContactNumber = prefs.flow(SwitchSetting.CALL_HIDE_CONTACT_NUMBER).first(),
+            statusLabels = prefs.flow(SwitchSetting.CALL_STATUS_LABELS).first(),
             callBgIncoming = prefs.callBgIncoming.first(),
             callBgOutgoing = prefs.callBgOutgoing.first(),
             avatarNoPhoto = prefs.avatarNoPhoto.first(),
             avatarUnknown = prefs.avatarUnknown.first(),
             avatarScope = prefs.avatarScope.first(),
             answerMode = prefs.answerMode.first(),
-            swapAnswer = prefs.swapAnswer.first(),
+            swapAnswer = prefs.flow(SwitchSetting.SWAP_ANSWER).first(),
             nameFormat = prefs.contactNameFormat.first(),
             carrierInfo = prefs.carrierInfo.first(),
-            scamMemo = prefs.scamMemo.first()
+            scamMemo = prefs.flow(SwitchSetting.SCAM_MEMO).first()
         )
 
         /** Свой снимок фона заранее; в высоком контрасте своего фона нет (InCallActivity). */

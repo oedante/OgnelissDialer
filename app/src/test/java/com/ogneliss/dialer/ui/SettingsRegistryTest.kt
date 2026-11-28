@@ -32,22 +32,22 @@ class SettingsRegistryTest {
         assertEquals("Обнаружены дублирующиеся id", ids.size, ids.distinct().size)
     }
 
+    /*
+     * 2.9.14 (техдолг, этап 2): переключатели — по описанию (SwitchSetting), и пункт
+     * реестра хранит само описание: «есть в реестре, но не обрабатывается» больше
+     * не скомпилируется. Остаётся обратное — описание есть, а пункта на экране нет.
+     * Было четыре теста, сверявших строковые списки ключей в трёх местах.
+     */
     @Test
-    fun `каждый переключатель обрабатывается SettingsCommands`() {
-        // Реестр описывает настройки, SettingsCommands их применяет.
-        // Расхождение означает молча неработающий переключатель:
-        // пользователь щёлкает, ничего не происходит, и вывод —
-        // приложение сломано. Компилятор такое не ловит: ключи строковые
-        val registryKeys = SettingsRegistry.entries
-            .mapNotNull { (it.kind as? SettingKind.Switch)?.key }
-
-        registryKeys.forEach { key ->
-            assertTrue(
-                "Ключ '$key' есть в реестре, но не обрабатывается " +
-                    "в SettingsCommands.setSwitch",
-                key in SettingsCommands.SWITCH_KEYS
+    fun `каждый переключатель — на экране ровно один раз`() {
+        val shown = SettingsRegistry.entries.mapNotNull { (it.kind as? SettingKind.Switch)?.setting }
+        com.ogneliss.dialer.settings.SwitchSetting.entries.forEach { setting ->
+            assertEquals(
+                "Переключатель ${setting.key}: описание есть, а пунктов в реестре — ${shown.count { it == setting }}",
+                1, shown.count { it == setting }
             )
         }
+        assertEquals(SettingsCommands.SWITCH_KEYS, SettingsState.SWITCH_KEYS)
     }
 
     @Test
@@ -60,48 +60,6 @@ class SettingsRegistryTest {
                 "Ключ '$key' есть в реестре, но не обрабатывается " +
                     "в SettingsCommands.setChoice",
                 key in SettingsCommands.CHOICE_KEYS
-            )
-        }
-    }
-
-    @Test
-    fun `в SettingsCommands нет ключей вне реестра`() {
-        val registryKeys = SettingsRegistry.entries
-            .mapNotNull { (it.kind as? SettingKind.Switch)?.key }.toSet()
-
-        SettingsCommands.SWITCH_KEYS.forEach { key ->
-            assertTrue(
-                "Ключ '$key' обрабатывается, но недоступен пользователю: " +
-                    "настройки нет в реестре",
-                key in registryKeys
-            )
-        }
-    }
-
-    @Test
-    fun `каждый переключатель известен SettingsState`() {
-        val registryKeys = SettingsRegistry.entries
-            .mapNotNull { (it.kind as? SettingKind.Switch)?.key }
-
-        registryKeys.forEach { key ->
-            assertTrue(
-                "Ключ '$key' есть в реестре, но не обрабатывается в SettingsState. " +
-                    "Переключатель будет всегда выключен.",
-                key in SettingsState.SWITCH_KEYS
-            )
-        }
-    }
-
-    @Test
-    fun `в SettingsState нет лишних ключей`() {
-        val registryKeys = SettingsRegistry.entries
-            .mapNotNull { (it.kind as? SettingKind.Switch)?.key }.toSet()
-
-        SettingsState.SWITCH_KEYS.forEach { key ->
-            assertTrue(
-                "Ключ '$key' обрабатывается в SettingsState, но отсутствует в реестре — " +
-                    "настройка недоступна пользователю.",
-                key in registryKeys
             )
         }
     }

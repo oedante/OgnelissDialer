@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui.conversation
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import com.ogneliss.dialer.ui.components.SectionTopBar
 import com.ogneliss.dialer.ui.components.TopBarMenuItem
 import com.ogneliss.dialer.ui.components.scrollEdgeFade
@@ -395,7 +396,7 @@ fun MessagesScreen(
     }
 
     // Перелистывание по панели (настройка): вправо — журнал, влево — контакты
-    val swipeNav = settings.panelSwipeNav
+    val swipeNav = settings[SwitchSetting.PANEL_SWIPE_NAV]
 
     fun selectedThreads(): List<MessagesViewModel.Thread> = shown.filter { threadKey(it) in selection.selected }
     // «Назад»: сперва снять выбор, потом выйти из архива

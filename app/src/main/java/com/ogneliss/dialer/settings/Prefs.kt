@@ -537,9 +537,6 @@ private val Context.dataStore by preferencesDataStore(
 @Singleton
 class Prefs @Inject constructor(@ApplicationContext private val context: Context) : GroupingSettings {
 
-
-
-
     /**
      * Ключи хранения. Строковые константы — часть контракта совместимости:
      * переименование ключа равносильно сбросу настройки у пользователя.
@@ -604,7 +601,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
          * на экран, и человеку, которому эта функция не нужна,
          * её лучше убрать.
          */
-        val FAKE_CALL_BUTTON = booleanPreferencesKey("fake_call_button")
 
         /**
          * Время назначенного псевдозвонка, RTC. 0 — не назначен.
@@ -623,20 +619,10 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
          * кадра. Разбор — в DialerViewModel, рядом с cachedSims.
          */
         val SIM_CACHE = stringPreferencesKey("sim_cache")
-        val PANEL_SWIPE_NAV = booleanPreferencesKey("panel_swipe_nav")
         val PINNED_NUMBERS = stringPreferencesKey("pinned_numbers")
-        val DYNAMIC_COLOR = booleanPreferencesKey("dynamic_color")
-        val SHOW_PHOTO = booleanPreferencesKey("show_photo")
         /** «Написать»: установленные мессенджеры для любого номера (1.3.5, выкл.). */
-        val MESSENGERS_ANY_NUMBER = booleanPreferencesKey("messengers_any_number")
-        val LARGE_BUTTONS = booleanPreferencesKey("large_buttons")
-        val BUTTON_LABELS = booleanPreferencesKey("button_labels")
-        val PROXIMITY_SCREEN_OFF = booleanPreferencesKey("proximity_screen_off")
-        val CALL_HIDE_CONTACT_NUMBER = booleanPreferencesKey("call_hide_contact_number")
         /** Подписи «Входящий вызов» и «Соединение…» на экране вызова (2.9.7, вкл.). */
-        val CALL_STATUS_LABELS = booleanPreferencesKey("call_status_labels")
         /** Живой фон экрана вызова (1.5.1, по умолчанию вкл.). */
-        val CALL_ANIMATION = booleanPreferencesKey("call_animation")
         /**
          * Свой фон экрана вызова (2.7.4): отметка — время сохранения снимка,
          * 0 или нет ключа — снимка нет. Сами файлы — call/CallBackgrounds.kt.
@@ -664,11 +650,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val ANSWER_MODE = stringPreferencesKey("answer_mode")
         val WIDGET_SHAPE = stringPreferencesKey("widget_shape")
         /** Отдельные значки «SMS» и «Контакты» в списке приложений (2.6.0, SectionIcons). */
-        val SECTION_ICONS = booleanPreferencesKey("section_icons")
         /** Цветные стрелки типа вызова (2.7.0, форум, 21vasya; выкл.): разбор в CallArrowColor. */
-        val COLORED_CALL_ARROWS = booleanPreferencesKey("colored_call_arrows")
         /** Длительность разговора в строке журнала (2.9.8, форум, Bublikov34; выкл.). */
-        val CALL_LOG_DURATION = booleanPreferencesKey("call_log_duration")
         /** «При запуске открывать» (2.7.0, форум, oleg_p): разбор в StartSection. */
         val START_SECTION = stringPreferencesKey("start_section")
         /** Последний открытый главный раздел — для «Последний раздел» (2.7.0). */
@@ -687,10 +670,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val SMS_TEXT_SCALE = floatPreferencesKey("sms_text_scale")
         // 2.2.2: подсказка о свайпах в журнале показана
         val SWIPE_HINT_DONE = booleanPreferencesKey("swipe_hint_done")
-        // Поведение
-        val HAPTIC = booleanPreferencesKey("haptic")
-        val KEY_TONES = booleanPreferencesKey("key_tones")
-        val MERGE_CALLS = booleanPreferencesKey("merge_calls")
         val GROUPING_MODE = stringPreferencesKey("grouping_mode")
         val SORT_ORDER = stringPreferencesKey("sort_order")
         val DEFAULT_SIM = intPreferencesKey("default_sim")
@@ -699,28 +678,14 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         /** Пользовательские имена слотов: "Рабочая", "Личная". */
         val SIM_LABEL_1 = stringPreferencesKey("sim_label_1")
         val SIM_LABEL_2 = stringPreferencesKey("sim_label_2")
-        val REMEMBER_SIM = booleanPreferencesKey("remember_sim")
-        val SMART_SPEAKER = booleanPreferencesKey("smart_speaker")
-        val DIALPAD_OPEN_AT_START = booleanPreferencesKey("dialpad_open_at_start")
-        val CALLBACK_SUGGESTION = booleanPreferencesKey("callback_suggestion")
-        // 2.1.0: входящий плашкой сверху, когда телефоном пользуются
-        val INCOMING_BANNER = booleanPreferencesKey("incoming_banner")
-        val SWAP_ANSWER = booleanPreferencesKey("swap_answer")
-        /** Вибрация, когда вызываемый снял трубку (2.5.0). */
-        val VIBRATE_ON_CONNECT = booleanPreferencesKey("vibrate_on_connect")
         /** Автодозвон (1.8.0): выключен, предлагать, сразу — разбор в RedialPolicy. */
         val AUTO_REDIAL = stringPreferencesKey("auto_redial")
         /** Сколько раз и как часто (1.8.0): готовые сочетания RedialPace. */
         val AUTO_REDIAL_PACE = stringPreferencesKey("auto_redial_pace")
-        /** Памятка о мошенниках в долгом разговоре с незнакомым (1.8.0). */
-        val SCAM_MEMO = booleanPreferencesKey("scam_memo")
         /**
          * Сообщения (2.0.0): разбор в sms/SmsRole.kt (SmsSettings).
          * «sms_in_app» убран в 2.1.0 — сохранённое значение больше не читается.
          */
-        val SMS_DELIVERY_REPORTS = booleanPreferencesKey("sms_delivery_reports")
-        // 2.8.6: «Отключить уведомления SMS» — разбор в SettingsRegistry
-        val SMS_NOTIFICATIONS_OFF = booleanPreferencesKey("sms_notifications_off")
         // 2.9.1: «Скрывать текст в уведомлениях» — разбор в SettingsRegistry
         val SMS_HIDE_TEXT = booleanPreferencesKey("sms_hide_text")
         // 2.9.12: вместо переключателя — выбор из трёх (SmsTextMode); без него решает прежний
@@ -734,7 +699,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val PANEL_SIDE = booleanPreferencesKey("panel_side")
         // 2.2.0
         val SMS_UNDO_SEND = stringPreferencesKey("sms_undo_send")
-        val SMS_CALLS_IN_THREAD = booleanPreferencesKey("sms_calls_in_thread")
         val SMS_OTP_CLEANUP = stringPreferencesKey("sms_otp_cleanup")
         val SMS_FOLDERS = stringPreferencesKey("sms_folders")
         /** Порядок и показ папок журнала и контактов (2.5.0, FolderOrder) — формат как у SMS. */
@@ -742,18 +706,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         val CONTACT_FOLDERS = stringPreferencesKey("contact_folders")
         val NOTES_RETENTION = stringPreferencesKey("notes_retention")
         val NOTES_RETENTION_SCOPE = stringPreferencesKey("notes_retention_scope")
-        // Экран после звонка
-        val POST_CALL_ENABLED = booleanPreferencesKey("post_call_enabled")
-        val POST_CALL_UNKNOWN_ONLY = booleanPreferencesKey("post_call_unknown_only")
-        // Антиспам
-        val BLOCK_HIDDEN = booleanPreferencesKey("block_hidden")
-        val BLOCK_NOT_IN_CONTACTS = booleanPreferencesKey("block_not_in_contacts")
-        val BLOCK_TAGGED_SPAM = booleanPreferencesKey("block_tagged_spam")
         /** Тихие часы для незнакомых (1.8.0): разбор в call/QuietHours.kt. */
         val QUIET_HOURS = stringPreferencesKey("quiet_hours")
         val EXTERNAL_LOOKUP_IDS = stringSetPreferencesKey("external_lookup_ids")
-        // Диагностика
-        val FILE_LOGGING = booleanPreferencesKey("file_logging")
         // Служебное
         val ONBOARDING_DONE = booleanPreferencesKey("onboarding_done")
         // 2.7.0: не читается и не пишется — шторка жестов при первом запуске удалена
@@ -777,6 +732,34 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
                 emit(emptyPreferences())
             } else throw error
         }
+
+    // ── Переключатели (2.9.14) ─────────────────────────────────────────────
+    /*
+     * Все переключатели настроек — по одному описанию (SwitchSetting): ключ,
+     * умолчание, копия для приёмника SMS. Здесь только чтение и запись — своих
+     * ключей, потоков и методов на каждый переключатель больше нет.
+     */
+
+    /*
+     * Потоки — по одному на переключатель, созданные заранее: экраны собирают их
+     * в Compose (collectAsStateWithLifecycle), и новый объект на каждый вызов
+     * переподписывал бы сбор при каждой перерисовке. Так же было и раньше —
+     * у каждого переключателя был свой val.
+     */
+    private val switchFlows: Map<SwitchSetting, Flow<Boolean>> =
+        SwitchSetting.entries.associateWith { s -> data.map { s.read(it) } }
+
+    /** Значение переключателя; до первой записи — умолчание из описания. Один и тот же поток. */
+    fun flow(setting: SwitchSetting): Flow<Boolean> = switchFlows.getValue(setting)
+
+    /** Все переключатели одним снимком — для SettingsState. */
+    val switches: Flow<Map<SwitchSetting, Boolean>> = data.map { SwitchSetting.readAll(it) }
+
+    /** Запись переключателя и, если есть, его копии в SmsSettings. */
+    suspend fun set(setting: SwitchSetting, value: Boolean) {
+        edit(setting.key, value) { it[setting.prefKey] = value }
+        setting.mirror?.invoke(context, value)
+    }
 
     // ── Жесты ──────────────────────────────────────────────────────────────
     /**
@@ -914,36 +897,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      */
     val language: Flow<String> = data.map { it[Keys.LANGUAGE].orEmpty() }
 
-    /**
-     * КАКОЙ SIM-КАРТОЙ ДЕЙСТВОВАТЬ ПРИ СВАЙПЕ.
-     *
-     * По умолчанию спрашиваем: свайп — быстрый жест, и ошибиться картой
-     * при двух номерах означает потратить деньги не с того счёта.
-     * Кому неважно — выбирает конкретную карту и избавляется от диалога.
-     */
-    /**
-     * ПЕРЕЛИСТЫВАНИЕ МЕЖДУ ВЫЗОВАМИ И КОНТАКТАМИ.
-     *
-     * Свайп по нижней панели: влево — в контакты, вправо — обратно.
-     *
-     * По умолчанию включено: жест не мешает ничему другому — панель
-     * не прокручивается, и горизонтальное движение по ней однозначно.
-     *
-     * Отключаемо на случай, если человек часто задевает панель
-     * при наборе номера.
-     */
-    val panelSwipeNav: Flow<Boolean> = data.map { it[Keys.PANEL_SWIPE_NAV] ?: true }
-
     val fakeCallNumber: Flow<String> = data.map { it[Keys.FAKE_CALL_NUMBER].orEmpty() }
-
-    /*
-     * 2.7.0, обзор вида 15.11.2026: умолчание true → false. Кнопка — единственный
-     * «парящий» элемент с тенью в плоском приложении, висит над колонкой кнопок
-     * вызова; псевдозвонок есть в «Меню → Инструменты». Кто включил или выключил
-     * сам — у того в хранилище лежит значение, его выбор остаётся.
-     * Должно совпадать с SettingsState.fakeCallButton.
-     */
-    val fakeCallButton: Flow<Boolean> = data.map { it[Keys.FAKE_CALL_BUTTON] ?: false }
 
     val fakeCallAt: Flow<Long> = data.map { it[Keys.FAKE_CALL_AT] ?: 0L }
 
@@ -999,53 +953,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         )
     }.distinctUntilChanged()
     /** По умолчанию false: динамический цвет системы перекрасил бы бренд. */
-    /**
-     * Цвета из обоев пользователя.
-     *
-     * ВЫКЛЮЧЕНО по умолчанию: результат непредсказуем. При одних обоях
-     * интерфейс получается контрастным, при других блёклым, и проверить
-     * это заранее нельзя.
-     *
-     * По умолчанию работает проверенная палитра с посчитанным контрастом;
-     * кому нужна связь с обоями — включает сам.
-     */
-    val dynamicColor: Flow<Boolean> = data.map { it[Keys.DYNAMIC_COLOR] ?: false }
-    val showPhoto: Flow<Boolean> = data.map { it[Keys.SHOW_PHOTO] ?: true }
-    val messengersAnyNumber: Flow<Boolean> = data.map { it[Keys.MESSENGERS_ANY_NUMBER] ?: false }
-    val largeButtons: Flow<Boolean> = data.map { it[Keys.LARGE_BUTTONS] ?: false }
-
-    /** Подписи под кнопками: разбор у Appearance.buttonLabels. По умолчанию — показывать. */
-    val buttonLabels: Flow<Boolean> = data.map { it[Keys.BUTTON_LABELS] ?: true }
-
-    /**
-     * Гасить экран у уха по датчику приближения. По умолчанию — да:
-     * без этого щека нажимает кнопки. Просили выключаемым в отзыве
-     * в Google Play (бывают датчики, которые гасят экран не вовремя).
-     */
-    val proximityScreenOff: Flow<Boolean> = data.map { it[Keys.PROXIMITY_SCREEN_OFF] ?: true }
-
-    /**
-     * На экране вызова у сохранённого контакта — тип номера вместо
-     * самого номера. По умолчанию — нет: номер показывается.
-     */
-    val callHideContactNumber: Flow<Boolean> = data.map { it[Keys.CALL_HIDE_CONTACT_NUMBER] ?: false }
-
-    /**
-     * Подписи состояния на экране вызова (2.9.7, письмо пользователя: «добавьте
-     * возможность показывать или скрывать подписи состояния — „Входящий“,
-     * „Вызов“ — оставив только таймер»). Выключено — нет «Входящий вызов»
-     * и «Соединение…»; таймер разговора, «На удержании» и «Вызов завершён»
-     * остаются: они сообщают то, чего иначе на экране не видно.
-     * По умолчанию — показывать, как было.
-     */
-    val callStatusLabels: Flow<Boolean> = data.map { it[Keys.CALL_STATUS_LABELS] ?: true }
-
-    /**
-     * Живой фон экрана вызова (1.5.1): медленные пятна цветов темы.
-     * По умолчанию — да; при системном «Убрать анимацию» фон неподвижен
-     * и без этой настройки (call/CallAmbientBackground.kt).
-     */
-    val callAnimation: Flow<Boolean> = data.map { it[Keys.CALL_ANIMATION] ?: true }
 
     /**
      * Отметки своего фона экрана вызова (2.7.4): входящие и исходящие.
@@ -1104,9 +1011,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      */
     val spamSim2Rules: Flow<com.ogneliss.dialer.call.SpamPolicy.Settings> = data.map { p ->
         com.ogneliss.dialer.call.SpamPolicy.Settings(
-            blockHidden = p[Keys.SPAM_SIM2_HIDDEN] ?: p[Keys.BLOCK_HIDDEN] ?: false,
-            blockNotInContacts = p[Keys.SPAM_SIM2_NOT_IN_CONTACTS] ?: p[Keys.BLOCK_NOT_IN_CONTACTS] ?: false,
-            blockTaggedSpam = p[Keys.SPAM_SIM2_TAGGED] ?: p[Keys.BLOCK_TAGGED_SPAM] ?: true,
+            blockHidden = p[Keys.SPAM_SIM2_HIDDEN] ?: SwitchSetting.BLOCK_HIDDEN.read(p),
+            blockNotInContacts = p[Keys.SPAM_SIM2_NOT_IN_CONTACTS] ?: SwitchSetting.BLOCK_NOT_IN_CONTACTS.read(p),
+            blockTaggedSpam = p[Keys.SPAM_SIM2_TAGGED] ?: SwitchSetting.BLOCK_TAGGED_SPAM.read(p),
             quietHours = QuietHours.from(p[Keys.SPAM_SIM2_QUIET] ?: p[Keys.QUIET_HOURS])
         )
     }.distinctUntilChanged()
@@ -1129,24 +1036,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     /** Форма значков-виджетов «SMS» и «Контакты» (2.1.3): разбор в WidgetShape. */
     val widgetShape: Flow<WidgetShape> = data.map { WidgetShape.from(it[Keys.WIDGET_SHAPE]) }
 
-    /** Отдельные значки «SMS» и «Контакты» в списке приложений (2.6.0): разбор в SectionIcons. */
-    val sectionIcons: Flow<Boolean> = data.map { it[Keys.SECTION_ICONS] ?: false }
-
-    /**
-     * Цветные стрелки вызовов (2.7.0). Разбор — CallArrowColor. 2.8.9: по умолчанию
-     * ВКЛЮЧЕНО (автор: «проверь, что цветные стрелки… включены по умолчанию»; было —
-     * выключено). Кто выключил сам — у того записано false, оно и остаётся.
-     */
-    val coloredCallArrows: Flow<Boolean> = data.map { it[Keys.COLORED_CALL_ARROWS] ?: true }
-
-    /**
-     * Длительность разговора в строке журнала (2.9.8, форум, Bublikov34: «не нашёл
-     * включение отображения длительности звонка в журнале, такое есть?»). Рядом
-     * с датой: «Сегодня, 14:05 · 2:35». По умолчанию — нет, как было: длительность
-     * видна в карточке абонента.
-     */
-    val callLogDuration: Flow<Boolean> = data.map { it[Keys.CALL_LOG_DURATION] ?: false }
-
     /** Что открывать при запуске значком (2.7.0): по умолчанию журнал. Разбор — StartSection. */
     val startSection: Flow<StartChoice> = data.map { StartChoice.from(it[Keys.START_SECTION]) }
 
@@ -1165,11 +1054,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      * в редакторе он стоит первым. Пусто — ещё не выбирали.
      */
     val contactAccount: Flow<String> = data.map { it[Keys.CONTACT_ACCOUNT].orEmpty() }
-
-    // ── Поведение ──────────────────────────────────────────────────────────
-    val haptic: Flow<Boolean> = data.map { it[Keys.HAPTIC] ?: true }
-    val keyTones: Flow<Boolean> = data.map { it[Keys.KEY_TONES] ?: true }
-    val mergeCalls: Flow<Boolean> = data.map { it[Keys.MERGE_CALLS] ?: true }
 
     /**
      * По умолчанию CONSECUTIVE — так работают штатные диалеры,
@@ -1219,13 +1103,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     }
 
     /**
-     * Автоматическое переключение на громкую связь по датчикам.
-     * Выключено по умолчанию: функция необычная, и внезапно заоравший
-     * динамик на совещании пугает сильнее, чем радует удобство.
-     */
-    val smartSpeaker: Flow<Boolean> = data.map { it[Keys.SMART_SPEAKER] ?: false }
-
-    /**
      * Автодозвон (1.8.0). По умолчанию — «Предлагать»: экран после «занято»
      * спрашивает, а без согласия ничего не набирается. Разбор — RedialPolicy.
      */
@@ -1233,23 +1110,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
 
     /** Сколько раз и как часто повторять (1.8.0): по умолчанию 5 раз через 10 с. */
     val autoRedialPace: Flow<RedialPace> = data.map { RedialPace.from(it[Keys.AUTO_REDIAL_PACE]) }
-
-    /**
-     * Памятка о мошенниках (1.8.0). ВКЛЮЧЕНА по умолчанию: она появляется
-     * один раз за разговор и только с незнакомым номером дольше двух
-     * минут — честный звонок курьера до неё не доживает, а тот, кому
-     * она нужна, о настройке не узнает, пока не станет поздно.
-     */
-    val scamMemo: Flow<Boolean> = data.map { it[Keys.SCAM_MEMO] ?: true }
-
-    /*
-     * Сообщения (2.0.0). Умолчание — то же, что у SmsSettings: отчёт
-     * о доставке — нет (часть операторов берёт за него плату).
-     */
-    val smsDeliveryReports: Flow<Boolean> = data.map { it[Keys.SMS_DELIVERY_REPORTS] ?: false }
-
-    /** Уведомления о новых SMS выключены (2.8.6). По умолчанию — нет, уведомления идут. */
-    val smsNotificationsOff: Flow<Boolean> = data.map { it[Keys.SMS_NOTIFICATIONS_OFF] ?: false }
 
     /** Места нижней панели (2.9.2): строка PanelSlots; null — порядок по роли SMS. */
     val panelSlots: Flow<String?> = data.map { it[Keys.PANEL_SLOTS] }
@@ -1294,24 +1154,11 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     /** Отмена отправки SMS (2.2.0): по умолчанию 5 секунд. */
     val smsUndoSend: Flow<UndoSend> = data.map { UndoSend.from(it[Keys.SMS_UNDO_SEND]) }
 
-    /** Звонки в ленте переписки (2.2.0): по умолчанию показываются. */
-    val smsCallsInThread: Flow<Boolean> = data.map { it[Keys.SMS_CALLS_IN_THREAD] ?: true }
-
     /** Автоудаление кодов (2.2.0): по умолчанию выключено — удаление без спроса. */
     val smsOtpCleanup: Flow<OtpCleanup> = data.map { OtpCleanup.from(it[Keys.SMS_OTP_CLEANUP]) }
 
     /** Папки SMS (2.2.0): порядок и видимость строкой, разбор — SmsFolders. */
     val smsFolders: Flow<String?> = data.map { it[Keys.SMS_FOLDERS] }
-
-    /**
-     * Открывать клавиатуру сразу при запуске.
-     *
-     * Выключено по умолчанию: чаще приложение открывают посмотреть,
-     * кто звонил, а не набрать номер. Тем, у кого наоборот,
-     * переключатель экономит одно нажатие на каждом запуске.
-     */
-    val dialpadOpenAtStart: Flow<Boolean> =
-        data.map { it[Keys.DIALPAD_OPEN_AT_START] ?: false }
 
     /**
      * ВХОДЯЩИЙ ПЛАШКОЙ СВЕРХУ (2.1.0). Включено — пока телефон
@@ -1324,48 +1171,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      * не продержаться (IncomingScreen.bannerSafe) — экран вызова целиком
      * и при включённой настройке.
      */
-    /*
-     * 2.2.2 (форум, realme XT: «не работает плашка сверху при звонке… какие-то
-     * разрешения дать?»). С 2.1.0 на MIUI/HyperOS, vivo и ColorOS (OPPO,
-     * realme, OnePlus) плашка не показывалась вовсе — прошивка может её
-     * не пропустить, — а переключатель при этом стоял включённым и ничего
-     * не делал. Теперь на этих прошивках он по умолчанию ВЫКЛЮЧЕН (вид
-     * соответствует делу), а включённый рукой — работает: человек решил
-     * сам, и под переключателем сказано, что разрешить в телефоне.
-     */
-    val incomingBanner: Flow<Boolean> = data.map {
-        it[Keys.INCOMING_BANNER] ?: !com.ogneliss.dialer.util.IncomingCallAccess.restrictiveShell
-    }
-
-    suspend fun setIncomingBanner(v: Boolean) = edit("incoming_banner", v) { it[Keys.INCOMING_BANNER] = v }
-
-    /**
-     * «ОТВЕТИТЬ» СЛЕВА (2.1.1, просьба пользователей через автора 09.11.2026).
-     *
-     * Обычно, как в большинстве звонилок, «Отклонить» слева, «Ответить»
-     * справа. Привыкшим к другому телефону (часть прошивок ставит ответ
-     * слева) — наоборот: кнопки экрана вызова и псевдозвонка меняются местами,
-     * сдвиг к ответу — влево. Плашку и уведомление вызова раскладывает
-     * система (CallStyle) — там порядок прежний, одинаковый во всех звонилках.
-     */
-    val swapAnswer: Flow<Boolean> = data.map { it[Keys.SWAP_ANSWER] ?: false }
-
-    suspend fun setSwapAnswer(v: Boolean) = edit("swap_answer", v) { it[Keys.SWAP_ANSWER] = v }
-
-    /**
-     * ВИБРАЦИЯ ПРИ ОТВЕТЕ (2.5.0, форум: «добавить бы вибрацию при снятии трубки
-     * вызываемым абонентом»). Исходящий соединился — короткая вибрация: телефон
-     * у уха или в кармане с гарнитурой, гудки сменились тишиной, и не всегда
-     * понятно, ответили ли уже. Включена по умолчанию: просили, а мешать ей
-     * нечему — одно короткое касание за звонок.
-     */
-    val vibrateOnConnect: Flow<Boolean> = data.map { it[Keys.VIBRATE_ON_CONNECT] ?: true }
-
-    suspend fun setVibrateOnConnect(v: Boolean) = edit("vibrate_on_connect", v) { it[Keys.VIBRATE_ON_CONNECT] = v }
-
-    /** Предлагать напоминание после сброшенного вызова. */
-    val callbackSuggestion: Flow<Boolean> =
-        data.map { it[Keys.CALLBACK_SUGGESTION] ?: true }
 
     /**
      * СРОК ЖИЗНИ ЗАМЕТОК.
@@ -1403,35 +1208,7 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
      */
     val consentVersion: Flow<Int> = data.map { it[Keys.CONSENT_VERSION] ?: 0 }
 
-    /** Запоминать выбранную для номера SIM. */
-    val rememberSim: Flow<Boolean> = data.map { it[Keys.REMEMBER_SIM] ?: true }
-
     // ── Экран после звонка ─────────────────────────────────────────────────
-    /**
-     * ЭКРАН ПОСЛЕ ЗВОНКА — ВЫКЛЮЧЕН ПО УМОЛЧАНИЮ.
-     *
-     * ── Почему выключен ────────────────────────────────────────────────────
-     * Окно появляется в момент, когда разговор окончен и человек уже
-     * переключился на другое дело: вернулся к работе, к собеседнику
-     * рядом, к дороге. Всплывающее окно там перехватывает внимание,
-     * которое ему уже не принадлежит.
-     *
-     * Заметку при этом можно записать в любой момент — из карточки
-     * абонента или свайпом по записи журнала. Тем, кому это нужно
-     * постоянно, включить настройку проще, чем всем остальным
-     * отключать её после каждого звонка.
-     */
-    val postCallEnabled: Flow<Boolean> = data.map { it[Keys.POST_CALL_ENABLED] ?: false }
-    /** По умолчанию true: всплывающее окно после КАЖДОГО звонка раздражает. */
-    val postCallUnknownOnly: Flow<Boolean> =
-        data.map { it[Keys.POST_CALL_UNKNOWN_ONLY] ?: true }
-
-    // ── Антиспам ───────────────────────────────────────────────────────────
-    val blockHidden: Flow<Boolean> = data.map { it[Keys.BLOCK_HIDDEN] ?: false }
-    val blockNotInContacts: Flow<Boolean> = data.map { it[Keys.BLOCK_NOT_IN_CONTACTS] ?: false }
-    /** Блокировать номера, помеченные пользователем как спам. Включено по умолчанию:
-     *  пользователь ставил метку осознанно, значит ждёт от неё эффекта. */
-    val blockTaggedSpam: Flow<Boolean> = data.map { it[Keys.BLOCK_TAGGED_SPAM] ?: true }
 
     /** Тихие часы для незнакомых (1.8.0). Выключены по умолчанию: правило для тех, кто его выбрал. */
     val quietHours: Flow<QuietHours> = data.map { QuietHours.from(it[Keys.QUIET_HOURS]) }
@@ -1441,9 +1218,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     /** Идентификаторы явно разрешённых внешних определителей. Пусто = все выключены. */
     val externalLookupIds: Flow<Set<String>> =
         data.map { it[Keys.EXTERNAL_LOOKUP_IDS] ?: emptySet() }
-
-    // ── Диагностика ────────────────────────────────────────────────────────
-    val fileLogging: Flow<Boolean> = data.map { it[Keys.FILE_LOGGING] ?: true }
 
     // ── Служебное ──────────────────────────────────────────────────────────
     val onboardingDone: Flow<Boolean> = data.map { it[Keys.ONBOARDING_DONE] ?: false }
@@ -1503,17 +1277,11 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         com.ogneliss.dialer.widget.PinnedWidget.update(context)
     }
 
-    suspend fun setPanelSwipeNav(v: Boolean) =
-        edit("panel_swipe_nav", v) { it[Keys.PANEL_SWIPE_NAV] = v }
-
     suspend fun setSimCache(json: String) =
         edit("sim_cache", "…") { it[Keys.SIM_CACHE] = json }
 
     suspend fun setFakeCallAt(at: Long) =
         edit("fake_call_at", at) { it[Keys.FAKE_CALL_AT] = at }
-
-    suspend fun setFakeCallButton(v: Boolean) =
-        edit("fake_call_button", v) { it[Keys.FAKE_CALL_BUTTON] = v }
 
     suspend fun setFakeCallNumber(number: String) =
         edit("fake_call_number", Logger.mask(number)) { it[Keys.FAKE_CALL_NUMBER] = number }
@@ -1541,19 +1309,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setCornerSize(v: CornerSize) = edit("corner_size", v.name) { it[Keys.CORNER_SIZE] = v.name }
     suspend fun setListDensity(v: ListDensity) = edit("list_density", v.name) { it[Keys.LIST_DENSITY] = v.name }
     suspend fun setUiFont(v: UiFont) = edit("ui_font", v.name) { it[Keys.UI_FONT] = v.name }
-    suspend fun setDynamicColor(v: Boolean) = edit("dynamic_color", v) { it[Keys.DYNAMIC_COLOR] = v }
-    suspend fun setShowPhoto(v: Boolean) = edit("show_photo", v) { it[Keys.SHOW_PHOTO] = v }
-    suspend fun setMessengersAnyNumber(v: Boolean) = edit("messengers_any_number", v) { it[Keys.MESSENGERS_ANY_NUMBER] = v }
-    suspend fun setLargeButtons(v: Boolean) = edit("large_buttons", v) { it[Keys.LARGE_BUTTONS] = v }
-    suspend fun setButtonLabels(v: Boolean) = edit("button_labels", v) { it[Keys.BUTTON_LABELS] = v }
-    suspend fun setProximityScreenOff(v: Boolean) =
-        edit("proximity_screen_off", v) { it[Keys.PROXIMITY_SCREEN_OFF] = v }
-    suspend fun setCallHideContactNumber(v: Boolean) =
-        edit("call_hide_contact_number", v) { it[Keys.CALL_HIDE_CONTACT_NUMBER] = v }
-    suspend fun setCallStatusLabels(v: Boolean) =
-        edit("call_status_labels", v) { it[Keys.CALL_STATUS_LABELS] = v }
-    suspend fun setCallAnimation(v: Boolean) =
-        edit("call_animation", v) { it[Keys.CALL_ANIMATION] = v }
     suspend fun setCallBgIncoming(mark: Long) =
         edit("call_bg_incoming", mark) { it[Keys.CALL_BG_INCOMING] = mark }
     suspend fun setCallBgOutgoing(mark: Long) =
@@ -1578,11 +1333,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("answer_mode", v.name) { it[Keys.ANSWER_MODE] = v.name }
     suspend fun setWidgetShape(v: WidgetShape) =
         edit("widget_shape", v.name) { it[Keys.WIDGET_SHAPE] = v.name }
-    suspend fun setSectionIcons(v: Boolean) = edit("section_icons", v) { it[Keys.SECTION_ICONS] = v }
-    suspend fun setColoredCallArrows(v: Boolean) =
-        edit("colored_call_arrows", v) { it[Keys.COLORED_CALL_ARROWS] = v }
-    suspend fun setCallLogDuration(v: Boolean) =
-        edit("call_log_duration", v) { it[Keys.CALL_LOG_DURATION] = v }
     suspend fun setStartSection(v: StartChoice) =
         edit("start_section", v.name) { it[Keys.START_SECTION] = v.name }
     suspend fun setLastSection(route: String) =
@@ -1593,11 +1343,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         edit("contact_sort", v.name) { it[Keys.CONTACT_SORT] = v.name }
     suspend fun setContactAccount(key: String) =
         edit("contact_account", "…") { it[Keys.CONTACT_ACCOUNT] = key }
-    suspend fun setHaptic(v: Boolean) = edit("haptic", v) { it[Keys.HAPTIC] = v }
-    suspend fun setKeyTones(v: Boolean) = edit("key_tones", v) { it[Keys.KEY_TONES] = v }
     suspend fun setGroupingMode(v: GroupingMode) =
         edit("grouping_mode", v.name) { it[Keys.GROUPING_MODE] = v.name }
-    suspend fun setMergeCalls(v: Boolean) = edit("merge_calls", v) { it[Keys.MERGE_CALLS] = v }
     suspend fun setSortOrder(v: SortOrder) = edit("sort_order", v.name) { it[Keys.SORT_ORDER] = v.name }
     suspend fun setDefaultSim(v: Int) = edit("default_sim", v) { it[Keys.DEFAULT_SIM] = v }
     suspend fun setOutgoingSim(v: OutgoingSim) = setDefaultSim(v.slot)
@@ -1612,32 +1359,11 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
         }
     }
 
-    suspend fun setDialpadOpenAtStart(v: Boolean) =
-        edit("dialpad_open_at_start", v) { it[Keys.DIALPAD_OPEN_AT_START] = v }
-
-    suspend fun setSmartSpeaker(v: Boolean) =
-        edit("smart_speaker", v) { it[Keys.SMART_SPEAKER] = v }
-    suspend fun setCallbackSuggestion(v: Boolean) =
-        edit("callback_suggestion", v) { it[Keys.CALLBACK_SUGGESTION] = v }
     suspend fun setAutoRedialMode(v: AutoRedialMode) =
         edit("auto_redial", v.name) { it[Keys.AUTO_REDIAL] = v.name }
     suspend fun setAutoRedialPace(v: RedialPace) =
         edit("auto_redial_pace", v.name) { it[Keys.AUTO_REDIAL_PACE] = v.name }
-    suspend fun setScamMemo(v: Boolean) = edit("scam_memo", v) { it[Keys.SCAM_MEMO] = v }
 
-    /*
-     * Настройки сообщений повторяются в SmsSettings (SharedPreferences):
-     * приёмник SMS и кнопки «Написать» решают сразу, без чтения DataStore.
-     */
-    suspend fun setSmsDeliveryReports(v: Boolean) {
-        edit("sms_delivery_reports", v) { it[Keys.SMS_DELIVERY_REPORTS] = v }
-        com.ogneliss.dialer.sms.SmsSettings.put(context, com.ogneliss.dialer.sms.SmsSettings.KEY_DELIVERY_REPORTS, v)
-    }
-    // 2.8.6: копия в SmsSettings — приёмник SMS решает без DataStore
-    suspend fun setSmsNotificationsOff(v: Boolean) {
-        edit("sms_notifications_off", v) { it[Keys.SMS_NOTIFICATIONS_OFF] = v }
-        com.ogneliss.dialer.sms.SmsSettings.put(context, com.ogneliss.dialer.sms.SmsSettings.KEY_NOTIFICATIONS_OFF, v)
-    }
     // 2.9.1: копия в SmsSettings — уведомление собирает приёмник SMS, без DataStore
     suspend fun setSmsTextMode(v: com.ogneliss.dialer.sms.SmsTextMode) {
         edit("sms_text_mode", v.name) { it[Keys.SMS_TEXT_MODE] = v.name }
@@ -1658,8 +1384,6 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setJournalFolders(v: String) = edit("journal_folders", "…") { it[Keys.JOURNAL_FOLDERS] = v }
 
     suspend fun setContactFolders(v: String) = edit("contact_folders", "…") { it[Keys.CONTACT_FOLDERS] = v }
-    suspend fun setSmsCallsInThread(v: Boolean) =
-        edit("sms_calls_in_thread", v) { it[Keys.SMS_CALLS_IN_THREAD] = v }
     suspend fun setSmsOtpCleanup(v: OtpCleanup) {
         edit("sms_otp_cleanup", v.name) { it[Keys.SMS_OTP_CLEANUP] = v.name }
         com.ogneliss.dialer.sms.SmsSettings.putInt(context, com.ogneliss.dialer.sms.SmsSettings.KEY_OTP_HOURS, v.hours)
@@ -1675,18 +1399,8 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
     suspend fun setConsentVersion(v: Int) =
         edit("consent_version", v) { it[Keys.CONSENT_VERSION] = v }
 
-    suspend fun setRememberSim(v: Boolean) = edit("remember_sim", v) { it[Keys.REMEMBER_SIM] = v }
-    suspend fun setPostCallEnabled(v: Boolean) = edit("post_call", v) { it[Keys.POST_CALL_ENABLED] = v }
-    suspend fun setPostCallUnknownOnly(v: Boolean) =
-        edit("post_call_unknown_only", v) { it[Keys.POST_CALL_UNKNOWN_ONLY] = v }
-    suspend fun setBlockHidden(v: Boolean) = edit("block_hidden", v) { it[Keys.BLOCK_HIDDEN] = v }
-    suspend fun setBlockNotInContacts(v: Boolean) =
-        edit("block_not_in_contacts", v) { it[Keys.BLOCK_NOT_IN_CONTACTS] = v }
-    suspend fun setBlockTaggedSpam(v: Boolean) =
-        edit("block_tagged_spam", v) { it[Keys.BLOCK_TAGGED_SPAM] = v }
     suspend fun setExternalLookupIds(v: Set<String>) =
         edit("external_lookup_ids", v.size) { it[Keys.EXTERNAL_LOOKUP_IDS] = v }
-    suspend fun setFileLogging(v: Boolean) = edit("file_logging", v) { it[Keys.FILE_LOGGING] = v }
     suspend fun setOnboardingDone(v: Boolean) =
         edit("onboarding_done", v) { it[Keys.ONBOARDING_DONE] = v }
 
@@ -1727,9 +1441,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
                  * (SectionIcons.reconcile) — иначе переключатель показывал бы
                  * «выкл.» при значках в списке приложений.
                  */
-                val icons = it[Keys.SECTION_ICONS]
+                val icons = it[SwitchSetting.SECTION_ICONS.prefKey]
                 it.clear()
-                if (icons != null) it[Keys.SECTION_ICONS] = icons
+                if (icons != null) it[SwitchSetting.SECTION_ICONS.prefKey] = icons
             }
         }
             .onSuccess {
@@ -1748,13 +1462,9 @@ class Prefs @Inject constructor(@ApplicationContext private val context: Context
                     context, com.ogneliss.dialer.sms.SmsSettings.KEY_OTP_HOURS, OtpCleanup.from(null).hours
                 )
                 // 2.8.6: и переключатели — отчёт о доставке (раньше оставался прежним)
-                // и «Отключить уведомления SMS»: после сброса уведомления снова идут
-                com.ogneliss.dialer.sms.SmsSettings.put(
-                    context, com.ogneliss.dialer.sms.SmsSettings.KEY_DELIVERY_REPORTS, false
-                )
-                com.ogneliss.dialer.sms.SmsSettings.put(
-                    context, com.ogneliss.dialer.sms.SmsSettings.KEY_NOTIFICATIONS_OFF, false
-                )
+                // и «Отключить уведомления SMS»: после сброса уведомления снова идут.
+                // 2.9.14: все переключатели с копией — по их описанию (SwitchSetting.mirror)
+                SwitchSetting.entries.forEach { s -> s.mirror?.invoke(context, s.default) }
                 com.ogneliss.dialer.sms.SmsSettings.put(
                     context, com.ogneliss.dialer.sms.SmsSettings.KEY_HIDE_TEXT, false
                 )

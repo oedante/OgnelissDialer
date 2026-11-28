@@ -1,5 +1,6 @@
 package com.ogneliss.dialer
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import android.os.Build
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
@@ -246,7 +247,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val vm: DialerViewModel = hiltViewModel()
             val theme by vm.prefs.theme.collectAsStateWithLifecycle(ThemeMode.SYSTEM)
-            val dynamic by vm.prefs.dynamicColor.collectAsStateWithLifecycle(false)
+            val dynamic by vm.prefs.flow(SwitchSetting.DYNAMIC_COLOR).collectAsStateWithLifecycle(false)
             // Масштаб интерфейса под экран (1.5.6): разбор в ui/theme/UiScale.kt
             val uiScale by vm.prefs.uiScale.collectAsStateWithLifecycle(com.ogneliss.dialer.settings.UiScale.DEFAULT)
 

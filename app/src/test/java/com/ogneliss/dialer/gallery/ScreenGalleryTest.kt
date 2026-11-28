@@ -404,10 +404,10 @@ class ScreenGalleryTest {
         }, content = journalContent),
         // «Цветные стрелки вызовов» включены (настройка «Журнал вызовов»)
         Shot("journal_arrows", prepare = { _ ->
-            runBlocking { Prefs(rule.activity.applicationContext).setColoredCallArrows(true) }
+            runBlocking { Prefs(rule.activity.applicationContext).set(com.ogneliss.dialer.settings.SwitchSetting.COLORED_CALL_ARROWS, true) }
             settle(1200)
         }, cleanup = {
-            runBlocking { Prefs(rule.activity.applicationContext).setColoredCallArrows(false) }
+            runBlocking { Prefs(rule.activity.applicationContext).set(com.ogneliss.dialer.settings.SwitchSetting.COLORED_CALL_ARROWS, false) }
             settle(600)
         }, content = journalContent),
         // Меню «⋮» шапки журнала — выпадающее окно (popup), а не шторка

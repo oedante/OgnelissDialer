@@ -1,5 +1,6 @@
 package com.ogneliss.dialer.ui
 
+import com.ogneliss.dialer.settings.SwitchSetting
 import com.ogneliss.dialer.ui.components.CardsBlurState
 import com.ogneliss.dialer.ui.components.LocalCardsBlur
 import com.ogneliss.dialer.ui.components.LocalTouchAnchor
@@ -469,14 +470,14 @@ fun RootScreen(
     val settings by vm.settingsState.collectAsStateWithLifecycle()
     val appearance = remember(settings) {
         Appearance(
-            largeButtons = settings.largeButtons,
-            showPhoto = settings.showPhoto,
-            haptic = settings.haptic,
-            keyTones = settings.keyTones,
-            buttonLabels = settings.buttonLabels,
+            largeButtons = settings[SwitchSetting.LARGE_BUTTONS],
+            showPhoto = settings[SwitchSetting.SHOW_PHOTO],
+            haptic = settings[SwitchSetting.HAPTIC],
+            keyTones = settings[SwitchSetting.KEY_TONES],
+            buttonLabels = settings[SwitchSetting.BUTTON_LABELS],
             listDensity = settings.listDensity,
-            coloredCallArrows = settings.coloredCallArrows,
-            callLogDuration = settings.callLogDuration
+            coloredCallArrows = settings[SwitchSetting.COLORED_CALL_ARROWS],
+            callLogDuration = settings[SwitchSetting.CALL_LOG_DURATION]
         )
     }
 
@@ -1404,10 +1405,10 @@ fun RootScreen(
                     NotesScreen(
                         vm = vm,
                         onOpenCard = openCard,
-                        onSwipeNext = if (settings.panelSwipeNav) {
+                        onSwipeNext = if (settings[SwitchSetting.PANEL_SWIPE_NAV]) {
                             { openSection(MainSection.REMINDERS) }
                         } else null,
-                        onSwipePrevious = if (settings.panelSwipeNav) {
+                        onSwipePrevious = if (settings[SwitchSetting.PANEL_SWIPE_NAV]) {
                             { openSection(MainSection.CONTACTS) }
                         } else null,
                         links = sectionLinks(openCard)
@@ -1429,7 +1430,7 @@ fun RootScreen(
                         // Напоминания — последний раздел карусели: вперёд листать
                         // некуда, назад — к заметкам. Разбор — у NotesScreen выше
                         onSwipeNext = null,
-                        onSwipePrevious = if (settings.panelSwipeNav) {
+                        onSwipePrevious = if (settings[SwitchSetting.PANEL_SWIPE_NAV]) {
                             { openSection(MainSection.NOTES) }
                         } else null,
                         links = sectionLinks(openCard)

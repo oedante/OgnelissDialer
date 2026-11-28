@@ -1,0 +1,135 @@
+<ru-RU>
+• «Записывать лог в файл» снова включается обратно: переключатель показывает настоящее значение.
+• «Входящий плашкой сверху» больше не отмечен как изменённый, если его не трогали.
+• Настройки устроены проще внутри — меньше мест для ошибок.
+</ru-RU>
+<ar>
+• يمكن إعادة تشغيل «كتابة السجل في ملف»: يعرض المفتاح القيمة الفعلية.
+• لم يعد «المكالمة الواردة كشريط» يظهر كمعدَّل إن لم تغيّره.
+• إعدادات أبسط من الداخل — أماكن أقل للأخطاء.
+</ar>
+<cs-CZ>
+• „Zapisovat protokol do souboru“ lze znovu zapnout: přepínač ukazuje skutečnou hodnotu.
+• „Příchozí hovor jako banner“ už není označen jako změněný, pokud jste ho neměnili.
+• Nastavení jsou uvnitř jednodušší — méně míst pro chyby.
+</cs-CZ>
+<da-DK>
+• »Skriv log til fil« kan slås til igen: kontakten viser den faktiske værdi.
+• »Indgående opkald som banner« vises ikke længere som ændret, hvis du ikke har rørt den.
+• Indstillingerne er enklere indeni — færre steder for fejl.
+</da-DK>
+<de-DE>
+• „Protokoll in Datei schreiben“ lässt sich wieder einschalten: der Schalter zeigt den echten Wert.
+• „Eingehender Anruf als Banner“ gilt nicht mehr als geändert, wenn Sie ihn nicht angefasst haben.
+• Einstellungen sind intern einfacher aufgebaut — weniger Stellen für Fehler.
+</de-DE>
+<en-US>
+• “Write log to file” can be turned back on: the switch shows the real value.
+• “Incoming call as a banner” is no longer marked as changed if you never touched it.
+• Settings are simpler inside — fewer places for bugs.
+</en-US>
+<es-ES>
+• «Guardar registro en archivo» se puede volver a activar: el interruptor muestra el valor real.
+• «Llamada entrante como banner» ya no aparece como modificada si no la tocaste.
+• Los ajustes son más simples por dentro: menos sitios para errores.
+</es-ES>
+<fi-FI>
+• ”Kirjoita loki tiedostoon” voidaan taas kytkeä päälle: kytkin näyttää todellisen arvon.
+• ”Saapuva puhelu bannerina” ei enää näy muutettuna, jos et ole koskenut siihen.
+• Asetukset ovat sisältä yksinkertaisempia — vähemmän paikkoja virheille.
+</fi-FI>
+<fr-FR>
+• « Écrire le journal dans un fichier » peut être réactivé : l'interrupteur affiche la vraie valeur.
+• « Appel entrant en bannière » n'est plus marqué comme modifié si vous n'y avez pas touché.
+• Les réglages sont plus simples en interne — moins d'endroits pour les erreurs.
+</fr-FR>
+<hi-IN>
+• «लॉग को फ़ाइल में लिखें» फिर से चालू किया जा सकता है: स्विच असली मान दिखाता है।
+• «इनकमिंग कॉल बैनर के रूप में» अब बदला हुआ नहीं दिखता, अगर आपने उसे नहीं छुआ।
+• सेटिंग्स अंदर से सरल — गलतियों की कम जगहें।
+</hi-IN>
+<hu-HU>
+• A „Napló írása fájlba” újra bekapcsolható: a kapcsoló a valódi értéket mutatja.
+• A „Bejövő hívás szalagként” már nem jelenik meg módosítottként, ha nem nyúlt hozzá.
+• A beállítások belül egyszerűbbek — kevesebb hely a hibáknak.
+</hu-HU>
+<id>
+• “Tulis log ke file” bisa diaktifkan lagi: sakelar menampilkan nilai sebenarnya.
+• “Panggilan masuk sebagai banner” tidak lagi ditandai berubah jika tidak Anda sentuh.
+• Pengaturan lebih sederhana di dalam — lebih sedikit tempat untuk bug.
+</id>
+<it-IT>
+• «Scrivi il registro su file» si può riattivare: l'interruttore mostra il valore reale.
+• «Chiamata in arrivo come banner» non risulta più modificata se non l'hai toccata.
+• Impostazioni più semplici all'interno: meno punti per gli errori.
+</it-IT>
+<iw-IL>
+• אפשר שוב להפעיל את „כתיבת יומן לקובץ”: המתג מציג את הערך האמיתי.
+• „שיחה נכנסת כבאנר” כבר לא מסומנת כשונתה אם לא נגעתם בה.
+• ההגדרות פשוטות יותר מבפנים — פחות מקומות לטעויות.
+</iw-IL>
+<ja-JP>
+• 「ログをファイルに書き込む」を再びオンにできるようになりました。スイッチが実際の値を表示します。
+• 「着信をバナーで表示」は、触れていなければ変更済みと表示されなくなりました。
+• 設定の内部構造を簡素化し、不具合の起きる箇所を減らしました。
+</ja-JP>
+<ko-KR>
+• 「로그를 파일에 기록」을 다시 켤 수 있습니다. 스위치가 실제 값을 보여 줍니다.
+• 「수신 전화를 배너로」는 건드리지 않았다면 더 이상 변경됨으로 표시되지 않습니다.
+• 설정 내부를 단순화해 오류가 생길 곳을 줄였습니다.
+</ko-KR>
+<nl-NL>
+• ‘Log naar bestand schrijven’ kan weer worden ingeschakeld: de schakelaar toont de echte waarde.
+• ‘Inkomende oproep als banner’ staat niet meer als gewijzigd als u er niet aan kwam.
+• Instellingen zijn vanbinnen eenvoudiger — minder plekken voor fouten.
+</nl-NL>
+<no-NO>
+• «Skriv logg til fil» kan slås på igjen: bryteren viser den faktiske verdien.
+• «Innkommende anrop som banner» vises ikke lenger som endret hvis du ikke har rørt den.
+• Innstillingene er enklere innvendig — færre steder for feil.
+</no-NO>
+<pl-PL>
+• „Zapisuj dziennik do pliku” można znów włączyć: przełącznik pokazuje prawdziwą wartość.
+• „Połączenie przychodzące jako baner” nie jest już oznaczane jako zmienione, jeśli go nie ruszałeś.
+• Ustawienia są prostsze w środku — mniej miejsc na błędy.
+</pl-PL>
+<pt-BR>
+• “Gravar registro em arquivo” pode ser ligado de novo: a chave mostra o valor real.
+• “Chamada recebida como banner” não aparece mais como alterada se você não mexeu nela.
+• Configurações mais simples por dentro — menos lugares para erros.
+</pt-BR>
+<ro>
+• „Scrie jurnalul în fișier” poate fi reactivat: comutatorul arată valoarea reală.
+• „Apel primit ca banner” nu mai apare ca modificat dacă nu l-ați atins.
+• Setările sunt mai simple în interior — mai puține locuri pentru erori.
+</ro>
+<sk>
+• „Zapisovať denník do súboru“ sa dá znova zapnúť: prepínač ukazuje skutočnú hodnotu.
+• „Prichádzajúci hovor ako banner“ už nie je označený ako zmenený, ak ste ho nemenili.
+• Nastavenia sú vnútri jednoduchšie — menej miest pre chyby.
+</sk>
+<sv-SE>
+• ”Skriv logg till fil” kan slås på igen: reglaget visar det verkliga värdet.
+• ”Inkommande samtal som banner” visas inte längre som ändrat om du inte har rört det.
+• Inställningarna är enklare inuti — färre ställen för fel.
+</sv-SE>
+<th>
+• เปิด «เขียนบันทึกลงไฟล์» กลับได้อีกครั้ง: สวิตช์แสดงค่าจริง
+• «สายเรียกเข้าแบบแบนเนอร์» ไม่ถูกทำเครื่องหมายว่าเปลี่ยนแล้วอีกต่อไปหากคุณไม่ได้แตะ
+• การตั้งค่าภายในเรียบง่ายขึ้น — จุดที่เกิดข้อผิดพลาดน้อยลง
+</th>
+<tr-TR>
+• “Günlüğü dosyaya yaz” yeniden açılabiliyor: anahtar gerçek değeri gösteriyor.
+• “Gelen arama banner olarak” dokunmadıysanız artık değiştirilmiş görünmüyor.
+• Ayarlar içeride daha sade — hatalar için daha az yer.
+</tr-TR>
+<vi>
+• Có thể bật lại «Ghi nhật ký vào tệp»: công tắc hiển thị giá trị thật.
+• «Cuộc gọi đến dạng biểu ngữ» không còn bị đánh dấu đã đổi nếu bạn chưa chạm vào.
+• Cài đặt bên trong gọn hơn — ít chỗ phát sinh lỗi hơn.
+</vi>
+<zh-CN>
+• “将日志写入文件”可以重新打开了：开关显示的是真实的值。
+• “来电以横幅显示”在未改动时不再标记为已更改。
+• 设置的内部结构更简单，出错的地方更少。
+</zh-CN>
