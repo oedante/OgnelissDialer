@@ -42,7 +42,11 @@ def count() -> dict:
     В *-composables.txt только именованные функции — там почти всё
     пропускаемое (strong skipping), а 499 непропускаемых живут в лямбдах.
     """
-    modules = glob.glob(os.path.join(METRICS, '**', '*-module.json'), recursive=True)
+    # Только код приложения: при -Pcompose.metrics=true компилятор пишет метрики и
+    # для тестов (папка debugUnitTest) — их составные функции в приложение не входят.
+    # 2.9.13: первый прогон в CI сложил оба файла (84 + 19 неустойчивых классов).
+    modules = [f for f in glob.glob(os.path.join(METRICS, '**', '*-module.json'), recursive=True)
+               if 'test' not in os.path.relpath(f, METRICS).lower()]
     if not modules:
         print(f'Нет метрик в {METRICS}: сначала ./gradlew :app:compileDebugKotlin -Pcompose.metrics=true --rerun')
         sys.exit(2)
