@@ -49,7 +49,6 @@ internal fun settingIcon(id: String): ImageVector? = when (id) {
     "key_tones" -> OgnelissIcons.MusicNote
     // Журнал
     "grouping" -> OgnelissIcons.MergeType
-    "merge_calls" -> OgnelissIcons.CallSplit
     "carrier_info" -> OgnelissIcons.Info
     "dialpad_open_at_start" -> OgnelissIcons.Dialpad
     "sort_order" -> OgnelissIcons.Search
@@ -89,6 +88,7 @@ internal fun settingIcon(id: String): ImageVector? = when (id) {
     "start_section" -> OgnelissIcons.OpenInNew
     "call_hide_contact_number" -> OgnelissIcons.Lock
     "call_status_labels" -> OgnelissIcons.Info
+    "call_notification_number_type" -> OgnelissIcons.Person
     "call_photo_style" -> OgnelissIcons.Image
     "call_ambient_style" -> OgnelissIcons.Palette
     "spam_sim_scope" -> OgnelissIcons.SimCard

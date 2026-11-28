@@ -48,7 +48,6 @@ class SwitchSettingTest {
         Triple("section_icons", "section_icons", false),
         Triple("colored_call_arrows", "colored_call_arrows", true),
         Triple("call_log_duration", "call_log_duration", false),
-        Triple("merge_calls", "merge_calls", true),
         Triple("messengers_any_number", "messengers_any_number", false),
         Triple("panel_swipe_nav", "panel_swipe_nav", true),
         Triple("fake_call_button", "fake_call_button", false),
@@ -85,7 +84,12 @@ class SwitchSettingTest {
         }
         // Плашку входящего — отдельно: умолчание зависит от прошивки (IncomingCallAccess)
         assertEquals("incoming_banner", SwitchSetting.INCOMING_BANNER.prefKey.name)
-        assertEquals(was.size + 1, SwitchSetting.entries.size)
+        // Новые после 2.9.13 — со своими умолчаниями
+        val added = mapOf("call_notification_number_type" to true)
+        added.forEach { (key, default) -> assertEquals(key, default, SwitchSetting.of(key)?.default) }
+        // Убранные после 2.9.13 — ни на что не влиявшие (merge_calls, 2.9.15)
+        listOf("merge_calls").forEach { assertEquals(it, null, SwitchSetting.of(it)) }
+        assertEquals(was.size + 1 + added.size, SwitchSetting.entries.size)
     }
 
     @Test

@@ -211,8 +211,6 @@
     <string name="settings_calllog_export_text">Tout le journal au format CSV</string>
     <string name="settings_log_save">Enregistrer le journal dans un fichier</string>
     <string name="settings_log_save_text">Le journal technique, dans un fichier de votre choix</string>
-    <string name="settings_merge_calls">Regrouper les appels d’un même numéro</string>
-    <string name="settings_merge_calls_text">Les appels consécutifs apparaissent en une seule entrée avec un compteur.</string>
     <string name="settings_notifications">Notifications de l’application</string>
     <string name="settings_post_call">Afficher un écran après l’appel</string>
     <string name="settings_post_call_text">Ajoutez une note, une étiquette ou un rappel juste après avoir raccroché.</string>
@@ -581,9 +579,6 @@
     <string name="incall_conference_drop">Déconnecter</string>
     <string name="incall_hidden_number">Numéro masqué</string>
     <!-- Вид журнала: разбор в JournalStyle -->
-    <string name="settings_journal_style">Style du journal</string>
-    <string name="journal_style_cards">Cartes</string>
-    <string name="journal_style_groups">Groupes par jour</string>
     <string name="action_mark_spam">Marquer comme spam</string>
     <string name="sim_kind_physical">Carte SIM</string>
     <string name="settings_button_labels">Libellés sous les boutons</string>
@@ -1208,4 +1203,6 @@
     <string name="settings_call_preview">Aperçu de l\'écran d\'appel</string>
     <string name="settings_call_preview_text">Avec les réglages actuels, sans son</string>
     <string name="keywords_call_preview">aperçu écran d\'appel apparence voir</string>
+    <string name="settings_call_notification_number_type">Type de numéro dans la notification d\'appel</string>
+    <string name="settings_call_notification_number_type_text">« Mobile », « Travail » sous le nom dans la notification d\'appel</string>
 </resources>

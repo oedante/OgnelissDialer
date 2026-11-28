@@ -110,6 +110,14 @@ class SettingsCommands @Inject constructor(
 
     /** Установка значения из списка вариантов. */
     suspend fun setChoice(key: String, value: String) {
+        /*
+         * 2.9.15 (техдолг, этап 2б): однотипные выборы — по описанию (Choices);
+         * здесь остались особые: язык, свайпы, свои фоны и картинки, тема с акцентом.
+         */
+        Choices.of(key)?.let {
+            it.set(prefs, appContext, value)
+            return
+        }
         when (key) {
             /*
              * Язык сохраняется И применяется.
@@ -136,38 +144,11 @@ class SettingsCommands @Inject constructor(
                  */
                 _localeChanged.value = !handledBySystem
             }
-            "theme" -> prefs.setTheme(
-                runCatching { ThemeMode.valueOf(value) }.getOrDefault(ThemeMode.SYSTEM)
-            )
             "swipe_right" -> prefs.setSwipeRight(SwipeAction.from(value))
             "swipe_left" -> prefs.setSwipeLeft(SwipeAction.from(value))
             // 2.1.0: свайпы раздела «SMS» — свои
             "sms_swipe_right" -> prefs.setSmsSwipeRight(SwipeAction.from(value))
             "sms_swipe_left" -> prefs.setSmsSwipeLeft(SwipeAction.from(value))
-            // 2.2.0
-            "sms_undo_send" -> prefs.setSmsUndoSend(UndoSend.from(value))
-            "sms_otp_cleanup" -> prefs.setSmsOtpCleanup(OtpCleanup.from(value))
-            "sms_text_mode" -> prefs.setSmsTextMode(
-                com.ogneliss.dialer.sms.SmsTextMode.parse(value) ?: com.ogneliss.dialer.sms.SmsTextMode.SHOW
-            )
-            "grouping" -> prefs.setGroupingMode(
-                runCatching { GroupingMode.valueOf(value) }
-                    .getOrDefault(GroupingMode.BY_CONTACT)
-            )
-            "notes_retention" -> prefs.setNotesRetention(
-                NotesRetention.Period.from(value)
-            )
-            "notes_retention_scope" -> prefs.setNotesRetentionScope(
-                NotesRetention.Scope.from(value)
-            )
-            "outgoing_sim" -> prefs.setOutgoingSim(OutgoingSim.from(value))
-            "carrier_info" -> prefs.setCarrierInfo(CarrierInfoMode.from(value))
-            "call_photo_style" -> prefs.setCallPhotoStyle(CallPhotoStyle.from(value))
-            "spam_sim_scope" -> prefs.setSpamSimScope(com.ogneliss.dialer.call.SpamSimScope.from(value))
-            "call_ambient_style" -> prefs.setCallAmbientStyle(
-                com.ogneliss.dialer.call.AmbientStyle.entries.firstOrNull { it.name == value }
-                    ?: com.ogneliss.dialer.call.AmbientStyle.THEME
-            )
             /*
              * Свой фон вызова (2.7.4): сюда доходит только «Обычный» — убрать
              * снимок и отметку. «Свой снимок» требует выбора файла и идёт
@@ -182,19 +163,6 @@ class SettingsCommands @Inject constructor(
                 if (value != CALL_BG_CUSTOM) removeCallBackground(CallBackgrounds.Kind.AVATAR_NO_PHOTO)
             "avatar_unknown" ->
                 if (value != CALL_BG_CUSTOM) removeCallBackground(CallBackgrounds.Kind.AVATAR_UNKNOWN)
-            "avatar_scope" -> prefs.setAvatarScope(AvatarScope.from(value))
-            "start_section" -> prefs.setStartSection(StartChoice.from(value))
-            "call_photo_size" -> prefs.setCallPhotoSize(CallPhotoSize.from(value))
-            "answer_mode" -> prefs.setAnswerMode(AnswerMode.from(value))
-            "widget_shape" -> {
-                prefs.setWidgetShape(WidgetShape.from(value))
-                // Значки на главном экране перерисовываются сразу — выбор виден без ожидания
-                com.ogneliss.dialer.widget.SectionWidgets.updateAll(appContext)
-                com.ogneliss.dialer.widget.PinnedWidget.update(appContext)
-            }
-            "contact_name_format" -> prefs.setContactNameFormat(ContactNameFormat.from(value))
-            "contact_sort" -> prefs.setContactSort(ContactSort.from(value))
-            "ui_scale" -> prefs.setUiScale(UiScale.from(value))
             /*
              * Цветовая тема и свой акцент (1.9.0) — одна настройка, как
              * в «Оформлении» почты: значение «ТЕМА» или «ТЕМА|#AARRGGBB»
@@ -211,17 +179,6 @@ class SettingsCommands @Inject constructor(
                     prefs.set(SwitchSetting.DYNAMIC_COLOR, false)
                 }
             }
-            // 1.9.0: скругление, плотность, шрифт — как в Ogneliss Mail
-            "corner_size" -> prefs.setCornerSize(CornerSize.from(value))
-            "list_density" -> prefs.setListDensity(ListDensity.from(value))
-            "ui_font" -> prefs.setUiFont(UiFont.from(value))
-            "journal_style" -> prefs.setJournalStyle(JournalStyle.from(value))
-            "auto_redial" -> prefs.setAutoRedialMode(AutoRedialMode.from(value))
-            "auto_redial_pace" -> prefs.setAutoRedialPace(RedialPace.from(value))
-            "quiet_hours" -> prefs.setQuietHours(QuietHours.from(value))
-            "sort_order" -> prefs.setSortOrder(
-                runCatching { SortOrder.valueOf(value) }.getOrDefault(SortOrder.RELEVANCE)
-            )
             else -> Logger.w(TAG, "Неизвестный ключ выбора: $key")
         }
     }
@@ -275,48 +232,26 @@ class SettingsCommands @Inject constructor(
     /** Размер текста SMS (2.8.5): 0,8…1,6, только текст сообщений в переписке. */
     suspend fun setSmsTextScale(value: Float) = prefs.setSmsTextScale(value)
 
-    /** Текущее значение варианта — для отметки в диалоге выбора. */
-    fun currentChoice(key: String, state: SettingsState): String = when (key) {
-        "language" -> state.language
-        "theme" -> state.theme.name
-        "swipe_right" -> state.swipeRight.key
-        "swipe_left" -> state.swipeLeft.key
-        "sms_swipe_right" -> state.smsSwipeRight.key
-        "sms_swipe_left" -> state.smsSwipeLeft.key
-        "sms_undo_send" -> state.smsUndoSend.name
-        "sms_otp_cleanup" -> state.smsOtpCleanup.name
-        "sms_text_mode" -> state.smsTextMode.name
-        "grouping" -> state.groupingMode.name
-        "sort_order" -> state.sortOrder.name
-        "outgoing_sim" -> state.outgoingSim.name
-        "carrier_info" -> state.carrierInfo.name
-        "call_photo_style" -> state.callPhotoStyle.name
-        "call_ambient_style" -> state.callAmbientStyle.name
-        "spam_sim_scope" -> state.spamSimScope.name
-        // 2.7.4: свой фон вызова — «Свой снимок» (CUSTOM), если отметка есть
-        "call_bg_incoming" -> if (state.callBgIncoming > 0L) CALL_BG_CUSTOM else CALL_BG_DEFAULT
-        "call_bg_outgoing" -> if (state.callBgOutgoing > 0L) CALL_BG_CUSTOM else CALL_BG_DEFAULT
-        "avatar_no_photo" -> if (state.avatarNoPhoto > 0L) CALL_BG_CUSTOM else CALL_BG_DEFAULT
-        "avatar_unknown" -> if (state.avatarUnknown > 0L) CALL_BG_CUSTOM else CALL_BG_DEFAULT
-        "avatar_scope" -> state.avatarScope.name
-        "start_section" -> state.startSection.name
-        "call_photo_size" -> state.callPhotoSize.name
-        "answer_mode" -> state.answerMode.name
-        "widget_shape" -> state.widgetShape.name
-        "contact_name_format" -> state.contactNameFormat.name
-        "contact_sort" -> state.contactSort.name
-        "ui_scale" -> state.uiScale.name
-        "theme_preset" -> themeChoice(state.themePreset, state.accentColor)
-        "corner_size" -> state.cornerSize.name
-        "list_density" -> state.listDensity.name
-        "ui_font" -> state.uiFont.name
-        "journal_style" -> state.journalStyle.name
-        "notes_retention" -> state.notesRetention.name
-        "notes_retention_scope" -> state.notesRetentionScope.name
-        "auto_redial" -> state.autoRedialMode.name
-        "auto_redial_pace" -> state.autoRedialPace.name
-        "quiet_hours" -> state.quietHours.name
-        else -> ""
+    /**
+     * Выбранное сейчас значение настройки с выбором — то, что сравнивает шторка.
+     * 2.9.15: однотипные — по описанию (Choices), здесь — особые.
+     */
+    fun currentChoice(key: String, state: SettingsState): String {
+        Choices.of(key)?.let { return it.currentName(state) }
+        return when (key) {
+            "language" -> state.language
+            "swipe_right" -> state.swipeRight.key
+            "swipe_left" -> state.swipeLeft.key
+            "sms_swipe_right" -> state.smsSwipeRight.key
+            "sms_swipe_left" -> state.smsSwipeLeft.key
+            // 2.7.4: свой фон вызова — «Свой снимок» (CUSTOM), если отметка есть
+            "call_bg_incoming" -> if (state.callBgIncoming > 0L) CALL_BG_CUSTOM else CALL_BG_DEFAULT
+            "call_bg_outgoing" -> if (state.callBgOutgoing > 0L) CALL_BG_CUSTOM else CALL_BG_DEFAULT
+            "avatar_no_photo" -> if (state.avatarNoPhoto > 0L) CALL_BG_CUSTOM else CALL_BG_DEFAULT
+            "avatar_unknown" -> if (state.avatarUnknown > 0L) CALL_BG_CUSTOM else CALL_BG_DEFAULT
+            "theme_preset" -> themeChoice(state.themePreset, state.accentColor)
+            else -> ""
+        }
     }
 
     /**
@@ -326,158 +261,49 @@ class SettingsCommands @Inject constructor(
      * Раньше для свайпов возвращался ключ хранения, и пользователь видел
      * «call» и «sms» вместо «Позвонить» и «Отправить SMS». Ключ существует
      * для базы и никогда не должен попадать на экран.
+     *
+     * 2.9.15: однотипные — по описанию (Choices), здесь — особые и «Авто» масштаба.
      */
-    fun choiceLabel(context: Context, key: String, state: SettingsState): String = when (key) {
-        // Подпись берётся по сохранённому значению, а не по состоянию
-        // AppCompatDelegate: иначе она не обновляется вместе с настройкой
-        "language" -> LocaleManager.options(context)
-            .firstOrNull { it.tag == state.language }?.nativeName
-            ?: context.getString(R.string.settings_language_system)
-
-        "theme" -> context.getString(
-            when (state.theme) {
-                ThemeMode.SYSTEM -> R.string.settings_theme_system
-                ThemeMode.LIGHT -> R.string.settings_theme_light
-                ThemeMode.DARK -> R.string.settings_theme_dark
-                ThemeMode.BLACK_AMOLED -> R.string.settings_theme_amoled
-                ThemeMode.HIGH_CONTRAST -> R.string.settings_theme_contrast
-            }
-        )
-
-        "theme_preset" -> state.accentColor?.let { accent ->
-            context.getString(themePresetLabelRes(state.themePreset)) + " · " + accentLabel(context, accent)
-        } ?: context.getString(themePresetLabelRes(state.themePreset))
-        "corner_size" -> context.getString(cornerSizeLabelRes(state.cornerSize))
-        "list_density" -> context.getString(listDensityLabelRes(state.listDensity))
-        "ui_font" -> context.getString(uiFontLabelRes(state.uiFont))
-
-        "swipe_right" -> context.getString(swipeActionLabelRes(state.swipeRight))
-        "swipe_left" -> context.getString(swipeActionLabelRes(state.swipeLeft))
-        "sms_swipe_right" -> context.getString(swipeActionLabelRes(state.smsSwipeRight, forSms = true))
-        "sms_swipe_left" -> context.getString(swipeActionLabelRes(state.smsSwipeLeft, forSms = true))
-        "sms_undo_send" -> context.getString(undoSendLabelRes(state.smsUndoSend))
-        "sms_otp_cleanup" -> context.getString(otpCleanupLabelRes(state.smsOtpCleanup))
-        "sms_text_mode" -> context.getString(smsTextModeLabelRes(state.smsTextMode))
-
-        "grouping" -> context.getString(
-            when (state.groupingMode) {
-                GroupingMode.CONSECUTIVE -> R.string.grouping_consecutive
-                GroupingMode.BY_CONTACT -> R.string.grouping_by_contact
-                GroupingMode.NONE -> R.string.grouping_none
-            }
-        )
-
-        "journal_style" -> context.getString(
-            when (state.journalStyle) {
-                JournalStyle.CARDS -> R.string.journal_style_cards
-                JournalStyle.GROUPS -> R.string.journal_style_groups
-            }
-        )
-
-        "carrier_info" -> context.getString(
-            when (state.carrierInfo) {
-                CarrierInfoMode.UNKNOWN_ONLY -> R.string.carrier_info_unknown
-                CarrierInfoMode.ALL -> R.string.carrier_info_all
-                CarrierInfoMode.HIDDEN -> R.string.carrier_info_hidden
-            }
-        )
-
-        "call_photo_style" -> context.getString(callPhotoStyleLabelRes(state.callPhotoStyle))
-        "call_ambient_style" -> context.getString(ambientStyleLabelRes(state.callAmbientStyle))
-        "spam_sim_scope" -> context.getString(spamSimScopeLabelRes(state.spamSimScope))
-        "call_bg_incoming", "call_bg_outgoing" ->
-            context.getString(callBgLabelRes(currentChoice(key, state)))
-        "avatar_no_photo", "avatar_unknown" ->
-            context.getString(avatarPictureLabelRes(key, currentChoice(key, state)))
-        "avatar_scope" -> context.getString(avatarScopeLabelRes(state.avatarScope))
-        "start_section" -> context.getString(startChoiceLabelRes(state.startSection))
-        "call_photo_size" -> context.getString(callPhotoSizeLabelRes(state.callPhotoSize))
-        "answer_mode" -> context.getString(answerModeLabelRes(state.answerMode))
-        "widget_shape" -> context.getString(widgetShapeLabelRes(state.widgetShape))
-        "contact_name_format" -> context.getString(contactNameFormatLabelRes(state.contactNameFormat))
-        "contact_sort" -> context.getString(contactSortLabelRes(state.contactSort))
-        "auto_redial" -> context.getString(autoRedialLabelRes(state.autoRedialMode))
-        "auto_redial_pace" -> context.getString(redialPaceLabelRes(state.autoRedialPace))
-        "quiet_hours" -> context.getString(quietHoursLabelRes(state.quietHours))
-
+    fun choiceLabel(context: Context, key: String, state: SettingsState): String {
         // «Авто» — с тем, что выбрано для этого экрана: видно, что оно делает
-        "ui_scale" -> if (state.uiScale == UiScale.AUTO) {
-            context.getString(R.string.ui_scale_auto_now, currentScalePercent(context, state))
-        } else {
-            context.getString(uiScaleLabelRes(state.uiScale))
+        if (key == Choices.UI_SCALE.key && state.uiScale == UiScale.AUTO) {
+            return context.getString(R.string.ui_scale_auto_now, currentScalePercent(context, state))
         }
-
-        "outgoing_sim" -> context.getString(outgoingSimLabelRes(state.outgoingSim))
-
-        "notes_retention" -> context.getString(
-            when (state.notesRetention) {
-                NotesRetention.Period.NEVER -> R.string.retention_never
-                NotesRetention.Period.MONTH -> R.string.retention_month
-                NotesRetention.Period.HALF_YEAR -> R.string.retention_half_year
-                NotesRetention.Period.YEAR -> R.string.retention_year
-            }
-        )
-
-        "notes_retention_scope" -> context.getString(
-            when (state.notesRetentionScope) {
-                NotesRetention.Scope.UNKNOWN_ONLY -> R.string.retention_scope_unknown
-                NotesRetention.Scope.ALL -> R.string.retention_scope_all
-            }
-        )
-
-        "sort_order" -> context.getString(
-            when (state.sortOrder) {
-                SortOrder.RELEVANCE -> R.string.sort_relevance
-                SortOrder.FREQUENCY -> R.string.sort_frequency
-                SortOrder.RECENCY -> R.string.sort_recency
-                SortOrder.ALPHABET -> R.string.sort_alphabet
-            }
-        )
-
-        else -> ""
+        Choices.of(key)?.let { return context.getString(it.currentLabelRes(state)) }
+        return when (key) {
+            // Подпись берётся по сохранённому значению, а не по состоянию
+            // AppCompatDelegate: иначе она не обновляется вместе с настройкой
+            "language" -> LocaleManager.options(context)
+                .firstOrNull { it.tag == state.language }?.nativeName
+                ?: context.getString(R.string.settings_language_system)
+            "theme_preset" -> state.accentColor?.let { accent ->
+                context.getString(themePresetLabelRes(state.themePreset)) + " · " + accentLabel(context, accent)
+            } ?: context.getString(themePresetLabelRes(state.themePreset))
+            "swipe_right" -> context.getString(swipeActionLabelRes(state.swipeRight))
+            "swipe_left" -> context.getString(swipeActionLabelRes(state.swipeLeft))
+            "sms_swipe_right" -> context.getString(swipeActionLabelRes(state.smsSwipeRight, forSms = true))
+            "sms_swipe_left" -> context.getString(swipeActionLabelRes(state.smsSwipeLeft, forSms = true))
+            "call_bg_incoming", "call_bg_outgoing" ->
+                context.getString(callBgLabelRes(currentChoice(key, state)))
+            "avatar_no_photo", "avatar_unknown" ->
+                context.getString(avatarPictureLabelRes(key, currentChoice(key, state)))
+            else -> ""
+        }
     }
 
-    /** Заголовок диалога выбора. */
+    /** Заголовок шторки выбора. 2.9.15: однотипные — по описанию (Choices). */
     fun choiceTitle(context: Context, key: String): String = context.getString(
-        when (key) {
+        Choices.of(key)?.titleRes ?: when (key) {
             "language" -> R.string.settings_language
-            "theme" -> R.string.settings_theme
             "theme_preset" -> R.string.settings_theme_preset
-            "corner_size" -> R.string.settings_corner_size
-            "list_density" -> R.string.settings_list_density
-            "ui_font" -> R.string.settings_ui_font
             "swipe_right" -> R.string.settings_swipe_right
             "swipe_left" -> R.string.settings_swipe_left
             "sms_swipe_right" -> R.string.settings_sms_swipe_right
             "sms_swipe_left" -> R.string.settings_sms_swipe_left
-            "sms_undo_send" -> R.string.settings_sms_undo_send
-            "sms_otp_cleanup" -> R.string.settings_sms_otp_cleanup
-            "sms_text_mode" -> R.string.settings_sms_text_mode
-            "grouping" -> R.string.settings_grouping
-            "sort_order" -> R.string.settings_sort_order
-            "outgoing_sim" -> R.string.settings_outgoing_sim
-            "carrier_info" -> R.string.settings_carrier_info
-            "call_photo_style" -> R.string.settings_call_photo
-            "call_ambient_style" -> R.string.settings_call_ambient_style
-            "spam_sim_scope" -> R.string.settings_spam_sim_scope
             "call_bg_incoming" -> R.string.settings_call_bg_incoming
             "call_bg_outgoing" -> R.string.settings_call_bg_outgoing
             "avatar_no_photo" -> R.string.settings_avatar_no_photo
             "avatar_unknown" -> R.string.settings_avatar_unknown
-            "avatar_scope" -> R.string.settings_avatar_scope
-            "start_section" -> R.string.settings_start_section
-            "call_photo_size" -> R.string.settings_call_photo_size
-            "answer_mode" -> R.string.settings_answer_mode
-            "widget_shape" -> R.string.settings_widget_shape
-            "contact_name_format" -> R.string.settings_contact_name_format
-            "contact_sort" -> R.string.settings_contact_sort
-            "ui_scale" -> R.string.settings_ui_scale
-            "journal_style" -> R.string.settings_journal_style
-            "notes_retention" -> R.string.settings_notes_retention
-            "notes_retention_scope" -> R.string.settings_notes_scope
-            "auto_redial" -> R.string.settings_auto_redial
-            "auto_redial_pace" -> R.string.settings_auto_redial_pace
-            "quiet_hours" -> R.string.settings_quiet_hours
             else -> R.string.nav_settings
         }
     )
@@ -746,39 +572,14 @@ class SettingsCommands @Inject constructor(
          */
         val SWITCH_KEYS: Set<String> get() = SwitchSetting.KEYS
 
-        /** Ключи, которые обрабатывает setChoice. */
-        val CHOICE_KEYS = setOf(
-            "language", "theme", "swipe_right", "swipe_left", "grouping", "sort_order",
-            // 2.1.0
-            "sms_swipe_right", "sms_swipe_left",
-            // 2.2.0
-            "sms_undo_send", "sms_otp_cleanup",
-            // 2.9.12 (было переключателем sms_hide_text)
-            "sms_text_mode",
-            "notes_retention", "notes_retention_scope", "carrier_info",
-            // 2.9.1
-            "outgoing_sim",
-            "call_photo_style", "call_photo_size", "answer_mode", "ui_scale",
-            // 2.9.5
-            "call_ambient_style",
-            // 2.9.8
-            "spam_sim_scope",
-            // 2.7.4
-            "call_bg_incoming", "call_bg_outgoing",
-            // 2.8.0
-            "avatar_no_photo", "avatar_unknown", "avatar_scope",
-            // 2.7.0
-            "start_section",
-            "contact_name_format", "contact_sort",
-            // 2.1.3
-            "widget_shape",
-            // 1.8.4
-            "theme_preset",
-            // 1.9.0
-            "corner_size", "list_density", "ui_font",
-            // 1.8.0
-            "auto_redial", "auto_redial_pace", "quiet_hours"
-            // "journal_style" — снят из реестра в 1.5.3 (вид журнала один)
+        /**
+         * Ключи, которые обрабатывает setChoice (2.9.15): однотипные — из описаний
+         * (Choices), особые — списком. «journal_style» снят из реестра в 1.5.3 (вид
+         * журнала один) — его ветки убраны вместе с переходом на описания.
+         */
+        val CHOICE_KEYS: Set<String> get() = Choices.KEYS + setOf(
+            "language", "theme_preset", "swipe_right", "swipe_left", "sms_swipe_right", "sms_swipe_left",
+            "call_bg_incoming", "call_bg_outgoing", "avatar_no_photo", "avatar_unknown"
         )
     }
 }

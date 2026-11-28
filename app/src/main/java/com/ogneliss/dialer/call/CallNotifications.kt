@@ -165,8 +165,11 @@ object CallNotifications {
             // 2.9.10: в шапке — «Ogneliss • Звонок» (автор: «в уведомлении писать на локальном языке звонок или SMS»)
             .setSubText(context.getString(R.string.notif_source_call))
             .setContentTitle(callerName)
-            // «Мобильный · Входящий вызов» — тип номера, как в стандартных звонилках (2.1.0)
-            .setContentText(listOfNotNull(card?.typeLabel, text).joinToString(" · "))
+            // «Мобильный · Входящий вызов» — тип номера, как в стандартных звонилках (2.1.0);
+            // 2.9.15 — если не выключен в настройках (CallerCard.showNumberType)
+            .setContentText(
+                listOfNotNull(card?.typeLabel?.takeIf { CallerCard.showNumberType }, text).joinToString(" · ")
+            )
             .apply { card?.photo?.let { setLargeIcon(it) } }
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setOngoing(true)

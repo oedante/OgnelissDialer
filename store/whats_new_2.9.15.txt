@@ -1,0 +1,135 @@
+<ru-RU>
+• «Мобильный» под именем в уведомлении о входящем можно убрать: Расширенные настройки → Экран вызова → «Тип номера в уведомлении о вызове».
+• Убран пункт «Группировать вызовы одного номера» — он ни на что не влиял; журнал группирует по настройке «Группировка вызовов».
+• Настройки с выбором устроены проще внутри — меньше мест для ошибок.
+</ru-RU>
+<ar>
+• يمكن إخفاء «جوّال» تحت الاسم في إشعار المكالمة الواردة: الإعدادات المتقدمة ← شاشة المكالمة ← «نوع الرقم في إشعار المكالمة».
+• أُزيل خيار «تجميع مكالمات الرقم نفسه» لأنه لم يكن له أي أثر؛ السجل يُجمَّع حسب إعداد «التجميع».
+• إعدادات الاختيار أبسط من الداخل — أماكن أقل للأخطاء.
+</ar>
+<cs-CZ>
+• „Mobil“ pod jménem v oznámení o příchozím hovoru lze skrýt: Pokročilá nastavení → Obrazovka hovoru → „Typ čísla v oznámení o hovoru“.
+• Odebrána volba „Seskupovat hovory stejného čísla“ — neměla žádný účinek; protokol seskupuje podle nastavení „Seskupení“.
+• Nastavení s výběrem jsou uvnitř jednodušší — méně míst pro chyby.
+</cs-CZ>
+<da-DK>
+• »Mobil« under navnet i notifikationen om indgående opkald kan skjules: Avancerede indstillinger → Opkaldsskærm → »Nummertype i opkaldsnotifikation«.
+• Valget »Grupér opkald fra samme nummer« er fjernet — det havde ingen effekt; loggen grupperes efter indstillingen »Gruppering«.
+• Indstillinger med valg er enklere indeni — færre steder for fejl.
+</da-DK>
+<de-DE>
+• „Mobil“ unter dem Namen in der Benachrichtigung zu eingehenden Anrufen lässt sich ausblenden: Erweiterte Einstellungen → Anrufbildschirm → „Nummerntyp in Anrufbenachrichtigung“.
+• Die Option „Anrufe derselben Nummer gruppieren“ wurde entfernt — sie hatte keine Wirkung; das Protokoll gruppiert nach „Anrufe gruppieren“.
+• Auswahleinstellungen sind intern einfacher — weniger Stellen für Fehler.
+</de-DE>
+<en-US>
+• “Mobile” under the name in the incoming call notification can be hidden: Advanced settings → Call screen → “Number type in call notification”.
+• Removed “Group calls from the same number” — it had no effect; the log is grouped by the “Group calls” setting.
+• Choice settings are simpler inside — fewer places for bugs.
+</en-US>
+<es-ES>
+• Se puede ocultar «Móvil» bajo el nombre en la notificación de llamada entrante: Ajustes avanzados → Pantalla de llamada → «Tipo de número en la notificación de llamada».
+• Se quitó «Agrupar llamadas del mismo número»: no tenía efecto; el registro se agrupa según «Agrupación».
+• Los ajustes de selección son más simples por dentro: menos sitios para errores.
+</es-ES>
+<fi-FI>
+• ”Matkapuhelin” nimen alla saapuvan puhelun ilmoituksessa voidaan piilottaa: Lisäasetukset → Puhelunäkymä → ”Numeron tyyppi puheluilmoituksessa”.
+• Poistettu ”Ryhmitä saman numeron puhelut” — sillä ei ollut vaikutusta; loki ryhmitellään ”Ryhmittely”-asetuksen mukaan.
+• Valinta-asetukset ovat sisältä yksinkertaisempia — vähemmän paikkoja virheille.
+</fi-FI>
+<fr-FR>
+• « Mobile » sous le nom dans la notification d'appel entrant peut être masqué : Réglages avancés → Écran d’appel → « Type de numéro dans la notification d'appel ».
+• Suppression de « Regrouper les appels du même numéro » : sans effet ; le journal est regroupé selon « Regrouper les appels ».
+• Les réglages à choix sont plus simples en interne — moins d'endroits pour les erreurs.
+</fr-FR>
+<hi-IN>
+• इनकमिंग कॉल सूचना में नाम के नीचे «मोबाइल» छिपाया जा सकता है: उन्नत सेटिंग्स → कॉल स्क्रीन → «कॉल सूचना में नंबर का प्रकार»।
+• «एक ही नंबर की कॉल समूहित करें» हटाया गया — इसका कोई असर नहीं था; लॉग «समूहन» सेटिंग से समूहित होता है।
+• विकल्प वाली सेटिंग्स अंदर से सरल — गलतियों की कम जगहें।
+</hi-IN>
+<hu-HU>
+• A „Mobil” a név alatt a bejövő hívás értesítésében elrejthető: Speciális beállítások → Hívóképernyő → „Számtípus a hívásértesítésben”.
+• Eltávolítva: „Azonos szám hívásainak csoportosítása” — nem volt hatása; a napló a „Csoportosítás” beállítás szerint csoportosít.
+• A választós beállítások belül egyszerűbbek — kevesebb hely a hibáknak.
+</hu-HU>
+<id>
+• “Seluler” di bawah nama pada notifikasi panggilan masuk bisa disembunyikan: Setelan lanjutan → Layar panggilan → “Jenis nomor di notifikasi panggilan”.
+• “Kelompokkan panggilan dari nomor yang sama” dihapus — tidak berpengaruh; log dikelompokkan menurut setelan “Pengelompokan”.
+• Setelan pilihan lebih sederhana di dalam — lebih sedikit tempat untuk bug.
+</id>
+<it-IT>
+• «Cellulare» sotto il nome nella notifica di chiamata in arrivo si può nascondere: Impostazioni avanzate → Schermata di chiamata → «Tipo di numero nella notifica di chiamata».
+• Rimossa «Raggruppa le chiamate dello stesso numero»: non aveva effetto; il registro si raggruppa secondo «Raggruppamento».
+• Impostazioni a scelta più semplici all'interno: meno punti per gli errori.
+</it-IT>
+<iw-IL>
+• אפשר להסתיר „נייד” מתחת לשם בהתראה על שיחה נכנסת: הגדרות מתקדמות ← מסך שיחה ← „סוג המספר בהתראת שיחה”.
+• הוסרה האפשרות „קבץ שיחות מאותו מספר” — לא הייתה לה השפעה; היומן מקובץ לפי ההגדרה „קיבוץ”.
+• הגדרות הבחירה פשוטות יותר מבפנים — פחות מקומות לטעויות.
+</iw-IL>
+<ja-JP>
+• 着信通知で名前の下の「携帯」を非表示にできます：詳細設定 → 通話画面 →「通話通知に番号の種類」。
+• 効果のなかった「同じ番号の通話をまとめる」を削除しました。履歴は「グループ化」の設定でまとめられます。
+• 選択式の設定の内部を簡素化し、不具合の起きる箇所を減らしました。
+</ja-JP>
+<ko-KR>
+• 수신 전화 알림에서 이름 아래 「휴대전화」를 숨길 수 있습니다: 고급 설정 → 통화 화면 → 「통화 알림에 번호 유형」.
+• 효과가 없던 「같은 번호의 통화 묶기」를 제거했습니다. 기록은 「그룹화」 설정에 따라 묶입니다.
+• 선택형 설정 내부를 단순화해 오류가 생길 곳을 줄였습니다.
+</ko-KR>
+<nl-NL>
+• ‘Mobiel’ onder de naam in de melding van een inkomende oproep kan worden verborgen: Geavanceerde instellingen → Oproepscherm → ‘Nummertype in oproepmelding’.
+• ‘Oproepen van hetzelfde nummer groeperen’ is verwijderd — het had geen effect; het logboek groepeert volgens ‘Groeperen’.
+• Keuze-instellingen zijn vanbinnen eenvoudiger — minder plekken voor fouten.
+</nl-NL>
+<no-NO>
+• «Mobil» under navnet i varselet om innkommende anrop kan skjules: Avanserte innstillinger → Anropsskjerm → «Nummertype i anropsvarsel».
+• «Grupper anrop fra samme nummer» er fjernet — det hadde ingen effekt; loggen grupperes etter innstillingen «Gruppering».
+• Valginnstillinger er enklere innvendig — færre steder for feil.
+</no-NO>
+<pl-PL>
+• „Komórka” pod nazwą w powiadomieniu o połączeniu przychodzącym można ukryć: Ustawienia zaawansowane → Ekran połączenia → „Typ numeru w powiadomieniu o połączeniu”.
+• Usunięto „Grupuj połączenia z tego samego numeru” — nie działało; dziennik grupuje według ustawienia „Grupowanie”.
+• Ustawienia z wyborem są prostsze w środku — mniej miejsc na błędy.
+</pl-PL>
+<pt-BR>
+• “Celular” abaixo do nome na notificação de chamada recebida pode ser ocultado: Configurações avançadas → Tela de chamada → “Tipo de número na notificação de chamada”.
+• Removido “Agrupar chamadas do mesmo número” — não tinha efeito; o registro é agrupado pela configuração “Agrupamento”.
+• Configurações de escolha mais simples por dentro — menos lugares para erros.
+</pt-BR>
+<ro>
+• „Mobil” sub nume în notificarea de apel primit poate fi ascuns: Setări avansate → Ecran de apel → „Tipul numărului în notificarea de apel”.
+• Eliminat „Grupează apelurile de la același număr” — nu avea efect; jurnalul se grupează după setarea „Grupare”.
+• Setările cu opțiuni sunt mai simple în interior — mai puține locuri pentru erori.
+</ro>
+<sk>
+• „Mobil“ pod menom v upozornení na prichádzajúci hovor sa dá skryť: Rozšírené nastavenia → Obrazovka hovoru → „Typ čísla v upozornení na hovor“.
+• Odstránená voľba „Zoskupovať hovory z rovnakého čísla“ — nemala účinok; denník zoskupuje podľa nastavenia „Zoskupenie“.
+• Nastavenia s výberom sú vnútri jednoduchšie — menej miest pre chyby.
+</sk>
+<sv-SE>
+• ”Mobil” under namnet i aviseringen om inkommande samtal kan döljas: Avancerade inställningar → Samtalsskärm → ”Nummertyp i samtalsavisering”.
+• ”Gruppera samtal från samma nummer” är borttaget — det hade ingen effekt; loggen grupperas enligt ”Gruppering”.
+• Valinställningar är enklare inuti — färre ställen för fel.
+</sv-SE>
+<th>
+• ซ่อน «มือถือ» ใต้ชื่อในการแจ้งเตือนสายเรียกเข้าได้: การตั้งค่าขั้นสูง → หน้าจอการโทร → «ประเภทหมายเลขในการแจ้งเตือนการโทร»
+• นำ «จัดกลุ่มสายจากหมายเลขเดียวกัน» ออก — ไม่มีผลใด ๆ; บันทึกจัดกลุ่มตามการตั้งค่า «การจัดกลุ่ม»
+• การตั้งค่าแบบเลือกภายในเรียบง่ายขึ้น — จุดที่เกิดข้อผิดพลาดน้อยลง
+</th>
+<tr-TR>
+• Gelen arama bildiriminde adın altındaki “Mobil” gizlenebilir: Gelişmiş ayarlar → Arama ekranı → “Arama bildiriminde numara türü”.
+• “Aynı numaradan gelen aramaları grupla” kaldırıldı — etkisi yoktu; kayıt “Gruplama” ayarına göre gruplanır.
+• Seçimli ayarlar içeride daha sade — hatalar için daha az yer.
+</tr-TR>
+<vi>
+• Có thể ẩn «Di động» dưới tên trong thông báo cuộc gọi đến: Cài đặt nâng cao → Màn hình cuộc gọi → «Loại số trong thông báo cuộc gọi».
+• Đã bỏ «Nhóm cuộc gọi cùng số» — không có tác dụng; nhật ký nhóm theo cài đặt «Nhóm».
+• Cài đặt dạng lựa chọn bên trong gọn hơn — ít chỗ phát sinh lỗi hơn.
+</vi>
+<zh-CN>
+• 来电通知中姓名下方的“手机”现在可以隐藏：高级设置 → 通话界面 → “通话通知中的号码类型”。
+• 移除了不起作用的“合并同一号码的通话”；通话记录按“分组”设置合并。
+• 选项类设置的内部结构更简单，出错的地方更少。
+</zh-CN>

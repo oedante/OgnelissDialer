@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import com.ogneliss.dialer.R
 import com.ogneliss.dialer.settings.SettingsCommands
 import com.ogneliss.dialer.settings.SwipeAction
-import com.ogneliss.dialer.settings.ThemeMode
 import com.ogneliss.dialer.ui.DialerViewModel
 import com.ogneliss.dialer.ui.components.ChoiceSheet
 import com.ogneliss.dialer.ui.components.ListSheetGroup
@@ -54,67 +53,18 @@ fun SettingsChoiceDialog(
 ) {
     val ctx = LocalContext.current
 
-    /** Пары «значение → подпись» для конкретной настройки. */
-    val options: List<Pair<String, String>> = when (settingKey) {
+    /**
+     * Пары «значение → подпись» для конкретной настройки. 2.9.15 (техдолг, этап 2б):
+     * однотипные — из описания (Choices: варианты по порядку и их подписи, те же,
+     * что у строки настройки); здесь — особые.
+     */
+    val choice = com.ogneliss.dialer.settings.Choices.of(settingKey)
+    val options: List<Pair<String, String>> = choice?.let { c ->
+        c.optionNames.map { it to stringResource(c.labelResOf(it)) }
+    } ?: when (settingKey) {
         "language" -> LocaleManager.options(ctx).map { it.tag to it.nativeName }
-        "theme" -> listOf(
-            ThemeMode.SYSTEM.name to stringResource(R.string.settings_theme_system),
-            ThemeMode.LIGHT.name to stringResource(R.string.settings_theme_light),
-            ThemeMode.DARK.name to stringResource(R.string.settings_theme_dark),
-            ThemeMode.BLACK_AMOLED.name to stringResource(R.string.settings_theme_amoled),
-            // Режим для слабого зрения: без него настройка существовала
-            // в коде, но выбрать её было нельзя
-            ThemeMode.HIGH_CONTRAST.name to stringResource(R.string.settings_theme_contrast)
-        )
-        "outgoing_sim" -> com.ogneliss.dialer.settings.OutgoingSim.entries.map {
-            it.name to stringResource(com.ogneliss.dialer.settings.SettingsCommands.outgoingSimLabelRes(it))
-        }
-        "notes_retention" -> listOf(
-            "NEVER" to stringResource(R.string.retention_never),
-            "MONTH" to stringResource(R.string.retention_month),
-            "HALF_YEAR" to stringResource(R.string.retention_half_year),
-            "YEAR" to stringResource(R.string.retention_year)
-        )
-        "notes_retention_scope" -> listOf(
-            "UNKNOWN_ONLY" to stringResource(R.string.retention_scope_unknown),
-            "ALL" to stringResource(R.string.retention_scope_all)
-        )
-        "sort_order" -> listOf(
-            "RELEVANCE" to stringResource(R.string.sort_relevance),
-            "FREQUENCY" to stringResource(R.string.sort_frequency),
-            "RECENCY" to stringResource(R.string.sort_recency),
-            "ALPHABET" to stringResource(R.string.sort_alphabet)
-        )
-        "journal_style" -> listOf(
-            "CARDS" to stringResource(R.string.journal_style_cards),
-            "GROUPS" to stringResource(R.string.journal_style_groups)
-        )
-
         "theme_preset" -> com.ogneliss.dialer.settings.ThemePreset.entries.map {
             it.name to stringResource(SettingsCommands.themePresetLabelRes(it))
-        }
-        // 1.9.0: как «Оформление» Ogneliss Mail
-        "corner_size" -> com.ogneliss.dialer.settings.CornerSize.entries.map {
-            it.name to stringResource(SettingsCommands.cornerSizeLabelRes(it))
-        }
-        "list_density" -> com.ogneliss.dialer.settings.ListDensity.entries.map {
-            it.name to stringResource(SettingsCommands.listDensityLabelRes(it))
-        }
-        "ui_font" -> com.ogneliss.dialer.settings.UiFont.entries.map {
-            it.name to stringResource(SettingsCommands.uiFontLabelRes(it))
-        }
-        "ui_scale" -> com.ogneliss.dialer.settings.UiScale.entries.map {
-            it.name to stringResource(SettingsCommands.uiScaleLabelRes(it))
-        }
-        "call_photo_style" -> com.ogneliss.dialer.settings.CallPhotoStyle.entries.map {
-            it.name to stringResource(SettingsCommands.callPhotoStyleLabelRes(it))
-        }
-        // 2.9.5: облик живого фона — тоны темы или «Пламя» (CallAmbientBackground)
-        "spam_sim_scope" -> com.ogneliss.dialer.call.SpamSimScope.entries.map {
-            it.name to stringResource(SettingsCommands.spamSimScopeLabelRes(it))
-        }
-        "call_ambient_style" -> com.ogneliss.dialer.call.AmbientStyle.entries.map {
-            it.name to stringResource(SettingsCommands.ambientStyleLabelRes(it))
         }
         // 2.7.4: фон вызова — обычный или свой снимок (из окна выбора фото)
         "call_bg_incoming", "call_bg_outgoing" -> listOf(
@@ -125,59 +75,6 @@ fun SettingsChoiceDialog(
         "avatar_no_photo", "avatar_unknown" -> listOf(
             SettingsCommands.CALL_BG_DEFAULT to stringResource(SettingsCommands.avatarPictureLabelRes(settingKey, SettingsCommands.CALL_BG_DEFAULT)),
             SettingsCommands.CALL_BG_CUSTOM to stringResource(R.string.avatar_custom)
-        )
-        "avatar_scope" -> com.ogneliss.dialer.settings.AvatarScope.entries.map {
-            it.name to stringResource(SettingsCommands.avatarScopeLabelRes(it))
-        }
-        "call_photo_size" -> com.ogneliss.dialer.settings.CallPhotoSize.entries.map {
-            it.name to stringResource(SettingsCommands.callPhotoSizeLabelRes(it))
-        }
-        "answer_mode" -> com.ogneliss.dialer.settings.AnswerMode.entries.map {
-            it.name to stringResource(SettingsCommands.answerModeLabelRes(it))
-        }
-        "sms_undo_send" -> com.ogneliss.dialer.settings.UndoSend.entries.map {
-            it.name to stringResource(SettingsCommands.undoSendLabelRes(it))
-        }
-        // 2.9.12: текст SMS в уведомлениях — три варианта (SmsTextMode)
-        "sms_text_mode" -> com.ogneliss.dialer.sms.SmsTextMode.entries.map {
-            it.name to stringResource(SettingsCommands.smsTextModeLabelRes(it))
-        }
-        "sms_otp_cleanup" -> com.ogneliss.dialer.settings.OtpCleanup.entries.map {
-            it.name to stringResource(SettingsCommands.otpCleanupLabelRes(it))
-        }
-        "widget_shape" -> com.ogneliss.dialer.settings.WidgetShape.entries.map {
-            it.name to stringResource(SettingsCommands.widgetShapeLabelRes(it))
-        }
-        "contact_name_format" -> com.ogneliss.dialer.settings.ContactNameFormat.entries.map {
-            it.name to stringResource(SettingsCommands.contactNameFormatLabelRes(it))
-        }
-        // 2.7.0: «При запуске открывать» — журнал, SMS, контакты, последний раздел
-        "start_section" -> com.ogneliss.dialer.settings.StartChoice.entries.map {
-            it.name to stringResource(SettingsCommands.startChoiceLabelRes(it))
-        }
-        "contact_sort" -> com.ogneliss.dialer.settings.ContactSort.entries.map {
-            it.name to stringResource(SettingsCommands.contactSortLabelRes(it))
-        }
-        // Автодозвон и тихие часы (1.8.0): подписи — из SettingsCommands,
-        // общие со строкой настройки
-        "auto_redial" -> com.ogneliss.dialer.call.AutoRedialMode.entries.map {
-            it.name to stringResource(SettingsCommands.autoRedialLabelRes(it))
-        }
-        "auto_redial_pace" -> com.ogneliss.dialer.call.RedialPace.entries.map {
-            it.name to stringResource(SettingsCommands.redialPaceLabelRes(it))
-        }
-        "quiet_hours" -> com.ogneliss.dialer.call.QuietHours.entries.map {
-            it.name to stringResource(SettingsCommands.quietHoursLabelRes(it))
-        }
-        "carrier_info" -> listOf(
-            "UNKNOWN_ONLY" to stringResource(R.string.carrier_info_unknown),
-            "ALL" to stringResource(R.string.carrier_info_all),
-            "HIDDEN" to stringResource(R.string.carrier_info_hidden)
-        )
-        "grouping" -> listOf(
-            "CONSECUTIVE" to stringResource(R.string.grouping_consecutive),
-            "BY_CONTACT" to stringResource(R.string.grouping_by_contact),
-            "NONE" to stringResource(R.string.grouping_none)
         )
         "swipe_right", "swipe_left", "sms_swipe_right", "sms_swipe_left" ->
             // Подписи берутся из единого места: у настроек и панели свайпа
@@ -313,25 +210,9 @@ private val CALL_PREVIEW_KEYS = setOf("call_photo_style", "call_photo_size", "ca
  * почты: плотность — что меняется, шрифт — откуда он.
  */
 @Composable
-private fun choiceHint(key: String, value: String): String? = when (key) {
-    // 2.9.12: что значит вариант текста SMS — коротко, подробнее в «Вопросах и ответах»
-    "sms_text_mode" -> when (value) {
-        com.ogneliss.dialer.sms.SmsTextMode.UNTIL_EXPANDED.name -> stringResource(R.string.sms_text_until_expanded_hint)
-        com.ogneliss.dialer.sms.SmsTextMode.HIDE.name -> stringResource(R.string.sms_text_hide_hint)
-        else -> null
-    }
-    "list_density" -> when (value) {
-        "COMPACT" -> stringResource(R.string.list_density_compact_hint)
-        "COMFORTABLE" -> stringResource(R.string.list_density_comfortable_hint)
-        else -> null
-    }
-    "ui_font" -> when (value) {
-        "SYSTEM" -> stringResource(R.string.ui_font_system_hint)
-        "ROBOTO" -> stringResource(R.string.ui_font_roboto_hint)
-        else -> null
-    }
-    else -> null
-}
+private fun choiceHint(key: String, value: String): String? =
+    // 2.9.15: пояснения вариантов — в описании настройки (Choices)
+    com.ogneliss.dialer.settings.Choices.of(key)?.hintResOf(value)?.let { stringResource(it) }
 
 /** Настройки свайпа — журнал и раздел «SMS» (2.1.0). */
 internal val SWIPE_KEYS = setOf("swipe_right", "swipe_left", "sms_swipe_right", "sms_swipe_left")

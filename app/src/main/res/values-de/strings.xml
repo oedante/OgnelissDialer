@@ -213,8 +213,6 @@
     <string name="settings_calllog_export_text">Das gesamte Protokoll als CSV-Tabelle</string>
     <string name="settings_log_save">Protokoll in eine Datei speichern</string>
     <string name="settings_log_save_text">Das technische Protokoll in eine Datei Ihrer Wahl</string>
-    <string name="settings_merge_calls">Anrufe derselben Nummer gruppieren</string>
-    <string name="settings_merge_calls_text">Aufeinanderfolgende Anrufe erscheinen als ein Eintrag mit Zähler.</string>
     <string name="settings_notifications">App-Benachrichtigungen</string>
     <string name="settings_post_call">Bildschirm nach dem Anruf anzeigen</string>
     <string name="settings_post_call_text">Notiz, Markierung oder Erinnerung direkt nach dem Auflegen.</string>
@@ -583,9 +581,6 @@
     <string name="incall_conference_drop">Trennen</string>
     <string name="incall_hidden_number">Unterdrückte Nummer</string>
     <!-- Вид журнала: разбор в JournalStyle -->
-    <string name="settings_journal_style">Protokollansicht</string>
-    <string name="journal_style_cards">Karten</string>
-    <string name="journal_style_groups">Gruppen nach Tagen</string>
     <string name="action_mark_spam">Als Spam markieren</string>
     <string name="sim_kind_physical">SIM-Karte</string>
     <string name="settings_button_labels">Beschriftungen unter Tasten</string>
@@ -1209,4 +1204,6 @@
     <string name="settings_call_preview">Anrufbildschirm ansehen</string>
     <string name="settings_call_preview_text">Mit den jetzigen Einstellungen, ohne Ton</string>
     <string name="keywords_call_preview">vorschau anrufbildschirm aussehen ansehen</string>
+    <string name="settings_call_notification_number_type">Nummerntyp in Anrufbenachrichtigung</string>
+    <string name="settings_call_notification_number_type_text">„Mobil“, „Arbeit“ unter dem Namen in der Anrufbenachrichtigung</string>
 </resources>
